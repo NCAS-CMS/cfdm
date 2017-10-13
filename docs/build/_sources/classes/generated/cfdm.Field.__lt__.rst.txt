@@ -1,7 +1,0 @@
-cfdm.Field.__lt__
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.__lt__
