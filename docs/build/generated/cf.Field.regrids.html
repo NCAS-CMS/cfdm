@@ -1,0 +1,290 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cf.Field.regrids &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-regrids">
+<h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.regrids">
+<code class="descclassname">Field.</code><code class="descname">regrids</code><span class="sig-paren">(</span><em>dst</em>, <em>src_cyclic=None</em>, <em>dst_cyclic=None</em>, <em>method=’auto’</em>, <em>use_dst_mask=False</em>, <em>_compute_field_mass=None</em>, <em>i=False</em><span class="sig-paren">)</span><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the field regridded onto a new latitude-longitude grid.</p>
+<p>Regridding, also called remapping or interpolation, is the process of
+changing the grid underneath field data values while preserving the
+qualities of the original data.</p>
+<p>By default the the regridding is a first-order conservative
+interpolation, but bilinear interpolation is available. The latter
+method is particular useful for cases when the latitude and longitude
+coordinate cell boundaries are not known nor inferrable. Nearest
+neighbour interpolation is also available.</p>
+<p><strong>Metadata</strong></p>
+<p>The field’s domain must have well defined X and Y axes with latitude
+and longitude coordinate values, which may be stored as dimension
+coordinate objects or two dimensional auxiliary coordinate
+objects. The same is true for the destination grid, if it provided as
+part of another field.</p>
+<p>The cyclicity of the X axes of the source field and destination grid
+is taken into account. If an X axis is in fact cyclic but is
+registered as such by its parent field (see <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal"><span class="pre">cf.Field.iscyclic</span></code></a>), then
+the cyclicity may be set with the <em>src_cyclic</em> or <em>dst_cyclic</em>
+parameters.</p>
+<p>The output field’s coordinate objects which span the X and/or Y axes
+are replaced with those from the destination grid. Any fields
+contained in coordinate reference objects will also be regridded, if
+possible.</p>
+<p><strong>Mask</strong></p>
+<p>The data array mask of the field is automatically taken into account,
+such that the regridded data array will be masked in regions where the
+input data array is masked. By default the mask of the destination
+grid is not taken into account. If the destination field data has
+more than two dimensions then the mask, if used, is taken from the two
+dimensionsal section of the data where the indices of all axes other
+than X and Y are zero.</p>
+<p><strong>Method</strong></p>
+<p>The interpolation is carried by out using the <code class="xref py py-obj docutils literal"><span class="pre">ESMF</span></code> package - a
+Python interface to the Earth System Modeling Framework (ESMF)
+regridding utility.</p>
+<p><strong>Logging</strong></p>
+<p>Whether ESMF logging is enabled or not is determined by
+<a class="reference internal" href="cf.REGRID_LOGGING.html#cf.REGRID_LOGGING" title="cf.REGRID_LOGGING"><code class="xref py py-obj docutils literal"><span class="pre">cf.REGRID_LOGGING</span></code></a>. If it is logging takes place after every call. By
+default logging is disabled.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.0.4.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>Regrid field <code class="docutils literal"><span class="pre">f</span></code> conservatively onto a grid contained in field
+<code class="docutils literal"><span class="pre">g</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>dst <span class="classifier-delimiter">:</span> <span class="classifier">Field or dict</span></dt>
+<dd><p class="first last">The field containing the new grid. If dst is a field list the
+first field in the list is used. Alternatively a dictionary
+can be passed containing the keywords ‘longitude’ and
+‘latitude’ with either two 1D dimension coordinates or two 2D
+auxiliary coordinates. In the 2D case both coordinates must
+have their axes in the same order and this must be specified
+by the keyword ‘axes’ as either <code class="docutils literal"><span class="pre">('X',</span> <span class="pre">'Y')</span></code> or <code class="docutils literal"><span class="pre">('Y',</span>
+<span class="pre">'X')</span></code>.</p>
+</dd>
+<dt>src_cyclic <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">Force the use of a periodic X axis for the source field,
+without altering the original field.</p>
+</dd>
+<dt>dst_cyclic <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">Force the use of a periodic X axis for the destination grid,
+without altering the original field.</p>
+</dd>
+<dt>method <span class="classifier-delimiter">:</span> <span class="classifier">string, optional</span></dt>
+<dd><p class="first last">By default the regridding method is set to ‘auto’. In this case
+conservative regridding will be used unless one or both of the
+fields does not have contiguous bounds, in which case bilinear
+regridding will be used. If a 1D dimension coordinate does not
+have bounds then contiguous bounds will be created
+automatically. If this parameter is set to conservative then
+first-order conservative regridding is used. If it is set to
+‘bilinear’ then multilinear interpolation is used. If it is set
+to ‘nearest_stod’ then nearest neighbor interpolation is used
+where each destination point is mapped to the closest source
+point. A given source point may map to multiple destination
+points, but no destination point will receive input from more
+than one source point. If it is set to ‘nearest_dtos’ then
+nearest neighbor interpolation is used where each source
+point is mapped to the closest destination point. A given
+destination point may receive input from multiple source
+points, but no source point will map to more than one
+destination point.</p>
+</dd>
+<dt>use_dst_mask <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">By default the mask of the data on the destination grid is not
+taken into account when performing regridding. If this option
+is set to true then it is. If the destination field has more
+than two dimensions then the first 2D slice in index space is
+used for the mask e.g. for an field varying with (X, Y, Z, T)
+the mask is taken from the slice (X, Y, 0, 0).</p>
+</dd>
+<dt>i <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If True then update the field in place. By default a new
+field is created. In either case, a field is
+returned.</p>
+</dd>
+<dt>_compute_field_mass <span class="classifier-delimiter">:</span> <span class="classifier">dict, optional</span></dt>
+<dd><p class="first last">If this is a dictionary then the field masses of the source
+and destination fields are computed and returned within the
+dictionary. The keys of the dictionary indicates the lat/long
+slice of the field and the corresponding value is a tuple
+containing the source field’s mass and the destination field’s
+mass. The calculation is only done if conservative regridding
+is being performed. This is for debugging purposes.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">cf.Field</span></dt>
+<dd><p class="first last">The regridded field.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>Regrid f to the grid of g using bilinear regridding and forcing the
+source field f to be treated as cyclic.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">src_cyclic</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bilinear&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Regrid f to the grid of g using the mask of g.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">use_dst_mask</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Regrid f to 2D auxiliary coordinates lat and lon, which have their
+dimensions ordered ‘Y’ first then ‘X’.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span>
+<span class="go">&lt;CF AuxiliaryCoordinate: latitude(110, 106) degrees_north&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span>
+<span class="go">&lt;CF AuxiliaryCoordinate: longitude(110, 106) degrees_east&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">regrids</span><span class="p">({</span><span class="s1">&#39;longitude&#39;</span><span class="p">:</span> <span class="n">lon</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">:</span> <span class="n">lat</span><span class="p">,</span> <span class="s1">&#39;axes&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/cf.Field.regrids.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,278 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cfdm.CellMethods &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-cellmethods">
+<h1>cfdm.CellMethods<a class="headerlink" href="#cfdm-cellmethods" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cfdm.CellMethods">
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMethods</code><span class="sig-paren">(</span><em>*cell_methods</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.CellMethods" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">list</span></code></p>
+<p>A CF cell methods object to describe the characteristic of a field
+that is represented by cell values.</p>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>string <span class="classifier-delimiter">:</span> <span class="classifier">str or cf.CellMethod or cf.CellMethods, optional</span></dt>
+<dd><p class="first last">Initialize new instance from a CF-netCDF-like cell methods
+string. See the <code class="xref py py-obj docutils literal"><span class="pre">parse</span></code> method for details. By default an
+empty cell methods is created.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">CellMethods</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">CellMethods</span><span class="p">(</span><span class="s1">&#39;time: max: height: mean&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.axes.html#cfdm.CellMethods.axes" title="cfdm.CellMethods.axes"><code class="xref py py-obj docutils literal"><span class="pre">axes</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.comment.html#cfdm.CellMethods.comment" title="cfdm.CellMethods.comment"><code class="xref py py-obj docutils literal"><span class="pre">comment</span></code></a></td>
+<td>Each cell method’s comment keyword.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.intervals.html#cfdm.CellMethods.intervals" title="cfdm.CellMethods.intervals"><code class="xref py py-obj docutils literal"><span class="pre">intervals</span></code></a></td>
+<td>Each cell method’s interval keyword(s).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.method.html#cfdm.CellMethods.method" title="cfdm.CellMethods.method"><code class="xref py py-obj docutils literal"><span class="pre">method</span></code></a></td>
+<td>Each cell method’s method keyword.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMethods.names</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.over.html#cfdm.CellMethods.over" title="cfdm.CellMethods.over"><code class="xref py py-obj docutils literal"><span class="pre">over</span></code></a></td>
+<td>Each cell method’s over keyword.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.where.html#cfdm.CellMethods.where" title="cfdm.CellMethods.where"><code class="xref py py-obj docutils literal"><span class="pre">where</span></code></a></td>
+<td>Each cell method’s where keyword.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.within.html#cfdm.CellMethods.within" title="cfdm.CellMethods.within"><code class="xref py py-obj docutils literal"><span class="pre">within</span></code></a></td>
+<td>Each cell method’s within keyword.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<p>Undocumented methods behave exactly as their counterparts in a
+built-in list.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.copy.html#cfdm.CellMethods.copy" title="cfdm.CellMethods.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.dump.html#cfdm.CellMethods.dump" title="cfdm.CellMethods.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a></td>
+<td>Return a string containing a full description of the instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.equals.html#cfdm.CellMethods.equals" title="cfdm.CellMethods.equals"><code class="xref py py-obj docutils literal"><span class="pre">equals</span></code></a></td>
+<td>True if two cell methods are equal, False otherwise.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.equivalent.html#cfdm.CellMethods.equivalent" title="cfdm.CellMethods.equivalent"><code class="xref py py-obj docutils literal"><span class="pre">equivalent</span></code></a></td>
+<td>True if two cell methods are equivalent, False otherwise.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.has_cellmethod.html#cfdm.CellMethods.has_cellmethod" title="cfdm.CellMethods.has_cellmethod"><code class="xref py py-obj docutils literal"><span class="pre">has_cellmethod</span></code></a></td>
+<td>Return True if and only if this cell methods is a super set of another.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.inspect.html#cfdm.CellMethods.inspect" title="cfdm.CellMethods.inspect"><code class="xref py py-obj docutils literal"><span class="pre">inspect</span></code></a></td>
+<td>Inspect the attributes.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMethods.netcdf_translation</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="cellmethods-list-like-methods">
+<h2>CellMethods list-like methods<a class="headerlink" href="#cellmethods-list-like-methods" title="Permalink to this headline">¶</a></h2>
+<p>These methods provide functionality exactly as their counterparts in a
+built-in <code class="xref py py-obj docutils literal"><span class="pre">list</span></code>.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.append.html#cfdm.CellMethods.append" title="cfdm.CellMethods.append"><code class="xref py py-obj docutils literal"><span class="pre">append</span></code></a></td>
+<td>L.append(object) – append object to end</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.count.html#cfdm.CellMethods.count" title="cfdm.CellMethods.count"><code class="xref py py-obj docutils literal"><span class="pre">count</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.extend.html#cfdm.CellMethods.extend" title="cfdm.CellMethods.extend"><code class="xref py py-obj docutils literal"><span class="pre">extend</span></code></a></td>
+<td>L.extend(iterable) – extend list by appending elements from the iterable</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.index.html#cfdm.CellMethods.index" title="cfdm.CellMethods.index"><code class="xref py py-obj docutils literal"><span class="pre">index</span></code></a></td>
+<td>Raises ValueError if the value is not present.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.insert.html#cfdm.CellMethods.insert" title="cfdm.CellMethods.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a></td>
+<td>L.insert(index, object) – insert object before index</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.pop.html#cfdm.CellMethods.pop" title="cfdm.CellMethods.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a></td>
+<td>Raises IndexError if list is empty or index is out of range.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMethods.remove.html#cfdm.CellMethods.remove" title="cfdm.CellMethods.remove"><code class="xref py py-obj docutils literal"><span class="pre">remove</span></code></a></td>
+<td>L.remove(value) – remove first occurrence of value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMethods.reverse.html#cfdm.CellMethods.reverse" title="cfdm.CellMethods.reverse"><code class="xref py py-obj docutils literal"><span class="pre">reverse</span></code></a></td>
+<td>L.reverse() – reverse <em>IN PLACE</em></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">cfdm.CellMethods</a><ul>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+<li><a class="reference internal" href="#cellmethods-list-like-methods">CellMethods list-like methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/cf.CellMethods.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

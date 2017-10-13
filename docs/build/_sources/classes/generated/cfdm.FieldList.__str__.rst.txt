@@ -1,0 +1,7 @@
+cfdm.FieldList.__str__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cfdm.FieldList.__str__

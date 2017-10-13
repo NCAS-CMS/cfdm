@@ -1,0 +1,502 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cfdm.CellMeasure &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-cellmeasure">
+<h1>cfdm.CellMeasure<a class="headerlink" href="#cfdm-cellmeasure" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cfdm.CellMeasure">
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>properties={}</em>, <em>attributes=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.variable.Variable</span></code></p>
+<p>A CF cell measure construct.</p>
+<p>A cell measure construct provides information that is needed about the
+size or shape of the cells and that depends on a subset of the domain
+axis constructs. Cell measure constructs have to be used when the size
+or shape of the cells cannot be deduced from the dimension or
+auxiliary coordinate constructs without special knowledge that a
+generic application cannot be expected to have. The cell measure
+construct consists of a numeric array of the metric data which spans a
+subset of the domain axis constructs, and properties to describe the
+data (in the same sense as for the field construct). The properties
+must contain a <code class="xref py py-obj docutils literal"><span class="pre">measure</span></code> property, which indicates which metric of
+the space it supplies e.g. cell horizontal areas, and a units property
+consistent with the measure property e.g. square metres. It is assumed
+that the metric does not depend on axes of the domain which are not
+spanned by the array, along which the values are implicitly
+propagated. CF-netCDF cell measure variables correspond to cell
+measure constructs.</p>
+<p><strong>Attributes</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="8%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">measure</span></code></td>
+<td><a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a></td>
+<td>The spatial measure being represented, either
+<code class="docutils literal"><span class="pre">'area'</span></code> or <code class="docutils literal"><span class="pre">'volume'</span></code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>properties: <a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first last">Initialize CF properties from the dictionary’s key/value
+pairs.</p>
+</dd>
+<dt>attributes: <a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first last">Provide attributes from the dictionary’s key/value pairs.</p>
+</dd>
+<dt>data: <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal"><span class="pre">cf.Data</span></code></a>, optional</dt>
+<dd><p class="first last">Provide a data array.</p>
+</dd>
+<dt>source: <code class="xref py py-obj docutils literal"><span class="pre">cf.{+Variable}</span></code>, optional</dt>
+<dd><p class="first last">Take the attributes, CF properties and data array from the
+source {+variable}. Any attributes, CF properties or data
+array specified with other parameters are set after
+initialisation from the source {+variable}.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then do not deep copy arguments prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="cf-properties">
+<h2>CF properties<a class="headerlink" href="#cf-properties" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.add_offset.html#cfdm.CellMeasure.add_offset" title="cfdm.CellMeasure.add_offset"><code class="xref py py-obj docutils literal"><span class="pre">add_offset</span></code></a></td>
+<td>The add_offset CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.calendar.html#cfdm.CellMeasure.calendar" title="cfdm.CellMeasure.calendar"><code class="xref py py-obj docutils literal"><span class="pre">calendar</span></code></a></td>
+<td>The calendar CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.comment.html#cfdm.CellMeasure.comment" title="cfdm.CellMeasure.comment"><code class="xref py py-obj docutils literal"><span class="pre">comment</span></code></a></td>
+<td>The comment CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure._FillValue.html#cfdm.CellMeasure._FillValue" title="cfdm.CellMeasure._FillValue"><code class="xref py py-obj docutils literal"><span class="pre">_FillValue</span></code></a></td>
+<td>The _FillValue CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.history.html#cfdm.CellMeasure.history" title="cfdm.CellMeasure.history"><code class="xref py py-obj docutils literal"><span class="pre">history</span></code></a></td>
+<td>The history CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.leap_month.html#cfdm.CellMeasure.leap_month" title="cfdm.CellMeasure.leap_month"><code class="xref py py-obj docutils literal"><span class="pre">leap_month</span></code></a></td>
+<td>The leap_month CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.leap_year.html#cfdm.CellMeasure.leap_year" title="cfdm.CellMeasure.leap_year"><code class="xref py py-obj docutils literal"><span class="pre">leap_year</span></code></a></td>
+<td>The leap_year CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.long_name.html#cfdm.CellMeasure.long_name" title="cfdm.CellMeasure.long_name"><code class="xref py py-obj docutils literal"><span class="pre">long_name</span></code></a></td>
+<td>The long_name CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.missing_value.html#cfdm.CellMeasure.missing_value" title="cfdm.CellMeasure.missing_value"><code class="xref py py-obj docutils literal"><span class="pre">missing_value</span></code></a></td>
+<td>The missing_value CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.month_lengths.html#cfdm.CellMeasure.month_lengths" title="cfdm.CellMeasure.month_lengths"><code class="xref py py-obj docutils literal"><span class="pre">month_lengths</span></code></a></td>
+<td>The month_lengths CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.scale_factor.html#cfdm.CellMeasure.scale_factor" title="cfdm.CellMeasure.scale_factor"><code class="xref py py-obj docutils literal"><span class="pre">scale_factor</span></code></a></td>
+<td>The scale_factor CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.standard_name.html#cfdm.CellMeasure.standard_name" title="cfdm.CellMeasure.standard_name"><code class="xref py py-obj docutils literal"><span class="pre">standard_name</span></code></a></td>
+<td>The standard_name CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.units.html#cfdm.CellMeasure.units" title="cfdm.CellMeasure.units"><code class="xref py py-obj docutils literal"><span class="pre">units</span></code></a></td>
+<td>The units CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.valid_max.html#cfdm.CellMeasure.valid_max" title="cfdm.CellMeasure.valid_max"><code class="xref py py-obj docutils literal"><span class="pre">valid_max</span></code></a></td>
+<td>The valid_max CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.valid_min.html#cfdm.CellMeasure.valid_min" title="cfdm.CellMeasure.valid_min"><code class="xref py py-obj docutils literal"><span class="pre">valid_min</span></code></a></td>
+<td>The valid_min CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.valid_range.html#cfdm.CellMeasure.valid_range" title="cfdm.CellMeasure.valid_range"><code class="xref py py-obj docutils literal"><span class="pre">valid_range</span></code></a></td>
+<td>The valid_range CF property.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.array.html#cfdm.CellMeasure.array" title="cfdm.CellMeasure.array"><code class="xref py py-obj docutils literal"><span class="pre">array</span></code></a></td>
+<td>An independent numpy array copy of the data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.binary_mask</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.data.html#cfdm.CellMeasure.data" title="cfdm.CellMeasure.data"><code class="xref py py-obj docutils literal"><span class="pre">data</span></code></a></td>
+<td>The <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal"><span class="pre">Data</span></code></a> object containing the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.dtarray.html#cfdm.CellMeasure.dtarray" title="cfdm.CellMeasure.dtarray"><code class="xref py py-obj docutils literal"><span class="pre">dtarray</span></code></a></td>
+<td>An independent numpy array of date-time objects.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.dtype.html#cfdm.CellMeasure.dtype" title="cfdm.CellMeasure.dtype"><code class="xref py py-obj docutils literal"><span class="pre">dtype</span></code></a></td>
+<td>The <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy</span></code></a> data type of the data array.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.hardmask</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.isscalar.html#cfdm.CellMeasure.isscalar" title="cfdm.CellMeasure.isscalar"><code class="xref py py-obj docutils literal"><span class="pre">isscalar</span></code></a></td>
+<td>True if the data array is scalar.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.mask.html#cfdm.CellMeasure.mask" title="cfdm.CellMeasure.mask"><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></a></td>
+<td>The mask of the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.ndim.html#cfdm.CellMeasure.ndim" title="cfdm.CellMeasure.ndim"><code class="xref py py-obj docutils literal"><span class="pre">ndim</span></code></a></td>
+<td>The number of dimensions in the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.shape.html#cfdm.CellMeasure.shape" title="cfdm.CellMeasure.shape"><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></a></td>
+<td>A tuple of the data array’s dimension sizes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.size.html#cfdm.CellMeasure.size" title="cfdm.CellMeasure.size"><code class="xref py py-obj docutils literal"><span class="pre">size</span></code></a></td>
+<td>The number of elements in the data array.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.subspace</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.Units.html#cfdm.CellMeasure.Units" title="cfdm.CellMeasure.Units"><code class="xref py py-obj docutils literal"><span class="pre">Units</span></code></a></td>
+<td>The <a class="reference internal" href="cfdm.Units.html#cfdm.Units" title="cfdm.Units"><code class="xref py py-obj docutils literal"><span class="pre">Units</span></code></a> object containing the units of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.varray.html#cfdm.CellMeasure.varray" title="cfdm.CellMeasure.varray"><code class="xref py py-obj docutils literal"><span class="pre">varray</span></code></a></td>
+<td>A numpy array view of the data array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.all</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.allclose</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.any</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.asdatetime</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.asreftime</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.attributes.html#cfdm.CellMeasure.attributes" title="cfdm.CellMeasure.attributes"><code class="xref py py-obj docutils literal"><span class="pre">attributes</span></code></a></td>
+<td>Inspect or change attributes which are not CF properties.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.chunk</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.ceil</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.clip</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.close</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.copy.html#cfdm.CellMeasure.copy" title="cfdm.CellMeasure.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.cos</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.datum.html#cfdm.CellMeasure.datum" title="cfdm.CellMeasure.datum"><code class="xref py py-obj docutils literal"><span class="pre">datum</span></code></a></td>
+<td>Return an element of the data array as a standard Python scalar.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.delprop.html#cfdm.CellMeasure.delprop" title="cfdm.CellMeasure.delprop"><code class="xref py py-obj docutils literal"><span class="pre">delprop</span></code></a></td>
+<td>Delete a CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.dump.html#cfdm.CellMeasure.dump" title="cfdm.CellMeasure.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a></td>
+<td>Return a string containing a full description of the cell measure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.equals.html#cfdm.CellMeasure.equals" title="cfdm.CellMeasure.equals"><code class="xref py py-obj docutils literal"><span class="pre">equals</span></code></a></td>
+<td>True if two cell measures are equal, False otherwise.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.exp</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.expand_dims.html#cfdm.CellMeasure.expand_dims" title="cfdm.CellMeasure.expand_dims"><code class="xref py py-obj docutils literal"><span class="pre">expand_dims</span></code></a></td>
+<td>Insert a size 1 axis into the data array.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.files</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.fill_value.html#cfdm.CellMeasure.fill_value" title="cfdm.CellMeasure.fill_value"><code class="xref py py-obj docutils literal"><span class="pre">fill_value</span></code></a></td>
+<td>Return the data array missing data value.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.flip</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.floor</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.getprop.html#cfdm.CellMeasure.getprop" title="cfdm.CellMeasure.getprop"><code class="xref py py-obj docutils literal"><span class="pre">getprop</span></code></a></td>
+<td>Get a CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.hasprop.html#cfdm.CellMeasure.hasprop" title="cfdm.CellMeasure.hasprop"><code class="xref py py-obj docutils literal"><span class="pre">hasprop</span></code></a></td>
+<td>Return True if a CF property exists, otherise False.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.HDF_chunks.html#cfdm.CellMeasure.HDF_chunks" title="cfdm.CellMeasure.HDF_chunks"><code class="xref py py-obj docutils literal"><span class="pre">HDF_chunks</span></code></a></td>
+<td>Specify HDF5 chunks for the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.identity.html#cfdm.CellMeasure.identity" title="cfdm.CellMeasure.identity"><code class="xref py py-obj docutils literal"><span class="pre">identity</span></code></a></td>
+<td>Return the cell measure’s identity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.insert_data.html#cfdm.CellMeasure.insert_data" title="cfdm.CellMeasure.insert_data"><code class="xref py py-obj docutils literal"><span class="pre">insert_data</span></code></a></td>
+<td>Insert a new data array into the variable in place.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.inspect.html#cfdm.CellMeasure.inspect" title="cfdm.CellMeasure.inspect"><code class="xref py py-obj docutils literal"><span class="pre">inspect</span></code></a></td>
+<td>Inspect the object for debugging.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.log</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.mask_invalid</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.match.html#cfdm.CellMeasure.match" title="cfdm.CellMeasure.match"><code class="xref py py-obj docutils literal"><span class="pre">match</span></code></a></td>
+<td>Determine whether or not a variable satisfies conditions.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.max</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.mean</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.min</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.mid_range</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.name.html#cfdm.CellMeasure.name" title="cfdm.CellMeasure.name"><code class="xref py py-obj docutils literal"><span class="pre">name</span></code></a></td>
+<td>Return a name for the cell measure.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.override_calendar</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.override_units.html#cfdm.CellMeasure.override_units" title="cfdm.CellMeasure.override_units"><code class="xref py py-obj docutils literal"><span class="pre">override_units</span></code></a></td>
+<td>Override the units.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.properties.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a></td>
+<td>Inspect or change the CF properties.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.range</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.rint</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.roll</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.sample_size</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.sd</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.select</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.setprop.html#cfdm.CellMeasure.setprop" title="cfdm.CellMeasure.setprop"><code class="xref py py-obj docutils literal"><span class="pre">setprop</span></code></a></td>
+<td>Set a CF property.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.sin</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal"><span class="pre">squeeze</span></code></a></td>
+<td>Remove size 1 dimensions from the data array</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.sum</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal"><span class="pre">transpose</span></code></a></td>
+<td>Permute the axes of the data array.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.trunc</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.unique</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.var</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure.where</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">cfdm.CellMeasure</a><ul>
+<li><a class="reference internal" href="#cf-properties">CF properties</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/cf.CellMeasure.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

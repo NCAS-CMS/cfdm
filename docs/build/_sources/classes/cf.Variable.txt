@@ -1,0 +1,87 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+
+cfdm.Variable
+===========
+
+.. autoclass:: cfdm.Variable
+   :no-members:
+   :no-inherited-members:
+
+CF Properties
+-------------
+ 
+.. autosummary::
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cfdm.Variable.add_offset
+   ~cfdm.Variable.calendar
+   ~cfdm.Variable.comment
+   ~cfdm.Variable._FillValue
+   ~cfdm.Variable.history
+   ~cfdm.Variable.leap_month
+   ~cfdm.Variable.leap_year
+   ~cfdm.Variable.long_name
+   ~cfdm.Variable.missing_value
+   ~cfdm.Variable.month_lengths
+   ~cfdm.Variable.scale_factor
+   ~cfdm.Variable.standard_name
+   ~cfdm.Variable.units
+   ~cfdm.Variable.valid_max
+   ~cfdm.Variable.valid_min
+   ~cfdm.Variable.valid_range
+
+
+Attributes
+----------
+
+.. autosummary::
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cfdm.Variable.array
+   ~cfdm.Variable.data
+   ~cfdm.Variable.dtarray
+   ~cfdm.Variable.dtype
+   ~cfdm.Variable.hardmask
+   ~cfdm.Variable.isscalar
+   ~cfdm.Variable.mask
+   ~cfdm.Variable.ndim
+   ~cfdm.Variable.shape
+   ~cfdm.Variable.size
+   ~cfdm.Variable.Units
+   ~cfdm.Variable.varray
+
+Methods
+-------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cfdm.Variable.attributes
+   ~cfdm.Variable.copy
+   ~cfdm.Variable.datum
+   ~cfdm.Variable.delprop
+   ~cfdm.Variable.dump
+   ~cfdm.Variable.equals
+   ~cfdm.Variable.expand_dims
+   ~cfdm.Variable.files
+   ~cfdm.Variable.fill_value
+   ~cfdm.Variable.flip
+   ~cfdm.Variable.getprop
+   ~cfdm.Variable.hasprop
+   ~cfdm.Variable.HDF_chunks
+   ~cfdm.Variable.identity
+   ~cfdm.Variable.insert_data
+   ~cfdm.Variable.mask_invalid
+   ~cfdm.Variable.match
+   ~cfdm.Variable.name
+   ~cfdm.Variable.override_units
+   ~cfdm.Variable.properties
+   ~cfdm.Variable.setprop
+   ~cfdm.Variable.squeeze
+   ~cfdm.Variable.transpose

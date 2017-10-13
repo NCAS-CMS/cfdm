@@ -1,0 +1,295 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cf.Field.indices &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-indices">
+<h1>cf.Field.indices<a class="headerlink" href="#cf-field-indices" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.indices">
+<code class="descclassname">Field.</code><code class="descname">indices</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cf.Field.indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create data array indices based on domain metadata.</p>
+<p>If metadata values are specified for an axis then a full slice
+(<code class="docutils literal"><span class="pre">slice(None)</span></code>) is assumed for that axis.</p>
+<p>Values for size 1 axes which are not spanned by the field’s data array
+may be specified, but only indices for axes which span the field’s
+data array will be returned.</p>
+<p>The coordinate value conditions may be given in any order.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal"><span class="pre">where</span></code></a>, <a class="reference internal" href="cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal"><span class="pre">subspace</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">args : <em>optional</em></p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><em>arg</em></td>
+<td>Description</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">'exact'</span></code> -Keyword parameter names are not treated as</dt>
+<dd><p class="first last">abbreviations of item identities. By default,
+keyword parameter names are allowed to be
+abbreviations of item identities.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>kwargs <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
+<dd><p class="first">Keyword parameters identify items of the domain () and set
+conditions on their data arrays. Indices are created which,
+for each axis, select where the conditions are met.</p>
+<p>A keyword name is a string which selects a unique item of the
+domain. The string may be any string value allowed by <em>items</em>
+parameter of the field’s <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal"><span class="pre">item</span></code></a> method, which is used to
+select a unique domain item. See <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal"><span class="pre">cf.Field.item</span></code></a> for details.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em>           </dt>
+<dd><p class="first last">The keyword <code class="docutils literal"><span class="pre">lat</span></code> will select the item returned by
+<code class="docutils literal"><span class="pre">f.item('lat',</span> <span class="pre">role='dam')</span></code>. See the <em>exact</em> parameter.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>In general, a keyword value specifies a test on the selected
+item’s data array which identifies axis elements. The returned
+indices for this axis are the positions of these elements.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To create indices for the northern hemisphere, assuming
+that there is a coordinate with identity “latitude”:
+<code class="docutils literal"><span class="pre">f.indices(latitude=cf.ge(0))</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To create indices for the northern hemisphere, identifying
+the latitude coordinate by its long name:
+<code class="docutils literal"><span class="pre">f.indices(**{'long_name:latitude':</span> <span class="pre">cf.ge(0)})</span></code>. In this
+case it is necessary to use the <code class="docutils literal"><span class="pre">**</span></code> syntax because the
+<code class="docutils literal"><span class="pre">:</span></code> characeter is not allowed in keyword parameter
+names.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>If the value is a <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#slice" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">slice</span></code></a> object then it is used as the axis
+indices, without testing the item’s data array.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To create indices for every even numbered element along
+the “Z” axis: <code class="docutils literal"><span class="pre">f.indices(Z=slice(0,</span> <span class="pre">None,</span> <span class="pre">2))</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="last docutils">
+<dt><strong>Multidimensional items</strong></dt>
+<dd><p class="first">Indices based on items which span two or more axes are
+possible if the result is a single element index for each of
+the axes spanned. In addition, two or more items must be
+provided, each one spanning the same axes  (in any order).</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em>          </dt>
+<dd><p class="first last">To create indices for the unique location 45 degrees
+north, 30 degrees east when latitude and longitude are
+stored in 2-dimensional auxiliary coordiantes:
+<code class="docutils literal"><span class="pre">f.indices(latitude=45,</span> <span class="pre">longitude=30)</span></code>. Note that this
+example would also work if latitude and longitude were
+stored in 1-dimensional dimensional or auxiliary
+coordinates, but in this case the location would not
+have to be unique.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>exact : str, <em>optional</em></p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out : tuple</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>These examples use the following field, which includes a dimension
+coordinate object with no identity (<code class="docutils literal"><span class="pre">ncvar:model_level_number</span></code>) and
+which has a data array which doesn’t span all of the domain axes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">eastward_wind field summary</span>
+<span class="go">---------------------------</span>
+<span class="go">Data           : eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1</span>
+<span class="go">Cell methods   : time: mean</span>
+<span class="go">Axes           : time(3) = [1979-05-01 12:00:00, ..., 1979-05-03 12:00:00] gregorian</span>
+<span class="go">               : air_pressure(5) = [850.0, ..., 50.0] hPa</span>
+<span class="go">               : grid_longitude(106) = [-20.54, ..., 25.66] degrees</span>
+<span class="go">               : grid_latitude(110) = [23.32, ..., -24.64] degrees</span>
+<span class="go">Aux coords     : latitude(grid_latitude(110), grid_longitude(106)) = [[67.12, ..., 22.89]] degrees_N</span>
+<span class="go">               : longitude(grid_latitude(110), grid_longitude(106)) = [[-45.98, ..., 35.29]] degrees_E</span>
+<span class="go">Coord refs     : &lt;CF CoordinateReference: rotated_latitude_longitude&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">23.32</span><span class="p">,</span> <span class="n">lon</span><span class="o">=-</span><span class="mf">20.54</span><span class="p">)</span>
+<span class="go">(slice(0, 3, 1), slice(0, 5, 1), slice(0, 1, 1), slice(0, 1, 1))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">grid_lon</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span> 
+<span class="go">(slice(0, 3, 1), slice(0, 5, 1), slice(50, 2, -2), [0, 1, 3, 90])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="s1">&#39;exact&#39;</span><span class="p">,</span> <span class="n">grid_latitude</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span> 
+<span class="go">(slice(0, 3, 1), slice(0, 5, 1), slice(50, 2, -2), [0, 1, 3, 90])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_lon</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;degrees&#39;</span><span class="p">),</span> <span class="n">air_pressure</span><span class="o">=</span><span class="mi">850</span><span class="p">)</span>
+<span class="go">(slice(0, 3, 1), slice(0, 1, 1), slice(0, 110, 1), slice(47, 70, 1))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_lon</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">air_pressure</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">85000</span><span class="p">,</span> <span class="s1">&#39;Pa&#39;</span><span class="p">)</span>
+<span class="go">(slice(0, 3, 1), slice(0, 1, 1), slice(0, 110, 1), slice(47, 70, 1))</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_long</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;lower_bounds&#39;</span><span class="p">))</span>
+<span class="go">(slice(0, 3, 1), slice(0, 5, 1), slice(0, 110, 1), slice(48, 106, 1))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/cf.Field.indices.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

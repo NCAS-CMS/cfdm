@@ -1,0 +1,66 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+cfdm.CellMethods
+==============
+
+.. autoclass:: cfdm.CellMethods
+   :no-members:
+   :no-inherited-members:
+
+Attributes
+----------
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cfdm.CellMethods.axes
+   ~cfdm.CellMethods.comment
+   ~cfdm.CellMethods.intervals
+   ~cfdm.CellMethods.method
+   ~cfdm.CellMethods.names
+   ~cfdm.CellMethods.over
+   ~cfdm.CellMethods.where
+   ~cfdm.CellMethods.within
+
+Methods
+-------
+
+Undocumented methods behave exactly as their counterparts in a
+built-in list.
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cfdm.CellMethods.copy
+   ~cfdm.CellMethods.dump
+   ~cfdm.CellMethods.equals
+   ~cfdm.CellMethods.equivalent
+   ~cfdm.CellMethods.has_cellmethod
+   ~cfdm.CellMethods.inspect
+   ~cfdm.CellMethods.netcdf_translation
+
+CellMethods list-like methods
+-----------------------------
+
+These methods provide functionality exactly as their counterparts in a
+built-in :py:obj:`list`.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cfdm.CellMethods.append
+   ~cfdm.CellMethods.count
+   ~cfdm.CellMethods.extend
+   ~cfdm.CellMethods.index
+   ~cfdm.CellMethods.insert
+   ~cfdm.CellMethods.pop
+   ~cfdm.CellMethods.remove
+   ~cfdm.CellMethods.reverse
+

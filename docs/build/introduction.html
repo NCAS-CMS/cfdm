@@ -1,0 +1,181 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting_started.html" />
+    <link rel="prev" title="cfdm 0.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="cfdm 0.1 documentation"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://cfconventions.org/">CF</a> is a <a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf">netCDF</a> convention which is in
+wide and growing use for the storage of model-generated and
+observational data relating to the atmosphere, ocean and Earth system.</p>
+<p>This package is an implementation of the <a class="reference external" href="URLtoGMD">CF data model</a>, and as such its API allows for the full scope of data and
+metadata interactions described by the CF conventions.</p>
+<p>With this package you can:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Read <a class="reference external" href="http://cfconventions.org/">CF-netCDF</a> files,
+<a class="reference external" href="http://www.met.reading.ac.uk/~david/cfa/0.4">CFA-netCDF</a> files
+and UK Met Office fields files and PP files.</li>
+<li>Create CF fields.</li>
+<li>Write fields to CF-netCDF and CFA-netCDF files on disk.</li>
+<li>Aggregate collections of fields into as few multidimensional
+fields as possible using the <a class="reference external" href="http://cf-trac.llnl.gov/trac/ticket/78">CF aggregation rules</a>.</li>
+<li>Create, delete and modify a field’s data and metadata.</li>
+<li>Select and subspace fields according to their metadata.</li>
+<li>Perform broadcastable, metadata-aware arithmetic, comparison and
+trigonometric operation with fields.</li>
+<li>Collapse fields by statistical operations.</li>
+<li>Sensibly deal with date-time data.</li>
+<li>Allow for cyclic axes.</li>
+<li>Visualize fields the <a class="reference external" href="http://climate.ncas.ac.uk/~andy/cfplot_sphinx/_build/html/">cf-plot package</a>.</li>
+</ul>
+</div></blockquote>
+<p>All of the above use <span class="xref std std-ref">LAMA</span> functionality, which allows multiple
+fields larger than the available memory to exist and be manipulated.</p>
+<p>See the <a class="reference external" href="http://cfpython.bitbucket.org/">cf-python home page</a> for
+downloads, installation and source code.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">cfdm 0.1 documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="next chapter">Getting started</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/introduction.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="cfdm 0.1 documentation"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+cfdm.Field.__ne__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.__ne__

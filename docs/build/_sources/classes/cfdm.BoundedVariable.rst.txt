@@ -1,0 +1,16 @@
+cfdm\.BoundedVariable
+=====================
+
+.. currentmodule:: cfdm
+
+.. autoclass:: BoundedVariable
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

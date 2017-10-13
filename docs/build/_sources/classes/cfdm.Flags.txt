@@ -1,0 +1,16 @@
+cfdm\.Flags
+===========
+
+.. currentmodule:: cfdm
+
+.. autoclass:: Flags
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

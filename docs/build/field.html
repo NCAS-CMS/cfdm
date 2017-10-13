@@ -1,0 +1,528 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction to the cfdm.Field object &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Creating cfdm.Field objects" href="field_creation.html" />
+    <link rel="prev" title="Reference manual" href="reference.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="field_creation.html" title="Creating cfdm.Field objects"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference manual"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Reference manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction-to-the-cfdm-field-object">
+<span id="field-structure"></span><h1>Introduction to the <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field</span></code></a> object<a class="headerlink" href="#introduction-to-the-cfdm-field-object" title="Permalink to this headline">¶</a></h1>
+<p>A <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field</span></code></a> object stores a field as defined by the <a class="reference external" href="http://cfconventions.org">CF-netCDF
+conventions</a> and the <a class="reference external" href="http://cf-trac.llnl.gov/trac/ticket/95">CF data model</a>. It is a container for a
+data array and metadata comprising properties to describe the physical
+nature of the data and a coordinate system (called a <em>domain</em>), which
+describes the positions of each element of the data array.</p>
+<p>It is structured in exactly the same way as a filed in the CF data
+model and, as in the CF data model, all components of a <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field</span></code></a>
+object are optional.</p>
+<div class="section" id="displaying-the-contents">
+<h2>Displaying the contents<a class="headerlink" href="#displaying-the-contents" title="Permalink to this headline">¶</a></h2>
+<p>The structure may be exposed with three different levels of detail.</p>
+<p>The built-in <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#repr" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">repr</span></code></a> function returns a short, one-line description of
+the field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
+</pre></div>
+</div>
+<p>This gives the identity of the field (air_temperature), the identities
+and sizes of its data array axes (time, latitude and longitude with
+sizes 12, 64 and 128 respectively) and the units of the field’s data
+array (K).</p>
+<p>The built-in <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a> function returns the same information as the the
+one-line output, along with short descriptions of the field’s other
+components:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">air_temperature field summary</span>
+<span class="go">-----------------------------</span>
+<span class="go">Data           : air_temperature(time(1200), latitude(64), longitude(128)) K</span>
+<span class="go">Cell methods   : time: mean (interval: 1.0 month)</span>
+<span class="go">Axes           : time(12) = [ 450-11-01 00:00:00, ...,  451-10-16 12:00:00] noleap calendar</span>
+<span class="go">               : latitude(64) = [-87.8638000488, ..., 87.8638000488] degrees_north</span>
+<span class="go">               : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
+<span class="go">               : height(1) = [2.0] m</span>
+</pre></div>
+</div>
+<p>This shows that the field has a cell method and four dimension
+coordinates, one of which (height) is a coordinate for a size 1 axis
+that is not a axis of the field’s data array. The units and first and
+last values of the coordinates’ data arrays are given and relative
+time values are translated into strings.</p>
+<p>The field’s <a class="reference internal" href="generated/cfdm.Field.dump.html#cfdm.Field.dump" title="cfdm.Field.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a> method describes each component’s
+properties, as well as the first and last values of the field’s data
+array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">======================</span>
+<span class="go">Field: air_temperature</span>
+<span class="go">======================</span>
+<span class="go">Axes:</span>
+<span class="go">    height(1)</span>
+<span class="go">    latitude(64)</span>
+<span class="go">    longitude(128)</span>
+<span class="go">    time(12)</span>
+
+<span class="go">Data(time(12), latitude(64), longitude(128)) = [[[236.512756348, ..., 256.93371582]]] K</span>
+<span class="go">cell_methods = time: mean (interval: 1.0 month)</span>
+
+<span class="go">experiment_id = &#39;pre-industrial control experiment&#39;</span>
+<span class="go">long_name = &#39;Surface Air Temperature&#39;</span>
+<span class="go">standard_name = &#39;air_temperature&#39;</span>
+<span class="go">title = &#39;model output prepared for IPCC AR4&#39;</span>
+
+<span class="go">Dimension coordinate: time</span>
+<span class="go">    Data(time(12)) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap calendar</span>
+<span class="go">    Bounds(time(12), 2) = [[ 450-11-01 00:00:00, ...,  451-11-01 00:00:00]] noleap calendar</span>
+<span class="go">    axis = &#39;T&#39;</span>
+<span class="go">    long_name = &#39;time&#39;</span>
+<span class="go">    standard_name = &#39;time&#39;</span>
+
+<span class="go">Dimension coordinate: latitude</span>
+<span class="go">    Data(latitude(64)) = [-87.8638000488, ..., 87.8638000488] degrees_north</span>
+<span class="go">    Bounds(latitude(64), 2) = [[-90.0, ..., 90.0]] degrees_north</span>
+<span class="go">    axis = &#39;Y&#39;</span>
+<span class="go">    long_name = &#39;latitude&#39;</span>
+<span class="go">    standard_name = &#39;latitude&#39;</span>
+
+<span class="go">Dimension coordinate: longitude</span>
+<span class="go">    Data(longitude(128)) = [0.0, ..., 357.1875] degrees_east</span>
+<span class="go">    Bounds(longitude(128), 2) = [[-1.40625, ..., 358.59375]] degrees_east</span>
+<span class="go">    axis = &#39;X&#39;</span>
+<span class="go">    long_name = &#39;longitude&#39;</span>
+<span class="go">    standard_name = &#39;longitude&#39;</span>
+
+<span class="go">Dimension coordinate: height</span>
+<span class="go">    Data(height(1)) = [2.0] m</span>
+<span class="go">    axis = &#39;Z&#39;</span>
+<span class="go">    long_name = &#39;height&#39;</span>
+<span class="go">    positive = &#39;up&#39;</span>
+<span class="go">    standard_name = &#39;height&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="data">
+<span id="fs-data-array"></span><h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p>A field’s data array is a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Data</span></code></a> object and is returned by its
+<a class="reference internal" href="generated/cfdm.Field.data.html#cfdm.Field.data" title="cfdm.Field.data"><code class="xref py py-obj docutils literal"><span class="pre">data</span></code></a> attribute.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [[[89.0, ..., 66.0]]] K&gt;</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Data</span></code></a> object:</p>
+<ul class="simple">
+<li>Contains an N-dimensional array with many similarities to a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy</span></code></a>
+array.</li>
+<li>Contains the units of the array elements.</li>
+<li>Uses <span class="xref std std-ref">LAMA</span> functionality to store and operate on arrays
+which are larger then the available memory.</li>
+<li>Supports masked arrays <a class="footnote-reference" href="#f1" id="id1">[1]</a>, regardless of whether or not it was
+initialized with a masked array.</li>
+</ul>
+</div>
+<div class="section" id="data-attributes">
+<h2>Data attributes<a class="headerlink" href="#data-attributes" title="Permalink to this headline">¶</a></h2>
+<p>Some of a field’s reserved attributes return information on its
+data. See the <span class="xref std std-ref">list of reserved data attributes</span> for details.</p>
+<p>For example, to find the shape of the data and to retrieve the data
+array as an actual <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy</span></code></a> array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 3, 4)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="go">array([[[ 89.,  80.,  71.],</span>
+<span class="go">        [ 85.,  76.,  67.],</span>
+<span class="go">        [ 83.,  74.,  65.],</span>
+<span class="go">        [ 84.,  75.,  66.]]])</span>
+</pre></div>
+</div>
+<p>The data array’s missing value mask may be retrieved with the
+<a class="reference internal" href="generated/cfdm.Field.mask.html#cfdm.Field.mask" title="cfdm.Field.mask"><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></a> attribute. The mask is returned as a new field with a
+boolean data array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">mask</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [[[False, ..., True]]]&gt;</span>
+</pre></div>
+</div>
+<p>If the field contains no missing data then a mask field with False
+values is still returned.</p>
+</div>
+<div class="section" id="cf-properties">
+<h2>CF properties<a class="headerlink" href="#cf-properties" title="Permalink to this headline">¶</a></h2>
+<p>Standard CF data variable properties (such as
+<a class="reference internal" href="generated/cfdm.Field.standard_name.html#cfdm.Field.standard_name" title="cfdm.Field.standard_name"><code class="xref py py-obj docutils literal"><span class="pre">standard_name</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.units.html#cfdm.Field.units" title="cfdm.Field.units"><code class="xref py py-obj docutils literal"><span class="pre">units</span></code></a>, etc.) all have reserved
+attribute names. See the <a class="reference internal" href="classes/cfdm.Field.html#field-cf-properties"><span class="std std-ref">list of reserved CF properties</span></a> for details. These properties may be set,
+retrieved and deleted like normal python object attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="go">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
+</pre></div>
+</div>
+<p>as well as with the dedicated <a class="reference internal" href="generated/cfdm.Field.setprop.html#cfdm.Field.setprop" title="cfdm.Field.setprop"><code class="xref py py-obj docutils literal"><span class="pre">setprop</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.getprop.html#cfdm.Field.getprop" title="cfdm.Field.getprop"><code class="xref py py-obj docutils literal"><span class="pre">getprop</span></code></a> and
+<a class="reference internal" href="generated/cfdm.Field.delprop.html#cfdm.Field.delprop" title="cfdm.Field.delprop"><code class="xref py py-obj docutils literal"><span class="pre">delprop</span></code></a> field methods:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+<span class="go">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Non-standard CF properties <em>must</em> be accessed using these three methods:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All of the field’s CF properties may be retrieved with the field’s
+<a class="reference internal" href="generated/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span>
+<span class="go">{&#39;_FillValue&#39;: 1e+20,</span>
+<span class="go"> &#39;foo&#39;: &#39;bar&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &#39;Surface Air Temperature&#39;,</span>
+<span class="go"> &#39;standard_name&#39;: &#39;air_temperature&#39;,</span>
+<span class="go"> &#39;units&#39;: &#39;K&#39;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="other-attributes">
+<h2>Other attributes<a class="headerlink" href="#other-attributes" title="Permalink to this headline">¶</a></h2>
+<p>A field has other reserved attributes which have a variety of
+roles. See the <span class="xref std std-ref">list of reserved attributes</span>
+for details.</p>
+<p>Any unreserved attribute may be set on a field object with, in
+general, no special meaning attached to it. The following unreserved
+attributes do, however, have particular interpretations:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">file</span></code></td>
+<td>The name of the file the field was read from</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">id</span></code></td>
+<td>An identifier for the field in the absence of a
+standard name. See the <a class="reference internal" href="generated/cfdm.Field.identity.html#cfdm.Field.identity" title="cfdm.Field.identity"><code class="xref py py-obj docutils literal"><span class="pre">identity</span></code></a> method for details.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">ncvar</span></code></td>
+<td>A netCDF variable name of the field.</td>
+</tr>
+</tbody>
+</table>
+<p>All of the field’s attributes may be retrieved with the field’s
+<a class="reference internal" href="generated/cfdm.Field.attributes.html#cfdm.Field.attributes" title="cfdm.Field.attributes"><code class="xref py py-obj docutils literal"><span class="pre">attributes</span></code></a> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span>
+<span class="go">{&#39;ncar&#39;: &#39;tas&#39;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<p>A field has a large range of methods which, in general, either return
+information about the field or change the field in place. See the
+<a class="reference internal" href="classes/cfdm.Field.html#field-methods"><span class="std std-ref">list of methods</span></a> and <a class="reference internal" href="field_manipulation.html#manipulating-fields"><span class="std std-ref">manipulating fields</span></a> section for details.</p>
+</div>
+<div class="section" id="domain-structure">
+<span id="id2"></span><h2>Domain structure<a class="headerlink" href="#domain-structure" title="Permalink to this headline">¶</a></h2>
+<p>A field’s domain completely describes the field’s coordinate system
+and is stored in its <code class="xref py py-obj docutils literal"><span class="pre">domain</span></code> attribute, the value of which is
+a <code class="xref py py-obj docutils literal"><span class="pre">cfdm.Domain</span></code> object.</p>
+<p>It contains axes (which describe the field’s dimensionality),
+dimension coordinate, auxiliary coordinate and cell measure objects
+(which themselves contain data arrays and properties to describe them)
+and coordinate reference objects (which relate the field’s coordinate
+values to locations in a planetary reference frame).</p>
+<p>Each item has a unique internal identifier (is a string containing a
+number), which serves to link related items.</p>
+<div class="section" id="items">
+<h3>Items<a class="headerlink" href="#items" title="Permalink to this headline">¶</a></h3>
+<p>Domain items are stored in the following objects:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item</th>
+<th class="head"><code class="xref py py-obj docutils literal"><span class="pre">cf</span></code> object</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Dimension coordinate object</td>
+<td><a class="reference internal" href="classes/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.DimensionCoordinate</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>Auxiliary coordinate object</td>
+<td><a class="reference internal" href="classes/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.AuxiliaryCoordinate</span></code></a></td>
+</tr>
+<tr class="row-even"><td>Cell measure object</td>
+<td><a class="reference internal" href="classes/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CellMeasure</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>Coordinate reference object</td>
+<td><a class="reference internal" href="classes/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.CoordinateReference</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p>These items may be retrieved with a variety of methods, some specific
+to each item type (such as <code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field.dim</span></code>) and some more generic (such
+as <code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field.coords</span></code> and <a class="reference internal" href="generated/cfdm.Field.item.html#cfdm.Field.item" title="cfdm.Field.item"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field.item</span></code></a>):</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item</th>
+<th class="head">Field retrieval methods</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Dimension coordinate object</td>
+<td><code class="xref py py-obj docutils literal"><span class="pre">dim</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">dims</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">coord</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">coords</span></code>
+<a class="reference internal" href="generated/cfdm.Field.item.html#cfdm.Field.item" title="cfdm.Field.item"><code class="xref py py-obj docutils literal"><span class="pre">item</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.items.html#cfdm.Field.items" title="cfdm.Field.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>Auxiliary coordinate object</td>
+<td><code class="xref py py-obj docutils literal"><span class="pre">aux</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">auxs</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">coord</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">coords</span></code>
+<a class="reference internal" href="generated/cfdm.Field.item.html#cfdm.Field.item" title="cfdm.Field.item"><code class="xref py py-obj docutils literal"><span class="pre">item</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.items.html#cfdm.Field.items" title="cfdm.Field.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a></td>
+</tr>
+<tr class="row-even"><td>Cell measure object</td>
+<td><code class="xref py py-obj docutils literal"><span class="pre">measure</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">measures</span></code>, <a class="reference internal" href="generated/cfdm.Field.item.html#cfdm.Field.item" title="cfdm.Field.item"><code class="xref py py-obj docutils literal"><span class="pre">item</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.items.html#cfdm.Field.items" title="cfdm.Field.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>Coordinate reference object</td>
+<td><code class="xref py py-obj docutils literal"><span class="pre">ref</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">refs</span></code>, <a class="reference internal" href="generated/cfdm.Field.item.html#cfdm.Field.item" title="cfdm.Field.item"><code class="xref py py-obj docutils literal"><span class="pre">item</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.items.html#cfdm.Field.items" title="cfdm.Field.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p>In each case the singular method form (such as <code class="xref py py-obj docutils literal"><span class="pre">aux</span></code>) returns
+an actual domain item whereas the plural method form (such as
+<code class="xref py py-obj docutils literal"><span class="pre">auxs</span></code>) returns a dictionary whose keys are the domain item
+identifiers with corresponding values of the items themselves.</p>
+<p>For example, to retrieve a unique dimension coordinate object with a
+standard name of “time”:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF DimensionCoordinate: time(12) noleap&gt;</span>
+</pre></div>
+</div>
+<p>To retrieve all coordinate objects and their domain identifiers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<span class="go">{&#39;dim0&#39;: &lt;CF DimensionCoordinate: time(12) noleap&gt;,</span>
+<span class="go"> &#39;dim1&#39;: &lt;CF DimensionCoordinate: latitude(64) degrees_north&gt;,</span>
+<span class="go"> &#39;dim2&#39;: &lt;CF DimensionCoordinate: longitude(128) degrees_east&gt;,</span>
+<span class="go"> &#39;dim3&#39;: &lt;CF DimensionCoordinate: height(1) m&gt;}</span>
+</pre></div>
+</div>
+<p>To retrieve all domain items and their domain identifiers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="go">{&#39;dim0&#39;: &lt;CF DimensionCoordinate: time(12) noleap&gt;,</span>
+<span class="go"> &#39;dim1&#39;: &lt;CF DimensionCoordinate: latitude(64) degrees_north&gt;,</span>
+<span class="go"> &#39;dim2&#39;: &lt;CF DimensionCoordinate: longitude(128) degrees_east&gt;,</span>
+<span class="go"> &#39;dim3&#39;: &lt;CF DimensionCoordinate: height(1) m&gt;}</span>
+</pre></div>
+</div>
+<p>In this example, all of the items happen to be coordinates.</p>
+</div>
+<div class="section" id="axes">
+<h3>Axes<a class="headerlink" href="#axes" title="Permalink to this headline">¶</a></h3>
+<p>Common axes of variation in the field’s data array and the domain’s
+items are defined by the domain’s axes.</p>
+<p>Each axis has a domain identifier (such as <code class="docutils literal"><span class="pre">'dim1'</span></code>) and an integer
+size and is stored in the domain’s <code class="xref py py-obj docutils literal"><span class="pre">dimension_sizes</span></code> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">domain</span><span class="o">.</span><span class="n">dimension_sizes</span>
+<span class="go">{&#39;dim1&#39;: 19, &#39;dim0&#39;: 12, &#39;dim2&#39;: 73, &#39;dim3&#39;: 96}</span>
+</pre></div>
+</div>
+<p>Particular axes may be retrieved with the <a class="reference internal" href="generated/cfdm.Field.axes.html#cfdm.Field.axes" title="cfdm.Field.axes"><code class="xref py py-obj docutils literal"><span class="pre">axes</span></code></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
+<span class="go">set([&#39;dim1&#39;, &#39;dim0&#39; &#39;dim2&#39; &#39;dim3&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">19</span><span class="p">)</span>
+<span class="go">set([&#39;dim1&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="go">set([&#39;dim0&#39;])</span>
+</pre></div>
+</div>
+<p>The axes spanned by a domain item or the field’s data array may be
+retrieved with the fields <a class="reference internal" href="generated/cfdm.Field.item_axes.html#cfdm.Field.item_axes" title="cfdm.Field.item_axes"><code class="xref py py-obj docutils literal"><span class="pre">item_axes</span></code></a> or
+<a class="reference internal" href="generated/cfdm.Field.data_axes.html#cfdm.Field.data_axes" title="cfdm.Field.data_axes"><code class="xref py py-obj docutils literal"><span class="pre">data_axes</span></code></a> methods respectively:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">item_axes</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="go">[&#39;dim0&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data_axes</span><span class="p">()</span>
+<span class="go">[&#39;dim0&#39;, &#39;dim1&#39; &#39;dim2&#39; &#39;dim3&#39;]</span>
+</pre></div>
+</div>
+<p>Note that the field’s data array may contain fewer size 1 axes than
+its domain.</p>
+<hr class="docutils" />
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="f1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Arrays that may have missing or invalid entries</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction to the <code class="docutils literal"><span class="pre">cfdm.Field</span></code> object</a><ul>
+<li><a class="reference internal" href="#displaying-the-contents">Displaying the contents</a></li>
+<li><a class="reference internal" href="#data">Data</a></li>
+<li><a class="reference internal" href="#data-attributes">Data attributes</a></li>
+<li><a class="reference internal" href="#cf-properties">CF properties</a></li>
+<li><a class="reference internal" href="#other-attributes">Other attributes</a></li>
+<li><a class="reference internal" href="#methods">Methods</a></li>
+<li><a class="reference internal" href="#domain-structure">Domain structure</a><ul>
+<li><a class="reference internal" href="#items">Items</a></li>
+<li><a class="reference internal" href="#axes">Axes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="previous chapter">Reference manual</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="field_creation.html"
+                        title="next chapter">Creating <code class="docutils literal"><span class="pre">cfdm.Field</span></code> objects</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/field.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="field_creation.html" title="Creating cfdm.Field objects"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Reference manual"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

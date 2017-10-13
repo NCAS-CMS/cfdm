@@ -1,0 +1,517 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discrete sampling geometries &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Functions of the cf module" href="function.html" />
+    <link rel="prev" title="The cf.FieldList object" href="fieldlist.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="function.html" title="Functions of the cf module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="fieldlist.html" title="The cf.FieldList object"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Reference manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="discrete-sampling-geometries">
+<span id="dsg"></span><h1>Discrete sampling geometries<a class="headerlink" href="#discrete-sampling-geometries" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#discrete-sampling-geometries">Discrete sampling geometries (DSG)</a>
+may be read into <code class="xref py py-obj docutils literal"><span class="pre">cf.Field</span></code> objects and also written to disk.</p>
+<div class="section" id="ragged-arrays">
+<h2>Ragged arrays<a class="headerlink" href="#ragged-arrays" title="Permalink to this headline">¶</a></h2>
+<p>Contiguous and indexed ragged arrays are stored in memory as
+incomplete multidimensional arrays (still using <span class="xref std std-ref">LAMA</span>
+functionality) and may only be written to disk in the latter form.</p>
+<div class="section" id="contiguous">
+<h3>Contiguous<a class="headerlink" href="#contiguous" title="Permalink to this headline">¶</a></h3>
+<p>The following CF-netCDF file contains <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_contiguous_ragged_array_representation">contiguous ragged array
+representations</a>
+of time series, each of which is has a different length:</p>
+<div class="highlight-pypy"><div class="highlight"><pre><span></span>$ ncdump DSG_timeSeries_contiguous.nc
+netcdf DSG_timeSeries_contiguous {
+dimensions:
+     station = 4 ;
+     obs = 24 ;
+     name_strlen = 8 ;
+
+variables:
+     double lon(station) ;
+             lon:standard_name = &quot;longitude&quot; ;
+             lon:long_name = &quot;station longitude&quot; ;
+             lon:units = &quot;degrees_east&quot; ;
+     double lat(station) ;
+             lat:standard_name = &quot;latitude&quot; ;
+             lat:long_name = &quot;station latitude&quot; ;
+             lat:units = &quot;degrees_north&quot; ;
+     double alt(station) ;
+             alt:long_name = &quot;vertical distance above the surface&quot; ;
+             alt:standard_name = &quot;height&quot; ;
+             alt:units = &quot;m&quot; ;
+             alt:positive = &quot;up&quot; ;
+             alt:axis = &quot;Z&quot; ;
+     char station_name(station, name_strlen) ;
+             station_name:long_name = &quot;station name&quot; ;
+             station_name:cf_role = &quot;timeseries_id&quot; ;
+     long station_info(station) ;
+             station_info:long_name = &quot;some kind of station info&quot; ;
+     long row_size(station) ;
+             row_size:long_name = &quot;number of observations for this station&quot; ;
+             row_size:sample_dimension = &quot;obs&quot; ;
+     double time(obs) ;
+             time:standard_name = &quot;time&quot; ;
+             time:long_name = &quot;time of measurement&quot; ;
+             time:units = &quot;days since 1970-01-01 00:00:00&quot; ;
+     double humidity(obs) ;
+             humidity:_FillValue = -999.9 ;
+             humidity:standard_name = &quot;specific_humidity&quot; ;
+             humidity:coordinates = &quot;time lat lon alt station_name station_info&quot; ;
+     double temp(obs) ;
+             temp:_FillValue = -999.9 ;
+             temp:standard_name = &quot;air_temperature&quot; ;
+             temp:units = &quot;Celsius&quot; ;
+             temp:coordinates = &quot;time lat lon alt station_name station_info&quot; ;
+
+// global attributes:
+             :Conventions = &quot;CF-1.6&quot; ;
+             :featureType = &quot;timeSeries&quot; ;
+
+data:
+
+ lon = -23, 0, 67, 178 ;
+
+ lat = -9, 2, 34, 78 ;
+
+ alt = 0.5, 12.6, 23.7, 345 ;
+
+ station_name =
+  &quot;station1&quot;,
+  &quot;station2&quot;,
+  &quot;station3&quot;,
+  &quot;station4&quot; ;
+
+ station_info = 4294967286, 4294967287, 4294967288, 4294967289 ;
+
+ row_size = 3, 7, 5, 9 ;
+
+ time = -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 0.5, 1.5, 2.5, 3.5, 4.5, -2, -1, 0,
+    1, 2, 3, 4, 5, 6 ;
+
+ humidity = 0, 1, 2, 1, 11, 21, 31, 41, 51, 61, 2, 102, 202, 302, 402, 3,
+    1003, 2003, 3003, 4003, 5003, 6003, 7003, 8003 ;
+
+ temp = 273.15, 274.15, 275.15, 274.15, 284.15, 294.15, 304.15, 314.15,
+    324.15, 334.15, 275.15, 375.15, 475.15, 575.15, 675.15, 276.15, 1276.15,
+    2276.15, 3276.15, 4276.15, 5276.15, 6276.15, 7276.15, 8276.15 ;
+}
+</pre></div>
+</div>
+<p>When read by cf-python, the contiguous ragged arrays are converted to
+<a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_incomplete_multidimensional_array_representation">incomplete multidimensional arrays</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;DSG_timeSeries_contiguous.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">air_temperature field summary</span>
+<span class="go">-----------------------------</span>
+<span class="go">Data           : air_temperature(ncdim%station(4), ncdim%timeseries(9)) Celsius</span>
+<span class="go">Axes           : ncdim%station(4)</span>
+<span class="go">               : ncdim%timeseries(9)</span>
+<span class="go">Aux coords     : time(ncdim%station(4), ncdim%timeseries(9)) = [[1969-12-29T00:00:00Z, ..., 1970-01-07T00:00:00Z]]</span>
+<span class="go">               : latitude(ncdim%station(4)) = [-9.0, ..., 78.0] degrees_north</span>
+<span class="go">               : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east</span>
+<span class="go">               : height(ncdim%station(4)) = [0.5, ..., 345.0] m</span>
+<span class="go">               : long_name:station name(ncdim%station(4)) = [station1, ..., station4]</span>
+<span class="go">               : long_name:some kind of station info(ncdim%station(4)) = [-10, ..., -7]</span>
+
+<span class="go">specific_humidity field summary</span>
+<span class="go">-------------------------------</span>
+<span class="go">Data           : specific_humidity(ncdim%station(4), ncdim%timeseries(9))</span>
+<span class="go">Axes           : ncdim%station(4)</span>
+<span class="go">               : ncdim%timeseries(9)</span>
+<span class="go">Aux coords     : time(ncdim%station(4), ncdim%timeseries(9)) = [[1969-12-29T00:00:00Z, ..., 1970-01-07T00:00:00Z]]</span>
+<span class="go">               : latitude(ncdim%station(4)) = [-9.0, ..., 78.0] degrees_north</span>
+<span class="go">               : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east</span>
+<span class="go">               : height(ncdim%station(4)) = [0.5, ..., 345.0] m</span>
+<span class="go">               : long_name:station name(ncdim%station(4)) = [station1, ..., station4]</span>
+<span class="go">               : long_name:some kind of station info(ncdim%station(4)) = [-10, ..., -7]</span>
+
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[[275.15 375.15 475.15 575.15 675.15 -- -- -- --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[[0.5 1.5 2.5 3.5 4.5 -- -- -- --]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexed">
+<h3>Indexed<a class="headerlink" href="#indexed" title="Permalink to this headline">¶</a></h3>
+<p>The following CF-netCDF file contains <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_indexed_ragged_array_representation">indexed ragged array
+representations</a>
+of time series, each of which is has a different length:</p>
+<div class="highlight-pypy"><div class="highlight"><pre><span></span>$ ncdump DSG_timeSeries_indexed.nc
+netcdf DSG_timeSeries_indexed {
+dimensions:
+     station = 4 ;
+     obs = UNLIMITED ; // (24 currently)
+     name_strlen = 8 ;
+
+variables:
+     double lon(station) ;
+             lon:standard_name = &quot;longitude&quot; ;
+             lon:long_name = &quot;station longitude&quot; ;
+             lon:units = &quot;degrees_east&quot; ;
+     double lat(station) ;
+             lat:standard_name = &quot;latitude&quot; ;
+             lat:long_name = &quot;station latitude&quot; ;
+             lat:units = &quot;degrees_north&quot; ;
+     double alt(station) ;
+             alt:long_name = &quot;vertical distance above the surface&quot; ;
+             alt:standard_name = &quot;height&quot; ;
+             alt:units = &quot;m&quot; ;
+             alt:positive = &quot;up&quot; ;
+             alt:axis = &quot;Z&quot; ;
+     char station_name(station, name_strlen) ;
+             station_name:long_name = &quot;station name&quot; ;
+             station_name:cf_role = &quot;timeseries_id&quot; ;
+     long station_info(station) ;
+             station_info:long_name = &quot;some kind of station info&quot; ;
+     long stationIndex(obs) ;
+             stationIndex:long_name = &quot;which station this obs is for&quot; ;
+             stationIndex:instance_dimension = &quot;station&quot; ;
+     double time(obs) ;
+             time:standard_name = &quot;time&quot; ;
+             time:long_name = &quot;time of measurement&quot; ;
+             time:units = &quot;days since 1970-01-01 00:00:00&quot; ;
+     double humidity(obs) ;
+             humidity:_FillValue = -999.9 ;
+             humidity:standard_name = &quot;specific_humidity&quot; ;
+             humidity:coordinates = &quot;time lat lon alt station_name station_info&quot; ;
+     double temp(obs) ;
+             temp:_FillValue = -999.9 ;
+             temp:standard_name = &quot;air_temperature&quot; ;
+             temp:units = &quot;Celsius&quot; ;
+             temp:coordinates = &quot;time lat lon alt station_name station_info&quot; ;
+
+// global attributes:
+             :Conventions = &quot;CF-1.6&quot; ;
+             :featureType = &quot;timeSeries&quot; ;
+
+data:
+
+ lon = -23, 0, 67, 178 ;
+
+ lat = -9, 2, 34, 78 ;
+
+ alt = 0.5, 12.6, 23.7, 345 ;
+
+ station_name =
+  &quot;station1&quot;,
+  &quot;station2&quot;,
+  &quot;station3&quot;,
+  &quot;station4&quot; ;
+
+ station_info = 4294967286, 4294967287, 4294967288, 4294967289 ;
+
+ stationIndex = 3, 2, 1, 0, 2, 3, 3, 3, 1, 1, 0, 2, 3, 1, 0, 1, 2, 3, 2, 3,
+    3, 3, 1, 1 ;
+
+ time = -2, 0.5, 1, -3, 1.5, -1, 0, 1, 2, 3, -2, 2.5, 2, 4, -1, 5, 3.5, 3,
+    4.5, 4, 5, 6, 6, 7 ;
+
+ humidity = 3, 2, 1, 0, 102, 1003, 2003, 3003, 11, 21, 1, 202, 4003, 31, 2,
+    41, 302, 5003, 402, 6003, 7003, 8003, 51, 61 ;
+
+ temp = 276.15, 275.15, 274.15, 273.15, 375.15, 1276.15, 2276.15, 3276.15,
+    284.15, 294.15, 274.15, 475.15, 4276.15, 304.15, 275.15, 314.15, 575.15,
+    5276.15, 675.15, 6276.15, 7276.15, 8276.15, 324.15, 334.15 ;
+</pre></div>
+</div>
+<p>When read by cf-python, the indexed ragged arrays are converted to
+<a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_incomplete_multidimensional_array_representation">incomplete multidimensional arrays</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;netcdf DSG_timeSeries_indexed.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">air_temperature field summary</span>
+<span class="go">-----------------------------</span>
+<span class="go">Data           : air_temperature(ncdim%station(4), ncdim%timeseries(9)) Celsius</span>
+<span class="go">Axes           : ncdim%station(4)</span>
+<span class="go">               : ncdim%timeseries(9)</span>
+<span class="go">Aux coords     : time(ncdim%station(4), ncdim%timeseries(9)) = [[1969-12-29T00:00:00Z, ..., 1970-01-07T00:00:00Z]]</span>
+<span class="go">               : latitude(ncdim%station(4)) = [-9.0, ..., 78.0] degrees_north</span>
+<span class="go">               : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east</span>
+<span class="go">               : height(ncdim%station(4)) = [0.5, ..., 345.0] m</span>
+<span class="go">               : long_name:station name(ncdim%station(4)) = [station1, ..., station4]</span>
+<span class="go">               : long_name:some kind of station info(ncdim%station(4)) = [-10, ..., -7]</span>
+
+<span class="go">specific_humidity field summary</span>
+<span class="go">-------------------------------</span>
+<span class="go">Data           : specific_humidity(ncdim%station(4), ncdim%timeseries(9))</span>
+<span class="go">Axes           : ncdim%station(4)</span>
+<span class="go">               : ncdim%timeseries(9)</span>
+<span class="go">Aux coords     : time(ncdim%station(4), ncdim%timeseries(9)) = [[1969-12-29T00:00:00Z, ..., 1970-01-07T00:00:00Z]]</span>
+<span class="go">               : latitude(ncdim%station(4)) = [-9.0, ..., 78.0] degrees_north</span>
+<span class="go">               : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east</span>
+<span class="go">               : height(ncdim%station(4)) = [0.5, ..., 345.0] m</span>
+<span class="go">               : long_name:station name(ncdim%station(4)) = [station1, ..., station4]</span>
+<span class="go">               : long_name:some kind of station info(ncdim%station(4)) = [-10, ..., -7]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[[275.15 375.15 475.15 575.15 675.15 -- -- -- --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[[0.5 1.5 2.5 3.5 4.5 -- -- -- --]]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexed-contiguous">
+<h3>Indexed contiguous<a class="headerlink" href="#indexed-contiguous" title="Permalink to this headline">¶</a></h3>
+<p>The following CF-netCDF file contains <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_ragged_array_representation_of_time_series_profiles">indexed contiguous ragged array
+representations</a>
+of time series profiles. Each profile uses the contiguous ragged array
+representation, and the indexed ragged array representation is used to
+organise the profiles into time series:</p>
+<div class="highlight-pypy"><div class="highlight"><pre><span></span>$ ncdump -h DSG_timeSeriesProfile_indexed_contiguous.nc
+netcdf DSG_timeSeriesProfile_indexed_contiguous {
+dimensions:
+     station = 3 ;
+     profile = 58 ;
+     obs = UNLIMITED ; // (118 currently)
+     name_strlen = 8 ;
+
+variables:
+     double lon(station) ;
+             lon:standard_name = &quot;longitude&quot; ;
+             lon:long_name = &quot;station longitude&quot; ;
+             lon:units = &quot;degrees_east&quot; ;
+     double lat(station) ;
+             lat:standard_name = &quot;latitude&quot; ;
+             lat:long_name = &quot;station latitude&quot; ;
+             lat:units = &quot;degrees_north&quot; ;
+     double alt(station) ;
+             alt:long_name = &quot;vertical distance above the surface&quot; ;
+             alt:standard_name = &quot;height&quot; ;
+             alt:units = &quot;m&quot; ;
+             alt:positive = &quot;up&quot; ;
+             alt:axis = &quot;Z&quot; ;
+     char station_name(station, name_strlen) ;
+             station_name:long_name = &quot;station name&quot; ;
+             station_name:cf_role = &quot;timeseries_id&quot; ;
+     long profile(profile) ;
+             profile:cf_role = &quot;profile_id&quot; ;
+     long station_info(station) ;
+             station_info:long_name = &quot;some kind of station info&quot; ;
+     long stationIndex(profile) ;
+             stationIndex:long_name = &quot;which station this profile is for&quot; ;
+             stationIndex:instance_dimension = &quot;station&quot; ;
+     long row_size(profile) ;
+             row_size:long_name = &quot;number of observations for this profile&quot; ;
+             row_size:sample_dimension = &quot;obs&quot; ;
+     double time(profile) ;
+             time:standard_name = &quot;time&quot; ;
+             time:long_name = &quot;time&quot; ;
+             time:units = &quot;days since 1970-01-01 00:00:00&quot; ;
+     double z(obs) ;
+             z:standard_name = &quot;altitude&quot; ;
+             z:long_name = &quot;height above mean sea level&quot; ;
+             z:units = &quot;km&quot; ;
+             z:axis = &quot;Z&quot; ;
+             z:positive = &quot;up&quot; ;
+     double humidity(obs) ;
+             humidity:_FillValue = -999.9 ;
+             humidity:standard_name = &quot;specific_humidity&quot; ;
+             humidity:coordinates = &quot;time lat lon alt z station_name station_info profile&quot; ;
+     double temp(obs) ;
+             temp:_FillValue = -999.9 ;
+             temp:standard_name = &quot;air_temperature&quot; ;
+             temp:units = &quot;Celsius&quot; ;
+             temp:coordinates = &quot;time lat lon alt z station_name station_info profile&quot; ;
+
+// global attributes:
+             :Conventions = &quot;CF-1.6&quot; ;
+             :featureType = &quot;timeSeriesProfile&quot; ;
+}
+</pre></div>
+</div>
+<p>When read by cf-python, the indexed contiguous ragged arrays are
+converted to <a class="reference external" href="http://cfconventions.org/cf-conventions/cf-conventions.html#_incomplete_multidimensional_array_representation">incomplete multidimensional arrays</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;DSG_timeSeriesProfile_indexed_contiguous.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">air_temperature field summary</span>
+<span class="go">-----------------------------</span>
+<span class="go">Data           : air_temperature(ncdim%station(3), ncdim%timeseries(26), ncdim%profile_1(4)) Celsius</span>
+<span class="go">Axes           : ncdim%station(3)</span>
+<span class="go">               : ncdim%timeseries(26)</span>
+<span class="go">               : ncdim%profile_1(4)</span>
+<span class="go">Aux coords     : time(ncdim%station(3), ncdim%timeseries(26)) = [[1970-01-04T00:00:00Z, ..., --]]</span>
+<span class="go">               : latitude(ncdim%station(3)) = [-9.0, ..., 34.0] degrees_north</span>
+<span class="go">               : longitude(ncdim%station(3)) = [-23.0, ..., 67.0] degrees_east</span>
+<span class="go">               : height(ncdim%station(3)) = [0.5, ..., 23.7] m</span>
+<span class="go">               : altitude(ncdim%station(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07123455612, ..., --]]] km</span>
+<span class="go">               : long_name:station name(ncdim%station(3)) = [station1, ..., station3]</span>
+<span class="go">               : long_name:some kind of station info(ncdim%station(3)) = [-10, ..., -8]</span>
+<span class="go">               : ncvar%profile(ncdim%station(3), ncdim%timeseries(26)) = [[102, ..., --]]</span>
+
+<span class="go">specific_humidity field summary</span>
+<span class="go">-------------------------------</span>
+<span class="go">Data           : specific_humidity(ncdim%station(3), ncdim%timeseries(26), ncdim%profile_1(4))</span>
+<span class="go">Axes           : ncdim%station(3)</span>
+<span class="go">               : ncdim%timeseries(26)</span>
+<span class="go">               : ncdim%profile_1(4)</span>
+<span class="go">Aux coords     : time(ncdim%station(3), ncdim%timeseries(26)) = [[1970-01-04T00:00:00Z, ..., --]]</span>
+<span class="go">               : latitude(ncdim%station(3)) = [-9.0, ..., 34.0] degrees_north</span>
+<span class="go">               : longitude(ncdim%station(3)) = [-23.0, ..., 67.0] degrees_east</span>
+<span class="go">               : height(ncdim%station(3)) = [0.5, ..., 23.7] m</span>
+<span class="go">               : altitude(ncdim%station(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07123455612, ..., --]]] km</span>
+<span class="go">               : long_name:station name(ncdim%station(3)) = [station1, ..., station3]</span>
+<span class="go">               : long_name:some kind of station info(ncdim%station(3)) = [-10, ..., -8]</span>
+<span class="go">               : ncvar%profile(ncdim%station(3), ncdim%timeseries(26)) = [[102, ..., --]]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Discrete sampling geometries</a><ul>
+<li><a class="reference internal" href="#ragged-arrays">Ragged arrays</a><ul>
+<li><a class="reference internal" href="#contiguous">Contiguous</a></li>
+<li><a class="reference internal" href="#indexed">Indexed</a></li>
+<li><a class="reference internal" href="#indexed-contiguous">Indexed contiguous</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="fieldlist.html"
+                        title="previous chapter">The <code class="docutils literal"><span class="pre">cf.FieldList</span></code> object</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="function.html"
+                        title="next chapter">Functions of the <code class="docutils literal"><span class="pre">cf</span></code> module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/discrete_sampling_geometries.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="function.html" title="Functions of the cf module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="fieldlist.html" title="The cf.FieldList object"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

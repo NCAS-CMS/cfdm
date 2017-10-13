@@ -1,0 +1,322 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Further examples &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="further-examples">
+<h1>Further examples<a class="headerlink" href="#further-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reading-files">
+<h2>Reading files<a class="headerlink" href="#reading-files" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="generated/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.read</span></code></a> function will read <a class="reference external" href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html">CF-netCDF</a>
+and <a class="reference external" href="http://www.met.reading.ac.uk/~david/cfa/0.3/">CFA-netCDF</a> files
+(or URLs if DAP access is enabled) and Met Office (UK) PP files and
+fields files from disk and return their contents as a field or a
+<a class="reference internal" href="fieldlist.html#fs-field-list"><span class="std std-ref">field list</span></a>, i.e. an ordered collection of
+fields stored in a <a class="reference internal" href="classes/cfdm.FieldList.html#cfdm.FieldList" title="cfdm.FieldList"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.FieldList</span></code></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;data.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;CF Field: air_pressure(grid_latitude(30), grid_longitude(24)) Pa&gt;,</span>
+<span class="go"> &lt;CF Field: x_wind(height(19), grid_latitude(29), grid_longitude(24)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: y_wind(height(19), grid_latitude(29), grid_longitude(24)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_potential_temperature(height(19), grid_latitude(30), grid_longitude(24)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_potential_temperature(height(19), grid_latitude(30), grid_longitude(24)) K&gt;</span>
+</pre></div>
+</div>
+<p>Multiple files may be read at once by using Unix shell wildcard
+characters in file names or providing a sequence of files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;~/file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file[1-9a-c].nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;dir*/*.pp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">([</span><span class="s1">&#39;file1.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;file2.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;file3*.nc&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>File names may use environment variables and <code class="docutils literal"><span class="pre">~</span></code> expansion:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;~/*.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;$DATA/*.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;$DATA/${MORE_DATA}/*.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;~/$DATA/${MORE_DATA}/*.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For each file, the file format is inferred from the file contents, not
+from the file name suffix.</p>
+</div>
+<div class="section" id="writing-files">
+<h2>Writing files<a class="headerlink" href="#writing-files" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="generated/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.write</span></code></a> function will write a field or field list to a
+CF-netCDF or CFA-netCDF file on disk:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;newfile.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A sequence of fields and field lists may be written to the same file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">],</span> <span class="s1">&#39;newfile.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All of the input fields are written to the same output file, but if
+metadata (such as coordinates) are identical in two or more fields
+then that metadata is only written once to the output file.</p>
+<p>Output file names are arbitrary (in particular, they do not require a
+suffix).</p>
+</div>
+<div class="section" id="cf-properties-and-attributes">
+<h2>CF properties and attributes<a class="headerlink" href="#cf-properties-and-attributes" title="Permalink to this headline">¶</a></h2>
+<p>The field’s CF properties are those which are intended to be essential
+metadata for the data array and would be included as data variable
+properties in a CF compliant netCDF file (such as
+<a class="reference internal" href="generated/cfdm.Field.standard_name.html#cfdm.Field.standard_name" title="cfdm.Field.standard_name"><code class="xref py py-obj docutils literal"><span class="pre">standard_name</span></code></a>). The field’s attributes are any other
+attributes, such as the names of the files containing the data array
+values.</p>
+<p>The CF properties are returned by the field’s <a class="reference internal" href="generated/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a>
+attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span>
+<span class="go">{&#39;_FillValue&#39;: 1e+20,</span>
+<span class="go"> &#39;cell_methods&#39;: &lt;CF CellMethods: time: mean&gt;,</span>
+<span class="go"> &#39;standard_name&#39;: &#39;air_temperature&#39;,</span>
+<span class="go"> &#39;units&#39;: &#39;K&#39;}</span>
+</pre></div>
+</div>
+<p>A CF property <em>recognised by the CF conventions</em> or an attribute may
+be set, retrieved and deleted as standard python object attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="go">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+<span class="go">AttributeError: Field doesn&#39;t have CF property &#39;long_name&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_pressure&#39;</span><span class="p">)</span>
+<span class="go">&#39;air_pressure&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">setattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_pressure&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ncvar</span> <span class="o">=</span> <span class="s1">&#39;tas&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;ncvar&#39;</span><span class="p">)</span>
+<span class="go">&#39;tas&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">ncvar</span>
+</pre></div>
+</div>
+<p>Any CF property (recognised by the CF conventions or not) may be set,
+retrieved and deleted with the field’s <a class="reference internal" href="generated/cfdm.Field.setprop.html#cfdm.Field.setprop" title="cfdm.Field.setprop"><code class="xref py py-obj docutils literal"><span class="pre">setprop</span></code></a>,
+<a class="reference internal" href="generated/cfdm.Field.getprop.html#cfdm.Field.getprop" title="cfdm.Field.getprop"><code class="xref py py-obj docutils literal"><span class="pre">getprop</span></code></a> and <a class="reference internal" href="generated/cfdm.Field.delprop.html#cfdm.Field.delprop" title="cfdm.Field.delprop"><code class="xref py py-obj docutils literal"><span class="pre">delprop</span></code></a> methods:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature at 1.5m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">)</span>
+<span class="go">&#39;temperature at 1.5m&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">)</span>
+<span class="go">AttributeError: Field doesn&#39;t have CF property &#39;long_name&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">,</span> <span class="s1">&#39;pressure&#39;</span><span class="p">)</span>
+<span class="go">&#39;pressure&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">,</span> <span class="s1">&#39;pressure&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span>
+<span class="go">{&#39;foo&#39;: &#39;bar&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &#39;pressure&#39;}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selecting-fields">
+<h2>Selecting fields<a class="headerlink" href="#selecting-fields" title="Permalink to this headline">¶</a></h2>
+<p>Fields may be selected with the <a class="reference internal" href="generated/cfdm.Field.match.html#cfdm.Field.match" title="cfdm.Field.match"><code class="xref py py-obj docutils literal"><span class="pre">match</span></code></a> and
+<code class="xref py py-obj docutils literal"><span class="pre">select</span></code> methods. These methods take conditions on field CF
+properties, attributes and coordinates as inputs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), grid_latitude(73), grid_longitude(96)) K&gt;]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;air&#39;</span><span class="p">)</span>
+<span class="go">[False, True]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;longitude&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">[&lt;CF Field: air_temperature(time(12), grid_latitude(73), grid_longitude(96)) K&gt;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-data-array">
+<h2>The data array<a class="headerlink" href="#the-data-array" title="Permalink to this headline">¶</a></h2>
+<p>The field’s data array may be retrieved as an independent numpy array
+with the field’s <a class="reference internal" href="generated/cfdm.Field.array.html#cfdm.Field.array" title="cfdm.Field.array"><code class="xref py py-obj docutils literal"><span class="pre">array</span></code></a> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[[ 2.  4.]</span>
+<span class="go"> [ 5.  1.]]</span>
+</pre></div>
+</div>
+<p>A particular element of the data array may be retrieved with the
+field’s <a class="reference internal" href="generated/cfdm.Field.datum.html#cfdm.Field.datum" title="cfdm.Field.datum"><code class="xref py py-obj docutils literal"><span class="pre">datum</span></code></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">2.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">1.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">4.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="coordinates">
+<h2>Coordinates<a class="headerlink" href="#coordinates" title="Permalink to this headline">¶</a></h2>
+<p>A dimension or auxiliary coordinate object of the field’s domain may
+be returned by the field’s <code class="xref py py-obj docutils literal"><span class="pre">coord</span></code> method. A coordinate
+object has the same CF property and data access principles as a field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF DimensionCoordinate: time(12)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;_FillValue&#39;: None,</span>
+<span class="go"> &#39;axis&#39;: &#39;T&#39;,</span>
+<span class="go"> &#39;calendar&#39;: &#39;noleap&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &#39;time&#39;,</span>
+<span class="go"> &#39;standard_name&#39;: &#39;time&#39;,</span>
+<span class="go"> &#39;units&#39;: &#39;days since 0000-1-1&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: days since 0000-1-1 calendar=noleap&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[  0  30  60  90 120 150 180 210 240 270 300 330]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-field">
+<span id="id1"></span><h2>Creating a field<a class="headerlink" href="#creating-a-field" title="Permalink to this headline">¶</a></h2>
+<p>A new field may be created by initializing a new <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field</span></code></a>
+instance. See the section on <a class="reference internal" href="field_creation.html#field-creation"><span class="std std-ref">field creation</span></a>
+for details.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Further examples</a><ul>
+<li><a class="reference internal" href="#reading-files">Reading files</a></li>
+<li><a class="reference internal" href="#writing-files">Writing files</a></li>
+<li><a class="reference internal" href="#cf-properties-and-attributes">CF properties and attributes</a></li>
+<li><a class="reference internal" href="#selecting-fields">Selecting fields</a></li>
+<li><a class="reference internal" href="#the-data-array">The data array</a></li>
+<li><a class="reference internal" href="#coordinates">Coordinates</a></li>
+<li><a class="reference internal" href="#creating-a-field">Creating a field</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/further_examples.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

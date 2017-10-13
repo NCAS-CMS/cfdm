@@ -1,0 +1,267 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cf.Field.subspace &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-subspace">
+<h1>cf.Field.subspace<a class="headerlink" href="#cf-field-subspace" title="Permalink to this headline">¶</a></h1>
+<dl class="attribute">
+<dt id="cf.Field.subspace">
+<code class="descclassname">Field.</code><code class="descname">subspace</code><a class="headerlink" href="#cf.Field.subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new object which will get or set a subspace of the field.</p>
+<p>The returned object is a <code class="xref py py-obj docutils literal"><span class="pre">SubspaceField</span></code> object which may be
+<strong>indexed</strong> to select a subspace by axis index values
+(<code class="docutils literal"><span class="pre">f.subspace[indices]</span></code>) or <strong>called</strong> to select a subspace by
+metadata values (<code class="docutils literal"><span class="pre">f.subspace(*exact,</span> <span class="pre">**metadata_values)</span></code>).</p>
+<p><strong>Subspacing by indexing</strong></p>
+<p>Subspacing by indices allows a subspaced field to be defined via index
+values for the axes of the field’s data array.</p>
+<p>Indices to the returned <code class="xref py py-obj docutils literal"><span class="pre">SubspaceField</span></code> object have an extended
+Python slicing syntax, which is similar to <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html#arrays-indexing" title="(in NumPy v1.13)"><span class="xref std std-ref">numpy array indexing</span></a>, but with three extensions:</p>
+<ul>
+<li><p class="first">Size 1 axes are never removed.</p>
+<p>An integer index i takes the i-th element but does not reduce the
+rank of the output array by one:</p>
+</li>
+<li><p class="first">The indices for each axis work independently.</p>
+<p>When more than one axis’s slice is a 1-d boolean sequence or 1-d
+sequence of integers, then these indices work independently along
+each axis (similar to the way vector subscripts work in Fortran),
+rather than by their elements:</p>
+</li>
+<li><p class="first">Boolean indices may be any object which exposes the numpy array
+interface.</p>
+</li>
+</ul>
+<p><strong>Subspacing by metadata values</strong></p>
+<p>A subspaced field may be defined via data array values of its domain
+items (dimension coordinate, auciliary coordinate and cell measured
+objects) by calling the <code class="xref py py-obj docutils literal"><span class="pre">SubspaceField</span></code> object.</p>
+<p><code class="docutils literal"><span class="pre">f.subspace(*exact,</span> <span class="pre">**metadata_values)</span></code> is a shorthand for
+<code class="docutils literal"><span class="pre">f.subspace[f.indices(*exact,</span> <span class="pre">**metadata_values)]</span></code>. See
+<a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal"><span class="pre">cf.Field.indices</span></code></a> for details.</p>
+<p><strong>Assignment to subspaces</strong></p>
+<p>Elements of a field’s data array may be changed by assigning values to
+a subspace of the field.</p>
+<p>Assignment is only possible to a subspace defined by indices of the
+returned <code class="xref py py-obj docutils literal"><span class="pre">SubspaceField</span></code> object. For example, <code class="docutils literal"><span class="pre">f.subspace[indices]</span> <span class="pre">=</span>
+<span class="pre">0</span></code> is possible, but <code class="docutils literal"><span class="pre">f.subspace(*exact,</span> <span class="pre">**metadata_values)</span> <span class="pre">=</span> <span class="pre">0</span></code> is
+<em>not</em> allowed. However, assigning to a subspace defined by metadata
+values may be done as follows: <code class="docutils literal"><span class="pre">f.subspace[f.indices(*exact,</span>
+<span class="pre">**metadata_values)]</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p>
+<p><strong>Missing data</strong></p>
+<p>The treatment of missing data elements during assignment to a subspace
+depends on the value of field’s <a class="reference internal" href="cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal"><span class="pre">hardmask</span></code></a> attribute. If it is True
+then masked elements will not be unmasked, otherwise masked elements
+may be set to any value.</p>
+<p>In either case, unmasked elements may be set, (including missing
+data).</p>
+<p>Unmasked elements may be set to missing data by assignment to the
+<a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal"><span class="pre">cf.masked</span></code></a> constant or by assignment to a value which contains masked
+elements.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal"><span class="pre">indices</span></code></a>, <a class="reference internal" href="cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal"><span class="pre">where</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">Data            : air_temperature(time(12), latitude(73), longitude(96)) K</span>
+<span class="go">Cell methods    : time: mean</span>
+<span class="go">Dimensions      : time(12) = [15, ..., 345] days since 1860-1-1</span>
+<span class="go">                : latitude(73) = [-90, ..., 90] degrees_north</span>
+<span class="go">                : longitude(96) = [0, ..., 356.25] degrees_east</span>
+<span class="go">                : height(1) = [2] m</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">:,</span> <span class="mi">10</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">lon</span><span class="o">&lt;</span><span class="mi">180</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="mi">95</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 5, 1)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">72</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 2, 3)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 1, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 25, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="nb">long</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="mi">270</span><span class="p">,</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">),</span> <span class="n">lat</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">set</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]))</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 3, 24)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">))</span>
+<span class="go">(12, 36, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="p">[</span><span class="n">cf</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">),</span> <span class="mi">90</span><span class="p">])</span>
+<span class="go">(12, 37, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="s1">&#39;radian&#39;</span><span class="p">),</span> <span class="n">height</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">(12, 73, 48)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="go">IndexError: No indices found for &#39;height&#39; values gt 3</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">dim2</span><span class="o">=</span><span class="mf">3.75</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 1, 96)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="mf">273.15</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">210</span><span class="p">,</span> <span class="mi">270</span><span class="p">,</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                     <span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">))]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/cf.Field.subspace.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

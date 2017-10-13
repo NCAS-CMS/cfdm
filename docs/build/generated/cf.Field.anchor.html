@@ -1,0 +1,348 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cf.Field.anchor &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-anchor">
+<h1>cf.Field.anchor<a class="headerlink" href="#cf-field-anchor" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.anchor">
+<code class="descclassname">Field.</code><code class="descname">anchor</code><span class="sig-paren">(</span><em>axes</em>, <em>value</em>, <em>i=False</em>, <em>dry_run=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cf.Field.anchor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roll a cyclic axis so that the given value lies in the first
+coordinate cell.</p>
+<p>A unique axis is selected with the <em>axes</em> and <em>kwargs</em> parameters.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.Field.axis.html#cf.Field.axis" title="cf.Field.axis"><code class="xref py py-obj docutils literal"><span class="pre">axis</span></code></a>, <a class="reference internal" href="cf.Field.cyclic.html#cf.Field.cyclic" title="cf.Field.cyclic"><code class="xref py py-obj docutils literal"><span class="pre">cyclic</span></code></a>, <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal"><span class="pre">iscyclic</span></code></a>, <a class="reference internal" href="cf.Field.period.html#cf.Field.period" title="cf.Field.period"><code class="xref py py-obj docutils literal"><span class="pre">period</span></code></a>, <a class="reference internal" href="cf.Field.roll.html#cf.Field.roll" title="cf.Field.roll"><code class="xref py py-obj docutils literal"><span class="pre">roll</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>Anchor the cyclic X axis to a value of 180:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes, kwargs <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
+<dd><p class="first">Select axes. The <em>axes</em> parameter may be one, or a sequence,
+of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2.7/library/constants.html#None" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>. If no <em>kwargs</em> arguments have been set
+then all axes are selected. This is the default.</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">An integer. Explicitly selects the axis corresponding to
+the given position in the list of axes of the field’s data
+array.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To select the third data array axis: <code class="docutils literal"><span class="pre">axes=2</span></code>. To
+select the last axis: <code class="docutils literal"><span class="pre">axes=-1</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#slice" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">slice</span></code></a> object. Explicitly selects the axes
+corresponding to the given positions in the list of axes
+of the field’s data array.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em> </dt>
+<dd><p class="first last">To select the last three data array axes:
+<code class="docutils literal"><span class="pre">axes=slice(-3,</span> <span class="pre">None)</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A domain axis identifier. Explicitly selects this axis.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To select axis “dim1”: <code class="docutils literal"><span class="pre">axes='dim1'</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">Any value accepted by the <em>items</em> parameter of the field’s
+<a class="reference internal" href="cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a> method. Used in conjunction with the <em>kwargs</em>
+parameters to select the axes which span the items that
+would be identified by this call of the field’s <a class="reference internal" href="cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a>
+method: <code class="docutils literal"><span class="pre">f.items(items=axes,</span> <span class="pre">axes=None,</span> <span class="pre">**kwargs)</span></code>. See
+<a class="reference internal" href="cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal"><span class="pre">cf.Field.items</span></code></a> for details.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To select the axes spanned by one dimensionsal time
+coordinates: <code class="docutils literal"><span class="pre">f.anchor('T',</span> <span class="pre">ndim=1)</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p class="last">If <em>axes</em> is a sequence of any combination of the above then
+the selected axes are the union of those selected by each
+element of the sequence. If the sequence is empty then no axes
+are selected.</p>
+</dd>
+<dt>value <span class="classifier-delimiter">:</span> <span class="classifier">data-like object</span></dt>
+<dd><p class="first">Anchor the dimension coordinate values for the selected cyclic
+axis to the <em>value</em>. If <em>value</em> has units then they must be
+compatible with those of the dimension coordinates, otherwise
+it is assumed to have the same units as the dimension
+coordinates. The coordinate values are transformed so that
+<em>value</em> is “equal to or just before” the new first coordinate
+value. More specifically:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Increasing dimension coordinates with positive period, P,
+are transformed so that <em>value</em> lies in the half-open
+range (L-P, F], where F and L are the transformed first
+and last coordinate values, respectively.</li>
+<li>Decreasing dimension coordinates with positive period, P,
+are transformed so that <em>value</em> lies in the half-open
+range (L+P, F], where F and L are the transformed first
+AND last coordinate values, respectively.</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">If the original dimension coordinates are <code class="docutils literal"><span class="pre">0,</span> <span class="pre">5,</span> <span class="pre">...,</span>
+<span class="pre">355</span></code> (evenly spaced) and the period is <code class="docutils literal"><span class="pre">360</span></code> then
+<code class="docutils literal"><span class="pre">value=0</span></code> implies transformed coordinates of <code class="docutils literal"><span class="pre">0,</span> <span class="pre">5,</span>
+<span class="pre">...,</span> <span class="pre">355</span></code>; <code class="docutils literal"><span class="pre">value=-12</span></code> implies transformed coordinates
+of <code class="docutils literal"><span class="pre">-10,</span> <span class="pre">-5,</span> <span class="pre">...,</span> <span class="pre">345</span></code>; <code class="docutils literal"><span class="pre">value=380</span></code> implies
+transformed coordinates of <code class="docutils literal"><span class="pre">380,</span> <span class="pre">385,</span> <span class="pre">...,</span> <span class="pre">715</span></code>.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">If the original dimension coordinates are <code class="docutils literal"><span class="pre">355,</span> <span class="pre">350,</span>
+<span class="pre">...,</span> <span class="pre">0</span></code> (evenly spaced) and the period is <code class="docutils literal"><span class="pre">360</span></code> then
+<code class="docutils literal"><span class="pre">value=355</span></code> implies transformed coordinates of <code class="docutils literal"><span class="pre">355,</span>
+<span class="pre">350,</span> <span class="pre">...,</span> <span class="pre">0</span></code>; <code class="docutils literal"><span class="pre">value=0</span></code> implies transformed
+coordinates of <code class="docutils literal"><span class="pre">0,</span> <span class="pre">-5,</span> <span class="pre">...,</span> <span class="pre">-355</span></code>; <code class="docutils literal"><span class="pre">value=392</span></code>
+implies transformed coordinates of <code class="docutils literal"><span class="pre">390,</span> <span class="pre">385,</span> <span class="pre">...,</span>
+<span class="pre">30</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>A data-like object is any object containing array-like or
+scalar data which could be used to create a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal"><span class="pre">cf.Data</span></code></a> object.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">Instances, <code class="docutils literal"><span class="pre">x</span></code>, of following types are all examples of
+data-like objects (because <code class="docutils literal"><span class="pre">cf.Data(x)</span></code> creates a valid
+<a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal"><span class="pre">cf.Data</span></code></a> object): <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>,
+<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">tuple</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">list</span></code>,
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal"><span class="pre">cf.Data</span></code></a>, <a class="reference internal" href="../classes/cf.Coordinate.html#cf.Coordinate" title="cf.Coordinate"><code class="xref py py-obj docutils literal"><span class="pre">cf.Coordinate</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">cf.Field</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>i <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If True then update the field in place. By default a new
+field is created. In either case, a field is
+returned.</p>
+</dd>
+<dt>dry_run <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">Return a dictionary of parameters which describe the anchoring
+process. The field is not changed, even if <em>i</em> is True.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out : cf.Field or dict</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [0, ..., 315] degrees_east&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[  0  45  90 135 180 225 270 315]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">230</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">g</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[270 315   0  45  90 135 180 225]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">590</span><span class="p">,</span> <span class="s1">&#39;degreesE&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">g</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[630 675 360 405 450 495 540 585]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="o">-</span><span class="mi">490</span><span class="p">,</span> <span class="s1">&#39;degreesE&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">g</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[-450 -405 -720 -675 -630 -585 -540 -495]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [0.0, ..., 357.1875] degrees_east&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [10001.25, ..., 10358.4375] degrees_east&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">{&#39;axis&#39;: &#39;dim2&#39;,</span>
+<span class="go"> &#39;nperiod&#39;: &lt;CF Data: [10080.0] 0.0174532925199433 rad&gt;,</span>
+<span class="go"> &#39;roll&#39;: 28}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;axis&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;roll&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;axis&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;nperiod&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [10001.25, ..., 10358.4375] degrees_east&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/cf.Field.anchor.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

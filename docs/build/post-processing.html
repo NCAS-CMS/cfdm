@@ -1,0 +1,331 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Post processing &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="post-processing">
+<h1>Post processing<a class="headerlink" href="#post-processing" title="Permalink to this headline">¶</a></h1>
+<p>This is simply a very basic introduction to some of the more widely used useful tools for viewing, checking, and converting UM input and output data. The tools described below all run on the ARCHER login nodes, and you can run them there, but they also run on the ARCHER post-processors (see <a class="reference external" href="http://www.archer.ac.uk/documentation/user-guide/connecting.php#sec-2.1.2">http://www.archer.ac.uk/documentation/user-guide/connecting.php#sec-2.1.2</a>). Try logging on to one of the post-processors for these exercises: <code class="docutils literal"><span class="pre">ssh</span> <span class="pre">-X</span> <span class="pre">espp1</span></code> (fieldop must currently be run onteh ARCHER login node). The post processors can see /home and /work and /nerc.</p>
+<div class="section" id="xconv">
+<h2>xconv<a class="headerlink" href="#xconv" title="Permalink to this headline">¶</a></h2>
+<p><strong>i. View data</strong></p>
+<p>On ARCHER go to the output directory of the global job that you ran previously (the one copied from xleha). Run <code class="docutils literal"><span class="pre">xconv</span></code> on the file ending with <code class="docutils literal"><span class="pre">da19810902_00</span></code>. This file is an atmosphere start file - this type of file is used to restart the model from the time specified in the file header data.</p>
+<p>Run a second instance of <code class="docutils literal"><span class="pre">xconv</span></code> on the file whose name ends in <code class="docutils literal"><span class="pre">.astart</span></code>. This is the file used by the model to start its run - created by the reconfiguration program in this case.</p>
+<p>The <code class="docutils literal"><span class="pre">xconv</span></code> window lists the fields in the file, the dimensions of those fields (upper left panel), the coordinates of the grid underlying the data, the time(s) of the data (upper right panel), some information about the type of file (lower left panel), and general data about the field (lower right panel.)</p>
+<p>Both files have the same fields. Double click on a field to reveal its coordinate data. Check the time for this field (select the “t” checkbox in the upper right panel).</p>
+<p>Plot both sets of data - click the “Plot Data” button.</p>
+<p>View the data - this shows numerical data values and their coordinates and can be helpful for finding spurious data values.</p>
+<p><strong>ii. Convert UM fields data to netCDF</strong></p>
+<p>Select a single-level field (one for which nz=1), choose “Output format” to be “Netcdf”, enter an “Output file name”, and select “Convert”. Information relevant to the file conversion will appear in the lower left panel.</p>
+<p>Use <code class="docutils literal"><span class="pre">xconv</span></code> to view the netcdf file just created.</p>
+</div>
+<div class="section" id="uminfo">
+<h2>uminfo<a class="headerlink" href="#uminfo" title="Permalink to this headline">¶</a></h2>
+<p>You can view the header information for the fields in a UM file by using the utility <code class="docutils literal"><span class="pre">uminfo</span></code> - redirect the output to a file or pipe it to <code class="docutils literal"><span class="pre">less</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>archer$ uminfo &lt;one-of-your-fields-files&gt; | less
+</pre></div>
+</div>
+<p>The output from this command is best viewed in conjunction with the Unified Model Documentation Paper F3 which explains in depth the various header fields.</p>
+</div>
+<div class="section" id="pumf">
+<h2>pumf<a class="headerlink" href="#pumf" title="Permalink to this headline">¶</a></h2>
+<p>Run <code class="docutils literal"><span class="pre">pumf</span></code> on the start file - here’s an example on one of grenvill’s files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>archer$ pumf xjpgza_da006
+PUMF successful
+Header output in: /work/n02/n02/ncastr01/tmp/tmp.eslogin005.16599/
+                  pumf_head.ncastr01.d14076.t150856.28259
+Field output in:  /work/n02/n02/ncastr01/tmp/tmp.eslogin005.16599/
+                  pumf_field.ncastr01.d14076.t150856.28259
+</pre></div>
+</div>
+<p>This provides another way of seeing header information, but also gives some information about the fields themselves. The output from pumf is a pair of text files. Use your favourite editor to view the output.</p>
+</div>
+<div class="section" id="cumf">
+<h2>cumf<a class="headerlink" href="#cumf" title="Permalink to this headline">¶</a></h2>
+<p>You can compare two UM fields files with <code class="docutils literal"><span class="pre">cumf</span></code>.  Note, differences in header information can arise even when field data is identical. Try running <code class="docutils literal"><span class="pre">cumf</span></code> on the two start files referred to above (in the View data section) - try running <code class="docutils literal"><span class="pre">cumf</span></code> on a file and itself.</p>
+</div>
+<div class="section" id="fieldop">
+<h2>fieldop<a class="headerlink" href="#fieldop" title="Permalink to this headline">¶</a></h2>
+<p>Note - please ensure you are on the ARCHER login node for this exercise.</p>
+<p><code class="docutils literal"><span class="pre">fieldop</span></code> allows you to add, subtract, multiply, divide files field value by field value. Particularly useful is the subtract option:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>archer$ export SCRATCH=/work/n02/n02/ncastr&lt;your id&gt;
+archer$ fieldop -s xjpgya_ca009 xjpgya_ca010 output
+FIELDOP output in: /work/n02/n02/ncastr01/fieldop.out.29843
+</pre></div>
+</div>
+<p>Note fieldop creates 2 files; the file in this case called <code class="docutils literal"><span class="pre">output</span></code> which is itself a fields file (in this case the difference of xjpgya_ca009 and xjpgya_ca010) and a file explaining how fieldop has run (a bit like a .leave file).
+Run this on your two start files. Use <code class="docutils literal"><span class="pre">xconv</span></code> to view the difference file. This is a useful tool to help you find where a model may be “blowing up”.</p>
+</div>
+<div class="section" id="ff2pp">
+<h2>ff2pp<a class="headerlink" href="#ff2pp" title="Permalink to this headline">¶</a></h2>
+<p>We have mentioned on the presentations the PP file format - this is a sequential format (a fields file is random access) still much used in the community. PP data is stored as 32-bit, which provides a significant saving of space, but means that a conversion step is required from a fields file (64-bit). The utility to do this is ff2pp (some confusion has arisen in the past with a similar utility written by the MO - be sure to use the CMS version located in /work/n02/n02/hum/bin - you can check that you are using the right one by typing <code class="docutils literal"><span class="pre">which</span> <span class="pre">ff2pp</span></code>. Try using it on some of your fields files - here’s an example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>archer$ cd /work/n02/n02/grenvill/um/xklka
+archer$ ff2pp xklkaa.pa1981sep xklkaa.pa1981sep.pp
+
+file xklkaa.pa1981sep is a byte swapped 64 bit ieee um file
+archer$ ls -l xklkaa.pa1981sep*
+-rw-r--r-- 1 grenvill n02 46559232 Nov 26 10:37 xklkaa.pa1981sep
+-rw-r--r-- 1 grenvill n02 19567200 Nov 28 10:45 xklkaa.pa1981sep.pp
+</pre></div>
+</div>
+<p>Note the reduction in file size - ff2pp does a lossy compression of data, but 32-bits is probably enough for diagnostics. Now use xconv to examine the contents of the PP file.</p>
+</div>
+<div class="section" id="cfa-and-cfdump">
+<h2>cfa and cfdump<a class="headerlink" href="#cfa-and-cfdump" title="Permalink to this headline">¶</a></h2>
+<p>There is an increasing use of python in the community and we have, and
+continue to develop, python tools to do much of the data processing
+previously done using IDL or MATLAB and are working to extend that
+functionality. <code class="docutils literal"><span class="pre">cfa</span></code> is a python utility which offers a host of
+features - we’ll use it to convert UM fields file or PP data to
+CF-compliant data in NetCDF format. You first need to set the
+environment to run <code class="docutils literal"><span class="pre">cfa</span></code> - if you will be a frequent user, add the
+<code class="docutils literal"><span class="pre">module</span> <span class="pre">load</span></code> and <code class="docutils literal"><span class="pre">module</span> <span class="pre">swap</span></code> commands to your .profile.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>esPP001$ module load anaconda cf
+esPP001$ module swap PrgEnv-cray PrgEnv-intel
+esPP001$ cfa -i -o xklkaa.pa1981sep.pp.nc xklkaa.pa1981sep.pp
+</pre></div>
+</div>
+<p>Try viewing the NetCDF file with xconv.</p>
+<p><code class="docutils literal"><span class="pre">cfdump</span></code> is a tool to view CF fields. It can be run on PP or NetCDF
+files, to provide a text representation of the CF fields contained in
+the input files. Try it on a PP file and its NetCDF equivalent,
+e.g.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>esPP001$ cfdump xklkaa.pa1981sep.pp | more
+surface_temperature field summary
+---------------------------------
+Data           : surface_temperature(latitude(145), longitude(192)) K
+Cell methods   : time: mean
+Axes           : time(1) = [1981-09-01 12:00:00] 360_day
+               : latitude(145) = [-90.0, ..., 90.0] degrees_north
+               : longitude(192) = [0.0, ..., 358.125] degrees_east
+
+PP_1_26001_vn802 field summary
+------------------------------
+Data           : PP_1_26001_vn802(latitude(180), longitude(360))
+Cell methods   : time: mean
+Axes           : time(1) = [1981-09-01 13:10:00] 360_day
+               : latitude(180) = [-89.5, ..., 89.5] degrees_north
+               : longitude(360) = [0.5, ..., 359.5] degrees_east
+</pre></div>
+</div>
+</div>
+<div class="section" id="cf-python-cf-plot">
+<h2>CF-python CF-plot<a class="headerlink" href="#cf-python-cf-plot" title="Permalink to this headline">¶</a></h2>
+<p>Many tools exist for analsing data from NWP and climate models and there are many contributing factors for the proliferation of these analysis utilities, for example, the disparity of data formats used by the authors of the models, and/or the availability of the underlying sofware. There is a strong push towards developing and using python as the underlying language and CF-netCDF as the data format. CMS is home to tools in the CF-netCDF stable - here’s an example of the use of these tools to perform some quite complex data manipulations. The user is insulated from virtually all of the details of the methods allowing them to concentrate on scientific analysis rather than programming intricacies.</p>
+<ul>
+<li><p class="first">Set up the environment and start python - if you will be a frequent
+user, add the <code class="docutils literal"><span class="pre">module</span> <span class="pre">load</span></code> and <code class="docutils literal"><span class="pre">module</span> <span class="pre">swap</span></code> commands to your
+.profile.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>archer$ module load anaconda cf
+archer$ module swap PrgEnv-cray PrgEnv-intel
+archer$ python
+&gt;&gt;&gt; import cf
+</pre></div>
+</div>
+</li>
+</ul>
+<p>We’ll be looking at CRU observed precipitation data</p>
+<ul>
+<li><p class="first">Read in data files</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;/home/n02/n02/charles/UM_Training_2015/cru/*.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Inspect the file contents with different amounts of detail</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Note that the three files in the cru directory are aggregated into one
+field.</p>
+<ul>
+<li><p class="first">Average the field with respect to time</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Note that the time coordinate is now of length 1.</p>
+<ul>
+<li><p class="first">Read in another field produced by a GCM, this has a different latitude/longitude grid to regrid the CRU data to</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;/home/n02/n02/charles/UM_Training_2015/N96_DJF_precip_means.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">g</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Regrid the field of observed data (f) to the grid of the model field (g)</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Subspace the regridded field, f, to a European region</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">70</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Note that the latitude and longitude coordinates are now shorter in length.</p>
+<ul>
+<li><p class="first">Import the cfplot visualisation library</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfplot</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Make a default contour plot of the field, f</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfplot</span><span class="o">.</span><span class="n">con</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Write out the new field f to disk</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;cru_precis_european_mean_regridded.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Post processing</a><ul>
+<li><a class="reference internal" href="#xconv">xconv</a></li>
+<li><a class="reference internal" href="#uminfo">uminfo</a></li>
+<li><a class="reference internal" href="#pumf">pumf</a></li>
+<li><a class="reference internal" href="#cumf">cumf</a></li>
+<li><a class="reference internal" href="#fieldop">fieldop</a></li>
+<li><a class="reference internal" href="#ff2pp">ff2pp</a></li>
+<li><a class="reference internal" href="#cfa-and-cfdump">cfa and cfdump</a></li>
+<li><a class="reference internal" href="#cf-python-cf-plot">CF-python CF-plot</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/post-processing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

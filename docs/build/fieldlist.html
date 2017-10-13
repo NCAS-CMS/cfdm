@@ -1,0 +1,286 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The cf.FieldList object &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Discrete sampling geometries" href="discrete_sampling_geometries.html" />
+    <link rel="prev" title="Manipulating cf.Field objects" href="field_manipulation.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="discrete_sampling_geometries.html" title="Discrete sampling geometries"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="field_manipulation.html" title="Manipulating cf.Field objects"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Reference manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-cf-fieldlist-object">
+<span id="fs-field-list"></span><h1>The <code class="xref py py-obj docutils literal"><span class="pre">cf.FieldList</span></code> object<a class="headerlink" href="#the-cf-fieldlist-object" title="Permalink to this headline">¶</a></h1>
+<p>A <code class="xref py py-obj docutils literal"><span class="pre">cf.FieldList</span></code> is an ordered sequence of <code class="xref py py-obj docutils literal"><span class="pre">cf.Field</span></code> objects.</p>
+<div class="section" id="list-like-operators">
+<h2>List-like operators<a class="headerlink" href="#list-like-operators" title="Permalink to this headline">¶</a></h2>
+<p>It supports all of the <a class="reference external" href="https://docs.python.org/2.7/library/stdtypes.html#typesseq-mutable" title="(in Python v2.7)"><span class="xref std std-ref">python list-like operations</span></a>. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">[&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;,</span>
+<span class="go"> &lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;]</span>
+</pre></div>
+</div>
+<p>Note that an indexing by an integer returns an individual field, but
+other types of index always return a field list.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fl</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+<span class="go">[&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;,</span>
+<span class="go"> &lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">+=</span> <span class="n">fl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;,</span>
+<span class="go"> &lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="selecting-fields">
+<h2>Selecting fields<a class="headerlink" href="#selecting-fields" title="Permalink to this headline">¶</a></h2>
+<p>One or more fields from a field list may be selected with the
+<code class="xref py py-obj docutils literal"><span class="pre">select</span></code> method that returns a new field list containing
+the selected fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;[air_temperature|x_wind]&#39;</span><span class="p">)</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;NOTHING&#39;</span><span class="p">)</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="manipulating-the-fields">
+<h2>Manipulating the fields<a class="headerlink" href="#manipulating-the-fields" title="Permalink to this headline">¶</a></h2>
+<p>For in-place changes, a <a class="reference external" href="https://docs.python.org/2.7/reference/compound_stmts.html#for" title="(in Python v2.7)"><span class="xref std std-ref">for loop</span></a> may be used to
+process each field element. For example to reverse the data array axis
+order of each field in-place:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: x_wind(grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">f</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: x_wind(grid_longitude(106), grid_latitude(110)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature( longitude(96), latitude(73), time(12)) K&gt;]</span>
+</pre></div>
+</div>
+<p>In-place changes to the fields may also be done with a list
+comprehension:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>For changes which result in new fields, a for loop or <a class="reference external" href="https://docs.python.org/2.7/tutorial/datastructures.html#tut-listcomps" title="(in Python v2.7)"><span class="xref std std-ref">list
+comprehension</span></a> may be used:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">round</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">new_fl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_fl</span>
+<span class="go">[&lt;CF Field: x_wind(grid_longitude(3), grid_latitude(110)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature( longitude(3), latitude(73), time(12)) K&gt;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sorting-the-fields">
+<h2>Sorting the fields<a class="headerlink" href="#sorting-the-fields" title="Permalink to this headline">¶</a></h2>
+<p>The field list may be sorted in-place with the <code class="xref py py-obj docutils literal"><span class="pre">sort</span></code>
+method, that works in a similar way to the <code class="xref py py-obj docutils literal"><span class="pre">sort</span></code> method of a
+built-in list. The only difference is that by default the fields are
+sorted by their identities (e.g their standard names). For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<span class="go">[&lt;CF Field: ocean_meridional_overturning_streamfunction(time(12), region(4), depth(40), latitude(180)) m3 s-1&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1&gt;,</span>
+<span class="go"> &lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The <code class="docutils literal"><span class="pre">cf.FieldList</span></code> object</a><ul>
+<li><a class="reference internal" href="#list-like-operators">List-like operators</a></li>
+<li><a class="reference internal" href="#selecting-fields">Selecting fields</a></li>
+<li><a class="reference internal" href="#manipulating-the-fields">Manipulating the fields</a></li>
+<li><a class="reference internal" href="#sorting-the-fields">Sorting the fields</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="field_manipulation.html"
+                        title="previous chapter">Manipulating <code class="docutils literal"><span class="pre">cf.Field</span></code> objects</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="discrete_sampling_geometries.html"
+                        title="next chapter">Discrete sampling geometries</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/fieldlist.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="discrete_sampling_geometries.html" title="Discrete sampling geometries"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="field_manipulation.html" title="Manipulating cf.Field objects"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

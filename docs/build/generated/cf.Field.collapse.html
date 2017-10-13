@@ -1,0 +1,1256 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cf.Field.collapse &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-collapse">
+<h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.collapse">
+<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=’auto’</em>, <em>ddof=1</em>, <em>a=None</em>, <em>i=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate=’mid_range’</em>, <em>group_by=’coords’</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse axes of the field.</p>
+<p>Collapsing an axis involves reducing its size with a given (typically
+statistical) method.</p>
+<p>By default all axes with size greater than 1 are collapsed completely
+with the given method. For example, to find the minumum of the data
+array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;min&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default the calculations of means, standard deviations and
+variances use a combination of volume, area and linear weights based
+on the field’s metadata. For example to find the mean of the data
+array, weighted where possible:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Specific weights may be forced with the weights parameter. For example
+to find the variance of the data array, weighting the X and Y axes by
+cell area, the T axis linearly and leaving all other axes unweighted:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;variance&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>A subset of the axes may be collapsed. For example, to find the mean
+over the time axis:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">&lt;CF Field: air_temperature(time(1), latitude(73), longitude(96) K&gt;</span>
+</pre></div>
+</div>
+<p>For example, to find the maximum over the time and height axes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: Z: max&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or, equivalently:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>An ordered sequence of collapses over different (or the same) subsets
+of the axes may be specified. For example, to first find the mean over
+the time axis and subequently the standard deviation over the latitude
+and longitude axes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean area: sd&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or, equivalently, in two steps:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;sd&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Grouped collapses are possible, whereby groups of elements along an
+axis are defined and each group is collapsed independently. The
+collapsed groups are concatenated so that the collapsed axis in the
+output field has a size equal to the number of groups. For example, to
+find the variance along the longitude axis within each group of size
+10 degrees:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;longitude: variance&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;degrees&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Climatological statistics (a type of grouped collapse) as defined by
+the CF conventions may be specified. For example, to collapse a time
+axis into multiannual means of calendar monthly minima:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;time: minimum within years T: mean over years&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>In all collapses, missing data array elements are accounted for in the
+calculation.</p>
+<p>The following collapse methods are available, over any subset of the
+axes:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Method</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Maximum</td>
+<td>The maximum of the values.</td>
+</tr>
+<tr class="row-odd"><td>Minimum</td>
+<td>The minimum of the values.</td>
+</tr>
+<tr class="row-even"><td>Sum</td>
+<td>The sum of the values.</td>
+</tr>
+<tr class="row-odd"><td>Mid-range</td>
+<td>The average of the maximum and the minimum of the
+values.</td>
+</tr>
+<tr class="row-even"><td>Range</td>
+<td>The absolute difference between the maximum and
+the minimum of the values.</td>
+</tr>
+<tr class="row-odd"><td>Mean</td>
+<td><p class="first">The unweighted mean, <span class="math">\(m\)</span>, of <span class="math">\(N\)</span>
+values <span class="math">\(x_i\)</span> is</p>
+<div class="math">
+\[m=\frac{1}{N}\sum_{i=1}^{N} x_i\]</div>
+<p>The weighted mean, <span class="math">\(\tilde{m}\)</span>, of <span class="math">\(N\)</span>
+values <span class="math">\(x_i\)</span> with corresponding weights
+<span class="math">\(w_i\)</span> is</p>
+<div class="last math">
+\[\tilde{m}=\frac{1}{\sum_{i=1}^{N} w_i}
+\sum_{i=1}^{N} w_i x_i\]</div>
+</td>
+</tr>
+<tr class="row-even"><td>Standard deviation</td>
+<td><p class="first">The unweighted standard deviation, <span class="math">\(s\)</span>, of
+<span class="math">\(N\)</span> values <span class="math">\(x_i\)</span> with mean <span class="math">\(m\)</span>
+and with <span class="math">\(N-ddof\)</span> degrees of freedom
+(<span class="math">\(ddof\ge0\)</span>) is</p>
+<div class="math">
+\[s=\sqrt{\frac{1}{N-ddof}
+\sum_{i=1}^{N} (x_i - m)^2}\]</div>
+<p>The weighted standard deviation,
+<span class="math">\(\tilde{s}_N\)</span>, of <span class="math">\(N\)</span> values
+<span class="math">\(x_i\)</span> with corresponding weights
+<span class="math">\(w_i\)</span>, weighted mean
+<span class="math">\(\tilde{m}\)</span> and with <span class="math">\(N\)</span>
+degrees of freedom is</p>
+<div class="math">
+\[\tilde{s}_N=\sqrt{\frac{1}
+{\sum_{i=1}^{N} w_i}
+\sum_{i=1}^{N} w_i(x_i -
+\tilde{m})^2}\]</div>
+<p>The weighted standard deviation,
+<span class="math">\(\tilde{s}\)</span>, of <span class="math">\(N\)</span> values
+<span class="math">\(x_i\)</span> with corresponding weights
+<span class="math">\(w_i\)</span> and with <span class="math">\(N-ddof\)</span> degrees
+of freedom <span class="math">\((ddof&gt;0)\)</span> is</p>
+<div class="math">
+\[\tilde{s}=\sqrt{ \frac{a
+\sum_{i=1}^{N} w_i}{a
+\sum_{i=1}^{N} w_i - ddof}}
+\tilde{s}_N\]</div>
+<p class="last">where <span class="math">\(a\)</span> is the smallest positive
+number whose product with each weight is an
+integer. <span class="math">\(a \sum_{i=1}^{N} w_i\)</span> is
+the size of a new sample created by each
+<span class="math">\(x_i\)</span> having <span class="math">\(aw_i\)</span> repeats. In
+practice, <span class="math">\(a\)</span> may not exist or may be
+difficult to calculate, so <span class="math">\(a\)</span> is
+either set to a predetermined value or an
+approximate value is calculated (see the
+<em>a</em> parameter for details).</p>
+</td>
+</tr>
+<tr class="row-odd"><td>Variance</td>
+<td>The variance is the square of the standard
+deviation.</td>
+</tr>
+<tr class="row-even"><td>Sample size</td>
+<td>The sample size, <span class="math">\(N\)</span>, as would be used for
+other statistical calculations.</td>
+</tr>
+<tr class="row-odd"><td>Sum of weights</td>
+<td>The sum of sample weights,
+<span class="math">\(\sum_{i=1}^{N} w_i\)</span>, as would be
+used for other statistical calculations.</td>
+</tr>
+<tr class="row-even"><td>Sum of squares of weights</td>
+<td>The sum of squares of sample weights,
+<span class="math">\(\sum_{i=1}^{N} {w_i}^{2}\)</span>,
+as would be used for other statistical
+calculations.</td>
+</tr>
+</tbody>
+</table>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal"><span class="pre">cell_area</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal"><span class="pre">weights</span></code></a>, <a class="reference internal" href="cf.Field.max.html#cf.Field.max" title="cf.Field.max"><code class="xref py py-obj docutils literal"><span class="pre">max</span></code></a>, <a class="reference internal" href="cf.Field.mean.html#cf.Field.mean" title="cf.Field.mean"><code class="xref py py-obj docutils literal"><span class="pre">mean</span></code></a>, <a class="reference internal" href="cf.Field.mid_range.html#cf.Field.mid_range" title="cf.Field.mid_range"><code class="xref py py-obj docutils literal"><span class="pre">mid_range</span></code></a>,
+<a class="reference internal" href="cf.Field.min.html#cf.Field.min" title="cf.Field.min"><code class="xref py py-obj docutils literal"><span class="pre">min</span></code></a>, <a class="reference internal" href="cf.Field.range.html#cf.Field.range" title="cf.Field.range"><code class="xref py py-obj docutils literal"><span class="pre">range</span></code></a>, <a class="reference internal" href="cf.Field.sample_size.html#cf.Field.sample_size" title="cf.Field.sample_size"><code class="xref py py-obj docutils literal"><span class="pre">sample_size</span></code></a>, <a class="reference internal" href="cf.Field.sd.html#cf.Field.sd" title="cf.Field.sd"><code class="xref py py-obj docutils literal"><span class="pre">sd</span></code></a>, <a class="reference internal" href="cf.Field.sum.html#cf.Field.sum" title="cf.Field.sum"><code class="xref py py-obj docutils literal"><span class="pre">sum</span></code></a>, <a class="reference internal" href="cf.Field.var.html#cf.Field.var" title="cf.Field.var"><code class="xref py py-obj docutils literal"><span class="pre">var</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first">Define the collapse method. All of the axes specified by the
+<em>axes</em> parameter are collapsed simultaneously by this
+method. The method is given by one of the following strings:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="62%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>method</em></th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'max'</span></code> or <code class="docutils literal"><span class="pre">'maximum'</span></code></td>
+<td>Maximum</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'min'</span></code> or <code class="docutils literal"><span class="pre">'minimum'</span></code></td>
+<td>Minimum</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'sum'</span></code></td>
+<td>Sum</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'mid_range'</span></code></td>
+<td>Mid-range</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'range'</span></code></td>
+<td>Range</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'mean'</span></code> or <code class="docutils literal"><span class="pre">'average'</span></code> or <code class="docutils literal"><span class="pre">'avg'</span></code></td>
+<td>Mean</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'sd'</span></code> or <code class="docutils literal"><span class="pre">'standard_deviation'</span></code></td>
+<td>Standard deviation</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'var'</span></code> or <code class="docutils literal"><span class="pre">'variance'</span></code></td>
+<td>Variance</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'sample_size'</span></code></td>
+<td>Sample size</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'sum_of_weights'</span></code></td>
+<td>Sum of weights</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'sum_of_weights2'</span></code></td>
+<td>Sum of squares of weights</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>An alternative form is to provide a CF cell methods-like
+string. In this case an ordered sequence of collapses may be
+defined and both the collapse methods and their axes are
+provided. The axes are interpreted as for the <em>axes</em>
+parameter, which must not also be set. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;time: max (interval 1 hr) X: Y: mean dim3: sd&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;sd&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;dim3&#39;</span><span class="p">)</span>    
+</pre></div>
+</div>
+<p>Climatological collapses are carried out if a <em>method</em> string
+contains any of the modifiers <code class="docutils literal"><span class="pre">'within</span> <span class="pre">days'</span></code>, <code class="docutils literal"><span class="pre">'within</span>
+<span class="pre">years'</span></code>, <code class="docutils literal"><span class="pre">'over</span> <span class="pre">days'</span></code> or <code class="docutils literal"><span class="pre">'over</span> <span class="pre">years'</span></code>. For example, to
+collapse a time axis into multiannual means of calendar
+monthly minima:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;time: minimum within years T: mean over years&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>which is equivalent to:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;time: minimum within years&#39;</span><span class="p">,</span> <span class="n">within_years</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean over years&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>axes, kwargs <span class="classifier-delimiter">:</span> <span class="classifier">optional  </span></dt>
+<dd><p class="first">The axes to be collapsed. The axes are those that would be
+selected by this call of the field’s <a class="reference internal" href="cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal"><span class="pre">axes</span></code></a> method:
+<code class="docutils literal"><span class="pre">f.axes(axes,</span> <span class="pre">**kwargs)</span></code>. See <a class="reference internal" href="cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal"><span class="pre">cf.Field.axes</span></code></a> for
+details. If an axis has size 1 then it is ignored. By default
+all axes with size greater than 1 are collapsed. If <em>axes</em> has
+the special value <code class="docutils literal"><span class="pre">'area'</span></code> then it is assumed that the X and
+Y axes are intended.</p>
+<blockquote class="last">
+<div><p><em>Example:</em></p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">axes='area'</span></code> is equivalent to <code class="docutils literal"><span class="pre">axes=['X',</span>
+<span class="pre">'Y']</span></code>. <code class="docutils literal"><span class="pre">axes=['area',</span> <span class="pre">Z']</span></code> is equivalent to
+<code class="docutils literal"><span class="pre">axes=['X',</span> <span class="pre">'Y',</span> <span class="pre">'Z']</span></code>.</p>
+</div></blockquote>
+</div></blockquote>
+</dd>
+<dt>weights <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
+<dd><p class="first">Specify the weights for the collapse. The weights are those
+that would be returned by this call of the field’s
+<a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal"><span class="pre">weights</span></code></a> method: <code class="docutils literal"><span class="pre">f.weights(weights,</span>
+<span class="pre">components=True)</span></code>. By default weights is <code class="docutils literal"><span class="pre">'auto'</span></code>, meaning
+that weights for all axes are created from the field’s
+metadata by one or more of the following methods, in order of
+preference,</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Cell volume (from cell measures)</li>
+<li>Cell area (from cell measures)</li>
+<li>Cell area calculated from (grid) latitude and (grid)
+longitude dimension coordinates with bounds</li>
+<li>Cell sizes of dimension coordinates with bounds</li>
+<li>Equal weights</li>
+</ol>
+</div></blockquote>
+<p>See <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal"><span class="pre">cf.Field.weights</span></code></a> for details.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To specify weights based on cell areas use
+<code class="docutils literal"><span class="pre">weights='area'</span></code>. To specify weights based on cell areas
+and linearly in the vertical you could set
+<code class="docutils literal"><span class="pre">weights=('area',</span> <span class="pre">'Z')</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>squeeze <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If True then size 1 collapsed axes are removed from the output
+data array. By default the axes which are collapsed are
+retained in the result’s data array.</p>
+</dd>
+<dt>mtol <span class="classifier-delimiter">:</span> <span class="classifier">number, optional        </span></dt>
+<dd><p class="first">Set the fraction of input array elements which is allowed to
+contain missing data when contributing to an individual output
+array element. Where this fraction exceeds <em>mtol</em>, missing
+data is returned. The default is 1, meaning that a missing
+datum in the output array only occurs when its contributing
+input array elements are all missing data. A value of 0 means
+that a missing datum in the output array occurs whenever any
+of its contributing input array elements are missing data. Any
+intermediate value is permitted.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To ensure that an output array element is a missing datum
+if more than 25% of its input array elements are missing
+data: <code class="docutils literal"><span class="pre">mtol=0.25</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>ddof <span class="classifier-delimiter">:</span> <span class="classifier">number, <em>optional</em></span></dt>
+<dd><p class="first last">The delta degrees of freedom in the calculation of a standard
+deviation or variance. The number of degrees of freedom used
+in the calculation is (N-<em>ddof</em>) where N represents the number
+of non-missing elements. By default <em>ddof</em> is 1, meaning the
+standard deviation and variance of the population is estimated
+according to the usual formula with (N-1) in the denominator
+to avoid the bias caused by the use of the sample mean
+(Bessel’s correction).</p>
+</dd>
+<dt>a <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
+<dd><p class="first">Specify the value of <span class="math">\(a\)</span> in the calculation of a
+weighted standard deviation or variance when the <em>ddof</em>
+parameter is greater than 0. See the notes above for
+details. A value is required each output array element, so <em>a</em>
+must be a single number or else a field which is broadcastable
+to the collapsed field. By default the calculation of each
+output array element uses an approximate value of <em>a</em> which is
+the smallest positive number whose products with the smallest
+and largest of the contributing weights, and their sum, are
+all integers. In this case, a positive number is considered to
+be an integer if its decimal part is sufficiently small (no
+greater than 10<sup>-8</sup> plus 10<sup>-5</sup> times its
+integer part).</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em>            </dt>
+<dd><p class="first last">To guarantee that <span class="math">\(\tilde{s}\)</span> is exact when the
+weights for each output array element are collectively
+coprime integers: <code class="docutils literal"><span class="pre">a=1</span></code>.</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>The default approximation will never overestimate
+<span class="math">\(a\)</span>, so <span class="math">\(\tilde{s}\)</span> will always greater than
+or equal to its true value when <span class="math">\(a\)</span> is not
+specified.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>coordinate <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd><p class="first">Set how the cell coordinate values for collapsed axes are
+defined. This has no effect on the cell bounds for the
+collapsed axes, which always represent the extrema of the
+input coordinates. Valid values are:</p>
+<blockquote class="last">
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>coordinate</em></th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'mid_range'</span></code></td>
+<td>An output coordinate is the average of the
+first and last input coordinate bounds (or
+the first and last coordinates if there are
+no bounds). This is the default.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">'min'</span></code></td>
+<td>An output coordinate is the minimum of the
+input coordinates.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">'max'</span></code></td>
+<td>An output coordinate is the maximum of the
+input coordinates.</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd>
+<dt>group <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em>        </span></dt>
+<dd><p class="first">Independently collapse groups of axis elements. Upon output,
+the results of the collapses are concatenated so that the
+output axis has a size equal to the number of groups. The
+<em>group</em> parameter defines how the elements are partitioned
+into groups, and may be one of:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">A <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal"><span class="pre">cf.Data</span></code></a> defining the group size in terms of ranges of
+coordinate values. The first group starts at the first
+coordinate bound of the first axis element (or its
+coordinate if there are no bounds) and spans the defined
+group size. Each susbsequent group immediately follows the
+preceeeding one. By default each group contains the
+consective run of elements whose coordinate values lie
+within the group limits (see the <em>group_by</em> parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 10 kilometres: <code class="docutils literal"><span class="pre">group=cf.Data(10,</span>
+<span class="pre">'km')</span></code>.</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>By default each element will be in exactly one
+group (see the <em>group_by</em> parameter).</li>
+<li>Groups may contain different numbers of elements.</li>
+<li>If no units are specified then the units of the
+coordinates are assumed.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A <code class="xref py py-obj docutils literal"><span class="pre">cf.TimeDuration</span></code> defining the group size in terms of
+calendar months and years or other time intervals. The
+first group starts at or before the first coordinate bound
+of the first axis element (or its coordinate if there are
+no bounds) and spans the defined group size. Each
+susbsequent group immediately follows the preceeeding
+one. By default each group contains the consective run of
+elements whose coordinate values lie within the group
+limits (see the <em>group_by</em> parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 5 days, starting and ending at
+midnight on each day: <code class="docutils literal"><span class="pre">group=cf.D(5)</span></code> (see <a class="reference internal" href="cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal"><span class="pre">cf.D</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 1 calendar month, starting and
+ending at day 16 of each month: <code class="docutils literal"><span class="pre">group=cf.M(day=16)</span></code>
+(see <a class="reference internal" href="cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal"><span class="pre">cf.M</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>By default each element will be in exactly one
+group (see the <em>group_by</em> parameter).</li>
+<li>Groups may contain different numbers of elements.</li>
+<li>The start of the first group may be before the first
+first axis element, depending on the offset defined
+by the time duration. For example, if
+<code class="docutils literal"><span class="pre">group=cf.Y(month=12)</span></code> then the first group will
+start on the closest 1st December to the first axis
+element.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A (sequence of) <code class="xref py py-obj docutils literal"><span class="pre">cf.Query</span></code>, each of which is a condition
+defining one or more groups. Each query selects elements
+whose coordinates satisfy its condition and from these
+elements multiple groups are created - one for each
+maximally consecutive run within these elements.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of the season MAM in each year:
+<code class="docutils literal"><span class="pre">group=cf.mam()</span></code> (see <a class="reference internal" href="cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal"><span class="pre">cf.mam</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of the seasons DJF and JJA in each
+year: <code class="docutils literal"><span class="pre">group=[cf.jja(),</span> <span class="pre">cf.djf()]</span></code>. To define groups
+for seasons DJF, MAM, JJA and SON in each year:
+<code class="docutils literal"><span class="pre">group=cf.seasons()</span></code> (see <a class="reference internal" href="cf.djf.html#cf.djf" title="cf.djf"><code class="xref py py-obj docutils literal"><span class="pre">cf.djf</span></code></a>, <a class="reference internal" href="cf.jja.html#cf.jja" title="cf.jja"><code class="xref py py-obj docutils literal"><span class="pre">cf.jja</span></code></a> and
+<code class="xref py py-obj docutils literal"><span class="pre">cf.season</span></code>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups for longitude elements less than or
+equal to 90 degrees and greater than 90 degrees:
+<code class="docutils literal"><span class="pre">group=[cf.le(90,</span> <span class="pre">'degrees'),</span> <span class="pre">cf.gt(90,</span> <span class="pre">'degrees')]</span></code>
+(see <a class="reference internal" href="cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal"><span class="pre">cf.le</span></code></a> and <a class="reference internal" href="cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal"><span class="pre">cf.gt</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>If a coordinate does not satisfy any of the
+conditions then its element will not be in a group.</li>
+<li>Groups may contain different numbers of elements.</li>
+<li>If no units are specified then the units of the
+coordinates are assumed.</li>
+<li>If an element is selected by two or more queries
+then the latest one in the sequence defines which
+group it will be in.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">An <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a> defining the number of elements in each
+group. The first group starts with the first axis element
+and spans the defined number of consecutive elements. Each
+susbsequent group immediately follows the preceeeding
+one.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 5 elements: <code class="docutils literal"><span class="pre">group=5</span></code>.</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>Each group has the defined number of elements, apart
+from the last group which may contain fewer
+elements.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote class="last">
+<div><ul>
+<li><p class="first">A <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.array</span></code></a> of integers defining groups. The array
+must have the same length as the axis to be collapsed and
+its sequence of values correspond to the axis
+elements. Each group contains the elements which
+correspond to a common non-negative integer value in the
+numpy array. Upon output, the collapsed axis is arranged
+in order of increasing group number.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">For an axis of size 8, create two groups, the first
+containing the first and last elements and the second
+containing the 3rd, 4th and 5th elements, whilst
+ignoring the 2nd, 6th and 7th elements:
+<code class="docutils literal"><span class="pre">group=numpy.array([0,</span> <span class="pre">-1,</span> <span class="pre">4,</span> <span class="pre">4,</span> <span class="pre">4,</span> <span class="pre">-1,</span> <span class="pre">-2,</span> <span class="pre">0])</span></code>.</p>
+</dd>
+<dt><em>Note:</em> </dt>
+<dd><ul class="first last simple">
+<li>The groups do not have to be in runs of consective
+elements; they may be scattered throughout the axis.</li>
+<li>An element which corresponds to a negative integer
+in the array will not be in a group.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>group_by <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd><p class="first">Specify how coordinates are assigned to the groups defined by
+the <em>group</em>, <em>within_days</em> or <em>within_years</em>
+parameter. Ignored unless one of these parameters is a
+<a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal"><span class="pre">cf.Data</span></code></a> or <code class="xref py py-obj docutils literal"><span class="pre">cf.TimeDuration</span></code> object. The <em>group_by</em>
+parameter may be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">'coords'</span></code>. This is the default. Each group contains the
+axis elements whose coordinate values lie within the group
+limits. Every element will be in a group.</li>
+</ul>
+</div></blockquote>
+<blockquote class="last">
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">'bounds'</span></code>. Each group contains the axis elements whose
+upper and lower coordinate bounds both lie within the
+group limits. Some elements may not be inside any group,
+either because the group limits do not coincide with
+coordinate bounds or because the group size is
+sufficiently small.</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>regroup <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first">For grouped collapses, return a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.array</span></code></a> of integers
+which identifies the groups defined by the <em>group</em>
+parameter. The array is interpreted as for a numpy array value
+of the <em>group</em> parameter, and thus may subsequently be used by
+<em>group</em> parameter in a separate collapse. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">groups</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;time: mean&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regroup</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;time: mean&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">groups</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;time: mean&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>within_days <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
+<dd><p class="first">Independently collapse groups of reference-time axis elements
+for CF “within days” climatological statistics. Each group
+contains elements whose coordinates span a time interval of up
+to one day. Upon output, the results of the collapses are
+concatenated so that the output axis has a size equal to the
+number of groups.</p>
+<dl class="docutils">
+<dt><em>Note:</em></dt>
+<dd><p class="first last">For CF compliance, a “within days” collapse should be
+followed by an “over days” collapse.</p>
+</dd>
+</dl>
+<p>The <em>within_days</em> parameter defines how the elements are
+partitioned into groups, and may be one of:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">A <code class="xref py py-obj docutils literal"><span class="pre">cf.TimeDuration</span></code> defining the group size in terms of a
+time interval of up to one day. The first group starts at
+or before the first coordinate bound of the first axis
+element (or its coordinate if there are no bounds) and
+spans the defined group size. Each susbsequent group
+immediately follows the preceeeding one. By default each
+group contains the consective run of elements whose
+coordinate values lie within the group limits (see the
+<em>group_by</em> parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 6 hours, starting at 00:00, 06:00,
+12:00 and 18:00: <code class="docutils literal"><span class="pre">within_days=cf.h(6)</span></code> (see <a class="reference internal" href="cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal"><span class="pre">cf.h</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 1 day, starting at 06:00:
+<code class="docutils literal"><span class="pre">within_days=cf.D(1,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal"><span class="pre">cf.D</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>Groups may contain different numbers of elements.</li>
+<li>The start of the first group may be before the first
+first axis element, depending on the offset defined
+by the time duration. For example, if
+<code class="docutils literal"><span class="pre">group=cf.D(hour=12)</span></code> then the first group will
+start on the closest midday to the first axis
+element.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote class="last">
+<div><ul>
+<li><p class="first">A (sequence of) <code class="xref py py-obj docutils literal"><span class="pre">cf.Query</span></code>, each of which is a condition
+defining one or more groups. Each query selects elements
+whose coordinates satisfy its condition and from these
+elements multiple groups are created - one for each
+maximally consecutive run within these elements.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 00:00 to 06:00 within each day,
+ignoring the rest of each day:
+<code class="docutils literal"><span class="pre">within_days=cf.hour(cf.le(6))</span></code> (see <a class="reference internal" href="cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal"><span class="pre">cf.hour</span></code></a> and
+<a class="reference internal" href="cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal"><span class="pre">cf.le</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 00:00 to 06:00 and 18:00 to 24:00
+within each day, ignoring the rest of each day:
+<code class="docutils literal"><span class="pre">within_days=[cf.hour(cf.le(6)),</span>
+<span class="pre">cf.hour(cf.gt(18))]</span></code> (see <a class="reference internal" href="cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal"><span class="pre">cf.gt</span></code></a>, <a class="reference internal" href="cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal"><span class="pre">cf.hour</span></code></a> and
+<a class="reference internal" href="cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal"><span class="pre">cf.le</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>Groups may contain different numbers of elements.</li>
+<li>If no units are specified then the units of the
+coordinates are assumed.</li>
+<li>If a coordinate does not satisfy any of the
+conditions then its element will not be in a group.</li>
+<li>If an element is selected by two or more queries
+then the latest one in the sequence defines which
+group it will be in.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>within_years <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em> </span></dt>
+<dd><p class="first">Independently collapse groups of reference-time axis elements
+for CF “within years” climatological statistics. Each group
+contains elements whose coordinates span a time interval of up
+to one calendar year. Upon output, the results of the
+collapses are concatenated so that the output axis has a size
+equal to the number of groups.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Note:</em></dt>
+<dd><p class="first last">For CF compliance, a “within years” collapse should be
+followed by an “over years” collapse.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The <em>within_years</em> parameter defines how the elements are
+partitioned into groups, and may be one of:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">A <code class="xref py py-obj docutils literal"><span class="pre">cf.TimeDuration</span></code> defining the group size in terms of a
+time interval of up to one calendar year. The first group
+starts at or before the first coordinate bound of the
+first axis element (or its coordinate if there are no
+bounds) and spans the defined group size. Each susbsequent
+group immediately follows the preceeeding one. By default
+each group contains the consective run of elements whose
+coordinate values lie within the group limits (see the
+<em>group_by</em> parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups of 90 days: <code class="docutils literal"><span class="pre">within_years=cf.D(90)</span></code>
+(see <a class="reference internal" href="cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal"><span class="pre">cf.D</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em>  </dt>
+<dd><p class="first last">To define groups of 3 calendar months, starting on the
+15th of a month: <code class="docutils literal"><span class="pre">within_years=cf.M(3,</span> <span class="pre">day=15)</span></code> (see
+<a class="reference internal" href="cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal"><span class="pre">cf.M</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>Groups may contain different numbers of elements.</li>
+<li>The start of the first group may be before the first
+first axis element, depending on the offset defined
+by the time duration. For example, if
+<code class="docutils literal"><span class="pre">group=cf.Y(month=12)</span></code> then the first group will
+start on the closest 1st December to the first axis
+element.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote class="last">
+<div><ul>
+<li><p class="first">A (sequence of) <code class="xref py py-obj docutils literal"><span class="pre">cf.Query</span></code>, each of which is a condition
+defining one or more groups. Each query selects elements
+whose coordinates satisfy its condition and from these
+elements multiple groups are created - one for each
+maximally consecutive run within these elements.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups for the season MAM within each year:
+<code class="docutils literal"><span class="pre">within_years=cf.mam()</span></code> (see <a class="reference internal" href="cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal"><span class="pre">cf.mam</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups for February and for November to
+December within each year:
+<code class="docutils literal"><span class="pre">within_years=[cf.month(2),</span> <span class="pre">cf.month(cf.ge(11))]</span></code>
+(see <a class="reference internal" href="cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="cf.ge.html#cf.ge" title="cf.ge"><code class="xref py py-obj docutils literal"><span class="pre">cf.ge</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>The first group may start outside of the range of
+coordinates (the start of the first group is
+controlled by parameters of the <code class="xref py py-obj docutils literal"><span class="pre">cf.TimeDuration</span></code>).</li>
+<li>If group boundaries do not coincide with coordinate
+bounds then some elements may not be inside any
+group.</li>
+<li>If the group size is sufficiently small then some
+elements may not be inside any group.</li>
+<li>Groups may contain different numbers of elements.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>over_days <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
+<dd><p class="first">Independently collapse groups of reference-time axis elements
+for CF “over days” climatological statistics. Each group
+contains elements whose coordinates are <strong>matching</strong>, in that
+their lower bounds have a common time of day but different
+dates of the year, and their upper bounds also have a common
+time of day but different dates of the year. Upon output, the
+results of the collapses are concatenated so that the output
+axis has a size equal to the number of groups.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">An element with coordinate bounds {1999-12-31 06:00:00,
+1999-12-31 18:00:00} <strong>matches</strong> an element with
+coordinate bounds {2000-01-01 06:00:00, 2000-01-01
+18:00:00}.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">An element with coordinate bounds {1999-12-31 00:00:00,
+2000-01-01 00:00:00} <strong>matches</strong> an element with
+coordinate bounds {2000-01-01 00:00:00, 2000-01-02
+00:00:00}.</p>
+</dd>
+<dt><em>Note:</em>       </dt>
+<dd><ul class="first last">
+<li><p class="first">A <em>coordinate</em> parameter value of <code class="docutils literal"><span class="pre">'min'</span></code> is assumed,
+regardless of its given value.</p>
+</li>
+<li><p class="first">A <em>group_by</em> parameter value of <code class="docutils literal"><span class="pre">'bounds'</span></code> is assumed,
+regardless of its given value.</p>
+</li>
+<li><p class="first">An “over days” collapse must be preceded by a “within
+days” collapse, as described by the CF conventions. If the
+field already contains sub-daily data, but does not have
+the “within days” cell methods flag then it may be added,
+for example, as follows (this example assumes that the
+appropriate cell method is the most recently applied,
+which need not be the case; see <code class="xref py py-obj docutils literal"><span class="pre">cf.CellMethods</span></code> for
+details):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">cell_methods</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">within</span> <span class="o">=</span> <span class="s1">&#39;days&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p>The <em>over_days</em> parameter defines how the elements are
+partitioned into groups, and may be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2.7/library/constants.html#None" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>. This is the default. Each collection of
+<strong>matching</strong> elements forms a group.</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A <code class="xref py py-obj docutils literal"><span class="pre">cf.TimeDuration</span></code> defining the group size in terms of a
+time duration of at least one day. Multiple groups are
+created from each collection of <strong>matching</strong> elements -
+the first of which starts at or before the first
+coordinate bound of the first element and spans the
+defined group size. Each susbsequent group immediately
+follows the preceeeding one. By default each group
+contains the <strong>matching</strong> elements whose coordinate values
+lie within the group limits (see the <em>group_by</em>
+parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups spanning 90 days:
+<code class="docutils literal"><span class="pre">over_days=cf.D(90)</span></code> or
+<code class="docutils literal"><span class="pre">over_days=cf.h(2160)</span></code>. (see <a class="reference internal" href="cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal"><span class="pre">cf.D</span></code></a> and <a class="reference internal" href="cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal"><span class="pre">cf.h</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups spanning 3 calendar months, starting
+and ending at 06:00 in the first day of each month:
+<code class="docutils literal"><span class="pre">over_days=cf.M(3,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal"><span class="pre">cf.M</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>Groups may contain different numbers of elements.</li>
+<li>The start of the first group may be before the first
+first axis element, depending on the offset defined
+by the time duration. For example, if
+<code class="docutils literal"><span class="pre">group=cf.M(day=15)</span></code> then the first group will
+start on the closest 15th of a month to the first
+axis element.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote class="last">
+<div><ul>
+<li><p class="first">A (sequence of) <code class="xref py py-obj docutils literal"><span class="pre">cf.Query</span></code>, each of which is a condition
+defining one or more groups. Each query selects elements
+whose coordinates satisfy its condition and from these
+elements multiple groups are created - one for each subset
+of <strong>matching</strong> elements.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups for January and for June to December,
+ignoring all other months: <code class="docutils literal"><span class="pre">over_days=[cf.month(1),</span>
+<span class="pre">cf.month(cf.wi(6,</span> <span class="pre">12))]</span></code> (see <a class="reference internal" href="cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal"><span class="pre">cf.month</span></code></a> and
+<a class="reference internal" href="cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal"><span class="pre">cf.wi</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>If a coordinate does not satisfy any of the
+conditions then its element will not be in a group.</li>
+<li>Groups may contain different numbers of elements.</li>
+<li>If an element is selected by two or more queries
+then the latest one in the sequence defines which
+group it will be in.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>over_years <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
+<dd><p class="first">Independently collapse groups of reference-time axis elements
+for CF “over years” climatological statistics. Each group
+contains elements whose coordinates are <strong>matching</strong>, in that
+their lower bounds have a common sub-annual date but different
+years, and their upper bounds also have a common sub-annual
+date but different years. Upon output, the results of the
+collapses are concatenated so that the output axis has a size
+equal to the number of groups.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">An element with coordinate bounds {1999-06-01 06:00:00,
+1999-09-01 06:00:00} <strong>matches</strong> an element with
+coordinate bounds {2000-06-01 06:00:00, 2000-09-01
+06:00:00}.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">An element with coordinate bounds {1999-12-01 00:00:00,
+2000-12-01 00:00:00} <strong>matches</strong> an element with
+coordinate bounds {2000-12-01 00:00:00, 2001-12-01
+00:00:00}.</p>
+</dd>
+<dt><em>Note:</em>       </dt>
+<dd><ul class="first last">
+<li><p class="first">A <em>coordinate</em> parameter value of <code class="docutils literal"><span class="pre">'min'</span></code> is assumed,
+regardless of its given value.</p>
+</li>
+<li><p class="first">A <em>group_by</em> parameter value of <code class="docutils literal"><span class="pre">'bounds'</span></code> is assumed,
+regardless of its given value.</p>
+</li>
+<li><p class="first">An “over years” collapse must be preceded by a “within
+years” or an “over days” collapse, as described by the
+CF conventions. If the field already contains sub-annual
+data, but does not have the “within years” or “over
+days” cell methods flag then it may be added, for
+example, as follows (this example assumes that the
+appropriate cell method is the most recently applied,
+which need not be the case; see <code class="xref py py-obj docutils literal"><span class="pre">cf.CellMethods</span></code> for
+details):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">cell_methods</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">over</span> <span class="o">=</span> <span class="s1">&#39;days&#39;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p>The <em>over_years</em> parameter defines how the elements are
+partitioned into groups, and may be one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2.7/library/constants.html#None" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>. Each collection of <strong>matching</strong> elements forms a
+group. This is the default.</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A <code class="xref py py-obj docutils literal"><span class="pre">cf.TimeDuration</span></code> defining the group size in terms of a
+time interval of at least one calendar year. Multiple
+groups are created from each collection of <strong>matching</strong>
+elements - the first of which starts at or before the
+first coordinate bound of the first element and spans the
+defined group size. Each susbsequent group immediately
+follows the preceeeding one. By default each group
+contains the <strong>matching</strong> elements whose coordinate values
+lie within the group limits (see the <em>group_by</em>
+parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups spanning 10 calendar years:
+<code class="docutils literal"><span class="pre">over_years=cf.Y(10)</span></code> or <code class="docutils literal"><span class="pre">over_years=cf.M(120)</span></code>
+(see <a class="reference internal" href="cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal"><span class="pre">cf.M</span></code></a> and <a class="reference internal" href="cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal"><span class="pre">cf.Y</span></code></a>).</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define groups spanning 5 calendar years, starting
+and ending at 06:00 on 01 December of each year:
+<code class="docutils literal"><span class="pre">over_years=cf.Y(5,</span> <span class="pre">month=12,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal"><span class="pre">cf.Y</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>Groups may contain different numbers of elements.</li>
+<li>The start of the first group may be before the first
+first axis element, depending on the offset defined
+by the time duration. For example, if
+<code class="docutils literal"><span class="pre">group=cf.Y(month=12)</span></code> then the first group will
+start on the closest 1st December to the first axis
+element.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote class="last">
+<div><ul>
+<li><p class="first">A (sequence of) <code class="xref py py-obj docutils literal"><span class="pre">cf.Query</span></code>, each of which is a condition
+defining one or more groups. Each query selects elements
+whose coordinates satisfy its condition and from these
+elements multiple groups are created - one for each subset
+of <strong>matching</strong> elements.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To define one group spanning 1981 to 1990 and another
+spanning 2001 to 2005:
+<code class="docutils literal"><span class="pre">over_years=[cf.year(cf.wi(1981,</span> <span class="pre">1990),</span>
+<span class="pre">cf.year(cf.wi(2001,</span> <span class="pre">2005)]</span></code> (see <a class="reference internal" href="cf.year.html#cf.year" title="cf.year"><code class="xref py py-obj docutils literal"><span class="pre">cf.year</span></code></a> and
+<a class="reference internal" href="cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal"><span class="pre">cf.wi</span></code></a>).</p>
+</dd>
+<dt><em>Note:</em></dt>
+<dd><ul class="first last simple">
+<li>If a coordinate does not satisfy any of the
+conditions then its element will not be in a group.</li>
+<li>Groups may contain different numbers of elements.</li>
+<li>If an element is selected by two or more queries
+then the latest one in the sequence defines which
+group it will be in.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>i <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If True then update the field in place. By default a new
+field is created. In either case, a field is
+returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">cf.Field or numpy array</span></dt>
+<dd><p class="first last">The collapsed field. If the <em>regroup</em> parameter is
+True then a numpy array is returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>Calculate the unweighted  mean over a the entire field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Five equivalent ways to calculate the unweighted  mean over a CF latitude axis:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;latitude: mean&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;lat: avg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;Y: average&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Three equivalent ways to calculate an area weighted mean over CF
+latitude and longitude axes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;lat: lon: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Two equivalent ways to calculate a time weighted mean over CF
+latitude, longitude and time axes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: Y: T: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Find how many non-missing elements in each group of a grouped
+collapse:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;latitude: sample_size&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">5</span> <span class="s1">&#39;degrees&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/cf.Field.collapse.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

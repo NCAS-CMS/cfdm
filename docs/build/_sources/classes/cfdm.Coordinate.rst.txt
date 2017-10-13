@@ -1,0 +1,16 @@
+cfdm\.Coordinate
+================
+
+.. currentmodule:: cfdm
+
+.. autoclass:: Coordinate
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

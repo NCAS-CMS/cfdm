@@ -1,0 +1,16 @@
+cfdm\.Data
+==========
+
+.. currentmodule:: cfdm
+
+.. autoclass:: Data
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

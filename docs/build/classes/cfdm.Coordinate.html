@@ -1,0 +1,2709 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cfdm.Coordinate &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.Variable" href="cfdm.Variable.html" />
+    <link rel="prev" title="cfdm.Units" href="cfdm.Units.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cfdm.Variable.html" title="cfdm.Variable"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cfdm.Units.html" title="cfdm.Units"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../reference.html" >Reference manual</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../class.html" accesskey="U">Classes of the <code class="docutils literal"><span class="pre">cfdm</span></code> module</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-coordinate">
+<h1>cfdm.Coordinate<a class="headerlink" href="#cfdm-coordinate" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cfdm.Coordinate">
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Coordinate</code><span class="sig-paren">(</span><em>properties={}</em>, <em>attributes={}</em>, <em>data=None</em>, <em>bounds=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">cfdm.boundedvariable.BoundedVariable</span></code></p>
+<p>Base class for a CF dimension or auxiliary coordinate construct.</p>
+<p><strong>Attributes</strong></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="11%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><cite>!climatology</cite></td>
+<td><code class="docutils literal"><span class="pre">bool</span></code></td>
+<td>Whether or not the bounds are intervals of
+climatological time. Presumed to be False if unset.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>properties: <cite>dict</cite>, optional</dt>
+<dd><p class="first last">Initialize a new instance with CF properties from a
+dictionary’s key/value pairs.</p>
+</dd>
+<dt>attributes: <cite>dict</cite>, optional</dt>
+<dd><p class="first last">Provide the new instance with attributes from a dictionary’s
+key/value pairs.</p>
+</dd>
+<dt>data: <cite>Data</cite>, optional</dt>
+<dd><p class="first last">Provide the new instance with an N-dimensional data array.</p>
+</dd>
+<dt>bounds: <cite>Data</cite> or <cite>cf.Bounds</cite>, optional</dt>
+<dd><p class="first last">Provide the new instance with cell bounds.</p>
+</dd>
+<dt>source: <cite>cf.BoundedVariable</cite>, optional</dt>
+<dd><p class="first last">Take the attributes, CF properties and data array from the
+source object. Any attributes, CF properties or data array
+specified with other parameters are set after initialisation
+from the source instance.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy arguments prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cfdm.Coordinate.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties={}</em>, <em>attributes={}</em>, <em>data=None</em>, <em>bounds=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>properties: <cite>dict</cite>, optional</dt>
+<dd><p class="first last">Initialize a new instance with CF properties from a
+dictionary’s key/value pairs.</p>
+</dd>
+<dt>attributes: <cite>dict</cite>, optional</dt>
+<dd><p class="first last">Provide the new instance with attributes from a dictionary’s
+key/value pairs.</p>
+</dd>
+<dt>data: <cite>Data</cite>, optional</dt>
+<dd><p class="first last">Provide the new instance with an N-dimensional data array.</p>
+</dd>
+<dt>bounds: <cite>Data</cite> or <cite>cf.Bounds</cite>, optional</dt>
+<dd><p class="first last">Provide the new instance with cell bounds.</p>
+</dd>
+<dt>source: <cite>cf.BoundedVariable</cite>, optional</dt>
+<dd><p class="first last">Take the attributes, CF properties and data array from the
+source object. Any attributes, CF properties or data array
+specified with other parameters are set after initialisation
+from the source instance.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy arguments prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.HDF_chunks">
+<code class="descname">HDF_chunks</code><span class="sig-paren">(</span><em>*chunksizes</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.HDF_chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify HDF5 chunks for the data array.</p>
+<p>Chunking refers to a storage layout where the data array is
+partitioned into fixed-size multi-dimensional chunks when written to a
+netCDF4 file on disk. Chunking is ignored if the data array is written
+to a netCDF3 format file.</p>
+<p>A chunk has the same rank as the data array, but with fewer (or no
+more) elements along each axis. The chunk is defined by a dictionary
+in which the keys identify axes and the values are the chunk sizes for
+those axes.</p>
+<p>If a given chunk size for an axis is larger than the axis size, then
+the size of the axis at the time of writing to disk will be used
+instead.</p>
+<p>If chunk sizes have been specified for some but not all axes, then the
+each unspecified chunk size is assumed to be the full size of its
+axis.</p>
+<p>If no chunk sizes have been set for any axes then the netCDF default
+chunk is used
+(<a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html">http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html</a>).</p>
+<p>A detailed discussion of HDF chunking and I/O performance is available
+at <a class="reference external" href="https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html">https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html</a> and
+<a class="reference external" href="http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking">http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking</a>. Basically,
+you want the chunks for each dimension to match as closely as possible
+the size and shape of the data block that users will read from the
+file.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.1.13.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>To define chunks which are the full size for each axis except for the
+first axis which is to have a chunk size of 12:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old_chunks</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">HDF_chunks</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>chunksizes: <cite>dict</cite> or <cite>None</cite>, optional</dt>
+<dd><p class="first">Specify the chunk sizes for axes of the coordinate. Axes are
+given by dictionary keys, with a chunk size for those axes as
+the dictionary values. A dictionary key may be an integer or a
+tuple of integers defining axes by position in the data
+array. In the special case of <em>chunksizes</em> being <cite>None</cite>, then
+chunking is set to the netCDF default.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To set the chunk size for first axes to 365: <code class="docutils literal"><span class="pre">{0:</span> <span class="pre">365}</span></code>.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To set the chunk size for the first and third data array
+axes to 100: <code class="docutils literal"><span class="pre">{0:</span> <span class="pre">100,</span> <span class="pre">2:</span> <span class="pre">100}</span></code>, or equivalently <code class="docutils literal"><span class="pre">{(0,</span>
+<span class="pre">2):</span> <span class="pre">100}</span></code>.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To set the chunk size for the second axis to 100 and for
+the third axis to 5: <code class="docutils literal"><span class="pre">{1:</span> <span class="pre">100,</span> <span class="pre">2:</span> <span class="pre">5}</span></code>.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To set the chunking to the netCDF default: <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">The chunk sizes prior to the new setting, or the current
+current sizes if no new values are specified.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.attributes">
+<code class="descname">attributes</code><span class="sig-paren">(</span><em>attrs=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inspect or change attributes which are not CF properties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>attrs: <cite>dict</cite>, optional</dt>
+<dd><p class="first last">Set coordinate attributes from the dictionary of values. If
+the <em>copy</em> parameter is True then the values in the <em>attrs</em>
+dictionary are deep copied</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then the values in the returned dictionary are deep
+copies of the coordinate’s attribute values. By default they
+are not copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out: <cite>dict</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
+<span class="go">{&#39;foo&#39;: &#39;bar&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
+<span class="go">{&#39;foo&#39;: &#39;bar&#39;}</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;value&#39;</span><span class="p">})</span>
+<span class="go">{&#39;foo&#39;: &#39;bar&#39;, &#39;name&#39;: &#39;value&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><em>_omit_data=False</em>, <em>_only_data=False</em>, <em>_omit_special=None</em>, <em>_omit_properties=False</em>, <em>_omit_attributes=False</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deep copy.</p>
+<p><code class="docutils literal"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal"><span class="pre">copy.deepcopy(f)</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <cite>cf.Coordinate</cite></dt>
+<dd><p class="first last">The deep copy.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="ow">is</span> <span class="n">f</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">copy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="ow">is</span> <span class="n">f</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.datum">
+<code class="descname">datum</code><span class="sig-paren">(</span><em>*index</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.datum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an element of the data array as a standard Python scalar.</p>
+<p>The first and last elements are always returned with <code class="docutils literal"><span class="pre">f.datum(0)</span></code>
+and <code class="docutils literal"><span class="pre">f.datum(-1)</span></code> respectively, even if the data array is a scalar
+array or has two or more dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>index: optional</dt>
+<dd><p class="first">Specify which element to return. When no positional arguments
+are provided, the method only works for data arrays with one
+element (but any number of dimensions), and the single element
+is returned. If positional arguments are given then they must
+be one of the following:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">An integer. This argument is interpreted as a flat index
+into the array, specifying which element to copy and
+return.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Example: If the data aray shape is <code class="docutils literal"><span class="pre">(2,</span> <span class="pre">3,</span> <span class="pre">6)</span></code> then:</dt>
+<dd><ul class="first last simple">
+<li><code class="docutils literal"><span class="pre">f.datum(0)</span></code> is equivalent to <code class="docutils literal"><span class="pre">f.datum(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">f.datum(-1)</span></code> is equivalent to <code class="docutils literal"><span class="pre">f.datum(1,</span> <span class="pre">2,</span> <span class="pre">5)</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">f.datum(16)</span></code> is equivalent to <code class="docutils literal"><span class="pre">f.datum(0,</span> <span class="pre">2,</span> <span class="pre">4)</span></code>.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p>If <em>index</em> is <code class="docutils literal"><span class="pre">0</span></code> or <code class="docutils literal"><span class="pre">-1</span></code> then the first or last data
+array element respecitively will be returned, even if the
+data array is a scalar array or has two or more
+dimensions.</p>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul class="simple">
+<li>Two or more integers. These arguments are interpreted as a
+multidimensionsal index to the array. There must be the
+same number of integers as data array dimensions.</li>
+</ul>
+</div></blockquote>
+<blockquote class="last">
+<div><ul>
+<li><p class="first">A tuple of integers. This argument is interpreted as a
+multidimensionsal index to the array. There must be the
+same number of integers as data array dimensions.</p>
+<blockquote>
+<div><p>Example: <code class="docutils literal"><span class="pre">f.datum((0,</span> <span class="pre">2,</span> <span class="pre">4))</span></code> is equivalent to
+<code class="docutils literal"><span class="pre">f.datum(0,</span> <span class="pre">2,</span> <span class="pre">4)</span></code>; and <code class="docutils literal"><span class="pre">f.datum(())</span></code> is equivalent
+to <code class="docutils literal"><span class="pre">f.datum()</span></code>.</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out:</dt>
+<dd><p class="first last">A copy of the specified element of the array as a suitable
+Python scalar.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(())</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[[2]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[[4 -- 6]</span>
+<span class="go"> [1 2 3]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">4     </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">3     </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">masked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">2     </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">2     </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">4     </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">6     </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">3     </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.delprop">
+<code class="descname">delprop</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.delprop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a CF property.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>getprop</cite>, <cite>hasprop</cite>, <cite>setprop</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>prop <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The name of the CF property.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">AttributeError: Coordinate doesn&#39;t have CF property &#39;foo&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.direction">
+<code class="descname">direction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the dimension coordinate values are increasing,
+otherwise return False.</p>
+<p>Dimension coordinates values are increasing if its coordinate values
+are increasing in index space.</p>
+<p>The direction is inferred from one of, in order of precedence:</p>
+<ul class="simple">
+<li>The data array</li>
+<li>The bounds data array</li>
+<li>The <cite>units</cite> CF property</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">Whether or not the coordinate is increasing.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">array</span>
+<span class="go">array([  0  30  60])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">direction</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span>
+<span class="go">array([  30  0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">direction</span><span class="p">()</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.dump">
+<code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>omit=()</em>, <em>field=None</em>, <em>key=None</em>, <em>_level=0</em>, <em>_title=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string containing a full description of the coordinate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>display <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If False then return the description as a string. By default
+the description is printed, i.e. <code class="docutils literal"><span class="pre">c.dump()</span></code> is equivalent to
+<code class="docutils literal"><span class="pre">print</span> <span class="pre">c.dump(display=False)</span></code>.</p>
+</dd>
+<dt>omit <span class="classifier-delimiter">:</span> <span class="classifier">sequence of strs</span></dt>
+<dd><p class="first last">Omit the given CF properties from the description.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">None or str</span></dt>
+<dd><p class="first last">A string containing the description.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.equals">
+<code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>ignore_fill_value=False</em>, <em>traceback=False</em>, <em>ignore=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if two coordinates are equal, False otherwise.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>other: </dt>
+<dd><p class="first last">The object to compare for equality.</p>
+</dd>
+<dt>atol: <cite>float</cite>, optional</dt>
+<dd><p class="first last">The absolute tolerance for all numerical comparisons, By
+default the value returned by the <cite>cf.ATOL</cite> function is
+used.</p>
+</dd>
+<dt>rtol: <cite>float</cite>, optional</dt>
+<dd><p class="first last">The relative tolerance for all numerical comparisons, By
+default the value returned by the <cite>cf.RTOL</cite> function is
+used.</p>
+</dd>
+<dt>ignore_fill_value: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then data arrays with different fill values are
+considered equal. By default they are considered unequal.</p>
+</dd>
+<dt>traceback: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then print a traceback highlighting where the two
+coordinates differ.</p>
+</dd>
+<dt>ignore: <cite>tuple</cite>, optional</dt>
+<dd><p class="first last">The names of CF properties to omit from the comparison.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <cite>bool</cite></dt>
+<dd><p class="first last">Whether or not the two coordinates are equal.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;name0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;name1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.expand_dims">
+<code class="descname">expand_dims</code><span class="sig-paren">(</span><em>position=0</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.expand_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a size 1 axis into the data array.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>squeeze</cite>, <cite>transpose</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>position: <cite>int</cite>, optional    </dt>
+<dd><p class="first last">Specify the position amongst the data array axes where the new
+axis is to be inserted. By default the new axis is inserted at
+position 0, the slowest varying position.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then update the coordinate in place. By default a
+new coordinate is created. In either case, a coordinate is
+returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><cite>None</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.fill_value">
+<code class="descname">fill_value</code><span class="sig-paren">(</span><em>default=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.fill_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the data array missing data value.</p>
+<p>This is the value of the <cite>missing_value</cite> CF property, or if that is
+not set, the value of the <cite>_FillValue</cite> CF property, else if that is
+not set, <code class="docutils literal"><span class="pre">None</span></code>. In the last case the default <cite>numpy</cite> missing data
+value for the array’s data type is assumed if a missing data value is
+required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>default: optional</dt>
+<dd><p class="first">If the missing value is unset then return this value. By
+default, <em>default</em> is <cite>None</cite>. If <em>default</em> is the special
+value <code class="docutils literal"><span class="pre">'netCDF'</span></code> then return the netCDF default value
+appropriate to the data array’s data type is used. These may
+be found as follows:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">netCDF4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">netCDF4</span><span class="o">.</span><span class="n">default_fillvals</span>    
+</pre></div>
+</div>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out:</dt>
+<dd><p class="first last">The missing data value, or the value specified by <em>default</em> if
+one has not been set.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">()</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">()</span>
+<span class="go">-1e30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mi">1073741824</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">()</span>
+<span class="go">1073741824</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">missing_value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">()</span>
+<span class="go">-1e30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">_FillValue</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">()</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;float64&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;netCDF&#39;</span><span class="p">)</span>
+<span class="go">9.969209968386869e+36</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">_FillValue</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;netCDF&#39;</span><span class="p">)</span>
+<span class="go">-999</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.getprop">
+<code class="descname">getprop</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.getprop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a CF property.</p>
+<p>When a default argument is given, it is returned when the attribute
+doesn’t exist; without it, an exception is raised in that case.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>delprop</cite>, <cite>hasprop</cite>, <cite>setprop</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>prop: <cite>str</cite></dt>
+<dd><p class="first last">The name of the CF property.</p>
+</dd>
+<dt>default: optional</dt>
+<dd><p class="first last">Return <em>default</em> if and only if the variable does not have the
+named property.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out:</dt>
+<dd><p class="first last">The value of the named property or the default value, if set.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">AttributeError: Field doesn&#39;t have CF property &#39;foo&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="go">&#39;bar&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.hasprop">
+<code class="descname">hasprop</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.hasprop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if a CF property exists, otherise False.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>delprop</cite>, <cite>getprop</cite>, <cite>setprop</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">hasprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>prop: <cite>str</cite></dt>
+<dd><p class="first last">The name of the property.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>bool</cite></dt>
+<dd><p class="first last">True if the CF property exists, otherwise False.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.identity">
+<code class="descname">identity</code><span class="sig-paren">(</span><em>default=None</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the identity of the coordinate.</p>
+<p>The identity is, by default, the first found of the following:</p>
+<ul class="simple">
+<li>The <cite>standard_name</cite> CF property.</li>
+<li>The <cite>!id</cite> attribute.</li>
+<li>If the <em>relaxed</em> parameter is True, the <cite>standard_name</cite> CF property.</li>
+<li>The <cite>!id</cite> attribute.</li>
+<li>The value of the <em>default</em> parameter.</li>
+</ul>
+<p>This is altered if the <em>relaxed</em> parameter is True.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>name</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>default: optional</dt>
+<dd><p class="first last">The identity if one could not otherwise be found. By default,
+<em>default</em> is <cite>None</cite>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out:</dt>
+<dd><p class="first last">The identity.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;Kelvin&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="go">&#39;Kelvin&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="go">&#39;foo&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">id</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="go">&#39;bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">identity</span><span class="p">()</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.insert_bounds">
+<code class="descname">insert_bounds</code><span class="sig-paren">(</span><em>bounds</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.insert_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert cell bounds.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">bounds:  data-like</p>
+<blockquote>
+<div><p>A data-like object is any object containing array-like or
+scalar data which could be used to create a <cite>cf.Data</cite> object.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">Instances, <code class="docutils literal"><span class="pre">x</span></code>, of following types are all examples of
+data-like objects (because <code class="docutils literal"><span class="pre">cf.Data(x)</span></code> creates a valid
+<cite>cf.Data</cite> object): <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a>,
+<a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#tuple" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">tuple</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">list</span></code>,
+<cite>numpy.ndarray</cite>, <cite>cf.Data</cite>, <cite>cf.Coordinate</cite>,
+<cite>cf.Field</cite>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+<p>copy: <cite>bool</cite>, optional</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.insert_data">
+<code class="descname">insert_data</code><span class="sig-paren">(</span><em>data</em>, <em>bounds=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.insert_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a new data array.</p>
+<p>A bounds data array may also inserted if given with the <em>bounds</em>
+keyword. Bounds may also be inserted independently with the
+<cite>insert_bounds</cite> method.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">data : <cite>Data</cite></p>
+<p>bounds : <cite>Data</cite>, optional</p>
+<p>copy : bool, optional</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.inspect">
+<code class="descname">inspect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.inspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inspect the object for debugging.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>cf.inspect</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">inspect</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>None</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.match">
+<code class="descname">match</code><span class="sig-paren">(</span><em>description=None</em>, <em>ndim=None</em>, <em>exact=False</em>, <em>match_and=True</em>, <em>inverse=False</em>, <em>_Flags=False</em>, <em>_CellMethods=False</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether or not a variable satisfies conditions.</p>
+<p>Conditions may be specified on the variable’s attributes and CF
+properties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <cite>bool</cite></dt>
+<dd><p class="first last">Whether or not the variable matches the given criteria.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.name">
+<code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>identity=False</em>, <em>ncvar=False</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a name for the coordinate.</p>
+<p>By default the name is the first found of the following:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>The <cite>standard_name</cite> CF property.</li>
+<li>The <cite>long_name</cite> CF property, preceeded by the string
+<code class="docutils literal"><span class="pre">'long_name:'</span></code>.</li>
+<li>The <cite>!id</cite> attribute.</li>
+<li>The <cite>!ncvar</cite> attribute, preceeded by the string <code class="docutils literal"><span class="pre">'ncvar%'</span></code>.</li>
+<li>The value of the <em>default</em> parameter.</li>
+</ol>
+</div></blockquote>
+<p>Note that <code class="docutils literal"><span class="pre">f.name(identity=True)</span></code> is equivalent to <code class="docutils literal"><span class="pre">f.identity()</span></code>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>identity</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;NO NAME&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>default: optional</dt>
+<dd><p class="first last">If no name can be found then return the value of the <em>default</em>
+parameter. By default the default is <cite>None</cite>.</p>
+</dd>
+<dt>identity: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then only 1., 3. and 5. are considered as possible
+names.</p>
+</dd>
+<dt>ncvar: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then only 4. and 5. are considered as possible names.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out:</dt>
+<dd><p class="first last">The name.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;temperature of the air&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ncvar</span> <span class="o">=</span> <span class="s1">&#39;tas&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="go">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="go">&#39;long_name:temperature of the air&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">long_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="go">&#39;ncvar:tas&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">ncvar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;no_name&#39;</span><span class="p">)</span>
+<span class="go">&#39;no_name&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;no_name&#39;</span><span class="p">)</span>
+<span class="go">&#39;air_temperature&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.override_units">
+<code class="descname">override_units</code><span class="sig-paren">(</span><em>units</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.override_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override the units.</p>
+<p>The new units <strong>need not</strong> be equivalent to the original ones and the
+data array elements will not be changed to reflect the new
+units. Therefore, this method should only be used when it is known
+that the data array values are correct but the units have incorrectly
+encoded.</p>
+<p>Not to be confused with setting <cite>units</cite> or <cite>Units</cite> attributes to units
+which are equivalent to the original units.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>calendar</cite>, <cite>override_calendar</cite>, <cite>units</cite>, <cite>Units</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>units: <cite>str</cite> or <cite>cf.Units</cite></dt>
+<dd><p class="first last">The new units for the data array.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then update the coordinate in place. By default a
+new coordinate is created. In either case, a coordinate is
+returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out: <cite>cf.Coordinate</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: hPa&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">100000.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="s1">&#39;km&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: km&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">100000.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">override_units</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;watts&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: watts&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">datum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">100000.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.properties">
+<code class="descname">properties</code><span class="sig-paren">(</span><em>props=None</em>, <em>clear=False</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.properties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inspect or change the CF properties.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>props: <cite>dict</cite>, optional   </dt>
+<dd><p class="first last">Set coordinate attributes from the dictionary of values. If
+the <em>copy</em> parameter is True then the values in the <em>attrs</em>
+dictionary are deep copied</p>
+</dd>
+<dt>clear: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then delete all CF properties.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then the values in the returned dictionary are deep
+copies of the coordinate’s attribute values. By default they
+are not copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">The CF properties prior to being changed, or the current CF
+properties if no changes were specified.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.remove_data">
+<code class="descname">remove_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.remove_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove and return the data array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <cite>Data</cite> or <cite>None</cite></dt>
+<dd><p class="first last">The removed data array, or <cite>None</cite> if there isn’t one.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hasdata</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [0, ..., 9] m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">remove_data</span><span class="p">()</span>
+<span class="go">&lt;CF Data: [0, ..., 9] m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hasdata</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">remove_data</span><span class="p">()</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.setprop">
+<code class="descname">setprop</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.setprop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a CF property.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>delprop</cite>, <cite>getprop</cite>, <cite>hasprop</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>prop <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd><p class="first last">The name of the CF property.</p>
+</dd>
+<dt>value :</dt>
+<dd><p class="first last">The value for the property.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.squeeze">
+<code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.squeeze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove size 1 dimensions from the data array</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>expand_dims</cite>, <cite>flip</cite>, <cite>transpose</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes: (sequence of) <cite>int</cite>, optional</dt>
+<dd><p class="first last">The size 1 axes to remove. By default, all size 1 axes are
+removed. Size 1 axes for removal are identified by their
+integer positions in the data array.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then update the coordinate in place. By default a
+new coordinate is created. In either case, a coordinate is
+returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out: <cite>cf.Coordinate</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">squeeze</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Coordinate.transpose">
+<code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Coordinate.transpose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Permute the dimensions of the data.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>expand_dims</cite>, <cite>squeeze</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes: (sequence of) <cite>int</cite>, optional</dt>
+<dd><p class="first last">The new order of the data array. By default, reverse the
+dimensions’ order, otherwise the axes are permuted according
+to the values given. The values of the sequence comprise the
+integer positions of the dimensions in the data array in the
+desired order.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then update the coordinate in place. By default a
+new coordinate is created. In either case, a coordinate is
+returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out : <cite>Coordinate</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">transpose</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.T">
+<code class="descname">T</code><a class="headerlink" href="#cfdm.Coordinate.T" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if and only if the coordinates are for a CF T axis.</p>
+<p>CF T axis coordinates are for a reference time axis hhave one or more
+of the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The <cite>axis</cite> property has the value <code class="docutils literal"><span class="pre">'T'</span></code></li>
+<li>Units of reference time (see <cite>cf.Units.isreftime</cite> for details)</li>
+<li>The <cite>standard_name</cite> property is one of <code class="docutils literal"><span class="pre">'time'</span></code> or
+<code class="docutils literal"><span class="pre">'forecast_reference_time'longitude'</span></code></li>
+</ul>
+</div></blockquote>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>ctype</cite>, <cite>X</cite>, <cite>~cf.Coordinate.Y</cite>, <cite>Z</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: seconds since 1992-10-8&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">T</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">standard_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;forecast_reference_time&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">T</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">T</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.Units">
+<code class="descname">Units</code><a class="headerlink" href="#cfdm.Coordinate.Units" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Units object containing the units of the data array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.X">
+<code class="descname">X</code><a class="headerlink" href="#cfdm.Coordinate.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if and only if the coordinates are for a CF X axis.</p>
+<p>CF X axis coordinates are for a horizontal axis have one or more of
+the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The <cite>axis</cite> property has the value <code class="docutils literal"><span class="pre">'X'</span></code></li>
+<li>Units of longitude (see <cite>cf.Units.islongitude</cite> for details)</li>
+<li>The <cite>standard_name</cite> property is one of <code class="docutils literal"><span class="pre">'longitude'</span></code>,
+<code class="docutils literal"><span class="pre">'projection_x_coordinate'</span></code> or <code class="docutils literal"><span class="pre">'grid_longitude'</span></code></li>
+</ul>
+</div></blockquote>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>ctype</cite>, <cite>T</cite>, <cite>~cf.Coordinate.Y</cite>, <cite>Z</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: degreeE&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">X</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="go">&#39;longitude&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">X</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">X</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.Y">
+<code class="descname">Y</code><a class="headerlink" href="#cfdm.Coordinate.Y" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if and only if the coordinates are for a CF Y axis.</p>
+<p>CF Y axis coordinates are for a horizontal axis and have one or more
+of the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The <cite>axis</cite> property has the value <code class="docutils literal"><span class="pre">'Y'</span></code></li>
+<li>Units of latitude (see <cite>cf.Units.islatitude</cite> for details)</li>
+<li>The <cite>standard_name</cite> property is one of <code class="docutils literal"><span class="pre">'latitude'</span></code>,
+<code class="docutils literal"><span class="pre">'projection_y_coordinate'</span></code> or <code class="docutils literal"><span class="pre">'grid_latitude'</span></code></li>
+</ul>
+</div></blockquote>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>ctype</cite>, <cite>T</cite>, <cite>X</cite>, <cite>Z</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: degree_north&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Y</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">==</span> <span class="s1">&#39;latitude&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Y</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.Z">
+<code class="descname">Z</code><a class="headerlink" href="#cfdm.Coordinate.Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if and only if the coordinates are for a CF Z axis.</p>
+<p>CF Z axis coordinates are for a vertical axis have one or more of the
+following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The <cite>axis</cite> property has the value <code class="docutils literal"><span class="pre">'Z'</span></code></li>
+<li>Units of pressure (see <cite>cf.Units.ispressure</cite> for details), level,
+layer, or sigma_level</li>
+<li>The <cite>positive</cite> property has the value <code class="docutils literal"><span class="pre">'up'</span></code> or <code class="docutils literal"><span class="pre">'down'</span></code>
+(case insensitive)</li>
+<li>The <cite>standard_name</cite> property is one of
+<code class="docutils literal"><span class="pre">'atmosphere_ln_pressure_coordinate'</span></code>,
+<code class="docutils literal"><span class="pre">'atmosphere_sigma_coordinate'</span></code>,
+<code class="docutils literal"><span class="pre">'atmosphere_hybrid_sigma_pressure_coordinate'</span></code>,
+<code class="docutils literal"><span class="pre">'atmosphere_hybrid_height_coordinate'</span></code>,
+<code class="docutils literal"><span class="pre">'atmosphere_sleve_coordinate</span></code>’, <code class="docutils literal"><span class="pre">'ocean_sigma_coordinate'</span></code>,
+<code class="docutils literal"><span class="pre">'ocean_s_coordinate'</span></code>, <code class="docutils literal"><span class="pre">'ocean_s_coordinate_g1'</span></code>,
+<code class="docutils literal"><span class="pre">'ocean_s_coordinate_g2'</span></code>, <code class="docutils literal"><span class="pre">'ocean_sigma_z_coordinate'</span></code> or
+<code class="docutils literal"><span class="pre">'ocean_double_sigma_coordinate'</span></code></li>
+</ul>
+</div></blockquote>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>ctype</cite>, <cite>T</cite>, <cite>X</cite>, <cite>~cf.Coordinate.Y</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: Pa&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">positive</span> <span class="o">==</span> <span class="s1">&#39;up&#39;</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True </span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="s1">&#39;Z&#39;</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;CF Units: sigma_level&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="go">&#39;ocean_sigma_coordinate&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.add_offset">
+<code class="descname">add_offset</code><a class="headerlink" href="#cfdm.Coordinate.add_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>The add_offset CF property.</p>
+<p>If present then this number is <em>subtracted</em> from the data prior to it
+being written to a file. If both <cite>scale_factor</cite> and <cite>add_offset</cite>
+properties are present, the offset is subtracted before the data are
+scaled. See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">add_offset</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">add_offset</span>
+<span class="go">-4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">add_offset</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;add_offset&#39;</span><span class="p">,</span> <span class="mf">10.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;add_offset&#39;</span><span class="p">)</span>
+<span class="go">10.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;add_offset&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.array">
+<code class="descname">array</code><a class="headerlink" href="#cfdm.Coordinate.array" title="Permalink to this definition">¶</a></dt>
+<dd><p>An independent numpy array copy of the data.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>data</cite>, <cite>dtarray</cite>, <cite>varray</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [0, ... 4] kg m-1 s-2&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span>
+<span class="go">[0 1 2 3 4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">999</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span>
+<span class="go">[999 1 2 3 4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[0 1 2 3 4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [0, ... 4] kg m-1 s-2&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.axis">
+<code class="descname">axis</code><a class="headerlink" href="#cfdm.Coordinate.axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>The axis CF property.</p>
+<p>The <cite>axis</cite> property may be used to specify the type of coordinates. It
+may take one of the values <cite>‘X’</cite>, <cite>‘Y’</cite>, <cite>‘Z’</cite> or <cite>‘T’</cite> which stand
+for a longitude, latitude, vertical, or time axis respectively. A
+value of <cite>‘X’</cite>, <cite>‘Y’</cite> or <cite>‘Z’</cite> may also also used to identify generic
+spatial coordinates (the values <cite>‘X’</cite> and <cite>‘Y’</cite> being used to identify
+horizontal coordinates).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">axis</span>
+<span class="go">&#39;Y&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">c</span><span class="o">.</span><span class="n">axis</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;axis&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;axis&#39;</span><span class="p">)</span>
+<span class="go">&#39;T&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;axis&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.bounds">
+<code class="descname">bounds</code><a class="headerlink" href="#cfdm.Coordinate.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <cite>cf.Bounds</cite> object containing the cell bounds.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>lower_bounds</cite>, <cite>upper_bounds</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF {+Variable}: latitude(64) degrees_north&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bounds</span>
+<span class="go">&lt;CF Bounds: latitude(64, 2) degrees_north&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">b</span>
+<span class="go">AttributeError: Can&#39;t set &#39;bounds&#39; attribute. Consider the insert_bounds method.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="go">&lt;CF Data: 90.0 degrees_north&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bounds</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="go">AttributeError: Can&#39;t set &#39;bounds&#39; attribute. Consider the insert_bounds method.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">bounds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">-=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>       
+<span class="go">&lt;CF Data: 89.0 degrees_north&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.calendar">
+<code class="descname">calendar</code><a class="headerlink" href="#cfdm.Coordinate.calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>The calendar CF property.</p>
+<p>This property is a mirror of the calendar stored in the <cite>Units</cite>
+attribute.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;noleap&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">calendar</span>
+<span class="go">&#39;noleap&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">c</span><span class="o">.</span><span class="n">calendar</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">,</span> <span class="s1">&#39;proleptic_gregorian&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">)</span>
+<span class="go">&#39;proleptic_gregorian&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;calendar&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.comment">
+<code class="descname">comment</code><a class="headerlink" href="#cfdm.Coordinate.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>The comment CF property.</p>
+<p>Miscellaneous information about the data or methods used to produce
+it. See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s1">&#39;This simulation was done on an HP-35 calculator&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">comment</span>
+<span class="go">&#39;This simulation was done on an HP-35 calculator&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">comment</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">,</span> <span class="s1">&#39;a comment&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">)</span>
+<span class="go">&#39;a comment&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;comment&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.ctype">
+<code class="descname">ctype</code><a class="headerlink" href="#cfdm.Coordinate.ctype" title="Permalink to this definition">¶</a></dt>
+<dd><p>The CF coordinate type.</p>
+<p>One of <code class="docutils literal"><span class="pre">'T'</span></code>, <code class="docutils literal"><span class="pre">'X'</span></code>, <code class="docutils literal"><span class="pre">'Y'</span></code> or <code class="docutils literal"><span class="pre">'Z'</span></code> if the coordinate object
+is for the respective CF axis type, otherwise None.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>T</cite>, <cite>X</cite>, <cite>~cf.Coordinate.Y</cite>, <cite>Z</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">X</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">ctype</span>
+<span class="go">&#39;X&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">T</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">ctype</span>
+<span class="go">&#39;T&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.data">
+<code class="descname">data</code><a class="headerlink" href="#cfdm.Coordinate.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <cite>Data</cite> object containing the data array.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>array</cite>, <cite>Data</cite>, <cite>hasdata</cite>, <cite>varray</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hasdata</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [[267.3, ..., 234.5]] K&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.decreasing">
+<code class="descname">decreasing</code><a class="headerlink" href="#cfdm.Coordinate.decreasing" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the dimension coordinate is increasing, otherwise
+False.</p>
+<p>A dimension coordinate is increasing if its coordinate values are
+increasing in index space.</p>
+<p>The direction is inferred from one of, in order of precedence:</p>
+<ul class="simple">
+<li>The data array</li>
+<li>The bounds data array</li>
+<li>The <cite>units</cite> CF property</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">Whether or not the coordinate is increasing.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p>True for dimension coordinate constructs, False otherwise.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">decreasing</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span><span class="o">.</span><span class="n">increasing</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.dtarray">
+<code class="descname">dtarray</code><a class="headerlink" href="#cfdm.Coordinate.dtarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>An independent numpy array of date-time objects.</p>
+<p>Only applicable for reference time units.</p>
+<p>If the calendar has not been set then the CF default calendar will be
+used and the units will be updated accordingly.</p>
+<p>The data type of the data array is unchanged.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>array</cite>, <cite>asdatetime</cite>, <cite>asreftime</cite>, <cite>dtvarray</cite>, <cite>varray</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.dtype">
+<code class="descname">dtype</code><a class="headerlink" href="#cfdm.Coordinate.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numpy data-type of the data array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;float64&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.hasbounds">
+<code class="descname">hasbounds</code><a class="headerlink" href="#cfdm.Coordinate.hasbounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if there are cell bounds.</p>
+<p>If present then cell bounds are stored in the <cite>!bounds</cite> attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">hasbounds</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">bounds</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.hasdata">
+<code class="descname">hasdata</code><a class="headerlink" href="#cfdm.Coordinate.hasdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if there is a data array.</p>
+<p>If present, the data array is stored in the <cite>data</cite> attribute.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>data</cite>, <cite>hasbounds</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">hasdata</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.history">
+<code class="descname">history</code><a class="headerlink" href="#cfdm.Coordinate.history" title="Permalink to this definition">¶</a></dt>
+<dd><p>The history CF property.</p>
+<p>A list of the applications that have modified the original data. See
+<a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="s1">&#39;created on 2012/10/01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">history</span>
+<span class="go">&#39;created on 2012/10/01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">history</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;history&#39;</span><span class="p">,</span> <span class="s1">&#39;created on 2012/10/01&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+<span class="go">&#39;created on 2012/10/01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;history&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.increasing">
+<code class="descname">increasing</code><a class="headerlink" href="#cfdm.Coordinate.increasing" title="Permalink to this definition">¶</a></dt>
+<dd><p>True for dimension coordinate constructs, False otherwise.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">increasing</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span><span class="o">.</span><span class="n">increasing</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.isscalar">
+<code class="descname">isscalar</code><a class="headerlink" href="#cfdm.Coordinate.isscalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the data array is scalar.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>hasdata</cite>, <cite>ndim</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">isscalar</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">isscalar</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hasdata</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">isscalar</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.leap_month">
+<code class="descname">leap_month</code><a class="headerlink" href="#cfdm.Coordinate.leap_month" title="Permalink to this definition">¶</a></dt>
+<dd><p>The leap_month CF property.</p>
+<p>Specifies which month is lengthened by a day in leap years for a user
+defined calendar. See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for
+details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">leap_month</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">leap_month</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">leap_month</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;leap_month&#39;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;leap_month&#39;</span><span class="p">)</span>
+<span class="go">11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;leap_month&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.leap_year">
+<code class="descname">leap_year</code><a class="headerlink" href="#cfdm.Coordinate.leap_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>The leap_year CF property.</p>
+<p>Provides an example of a leap year for a user defined calendar. It is
+assumed that all years that differ from this year by a multiple of
+four are also leap years. See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for
+details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">leap_year</span> <span class="o">=</span> <span class="mi">1984</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">leap_year</span>
+<span class="go">1984</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">leap_year</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;leap_year&#39;</span><span class="p">,</span> <span class="mi">1984</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;leap_year&#39;</span><span class="p">)</span>
+<span class="go">1984</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;leap_year&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.long_name">
+<code class="descname">long_name</code><a class="headerlink" href="#cfdm.Coordinate.long_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The long_name CF property.</p>
+<p>A descriptive name that indicates a nature of the data. This name is
+not standardized. See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for
+details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;zonal_wind&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span>
+<span class="go">&#39;zonal_wind&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">long_name</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">,</span> <span class="s1">&#39;surface air temperature&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">)</span>
+<span class="go">&#39;surface air temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.mask">
+<code class="descname">mask</code><a class="headerlink" href="#cfdm.Coordinate.mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>The mask of the data array.</p>
+<p>Values of True indicate masked elements.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>binary_mask</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">mask</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">long_name</span>
+<span class="go">&#39;mask&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;bool&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [[[True, ..., False]]] &gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.missing_value">
+<code class="descname">missing_value</code><a class="headerlink" href="#cfdm.Coordinate.missing_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The missing_value CF property.</p>
+<p>A value used to represent missing or undefined data (deprecated by the
+netCDF user guide). See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for
+details.</p>
+<p>Note that this attribute is used primarily for writing data to disk
+and is independent of the missing data mask. It may, however, be used
+when unmasking data array elements.</p>
+<p>The recommended way of retrieving the missing data value is with the
+<cite>fill_value</cite> method.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>_FillValue</cite>, <cite>fill_value</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">1.0e30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">missing_value</span>
+<span class="go">1e+30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">missing_value</span>
+</pre></div>
+</div>
+<p>Mask the data array where it equals a missing data value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setitem</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">())</span> <span class="n">DCH</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.month_lengths">
+<code class="descname">month_lengths</code><a class="headerlink" href="#cfdm.Coordinate.month_lengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>The month_lengths CF property.</p>
+<p>Specifies the length of each month in a non-leap year for a user
+defined calendar. See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for
+details.</p>
+<p>Stored as a tuple but may be set as any array-like object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">month_lengths</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">34</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">34</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">month_lengths</span>
+<span class="go">(34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">month_lengths</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;month_lengths&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">34</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">27</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">34</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;month_lengths&#39;</span><span class="p">)</span>
+<span class="go">(34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;month_lengths&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.ndim">
+<code class="descname">ndim</code><a class="headerlink" href="#cfdm.Coordinate.ndim" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of dimensions in the data array.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>data</cite>, <cite>hasdata</cite>, <cite>isscalar</cite>, <cite>shape</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hasdata</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.positive">
+<code class="descname">positive</code><a class="headerlink" href="#cfdm.Coordinate.positive" title="Permalink to this definition">¶</a></dt>
+<dd><p>The positive CF property.</p>
+<p>The direction of positive (i.e., the direction in which the coordinate
+values are increasing), whether up or down, cannot in all cases be
+inferred from the <cite>units</cite>. The direction of positive is useful for
+applications displaying the data. The <cite>positive</cite> attribute may have
+the value <cite>‘up’</cite> or <cite>‘down’</cite> (case insensitive).</p>
+<p>For example, if ocean depth coordinates encode the depth of the
+surface as <cite>0</cite> and the depth of 1000 meters as <cite>1000</cite> then the
+<cite>postive</cite> property will have the value <cite>‘down’</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">positive</span> <span class="o">=</span> <span class="s1">&#39;up&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">positive</span>
+<span class="go">&#39;up&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">c</span><span class="o">.</span><span class="n">positive</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;positive&#39;</span><span class="p">,</span> <span class="s1">&#39;down&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;positive&#39;</span><span class="p">)</span>
+<span class="go">&#39;down&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;positive&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.scale_factor">
+<code class="descname">scale_factor</code><a class="headerlink" href="#cfdm.Coordinate.scale_factor" title="Permalink to this definition">¶</a></dt>
+<dd><p>The scale_factor CF property.</p>
+<p>If present then the data are <em>divided</em> by this factor prior to it
+being written to a file. If both <cite>scale_factor</cite> and <cite>add_offset</cite>
+properties are present, the offset is subtracted before the data are
+scaled. See <a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">scale_factor</span>
+<span class="go">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">scale_factor</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;scale_factor&#39;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;scale_factor&#39;</span><span class="p">)</span>
+<span class="go">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;scale_factor&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.shape">
+<code class="descname">shape</code><a class="headerlink" href="#cfdm.Coordinate.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tuple of the data array’s dimension sizes.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>data</cite>, <cite>hasdata</cite>, <cite>ndim</cite>, <cite>size</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hasdata</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">dnim</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">f</span><span class="o">.</span><span class="n">size</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.size">
+<code class="descname">size</code><a class="headerlink" href="#cfdm.Coordinate.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of elements in the data array.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>data</cite>, <cite>hasdata</cite>, <cite>ndim</cite>, <cite>shape</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">size</span>
+<span class="go">7008</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">size</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 1, 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">size</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">hasdata</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="nb">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.standard_name">
+<code class="descname">standard_name</code><a class="headerlink" href="#cfdm.Coordinate.standard_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The standard_name CF property.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="go">&#39;time&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">c</span><span class="o">.</span><span class="n">standard_name</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+<span class="go">&#39;time&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.units">
+<code class="descname">units</code><a class="headerlink" href="#cfdm.Coordinate.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>The units CF property.</p>
+<p>This property is a mirror of the units stored in the <cite>Units</cite>
+attribute.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 2.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees_east&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;degree_east&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">c</span><span class="o">.</span><span class="n">units</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;days since 2004-06-01&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span>
+<span class="go">&#39;days since 2004-06-01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.valid_max">
+<code class="descname">valid_max</code><a class="headerlink" href="#cfdm.Coordinate.valid_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>The valid_max CF property.</p>
+<p>The largest valid value of the data. See
+<a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">valid_max</span> <span class="o">=</span> <span class="mf">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">valid_max</span>
+<span class="go">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">valid_max</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;valid_max&#39;</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;valid_max&#39;</span><span class="p">)</span>
+<span class="go">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;valid_max&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.valid_min">
+<code class="descname">valid_min</code><a class="headerlink" href="#cfdm.Coordinate.valid_min" title="Permalink to this definition">¶</a></dt>
+<dd><p>The valid_min CF property.</p>
+<p>The smallest valid value of the data. See
+<a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">valid_min</span> <span class="o">=</span> <span class="mf">8.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">valid_min</span>
+<span class="go">8.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">valid_min</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;valid_min&#39;</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;valid_min&#39;</span><span class="p">)</span>
+<span class="go">8.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;valid_min&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.valid_range">
+<code class="descname">valid_range</code><a class="headerlink" href="#cfdm.Coordinate.valid_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>The valid_range CF property.</p>
+<p>The smallest and largest valid values the data. See
+<a class="reference external" href="http://cfconventions.org/latest.html">http://cfconventions.org/latest.html</a> for details.</p>
+<p>Stored as a tuple but may be set as any array-like object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">valid_range</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100.</span><span class="p">,</span> <span class="mf">400.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">valid_range</span>
+<span class="go">(100.0, 400.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">valid_range</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;valid_range&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">400.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;valid_range&#39;</span><span class="p">)</span>
+<span class="go">(100.0, 400.0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;valid_range&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Coordinate.varray">
+<code class="descname">varray</code><a class="headerlink" href="#cfdm.Coordinate.varray" title="Permalink to this definition">¶</a></dt>
+<dd><p>A numpy array view of the data array.</p>
+<p>Changing the elements of the returned view changes the data array.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>array</cite>, <cite>data</cite>, <cite>dtarray</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [0, ... 4] kg m-1 s-2&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span>
+<span class="go">[0 1 2 3 4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">999</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">a</span>
+<span class="go">[999 1 2 3 4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="go">[999 1 2 3 4]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data: [999, ... 4] kg m-1 s-2&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cfdm.Units.html"
+                        title="previous chapter">cfdm.Units</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cfdm.Variable.html"
+                        title="next chapter">cfdm.Variable</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/cfdm.Coordinate.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cfdm.Variable.html" title="cfdm.Variable"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cfdm.Units.html" title="cfdm.Units"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../reference.html" >Reference manual</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../class.html" >Classes of the <code class="docutils literal"><span class="pre">cfdm</span></code> module</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+cfdm.CellMethod
+===============
+
+.. currentmodule:: cfdm
+
+.. autoclass:: CellMethod
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

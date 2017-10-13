@@ -1,0 +1,7 @@
+cfdm.Field.__ge__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.__ge__

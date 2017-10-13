@@ -1,0 +1,341 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cfdm.FieldList &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-fieldlist">
+<span id="fieldlist"></span><h1>cfdm.FieldList<a class="headerlink" href="#cfdm-fieldlist" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cfdm.FieldList">
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">FieldList</code><span class="sig-paren">(</span><em>fields=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.FieldList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">list</span></code></p>
+<p>An ordered sequence of fields.</p>
+<p>Each element of a field list is a <code class="xref py py-obj docutils literal"><span class="pre">cf.Field</span></code> object.</p>
+<p>A field list supports the python list-like operations (such as
+indexing and methods like <code class="xref py py-obj docutils literal"><span class="pre">append</span></code>).</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">&lt;CF Field: air_temperaturetime(12), latitude(73), longitude(96) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">([</span><span class="n">f</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>3
+&gt;&gt;&gt; len(fl + fl)
+6</p>
+<p>These methods provide functionality similar to that of a
+<a class="reference external" href="https://docs.python.org/2.7/tutorial/datastructures.html#tut-morelists" title="(in Python v2.7)"><span class="xref std std-ref">built-in list</span></a>. The main difference is
+that when a field element needs to be assesed for equality its
+<code class="xref py py-obj docutils literal"><span class="pre">equals</span></code> method is used, rather than the <code class="docutils literal"><span class="pre">==</span></code> operator.</p>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>fields: (sequence of) <code class="xref py py-obj docutils literal"><span class="pre">cf.Field</span></code>, optional</dt>
+<dd><p class="first last">Create a new field list with these fields.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="inspection">
+<span id="fieldlist-methods"></span><h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.dump.html#cfdm.FieldList.dump" title="cfdm.FieldList.dump"><code class="xref py py-obj docutils literal"><span class="pre">dump</span></code></a></td>
+<td>A full description of each field.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="selection">
+<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.select.html#cfdm.FieldList.select" title="cfdm.FieldList.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a></td>
+<td>Return the fields that satisfy the given conditions.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="comparison">
+<h2>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.equals.html#cfdm.FieldList.equals" title="cfdm.FieldList.equals"><code class="xref py py-obj docutils literal"><span class="pre">equals</span></code></a></td>
+<td>True if two field lists are equal, False otherwise.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cfdm.FieldList.set_equals</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.copy.html#cfdm.FieldList.copy" title="cfdm.FieldList.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="list-like-operations">
+<h2>List-like operations<a class="headerlink" href="#list-like-operations" title="Permalink to this headline">¶</a></h2>
+<p>These methods provide functionality similar to that of a
+<a class="reference external" href="https://docs.python.org/2.7/tutorial/datastructures.html#tut-morelists" title="(in Python v2.7)"><span class="xref std std-ref">built-in list</span></a>. The main difference is
+that when a field element needs to be assesed for equality its
+<a class="reference internal" href="../generated/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal"><span class="pre">equals</span></code></a> method is used, rather than the <code class="docutils literal"><span class="pre">==</span></code>
+operator. For example</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span><span class="p">)</span>
+</pre></div>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.append.html#cfdm.FieldList.append" title="cfdm.FieldList.append"><code class="xref py py-obj docutils literal"><span class="pre">append</span></code></a></td>
+<td>L.append(object) – append object to end</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.count.html#cfdm.FieldList.count" title="cfdm.FieldList.count"><code class="xref py py-obj docutils literal"><span class="pre">count</span></code></a></td>
+<td>Return number of occurrences of value</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.extend.html#cfdm.FieldList.extend" title="cfdm.FieldList.extend"><code class="xref py py-obj docutils literal"><span class="pre">extend</span></code></a></td>
+<td>L.extend(iterable) – extend list by appending elements from the iterable</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.index.html#cfdm.FieldList.index" title="cfdm.FieldList.index"><code class="xref py py-obj docutils literal"><span class="pre">index</span></code></a></td>
+<td>Return first index of value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.insert.html#cfdm.FieldList.insert" title="cfdm.FieldList.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a></td>
+<td>L.insert(index, object) – insert object before index</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.pop.html#cfdm.FieldList.pop" title="cfdm.FieldList.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a></td>
+<td>Raises IndexError if list is empty or index is out of range.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.reverse.html#cfdm.FieldList.reverse" title="cfdm.FieldList.reverse"><code class="xref py py-obj docutils literal"><span class="pre">reverse</span></code></a></td>
+<td>L.reverse() – reverse <em>IN PLACE</em></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.sort.html#cfdm.FieldList.sort" title="cfdm.FieldList.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a></td>
+<td>Stable sort of the field list <em>IN PLACE</em></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.__add__.html#cfdm.FieldList.__add__" title="cfdm.FieldList.__add__"><code class="xref py py-obj docutils literal"><span class="pre">__add__</span></code></a></td>
+<td>Called to implement evaluation of f + x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.__contains__.html#cfdm.FieldList.__contains__" title="cfdm.FieldList.__contains__"><code class="xref py py-obj docutils literal"><span class="pre">__contains__</span></code></a></td>
+<td>Called to implement membership test operators.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.__iadd__.html#cfdm.FieldList.__iadd__" title="cfdm.FieldList.__iadd__"><code class="xref py py-obj docutils literal"><span class="pre">__iadd__</span></code></a></td>
+<td>x.__iadd__(y) &lt;==&gt; x+=y</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.__imul__.html#cfdm.FieldList.__imul__" title="cfdm.FieldList.__imul__"><code class="xref py py-obj docutils literal"><span class="pre">__imul__</span></code></a></td>
+<td>x.__imul__(y) &lt;==&gt; x*=y</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.__getitem__.html#cfdm.FieldList.__getitem__" title="cfdm.FieldList.__getitem__"><code class="xref py py-obj docutils literal"><span class="pre">__getitem__</span></code></a></td>
+<td>Called to implement evaluation of f[index]</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.__len__.html#cfdm.FieldList.__len__" title="cfdm.FieldList.__len__"><code class="xref py py-obj docutils literal"><span class="pre">__len__</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.FieldList.__mul__.html#cfdm.FieldList.__mul__" title="cfdm.FieldList.__mul__"><code class="xref py py-obj docutils literal"><span class="pre">__mul__</span></code></a></td>
+<td>Called to implement evaluation of f * x</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.FieldList.__setitem__.html#cfdm.FieldList.__setitem__" title="cfdm.FieldList.__setitem__"><code class="xref py py-obj docutils literal"><span class="pre">__setitem__</span></code></a></td>
+<td>x.__setitem__(i, y) &lt;==&gt; x[i]=y</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special-methods">
+<h2>Special methods<a class="headerlink" href="#special-methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.FieldList.__deepcopy__.html#cfdm.FieldList.__deepcopy__" title="cfdm.FieldList.__deepcopy__"><code class="xref py py-obj docutils literal"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/2.7/library/copy.html#copy.deepcopy" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">copy.deepcopy</span></code></a> standard library function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.FieldList.__repr__.html#cfdm.FieldList.__repr__" title="cfdm.FieldList.__repr__"><code class="xref py py-obj docutils literal"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#repr" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.FieldList.__str__.html#cfdm.FieldList.__str__" title="cfdm.FieldList.__str__"><code class="xref py py-obj docutils literal"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a> built-in function.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">cfdm.FieldList</a><ul>
+<li><a class="reference internal" href="#inspection">Inspection</a></li>
+<li><a class="reference internal" href="#selection">Selection</a></li>
+<li><a class="reference internal" href="#comparison">Comparison</a></li>
+<li><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+<li><a class="reference internal" href="#list-like-operations">List-like operations</a></li>
+<li><a class="reference internal" href="#special-methods">Special methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/cf.FieldList.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

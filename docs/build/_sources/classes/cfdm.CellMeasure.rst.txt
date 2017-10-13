@@ -1,0 +1,16 @@
+cfdm\.CellMeasure
+=================
+
+.. currentmodule:: cfdm
+
+.. autoclass:: CellMeasure
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

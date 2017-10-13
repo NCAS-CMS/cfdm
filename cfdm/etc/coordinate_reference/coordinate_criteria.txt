@@ -1,0 +1,18 @@
+## Col 0: Coordinate standard name Col 1+: Set of coordinate identites to which it applies
+#projection_x_coordinate
+#projection_y_coordinate
+#grid_latitude
+#grid_longitude
+#longitude units:degrees_east
+#latitude units:degrees_north
+#atmosphere_sleve_coordinate
+#ocean_sigma_coordinate
+#atmosphere_ln_pressure_coordinate
+#atmosphere_sigma_coordinate
+#atmosphere_hybrid_sigma_pressure_coordinate
+#atmosphere_hybrid_height_coordinate
+#atmosphere_sleve_coordinate
+#ocean_sigma_coordinate
+#ocean_s_coordinate
+#ocean_sigma_z_coordinate
+#ocean_double_sigma_coordinate

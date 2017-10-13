@@ -1,0 +1,570 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Creating cfdm.Field objects &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Manipulating cf.Field objects" href="field_manipulation.html" />
+    <link rel="prev" title="Introduction to the cfdm.Field object" href="field.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="field_manipulation.html" title="Manipulating cf.Field objects"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="field.html" title="Introduction to the cfdm.Field object"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Reference manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="creating-cfdm-field-objects">
+<span id="field-creation"></span><h1>Creating <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field</span></code></a> objects<a class="headerlink" href="#creating-cfdm-field-objects" title="Permalink to this headline">¶</a></h1>
+<p>A new field may be created by initializing a new <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Field</span></code></a> instance
+with properties and a data array:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Keyword</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">attributes</span></code></td>
+<td>Provide the new field with non-CF attributes in a dictionary</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">data</span></code></td>
+<td>Provide the new field with a data array in a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal"><span class="pre">cfdm.Data</span></code></a> object</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">properties</span></code></td>
+<td>Provide the new field with CF properties in a dictionary</td>
+</tr>
+</tbody>
+</table>
+<p>Other metadata items (coordinates, cell methods, etc.) are then
+provided with the following methods:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.insert_aux.html#cfdm.Field.insert_aux" title="cfdm.Field.insert_aux"><code class="xref py py-obj docutils literal"><span class="pre">insert_aux</span></code></a></td>
+<td>Insert an auxiliary coordinate object into the field.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.insert_axis.html#cfdm.Field.insert_axis" title="cfdm.Field.insert_axis"><code class="xref py py-obj docutils literal"><span class="pre">insert_axis</span></code></a></td>
+<td>Insert a domain axis into the field.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.insert_cell_methods.html#cfdm.Field.insert_cell_methods" title="cfdm.Field.insert_cell_methods"><code class="xref py py-obj docutils literal"><span class="pre">insert_cell_methods</span></code></a></td>
+<td>Insert cell method objects into the field.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.insert_domain_anc.html#cfdm.Field.insert_domain_anc" title="cfdm.Field.insert_domain_anc"><code class="xref py py-obj docutils literal"><span class="pre">insert_domain_anc</span></code></a></td>
+<td>Insert a domain ancillary object into the field.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.insert_data.html#cfdm.Field.insert_data" title="cfdm.Field.insert_data"><code class="xref py py-obj docutils literal"><span class="pre">insert_data</span></code></a></td>
+<td>Insert a data array into the field.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.insert_dim.html#cfdm.Field.insert_dim" title="cfdm.Field.insert_dim"><code class="xref py py-obj docutils literal"><span class="pre">insert_dim</span></code></a></td>
+<td>Insert a dimension coordinate object into the field.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.insert_field_anc.html#cfdm.Field.insert_field_anc" title="cfdm.Field.insert_field_anc"><code class="xref py py-obj docutils literal"><span class="pre">insert_field_anc</span></code></a></td>
+<td>Insert a field ancillary object into the field.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.insert_measure.html#cfdm.Field.insert_measure" title="cfdm.Field.insert_measure"><code class="xref py py-obj docutils literal"><span class="pre">insert_measure</span></code></a></td>
+<td>Insert a cell measure object into the field.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.insert_ref.html#cfdm.Field.insert_ref" title="cfdm.Field.insert_ref"><code class="xref py py-obj docutils literal"><span class="pre">insert_ref</span></code></a></td>
+<td>Insert a coordinate reference object into the field.</td>
+</tr>
+</tbody>
+</table>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span>
+<span class="go">&lt;CF DimensionCoordinate: time(12) days since 2003-12-1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Removing field components is done with the following methods:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.remove_axis.html#cfdm.Field.remove_axis" title="cfdm.Field.remove_axis"><code class="xref py py-obj docutils literal"><span class="pre">remove_axis</span></code></a></td>
+<td>Remove and return a unique axis from the field.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.remove_axes.html#cfdm.Field.remove_axes" title="cfdm.Field.remove_axes"><code class="xref py py-obj docutils literal"><span class="pre">remove_axes</span></code></a></td>
+<td>Remove and return axes from the field.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.remove_data.html#cfdm.Field.remove_data" title="cfdm.Field.remove_data"><code class="xref py py-obj docutils literal"><span class="pre">remove_data</span></code></a></td>
+<td>Remove and return the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.remove_item.html#cfdm.Field.remove_item" title="cfdm.Field.remove_item"><code class="xref py py-obj docutils literal"><span class="pre">remove_item</span></code></a></td>
+<td>Remove and return an item from the field.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.remove_items.html#cfdm.Field.remove_items" title="cfdm.Field.remove_items"><code class="xref py py-obj docutils literal"><span class="pre">remove_items</span></code></a></td>
+<td>Remove and return items from the field.</td>
+</tr>
+</tbody>
+</table>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">remove_item</span><span class="p">(</span><span class="s1">&#39;forecast_reference_time&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="examples">
+<span id="field-creation-examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>To improve readability, it is recommended that the construction of a
+field is done by first creating the components separately (data,
+coordinates, properties, <em>etc.</em>), and then combining them to make the
+field (as in <a class="reference internal" href="#fc-example3"><span class="std std-ref">example 3</span></a> and <a class="reference internal" href="#fc-example4"><span class="std std-ref">example 4</span></a>), although this may not be necessary for very simple
+fields (as in <a class="reference internal" href="#fc-example1"><span class="std std-ref">example 1</span></a> and <span class="xref std std-ref">example 2</span>).</p>
+<div class="section" id="example-1">
+<span id="fc-example1"></span><h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h3>
+<p>An empty field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">-------</span>
+<span class="go">Field:</span>
+<span class="go">-------</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2">
+<span id="fc-example2-1"></span><h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this headline">¶</a></h3>
+<p>A field with just CF properties:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;temperature of air&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">----------------------</span>
+<span class="go">Field: air_temperature</span>
+<span class="go">----------------------</span>
+<span class="go">long_name = &#39;temperature of air&#39;</span>
+<span class="go">standard_name = &#39;air_temperature&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2-1">
+<h3>Example 2.1<a class="headerlink" href="#example-2-1" title="Permalink to this headline">¶</a></h3>
+<p>The properties may also be passed in with the <code class="xref py py-obj docutils literal"><span class="pre">properties</span></code> parameter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                           <span class="s1">&#39;long_name&#39;</span>    <span class="p">:</span> <span class="s1">&#39;temperature of air&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">----------------------</span>
+<span class="go">Field: air_temperature</span>
+<span class="go">----------------------</span>
+<span class="go">long_name = &#39;temperature of air&#39;</span>
+<span class="go">standard_name = &#39;air_temperature&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2-2">
+<h3>Example 2.2<a class="headerlink" href="#example-2-2" title="Permalink to this headline">¶</a></h3>
+<p>The properties may also be set with the <a class="reference internal" href="generated/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal"><span class="pre">properties</span></code></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="s1">&#39;long_name&#39;</span>    <span class="p">:</span> <span class="s1">&#39;temperature of air&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">----------------------</span>
+<span class="go">Field: air_temperature</span>
+<span class="go">----------------------</span>
+<span class="go">long_name = &#39;temperature of air&#39;</span>
+<span class="go">standard_name = &#39;air_temperature&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-3">
+<span id="fc-example3"></span><h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this headline">¶</a></h3>
+<p>A field with a simple domain. Note that in this example the data and
+coordinates are generated using <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#range" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">range</span></code></a> and <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.arange</span></code></a>
+simply for the sake of having some numbers to play with. In practice
+it is likely the values would have been read from a file in some
+arbitrary format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">properties</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;eastward_wind&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dim0</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                                <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dim1</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dim1</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;longitude&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">dim0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">dim1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">eastward_wind field summary</span>
+<span class="go">---------------------------</span>
+<span class="go">Data           : eastward_wind(latitude(10), longitude(9)) m s-1</span>
+<span class="go">Axes           : latitude(10) = [0, ..., 9] degrees_north</span>
+<span class="go">               : longitude(9) = [0, ..., 8] degrees_east</span>
+</pre></div>
+</div>
+<p>Adding an auxiliary coordinate to the “latitude” axis and a cell
+method may be done with the relevant methods (note that these
+coordinate values are just for illustration):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aux</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span><span class="s1">&#39;gamma&#39;</span><span class="p">,</span><span class="s1">&#39;delta&#39;</span><span class="p">,</span><span class="s1">&#39;epsilon&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                                               <span class="s1">&#39;zeta&#39;</span><span class="p">,</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span><span class="s1">&#39;theta&#39;</span><span class="p">,</span><span class="s1">&#39;iota&#39;</span><span class="p">,</span><span class="s1">&#39;kappa&#39;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aux</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;extra&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_aux</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dim0&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_cell_methods</span><span class="p">(</span><span class="s1">&#39;latitude: point&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;wind&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">eastward_wind field summary</span>
+<span class="go">---------------------------</span>
+<span class="go">Data           : eastward_wind(latitude(10), longitude(9)) m s-1</span>
+<span class="go">Cell methods   : latitude: point</span>
+<span class="go">Axes           : latitude(10) = [0, ..., 9] degrees_north</span>
+<span class="go">               : longitude(9) = [0, ..., 8] degrees_east</span>
+<span class="go">Aux coords     : long_name:extra(latitude(10)) = [alpha, ..., kappa]</span>
+</pre></div>
+</div>
+<p>Removing the auxiliary coordinate and the cell method that were just
+added is also done with a method and by simple deletion:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">remove_item</span><span class="p">({</span><span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;extra&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">cell_methods</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<span class="go">eastward_wind field summary</span>
+<span class="go">---------------------------</span>
+<span class="go">Data           : eastward_wind(latitude(10), longitude(9)) m s-1</span>
+<span class="go">Axes           : latitude(10) = [0, ..., 9] degrees_north</span>
+<span class="go">               : longitude(9) = [0, ..., 8] degrees_east</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-4">
+<span id="fc-example4"></span><h3>Example 4<a class="headerlink" href="#example-4" title="Permalink to this headline">¶</a></h3>
+<p>A more complicated field is created by the following script. Note that
+in this example the data and coordinates are generated using
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.13)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.arange</span></code></a> simply for the sake of having some numbers to play
+with. In practice it is likely the values would have been read from a
+file in some arbitrary format:</p>
+<div class="highlight-guess"><div class="highlight"><pre><span></span> <span class="kn">import</span> <span class="nn">numpy</span>
+ <span class="kn">import</span> <span class="nn">cfdm</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+ <span class="c1"># 1. CREATE the field&#39;s domain items</span>
+ <span class="c1">#---------------------------------------------------------------------</span>
+ <span class="c1"># Create a grid_latitude dimension coordinate</span>
+ <span class="n">Y</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;grid_latitude&#39;</span><span class="p">},</span>
+                            <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mf">10.</span><span class="p">),</span> <span class="s1">&#39;degrees&#39;</span><span class="p">))</span>
+
+ <span class="c1"># Create a grid_longitude dimension coordinate</span>
+ <span class="n">X</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mf">9.</span><span class="p">),</span> <span class="s1">&#39;degrees&#39;</span><span class="p">))</span>
+ <span class="n">X</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;grid_longitude&#39;</span>
+
+ <span class="c1"># Create a time dimension coordinate (with bounds)</span>
+ <span class="n">bounds</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+                                 <span class="n">cfdm</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)))</span>
+ <span class="n">T</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+                            <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">,</span>
+                                                     <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)),</span>
+                            <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+
+ <span class="c1"># Create a longitude auxiliary coordinate</span>
+ <span class="n">lat</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mi">90</span><span class="p">)</span><span class="o">.</span><span class="kp">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span>
+                                           <span class="s1">&#39;degrees_north&#39;</span><span class="p">))</span>
+ <span class="n">lat</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;latitude&#39;</span>
+
+ <span class="c1"># Create a latitude auxiliary coordinate</span>
+ <span class="n">lon</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span>
+                              <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">91</span><span class="p">)</span><span class="o">.</span><span class="kp">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+                                           <span class="s1">&#39;degrees_east&#39;</span><span class="p">))</span>
+
+ <span class="c1"># Create a rotated_latitude_longitude grid mapping coordinate reference</span>
+ <span class="n">grid_mapping</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CoordinateReference</span><span class="p">(</span><span class="s1">&#39;rotated_latitude_longitude&#39;</span><span class="p">,</span>
+                                       <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+                                           <span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">:</span> <span class="mf">38.0</span><span class="p">,</span>
+                                           <span class="s1">&#39;grid_north_pole_longitude&#39;</span><span class="p">:</span> <span class="mf">190.0</span><span class="p">})</span>
+
+ <span class="c1">#---------------------------------------------------------------------</span>
+ <span class="c1"># 3. Create the field</span>
+ <span class="c1">#---------------------------------------------------------------------</span>
+ <span class="c1"># Create CF properties</span>
+ <span class="n">properties</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;eastward_wind&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;long_name&#39;</span>    <span class="p">:</span> <span class="s1">&#39;East Wind&#39;</span><span class="p">}</span>
+
+ <span class="c1"># Create the field&#39;s data array</span>
+ <span class="n">data</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="kp">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">)</span>
+
+ <span class="c1"># Finally, create the field</span>
+ <span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_cell_methods</span><span class="p">(</span><span class="s1">&#39;latitude: point&#39;</span><span class="p">)</span>
+
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_aux</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_aux</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_ref</span><span class="p">(</span><span class="n">grid_mapping</span><span class="p">)</span>
+
+ <span class="n">f</span><span class="o">.</span><span class="n">insert_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+ <span class="n">print_f</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+ <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+
+ <span class="k">print</span> <span class="n">f</span>
+</pre></div>
+</div>
+<p>Running this script produces the following output:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>The new field:
+
+eastward_wind field summary
+---------------------------
+Data           : eastward_wind(grid_longitude(9), grid_latitude(10)) m s-1
+Cell methods   : latitude: point
+Axes           : time(1) = [2000-01-02T00:00:00Z] noleap
+               : grid_longitude(9) = [0.0, ..., 8.0] degrees
+               : grid_latitude(10) = [0.0, ..., 9.0] degrees
+Aux coords     : latitude(grid_latitude(10), grid_longitude(9)) = [[0, ..., 89]] degrees_north
+               : longitude(grid_longitude(9), grid_latitude(10)) = [[1, ..., 90]] degrees_east
+Coord refs     : rotated_latitude_longitude
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-5">
+<span id="fc-example5"></span><h3>Example 5<a class="headerlink" href="#example-5" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference internal" href="#fc-example4"><span class="std std-ref">Example 4</span></a> would be slightly more complicated if
+the <code class="docutils literal"><span class="pre">grid_longitude</span></code> and <code class="docutils literal"><span class="pre">grid_latitude</span></code> axes were to have the
+same size. In this case the field needs be told which axes, and in
+which order, are spanned by the two dimensional auxiliary coordinates
+(<code class="docutils literal"><span class="pre">latitude</span></code> and <code class="docutils literal"><span class="pre">longitude</span></code>) and the field needs to know which
+axes span the data array:</p>
+<div class="highlight-guess"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">cfdm</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+<span class="c1"># 1. CREATE the field&#39;s domain items</span>
+<span class="c1">#---------------------------------------------------------------------</span>
+<span class="c1"># Create a grid_latitude dimension coordinate</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;grid_latitude&#39;</span><span class="p">},</span>
+                           <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mf">10.</span><span class="p">),</span> <span class="s1">&#39;degrees&#39;</span><span class="p">))</span>
+
+<span class="c1"># Create a grid_longitude dimension coordinate</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mf">10.</span><span class="p">),</span> <span class="s1">&#39;degrees&#39;</span><span class="p">))</span>
+<span class="n">X</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;grid_longitude&#39;</span>
+
+<span class="c1"># Create a time dimension coordinate (with bounds)</span>
+<span class="n">bounds</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+                                <span class="n">cfdm</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)))</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">),</span>
+                           <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">,</span>
+                                                    <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)),</span>
+                           <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">)</span>
+
+<span class="c1"># Create a longitude auxiliary coordinate</span>
+<span class="n">lat</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="kp">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+                                          <span class="s1">&#39;degrees_north&#39;</span><span class="p">))</span>
+<span class="n">lat</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;latitude&#39;</span>
+
+<span class="c1"># Create a latitude auxiliary coordinate</span>
+<span class="n">lon</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">),</span>
+                             <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span><span class="o">.</span><span class="kp">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+                                          <span class="s1">&#39;degrees_east&#39;</span><span class="p">))</span>
+
+<span class="c1"># Create a rotated_latitude_longitude grid mapping coordinate reference</span>
+<span class="n">grid_mapping</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CoordinateReference</span><span class="p">(</span><span class="s1">&#39;rotated_latitude_longitude&#39;</span><span class="p">,</span>
+                                      <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+                                          <span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">:</span> <span class="mf">38.0</span><span class="p">,</span>
+                                          <span class="s1">&#39;grid_north_pole_longitude&#39;</span><span class="p">:</span> <span class="mf">190.0</span><span class="p">})</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+<span class="c1"># 3. Create the field</span>
+<span class="c1">#---------------------------------------------------------------------</span>
+<span class="c1"># Create CF properties</span>
+<span class="n">properties</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;eastward_wind&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;long_name&#39;</span>    <span class="p">:</span> <span class="s1">&#39;Eastward Wind&#39;</span><span class="p">}</span>
+
+<span class="c1"># Create the field&#39;s data array</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="kp">arange</span><span class="p">(</span><span class="mf">100.</span><span class="p">)</span><span class="o">.</span><span class="kp">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;m s-1&#39;</span><span class="p">)</span>
+
+<span class="c1"># Finally, create the field</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">insert_cell_methods</span><span class="p">(</span><span class="s1">&#39;latitude: point&#39;</span><span class="p">)</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">insert_dim</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">insert_aux</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">])</span>
+<span class="n">f</span><span class="o">.</span><span class="n">insert_aux</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">])</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">insert_ref</span><span class="p">(</span><span class="n">grid_mapping</span><span class="p">)</span>
+
+<span class="n">f</span><span class="o">.</span><span class="n">insert_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">])</span>
+
+<span class="k">print</span> <span class="n">f</span>
+</pre></div>
+</div>
+<p>Running this script produces the following output:</p>
+<div class="highlight-none"><div class="highlight"><pre><span></span>eastward_wind field summary
+---------------------------
+Data           : eastward_wind(grid_latitude(10), grid_longitude(10)) m s-1
+Cell methods   : latitude: point
+Axes           : time(1) = [2000-01-02T00:00:00Z] noleap
+               : grid_latitude(10) = [0.0, ..., 9.0] degrees
+               : grid_longitude(10) = [0.0, ..., 9.0] degrees
+Aux coords     : latitude(grid_latitude(10), grid_longitude(10)) = [[0, ..., 99]] degrees_north
+               : longitude(grid_longitude(10), grid_latitude(10)) = [[1, ..., 100]] degrees_east
+Coord refs     : rotated_latitude_longitude
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Creating <code class="docutils literal"><span class="pre">cfdm.Field</span></code> objects</a><ul>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#example-1">Example 1</a></li>
+<li><a class="reference internal" href="#example-2">Example 2</a></li>
+<li><a class="reference internal" href="#example-2-1">Example 2.1</a></li>
+<li><a class="reference internal" href="#example-2-2">Example 2.2</a></li>
+<li><a class="reference internal" href="#example-3">Example 3</a></li>
+<li><a class="reference internal" href="#example-4">Example 4</a></li>
+<li><a class="reference internal" href="#example-5">Example 5</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="field.html"
+                        title="previous chapter">Introduction to the <code class="docutils literal"><span class="pre">cfdm.Field</span></code> object</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="field_manipulation.html"
+                        title="next chapter">Manipulating <code class="docutils literal"><span class="pre">cf.Field</span></code> objects</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/field_creation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="field_manipulation.html" title="Manipulating cf.Field objects"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="field.html" title="Introduction to the cfdm.Field object"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../1.0/index.html">1.0
+
+      <option value="../0.9.9/index.html">0.9.9
+
+      <option value="../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference manual</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

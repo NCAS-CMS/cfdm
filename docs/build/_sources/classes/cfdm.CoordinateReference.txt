@@ -1,0 +1,58 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+cfdm.CoordinateReference
+======================
+
+.. autoclass:: cfdm.CoordinateReference
+   :no-members:
+   :no-inherited-members:
+
+Attributes
+----------
+ 
+.. autosummary::
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cfdm.CoordinateReference.T
+   ~cfdm.CoordinateReference.X
+   ~cfdm.CoordinateReference.Y
+   ~cfdm.CoordinateReference.Z
+   ~cfdm.CoordinateReference.hasbounds
+   
+Methods
+-------
+ 
+.. autosummary::
+   :toctree: ../generated/
+   :template: method.rst
+   
+   ~cfdm.CoordinateReference.canonical_units
+   ~cfdm.CoordinateReference.change_coord_identities
+   ~cfdm.CoordinateReference.clear
+   ~cfdm.CoordinateReference.close
+   ~cfdm.CoordinateReference.copy
+   ~cfdm.CoordinateReference.default_value
+   ~cfdm.CoordinateReference.dump
+   ~cfdm.CoordinateReference.equals
+   ~cfdm.CoordinateReference.equivalent
+   ~cfdm.CoordinateReference.get
+   ~cfdm.CoordinateReference.has_key
+   ~cfdm.CoordinateReference.identity
+   ~cfdm.CoordinateReference.inspect
+   ~cfdm.CoordinateReference.items
+   ~cfdm.CoordinateReference.iteritems
+   ~cfdm.CoordinateReference.iterkeys
+   ~cfdm.CoordinateReference.itervalues
+   ~cfdm.CoordinateReference.keys
+   ~cfdm.CoordinateReference.match
+   ~cfdm.CoordinateReference.pop
+   ~cfdm.CoordinateReference.popitem
+   ~cfdm.CoordinateReference.remove_all_coords
+   ~cfdm.CoordinateReference.set
+   ~cfdm.CoordinateReference.setcoord
+   ~cfdm.CoordinateReference.setdefault
+   ~cfdm.CoordinateReference.structural_signature
+   ~cfdm.CoordinateReference.update
+   ~cfdm.CoordinateReference.values

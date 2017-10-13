@@ -1,0 +1,16 @@
+cfdm\.FieldList
+===============
+
+.. currentmodule:: cfdm
+
+.. autoclass:: FieldList
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

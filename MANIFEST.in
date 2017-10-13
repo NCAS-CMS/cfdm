@@ -1,0 +1,22 @@
+include MANIFEST.in		
+include Changelog.md
+include README.md
+recursive-include cf *
+recursive-include test *
+recursive-include docs/_build *
+recursive-include docs/_sources *
+recursive-include docs/_static *
+recursive-include docs/_templates *
+recursive-include docs/_themes *
+recursive-include docs/build *
+recursive-include docs/source *
+prune docs/build/.doctrees
+recursive-exclude docs/build *.doctree
+recursive-exclude docs/source/generated *.rst
+recursive-exclude docs/source/classes/generated *.rst
+recursive-include scripts/man1 *
+recursive-exclude * *~ *.gz *.pyc
+recursive-exclude * *.o *.so .nfs*
+recursive-exclude test *.nc
+recursive-exclude cf *.a
+recursive-include test test_file[23].nc file[1-9].nc DSG*nc

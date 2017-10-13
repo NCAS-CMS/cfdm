@@ -1,0 +1,16 @@
+cfdm\.FieldAncillary
+====================
+
+.. currentmodule:: cfdm
+
+.. autoclass:: FieldAncillary
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,16 @@
+cfdm\.Datetime
+==============
+
+.. currentmodule:: cfdm
+
+.. autoclass:: Datetime
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

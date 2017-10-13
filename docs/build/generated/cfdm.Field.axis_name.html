@@ -1,0 +1,276 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cfdm.Field.axis_name &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.Field.axis_size" href="cfdm.Field.axis_size.html" />
+    <link rel="prev" title="cfdm.Field.axis" href="cfdm.Field.axis.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cfdm.Field.axis_size.html" title="cfdm.Field.axis_size"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cfdm.Field.axis.html" title="cfdm.Field.axis"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../reference.html" >Reference manual</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../class.html" >Classes of the <code class="docutils literal"><span class="pre">cfdm</span></code> module</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../classes/cfdm.Field.html" accesskey="U">cfdm.Field</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-field-axis-name">
+<h1>cfdm.Field.axis_name<a class="headerlink" href="#cfdm-field-axis-name" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cfdm.Field.axis_name">
+<code class="descclassname">Field.</code><code class="descname">axis_name</code><span class="sig-paren">(</span><em>axes=None</em>, <em>default=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Field.axis_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the canonical name for an axis.</p>
+<p>Axes are selected with the criteria specified by the keyword
+parameters. If no keyword parameters are specified then all axes are
+selected.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">axis</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">axis_size</span></code>, <code class="xref py py-obj docutils literal"><span class="pre">item</span></code></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes, kwargs: optional</dt>
+<dd><p class="first">Select axes. The <em>axes</em> parameter may be one, or a sequence,
+of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2.7/library/constants.html#None" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">None</span></code></a>. If no <em>kwargs</em> arguments have been set
+then all axes are selected. This is the default.</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">An integer. Explicitly selects the axis corresponding to
+the given position in the list of axes of the field’s data
+array.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To select the third data array axis: <code class="docutils literal"><span class="pre">axes=2</span></code>. To
+select the last axis: <code class="docutils literal"><span class="pre">axes=-1</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#slice" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">slice</span></code></a> object. Explicitly selects the axes
+corresponding to the given positions in the list of axes
+of the field’s data array.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em> </dt>
+<dd><p class="first last">To select the last three data array axes:
+<code class="docutils literal"><span class="pre">axes=slice(-3,</span> <span class="pre">None)</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">A domain axis identifier. Explicitly selects this axis.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To select axis “dim1”: <code class="docutils literal"><span class="pre">axes='dim1'</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><ul>
+<li><p class="first">Any value accepted by the <em>description</em> parameter of the field’s
+<code class="xref py py-obj docutils literal"><span class="pre">items</span></code> method. Used in conjunction with the <em>kwargs</em>
+parameters to select the axes which span the items that
+would be identified by this call of the field’s <code class="xref py py-obj docutils literal"><span class="pre">items</span></code>
+method: <code class="docutils literal"><span class="pre">f.items(items=axes,</span> <span class="pre">axes=None,</span> <span class="pre">**kwargs)</span></code>. See
+<code class="xref py py-obj docutils literal"><span class="pre">cf.Field.items</span></code> for details.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last">To select the axes spanned by one dimensionsal time
+coordinates: <code class="docutils literal"><span class="pre">f.axis_name('T',</span> <span class="pre">ndim=1)</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p class="last">If <em>axes</em> is a sequence of any combination of the above then
+the selected axes are the union of those selected by each
+element of the sequence. If the sequence is empty then no axes
+are selected.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#str" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">str</span></code></a></dt>
+<dd><p class="first last">The canonical name for the axis.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axis_name</span><span class="p">(</span><span class="s1">&#39;dim0&#39;</span><span class="p">)</span>
+<span class="go">&#39;time&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axis_name</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="go">&#39;dim1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axis_name</span><span class="p">(</span><span class="s1">&#39;long_name%latitude&#39;</span><span class="p">)</span>
+<span class="go">&#39;ncdim%lat&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cfdm.Field.axis.html"
+                        title="previous chapter">cfdm.Field.axis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cfdm.Field.axis_size.html"
+                        title="next chapter">cfdm.Field.axis_size</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/generated/cfdm.Field.axis_name.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cfdm.Field.axis_size.html" title="cfdm.Field.axis_size"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cfdm.Field.axis.html" title="cfdm.Field.axis"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../reference.html" >Reference manual</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../class.html" >Classes of the <code class="docutils literal"><span class="pre">cfdm</span></code> module</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../classes/cfdm.Field.html" >cfdm.Field</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

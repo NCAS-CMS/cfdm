@@ -1,0 +1,153 @@
+cfdm.BoundedVariable
+==================
+
+.. currentmodule:: cfdm
+
+.. autoclass:: BoundedVariable
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BoundedVariable.HDF_chunks
+      ~BoundedVariable.__init__
+      ~BoundedVariable.all
+      ~BoundedVariable.allclose
+      ~BoundedVariable.any
+      ~BoundedVariable.append
+      ~BoundedVariable.asdatetime
+      ~BoundedVariable.asreftime
+      ~BoundedVariable.attributes
+      ~BoundedVariable.ceil
+      ~BoundedVariable.chunk
+      ~BoundedVariable.clip
+      ~BoundedVariable.close
+      ~BoundedVariable.concatenate
+      ~BoundedVariable.contiguous
+      ~BoundedVariable.convert_reference_time
+      ~BoundedVariable.copy
+      ~BoundedVariable.cos
+      ~BoundedVariable.count
+      ~BoundedVariable.cyclic
+      ~BoundedVariable.datum
+      ~BoundedVariable.delprop
+      ~BoundedVariable.direction
+      ~BoundedVariable.dump
+      ~BoundedVariable.equals
+      ~BoundedVariable.equivalent
+      ~BoundedVariable.exp
+      ~BoundedVariable.expand_dims
+      ~BoundedVariable.extend
+      ~BoundedVariable.files
+      ~BoundedVariable.fill_value
+      ~BoundedVariable.flip
+      ~BoundedVariable.floor
+      ~BoundedVariable.getprop
+      ~BoundedVariable.hasprop
+      ~BoundedVariable.identity
+      ~BoundedVariable.index
+      ~BoundedVariable.insert
+      ~BoundedVariable.insert_bounds
+      ~BoundedVariable.insert_data
+      ~BoundedVariable.inspect
+      ~BoundedVariable.log
+      ~BoundedVariable.mask_invalid
+      ~BoundedVariable.match
+      ~BoundedVariable.max
+      ~BoundedVariable.mean
+      ~BoundedVariable.mid_range
+      ~BoundedVariable.min
+      ~BoundedVariable.name
+      ~BoundedVariable.override_calendar
+      ~BoundedVariable.override_units
+      ~BoundedVariable.pop
+      ~BoundedVariable.properties
+      ~BoundedVariable.range
+      ~BoundedVariable.remove
+      ~BoundedVariable.remove_data
+      ~BoundedVariable.rint
+      ~BoundedVariable.roll
+      ~BoundedVariable.round
+      ~BoundedVariable.sample_size
+      ~BoundedVariable.sd
+      ~BoundedVariable.select
+      ~BoundedVariable.setprop
+      ~BoundedVariable.sin
+      ~BoundedVariable.squeeze
+      ~BoundedVariable.sum
+      ~BoundedVariable.tan
+      ~BoundedVariable.transpose
+      ~BoundedVariable.trunc
+      ~BoundedVariable.unique
+      ~BoundedVariable.var
+      ~BoundedVariable.where
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BoundedVariable.Data
+      ~BoundedVariable.T
+      ~BoundedVariable.Units
+      ~BoundedVariable.X
+      ~BoundedVariable.Y
+      ~BoundedVariable.Z
+      ~BoundedVariable.add_offset
+      ~BoundedVariable.array
+      ~BoundedVariable.binary_mask
+      ~BoundedVariable.bounds
+      ~BoundedVariable.calendar
+      ~BoundedVariable.cellsize
+      ~BoundedVariable.comment
+      ~BoundedVariable.data
+      ~BoundedVariable.day
+      ~BoundedVariable.dtarray
+      ~BoundedVariable.dtvarray
+      ~BoundedVariable.dtype
+      ~BoundedVariable.hardmask
+      ~BoundedVariable.hasbounds
+      ~BoundedVariable.hasdata
+      ~BoundedVariable.history
+      ~BoundedVariable.hour
+      ~BoundedVariable.isauxiliary
+      ~BoundedVariable.isdimension
+      ~BoundedVariable.isdomainancillary
+      ~BoundedVariable.isfieldancillary
+      ~BoundedVariable.ismeasure
+      ~BoundedVariable.isperiodic
+      ~BoundedVariable.isscalar
+      ~BoundedVariable.leap_month
+      ~BoundedVariable.leap_year
+      ~BoundedVariable.long_name
+      ~BoundedVariable.lower_bounds
+      ~BoundedVariable.mask
+      ~BoundedVariable.minute
+      ~BoundedVariable.missing_value
+      ~BoundedVariable.month
+      ~BoundedVariable.month_lengths
+      ~BoundedVariable.ndim
+      ~BoundedVariable.reference_datetime
+      ~BoundedVariable.scale_factor
+      ~BoundedVariable.second
+      ~BoundedVariable.shape
+      ~BoundedVariable.size
+      ~BoundedVariable.standard_name
+      ~BoundedVariable.subspace
+      ~BoundedVariable.units
+      ~BoundedVariable.unsafe_array
+      ~BoundedVariable.upper_bounds
+      ~BoundedVariable.valid_max
+      ~BoundedVariable.valid_min
+      ~BoundedVariable.valid_range
+      ~BoundedVariable.varray
+      ~BoundedVariable.year
+   
+   

@@ -1,0 +1,16 @@
+cfdm\.Variable
+==============
+
+.. currentmodule:: cfdm
+
+.. autoclass:: Variable
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,1193 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cfdm.Units &#8212; Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.Coordinate" href="cfdm.Coordinate.html" />
+    <link rel="prev" title="cfdm.Flags" href="cfdm.Flags.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cfdm.Coordinate.html" title="cfdm.Coordinate"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cfdm.Flags.html" title="cfdm.Flags"
+             accesskey="P">previous</a> |</li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../reference.html" >Reference manual</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../class.html" accesskey="U">Classes of the <code class="docutils literal"><span class="pre">cfdm</span></code> module</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-units">
+<h1>cfdm.Units<a class="headerlink" href="#cfdm-units" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cfdm.Units">
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Units</code><span class="sig-paren">(</span><em>units=None</em>, <em>calendar=None</em>, <em>formatted=False</em>, <em>names=False</em>, <em>definition=False</em>, <em>_ut_unit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2.7/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>Store, combine and compare physical units and convert numeric values
+to different units.</p>
+<p>Units are as defined in UNIDATA’s Udunits-2 package, with a few
+exceptions for greater consistency with the CF conventions namely
+support for CF calendars and new units definitions.</p>
+<p><strong>Modifications to the standard Udunits database</strong></p>
+<p>Whilst a standard Udunits-2 database may be used, greater consistency
+with CF is achieved by using a modified database. The following units
+are either new to, modified from, or removed from the standard
+Udunits-2 database (version 2.1.24):</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="11%" />
+<col width="22%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unit name</th>
+<th class="head">Symbol</th>
+<th class="head">Definition</th>
+<th class="head">Status</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>practical_salinity_unit</td>
+<td>psu</td>
+<td>1e-3</td>
+<td>New unit</td>
+</tr>
+<tr class="row-odd"><td>level</td>
+<td>&#160;</td>
+<td>1</td>
+<td>New unit</td>
+</tr>
+<tr class="row-even"><td>sigma_level</td>
+<td>&#160;</td>
+<td>1</td>
+<td>New unit</td>
+</tr>
+<tr class="row-odd"><td>layer</td>
+<td>&#160;</td>
+<td>1</td>
+<td>New unit</td>
+</tr>
+<tr class="row-even"><td>decibel</td>
+<td>dB</td>
+<td>1</td>
+<td>New unit</td>
+</tr>
+<tr class="row-odd"><td>bel</td>
+<td>&#160;</td>
+<td>10 dB</td>
+<td>New unit</td>
+</tr>
+<tr class="row-even"><td>sverdrup</td>
+<td>Sv</td>
+<td>1e6 m3 s-1</td>
+<td>Added symbol</td>
+</tr>
+<tr class="row-odd"><td>sievert</td>
+<td>&#160;</td>
+<td>J kg-1</td>
+<td>Removed symbol</td>
+</tr>
+</tbody>
+</table>
+<p>Plural forms of the new units’ names are allowed, such as
+<code class="docutils literal"><span class="pre">practical_salinity_units</span></code>.</p>
+<p>The modified database is in the <em>udunits</em> subdirectory of the <em>etc</em>
+directory found in the same location as this module.</p>
+<p><strong>Accessing units</strong></p>
+<p>Units may be set, retrieved and deleted via the <cite>units</cite> attribute. Its
+value is a string that can be recognized by UNIDATA’s Udunits-2
+package, with the few exceptions given in the CF conventions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m s-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span>
+<span class="go">&lt;Cf Units: &#39;m s-1&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;days since 2004-3-1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span>
+<span class="go">&lt;CF Units: days since 2004-3-1&gt;</span>
+</pre></div>
+</div>
+<p><strong>Equality and equivalence of units</strong></p>
+<p>There are methods for assessing whether two units are equivalent or
+equal. Two units are equivalent if numeric values in one unit are
+convertible to numeric values in the other unit (such as
+<code class="docutils literal"><span class="pre">kilometres</span></code> and <code class="docutils literal"><span class="pre">metres</span></code>). Two units are equal if they are
+equivalent and their conversion is a scale factor of 1 and an offset
+of 0 (such as <code class="docutils literal"><span class="pre">kilometres</span></code> and <code class="docutils literal"><span class="pre">1000</span> <span class="pre">metres</span></code>). Note that
+equivalence and equality are based on internally stored binary
+representations of the units, rather than their string
+representations.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m/s&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m s-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;km.s-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;0.001 kilometer.second-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;gram&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>  <span class="n">u</span> <span class="o">==</span> <span class="n">v</span>
+<span class="go">(True, True, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">(True, False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">(True, True)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go">(False, False)</span>
+</pre></div>
+</div>
+<p><strong>Time and reference time units</strong></p>
+<p>Time units may be given as durations of time (<em>time units</em>) or as an
+amount of time since a reference time (<em>reference time units</em>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Units</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;day&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;days since 1970-01-01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;seconds since 1992-10-8 15:15:42.5 -6:00&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is recommended that the units <code class="docutils literal"><span class="pre">year</span></code> and <code class="docutils literal"><span class="pre">month</span></code> be used
+with caution, as explained in the following excerpt from the CF
+conventions: “The Udunits package defines a year to be exactly
+365.242198781 days (the interval between 2 successive passages of
+the sun through vernal equinox). It is not a calendar year. Udunits
+includes the following definitions for years: a common_year is 365
+days, a leap_year is 366 days, a Julian_year is 365.25 days, and a
+Gregorian_year is 365.2425 days. For similar reasons the unit
+<code class="docutils literal"><span class="pre">month</span></code>, which is defined to be exactly year/12, should also be
+used with caution.”</p>
+</div>
+<p><strong>Calendar</strong></p>
+<p>The date given in reference time units is associated with one of the
+calendars recognized by the CF conventions and may be set with the
+<cite>calendar</cite> attribute. However, as in the CF conventions, if the
+calendar is not set then, for the purposes of calculation and
+comparison, it defaults to the mixed Gregorian/Julian calendar as
+defined by Udunits:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">calendar</span>
+<span class="go">AttributeError: Can&#39;t get &#39;Units&#39; attribute &#39;calendar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">calendar</span> <span class="o">=</span> <span class="s1">&#39;gregorian&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p><strong>Arithmetic with units</strong></p>
+<p>The following operators, operations and assignments are overloaded:</p>
+<p>Comparison operators:</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">==,</span> <span class="pre">!=</span></code></div></blockquote>
+<p>Binary arithmetic operations:</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">+,</span> <span class="pre">-,</span> <span class="pre">*,</span> <span class="pre">/,</span> <span class="pre">pow(),</span> <span class="pre">**</span></code></div></blockquote>
+<p>Unary arithmetic operations:</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">-,</span> <span class="pre">+</span></code></div></blockquote>
+<p>Augmented arithmetic assignments:</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">+=,</span> <span class="pre">-=,</span> <span class="pre">*=,</span> <span class="pre">/=,</span> <span class="pre">**=</span></code></div></blockquote>
+<p>The comparison operations return a boolean and all other operations
+return a new units object or modify the units object in place.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="go">&lt;CF Units: m&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">u</span> <span class="o">*</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span>
+<span class="go">&lt;CF Units: 1000 m&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">==</span> <span class="n">v</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">!=</span> <span class="n">v</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">**=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span>
+<span class="go">&lt;CF Units: m2&gt;</span>
+</pre></div>
+</div>
+<p>It is also possible to create the logarithm of a unit corresponding to
+the given logarithmic base:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;seconds&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">&lt;CF Units: lg(re 1 s)&gt;</span>
+</pre></div>
+</div>
+<p><strong>Modifying data for equivalent units</strong></p>
+<p>Any numpy array or python numeric type may be modified for equivalent
+units using the <cite>conform</cite> static method.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="o">.</span><span class="n">conform</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;km&#39;</span><span class="p">),</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">))</span>
+<span class="go">2000.0</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="o">.</span><span class="n">conform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;minute&#39;</span><span class="p">),</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">))</span>
+<span class="go">array([   0.,   60.,  120.,  180.,  240.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([ 0.,  1.,  2.,  3.,  4.])</span>
+</pre></div>
+</div>
+<p>If the <em>copy</em> parameter is False, then a numpy array is modified in
+place, without any copying overheads:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="o">.</span><span class="n">conform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span>
+<span class="go">                  Units(&#39;days since 2000-12-1&#39;),</span>
+<span class="go">                  Units(&#39;days since 2001-1-1&#39;), copy=False)</span>
+<span class="go">array([-31., -30., -29., -28., -27.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([-31., -30., -29., -28., -27.])</span>
+</pre></div>
+</div>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>units: <cite>str</cite> or <cite>cf.Units</cite>, optional</dt>
+<dd><p class="first last">Set the new units from this string.</p>
+</dd>
+<dt>calendar: <cite>str</cite>, optional</dt>
+<dd><p class="first last">Set the calendar for reference time units.</p>
+</dd>
+<dt>formatted: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">Format the string representation of the units in a
+standardized manner. See the <cite>formatted</cite> method.</p>
+</dd>
+<dt>names: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">Format the string representation of the units using names
+instead of symbols. See the <cite>format</cite> method.</p>
+</dd>
+<dt>definition: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">Format the string representation of the units using basic
+units. See the <cite>format</cite> method.</p>
+</dd>
+<dt>_ut_unit: <cite>int</cite>, optional</dt>
+<dd><p class="first last">Set the new units from this Udunits binary unit
+representation. This should be an integer returned by a call
+to <cite>ut_parse</cite> function of Udunits. Ignored if <cite>units</cite> is set.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cfdm.Units.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>units=None</em>, <em>calendar=None</em>, <em>formatted=False</em>, <em>names=False</em>, <em>definition=False</em>, <em>_ut_unit=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>units: <cite>str</cite> or <cite>cf.Units</cite>, optional</dt>
+<dd><p class="first last">Set the new units from this string.</p>
+</dd>
+<dt>calendar: <cite>str</cite>, optional</dt>
+<dd><p class="first last">Set the calendar for reference time units.</p>
+</dd>
+<dt>formatted: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">Format the string representation of the units in a
+standardized manner. See the <cite>formatted</cite> method.</p>
+</dd>
+<dt>names: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">Format the string representation of the units using names
+instead of symbols. See the <cite>format</cite> method.</p>
+</dd>
+<dt>definition: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">Format the string representation of the units using basic
+units. See the <cite>format</cite> method.</p>
+</dd>
+<dt>_ut_unit: <cite>int</cite>, optional</dt>
+<dd><p class="first last">Set the new units from this Udunits binary unit
+representation. This should be an integer returned by a call
+to <cite>ut_parse</cite> function of Udunits. Ignored if <cite>units</cite> is set.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="cfdm.Units.conform">
+<em class="property">static </em><code class="descname">conform</code><span class="sig-paren">(</span><em>x</em>, <em>from_units</em>, <em>to_units</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.conform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conform values in one unit to equivalent values in another, compatible
+unit. Returns the conformed values.</p>
+<p>The values may either be a numpy array or a python numeric type. The
+returned value is of the same type, except that input integers are
+converted to floats (see the <em>copy</em> parameter).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">conform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;kilometres&#39;</span><span class="p">),</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;metres&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">x: <cite>numpy.ndarray</cite> or python numeric</p>
+<dl class="docutils">
+<dt>from_units: <cite>Units</cite></dt>
+<dd><p class="first last">The original units of <cite>x</cite></p>
+</dd>
+<dt>to_units: <cite>Units</cite></dt>
+<dd><p class="first last">The units to which <cite>x</cite> should be conformed to.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False and <cite>x</cite> is a numpy array then change it in place,
+creating no temporary copies, with one exception: If <cite>x</cite> is of
+integer type and the conversion is not null, then it will not
+be changed inplace and the returned conformed array will be of
+float type.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <cite>numpy.ndarray</cite> or python numeric</dt>
+<dd><p class="first last">The modified numeric values.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="o">.</span><span class="n">conform</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;km&#39;</span><span class="p">),</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">))</span>
+<span class="go">2000.0</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">5.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="o">.</span><span class="n">conform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;minute&#39;</span><span class="p">),</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">))</span>
+<span class="go">array([   0.,   60.,  120.,  180.,  240.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([ 0.,  1.,  2.,  3.,  4.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="o">.</span><span class="n">conform</span><span class="p">(</span><span class="n">a</span><span class="p">,</span>
+<span class="go">                  Units(&#39;days since 2000-12-1&#39;),</span>
+<span class="go">                  Units(&#39;days since 2001-1-1&#39;), inplace=True)</span>
+<span class="go">array([-31., -30., -29., -28., -27.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([-31., -30., -29., -28., -27.])</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not change the calendar of reference time units in the current
+version. Whilst this is possible, it will almost certainly result
+in an incorrect interpretation of the data or an error. Allowing
+the calendar to be changed is under development and will be
+available soon.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Units.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deep copy.</p>
+<p>Equivalent to <code class="docutils literal"><span class="pre">copy.deepcopy(u)</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out :</dt>
+<dd><p class="first last">The deep copy.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Units.dump">
+<code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>prefix=None</em>, <em>omit=()</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a string containing a description of the units.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>display <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
+<dd><p class="first last">If False then return the description as a string. By default
+the description is printed, i.e. <code class="docutils literal"><span class="pre">u.dump()</span></code> is equivalent to
+<code class="docutils literal"><span class="pre">print</span> <span class="pre">u.dump(display=False)</span></code>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">None or str</span></dt>
+<dd><p class="first last">A string containing the description.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Units.equals">
+<code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if and only if numeric values in one unit are convertible
+to numeric values in the other unit and their conversion is a scale
+factor of 1.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>~cf.Units.equivalent</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>other <span class="classifier-delimiter">:</span> <span class="classifier">Units</span></dt>
+<dd><p class="first last">The other units.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">True if the units are equal, False otherwise.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;km&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;1000m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;100000m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m s-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">m</span><span class="o">/</span><span class="n">s</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">m</span><span class="o">/</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Undefined units are considered equal:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Units</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Units.equivalent">
+<code class="descname">equivalent</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if numeric values in one unit are convertible to numeric
+values in the other unit.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>~cf.Units.equals</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>other <span class="classifier-delimiter">:</span> <span class="classifier">Units</span></dt>
+<dd><p class="first last">The other units.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
+<dd><p class="first last">True if the units are equivalent, False otherwise.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;km&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;366_day&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;seconds since 1978-3-12&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;gregorian)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">equivalent</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Units.formatted">
+<code class="descname">formatted</code><span class="sig-paren">(</span><em>names=None</em>, <em>definition=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.formatted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the string stored in the <cite>units</cite> attribute in a standardized
+manner. The <cite>units</cite> attribute is modified in place and its new value
+is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>names: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">Use unit names instead of symbols.</p>
+</dd>
+<dt>definition: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">The formatted string is given in terms of basic units instead
+of stopping any expansion at the highest level possible.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out: <cite>str</cite> or <cite>None</cite></dt>
+<dd><p class="first last">The formatted string. If the units have not yet been set, then
+<cite>None</cite> is returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;W&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;watt&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">definition</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;m2.kg.s-3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">definition</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&#39;meter^2-kilogram-second^-3&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">format</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;W&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span><span class="o">=</span><span class="s1">&#39;dram&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">&#39;1.848345703125e-06 meter^3&#39;</span>
+</pre></div>
+</div>
+<p>Formatting is also available during object initialization:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m/s&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;m.s-1&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;dram&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;1.848345703125e-06 m3&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;Watt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;Watt&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;Watt&#39;</span><span class="p">,</span> <span class="n">formatted</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;W&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;Watt&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;watt&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;Watt&#39;</span><span class="p">,</span> <span class="n">definition</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;m2.kg.s-3&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;Watt&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">definition</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;meter^2-kilogram-second^-3&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Units.inspect">
+<code class="descname">inspect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.inspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inspect the object for debugging.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>cf.inspect</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Units.log">
+<code class="descname">log</code><span class="sig-paren">(</span><em>base</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Units.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the logarithmic unit corresponding to the given logarithmic
+base.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>base <span class="classifier-delimiter">:</span> <span class="classifier">int or float</span></dt>
+<dd><p class="first last">The logarithmic base.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
+<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">Units</span></dt>
+<dd><p class="first last">The logarithmic unit corresponding to the given logarithmic
+base.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span>
+<span class="go">&lt;CF Units: watt&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">&lt;CF Units: lg(re 1 W)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">&lt;CF Units: lb(re 1 W)&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">math</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">e</span><span class="p">)</span>
+<span class="go">&lt;CF Units: ln(re 1 W)&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">3.5</span><span class="p">)</span>
+<span class="go">&lt;CF Units: 0.798235600147928 ln(re 1 W)&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.calendar">
+<code class="descname">calendar</code><a class="headerlink" href="#cfdm.Units.calendar" title="Permalink to this definition">¶</a></dt>
+<dd><p>The calendar for reference time units.</p>
+<p>May be any string allowed by the calendar CF property.</p>
+<p>If it is unset then the default CF calendar is assumed when required.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>units</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;365_day&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">calendar</span>
+<span class="go">&#39;365_day&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2001-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">calendar</span>
+<span class="go">&#39;noleap&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2001-1-1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">calendar</span>
+<span class="go">AttributeError: Units has no attribute &#39;calendar&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.iscalendartime">
+<code class="descname">iscalendartime</code><a class="headerlink" href="#cfdm.Units.iscalendartime" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the units are calendar time units, False otherwise.</p>
+<p>Note that regular time units (such as <code class="docutils literal"><span class="pre">'days'</span></code>) are not calendar
+time units.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>isdimensionless</cite>, <cite>islongitude</cite>, <cite>islatitude</cite>,
+<cite>ispressure</cite>, <cite>isreftime</cite>, <cite>istime</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iscalendartime</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iscalendartime</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iscalendartime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;km s-1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">iscalendartime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">()</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.isdimensionless">
+<code class="descname">isdimensionless</code><a class="headerlink" href="#cfdm.Units.isdimensionless" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the units are dimensionless, false otherwise.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>islongitude</cite>, <cite>islatitude</cite>, <cite>ispressure</cite>, <cite>isreftime</cite>,
+<cite>istime</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;100&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m/m&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m km-1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">()</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;m/s&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isdimensionless</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.islatitude">
+<code class="descname">islatitude</code><a class="headerlink" href="#cfdm.Units.islatitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if and only if the units are latitude units.</p>
+<p>This is the case if and only if the <cite>units</cite> attribute is one of
+<code class="docutils literal"><span class="pre">'degrees_north'</span></code>, <code class="docutils literal"><span class="pre">'degree_north'</span></code>, <code class="docutils literal"><span class="pre">'degree_N'</span></code>,
+<code class="docutils literal"><span class="pre">'degrees_N'</span></code>, <code class="docutils literal"><span class="pre">'degreeN'</span></code>, and <code class="docutils literal"><span class="pre">'degreesN'</span></code>.</p>
+<p>Note that units of <code class="docutils literal"><span class="pre">'degrees'</span></code> are not latitude units.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>isdimensionless</cite>, <cite>islongitude</cite>, <cite>ispressure</cite>,
+<cite>isreftime</cite>, <cite>istime</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;degrees_north&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islatitude</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;degrees&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islatitude</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;degrees_east&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islatitude</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islatitude</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">()</span><span class="o">.</span><span class="n">islatitude</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.islongitude">
+<code class="descname">islongitude</code><a class="headerlink" href="#cfdm.Units.islongitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if and only if the units are longitude units.</p>
+<p>This is the case if and only if the <cite>units</cite> attribute is one of
+<code class="docutils literal"><span class="pre">'degrees_east'</span></code>, <code class="docutils literal"><span class="pre">'degree_east'</span></code>, <code class="docutils literal"><span class="pre">'degree_E'</span></code>,
+<code class="docutils literal"><span class="pre">'degrees_E'</span></code>, <code class="docutils literal"><span class="pre">'degreeE'</span></code>, and <code class="docutils literal"><span class="pre">'degreesE'</span></code>.</p>
+<p>Note that units of <code class="docutils literal"><span class="pre">'degrees'</span></code> are not longitude units.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>isdimensionless</cite>, <cite>islatitude</cite>, <cite>ispressure</cite>,
+<cite>isreftime</cite>, <cite>istime</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;degrees_east&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islongitude</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;degrees&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islongitude</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;degrees_north&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islongitude</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">islongitude</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">()</span><span class="o">.</span><span class="n">islongitude</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.ispressure">
+<code class="descname">ispressure</code><a class="headerlink" href="#cfdm.Units.ispressure" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the units are pressure units, false otherwise.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>isdimensionless</cite>, <cite>islongitude</cite>, <cite>islatitude</cite>,
+<cite>isreftime</cite>, <cite>istime</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">ispressure</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;hPa&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">ispressure</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;meter^-1-kilogram-second^-2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">ispressure</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;hours since 2100-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">ispressure</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.isreftime">
+<code class="descname">isreftime</code><a class="headerlink" href="#cfdm.Units.isreftime" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the units are reference time units, False otherwise.</p>
+<p>Note that time units (such as <code class="docutils literal"><span class="pre">'days'</span></code>) are not reference time
+units.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>isdimensionless</cite>, <cite>islongitude</cite>,
+<cite>islatitude</cite>, <cite>ispressure</cite>, <cite>istime</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-12-1 03:00&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;hours since 2100-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">(</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">Units</span><span class="p">()</span><span class="o">.</span><span class="n">isreftime</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.istime">
+<code class="descname">istime</code><a class="headerlink" href="#cfdm.Units.istime" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the units are time units, False otherwise.</p>
+<p>Note that reference time units (such as <code class="docutils literal"><span class="pre">'days</span> <span class="pre">since</span> <span class="pre">2000-12-1'</span></code>)
+are not time units, nor are calendar years and calendar months.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>iscalendartime</cite>, <cite>isdimensionless</cite>, <cite>islongitude</cite>,
+<cite>islatitude</cite>, <cite>ispressure</cite>, <cite>isreftime</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;seconds&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">()</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;hours since 2100-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">istime</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.reftime">
+<code class="descname">reftime</code><a class="headerlink" href="#cfdm.Units.reftime" title="Permalink to this definition">¶</a></dt>
+<dd><p>The reference date-time of reference time units.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>calendar</cite>, <cite>isreftime</cite>, <cite>units</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">repr</span><span class="p">(</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 1900-1-1&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reftime</span><span class="p">)</span>
+<span class="go">&lt;CF Datetime: 1900-01-01 00:00:00&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 1900-1-1 03:00&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reftime</span><span class="p">)</span>
+<span class="go">&#39;1900-01-01 03:00:00&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cfdm.Units.units">
+<code class="descname">units</code><a class="headerlink" href="#cfdm.Units.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>The units.</p>
+<p>May be any string allowed by the units CF property.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>calendar</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;kg&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;seconds&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;seconds&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Units</span><span class="p">(</span><span class="s1">&#39;days since 2000-1-1&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;366_day&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;days since 2000-1-1&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cfdm.Flags.html"
+                        title="previous chapter">cfdm.Flags</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cfdm.Coordinate.html"
+                        title="next chapter">cfdm.Coordinate</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/cfdm.Units.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cfdm.Coordinate.html" title="cfdm.Coordinate"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cfdm.Flags.html" title="cfdm.Flags"
+             >previous</a> |</li>
+  <li><a target="_blank" href="../../archive.html">Archive</a> &laquo;</li>
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python 0.1</a> &raquo;</li>
+<!--
+  <li><a target="_blank" href="http://cfpython.bitbucket.io">cf-python</a> &raquo;</li>
+  <li><select onchange="location = this.options[this.selectedIndex].value;">
+
+      <option value="../../1.0/index.html">1.0
+
+      <option value="../../0.9.9/index.html">0.9.9
+
+      <option value="../../0.9.8.3/index.html">0.9.8.3
+
+      <option value="../../archive.html">Archive
+
+      </select>
+  </li>
+-->
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="../reference.html" >Reference manual</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../class.html" >Classes of the <code class="docutils literal"><span class="pre">cfdm</span></code> module</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016, David Hassell.
+      Last updated on Oct 04, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

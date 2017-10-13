@@ -1,0 +1,7 @@
+cfdm.Field.__eq__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.__eq__
