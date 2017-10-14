@@ -754,11 +754,6 @@ then modify the docstring.
 #--- End: class
 
 
-class DeprecationError(Exception):
-    '''Exception for removed methods'''
-    pass
-
-
 # ====================================================================
 #
 # Variable object

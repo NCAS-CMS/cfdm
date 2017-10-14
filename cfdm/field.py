@@ -12,8 +12,7 @@ from .fieldancillary      import FieldAncillary
 from .flags               import Flags
 
 from .functions import (parse_indices, equals, RTOL, ATOL,
-                        RELAXED_IDENTITIES, IGNORE_IDENTITIES)
-from .functions import inspect as cf_inspect
+                        RELAXED_IDENTITIES)
 from .units     import Units
 from .variable  import Variable
 

@@ -15,6 +15,41 @@ from .          import __version__, __file__
 from .constants import CONSTANTS
 
 
+def RELAXED_IDENTITIES(*arg):
+    '''
+
+:Parameters:
+
+    arg: `bool`, optional
+      
+:Returns:
+
+    out: `bool`
+        The value prior to the change, or the current value if no new
+        value was specified.
+
+:Examples:
+
+>>> org = cf.RELAXED_IDENTITIES()
+>>> print org
+False
+>>> cf.RELAXED_IDENTITIES(True)
+False
+>>> cf.RELAXED_IDENTITIES()
+True
+>>> cf.RELAXED_IDENTITIES(org)
+True
+>>> cf.RELAXED_IDENTITIES()
+False
+
+    '''
+    old = CONSTANTS['RELAXED_IDENTITIES']
+    if arg:
+        CONSTANTS['RELAXED_IDENTITIES'] = bool(arg[0])
+    
+    return old
+#--- End:def
+
 def _numpy_allclose(a, b, rtol=None, atol=None):
     '''
 

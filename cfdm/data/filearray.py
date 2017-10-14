@@ -14,7 +14,6 @@ from numpy.ma import is_masked  as numpy_ma_is_masked
 from numpy.ma import masked_all as numpy_ma_masked_all
 
 from ..functions import parse_indices, get_subspace, abspath
-from ..functions import inspect as cf_inspect
 from ..constants import CONSTANTS
 
 _debug = False
