@@ -1,29 +1,4 @@
 from .boundedvariable import BoundedVariable
-'''
-
-**Initialization**
-
-:Parameters:
-
-    properties: `dict`, optional
-        Initialize a new instance with CF properties from a
-        dictionary's key/value pairs.
-
-    attributes: `dict`, optional
-        Provide the new instance with attributes from a dictionary's
-        key/value pairs.
-
-    data: `Data`, optional
-        Provide the new instance with an N-dimensional data array.
-
-    bounds: `Data` or `Bounds`, optional
-        Provide the new instance with cell bounds.
-
-    copy: `bool`, optional
-        If False then do not copy arguments prior to
-        initialization. By default arguments are deep copied.
-
-'''         
 
 class DomainAncillary(BoundedVariable):
     '''A CF domain ancillary construct.
@@ -44,54 +19,12 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
-    def __init__(self, properties={}, attributes={}, data=None,
-                 bounds=None, source=None, copy=True):
-        '''**Initialization**
-
-:Parameters:
-
-    properties: `dict`, optional
-        Initialize a new instance with CF properties from a
-        dictionary's key/value pairs.
-
-    attributes: `dict`, optional
-        Provide the new instance with attributes from a dictionary's
-        key/value pairs.
-
-    data: `Data`, optional
-        Provide the new instance with an N-dimensional data array.
-
-    bounds: `Data` or `Bounds`, optional
-        Provide the new instance with cell bounds.
-
-    source: `DomainAncillary`, optional
-        Take the attributes, CF properties and data array from the
-        source object. Any attributes, CF properties or data array
-        specified with other parameters are set after initialisation
-        from the source instance.
-
-    copy: `bool`, optional
-        If False then do not copy arguments prior to
-        initialization. By default arguments are deep copied.
-
-        '''
-        super(DomainAncillary, self).__init__(properties=properties,
-                                              attributes=attributes,
-                                              data=data,
-                                              bounds=bounds,
-                                              source=source,
-                                              copy=copy)
-        
-#        if self.hasdata and not self.ndim:
-#            # Turn a scalar object into 1-d
-#            self.expand_dims(0, copy=False)
-    #--- End: def
     
     @property
     def isdomainancillary(self):
         '''True, denoting that the variable is a domain ancillary object.
 
-.. versionadded:: 2.0
+.. versionadded:: 1.6
 
 :Examples:
 

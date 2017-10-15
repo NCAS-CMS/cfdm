@@ -2823,7 +2823,8 @@ standard_name = 'time'
         indent1 = '    ' * (_level+1)
 
         if _title is None:
-            string = ['{0}Variable: {1}'.format(indent0, self.name(''))]
+#            construct = self.__class__.__name__  re.sub("([A-Z])"," \g<0>",label)
+            string = ['{0}Variable: {1}'.format(indent0, self.name(default=''))]
         else:
             string = [indent0 + _title]
 

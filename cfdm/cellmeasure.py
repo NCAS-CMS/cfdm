@@ -42,8 +42,6 @@ Attribute   Type   Description
 
 Always True.
 
-.. seealso:: `isauxiliary`, `isdimension`
-
 :Examples: 
 
 >>> c.ismeasure

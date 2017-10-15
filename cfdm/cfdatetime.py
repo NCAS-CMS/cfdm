@@ -1,5 +1,8 @@
-from datetime  import datetime
-from functools import partial as functools_partial
+import functools
+
+from datetime import datetime
+
+import numpy
 
 import netCDF4
 if netCDF4.__version__ >= '1.2.5':
@@ -10,44 +13,8 @@ if netCDF4.__version__ <= '1.1.1':
     _netCDF4_netcdftime_parse_date = netCDF4.netcdftime._parse_date
 elif netCDF4.__version__ <= '1.2.4':
     _netCDF4_netcdftime_parse_date = netCDF4.netcdftime.netcdftime._parse_date
-       
-from numpy import around     as numpy_around
-from numpy import array      as numpy_array
-from numpy import asanyarray as numpy_asanyarray
-from numpy import ndarray    as numpy_ndarray
-from numpy import ndim       as numpy_ndim
-from numpy import vectorize  as numpy_vectorize
 
-from numpy.ma import array        as numpy_ma_array
-from numpy.ma import isMA         as numpy_ma_isMA
-from numpy.ma import is_masked    as numpy_ma_is_masked
-from numpy.ma import masked       as numpy_ma_masked
-from numpy.ma import masked_all   as numpy_ma_masked_all
-from numpy.ma import masked_where as numpy_ma_masked_where
-from numpy.ma import nomask       as numpy_ma_nomask
-
-from .units     import Units
-
-from numpy import around     as numpy_around
-from numpy import array      as numpy_array
-from numpy import asanyarray as numpy_asanyarray
-from numpy import ndarray    as numpy_ndarray
-from numpy import ndim       as numpy_ndim
-from numpy import vectorize  as numpy_vectorize
-
-from numpy.ma import array        as numpy_ma_array
-from numpy.ma import isMA         as numpy_ma_isMA
-from numpy.ma import is_masked    as numpy_ma_is_masked
-from numpy.ma import masked       as numpy_ma_masked
-from numpy.ma import masked_all   as numpy_ma_masked_all
-from numpy.ma import masked_where as numpy_ma_masked_where
-from numpy.ma import nomask       as numpy_ma_nomask
-
-from .units     import Units
-
-# Define some useful units
-_calendar_years  = Units('calendar_years')
-_calendar_months = Units('calendar_months')
+from .units import Units
 
 # ====================================================================
 #
@@ -587,7 +554,7 @@ Parse an ISO 8601 date-time string into a `cf.Datetime` object.
     return Datetime(year, month, day, hour, minute, second)
 #--- End: def
 
-array_st2Datetime = numpy_vectorize(st2Datetime, otypes=[object])
+array_st2Datetime = numpy.vectorize(st2Datetime, otypes=[object])
 
 def rt2dt(array, units_in, units_out=None, dummy1=None):
     '''Convert reference times  to date-time objects
@@ -614,35 +581,35 @@ The returned array is always independent.
 
     '''
     mask = None
-    if numpy_ma_isMA(array):
+    if numpy.ma.isMA(array):
         # num2date has issues if the mask is nomask
         mask = array.mask
-        if mask is numpy_ma_nomask or not numpy_ma_is_masked(array):
-            array = array.view(numpy_ndarray)
+        if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+            array = array.view(numpy.ndarray)
 
     array = units_in._utime.num2date(array)
 
     if mask is not None:
-        array = numpy_ma_masked_where(mask, array)
+        array = numpy.ma.masked_where(mask, array)
 
-    ndim = numpy_ndim(array)
+    ndim = numpy.ndim(array)
 
     if mask is None:
         # There is no missing data
-        array = numpy_array(array, dtype=object)
-        return numpy_vectorize(
-            functools_partial(dt2Dt, calendar=units_in._calendar),
+        array = numpy.array(array, dtype=object)
+        return numpy.vectorize(
+            functools.partial(dt2Dt, calendar=units_in._calendar),
             otypes=[object])(array)
     else:
         # There is missing data
         if not ndim:
-            return numpy_ma_masked_all((), dtype=object)
+            return numpy.ma.masked_all((), dtype=object)
         else:
-            array = numpy_array(array)
-            array = numpy_vectorize(
-                functools_partial(dt2Dt, calendar=units_in._calendar),
+            array = numpy.array(array)
+            array = numpy.vectorize(
+                functools.partial(dt2Dt, calendar=units_in._calendar),
                 otypes=[object])(array)
-            return numpy_ma_masked_where(mask, array)
+            return numpy.ma.masked_where(mask, array)
 #--- End: def
 
 def dt2Dt(x, calendar=None):
@@ -677,9 +644,9 @@ The returned array is always independent.
         An array of numbers with the same shape as *array*.
 
     '''
-    ndim = numpy_ndim(array)
+    ndim = numpy.ndim(array)
     
-    if not ndim and isinstance(array, numpy_ndarray):
+    if not ndim and isinstance(array, numpy.ndarray):
         # This necessary because date2num gets upset if you pass
         # it a scalar numpy array
         array = array.item()
@@ -687,7 +654,7 @@ The returned array is always independent.
     array = units_out._utime.date2num(array)
 
     if not ndim:
-        array = numpy_array(array)
+        array = numpy.array(array)
 
     # Round to the nearest millisecond. This is only necessary whilst
     # netCDF4 time functions have an accuracy of no better than 1
@@ -729,7 +696,7 @@ The returned array is always independent.
                                 if year:
                                     array *= 365.242198781 * 86400.0
     #--- End: if
-    array = numpy_around(array, decimals, array)
+    array = numpy.around(array, decimals, array)
 
     if day:
         array /= 86400.0
@@ -745,7 +712,7 @@ The returned array is always independent.
         array /= 365.242198781 * 86400.0
 
     if not ndim:
-        array = numpy_asanyarray(array)
+        array = numpy.asanyarray(array)
         
     return array
 #--- End: def
@@ -775,9 +742,9 @@ The returned array is always independent.
 
     array = st2dt(array, units_in)
 
-    ndim = numpy_ndim(array)
+    ndim = numpy.ndim(array)
     
-    if not ndim and isinstance(array, numpy_ndarray):
+    if not ndim and isinstance(array, numpy.ndarray):
         # This necessary because date2num gets upset if you pass
         # it a scalar numpy array
         array = array.item()
@@ -785,7 +752,7 @@ The returned array is always independent.
     array = units_out._utime.date2num(array)
     
     if not ndim:
-        array = numpy_array(array)
+        array = numpy.array(array)
 
     return array
 #--- End: def

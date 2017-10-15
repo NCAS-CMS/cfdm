@@ -8,7 +8,7 @@ class FieldAncillary(Variable):
     def isfieldancillary(self):
         '''True, denoting that the variable is a field ancillary object.
 
-.. versionadded:: 2.0
+.. versionadded:: 1.6
 
 :Examples:
 

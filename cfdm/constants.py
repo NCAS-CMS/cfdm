@@ -1,11 +1,6 @@
 import sys
 
-from psutil   import virtual_memory
-from tempfile import gettempdir
-
-from numpy.ma import masked as numpy_ma_masked
-from numpy.ma import nomask as numpy_ma_nomask
-
+import numpy
 
 
 # --------------------------------------------------------------------
@@ -32,11 +27,8 @@ from numpy.ma import nomask as numpy_ma_nomask
 # --------------------------------------------------------------------
 CONSTANTS = {'RTOL'              : sys.float_info.epsilon,
              'ATOL'              : sys.float_info.epsilon,
-             'TEMPDIR'           : gettempdir(),
              'RELAXED_IDENTITIES': False,
-             'IGNORE_IDENTITIES' : False,
-
              }
 
-masked = numpy_ma_masked
-nomask = numpy_ma_nomask
+masked = numpy.ma.masked
+nomask = numpy.ma.nomask
