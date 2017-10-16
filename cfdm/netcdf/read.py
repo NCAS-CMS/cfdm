@@ -8,28 +8,28 @@ import numpy
 import netCDF4
 
 # Import CF data model objects
-from ..auxiliarycoordinate import AuxiliaryCoordinate
-from ..dimensioncoordinate import DimensionCoordinate
-from ..cellmeasure         import CellMeasure
-from ..cellmethods         import CellMethods
-from ..coordinatereference import CoordinateReference
-from ..domainancillary     import DomainAncillary
-from ..domainaxis          import DomainAxis
-from ..field               import Field
-from ..fieldancillary      import FieldAncillary
+#from ..auxiliarycoordinate import AuxiliaryCoordinate
+#from ..dimensioncoordinate import DimensionCoordinate
+#from ..cellmeasure         import CellMeasure
+#from ..cellmethods         import CellMethods
+#from ..coordinatereference import CoordinateReference
+#from ..domainancillary     import DomainAncillary
+#from ..domainaxis          import DomainAxis
+#from ..field               import Field
+#from ..fieldancillary      import FieldAncillary
 
 # Import 
-from ..bounds    import Bounds
-from ..fieldlist import FieldList
+#from ..bounds    import Bounds
+#from ..fieldlist import FieldList
 from ..functions import abspath
-from ..units     import Units
-from ..variable  import Variable
+#from ..units     import Units
+#from ..variable  import Variable
 
 from ..data.data      import Data
-from ..data.filearray import CompressedArray, FilledArray
+#from ..data.filearray import CompressedArray, FilledArray
 
 from .functions  import _open_netcdf_file
-from .filearray  import NetCDFFileArray
+#from .filearray  import NetCDFFileArray
 
 
 def netcdf_read(filename, field=(), verbose=False, uncompress=True,
@@ -1639,12 +1639,12 @@ Set the Data attribute of a variable.
         dtype = numpy.dtype('S{0}'.format(strlen))
     #--- End: if
 
-    filearray = g['mod'].netcdf.filearray.NetCDFFileArray(file=g['filename'],
-                                                          ncvar=ncvar._name,
-                                                          dtype=dtype,
-                                                          ndim=ndim,
-                                                          shape=shape,
-                                                          size=size)
+    filearray = g['mod'].data.filearray.NetCDFFileArray(file=g['filename'],
+                                                        ncvar=ncvar._name,
+                                                        dtype=dtype,
+                                                        ndim=ndim,
+                                                        shape=shape,
+                                                        size=size)
 
     compression = g['compression']
 
@@ -1668,27 +1668,28 @@ Set the Data attribute of a variable.
             if ncdim in compression:
                 c = compression[ncdim]
                 if 'gathered' in c:
-                    # Compression by gathering
-                    indices = c['gathered']['indices']
-                    
-                    uncompressed_shape = [nc[ncdim].size for ncdim in ncvar.dimensions]
-                    sample_axis = ncvar.dimensions.index(ncdim)
-                    
-                    data = Data.empty(shape=tuple(uncompressed_shape),
-                                      units=variable.units,
-                                      dtype=dtype,
-                                      chunk=False)
-                    data.fill_value = variable.fill_value()
-                    data.chunk(omit_axes=[sample_axis])
-                    
-                    for partition in data.partitions.flat:
-                        partition.subarray = CompressedArray(
-                            array=filearray,
-                            shape=partition.shape,
-                            compression = {'gathered': {
-                                'sample_axis': sample_axis,
-                                'indices'    : indices}})
-                        partition.part = []
+                    pass
+##                    # Compression by gathering
+##                    indices = c['gathered']['indices']
+##                    
+##                    uncompressed_shape = [nc[ncdim].size for ncdim in ncvar.dimensions]
+##                    sample_axis = ncvar.dimensions.index(ncdim)
+##                    
+##                    data = Data.empty(shape=tuple(uncompressed_shape),
+##                                      units=variable.units,
+##                                      dtype=dtype,
+##                                      chunk=False)
+##                    data.fill_value = variable.fill_value()
+##                    data.chunk(omit_axes=[sample_axis])
+##                    
+##                    for partition in data.partitions.flat:
+##                        partition.subarray = CompressedArray(
+##                            array=filearray,
+##                            shape=partition.shape,
+##                            compression = {'gathered': {
+##                                'sample_axis': sample_axis,
+##                                'indices'    : indices}})
+##                        partition.part = []a
 
                 elif 'DSG_indexed_contiguous' in c:
                     # DSG contiguous indexed ragged array. Check

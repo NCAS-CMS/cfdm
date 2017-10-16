@@ -3,12 +3,12 @@ import sys
 
 import numpy
 
-from ..netcdf.filearray import NetCDFFileArray
+#from ..netcdf.filearray import NetCDFFileArray
 
 from ..constants  import masked
 from ..cfdatetime import rt2dt, st2rt, st2dt
 from ..units      import Units
-from ..functions  import (RTOL, ATOL, parse_indices, get_subspace,
+from ..functions  import (RTOL, ATOL, parse_indices,
                           set_subspace, _numpy_allclose)                         
 
 from .filearray import FileArray
@@ -135,7 +135,7 @@ There are three extensions to the numpy indexing functionality:
             if isinstance(data, self.__class__):
                 data = data._array
             elif not isinstance(data, numpy.ndarray):
-                data = numpy.asanyarray(data)
+                data = numpy.asanyarray(data, dtype=dtype)
 
             if (data.dtype.kind == 'O' and not dt and 
                 hasattr(data.item((0,)*data.ndim), 'timetuple')):
@@ -186,7 +186,7 @@ numeric reference times will be returned.
 
 :Returns:
 
-    out: numpy.ndarray
+    out: `numpy.ndarray`
         The numpy array copy the data array.
 
 :Examples:
@@ -288,7 +288,7 @@ x.__getitem__(indices) <==> x[indices]
         else:
             array = get_subspace(self._array, indices)
 
-        return type(self)(array,
+        return type(self)(self._array[indices],
                           self.Units,
                           self.fill_value)
     #--- End: def
