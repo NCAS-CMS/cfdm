@@ -183,7 +183,7 @@ functionality:
 >>> f[..., f.coord('longitude')<180].shape
 (12, 73, 48)
 
-.. versionadded:: 2.0
+.. versionadded:: 1.6
 
 :Examples 1:
 
@@ -191,7 +191,7 @@ functionality:
 
 :Returns:
 
-    out: `{+Variable}`
+    out: `Field`
 
         '''
         if _debug:
@@ -249,7 +249,7 @@ functionality:
         # Replace existing domain axes
         Axes = new._Axes
         for axis, size in izip(data_axes, new.shape):
-            Axes[axis] = DomainAxis(size, Axes[axis].ncdim)
+            Axes[axis] = DomainAxis(size, ncdim=Axes[axis].ncdim)
             
         return new
     #--- End: def

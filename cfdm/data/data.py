@@ -1,17 +1,13 @@
 import itertools
-import sys
 
 import numpy
-
-#from ..netcdf.filearray import NetCDFFileArray
 
 from ..constants  import masked
 from ..cfdatetime import rt2dt, st2rt, st2dt
 from ..units      import Units
-from ..functions  import (RTOL, ATOL, parse_indices,
-                          set_subspace, _numpy_allclose)                         
+from ..functions  import RTOL, ATOL, set_subspace, _numpy_allclose
 
-from .filearray import FileArray
+from .filearray import Array, NumpyArray
 
 _units_None = Units()
 _units_1    = Units('1')
@@ -115,26 +111,24 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''      
+        units = Units(units)
+        
+        self._Units       = units
+        self._fill_value  = fill_value
+        self._array       = None
+
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
         self._HDF_chunks = None
 
-        units = Units(units)
-        self._Units = units
-#        self._array_Units = _units_None
-        
-        self._fill_value  = fill_value
-#        self._dtype       = None
-        self._array       = None
-
         if data is None:
             return
 
-        if not isinstance(data, FileArray):
-
-            if isinstance(data, self.__class__):
-                data = data._array
-            elif not isinstance(data, numpy.ndarray):
+        if isinstance(data, self.__class__):
+            data = data._array
+            
+        if not isinstance(data, Array):
+            if not isinstance(data, numpy.ndarray):
                 data = numpy.asanyarray(data, dtype=dtype)
 
             if (data.dtype.kind == 'O' and not dt and 
@@ -142,7 +136,7 @@ There are three extensions to the numpy indexing functionality:
                 # We've been given one or more date-time objects
                 dt = True
         #--- End: if
-
+        
         # ------------------------------------------------------------
         # Deal with date-times
         # ------------------------------------------------------------
@@ -173,7 +167,10 @@ There are three extensions to the numpy indexing functionality:
                 data = dt2rt(data, None, units)
         #--- End: if
 
-        self._array = data
+        if isinstance(data, Array):
+            self._array = data
+        else:
+            self._array = NumpyArray(data)
     #--- End: def
 
     def __array__(self, *dtype):
@@ -281,14 +278,7 @@ x.__str__() <==> str(x)
 x.__getitem__(indices) <==> x[indices]
 
         '''
-        indices = parse_indices(self.shape, indices)
-
-        if isinstance(self._array, FileArray):
-            array = self._array[indices]
-        else:
-            array = get_subspace(self._array, indices)
-
-        return type(self)(self._array[indices],
+        return type(self)(NumpyArray(self._array[indices]),
                           self.Units,
                           self.fill_value)
     #--- End: def
@@ -323,14 +313,7 @@ elements.
 :Examples:
 
         '''            
-        indices = parse_indices(self.shape, indices)
-
-        if isinstance(self._array, FileArray):
-            array = self._array[...]
-        elif sys.getrefcount(self._array) < 2:
-            array = self._array[...]
-        else:
-            array = self._array[...].copy()
+        array = self._array[...]
 
         # If value has Units then make sure that they're the same
         # as self.Units
@@ -341,15 +324,7 @@ elements.
             raise ValueError(
 "Can't set to values with different units: {!r}".format(value.Units))
 
-#            if not value.Units.equivalent(self.Units):
-#                raise ValueError(
-#"Can't set values with incompatible units: {!r}".format(value.Units))
-#            value = value.copy()
-#            value.Units = self.Units
-#            print 'value=', value
-        #--- End: if
-
-        if value is masked:
+        if value is masked and not numpy.ma.isMA(array):
             # The assignment is masking elements, so turn a
             # non-masked array into a masked one.
             array = array.view(numpy.ma.MaskedArray)
@@ -358,7 +333,7 @@ elements.
 
         set_subspace(array, indices, value)
         
-        self._array = array
+        self._array = NumpyArray(array)
     #--- End: def
 
     def __int__(self):
@@ -469,39 +444,7 @@ units object, so this attribute is guaranteed to always exist.
 
     @Units.setter    
     def Units(self, value):
-#        units = self._Units
-#        value = Units(value)
-#       
-#        if self._Units == _units_None:
-#            self._Units = value
-#            if self._array_Units == _units_None:
-#                self._array_Units = value
-#                
-#            return
-#        
-#        if not self._Units.equivalent(value):
-#            raise ValueError("Can't set Units to non-equivalent units")
-#
-#        dtype = self.dtype
-#        if dtype is not None:
-#            if dtype.kind == 'i':
-#                char = dtype.char        
-#                if char == 'i':
-#                    old_units = getattr(self, '_Units', None)
-#                    if old_units is not None and not old_units.equals(value):
-#                        self.dtype = 'float32'
-#                elif char == 'l':
-#                    old_units = getattr(self, '_Units', None)
-#                    if old_units is not None and not old_units.equals(value):
-#                        self.dtype = float
-#        #-- End: if
-
         self._Units = Units(value)
-
-#        if self._array_Units == _units_None:
-#            self._array_Units = value
-    #--- End: def
-
     @Units.deleter
     def Units(self):
         self._Units = _units_None
@@ -529,25 +472,25 @@ True
     # ----------------------------------------------------------------
     @property
     def dtype(self):
-        '''The `numpy` data type of the data array.
+        '''The `numpy` data type of the data.
 
 Setting the data type to a `numpy.dtype` object (or any object
 convertible to a `numpy.dtype` object, such as the string
 ``'int32'``), will cause the data array elements to be recast to the
-specified type at the time that they are next accessed, and not
-before. This does not immediately change the data array elements, so,
-for example, reinstating the original data type prior to data access
-results in no loss of information.
+specified type.
+
+.. versionadded:: 1.6
 
 :Examples:
 
->>> d = Data([0.5, 1.5, 2.5])
 >>> d.dtype
-dtype(float64')
+dtype('float64')
 >>> type(d.dtype)
 <type 'numpy.dtype'>
 
 >>> d = Data([0.5, 1.5, 2.5])
+>>> print d.array
+[0.5 1.5 2.5]
 >>> import numpy
 >>> d.dtype = numpy.dtype(int)
 >>> print d.array
@@ -559,27 +502,14 @@ dtype(float64')
 >>> print d.array
 [ 0.  1.  1.]
 
->>> d = Data([0.5, 1.5, 2.5])
->>> d.dtype = int
->>> d.dtype = bool
->>> d.dtype = float
->>> print d.array
-[ 0.5  1.5  2.5]
-
         '''
         return self._array.dtype
-#        d = self._dtype
-#        if d is None:
-#            if not hasattr(self, '_array'):
-#                raise ValueError("No dtype")
-#            d = self._array.dtype
-#            
-#        return d
     #--- End: def
     @dtype.setter
     def dtype(self, value):
-        self._array = numpy.asanyarray(dtype=value)
-#        self._dtype = numpy.dtype(value)
+        value = numpy.dtype(value)
+        if value != self.dtype:
+            self._array = NumpyArray(numpy.asanyarray(self.array, dtype=value))
 
     # ----------------------------------------------------------------
     # Attribute
@@ -698,7 +628,7 @@ Number of elements in the data array.
     # ----------------------------------------------------------------
     @property
     def array(self):
-        '''A numpy array copy the data array.
+        '''A numpy array copy the data.
 
 .. note:: If the data array is stored as date-time objects then a
           numpy array of numeric reference times will be returned. A
@@ -743,24 +673,12 @@ True
 :Examples:
 
         '''
-        if isinstance(self._array, FileArray):
-            array = self._array[...]
-        elif sys.getrefcount(self._array) < 2:
-            array = self._array[...]
-        else:
-            array = self._array[...].copy()
+        array = self._array[...]
 
-#        array_Units = self._array_Units
-#        if array_Units != _units_None and array_Units != self.Units:
-#            array = Units.conform(array, array_Units, self.Units, copy=False)
-#            
-#        if self.dtype != array.dtype:
-#            array = array.astype(self.dtype)
-#
-#        self._dtype       = None
-#        self._array_Units = self.Units
-        
-        self._array = array
+        if self.fill_value is not None and numpy.ma.isMA(array):
+            array.set_fill_value(self.fill_value)
+
+        self._array = NumpyArray(array)
 
         return array
     #--- End: def
@@ -863,7 +781,11 @@ True
 >>> e = d.copy()
 
         '''        
-        return type(self)(self._array, self.Units, self._fill_value)
+        new = type(self)(self._array, self.Units, self.fill_value)
+
+        new.HDF_chunks(self.HDF_chunks())
+
+        return new
     #--- End: def
 
     def max(self, axes=None):
@@ -889,8 +811,18 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'max')
 
+        array = numpy.amax(self.varray, axis=axes, keepdims=True)
+
         d = self.copy()
-        d._array = numpy.amax(self.array, axis=axes, keepdims=True)
+        d._array = NumpyArray(array)
+        
+        if d._HDF_chunks:            
+            HDF = {}
+            for axis in axes:
+                HDF[axis] = None
+
+            d.HDF_chunks(HDF)
+        #--- End: if
 
         return d
     #--- End: def
@@ -916,10 +848,20 @@ Missing data array elements are omitted from the calculation.
         '''
         # Parse the axes. By default flattened input is used.
         if axes is not None:
-            axes = self._parse_axes(axes, 'max')
+            axes = self._parse_axes(axes, 'min')
 
+        array = numpy.amin(self.varray, axis=axes, keepdims=True)
+            
         d = self.copy()
-        d._array = numpy.amin(self.array, axis=axes, keepdims=True)
+        d._array = NumpyArray(array)
+
+        if d._HDF_chunks:            
+            HDF = {}
+            for axis in axes:
+                HDF[axis] = None
+
+            d.HDF_chunks(HDF)
+        #--- End: if
 
         return d
     #--- End: def
@@ -983,9 +925,19 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'sum')
 
+        array = numpy.sum(self.varray, axis=axes, keepdims=True)
+            
         d = self.copy()
-        d._array = numpy.sum(self.array, axis=axes, keepdims=True)
+        d._array = NumpyArray(array)
 
+        if d._HDF_chunks:            
+            HDF = {}
+            for axis in axes:
+                HDF[axis] = None
+
+            d.HDF_chunks(HDF)
+        #--- End: if
+        
         return d
     #--- End: def
 
@@ -1015,7 +967,7 @@ Missing data array elements are omitted from the calculation.
         for axis, size in chunks.iteritems():
             _HDF_chunks[axis] = size
 
-        if _HDF_chunks.values() == [None] * self.ndim:
+        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
             _HDF_chunks = None
 
         self._HDF_chunks = _HDF_chunks
@@ -1066,7 +1018,7 @@ Missing data array elements are omitted from the calculation.
             raise ValueError("Can't {}: Duplicate axis: {}".format(
                 method, axes2))            
         
-        return axes2
+        return tuple(axes2)
     #--- End: def
 
     def squeeze(self, axes=None, copy=True):
@@ -1315,55 +1267,6 @@ missing values.
         return type(self)(u, self.Units, self.fill_value)
     #--- End: def
 
-    def override_units(self, units, copy=True):
-        '''Override the data array units.
-        
-Not to be confused with setting the `Units` attribute to units which
-are equivalent to the original units. This is different because in
-this case the new units need not be equivalent to the original ones
-and the data array elements will not be changed to reflect the new
-units.
-
-:Parameters:
-
-    units: `str` or `Units`
-        The new units for the data array.
-
-    copy: `bool`, optional
-        If False then update the data array in place. By default a new
-        data array is created.
-
-:Returns:
-
-    out: `Data`
-
-:Examples:
-
->>> d = Data(1012.0, 'hPa')
->>> d.override_units('km')
->>> d.Units
-<CF Units: km>
->>> d.datum(0)
-1012.0
->>> d.override_units(Units('watts'))
->>> d.Units
-<CF Units: watts>
->>> d.datum(0)
-1012.0
-
-        '''
-        if copy:
-            d = self.copy()
-        else:
-            d = self
-
-        d._Units = Units(units)
-
-#        d._array_Units = d.Units
-        
-        return d
-    #--- End: def
-    
     def dump(self, display=True, prefix=None):
         '''
 
@@ -1493,11 +1396,11 @@ False
         #--- End: if
 
         # Check that each instance has the same fill value
-        if not ignore_fill_value and self._fill_value != other._fill_value:
+        if not ignore_fill_value and self.fill_value != other.fill_value:
             if traceback:
                 print("{0}: Different fill values: {1}, {2}".format(
                     self.__class__.__name__, 
-                    self._fill_value, other._fill_value))
+                    self.fill_value, other.fill_value))
             return False
         #--- End: if
 

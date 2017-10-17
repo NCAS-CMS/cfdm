@@ -24,13 +24,7 @@ import netCDF4
 from ..functions import abspath
 #from ..units     import Units
 #from ..variable  import Variable
-
-from ..data.data      import Data
-#from ..data.filearray import CompressedArray, FilledArray
-
-from .functions  import _open_netcdf_file
-#from .filearray  import NetCDFFileArray
-
+#from ..data.data      import Data
 
 def netcdf_read(filename, field=(), verbose=False, uncompress=True,
                 _debug=False, _mod=None):
@@ -153,7 +147,7 @@ ancillaries, field ancillaries).
     g['filename'] = filename
     
     # Read the netCDF file 
-    nc = _open_netcdf_file(filename, 'r')
+    nc = g['mod']._open_netcdf_file(filename, 'r')
 
     if _debug:
         print 'Reading file', filename
@@ -1639,12 +1633,12 @@ Set the Data attribute of a variable.
         dtype = numpy.dtype('S{0}'.format(strlen))
     #--- End: if
 
-    filearray = g['mod'].data.filearray.NetCDFFileArray(file=g['filename'],
-                                                        ncvar=ncvar._name,
-                                                        dtype=dtype,
-                                                        ndim=ndim,
-                                                        shape=shape,
-                                                        size=size)
+    filearray = g['mod'].data.filearray.NetCDFArray(file=g['filename'],
+                                                    ncvar=ncvar._name,
+                                                    dtype=dtype,
+                                                    ndim=ndim,
+                                                    shape=shape,
+                                                    size=size)
 
     compression = g['compression']
 

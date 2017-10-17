@@ -1,17 +1,12 @@
+import sys
 from os       import close
-from sys      import getrefcount
+#from sys      import getrefcount
 from tempfile import mkstemp
 from operator import mul
 
-from numpy import empty   as numpy_empty
-from numpy import full    as numpy_full
-from numpy import load    as numpy_load
-from numpy import ndarray as numpy_ndarray
-from numpy import save    as numpy_save
-
-from numpy.ma import array      as numpy_ma_array
-from numpy.ma import is_masked  as numpy_ma_is_masked
-from numpy.ma import masked_all as numpy_ma_masked_all
+import numpy
+import netCDF4
+ 
 
 from ..functions import parse_indices, get_subspace, abspath
 from ..constants import CONSTANTS
@@ -24,7 +19,7 @@ _debug = False
 # 
 # ====================================================================
 
-class FileArray(object):
+class Array(object):
     '''An array stored in a file.
     
 .. note:: Subclasses must define the following methods:
@@ -56,9 +51,9 @@ class FileArray(object):
 '''
         self.__dict__ = kwargs
 
-        f = getattr(self, 'file', None)
-        if f is not None:
-            self.file = abspath(f)
+#        f = getattr(self, 'file', None)
+#        if f is not None:
+#            self.file = abspath(f)
     #--- End: def
             
     def __deepcopy__(self, memo):
@@ -76,7 +71,8 @@ Used if copy.deepcopy is called on the variable.
 x.__repr__() <==> repr(x)
 
 '''      
-        return "<CFDM: {0}>".format(self.__class__.__name__, str(self))
+        return "<CFDM {0}: {1}, {2}>".format(self.__class__.__name__,
+                                             self.shape, self.dtype)
     #--- End: def
      
     def __str__(self):
@@ -121,7 +117,7 @@ x.__str__() <==> str(x)
 
 # ====================================================================
 #
-# NumpyArray object
+# Array object
 # 
 # ====================================================================
 
@@ -129,48 +125,17 @@ class NumpyArray(Array):
     '''An numpy  array.
 
     '''
-    def __init__(self, array, fill_value=None):
+    def __init__(self, array=None):
         '''
         
 **Initialization**
 
 :Parameters:
 
-    file: `str`
-        The netCDF file name in normalized, absolute form.
+    array: `numpy.ndarray`
 
-    dtype: `numpy.dtype`
-        The numpy data type of the data array.
-
-    ndim: `int`
-        Number of dimensions in the data array.
-
-    shape: `tuple`
-        The data array's dimension sizes.
-
-    size: `int`
-        Number of elements in the data array.
-
-        '''   
-        self._array = array
-    #--- End: def
-            
-    def __repr__(self):
         '''
-
-x.__repr__() <==> repr(x)
-
-'''      
-        return repr(self._array)
-    #--- End: def
-     
-    def __str__(self):
-        '''
-
-x.__str__() <==> str(x)
-
-'''
-        return str(self._array)
+        super(NumpyArray, self).__init__(array=array)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -181,41 +146,72 @@ x.__getitem__(indices) <==> x[indices]
 Returns a numpy array.
 
 '''
-        array = self._array
+        if sys.getrefcount(self.array) < 2:
+            array = self.array
+        else:
+            array = self.array.copy()
 
+        if indices is Ellipsis:
+            return array
+            
         indices = parse_indices(array.shape, indices)
 
-        array = get_subspace(array, indices)
+        return get_subspace(array, indices)
+    #--- End: def
 
-        if numpy.ma.isMA(array):
-            array.set_fill_value(self.fill_Value)
+    def __repr__(self):
+        '''
+
+x.__repr__() <==> repr(x)
+
+'''      
+        return "<CFDM {0}: {1}>".format(self.__class__.__name__, str(self))
+    #--- End: def
+     
+    def __str__(self):
+        '''
+
+x.__str__() <==> str(x)
+
+'''
+        return "{0}, dtype={1}".format(self.shape, self.dtype)
     #--- End: def
 
     @property
     def ndim(self):
-        return self._array.ndim
+        return self.array.ndim
 
     @property
     def shape(self):
-        return self._array.shape
+        return self.array.shape
 
     @property
     def size(self):
-        return self._array.size
+        return self.array.size
 
     @property
     def dtype(self):
-        return self._array.dtype
+        return self.array.dtype
 
+#    def copy(self):
+#        '''
+#'''
+#        C = self.__class__
+#        new = C.__new__(C)
+#        new.__dict__ = self.__dict__.copy()
+#        return new
+#    #--- End: def
+#
+#    def close(self): pass
 #--- End: class
 
 # ====================================================================
 #
-# NetCDFFileArray object
+# NetCDFArray object
 #
 # ====================================================================
 
-class NetCDFFileArray(FileArray):
+class NetCDFArray(Array):
     '''A sub-array stored in a netCDF file.
     
 **Initialization**
@@ -262,6 +258,36 @@ class NetCDFFileArray(FileArray):
                         size=v.size)
 
     '''
+    def __init__(self, **kwargs):
+        '''
+        
+**Initialization**
+
+:Parameters:
+
+    file: `str`
+        The netCDF file name in normalized, absolute form.
+
+    dtype: `numpy.dtype`
+        The numpy data type of the data array.
+
+    ndim: `int`
+        Number of dimensions in the data array.
+
+    shape: `tuple`
+        The data array's dimension sizes.
+
+    size: `int`
+        Number of elements in the data array.
+
+'''
+        super(NetCDFArray, self).__init__(**kwargs)
+
+        f = getattr(self, 'file', None)
+        if f is not None:
+            self.file = abspath(f)
+    #--- End: def
+            
     def __getitem__(self, indices):
         '''
 
@@ -269,8 +295,10 @@ x.__getitem__(indices) <==> x[indices]
 
 Returns a numpy array.
 
-''' 
+'''
         nc = self.open()
+        
+        indices = parse_indices(self.shape, indices)
         
         ncvar = getattr(self, 'ncvar', None)
 
@@ -303,21 +331,39 @@ Returns a numpy array.
             new_shape = array.shape[0:-1]
             new_size  = long(reduce(mul, new_shape, 1))
             
-            array = numpy_ma_resize(array, (new_size, strlen))
+            array = numpy.ma.resize(array, (new_size, strlen))
             
             array = array.filled(fill_value='')
 
-            array = numpy_array([''.join(x).rstrip() for x in array],
+            array = numpy.array([''.join(x).rstrip() for x in array],
                                 dtype='S%d' % strlen)
             
             array = array.reshape(new_shape)
 
-            array = numpy_ma_where(array=='', numpy_ma_masked, array)
+            array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
 
         return array
     #--- End: def
 
+    def __repr__(self):
+        '''
+
+x.__repr__() <==> repr(x)
+
+'''      
+        return "<CFDM: {0}>".format(self.__class__.__name__, str(self))
+    #--- End: def
+     
+    def __str__(self):
+        '''
+
+x.__str__() <==> str(x)
+
+'''
+        return "{0} in {1}".format(self.shape, self.file)
+    #--- End: def
+    
     def __str__(self):
         '''
 
@@ -345,20 +391,12 @@ If the file is not open then no action is taken.
 :Examples:
 
 >>> f.close()
-
+        
 '''
-        _close_netcdf_file(self.file)
-    #--- End: def
-
-    @property
-    def  file_pointer(self):
-        '''
-'''
-        offset = getattr(self, 'ncvar', None)
-        if offset is None:
-            offset = self.varid
-
-        return (self.file, offset)
+        try:
+            self.nc.close()
+        except AttributeError:
+            pass
     #--- End: def
 
     def open(self):
@@ -377,8 +415,26 @@ array.
 <netCDF4.Dataset at 0x115a4d0>
 
 '''
-        return _open_netcdf_file(self.file, 'r')
+        try:        
+            nc = netCDF4.Dataset(self.file, 'r')
+        except RuntimeError as runtime_error:
+            raise RuntimeError("{}: {}".format(runtime_error, self.file))
+
+        self.nc = nc
+
+        return nc
     #--- End: def
+
+#    @property
+#    def  file_pointer(self):
+#        '''
+#'''
+#        offset = getattr(self, 'ncvar', None)
+#        if offset is None:
+#            offset = self.varid
+#
+#        return (self.file, offset)
+#    #--- End: def
 
 #--- End: class
 
@@ -437,7 +493,7 @@ Returns a numpy array.
         
         # Initialize the full, uncompressed output array with missing
         # data everywhere
-        uarray = numpy_ma_masked_all(self.shape, dtype=array.dtype)
+        uarray = numpy.ma.masked_all(self.shape, dtype=array.dtype)
 
         r_indices = [slice(None)] * array.ndim
         p_indices = [slice(None)] * uarray.ndim        
@@ -621,7 +677,7 @@ True
     def unique(self):
         '''
 '''
-        return getrefcount(self.array) <= 2
+        return sys.getrefcount(self.array) <= 2
     #--- End: def
 #--- End: class
 

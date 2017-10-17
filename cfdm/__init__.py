@@ -71,3 +71,4 @@ from .cellmethods         import CellMethod, CellMethods
 from .netcdf.read         import netcdf_read
 from .constants           import *
 from .functions           import *
+from .functions           import _open_netcdf_file

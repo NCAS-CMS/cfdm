@@ -411,6 +411,16 @@ indices must contain an index for each dimension of the input array.
 
 #--- End: def
 
+def _open_netcdf_file(filename, mode, fmt='NETCDF4'):
+    try:        
+        nc = netCDF4.Dataset(filename, mode, format=fmt)
+    except RuntimeError as runtime_error:
+        raise RuntimeError("{}: {}".format(runtime_error, filename))
+    
+    return nc
+    #--- End: def
+
+
 def set_subspace(array, indices, value):
     '''
 '''

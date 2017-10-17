@@ -2233,11 +2233,7 @@ The data type of the data array is unchanged.
 
 Setting the data type to a `numpy.dtype` object (or any object
 convertible to a `numpy.dtype` objec, such as the string ``'int32'``),
-will cause the data array elements to be recast to the specified type
-at the time that they are next accessed, and not before. This does not
-immediately change the data array elements, so, for example,
-reinstating the original data type prior to data access results in no
-loss of information.
+will cause the data array elements to be recast to the specified type.
 
 .. versionadded:: 1.6
 
@@ -2261,28 +2257,22 @@ dtype('float64')
 >>> print f.array
 [ 0.  1.  1.]
 
->>> print f.array
-[0.5 1.5 2.5]
->>> f.dtype = int
->>> f.dtype = bool
->>> f.dtype = float
->>> print f.array
-[ 0.5  1.5  2.5]
-
         '''
         if self.hasdata:
             return self.data.dtype
 
-        raise AttributeError("Can't get 'dtype' when there is no data".format(
-            self.__class__.__name__))
+        raise AttributeError(
+            "Can't get {} 'dtype' when there is no data".format(
+                self.__class__.__name__))
     #--- End: def
     @dtype.setter
     def dtype(self, value):
         if self.hasdata:
             self.data.dtype = value
-
-        raise AttributeError("Can't set 'dtype' when there is no data".format(
-            self.__class__.__name__))
+        else:
+            raise AttributeError(
+                "Can't set {} 'dtype' when there is no data".format(
+                    self.__class__.__name__))
 
     # ----------------------------------------------------------------
     # Attribute (read only)
@@ -3326,68 +3316,6 @@ Return True if a CF property exists, otherise False.
 
         # Still here? Then has a simple property?
         return prop in self._private['simple_properties']
-    #--- End: def
-
-    def override_units(self, units, copy=True):
-        '''Override the units.
-
-The new units **need not** be equivalent to the original ones and the
-data array elements will not be changed to reflect the new
-units. Therefore, this method should only be used when it is known
-that the data array values are correct but the units have incorrectly
-encoded.
-
-Not to be confused with setting `units` or `Units` attributes to units
-which are equivalent to the original units.
-
-.. versionadded:: 1.6
-
-.. seealso:: `calendar`, `override_calendar`, `units`, `Units`
-
-:Examples 1:
-
->>> g = f.{+name}('m')
-
-:Parameters:
-
-    units: `str` or `Units`
-        The new units for the data array.
-
-    {+copy}
-
-:Returns:
-
-    out: `{+Variable}`
-
-:Examples 2:
-
->>> f.Units
-<CF Units: hPa>
->>> f.datum(0)
-100000.0
->>> f.{+name}('km')
->>> f.Units
-<CF Units: km>
->>> f.datum(0)
-100000.0
->>> f.{+name}(Units('watts'))
->>> f.Units
-<CF Units: watts>
->>> f.datum(0)
-100000.0
-
-      '''
-        if copy:
-            v = self.copy()
-        else:
-            v = self
-
-        if v.hasdata:
-            v.data.override_units(units, copy=False)
-        else:
-            v.Units = Units(units)
-
-        return v
     #--- End: def
 
     @property
