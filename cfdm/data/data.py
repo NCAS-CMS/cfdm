@@ -766,6 +766,19 @@ True
             return data
     #--- End: def
 
+    def close(self):
+        '''
+'''
+        if self._array.on_disk:
+            self._array.close()
+        
+    def open(self):
+        '''
+'''
+        if self._array.on_disk:
+            self._array.open(save=True)
+        
+
     def copy(self):
         '''Return a deep copy.
 

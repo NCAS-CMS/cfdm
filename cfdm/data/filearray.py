@@ -343,6 +343,9 @@ Returns a numpy array.
             array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
 
+        if not hasattr(self, 'nc'):
+            nc.close()
+
         return array
     #--- End: def
 
@@ -378,28 +381,26 @@ x.__str__() <==> str(x)
     #--- End: def
     
     def close(self):
-        '''
-
-Close the file containing the data array.
+        '''Close the file containing the array.
 
 If the file is not open then no action is taken.
 
 :Returns:
 
-    None
+    `None`
 
 :Examples:
 
 >>> f.close()
-        
-'''
-        try:
-            self.nc.close()
-        except AttributeError:
-            pass
+
+        '''
+        nc = getattr(self, 'nc', None)
+        if nc is not None:
+            nc.close()
+            del self.nc
     #--- End: def
 
-    def open(self):
+    def open(self, save=False):
         '''
 
 Return a `netCDF4.Dataset` object for the file containing the data
@@ -407,7 +408,7 @@ array.
 
 :Returns:
 
-    out : netCDF4.Dataset
+    out: `netCDF4.Dataset`
 
 :Examples:
 
@@ -415,26 +416,19 @@ array.
 <netCDF4.Dataset at 0x115a4d0>
 
 '''
-        try:        
-            nc = netCDF4.Dataset(self.file, 'r')
-        except RuntimeError as runtime_error:
-            raise RuntimeError("{}: {}".format(runtime_error, self.file))
-
-        self.nc = nc
+        nc = getattr(self, 'nc', None)
+        if nc is None:
+            try:        
+                nc = netCDF4.Dataset(self.file, 'r')
+            except RuntimeError as runtime_error:
+                raise RuntimeError("{}: {}".format(runtime_error, self.file))        
+                
+            if save:
+                self.nc = nc
+        #--- End: if
 
         return nc
     #--- End: def
-
-#    @property
-#    def  file_pointer(self):
-#        '''
-#'''
-#        offset = getattr(self, 'ncvar', None)
-#        if offset is None:
-#            offset = self.varid
-#
-#        return (self.file, offset)
-#    #--- End: def
 
 #--- End: class
 

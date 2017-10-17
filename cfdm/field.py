@@ -172,18 +172,14 @@ functionality:
   >>> f[:, f.coord('latitude')<0].shape
   (12, 36, 96)
 
-.. seealso `subspace`
-
 >>> f.shape
 (12, 73, 96)
 >>> f[...].shape
 (12, 73, 96)
->>> f[slice(0, 12), :, 10:0:-2].shape
-(12, 73, 5)
->>> f[..., f.coord('longitude')<180].shape
-(12, 73, 48)
 
 .. versionadded:: 1.6
+
+.. seealso:: `__setitem__`
 
 :Examples 1:
 
@@ -193,14 +189,14 @@ functionality:
 
     out: `Field`
 
-        '''
-        if _debug:
-            print self.__class__.__name__+'.__getitem__'
-            print '    input indices =', indices
-            
-        if indices is Ellipsis:
-            return self.copy()
+:Examples 2:
 
+>>> f.shape
+(12, 73, 96)
+>>> f[...].shape
+(12, 73, 96)
+
+        ''' 
         data  = self.data
         shape = data.shape
 
@@ -210,15 +206,13 @@ functionality:
 
         indices = parse_indices(shape, indices)
 
-        new = self.copy(_omit_data=True)
+        new = self.copy() #_omit_data=True)
+
+        new.open()
 
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-        if _debug:
-            print '    shape    =', shape
-            print '    indices  =', indices
-
         new._Data = self.data[tuple(indices)]
 
         # ------------------------------------------------------------
@@ -250,14 +244,17 @@ functionality:
         Axes = new._Axes
         for axis, size in izip(data_axes, new.shape):
             Axes[axis] = DomainAxis(size, ncdim=Axes[axis].ncdim)
-            
+
+        new.close()
+
         return new
     #--- End: def
 
     def _no_None_dict(self, d):
         '''
         '''
-        return dict((key, value) for key, value in d.iteritems() if value is not None)
+        return dict((key, value) for key, value in d.iteritems() 
+                    if value is not None)
     #--- End: def
 
     def __repr__(self):
@@ -276,7 +273,7 @@ x.__repr__() <==> repr(x)
             axis_size = self.axis_size
             x = ['{0}({1})'.format(axis_name(axis), axis_size(axis))
                  for axis in self.data_axes()]
-            axis_names = '(%s)' % ', '.join(x)
+            axis_names = '({0})'.format(', '.join(x))
         else:
             axis_names = ''
             
@@ -284,9 +281,10 @@ x.__repr__() <==> repr(x)
         units = getattr(self, 'units', '')
         calendar = getattr(self, 'calendar', None)
         if calendar:
-            units += '%s calendar' % calendar
+            units += '{0} calendar'.format(calendar)
 
-        return '<CF Field: %s%s %s>' % (self.name(''), axis_names, units)
+        return '<CF Field: {0}{1} {2}>'.format(self.name(default=''),
+                                               axis_names, units)
     #--- End: def
 
     def __str__(self):

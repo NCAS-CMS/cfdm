@@ -1274,8 +1274,16 @@ def _create_bounded_item(nc, ncvar, attributes, f, dimension=False,
         bounds = g['mod'].Bounds(properties=properties, copy=False)
         
         bounds.ncvar = ncbounds
-        bounds.Units = b_Units
 
+        if not b_Units:
+            bounds.Units = c_Units
+        else:
+            if not b_Units.equivalent(c_Units):
+                bounds.Units = c_Units
+                print(
+"WARNING: Overriding {0} of {1!r} bounds ({2!r}) with {3!r}".format(
+    b_Units, ncvar, ncbounds, c_Units))
+ 
         bounds_data = _set_Data(nc, nc.variables[ncbounds], bounds, g=g)
 
         bounds.insert_data(bounds_data, copy=False)
