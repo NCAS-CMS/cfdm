@@ -364,7 +364,7 @@ AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
     def dtype(self):
         '''Numpy data-type of the data array.
 
-.. versionadded:: 2.0 
+.. versionadded:: 1.6
 
 :Examples:
 
@@ -401,7 +401,7 @@ dtype('float64')
 
 The Units object containing the units of the data array.
 
-.. versionadded:: 2.0 
+.. versionadded:: 1.6
 
 '''
         return Variable.Units.fget(self)
@@ -415,14 +415,6 @@ The Units object containing the units of the data array.
         if self.hasbounds:
             self.bounds.Units = value
     #--- End: def
-#    @Units.deleter
-#    def Units(self):
-#        Variable.Units.fdel(self)
-#        
-#        if self.hasbounds:
-#            # Delete the bounds' Units
-#            del self.bounds.Units
-#    #--- End: def
 
     # ----------------------------------------------------------------
     # CF property: calendar
@@ -677,11 +669,11 @@ Return a string containing a full description of the variable.
 
 .. versionadded:: 1.6
 
+.. seealso , `insert_data`, `remove_bounds`, `remove_data`
+
 :Parameters:
 
-    bounds:  data-like
-
-        {+data-like}
+    bounds: `Bounds`
 
     copy: `bool`, optional
 
@@ -691,35 +683,22 @@ Return a string containing a full description of the variable.
 
         '''
         if not getattr(bounds, 'isbounds', False):
-            raise ValueError("bounds must be Bounds")
+            raise ValueError("bounds must be a `Bounds` object")
 
         # Check dimensionality
         if bounds.ndim != self.ndim + 1:
             raise ValueError(
-"Can't set bounds: Incorrect number of dimemsions: {0} (expected {1})".format(
+"Can't set bounds: Incorrect number of dimemsions: {} (expected {})".format(
     bounds.ndim, self.ndim+1))
 
         # Check shape
         if bounds.shape[:-1] != self.shape:
             raise ValueError(
-                "Can't set bounds: Incorrect shape: {0} (expected {1})".format(
+                "Can't set bounds: Incorrect shape: {} (expected {})".format(
                     bounds.shape, self.shape+(bounds.shape[-1],)))
 
         if copy:            
             bounds = bounds.copy()
-
-        # Check units
-        units      = bounds.Units
-        self_units = self.Units
-
-        if not units:
-            bounds.override_units(self_units, copy=False)
-        elif not units.equivalent(self_units):
-            raise ValueError(
-"Can't set bounds: Incompatible units: {!r} (not equivalent to {!r})".format(
-    bounds.Units, self.Units))
-        
-        bounds.Units = self_units
 
         # Copy selected properties to the bounds
         for prop in ('standard_name', 'axis', 'positive',
@@ -731,7 +710,6 @@ Return a string containing a full description of the variable.
         self._set_special_attr('bounds', bounds)        
 
         self._hasbounds = True
-#        self._direction = None
     #--- End: def
 
     def insert_data(self, data, bounds=None, copy=True):

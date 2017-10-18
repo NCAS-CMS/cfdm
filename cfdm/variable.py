@@ -3671,54 +3671,6 @@ None
             self.data.open()
     #--- End: def
 
-    def override_units(self, units, copy=True):
-        '''Override the units.
-
-The new units **need not** be equivalent to the original ones and the
-data array elements will not be changed to reflect the new
-units. Therefore, this method should only be used when it is known
-that the data array values are correct but the units have incorrectly
-encoded.
-
-Not to be confused with setting `units` or `Units` attributes to units
-which are equivalent to the original units.
-
-.. versionadded:: 1.6
-
-.. seealso:: `calendar`, `units`, `Units`
-
-:Examples 1:
-
->>> g = f.{+name}('m')
-
-:Parameters:
-
-    units: `str` or `Units`
-        The new units for the data array.
-
-    {+copy}
-
-:Returns:
-
-    out: `cf.{+Variable}`
-
-:Examples 2:
-
-
-        '''
-        if copy:
-            v = self.copy()
-        else:
-            v = self
-
-        if v.hasdata:
-            v.data.override_units(units, copy=False)
-        else:
-            v.Units = Units(units)
-
-        return v
-    #--- End: def
-
     def HDF_chunks(self, *chunksizes):
         '''{+HDF_chunks}
         

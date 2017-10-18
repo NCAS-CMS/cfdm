@@ -1267,26 +1267,26 @@ def _create_bounded_item(nc, ncvar, attributes, f, dimension=False,
 
         bounds = g['mod'].Bounds(properties=properties, copy=False)
 
-        bounds.ncvar = ncbounds
-
         if not b_Units:
             b_Units = c_Units
 
         bounds.Units = b_Units
         
+        bounds.ncvar = ncbounds
+
         bounds_data = _set_Data(nc, nc.variables[ncbounds], bounds, g=g)
 
         bounds.insert_data(bounds_data, copy=False)
 
-        if b_Units != c_Units:
-            if b_Units.equivalent(c_Units):
-                bounds.Units = c_Units
-            else:
-                bounds.override_units(c_Units, copy=False)
-                print(
-"WARNING: Overriding {0!r} bounds units from {1!r} to {2!r}".format(
-    ncbounds, b_Units, c_Units))
-        #--- End: if
+#        if b_Units != c_Units:
+#            if b_Units.equivalent(c_Units):
+#                bounds.Units = c_Units
+#            else:
+#                bounds.override_units(c_Units, copy=False)
+#                print(
+#"WARNING: Overriding {0!r} bounds units from {1!r} to {2!r}".format(
+#    ncbounds, b_Units, c_Units))
+#        #--- End: if
         
         # Make sure that the bounds dimensions are in the same order
         # as its parent's dimensions
@@ -1661,7 +1661,7 @@ Set the Data attribute of a variable.
                 c = compression[ncdim]
                 if 'gathered' in c:
                     pass
-##                    # Compression by gathering
+                    # Compression by gathering
 ##                    indices = c['gathered']['indices']
 ##                    
 ##                    uncompressed_shape = [nc[ncdim].size for ncdim in ncvar.dimensions]
@@ -1683,12 +1683,30 @@ Set the Data attribute of a variable.
 ##                                'indices'    : indices}})
 ##                        partition.part = []a
 
+                    # Create an empty Data array which has dimensions
+                    # uncompressed_shape
+                    uncompressed_shape = tuple([nc[ncdim].size for ncdim in ncvar.dimensions])
+
+                    empty_data = g['mod'].Data.compression_initialize_gathered(uncompressed_shape)
+
+                    sample_axis = ncvar.dimensions.index(ncdim)
+
+                    indices = c['gathered']['indices']
+
+                    data = g['mod'].Data.compression_fill_gathered(empty_data,
+                                                                   dtype,
+                                                                   variable.Units,
+                                                                   variable.fill_value(),
+                                                                   filearray,
+                                                                   sample_axis,
+                                                                   indices)
+
                 elif 'DSG_indexed_contiguous' in c:
                     # DSG contiguous indexed ragged array. Check
                     # this before DSG_indexed and DSG_contiguous
                     # because both of these will exist for an
                     # indexed and contiguous array.
-                    empty_data            = c['DSG_indexed_contiguous']['empty_data']
+                    empty_data            = c['DSG_indexed_contiguous']['empty_data'].copy()
                     profiles_per_instance = c['DSG_indexed_contiguous']['profiles_per_instance']
                     elements_per_profile  = c['DSG_indexed_contiguous']['elements_per_profile']
                     profile_indices       = c['DSG_indexed_contiguous']['profile_indices']
@@ -1704,7 +1722,7 @@ Set the Data attribute of a variable.
 
                 elif 'DSG_contiguous' in c:                    
                     # DSG contiguous ragged array
-                    empty_data            = c['DSG_contiguous']['empty_data']
+                    empty_data            = c['DSG_contiguous']['empty_data'].copy()
                     elements_per_instance = c['DSG_contiguous']['elements_per_instance']
                                         
                     data = g['mod'].Data.DSG_fill_contiguous(empty_data,
@@ -1716,7 +1734,7 @@ Set the Data attribute of a variable.
                                         
                 elif 'DSG_indexed' in c:
                     # DSG indexed ragged array
-                    empty_data       = c['DSG_indexed']['empty_data']
+                    empty_data       = c['DSG_indexed']['empty_data'].copy()
                     instance_indices = c['DSG_indexed']['instance_indices']
                     
                     data = g['mod'].Data.DSG_fill_indexed(empty_data,

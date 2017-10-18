@@ -7,7 +7,7 @@ from ..cfdatetime import rt2dt, st2rt, st2dt
 from ..units      import Units
 from ..functions  import RTOL, ATOL, parse_indices, set_subspace, _numpy_allclose
 
-from .filearray import Array, NumpyArray
+from .array import Array, NumpyArray
 
 _units_None = Units()
 _units_1    = Units('1')
@@ -278,7 +278,7 @@ x.__str__() <==> str(x)
 x.__getitem__(indices) <==> x[indices]
 
         '''
-        return type(self)(NumpyArray(self._array[indices]),
+        return type(self)(self._array[indices],
                           self.Units,
                           self.fill_value)
     #--- End: def
@@ -313,16 +313,16 @@ elements.
 :Examples:
 
         '''            
-        array = self._array[...]
-
         # If value has Units then make sure that they're the same
         # as self.Units
         if (isinstance(value, self.__class__) and
-            self.Units  != _units_None and
-            value.Units != _units_None and
+            self.Units and
+            value.Units and
             value.Units != self.Units):
             raise ValueError(
 "Can't set to values with different units: {!r}".format(value.Units))
+
+        array = self._array[...]
 
         if value is masked and not numpy.ma.isMA(array):
             # The assignment is masking elements, so turn a
@@ -392,12 +392,11 @@ TypeError: iteration over a 0-d Data
                 yield self[n, ...].squeeze(0, copy=False)
     #--- End: def
 
-
     def __eq__(self, y):
-        return type(self)(self.array == y)
+        return type(self)(self.varray == y)
 
     def __ne__(self, y):
-        return type(self)(self.array != y)
+        return type(self)(self.varray != y)
     
     @property
     def isscalar(self):
@@ -430,8 +429,6 @@ False
 
 ..versionadded:: 1.6
 
-.. seealso:: `override_units`
-
 :Examples:
 
 >>> d.Units = Units('m')
@@ -446,14 +443,7 @@ False
     #--- End: def
     @Units.setter    
     def Units(self, value):
-        value = Units(value)
-
-        if self.Units != value:
-            array = Units.conform(self.array, self.Units, value, copy=False)
-            self._array = NumpyArray(array)
-
-        self._Units = value
-    #--- End: def
+        self._Units = Units(value)
 
     # ----------------------------------------------------------------
     # Attribute (read only)
@@ -920,56 +910,56 @@ dimension is iterated over first.
         return itertools.product(*[xrange(0, r) for r in self.shape])  
     #--- End: def
 
-    def override_units(self, units, copy=True):
-        '''Override the data array units.
-
-Not to be confused with setting the `Units` attribute to units which
-are equivalent to the original units. This is different because in
-this case the new units need not be equivalent to the original ones
-and the data array elements will not be changed to reflect the new
-units.
-
-..versionadded:: 1.6
-
-.. seealso:: `Units`
-
-:Parameters:
-
-    units: `str` or `Units`
-        The new units for the data array.
-
-    copy: `bool`, optional
-        If False then update the data array in place. By default a new
-        data array is created.
-
-:Returns:
-
-    out: `Data`
-
-:Examples:
-
->>> d = Data(1012.0, 'hPa')
->>> d.override_units('km')
->>> d.Units
-<CF Units: km>
->>> d.datum(0)
-1012.0
->>> d.override_units(Units('watts'))
->>> d.Units
-<CF Units: watts>
->>> d.datum(0)
-1012.0
-
-        '''
-        if copy:
-            d = self.copy()
-        else:
-            d = self
-
-        d._Units = Units(units)
-
-        return d
-    #--- End: def
+#    def override_units(self, units, copy=True):
+#        '''Override the data array units.
+#
+#Not to be confused with setting the `Units` attribute to units which
+#are equivalent to the original units. This is different because in
+#this case the new units need not be equivalent to the original ones
+#and the data array elements will not be changed to reflect the new
+#units.
+#
+#..versionadded:: 1.6
+#
+#.. seealso:: `Units`
+#
+#:Parameters:
+#
+#    units: `str` or `Units`
+#        The new units for the data array.
+#
+#    copy: `bool`, optional
+#        If False then update the data array in place. By default a new
+#        data array is created.
+#
+#:Returns:
+#
+#    out: `Data`
+#
+#:Examples:
+#
+#>>> d = Data(1012.0, 'hPa')
+#>>> d.override_units('km')
+#>>> d.Units
+#<CF Units: km>
+#>>> d.datum(0)
+#1012.0
+#>>> d.override_units(Units('watts'))
+#>>> d.Units
+#<CF Units: watts>
+#>>> d.datum(0)
+#1012.0
+#
+#        '''
+#        if copy:
+#            d = self.copy()
+#        else:
+#            d = self
+#
+#        d._Units = Units(units)
+#
+#        return d
+#    #--- End: def
 
     def sum(self, axes=None):
         '''Return the sum of an array or the sum along axes.
@@ -1200,7 +1190,9 @@ selected with the keyword arguments.
         if not axes:
             return d
         
-        d._array = numpy.squeeze(self.array, axes)
+        array = numpy.squeeze(self.varray, axes)
+
+        d._array = NumpyArray(array)
 
         return d
     #--- End: def
@@ -1247,7 +1239,7 @@ data array shape.
         else:
             d = self
 
-        array = numpy.expand_dims(self.array, position)
+        array = numpy.expand_dims(self.varray, position)
 
         d._array = NumpyArray(array)
 
@@ -1324,8 +1316,10 @@ data array shape.
                     "Can't transpose: Axes don't match array: {}".format(axes))
         #--- End: if
 
-        d._array = numpy.transpose(self.array, axes=axes)
+        array = numpy.transpose(self.varray, axes=axes)
         
+        d._array = NumpyArray(array)
+
         return d
     #--- End: def
 
@@ -1352,12 +1346,12 @@ missing values.
 <CF Data: [1, 2, 4] metre>
 
         '''
-        u = numpy.unique(self.array)
+        array = numpy.unique(self.array)
 
-        if numpy.ma.is_masked(u):
-            u = u.compressed()
+        if numpy.ma.is_masked(array):
+            array = array.compressed()
             
-        return type(self)(u, self.Units, self.fill_value)
+        return type(self)(array, self.Units, self.fill_value)
     #--- End: def
 
     def dump(self, display=True, prefix=None):
@@ -1675,8 +1669,24 @@ masked
     #--- End: def
 
     # ----------------------------------------------------------------
-    # DSG class methods
+    # Compression class methods
     # ----------------------------------------------------------------
+    @classmethod
+    def compression_initialize_gathered(cls, uncompressed_shape):
+        '''Create an empty Data array
+        
+:Parameters:
+
+:Returns:
+ 
+    out: `Data`
+
+        '''
+        array = numpy.ma.masked_all(uncompressed_shape)
+                   
+        return cls(array)
+    #--- End: def
+
     @classmethod
     def DSG_initialize_indexed_contiguous(cls,
                                           instance_dimension_size,
@@ -1738,10 +1748,10 @@ element_dimension_size  = count.max()
     out: `Data`
 
         '''
-        data = cls(numpy.ma.masked_all((instance_dimension_size,
-                                        element_dimension_size)))
+        array = numpy.ma.masked_all((instance_dimension_size,
+                                     element_dimension_size))
         
-        return data
+        return cls(array)
     #--- End: def
 
     @classmethod
@@ -1772,6 +1782,66 @@ element_dimension_size  = count.max()
     #--- End: def
 
     @classmethod
+    def compression_fill_gathered(cls, data, dtype, units, fill_value,
+                                  gathered_array, sample_axis, indices):
+        '''
+        
+    data: `Data`
+
+    gathered_array:
+        
+    sample_axes: `int`
+
+    indices: `Data`
+
+        '''
+        data.dtype = dtype
+        data.Units = units
+        data.fill_value = fill_value
+
+        uncompressed_array = data.varray 
+
+        # The gathered array
+        gathered_array = gathered_array.array
+        
+#        # Initialize the full, uncompressed output array with missing
+#        # data everywhere
+#        uarray = numpy.ma.masked_all(self.shape, dtype=array.dtype)
+
+        gathered_indices     = [slice(None)] * gathered_array.ndim
+        uncompressed_indices = [slice(None)] * uncompressed_array.ndim        
+        
+#        sample_axis           = uncompression['axis']
+#        uncompression_indices = uncompression['indices']
+        
+        compressed_axes = range(sample_axis, data.ndim - (gathered_array.ndim - sample_axis - 1))
+        n_compressed_axes = len(compressed_axes)
+        
+        zzz = [reduce(mul, [uncompressed_array.shape[i] for i in compressed_axes[i:]], 1)
+               for i in range(1, n_compressed_axes)]
+        
+        xxx = [[0] * indices.size] * n_compressed_axes
+
+        for n, b in enumerate(indices):
+            xxx = zeros[:]
+            for i, z in enumerate(zzz):                
+                if b >= z:
+                    (a, b) = divmod(b, z)
+                    xxx[i][n] = a
+                    xxx[-1][n] = b
+            #--- End: for
+                        
+            for j, x in izip(compressed_axes, xxx):
+                p_indices[j] = x
+                    
+        #--- End: for
+
+        uncompressed_array[tuple(uncompressed_indices)] = gathered_array.varray
+
+        return data
+    #--- End: def
+
+    @classmethod
     def DSG_fill_indexed(cls, data, dtype, units, fill_value,
                          ragged_array, index):
         '''sdfsdfsd
@@ -1788,8 +1858,6 @@ element_dimension_size  = count.max()
     index: `Data`
 
         '''
-        data = data.copy()
-
         data.dtype = dtype
         data.Units = units
         data.fill_value = fill_value
@@ -1820,8 +1888,6 @@ element_dimension_size  = count.max()
     elements_per_feature: `Data`
 
         '''
-        data = data.copy()
-        
         data.dtype = dtype
         data.Units = units
         data.fill_value = fill_value
@@ -1865,8 +1931,6 @@ element_dimension_size  = count.max()
         position of each profile of each instance.
 
         '''
-        data = data.copy()
-
         data.dtype = dtype
         data.Units = units
         data.fill_value = fill_value
