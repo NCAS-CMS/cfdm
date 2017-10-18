@@ -317,26 +317,33 @@ and auxiliary coordinate roles for different data variables.
     # ---------------------------------------------------------------
     for f in fields:
 
-        # Set HDF chunking
-        org_chunks = f.HDF_chunks(HDF_chunks)
-        default_chunks = f.HDF_chunks()
-        chunks = org_chunks.copy()
-        shape = f.shape
-        for i, size in org_chunks.iteritems():
-            if size is None:
-                size = default_chunks[i]
-            dim_size = shape[i]
-            if size is None or size > dim_size:
-                size = dim_size
-            chunks[i] = size
-        #--- End: for
-        f.HDF_chunks(chunks)
+#        # Set HDF chunking
+#        chunks = f.HDF_chunks()
+#        if chunks
+#        
+#        org_chunks = f.HDF_chunks(HDF_chunks)
+#        default_chunks = f.HDF_chunks()
+#        chunks = org_chunks.copy()
+#        shape = f.shape
+#        for i, size in org_chunks.iteritems():
+#            if size is None:
+#                size = default_chunks[i]
+#            dim_size = shape[i]
+#            if size is None or size > dim_size:
+#                size = dim_size
+#            chunks[i] = size
+#        #--- End: for
+#        f.HDF_chunks(chunks)
 
+        if g['_debug']:            
+            print '  Field shape:', f.shape
+            print '  HDF chunks :', f.HDF_chunks()
+        
         # Write the field
         _write_a_field(f, g=g)
 
-        # Reset HDF chunking
-        f.HDF_chunks(org_chunks)
+#        # Reset HDF chunking
+#        f.HDF_chunks(org_chunks)
     #-- End: for
 
     # ---------------------------------------------------------------
@@ -1411,10 +1418,6 @@ created. The ``seen`` dictionary is updated for *cfvar*.
     for attr in omit:
         netcdf_attrs.pop(attr, None) 
 
-    #---------------------------------------------------------
-    # Write a normal netCDF variable 
-    #---------------------------------------------------------
-
     # ------------------------------------------------------------
     # Create a new netCDF variable and set the _FillValue
     # ------------------------------------------------------------ 
@@ -1424,10 +1427,14 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         lsd = None
 
     # Set HDF chunk sizes
-    chunksizes = [size for i, size in sorted(cfvar.HDF_chunks().items())]
-    if chunksizes == [None] * cfvar.ndim:
-        chunksizes = None
-
+    chunksizes = None
+#    chunksizes = [size for i, size in sorted(cfvar.HDF_chunks().items())]
+#    if chunksizes == [None] * cfvar.ndim:
+#        chunksizes = None
+#
+#    if _debug:
+#        print '  chunksizes:', chunksizes
+        
     try:
         g['nc'][ncvar] = g['netcdf'].createVariable(
             ncvar,

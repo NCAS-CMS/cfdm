@@ -109,7 +109,7 @@ x.__str__() <==> str(x)
         pass
     #--- End: def
 
-    def open(self):
+    def open(self, keep_open=False):
         pass
     #--- End: def
 
@@ -193,16 +193,6 @@ x.__str__() <==> str(x)
     def dtype(self):
         return self.array.dtype
 
-#    def copy(self):
-#        '''
-#'''
-#        C = self.__class__
-#        new = C.__new__(C)
-#        new.__dict__ = self.__dict__.copy()
-#        return new
-#    #--- End: def
-#
-#    def close(self): pass
 #--- End: class
 
 # ====================================================================
@@ -343,9 +333,9 @@ Returns a numpy array.
             array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
 
-        if not hasattr(self, 'nc'):
-            nc.close()
-
+        if not getattr(self, 'keep_open', False):
+            self.close()
+        
         return array
     #--- End: def
 
@@ -398,9 +388,10 @@ If the file is not open then no action is taken.
         if nc is not None:
             nc.close()
             del self.nc
+            self.keep_open = False
     #--- End: def
 
-    def open(self, save=False):
+    def open(self, keep_open=False):
         '''
 
 Return a `netCDF4.Dataset` object for the file containing the data
@@ -422,9 +413,10 @@ array.
                 nc = netCDF4.Dataset(self.file, 'r')
             except RuntimeError as runtime_error:
                 raise RuntimeError("{}: {}".format(runtime_error, self.file))        
-                
-            if save:
-                self.nc = nc
+
+            self.nc = nc
+
+            self.keep_open = keep_open
         #--- End: if
 
         return nc

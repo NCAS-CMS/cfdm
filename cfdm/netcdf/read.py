@@ -2,8 +2,6 @@ import re
 import struct
 import sys
 
-from itertools import izip
-
 import numpy
 import netCDF4
 
@@ -68,8 +66,6 @@ ancillaries, field ancillaries).
             *Example:*
               To create fields from domain ancillary and cell measure
               objects: ``field=['domain_ancillary', 'measure']``.
-
-        .. versionadded:: 1.0.4
 
     verbose: `bool`, optional
         If True then print information to stdout.
@@ -212,8 +208,6 @@ ancillaries, field ancillaries).
             # units and 3) remove the offending units.
             attributes[ncvar]['nonCF_Units'] = \
                 attributes[ncvar].pop('units', '')
-#            attributes[ncvar]['nonCF_Units'] += \
-#                ' '+attributes[ncvar].pop('calendar', '')
             try:
                 attributes[ncvar]['nonCF_Units'] += \
                  ' '+attributes[ncvar].pop('calendar', '')
@@ -1272,32 +1266,28 @@ def _create_bounded_item(nc, ncvar, attributes, f, dimension=False,
                                  properties.pop('calendar', None))
 
         bounds = g['mod'].Bounds(properties=properties, copy=False)
-        
+
         bounds.ncvar = ncbounds
 
         if not b_Units:
-            bounds.Units = c_Units
-        else:
-            if not b_Units.equivalent(c_Units):
-                bounds.Units = c_Units
-                print(
-"WARNING: Overriding {0} of {1!r} bounds ({2!r}) with {3!r}".format(
-    b_Units, ncvar, ncbounds, c_Units))
- 
+            b_Units = c_Units
+
+        bounds.Units = b_Units
+        
         bounds_data = _set_Data(nc, nc.variables[ncbounds], bounds, g=g)
 
         bounds.insert_data(bounds_data, copy=False)
 
-        if not b_Units:
-            bounds.override_units(c_Units, copy=False)
-
-        if b_Units and not b_Units.equivalent(c_Units):
-            bounds.override_units(c_Units, copy=False)
-            if verbose:
+        if b_Units != c_Units:
+            if b_Units.equivalent(c_Units):
+                bounds.Units = c_Units
+            else:
+                bounds.override_units(c_Units, copy=False)
                 print(
-"WARNING: Overriding {0} of {1!r} bounds ({2!r}) with {3!r}".format(
-    b_Units, ncvar, ncbounds, c_Units))
- 
+"WARNING: Overriding {0!r} bounds units from {1!r} to {2!r}".format(
+    ncbounds, b_Units, c_Units))
+        #--- End: if
+        
         # Make sure that the bounds dimensions are in the same order
         # as its parent's dimensions
         c_ncdims = nc.variables[ncvar].dimensions

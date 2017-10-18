@@ -377,7 +377,7 @@ dtype('float64')
         if self.hasdata:
             return self.data.dtype
         
-        if self.hasbounds:
+        if self.hasbounds and self.bounds.hasdata:
             return self.bounds.dtype
 
         raise AttributeError("{} does not have attribute 'dtype'".format(
@@ -388,7 +388,7 @@ dtype('float64')
         if self.hasdata:
             self.data.dtype = value
 
-        if self.hasbounds:
+        if self.hasbounds and self.bounds.hasdata:
             self.bounds.dtype = value
     #--- End: def
 
@@ -415,14 +415,14 @@ The Units object containing the units of the data array.
         if self.hasbounds:
             self.bounds.Units = value
     #--- End: def
-    @Units.deleter
-    def Units(self):
-        Variable.Units.fdel(self)
-        
-        if self.hasbounds:
-            # Delete the bounds' Units
-            del self.bounds.Units
-    #--- End: def
+#    @Units.deleter
+#    def Units(self):
+#        Variable.Units.fdel(self)
+#        
+#        if self.hasbounds:
+#            # Delete the bounds' Units
+#            del self.bounds.Units
+#    #--- End: def
 
     # ----------------------------------------------------------------
     # CF property: calendar
@@ -711,11 +711,14 @@ Return a string containing a full description of the variable.
         # Check units
         units      = bounds.Units
         self_units = self.Units
-        if units and not units.equivalent(self_units):
+
+        if not units:
+            bounds.override_units(self_units, copy=False)
+        elif not units.equivalent(self_units):
             raise ValueError(
 "Can't set bounds: Incompatible units: {!r} (not equivalent to {!r})".format(
     bounds.Units, self.Units))
-            
+        
         bounds.Units = self_units
 
         # Copy selected properties to the bounds

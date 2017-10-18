@@ -206,8 +206,10 @@ functionality:
 
         indices = parse_indices(shape, indices)
 
-        new = self.copy() #_omit_data=True)
+        new = self.copy()
 
+        # Open any files that contained the original data (this not
+        # necessary, is an optimsation)
         new.open()
 
         # ------------------------------------------------------------
@@ -245,6 +247,7 @@ functionality:
         for axis, size in izip(data_axes, new.shape):
             Axes[axis] = DomainAxis(size, ncdim=Axes[axis].ncdim)
 
+        # Close any files that contained the original data
         new.close()
 
         return new
@@ -3575,6 +3578,16 @@ The domain is not updated.
         return key
     #--- End: def
 
+    def open(self):
+        '''
+'''
+        if self.hasdata:
+            self.data.open()
+
+        for item in self.items().itervalues():
+            item.open()
+    #--- End: def
+    
     def insert_field_anc(self, item, key=None, axes=None, copy=True,
                          replace=True):
         '''Insert a field ancillary object into the {+variable}.
@@ -5523,7 +5536,10 @@ are subsequently required.
     `None`
 
 '''
-        for item in self.itervalues():
+        if self.hasdata:
+            self.data.close()
+            
+        for item in self.items().itervalues():
             item.close()
     #--- End: def
 

@@ -108,7 +108,7 @@ True
         try:            
             return numpy.allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            return numpy_all(a == b)
+            return numpy.all(a == b)
     else:
         if a_is_masked and b_is_masked:
             if (a.mask != b.mask).any():

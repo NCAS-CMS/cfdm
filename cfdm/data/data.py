@@ -5,7 +5,7 @@ import numpy
 from ..constants  import masked
 from ..cfdatetime import rt2dt, st2rt, st2dt
 from ..units      import Units
-from ..functions  import RTOL, ATOL, set_subspace, _numpy_allclose
+from ..functions  import RTOL, ATOL, parse_indices, set_subspace, _numpy_allclose
 
 from .filearray import Array, NumpyArray
 
@@ -119,7 +119,7 @@ There are three extensions to the numpy indexing functionality:
 
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
-        self._HDF_chunks = None
+        self._HDF_chunks = {}
 
         if data is None:
             return
@@ -129,7 +129,7 @@ There are three extensions to the numpy indexing functionality:
             
         if not isinstance(data, Array):
             if not isinstance(data, numpy.ndarray):
-                data = numpy.asanyarray(data, dtype=dtype)
+                data = numpy.asanyarray(data)
 
             if (data.dtype.kind == 'O' and not dt and 
                 hasattr(data.item((0,)*data.ndim), 'timetuple')):
@@ -331,6 +331,8 @@ elements.
         else:
             value = numpy.asanyarray(value)
 
+        indices = parse_indices(array.shape, indices)
+        
         set_subspace(array, indices, value)
         
         self._array = NumpyArray(array)
@@ -426,8 +428,9 @@ False
     def Units(self):
         '''The `Units` object containing the units of the data array.
 
-Deleting this attribute is equivalent to setting it to an undefined
-units object, so this attribute is guaranteed to always exist.
+..versionadded:: 1.6
+
+.. seealso:: `override_units`
 
 :Examples:
 
@@ -441,13 +444,16 @@ units object, so this attribute is guaranteed to always exist.
         '''
         return self._Units
     #--- End: def
-
     @Units.setter    
     def Units(self, value):
-        self._Units = Units(value)
-    @Units.deleter
-    def Units(self):
-        self._Units = _units_None
+        value = Units(value)
+
+        if self.Units != value:
+            array = Units.conform(self.array, self.Units, value, copy=False)
+            self._array = NumpyArray(array)
+
+        self._Units = value
+    #--- End: def
 
     # ----------------------------------------------------------------
     # Attribute (read only)
@@ -769,15 +775,14 @@ True
     def close(self):
         '''
 '''
-        if self._array.on_disk:
-            self._array.close()
-        
+        self._array.close()
+    #--- End: def
+    
     def open(self):
         '''
 '''
-        if self._array.on_disk:
-            self._array.open(save=True)
-        
+        self._array.open(keep_open=True)
+    #--- End: def
 
     def copy(self):
         '''Return a deep copy.
@@ -915,6 +920,57 @@ dimension is iterated over first.
         return itertools.product(*[xrange(0, r) for r in self.shape])  
     #--- End: def
 
+    def override_units(self, units, copy=True):
+        '''Override the data array units.
+
+Not to be confused with setting the `Units` attribute to units which
+are equivalent to the original units. This is different because in
+this case the new units need not be equivalent to the original ones
+and the data array elements will not be changed to reflect the new
+units.
+
+..versionadded:: 1.6
+
+.. seealso:: `Units`
+
+:Parameters:
+
+    units: `str` or `Units`
+        The new units for the data array.
+
+    copy: `bool`, optional
+        If False then update the data array in place. By default a new
+        data array is created.
+
+:Returns:
+
+    out: `Data`
+
+:Examples:
+
+>>> d = Data(1012.0, 'hPa')
+>>> d.override_units('km')
+>>> d.Units
+<CF Units: km>
+>>> d.datum(0)
+1012.0
+>>> d.override_units(Units('watts'))
+>>> d.Units
+<CF Units: watts>
+>>> d.datum(0)
+1012.0
+
+        '''
+        if copy:
+            d = self.copy()
+        else:
+            d = self
+
+        d._Units = Units(units)
+
+        return d
+    #--- End: def
+
     def sum(self, axes=None):
         '''Return the sum of an array or the sum along axes.
 
@@ -959,14 +1015,22 @@ Missing data array elements are omitted from the calculation.
         '''
         _HDF_chunks = self._HDF_chunks
 
-        if _HDF_chunks is None:
-            _HDF_chunks = {}
-        else:
-            _HDF_chunks = _HDF_chunks.copy()
-
         org_HDF_chunks = dict([(i, _HDF_chunks.get(i))
                                for i in range(self.ndim)])
 
+        org_HDF_chunks = _HDF_chunks.copy()
+        
+        if not chunks:
+            return org_HDF_chunks
+
+#        if _HDF_chunks is None:
+#            _HDF_chunks = {}
+#        else:
+#        _HDF_chunks = _HDF_chunks.copy()
+
+#        org_HDF_chunks = _HDF_chunks.copy()
+            
+ 
         if not chunks:
             return org_HDF_chunks
 
@@ -974,16 +1038,22 @@ Missing data array elements are omitted from the calculation.
         
         if chunks is None:
             # Clear all chunking
-            self._HDF_chunks = None
+            self._HDF_chunks = {}
             return org_HDF_chunks
 
+#        for i in range(self.ndim):
+            
+
         for axis, size in chunks.iteritems():
-            _HDF_chunks[axis] = size
+            if size is not None:
+                _HDF_chunks[axis] = size
+            else:
+                _HDF_chunks.pop(axis, None)
+                
+#        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
+#            _HDF_chunks = None
 
-        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
-            _HDF_chunks = None
-
-        self._HDF_chunks = _HDF_chunks
+#        self._HDF_chunks = _HDF_chunks
             
         return org_HDF_chunks
     #--- End: def
@@ -1177,7 +1247,17 @@ data array shape.
         else:
             d = self
 
-        d._array = numpy.expand_dims(self.array, position)
+        array = numpy.expand_dims(self.array, position)
+
+        d._array = NumpyArray(array)
+
+        if d._HDF_chunks:            
+            HDF = {}
+            for axis in axes:
+                HDF[axis] = None
+
+            d.HDF_chunks(HDF)
+        #--- End: if
 
         return d
     #--- End: def

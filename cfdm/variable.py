@@ -2573,6 +2573,13 @@ properties.
             return not bool(inverse)
     #--- End: def
 
+    def close(self):
+        '''
+'''
+        if self.hasdata:
+            self.data.close()
+    #--- End: def
+
     def copy(self, _omit_data=False, _only_data=False,
              _omit_special=None, _omit_properties=False,
              _omit_attributes=False):
@@ -3655,6 +3662,13 @@ None
             return 'ncvar%{0}'.format(n)
 
         return default
+    #--- End: def
+
+    def open(self):
+        '''
+'''
+        if self.hasdata:
+            self.data.open()
     #--- End: def
 
     def override_units(self, units, copy=True):
