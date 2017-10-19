@@ -1,4 +1,5 @@
 import itertools
+import operator
 
 import numpy
 
@@ -1688,13 +1689,13 @@ masked
     #--- End: def
 
     @classmethod
-    def DSG_initialize_indexed_contiguous(cls,
-                                          instance_dimension_size,
-                                          element_dimension_1_size,
-                                          element_dimension_2_size,
-                                          profiles_per_instance,
-                                          elements_per_profile,
-                                          profile_indices):
+    def compression_initialize_indexed_contiguous(cls,
+                                                  instance_dimension_size,
+                                                  element_dimension_1_size,
+                                                  element_dimension_2_size,
+                                                  profiles_per_instance,
+                                                  elements_per_profile,
+                                                  profile_indices):
         '''Create an empty Data array which has dimensions
         (instance_dimension_size, element_dimension_1_size,
         element_dimension_2_size)
@@ -1727,10 +1728,10 @@ masked
     #--- End: def
 
     @classmethod
-    def DSG_initialize_contiguous(cls,
-                                  instance_dimension_size,
-                                  element_dimension_size,
-                                  elements_per_instance):
+    def compression_initialize_contiguous(cls,
+                                          instance_dimension_size,
+                                          element_dimension_size,
+                                          elements_per_instance):
         '''Create an empty Data array which has dimensions
         (instance_dimension_size, element_dimension_size)
 
@@ -1755,10 +1756,8 @@ element_dimension_size  = count.max()
     #--- End: def
 
     @classmethod
-    def DSG_initialize_indexed(cls,
-                               instance_dimension_size,
-                               element_dimension_size,
-                               index):
+    def compression_initialize_indexed(cls, instance_dimension_size,
+                                       element_dimension_size, index):
         '''Create an empty Data array which has shape
         (instance_dimension_size, element_dimension_size)
 
@@ -1800,50 +1799,39 @@ element_dimension_size  = count.max()
         data.fill_value = fill_value
 
         uncompressed_array = data.varray 
-
-        # The gathered array
-        gathered_array = gathered_array.array
-        
-#        # Initialize the full, uncompressed output array with missing
-#        # data everywhere
-#        uarray = numpy.ma.masked_all(self.shape, dtype=array.dtype)
-
-        gathered_indices     = [slice(None)] * gathered_array.ndim
-        uncompressed_indices = [slice(None)] * uncompressed_array.ndim        
-        
-#        sample_axis           = uncompression['axis']
-#        uncompression_indices = uncompression['indices']
-        
+       
         compressed_axes = range(sample_axis, data.ndim - (gathered_array.ndim - sample_axis - 1))
-        n_compressed_axes = len(compressed_axes)
         
-        zzz = [reduce(mul, [uncompressed_array.shape[i] for i in compressed_axes[i:]], 1)
-               for i in range(1, n_compressed_axes)]
+        zzz = [reduce(operator.mul, [uncompressed_array.shape[i] for i in compressed_axes[i:]], 1)
+               for i in range(1, len(compressed_axes))]
         
-        xxx = [[0] * indices.size] * n_compressed_axes
+        xxx = [[0] * indices.size for i in compressed_axes]
 
-        for n, b in enumerate(indices):
-            xxx = zeros[:]
-            for i, z in enumerate(zzz):                
+
+        for n, b in enumerate(indices.varray):
+            if not zzz or b < zzz[-1]:
+                xxx[-1][n] = b
+                continue
+            
+            for i, z in enumerate(zzz):
                 if b >= z:
                     (a, b) = divmod(b, z)
                     xxx[i][n] = a
                     xxx[-1][n] = b
-            #--- End: for
-                        
-            for j, x in izip(compressed_axes, xxx):
-                p_indices[j] = x
-                    
         #--- End: for
 
-        uncompressed_array[tuple(uncompressed_indices)] = gathered_array.varray
+        uncompressed_indices = [slice(None)] * uncompressed_array.ndim        
+        for i, x in enumerate(xxx):
+            uncompressed_indices[sample_axis+i] = x
+
+        uncompressed_array[tuple(uncompressed_indices)] = gathered_array[...]
 
         return data
     #--- End: def
 
     @classmethod
-    def DSG_fill_indexed(cls, data, dtype, units, fill_value,
-                         ragged_array, index):
+    def compression_fill_indexed(cls, data, dtype, units, fill_value,
+                                 ragged_array, index):
         '''sdfsdfsd
 
 :Parameters:
@@ -1862,23 +1850,24 @@ element_dimension_size  = count.max()
         data.Units = units
         data.fill_value = fill_value
 
-        array = data.varray
+        uncompressed_array = data.varray
 
-        for i in range(data.shape[1]): #index.unique():
+        for i in range(uncompressed_array.shape[0]): #index.unique():
             sample_dimension_indices = numpy.where(index == i)[0]
             
             indices = (slice(i, i+1),
                        slice(0, len(sample_dimension_indices)))
 
-            array[indices] = ragged_array[sample_dimension_indices]
+            uncompressed_array[indices] = ragged_array[sample_dimension_indices]
         #--- End: for
 
         return data
     #--- End: def
 
     @classmethod
-    def DSG_fill_contiguous(cls, data, dtype, units, fill_value,
-                            ragged_array, elements_per_feature):
+    def compression_fill_contiguous(cls, data, dtype, units,
+                                    fill_value, ragged_array,
+                                    elements_per_feature):
         '''
         
     data: `Data`
@@ -1892,7 +1881,7 @@ element_dimension_size  = count.max()
         data.Units = units
         data.fill_value = fill_value
 
-        array = data.varray 
+        uncompressed_array = data.varray 
 
         start = 0 
         for i, n in enumerate(elements_per_feature):
@@ -1902,7 +1891,7 @@ element_dimension_size  = count.max()
             indices = (slice(i, i+1),
                        slice(0, sample_indices.stop - sample_indices.start))
                              
-            array[indices ] = ragged_array[sample_indices]
+            uncompressed_array[indices ] = ragged_array[sample_indices]
                              
             start += n
         #--- End: for
@@ -1911,11 +1900,11 @@ element_dimension_size  = count.max()
     #--- End: def
 
     @classmethod
-    def DSG_fill_indexed_contiguous(cls, data, dtype, units,
-                                    fill_value, ragged_array,
-                                    profiles_per_instance,
-                                    elements_per_profile,
-                                    profile_indices):
+    def compression_fill_indexed_contiguous(cls, data, dtype, units,
+                                            fill_value, ragged_array,
+                                            profiles_per_instance,
+                                            elements_per_profile,
+                                            profile_indices):
         '''
         
     data: `Data`
@@ -1935,10 +1924,10 @@ element_dimension_size  = count.max()
         data.Units = units
         data.fill_value = fill_value
 
-        array = data.varray 
+        uncompressed_array = data.varray 
 
         # Loop over instances
-        for i in range(array.shape[0]):
+        for i in range(uncompressed_array.shape[0]):
 
             # For all of the profiles in ths instance, find the
             # locations in the elements_per_profile array of the
@@ -1949,7 +1938,7 @@ element_dimension_size  = count.max()
             n_profiles = xprofile_indices.size
 
             # Loop over profiles in this instance
-            for j in range(array.shape[1]):
+            for j in range(uncompressed_array.shape[1]):
                 if j >= n_profiles:
                     continue
                 
@@ -1970,7 +1959,7 @@ element_dimension_size  = count.max()
                            slice(j, j+1), 
                            slice(0, sample_indices.stop - sample_indices.start))
                 
-                array[indices] = ragged_array[sample_indices]
+                uncompressed_array[indices] = ragged_array[sample_indices]
         #--- End: for
 
         return data

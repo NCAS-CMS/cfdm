@@ -240,15 +240,11 @@ ancillaries, field ancillaries).
             print '    Pre-processing', ncvar
 
         # Remove list, index and count variables
-        compressed_ncdims = attributes[ncvar].get('compressed', None)
+        compressed_ncdims = attributes[ncvar].get('compress', None)
         if compressed_ncdims is not None:
-            # This variable is a list variable for compressed by
-            # gathering arrays
-            if _debug:
-                print '        List variable: compressed =', compressed_ncdims
-            _uuu(nc, ncvar, compressed_ncdims, g=g)
+            # This variable is a list variable for gathering arrays
+            _parse_compression_gathered(nc, ncvar, attributes, compressed_ncdims, g=g)
             variables.discard(ncvar)
-        #--- End: if
         
         if g['global_attributes'].get('featureType'):
             if 'sample_dimension' in attributes[ncvar]:
@@ -468,6 +464,22 @@ ancillaries, field ancillaries).
     return fields_in_file
 #--- End: def
 
+def _parse_compression_gathered(nc, ncvar, attributes, compressed_ncdims, g=None):
+    '''
+'''
+    _debug = g['_debug']
+    if _debug:
+        print '        List variable: compress =', compressed_ncdims
+
+    compression_type = 'gathered'
+    gathered_ncdimension = nc[ncvar].dimensions[0]
+    indices = _create_Data(nc, ncvar, attributes, g=g)
+    
+    g['compression'][gathered_ncdimension] = {
+        'gathered': {'indices'             : indices,
+                     'implied_ncdimensions': compressed_ncdims.split()}}
+#--- End: def
+
 def _parse_DSG_contiguous_compression(nc, ncvar, attributes,
                                       sample_ncdimension, g=None):
     '''
@@ -493,9 +505,9 @@ def _parse_DSG_contiguous_compression(nc, ncvar, attributes,
 
     # Create an empty Data array which has dimensions (instance
     # dimension, element dimension).
-    data = g['mod'].Data.DSG_initialize_contiguous(instance_dimension_size,
-                                                   element_dimension_size,
-                                                   elements_per_instance)
+    data = g['mod'].Data.compression_initialize_contiguous(instance_dimension_size,
+                                                           element_dimension_size,
+                                                           elements_per_instance)
 
     if _debug:
         print '    DSG contiguous array implied shape:', data.shape
@@ -577,10 +589,10 @@ def _parse_DSG_indexed_compression(nc, ncvar, attributes,
 
     # Create an empty Data array which has dimensions
     # (instance dimension, element dimension)
-    data = g['mod'].Data.DSG_initialize_indexed(instance_dimension_size,
-                                                element_dimension_size,
-                                                instance_indices)
-
+    data = g['mod'].Data.compression_initialize_indexed(instance_dimension_size,
+                                                        element_dimension_size,
+                                                        instance_indices)
+    
     if _debug:        
         print '    DSG indexed array implied shape:', data.shape
 
@@ -674,12 +686,12 @@ def _parse_DSG_indexed_contiguous_compression(nc, ncvar,
     
     # Create an empty Data array which has dimensions
     # (instance_dimension, element_dimension_1, element_dimension_2)
-    data = g['mod'].Data.DSG_initialize_indexed_contiguous(instance_dimension_size,
-                                                           element_dimension_1_size,
-                                                           element_dimension_2_size,
-                                                           profiles_per_instance,
-                                                           elements_per_profile,
-                                                           profile_indices)
+    data = g['mod'].Data.compression_initialize_indexed_contiguous(instance_dimension_size,
+                                                                   element_dimension_1_size,
+                                                                   element_dimension_2_size,
+                                                                   profiles_per_instance,
+                                                                   elements_per_profile,
+                                                                   profile_indices)
     
     if _debug:
         print '    DSG indexed and contiguous array implied shape:', data.shape
@@ -944,7 +956,7 @@ Create a field for a given netCDF variable.
         ncdim_to_axis[ncdim] = dim
     #--- End: for
 
-    f._Data = _set_Data(nc, nc.variables[data_ncvar], f,
+    f._Data = _set_Data(nc, data_ncvar, f,
                         unpacked_dtype=unpacked_dtype, g=g)
     
     # ----------------------------------------------------------------
@@ -968,8 +980,10 @@ Create a field for a given netCDF variable.
 
             # Set dimensions for this variable 
             aux_ncdimensions = _ncdimensions(nc, ncvar, g=g)
+#            print 'aux_ncdimensions=',aux_ncdimensions
             dimensions = [ncdim_to_axis[ncdim] for ncdim in aux_ncdimensions
                           if ncdim in ncdim_to_axis]
+#            print 'dimensions=',dimensions
 
             if ncvar in auxiliary_coordinates:
                 coord = auxiliary_coordinates[ncvar].copy()
@@ -1055,7 +1069,7 @@ Create a field for a given netCDF variable.
                 # Variable is scalar => term is a parameter, not a
                 # DomainAncillary
                 if ncvar not in coordref_parameters:
-                    variable = _create_Variable(nc, ncvar, attributes, g=g)
+                    variable = _create_Data(nc, ncvar, attributes, g=g)
                     coordref_parameters[ncvar] = variable
                 continue
 
@@ -1251,7 +1265,7 @@ def _create_bounded_item(nc, ncvar, attributes, f, dimension=False,
     if climatology:
         c.climatology = climatology
 
-    data = _set_Data(nc, nc.variables[ncvar], c, g=g)
+    data = _set_Data(nc, ncvar, c, g=g)
 
     # ------------------------------------------------------------
     # Add any bounds
@@ -1274,7 +1288,7 @@ def _create_bounded_item(nc, ncvar, attributes, f, dimension=False,
         
         bounds.ncvar = ncbounds
 
-        bounds_data = _set_Data(nc, nc.variables[ncbounds], bounds, g=g)
+        bounds_data = _set_Data(nc, ncbounds, bounds, g=g)
 
         bounds.insert_data(bounds_data, copy=False)
 
@@ -1332,13 +1346,13 @@ Create a variable.
 '''
     variable = g['mod'].Variable(properties=attributes[ncvar])
 
-    data = _set_Data(nc, nc.variables[ncvar], variable,
-                     uncompress_override=False, g=g)
+    data = _set_Data(nc, ncvar, variable, uncompress_override=False,
+                     g=g)
 
     return data
 #--- End: def
 
-def _create_Variable(nc, ncvar, attributes, g=None):
+def _create_Data(nc, ncvar, attributes, g=None):
     '''
 
 Create a variable.
@@ -1349,26 +1363,26 @@ Create a variable.
         The entire netCDF file in a `netCDF4.Dataset` object.
 
     ncvar: `str`
-        The netCDF name of the coordinate variable.
+        The netCDF variable name.
 
     attributes: `dict`
-        Dictionary of the coordinate variable's netCDF attributes.
+        Dictionary of the netCDF variable's attributes.
 
     g: `dict`
 
 :Returns:
     
-    out: `Variable`
-        The new variable.
+    out: `Data`
 
 '''
-    variable = g['mod'].Variable(properties=attributes[ncvar])
+    properties = attributes[ncvar]
 
-    data = _set_Data(nc, nc.variables[ncvar], variable, g=g)
+    units = g['mod'].Units(properties.pop('units', None),
+                           properties.pop('calendar', None))
 
-    variable.insert_data(data, copy=False)
+    data = _set_Data(nc, ncvar, units=units, g=g)
 
-    return variable
+    return data
 #--- End: def
 
 def _create_item(nc, ncvar, attributes, f, cell_measure=False,
@@ -1401,7 +1415,7 @@ Create a cell measure or field ancillary object.
     elif field_ancillary:
         clm = g['mod'].FieldAncillary(properties=attributes[ncvar])
 
-    data = _set_Data(nc, nc.variables[ncvar], clm, g=g)
+    data = _set_Data(nc, ncvar, clm, g=g)
 
     clm.insert_data(data, copy=False)
 
@@ -1457,7 +1471,7 @@ variable.
                 c = compression[ncdim]
                 if 'gathered' in c:
                     # Compression by gathering
-                    i = ncdimension.index(ncdim)
+                    i = ncdimensions.index(ncdim)
                     ncdimensions[i:i+1] = c['gathered']['implied_ncdimensions']
                 elif 'DSG_indexed_contiguous' in c:
                     # DSG indexed contiguous ragged array.
@@ -1587,8 +1601,9 @@ def _create_formula_terms_ref(f, key, coord, formula_terms,
     return coordref
 #--- End: def
 
-def _set_Data(nc, ncvar, variable, unpacked_dtype=False,
-              uncompress_override=None, g=None):
+def _set_Data(nc, ncvar, variable=None, unpacked_dtype=False,
+              uncompress_override=None, units=None, fill_value=None,
+              g=None):
     '''
 
 Set the Data attribute of a variable.
@@ -1597,9 +1612,9 @@ Set the Data attribute of a variable.
 
     nc: `netCDf4.Dataset`
 
-    ncvar: `netCDF4.Variable`
+    ncvar: `str`
 
-    variable: `Variable`
+    variable: `Variable`, optional
 
     unpacked_dtype: `False` or `numpy.dtype`, optional
 
@@ -1611,14 +1626,16 @@ Set the Data attribute of a variable.
 
 :Examples: 
 
-'''    
-    dtype = ncvar.dtype
+'''  
+    ncvariable = nc.variables[ncvar]
+
+    dtype = ncvariable.dtype
     if unpacked_dtype is not False:
         dtype = numpy.result_type(dtype, unpacked_dtype)
 
-    ndim  = ncvar.ndim
-    shape = ncvar.shape
-    size  = ncvar.size
+    ndim  = ncvariable.ndim
+    shape = ncvariable.shape
+    size  = ncvariable.size
     if size < 2:
         size = int(size)
 
@@ -1631,72 +1648,62 @@ Set the Data attribute of a variable.
         dtype = numpy.dtype('S{0}'.format(strlen))
     #--- End: if
 
-    filearray = g['mod'].data.filearray.NetCDFArray(file=g['filename'],
-                                                    ncvar=ncvar._name,
-                                                    dtype=dtype,
-                                                    ndim=ndim,
-                                                    shape=shape,
-                                                    size=size)
+    filearray = g['mod'].data.array.NetCDFArray(file=g['filename'],
+                                                ncvar=ncvar, #iable._name,
+                                                dtype=dtype,
+                                                ndim=ndim,
+                                                shape=shape,
+                                                size=size)
 
+    # Find the units for the data
+    if units is None and variable is not None:
+        units = variable.Units
+        
+    # Find the fill_value for the data
+    if fill_value is None and variable is not None:
+        fill_value = variable.fill_value()
+        
     compression = g['compression']
 
     if ((uncompress_override is not None and not uncompress_override) or
         not g['compression'] or 
         not g['uncompress'] or
-        not set(compression).intersection(ncvar.dimensions)):        
+        not set(compression).intersection(ncvariable.dimensions)):        
         # --------------------------------------------------------
         # The array is not compressed
         # --------------------------------------------------------
         data = g['mod'].Data(filearray,
-                             units=variable.Units,
-                             fill_value=variable.fill_value())
+                             units=units,
+                             fill_value=fill_value)
     else:
         # --------------------------------------------------------
         # The array is compressed
         # --------------------------------------------------------
         # Loop round the data variables dimensions as they are in
         # the netCDF file
-        for ncdim in ncvar.dimensions:
+        for ncdim in ncvariable.dimensions:
             if ncdim in compression:
                 c = compression[ncdim]
                 if 'gathered' in c:
-                    pass
-                    # Compression by gathering
-##                    indices = c['gathered']['indices']
-##                    
-##                    uncompressed_shape = [nc[ncdim].size for ncdim in ncvar.dimensions]
-##                    sample_axis = ncvar.dimensions.index(ncdim)
-##                    
-##                    data = Data.empty(shape=tuple(uncompressed_shape),
-##                                      units=variable.units,
-##                                      dtype=dtype,
-##                                      chunk=False)
-##                    data.fill_value = variable.fill_value()
-##                    data.chunk(omit_axes=[sample_axis])
-##                    
-##                    for partition in data.partitions.flat:
-##                        partition.subarray = CompressedArray(
-##                            array=filearray,
-##                            shape=partition.shape,
-##                            compression = {'gathered': {
-##                                'sample_axis': sample_axis,
-##                                'indices'    : indices}})
-##                        partition.part = []a
-
                     # Create an empty Data array which has dimensions
-                    # uncompressed_shape
-                    uncompressed_shape = tuple([nc[ncdim].size for ncdim in ncvar.dimensions])
+                    # uncompressed_shape  
+                    ncdims = _ncdimensions(nc, ncvar, g=g)
+                    uncompressed_shape = tuple([nc[dim].size for dim in ncdims])
 
                     empty_data = g['mod'].Data.compression_initialize_gathered(uncompressed_shape)
 
-                    sample_axis = ncvar.dimensions.index(ncdim)
+                    # The position of the compressed axis in the
+                    # gathered array
 
+                    sample_axis = ncvariable.dimensions.index(ncdim)
+
+                    # The uncompression indices
                     indices = c['gathered']['indices']
 
                     data = g['mod'].Data.compression_fill_gathered(empty_data,
                                                                    dtype,
-                                                                   variable.Units,
-                                                                   variable.fill_value(),
+                                                                   units,
+                                                                   fill_value,
                                                                    filearray,
                                                                    sample_axis,
                                                                    indices)
@@ -1711,38 +1718,38 @@ Set the Data attribute of a variable.
                     elements_per_profile  = c['DSG_indexed_contiguous']['elements_per_profile']
                     profile_indices       = c['DSG_indexed_contiguous']['profile_indices']
 
-                    data = g['mod'].Data.DSG_fill_indexed_contiguous(empty_data,
-                                                                     dtype,
-                                                                     variable.Units,
-                                                                     variable.fill_value(),
-                                                                     filearray,
-                                                                     profiles_per_instance,
-                                                                     elements_per_profile,
-                                                                     profile_indices)
+                    data = g['mod'].Data.compression_fill_indexed_contiguous(empty_data,
+                                                                             dtype,
+                                                                             units,
+                                                                             fill_value,
+                                                                             filearray,
+                                                                             profiles_per_instance,
+                                                                             elements_per_profile,
+                                                                             profile_indices)
 
                 elif 'DSG_contiguous' in c:                    
                     # DSG contiguous ragged array
                     empty_data            = c['DSG_contiguous']['empty_data'].copy()
                     elements_per_instance = c['DSG_contiguous']['elements_per_instance']
                                         
-                    data = g['mod'].Data.DSG_fill_contiguous(empty_data,
-                                                             dtype,
-                                                             variable.Units,
-                                                             variable.fill_value(),
-                                                             filearray,
-                                                             elements_per_instance)
+                    data = g['mod'].Data.compression_fill_contiguous(empty_data,
+                                                                     dtype,
+                                                                     units,
+                                                                     fill_value,
+                                                                     filearray,
+                                                                     elements_per_instance)
                                         
                 elif 'DSG_indexed' in c:
                     # DSG indexed ragged array
                     empty_data       = c['DSG_indexed']['empty_data'].copy()
                     instance_indices = c['DSG_indexed']['instance_indices']
                     
-                    data = g['mod'].Data.DSG_fill_indexed(empty_data,
-                                                          dtype,
-                                                          variable.Units,
-                                                          variable.fill_value(),
-                                                          filearray,
-                                                          instance_indices)
+                    data = g['mod'].Data.compression_fill_indexed(empty_data,
+                                                                  dtype,
+                                                                  units,
+                                                                  fill_value,
+                                                                  filearray,
+                                                                  instance_indices)
                         
                 else:
                     raise ValueError("Bad compression vibes. c.keys()={}".format(c.keys()))
