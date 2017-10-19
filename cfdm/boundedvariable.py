@@ -700,6 +700,10 @@ Return a string containing a full description of the variable.
         if copy:            
             bounds = bounds.copy()
 
+        # Copy units
+        if not bounds.Units:
+            bounds.Units = self.Units
+            
         # Copy selected properties to the bounds
         for prop in ('standard_name', 'axis', 'positive',
                      'leap_months', 'leap_years', 'month_lengths'):

@@ -125,6 +125,8 @@ class create_fieldTest(unittest.TestCase):
 
         f.insert_cell_methods('grid_longitude: mean grid_latitude: max')
 
+
+#        f.dump()
         # Write the file, and read it in
 #        print f.shape
         cfdm.write(f, self.filename, _debug=True)

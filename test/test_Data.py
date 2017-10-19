@@ -298,7 +298,7 @@ class DataTest(unittest.TestCase):
         d[...] = cfdm.masked
         a = d.varray
         self.assertTrue(a.shape == ())
-        self.assertTrue(a[()] is numpy.ma.masked)
+        self.assertTrue(a[()] is numpy.ma.masked, 'a='+repr(a))
         a[()] = 18
         self.assertTrue(a == numpy.array(18))
 

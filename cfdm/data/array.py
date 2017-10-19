@@ -198,8 +198,15 @@ Returns a numpy array.
         if sys.getrefcount(self.array) < 2:
             array = self.array
         else:
-            array = self.array.copy()
-
+            if numpy.ma.isMA and not self.ndim:
+                # This is because numpy.ma.copy doesn't work for
+                # scalar arrays (at the moment, at least)
+                array = numpy.ma.masked_all((), dtype=self.array.dtype)
+                array[...] = self.array
+            else:
+                array = self.array.copy()
+        #--- End: if
+        
         if indices is Ellipsis:
             return array
             
@@ -350,7 +357,7 @@ Returns a numpy array.
             strlen = array.shape[-1]
             
             new_shape = array.shape[0:-1]
-            new_size  = long(reduce(mul, new_shape, 1))
+            new_size  = long(reduce(operator.mul, new_shape, 1))
             
             array = numpy.ma.resize(array, (new_size, strlen))
             

@@ -46,14 +46,12 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in self.chunk_sizes:    
-            f = cfdm.read(self.filename)
-            f.append(f[0].copy())
-            f[1].data[...] = f[1].array * 10
-            
-            g = cfdm.read(self.filename)[0]
-            self.assertTrue(g in f)
-        #--- End: for    
+        f = cfdm.read(self.filename)
+        f.append(f[0].copy())
+        f[1].data[...] = f[1].array * 10
+        
+        g = cfdm.read(self.filename)[0]
+        self.assertTrue(g in f)
     #--- End: def
 
     def test_FieldList___len__(self):
@@ -169,16 +167,14 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in self.chunk_sizes:    
-            f = cfdm.read(self.filename)
-            g = f.copy()
-            self.assertTrue(f.equals(g, traceback=True))
-
-            f += g.copy()
-            self.assertTrue(len(f) == 2)
-            g = f.copy()
-            self.assertTrue(f.equals(g, traceback=True))
-        #--- End: for    
+        f = cfdm.read(self.filename)
+        g = f.copy()
+        self.assertTrue(f.equals(g, traceback=True))
+        
+        f += g.copy()
+        self.assertTrue(len(f) == 2)
+        g = f.copy()
+        self.assertTrue(f.equals(g, traceback=True))
     #--- End: def
 
     def test_FieldList_extend(self):
@@ -310,16 +306,14 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in self.chunk_sizes:    
-            f = cfdm.read(self.filename)
-            g = f.copy()
-            self.assertTrue(f.equals(g, traceback=True))
-
-            f += g.copy()
-            self.assertTrue(len(f) == 2)
-            g = f.copy()
-            self.assertTrue(f.equals(g, traceback=True))
-        #--- End: for    
+        f = cfdm.read(self.filename)
+        g = f.copy()
+        self.assertTrue(f.equals(g, traceback=True))
+        
+        f += g.copy()
+        self.assertTrue(len(f) == 2)
+        g = f.copy()
+        self.assertTrue(f.equals(g, traceback=True))
     #--- End: def
 
 #--- End: class

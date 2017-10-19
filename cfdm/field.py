@@ -5708,7 +5708,7 @@ Return a deep or shallow copy.
                                              ignore_data_type=ignore_data_type,
                                              ignore_fill_value=ignore_fill_value,
                                              ignore=ignore,
-                                             traceback=True): # False): # DCH
+                                             traceback=False):
                                 del role_items1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_item = True

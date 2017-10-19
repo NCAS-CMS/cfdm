@@ -335,7 +335,7 @@ elements.
         indices = parse_indices(array.shape, indices)
 
         self._set_subspace(array, indices, value)
-        
+
         self._array = NumpyArray(array)
     #--- End: def
 
@@ -650,7 +650,18 @@ True
 -99.0 km
 
         '''
-        return self.varray.copy()
+        array = self.varray
+        
+        if numpy.ma.isMA and not self.ndim:
+            # This is because numpy.ma.copy doesn't work for
+            # scalar arrays (at the moment, at least)
+            temp = numpy.ma.masked_all((), dtype=array.dtype)
+            temp[...] = array
+            array = temp
+        else:
+            array = array.copy()
+
+        return array
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -1132,7 +1143,7 @@ Missing data array elements are omitted from the calculation.
     
     #        if not numpy.ndim(value) :
             if numpy.size(value) == 1:
-                for i in product(*indices1):
+                for i in itertools.product(*indices1):
                     array[i] = value
                     
             else:
