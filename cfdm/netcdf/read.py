@@ -1700,6 +1700,12 @@ Set the Data attribute of a variable.
                     # The uncompression indices
                     indices = c['gathered']['indices']
 
+#                    data = g['mod'].data.array.GatheredArray(uncompressed_shape=uncompressed_shape, 
+#                                                             dtype=dtype,
+#                                                             gathered_array=filearray,
+#                                                             sample_axis=sample_axis, 
+#                                                             indices=indices)
+
                     data = g['mod'].Data.compression_fill_gathered(empty_data,
                                                                    dtype,
                                                                    units,

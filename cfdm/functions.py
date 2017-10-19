@@ -30,16 +30,16 @@ def RELAXED_IDENTITIES(*arg):
 
 :Examples:
 
->>> org = cf.RELAXED_IDENTITIES()
+>>> org = RELAXED_IDENTITIES()
 >>> print org
 False
->>> cf.RELAXED_IDENTITIES(True)
+>>> RELAXED_IDENTITIES(True)
 False
->>> cf.RELAXED_IDENTITIES()
+>>> RELAXED_IDENTITIES()
 True
->>> cf.RELAXED_IDENTITIES(org)
+>>> RELAXED_IDENTITIES(org)
 True
->>> cf.RELAXED_IDENTITIES()
+>>> RELAXED_IDENTITIES()
 False
 
     '''
@@ -192,7 +192,7 @@ def parse_indices(shape, indices):
     ndim = n
     for index in indices:
         if index is Ellipsis:
-            m = n-length+1
+            m = n - length + 1
             parsed_indices.extend([slice(None)] * m)
             n -= m            
         else:
@@ -333,15 +333,15 @@ def parse_indices(shape, indices):
                                 
                         index = slice(start, stop, step)
                         is_slice = True
-                    else:
+#                    else:
 #                        if ((step > 0 and (steps <= 0).any()) or
 #                            (step < 0 and (steps >= 0).any()) or
 #                            not step):
 #                           raise ValueError("Bad index (not strictly monotonic): %s" % index)
-                        
-                        if not (steps > 0).all():
-                            raise ValueError(
-"Bad index (not strictly monotonically increasing sequence): {}".format(index))
+#                        pass
+#                        if not (steps > 0).all():
+#                            raise ValueError(
+#"Bad index (not strictly monotonically increasing sequence): {}".format(index))
                             
                 else:
                     raise IndexError(
@@ -356,60 +356,60 @@ def parse_indices(shape, indices):
     return parsed_indices
 #--- End: def
 
-def get_subspace(array, indices):
-    '''
-
-:Parameters:
-
-    array : numpy array
-
-    indices : list
-
-Subset the input numpy array with the given indices. Indexing is similar to
-that of a numpy array. The differences to numpy array indexing are:
-
-1. An integer index i takes the i-th element but does not reduce the rank of
-   the output array by one.
-
-2. When more than one dimension's slice is a 1-d boolean array or 1-d sequence
-   of integers then these indices work independently along each dimension
-   (similar to the way vector subscripts work in Fortran).
-
-indices must contain an index for each dimension of the input array.
-'''
-    gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
-    len_gg = len(gg)
-
-    if len_gg < 2:
-        # ------------------------------------------------------------
-        # At most one axis has a list-of-integers index so we can do a
-        # normal numpy subspace
-        # ------------------------------------------------------------
-        return array[tuple(indices)]
-
-    else:
-        # ------------------------------------------------------------
-        # At least two axes have list-of-integers indices so we can't
-        # do a normal numpy subspace
-        # ------------------------------------------------------------
-        if numpy.ma.isMA(array):
-            take = numpy.ma.take
-        else:
-            take = numpy.take
-
-        indices = indices[:]
-        for axis in gg:
-            array = take(array, indices[axis], axis=axis)
-            indices[axis] = slice(None)
-        #--- End: for
-
-        if len_gg < len(indices):
-            array = array[tuple(indices)]
-
-        return array
-    #--- End: if
-
-#--- End: def
+#def get_subspace(array, indices):
+#    '''
+#
+#:Parameters:
+#
+#    array : numpy array
+#
+#    indices : list
+#
+#Subset the input numpy array with the given indices. Indexing is similar to
+#that of a numpy array. The differences to numpy array indexing are:
+#
+#1. An integer index i takes the i-th element but does not reduce the rank of
+#   the output array by one.
+#
+#2. When more than one dimension's slice is a 1-d boolean array or 1-d sequence
+#   of integers then these indices work independently along each dimension
+#   (similar to the way vector subscripts work in Fortran).
+#
+#indices must contain an index for each dimension of the input array.
+#'''
+#    gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
+#    len_gg = len(gg)
+#
+#    if len_gg < 2:
+#        # ------------------------------------------------------------
+#        # At most one axis has a list-of-integers index so we can do a
+#        # normal numpy subspace
+#        # ------------------------------------------------------------
+#        return array[tuple(indices)]
+#
+#    else:
+#        # ------------------------------------------------------------
+#        # At least two axes have list-of-integers indices so we can't
+#        # do a normal numpy subspace
+#        # ------------------------------------------------------------
+#        if numpy.ma.isMA(array):
+#            take = numpy.ma.take
+#        else:
+#            take = numpy.take
+#
+#        indices = indices[:]
+#        for axis in gg:
+#            array = take(array, indices[axis], axis=axis)
+#            indices[axis] = slice(None)
+#        #--- End: for
+#
+#        if len_gg < len(indices):
+#            array = array[tuple(indices)]
+#
+#        return array
+#    #--- End: if
+#
+##--- End: def
 
 def _open_netcdf_file(filename, mode, fmt='NETCDF4'):
     try:        
@@ -418,73 +418,6 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'):
         raise RuntimeError("{}: {}".format(runtime_error, filename))
     
     return nc
-    #--- End: def
-
-
-def set_subspace(array, indices, value):
-    '''
-'''
-    gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
-
-    if len(gg) < 2: 
-        # ------------------------------------------------------------
-        # At most one axis has a list-of-integers index so we can do a
-        # normal numpy assignment
-        # ------------------------------------------------------------
-        array[tuple(indices)] = value
-    else:
-        # ------------------------------------------------------------
-        # At least two axes have list-of-integers indices so we can't
-        # do a normal numpy assignment
-        # ------------------------------------------------------------
-        indices1 = indices[:]
-        for i, x in enumerate(indices):
-            if i in gg:
-                y = []
-                args = [iter(x)] * 2
-                for start, stop in izip_longest(*args):
-                    if not stop:
-                        y.append(slice(start, start+1))
-                    else:
-                        step = stop - start
-                        stop += 1
-                        y.append(slice(start, stop, step))
-                #--- End: for
-                indices1[i] = y
-            else:
-                indices1[i] = (x,)
-        #--- End: for
-
-#        if not numpy.ndim(value) :
-        if numpy.size(value) == 1:
-            for i in product(*indices1):
-                array[i] = value
-                
-        else:
-            indices2 = []
-            ndim_difference = array.ndim - numpy.ndim(value)
-            for i, n in enumerate(numpy.shape(value)):
-                if n == 1:
-                    indices2.append((slice(None),))
-                elif i + ndim_difference in gg:
-                    y = []
-                    start = 0
-                    while start < n:
-                        stop = start + 2
-                        y.append(slice(start, stop))
-                        start = stop
-                    #--- End: while
-                    indices2.append(y)
-                else:
-                    indices2.append((slice(None),))
-            #--- End: for
-
-#            print  'C',indices1
-#            print  'D', indices2
-#            print 'E', value
-            for i, j in izip(product(*indices1), product(*indices2)):
-#                print i, j
-                array[i] = value[j]
 #--- End: def
 
 def ATOL(*arg):
@@ -518,12 +451,12 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 
 :Examples 2:
 
->>> cf.ATOL()
+>>> ATOL()
 1e-08
->>> old = cf.ATOL(1e-10)
->>> cf.ATOL(old)
+>>> old = ATOL(1e-10)
+>>> ATOL(old)
 1e-10
->>> cf.ATOL()
+>>> ATOL()
 1e-08
 
     '''
@@ -565,12 +498,12 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 
 :Examples 2:
 
->>> cf.RTOL()
+>>> RTOL()
 1.0000000000000001e-05
->>> old = cf.RTOL(1e-10)
->>> cf.RTOL(old)
+>>> old = RTOL(1e-10)
+>>> RTOL(old)
 1e-10
->>> cf.RTOL()
+>>> RTOL()
 1.0000000000000001e-05
 
     '''
@@ -771,8 +704,6 @@ Return a normalized absolute version of a file name.
 
 If a string containing URL is provided then it is returned unchanged.
 
-.. seealso:: `dirname`, `pathjoin`, `relpath`
-
 :Parameters:
 
     filename: `str`
@@ -788,11 +719,11 @@ If a string containing URL is provided then it is returned unchanged.
 >>> import os
 >>> os.getcwd()
 '/data/archive'
->>> cfdm.abspath('file.nc')
+>>> abspath('file.nc')
 '/data/archive/file.nc'
->>> cfdm.abspath('..//archive///file.nc')
+>>> abspath('..//archive///file.nc')
 '/data/archive/file.nc'
->>> cfdm.abspath('http://data/archive/file.nc')
+>>> abspath('http://data/archive/file.nc')
 'http://data/archive/file.nc'
 
 '''
@@ -801,130 +732,6 @@ If a string containing URL is provided then it is returned unchanged.
         return filename
 
     return os.path.abspath(filename)
-#--- End: def
-
-def relpath(filename, start=None):
-    '''
-
-Return a relative filepath to a file.
-
-The filepath is relative either from the current directory or from an
-optional start point.
-
-If a string containing URL is provided then it is returned unchanged.
-
-.. seealso:: `cf.abspath`, `cf.dirname`, `cf.pathjoin`
-
-:Parameters:
-
-    filename: `str`
-        The name of the file.
-
-    start: `str`, optional
-        The start point for the relative path. By default the current
-        directoty is used.
-
-:Returns:
-
-    out: `str`
-        The relative path.
-
-:Examples:
-
->>> cf.relpath('/data/archive/file.nc')
-'../file.nc'
->>> cf.relpath('/data/archive///file.nc', start='/data')
-'archive/file.nc'
->>> cf.relpath('http://data/archive/file.nc')
-'http://data/archive/file.nc'
-
-'''
-    u = urlparse_urlparse(filename)
-    if u.scheme != '':
-        return filename
-
-    if start is not None:
-        return os.path.relpath(filename, start)
-
-    return os.path.relpath(filename)
-#--- End: def
-
-def dirname(filename):
-    '''
-
-Return the directory name of a file.
-
-If a string containing URL is provided then everything up to, but not
-including, the last slash (/) is returned.
-
-.. seealso:: `cf.abspath`, `cf.pathjoin`, `cf.relpath`
-
-:Parameters:
-
-    filename: `str`
-        The name of the file.
-
-:Returns:
-
-    out: `str`
-        The directory name.
-
-:Examples:
-
->>> cf.dirname('/data/archive/file.nc')
-'/data/archive'
->>> cf.dirname('..//file.nc')
-'..'
->>> cf.dirname('http://data/archive/file.nc')
-'http://data/archive'
-
-'''
-    u = urlparse_urlparse(filename)
-    if u.scheme != '':
-        return filename.rpartition('/')[0]
-
-    return os.path.dirname(filename)
-#--- End: def
-
-def pathjoin(path1, path2):
-    '''
-
-Join two file path components intelligently.
-
-If either of the paths is a URL then a URL will be returned
-
-.. seealso:: `cf.abspath`, `cf.dirname`, `cf.relpath`
-
-:Parameters:
-
-    path1: `str`
-        The first component of the path.
-
-    path2: `str`
-        The second component of the path.
-
-:Returns:
-
-    out: `str`
-        The joined paths.
-
-:Examples:
-
->>> cf.pathjoin('/data/archive', '../archive/file.nc')
-'/data/archive/../archive/file.nc'
->>> cf.pathjoin('/data/archive', '../archive/file.nc')
-'/data/archive/../archive/file.nc'
->>> cf.abspath(cf.pathjoin('/data/', 'archive/')
-'/data/archive'
->>> cf.pathjoin('http://data', 'archive/file.nc')
-'http://data/archive/file.nc'
-
-'''
-    u = urlparse_urlparse(path1)
-    if u.scheme != '':
-        return urlparse_urljoin(path1, path2)
-
-    return os.path.join(path1, path2)
 #--- End: def
 
 def allclose(x, y, rtol=None, atol=None):
@@ -996,7 +803,7 @@ def environment(display=True):
 
 :Examples:
 
->>> cfdm.environment()
+>>> environment()
 Platform: Linux-4.4.0-53-generic-x86_64-with-debian-stretch-sid
 HDF5 library: 1.8.17
 netcdf library: 4.4.1

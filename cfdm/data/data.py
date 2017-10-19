@@ -6,7 +6,7 @@ import numpy
 from ..constants  import masked
 from ..cfdatetime import rt2dt, st2rt, st2dt
 from ..units      import Units
-from ..functions  import RTOL, ATOL, parse_indices, set_subspace, _numpy_allclose
+from ..functions  import RTOL, ATOL, parse_indices, _numpy_allclose
 
 from .array import Array, NumpyArray
 
@@ -333,8 +333,8 @@ elements.
             value = numpy.asanyarray(value)
 
         indices = parse_indices(array.shape, indices)
-        
-        set_subspace(array, indices, value)
+
+        self._set_subspace(array, indices, value)
         
         self._array = NumpyArray(array)
     #--- End: def
@@ -1095,6 +1095,69 @@ Missing data array elements are omitted from the calculation.
         return tuple(axes2)
     #--- End: def
 
+    @classmethod
+    def _set_subspace(cls, array, indices, value):
+        '''
+        '''
+        gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
+    
+        if len(gg) < 2: 
+            # ------------------------------------------------------------
+            # At most one axis has a list-of-integers index so we can do a
+            # normal numpy assignment
+            # ------------------------------------------------------------
+            array[tuple(indices)] = value
+        else:
+            # ------------------------------------------------------------
+            # At least two axes have list-of-integers indices so we can't
+            # do a normal numpy assignment
+            # ------------------------------------------------------------
+            indices1 = indices[:]
+            for i, x in enumerate(indices):
+                if i in gg:
+                    y = []
+                    args = [iter(x)] * 2
+                    for start, stop in itertools.izip_longest(*args):
+                        if not stop:
+                            y.append(slice(start, start+1))
+                        else:
+                            step = stop - start
+                            stop += 1
+                            y.append(slice(start, stop, step))
+                    #--- End: for
+                    indices1[i] = y
+                else:
+                    indices1[i] = (x,)
+            #--- End: for
+    
+    #        if not numpy.ndim(value) :
+            if numpy.size(value) == 1:
+                for i in product(*indices1):
+                    array[i] = value
+                    
+            else:
+                indices2 = []
+                ndim_difference = array.ndim - numpy.ndim(value)
+                for i, n in enumerate(numpy.shape(value)):
+                    if n == 1:
+                        indices2.append((slice(None),))
+                    elif i + ndim_difference in gg:
+                        y = []
+                        start = 0
+                        while start < n:
+                            stop = start + 2
+                            y.append(slice(start, stop))
+                            start = stop
+                        #--- End: while
+                        indices2.append(y)
+                    else:
+                        indices2.append((slice(None),))
+                #--- End: for
+    
+                for i, j in zip(itertools.product(*indices1), itertools.product(*indices2)):
+                    array[i] = value[j]
+    #--- End: def
+
     def squeeze(self, axes=None, copy=True):
         '''Remove size 1 axes from the data.
 
@@ -1478,7 +1541,7 @@ False
         other_Units = other.Units
         if self_Units != other_Units:
             if traceback:
-                print("{0}: Different units: {!r}, {!r}".format(
+                print("{0}: Different units: {1!r}, {2!r}".format(
                     self.__class__.__name__, self.Units, other.Units))
             return False
         #--- End: if
@@ -1800,7 +1863,7 @@ element_dimension_size  = count.max()
 
         uncompressed_array = data.varray 
        
-        compressed_axes = range(sample_axis, data.ndim - (gathered_array.ndim - sample_axis - 1))
+        compressed_axes = range(sample_axis, uncompressed_array.ndim - (gathered_array.ndim - sample_axis - 1))
         
         zzz = [reduce(operator.mul, [uncompressed_array.shape[i] for i in compressed_axes[i:]], 1)
                for i in range(1, len(compressed_axes))]

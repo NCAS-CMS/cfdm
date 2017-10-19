@@ -5,7 +5,7 @@ import numpy
 
 from ..                import __Conventions__
 from ..cfdatetime      import dt2rt
-from ..functions       import equals, flat, relpath, abspath
+from ..functions       import equals, flat, abspath
 
 #from .filearray import NetCDFFileArray
 from ..functions import _open_netcdf_file
