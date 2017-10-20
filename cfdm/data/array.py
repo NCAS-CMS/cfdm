@@ -195,7 +195,7 @@ x.__getitem__(indices) <==> x[indices]
 Returns a numpy array.
 
 '''
-        if sys.getrefcount(self.array) < 2:
+        if sys.getrefcount(self.array) <= 2:
             array = self.array
         else:
             if numpy.ma.isMA and not self.ndim:
@@ -206,7 +206,7 @@ Returns a numpy array.
             else:
                 array = self.array.copy()
         #--- End: if
-        
+
         if indices is Ellipsis:
             return array
             

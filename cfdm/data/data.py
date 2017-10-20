@@ -317,21 +317,18 @@ elements.
         # If value has Units then make sure that they're the same
         # as self.Units
         if (isinstance(value, self.__class__) and
-            self.Units and
-            value.Units and
             value.Units != self.Units):
             raise ValueError(
 "Can't set to values with different units: {!r}".format(value.Units))
 
         array = self._array[...]
 
-        if value is masked and not numpy.ma.isMA(array):
-            # The assignment is masking elements, so turn a
-            # non-masked array into a masked one.
+        if value is masked or numpy.ma.isMA(value):
+            # The data is not masked and the assignment is masking
+            # elements, so turn the non-masked array into a masked
+            # one.
             array = array.view(numpy.ma.MaskedArray)
-        else:
-            value = numpy.asanyarray(value)
-
+            
         indices = parse_indices(array.shape, indices)
 
         self._set_subspace(array, indices, value)
@@ -652,7 +649,7 @@ True
         '''
         array = self.varray
         
-        if numpy.ma.isMA and not self.ndim:
+        if numpy.ma.isMA(array) and not self.ndim:
             # This is because numpy.ma.copy doesn't work for
             # scalar arrays (at the moment, at least)
             temp = numpy.ma.masked_all((), dtype=array.dtype)

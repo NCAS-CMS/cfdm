@@ -556,7 +556,7 @@ Parse an ISO 8601 date-time string into a `cf.Datetime` object.
 
 array_st2Datetime = numpy.vectorize(st2Datetime, otypes=[object])
 
-def rt2dt(array, units_in, units_out=None, dummy1=None):
+def rt2dt(array, units_in, dummy0=None, dummy1=None):
     '''Convert reference times  to date-time objects
 
 The returned array is always independent.
@@ -567,10 +567,10 @@ The returned array is always independent.
 
     units_in: `cf.Units`
 
-    units_out: *optional*
+    dummy0: optional
         Ignored.
 
-    dummy1:
+    dummy1: optional
         Ignored.
 
 :Returns:

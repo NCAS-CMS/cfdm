@@ -33,51 +33,40 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for hardmask in (False, True):
-            a = numpy.ma.arange(3000).reshape(50, 60)
-            if hardmask:
-                a.harden_mask()
-            else:
-                a.soften_mask()
-                    
-            d = cfdm.Data(a.filled(), 'm')
-            d.hardmask = hardmask
-            
-            for n, (j, i) in enumerate(((34, 23), (0, 0), (-1, -1),
-                                        (slice(40, 50), slice(58, 60)),
-                                        (Ellipsis, slice(None)),
-                                        (slice(None), Ellipsis),
-            )):
-                n = -n-1
-                for dvalue, avalue in ((n, n), (cfdm.masked, numpy.ma.masked), (n, n)):
-                    message = "hardmask={}, cfdm.Data[{}, {}]]={}={} failed".format(hardmask, j, i, dvalue, avalue)
-                    d[j, i] = dvalue
-                    a[j, i] = avalue
-                    self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
-                    self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), 
-                                        'd.mask.array='+repr(d.mask.array)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
-            #--- End: for
-    
-            a = numpy.ma.arange(3000).reshape(50, 60)
-            if hardmask:
-                a.harden_mask()
-            else:
-                a.soften_mask()
-    
-            d = cfdm.Data(a.filled(), 'm')
-            d.hardmask = hardmask
-            
-            (j, i) = (slice(0, 2), slice(0, 3))
-            array = numpy.array([[1, 2, 6],[3, 4, 5]])*-1
-            for dvalue in (array,
-                           numpy.ma.masked_where(array < -2, array),
-                           array):
-                message = 'cfdm.Data[%s, %s]=%s failed' % (j, i, dvalue)
+        a = numpy.ma.arange(3000).reshape(50, 60)
+                
+        d = cfdm.Data(a.filled(), 'm')
+        
+        for n, (j, i) in enumerate(((34, 23), (0, 0), (-1, -1),
+                                    (slice(40, 50), slice(58, 60)),
+                                    (Ellipsis, slice(None)),
+                                    (slice(None), Ellipsis),
+        )):
+            n = -n-1
+            for dvalue, avalue in ((n, n), (cfdm.masked, numpy.ma.masked), (n, n)):
+                message = "cfdm.Data[{}, {}]]={}={} failed".format(j, i, dvalue, avalue)
                 d[j, i] = dvalue
-                a[j, i] = dvalue
+                a[j, i] = avalue
                 self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
-                self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), message)
-            #--- End: for
+                self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), 
+                                'd.mask.array='+repr(d.mask.array)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
+        #--- End: for
+    
+        a = numpy.ma.arange(3000).reshape(50, 60)
+        
+        d = cfdm.Data(a.filled(), 'm')
+        
+        (j, i) = (slice(0, 2), slice(0, 3))
+        array = numpy.array([[1, 2, 6],[3, 4, 5]])*-1
+        
+        for dvalue in (array,
+                       numpy.ma.masked_where(array < -2, array),
+                       array):
+            message = 'cfdm.Data[%s, %s]=%s failed' % (j, i, dvalue)
+            d[j, i] = dvalue
+            a[j, i] = dvalue
+            self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
+            self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), message)
         #--- End: for
     #--- End: def
 
@@ -118,7 +107,8 @@ class DataTest(unittest.TestCase):
         # Scalar array
         for d, x in zip([cfdm.Data(11292.5, 'days since 1970-1-1'),
                          cfdm.Data('2000-12-1 12:00', dt=True)],
-                        [11292.5, 0.5]):
+                        [11292.5,
+                         0.5]):
             a = d.dtarray
             self.assertTrue(a.shape == ())
             self.assertTrue(a == numpy.array(cfdm.dt('2000-12-1 12:00')))
