@@ -129,7 +129,7 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
         # Write the file, and read it in
 #        print f.shape
-        cfdm.write(f, self.filename, _debug=True)
+        cfdm.write(f, self.filename, _debug=False)
 
         g = cfdm.read(self.filename, _debug=False, squeeze=True)
         

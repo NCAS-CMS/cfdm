@@ -22,6 +22,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_items']
 #        self.test_only = ['test_Field_axes','test_Field_data_axes']
 #        self.test_only = ['test_Field___getitem__']
+#        self.test_only = ['test_Field___setitem__']
 #        self.test_only = ['test_Field_expand_dims']
 #        self.test_only = ['test_Field_field']
 
@@ -55,10 +56,12 @@ class FieldTest(unittest.TestCase):
         self.assertTrue((g.array == d[6:2:-1, 4:1:-1]).all())
 
         g = f[[0, 3, 8], [1, 7, 8]]
-        
+        self.assertTrue(g.shape == (3, 3))
+                
 #        g = f[[8, 3, 0], [8, 7, 1]]
         
         g = f[[1, 4, 7], slice(6, 8)]
+        self.assertTrue((g.array == d[[1, 4, 7], slice(6, 8)]).all())
     #--- End: def
 
     def test_Field___setitem__(self):
@@ -90,11 +93,12 @@ class FieldTest(unittest.TestCase):
         f[index] = -4
         self.assertTrue((f[index].array == -4).all(),
                         '\n'+repr(f.array)+'\n'+repr(f[index].array))
+
         f[index] = cfdm.Data(-5, None)
         self.assertTrue((f[index].array == -5).all(),
                         '\n'+repr(f.array)+'\n'+repr(f[index].array))
 
-        f[index] = cfdm.Data([-0.006], 'km s-1')
+        f[index] = cfdm.Data([-6.], f.Units)
         self.assertTrue((f[index].array == -6).all(),
                         '\n'+repr(f.array)+'\n'+repr(f[index].array))
 
@@ -102,9 +106,13 @@ class FieldTest(unittest.TestCase):
         self.assertTrue((f[index].array == -7).all(),
                         '\n'+repr(f.array)+'\n'+repr(f[index].array))
 
-        index = ([7, 4, 1], slice(6, 8))
-        f[index] = [-8]
+        f[index] = numpy.full((3, 3), -8.0)
         self.assertTrue((f[index].array == -8).all(),
+                        '\n'+repr(f.array)+'\n'+repr(f[index].array))
+
+        index = ([7, 4, 1], slice(6, 8))
+        f[index] = [-9]
+        self.assertTrue((f[index].array == -9).all(),
                         '\n'+repr(f.array)+'\n'+repr(f[index].array))
     #--- End: def
 

@@ -465,7 +465,7 @@ Each cell method's interval keyword(s).
                     "Unparseable interval: {0!r}".format(interval))
                 
             if d.ndim > 1:
-                d.squeeze(i=True)
+                d.squeeze(copy=False)
 
             values.append(d)
         #--- End: for
@@ -567,11 +567,11 @@ corresponding dimension or dimensions.
             return string
     #--- End: def
 
-    def expand_intervals(self, i=False):
-        if i:
-            c = self
-        else:
+    def expand_intervals(self, copy=True):
+        if copy:
             c = self.copy()
+        else:
+            c = self
 
         n_axes = len(c._axes)
         intervals = c._intervals
@@ -637,13 +637,13 @@ corresponding dimension or dimensions.
         self._intervals = tuple(_intervals)
     #--- End: def
 
-    def change_axes(self, axis_map, i=False):
+    def change_axes(self, axis_map, copy=True):
         '''
     '''
-        if i:
-            c = self
-        else:
+        if copy:
             c = self.copy()
+        else:
+            c = self
 
         if not axis_map:
             return c
@@ -654,22 +654,20 @@ corresponding dimension or dimensions.
     #--- End: def
 
     def copy(self):
-        '''
-
-Return a deep copy.
+        '''Return a deep copy.
 
 ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
 :Returns:
 
-    out : 
+    out: `CellMethod`
         The deep copy.
 
 :Examples:
 
 >>> d = c.copy()
 
-'''       
+        '''       
         new = CellMethod.__new__(CellMethod)
 
         new._axes    = self._axes     
@@ -843,8 +841,8 @@ The `axes` and `intervals` attributes are ignored in the comparison.
             return False
 
         if len(self1.intervals) != len(other1.intervals):
-            self1 = self1.expand_intervals(i=True)
-            other1.expand_intervals(i=True)
+            self1 = self1.expand_intervals(copy=False)
+            other1.expand_intervals(copy=False)
             if len(self1.intervals) != len(other1.intervals):
                 if traceback:
                     print("{0}: Different numbers of intervals: {1!r} != {2!r}".format(
@@ -1154,7 +1152,7 @@ Cell methods    : time: minimum within years
                             parsed_interval = ast_literal_eval(interval)
                         except:
                             raise ValueError(
-"Unparseable cell methods interval: {0!r}".format(
+"Unparseable cell methods interval: {!r}".format(
     interval+' '+units if units is not None else interval))
                             
                         try:
@@ -1359,7 +1357,7 @@ Each cell method's interval keyword(s).
 "Unparseable cell method interval: {0!r}".format(interval))
                 
             if d.ndim > 1:
-                d.squeeze(i=True)
+                d.squeeze(copy=False)
 
             values.append(d)
         #--- End: for
@@ -1522,16 +1520,16 @@ Return a deep copy.
         return type(self)([cm.copy() for cm in self])
     #--- End: def
 
-    def change_axes(self, axis_map, i=False):
+    def change_axes(self, axis_map, copy=False):
         '''
     '''
-        if i:
-            cms = self
-        else:
+        if copy:
             cms = self.copy()
+        else:
+            cms = self
 
         for cm in cms:
-            cm.change_axes(axis_map, i=True)
+            cm.change_axes(axis_map, copy=False)
 
         return cms
     #--- End: def
@@ -1627,17 +1625,16 @@ The `axes` attribute is ignored in the comparison.
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             if traceback:
-                print("%s: Different types: %s != %s" %
-                      (self.__class__.__name__,
-                       self.__class__.__name__,
-                       other.__class__.__name__))
+                print("{0}: Different types: {0} != {1}".format(
+                    self.__class__.__name__,
+                    other.__class__.__name__))
             return False
 
         if len(self) != len(other):
             if traceback:
                 print(
-"{0}: Different numbers of methods: {1} != {2}".format(
-    self.__class__.__name__, len(self), len(other)))
+                    "{0}: Different numbers of cell methods: {1} != {2}".format(
+                        self.__class__.__name__, len(self), len(other)))
             return False
     
         for cm0, cm1 in zip(self, other):
@@ -1699,44 +1696,44 @@ The `axes` attributes are ignored in the comparison.
             if not cm0.equivalent(cm1, rtol=rtol, atol=atol, 
                                   traceback=traceback):
                 if traceback:
-                    print("as 9o78yd jhbn ")
+                    print("{0}: Different cell method".format(self.__class__.__name__))
                 return False 
         #--- End: for
 
         return True
     #--- End: def
 
-    def has_cellmethod(self, other):
-        '''
-
-Return True if and only if this cell methods is a super set of another.
-
-:Parameters:
-
-    other : cf.CellMethods
-        The other cell methods for comparison.
-
-:Returns:
-    out : bool
-        Whether or not this cell methods is a super set of the other.
-
-:Examples:
-
-'''
-        if len(other) != 1:
-            return False
-
-        found_match = False
-
-        cm1 = other[0]
-        for cm in self:
-            if cm.equivalent(cm1):
-                found_match = True
-                break
-        #--- End: for
-
-        return found_match
-    #--- End: def
+#    def has_cellmethod(self, other):
+#        '''
+#
+#Return True if and only if this cell methods is a super set of another.
+#
+#:Parameters:
+#
+#    other : cf.CellMethods
+#        The other cell methods for comparison.
+#
+#:Returns:
+#    out : bool
+#        Whether or not this cell methods is a super set of the other.
+#
+#:Examples:
+#
+#'''
+#        if len(other) != 1:
+#            return False
+#
+#        found_match = False
+#
+#        cm1 = other[0]
+#        for cm in self:
+#            if cm.equivalent(cm1):
+#                found_match = True
+#                break
+#        #--- End: for
+#
+#        return found_match
+#    #--- End: def
 
     def inspect(self):
         '''

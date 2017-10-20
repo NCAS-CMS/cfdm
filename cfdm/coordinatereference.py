@@ -773,7 +773,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
     #--- End: def
 
     def change_identifiers(self, identity_map, coordinate=True,
-                           ancillary=True, strict=False, i=False):
+                           ancillary=True, strict=False, copy=True):
         '''Change the
 
 ntifier is not in the provided mapping then it is
@@ -809,10 +809,10 @@ reference.
 {'dim1', 'aux0'}
 
         '''
-        if i:
-            r = self
-        else:
+        if copy:
             r = self.copy()
+        else:
+            r = self
 
         if not identity_map and not strict:
             return r

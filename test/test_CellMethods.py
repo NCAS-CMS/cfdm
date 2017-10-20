@@ -60,8 +60,9 @@ class CellMethodsTest(unittest.TestCase):
             return
 
         for s in self.strings:
+            print s
             cm = cfdm.CellMethods(s)           
-            self.assertTrue(str(cm) == s, '{!r} != {!r}'.format(s, str(cm)))
+            self.assertTrue(s == str(cm), '{!r} != {!r}'.format(s, str(cm)))
     #--- End: def
 
     def test_CellMethods_equals(self):

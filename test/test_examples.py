@@ -4,11 +4,11 @@ import unittest
 
 import numpy
 
-import cf
+import cfdm
 
 class ExamplesTest(unittest.TestCase):
     def test_example1(self):
-        f = cf.Field()
+        f = cfdm.Field()
         print_f = str(f)
         
         self.assertTrue(
@@ -17,7 +17,7 @@ class ExamplesTest(unittest.TestCase):
         #--- End: def
 
     def test_example2(self):
-        f = cf.Field()
+        f = cfdm.Field()
         f.standard_name = 'air_temperature'
         f.properties({'long_name': 'temperature of air',
                       'foo'      : 'bar'})
@@ -29,14 +29,14 @@ class ExamplesTest(unittest.TestCase):
     #--- End: def
 
     def test_example3(self):
-        data = cf.Data(numpy.arange(90.).reshape(10, 9), 'm s-1')
+        data = cfdm.Data(numpy.arange(90.).reshape(10, 9), 'm s-1')
         properties = {'standard_name': 'eastward_wind'}
-        dim0 = cf.DimensionCoordinate(data=cf.Data(range(10), 'degrees_north'),
+        dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(range(10), 'degrees_north'),
                                       properties={'standard_name': 'latitude'})
-        dim1 = cf.DimensionCoordinate(data=cf.Data(range(9), 'degrees_east'))
+        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(range(9), 'degrees_east'))
         dim1.standard_name = 'longitude'
 
-        f = cf.Field(properties=properties)
+        f = cfdm.Field(properties=properties)
         f.insert_dim(dim0)
         f.insert_dim(dim1)
         f.insert_data(data)
@@ -52,7 +52,7 @@ Axes           : latitude(10) = [0, ..., 9] degrees_north
                : longitude(9) = [0, ..., 8] degrees_east
 ''')
 
-        aux = cf.AuxiliaryCoordinate(data=cf.Data(['alpha','beta','gamma','delta','epsilon',
+        aux = cfdm.AuxiliaryCoordinate(data=cfdm.Data(['alpha','beta','gamma','delta','epsilon',
                                                    'zeta','eta','theta','iota','kappa']))
 
         aux.long_name = 'extra'
@@ -89,34 +89,34 @@ Axes           : latitude(10) = [0, ..., 9] degrees_north
         # 1. CREATE the field's domain items
         #---------------------------------------------------------------------
         # Create a grid_latitude dimension coordinate
-        Y = cf.DimensionCoordinate(properties={'standard_name': 'grid_latitude'},
-                                   data=cf.Data(numpy.arange(10.), 'degrees'))
+        Y = cfdm.DimensionCoordinate(properties={'standard_name': 'grid_latitude'},
+                                   data=cfdm.Data(numpy.arange(10.), 'degrees'))
         
         # Create a grid_longitude dimension coordinate
-        X = cf.DimensionCoordinate(data=cf.Data(numpy.arange(9.), 'degrees'))
+        X = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(9.), 'degrees'))
         X.standard_name = 'grid_longitude'
         
         # Create a time dimension coordinate (with bounds)
-        bounds = cf.Bounds(
-            data=cf.Data([0.5, 1.5],
-                         cf.Units('days since 2000-1-1', calendar='noleap')))
-        T = cf.DimensionCoordinate(properties=dict(standard_name='time'),
-                                   data=cf.Data(1, cf.Units('days since 2000-1-1',
+        bounds = cfdm.Bounds(
+            data=cfdm.Data([0.5, 1.5],
+                         cfdm.Units('days since 2000-1-1', calendar='noleap')))
+        T = cfdm.DimensionCoordinate(properties=dict(standard_name='time'),
+                                   data=cfdm.Data(1, cfdm.Units('days since 2000-1-1',
                                                             calendar='noleap')),
                                    bounds=bounds)
         
         # Create a longitude auxiliary coordinate
-        lat = cf.AuxiliaryCoordinate(data=cf.Data(numpy.arange(90).reshape(10, 9),
+        lat = cfdm.AuxiliaryCoordinate(data=cfdm.Data(numpy.arange(90).reshape(10, 9),
                                                   'degrees_north'))
         lat.standard_name = 'latitude'
         
         # Create a latitude auxiliary coordinate
-        lon = cf.AuxiliaryCoordinate(properties=dict(standard_name='longitude'),
-                                     data=cf.Data(numpy.arange(1, 91).reshape(9, 10),
+        lon = cfdm.AuxiliaryCoordinate(properties=dict(standard_name='longitude'),
+                                     data=cfdm.Data(numpy.arange(1, 91).reshape(9, 10),
                                                   'degrees_east'))
         
         # Create a rotated_latitude_longitude grid mapping coordinate reference
-        grid_mapping = cf.CoordinateReference('rotated_latitude_longitude',
+        grid_mapping = cfdm.CoordinateReference('rotated_latitude_longitude',
                                               parameters={
                                                   'grid_north_pole_latitude': 38.0,
                                                   'grid_north_pole_longitude': 190.0})
@@ -129,10 +129,10 @@ Axes           : latitude(10) = [0, ..., 9] degrees_north
                       'long_name'    : 'East Wind'}
 
         # Create the field's data array
-        data = cf.Data(numpy.arange(90.).reshape(9, 10), 'm s-1')
+        data = cfdm.Data(numpy.arange(90.).reshape(9, 10), 'm s-1')
         
         # Finally, create the field
-        f = cf.Field(properties=properties)
+        f = cfdm.Field(properties=properties)
 
         f.insert_cell_methods('latitude: point')
 
@@ -164,40 +164,40 @@ Coord refs     : rotated_latitude_longitude
     #--- End: def
 
     def test_example5(self):
-        import cf
+        import cfdm
         import numpy
         
         #---------------------------------------------------------------------
         # 1. CREATE the field's domain items
         #---------------------------------------------------------------------
         # Create a grid_latitude dimension coordinate
-        Y = cf.DimensionCoordinate(properties={'standard_name': 'grid_latitude'},
-                                      data=cf.Data(numpy.arange(10.), 'degrees'))
+        Y = cfdm.DimensionCoordinate(properties={'standard_name': 'grid_latitude'},
+                                      data=cfdm.Data(numpy.arange(10.), 'degrees'))
         
         # Create a grid_longitude dimension coordinate
-        X = cf.DimensionCoordinate(data=cf.Data(numpy.arange(10.), 'degrees'))
+        X = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.), 'degrees'))
         X.standard_name = 'grid_longitude'
 
         # Create a time dimension coordinate (with bounds)
-        bounds = cf.Bounds(
-            data=cf.Data([0.5, 1.5], cf.Units('days since 2000-1-1', calendar='noleap')))
-        T = cf.DimensionCoordinate(properties=dict(standard_name='time'),
-                                   data=cf.Data(1, cf.Units('days since 2000-1-1',
+        bounds = cfdm.Bounds(
+            data=cfdm.Data([0.5, 1.5], cfdm.Units('days since 2000-1-1', calendar='noleap')))
+        T = cfdm.DimensionCoordinate(properties=dict(standard_name='time'),
+                                   data=cfdm.Data(1, cfdm.Units('days since 2000-1-1',
                                                             calendar='noleap')),
                                    bounds=bounds)
         
         # Create a longitude auxiliary coordinate
-        lat = cf.AuxiliaryCoordinate(data=cf.Data(numpy.arange(100).reshape(10, 10),
+        lat = cfdm.AuxiliaryCoordinate(data=cfdm.Data(numpy.arange(100).reshape(10, 10),
                                                   'degrees_north'))
         lat.standard_name = 'latitude'
         
         # Create a latitude auxiliary coordinate
-        lon = cf.AuxiliaryCoordinate(properties=dict(standard_name='longitude'),
-                                     data=cf.Data(numpy.arange(1, 101).reshape(10, 10),
+        lon = cfdm.AuxiliaryCoordinate(properties=dict(standard_name='longitude'),
+                                     data=cfdm.Data(numpy.arange(1, 101).reshape(10, 10),
                                                   'degrees_east'))
         
         # Create a rotated_latitude_longitude grid mapping coordinate reference
-        grid_mapping = cf.CoordinateReference('rotated_latitude_longitude',
+        grid_mapping = cfdm.CoordinateReference('rotated_latitude_longitude',
                                               parameters={
                                                   'grid_north_pole_latitude': 38.0,
                                                   'grid_north_pole_longitude': 190.0})
@@ -210,10 +210,10 @@ Coord refs     : rotated_latitude_longitude
                       'long_name'    : 'Eastward Wind'}
         
         # Create the field's data array
-        data = cf.Data(numpy.arange(100.).reshape(10, 10), 'm s-1')
+        data = cfdm.Data(numpy.arange(100.).reshape(10, 10), 'm s-1')
         
         # Finally, create the field
-        f = cf.Field(properties=properties)
+        f = cfdm.Field(properties=properties)
 
         f.insert_cell_methods('latitude: point')
 
@@ -248,7 +248,7 @@ Coord refs     : rotated_latitude_longitude
 
 if __name__ == '__main__':
     print 'Run date:', datetime.datetime.now()
-    cf.environment()
+    cfdm.environment()
     print ''
     unittest.main(verbosity=2)
 

@@ -3464,7 +3464,7 @@ None
         '''
         cm = CellMethods(item)
         self.Items.cell_methods.extend(cm)
-        self._conform_cell_methods(self.CellMethods)
+        self._conform_cell_methods(self.CellMethods, copy=False)
     #--- End: def
 
     def insert_axis(self, axis, key=None, replace=True, copy=True):
@@ -3688,7 +3688,7 @@ domain ancillary identifiers.
             if key is not None:
                 identity_map[identifier] = key
         #--- End: for
-        ref.change_identifiers(identity_map, ancillary=False, i=True)
+        ref.change_identifiers(identity_map, ancillary=False, copy=False)
 
         identity_map = {}
         for identifier in ref.ancillaries.values():
@@ -3698,10 +3698,10 @@ domain ancillary identifiers.
         #--- End: for
 
 # DCH inplace??
-        ref.change_identifiers(identity_map, coordinate=False, i=not copy)
+        ref.change_identifiers(identity_map, coordinate=False, copy=False)
     #--- End: def
 
-    def _conform_cell_methods(self, cms):
+    def _conform_cell_methods(self, cms, copy=True):
         '''
 
 :Examples 1:
@@ -3714,7 +3714,7 @@ domain ancillary identifiers.
 
 :Returns:
 
-    `None`
+    out: `CellMethods`
 
 :Examples 2:
 
@@ -3724,24 +3724,26 @@ domain ancillary identifiers.
             for axis in cm.axes:
                 if axis in axis_map:
                     continue
+
                 if axis == 'area':
                     axis_map[axis] = axis
                     continue
-                axis_map[axis] = self.axis(axis, default=axis,
-                                           key=True)
+
+                axis_map[axis] = self.axis(axis, default=axis, key=True)
         #--- End: for
 
-        self.CellMethods.change_axes(axis_map, i=True)
+#        self.CellMethods.change_axes(axis_map, i=True)
+        return cms.change_axes(axis_map, copy=copy)
     #--- End: def
 
-    def _unconform_cell_methods(self, cms):
+    def _unconform_cell_methods(self, cms, copy=True):
         '''
 
 :Parameters:
 
 :Returns:
 
-    `None`
+    out: `CellMethods`
 
 :Examples:
 
@@ -3755,11 +3757,12 @@ domain ancillary identifiers.
             for axis in cm.axes:
                 if axis in axes_names:
                     axis_map[axis] = axes_names.pop(axis)
+        #--- End: for
 
-        return cms.change_axes(axis_map, i=False)
+        return cms.change_axes(axis_map, copy=copy)
     #--- End: def
 
-    def _unconform_ref(self, ref, i=False):
+    def _unconform_ref(self, ref, copy=True):
         '''Replace the content of ref.coordinates with coordinate identifiers
 and domain ancillaries where possible.
 
@@ -3774,10 +3777,10 @@ and domain ancillaries where possible.
 :Examples:
 
 >>> s = f._unconform_ref(r)
->>> s = f._unconform_ref(r, i=True)
+>>> s = f._unconform_ref(r, copy=False)
         
         '''
-        if not i:
+        if copy:
             ref = ref.copy()
             
         identity_map = {}
@@ -3787,7 +3790,7 @@ and domain ancillaries where possible.
             if item is not None:
                 identity_map[identifier] = item.identity()
         #--- End: for
-        ref.change_identifiers(identity_map, ancillary=False, strict=True, i=True)
+        ref.change_identifiers(identity_map, ancillary=False, strict=True, copy=False)
  
         identity_map = {}
         role = ('c',)
@@ -3796,7 +3799,7 @@ and domain ancillaries where possible.
             if anc is not None:
                 identity_map[identifier] = anc.identity()
         #--- End: for
-        ref.change_identifiers(identity_map, coordinate=False, strict=True, i=True)
+        ref.change_identifiers(identity_map, coordinate=False, strict=True, copy=False)
 # DCH inplace??
         return ref
     #--- End: def
@@ -4020,7 +4023,7 @@ and domain ancillaries where possible.
                 
         cms = self.CellMethods
         if cms:
-            self._conform_cell_methods(cms)
+            self._conform_cell_methods(cms, copy=False)
 
         return key
     #--- End: def
@@ -4694,7 +4697,7 @@ may be selected with the keyword arguments.
                     ref.change_identifiers(identity_map,
                                            coordinate=(item_role!='c'),
                                            ancillary=(item_role=='c'),
-                                           i=True)
+                                           copy=False)
             #--- End: if
                 
             out[key] = Items.remove_item(key)        
@@ -4810,7 +4813,7 @@ coordinate or cell measure object of the field.
         # Replace the axis in cell methods with a standard name, if
         # possible.
         if cms:
-            self.CellMethods.change_axes(axis_map, i=True)
+            self.CellMethods.change_axes(axis_map, copy=False)
             self.CellMethods.remove_axes(del_axes)
 
         # Remove the axes
@@ -5698,7 +5701,7 @@ Return a deep or shallow copy.
 #                                # Transpose item1 axes, if necessary
 #                                
 #
-#                                item0.compare = item0.equivalent
+#                                item0_compare = item0.equivalent
                                 pass
                             else:
                                 item0_compare = item0.equals
@@ -5732,14 +5735,14 @@ Return a deep or shallow copy.
                     break
             #--- End: for
 
+            # Map item axes in the two instances
+            axes0_to_axes1[axes0] = axes1
+
             if not matched_all_items_with_these_axes:
                 if traceback:
                     names = [self.axis_name(axis0) for axis0 in axes0]
                     print("Can't match items spanning axes {0}".format(names))
                 return False
-
-            # Map item axes in the two instances
-            axes0_to_axes1[axes0] = axes1
         #--- End: for
 
         axis0_to_axis1 = {}
@@ -5804,6 +5807,7 @@ Return a deep or shallow copy.
 
                         return False
                     elif axis0 == axis1:
+                        # Assume that the axes are standard names
                         axes1.remove(axis1)
                         argsort.append(cm1.axes.index(axis1))
                     elif axis1 is None:
@@ -5821,6 +5825,7 @@ Return a deep or shallow copy.
     self.cell_methods, other.cell_methods))
                 return False
 
+            cm1 = cm1.copy()
             cm1.sort(argsort=argsort)
             cm1.axes = axes0
 
@@ -6048,5 +6053,130 @@ Return a deep or shallow copy.
     def role(self, key):
         return self._role[key]
     #--- End: def
+
+    def aaa(self, other, atol=None, rtol=None, _equivalent=False):
+        '''
+        '''
+        if rtol is None:
+            rtol = RTOL()
+        if atol is None:
+            atol = ATOL()
+
+        # ------------------------------------------------------------
+        # 
+        # ------------------------------------------------------------
+        axes0_to_axes1 = {}
+
+        key1_to_key0 = {}
+
+        axes_to_items0 = self.axes_to_items()
+        axes_to_items1 = other.axes_to_items()
+        
+        for axes0, items0 in axes_to_items0.iteritems():
+            matched_all_items_with_these_axes = False
+
+            len_axes0 = len(axes0) 
+            for axes1, items1 in axes_to_items1.items():
+                matched_roles = False
+
+                if len_axes0 != len(axes1):
+                    # axes1 and axes0 contain differents number of
+                    # axes.
+                    continue
+            
+                for role in ('d', 'a', 'm', 'f', 'c'):
+                    matched_role = False
+
+                    role_items0 = items0[role]
+                    role_items1 = items1[role]
+
+                    if len(role_items0) != len(role_items1):
+                        # There are the different numbers of items
+                        # with this role
+                        matched_all_items_with_these_axes = False
+                        break
+
+                    # Check that there are matching pairs of equal
+                    # items
+                    for key0, item0 in role_items0.iteritems():
+                        matched_item = False
+                        for key1, item1 in role_items1.items():
+                            if _equivalent:
+                                pass
+#                                # Flip item1 axes, if necessary
+#                                flip = [i
+#                                        for i, (d0, d1) in enumerate(zip(directions0, directions1))
+#                                        if d0 != d1]
+#                                if flip:
+#                                    item1 = item1.flip(flip)
+#
+#                                # Transpose item1 axes, if necessary
+#                                
+#
+#                                item0_compare = item0.equivalent
+                            else:
+                                item0_compare = item0.equals
+                               
+                            if item0_compare(item1, rtol=rtol,
+                                             atol=atol,
+                                             ignore_data_type=ignore_data_type,
+                                             ignore_fill_value=ignore_fill_value,
+                                             ignore=ignore,
+                                             traceback=False):
+                                del role_items1[key1]
+                                key1_to_key0[key1] = key0
+                                matched_item = True
+                                break
+                        #--- End: for
+
+                        if not matched_item:
+                            break
+                    #--- End: for
+
+                    if role_items1:
+                        break
+
+                    del items1[role]
+                #--- End: for
+
+                matched_all_items_with_these_axes = not items1
+
+                if matched_all_items_with_these_axes:
+                    del axes_to_items1[axes1]
+                    break
+            #--- End: for
+
+            # Map item axes in the two instances
+            axes0_to_axes1[axes0] = axes1
+
+            if not matched_all_items_with_these_axes:
+                if traceback:
+                    names = [self.axis_name(axis0) for axis0 in axes0]
+                    print("Can't match items spanning axes {0}".format(names))
+                return False
+        #--- End: for
+
+        axis0_to_axis1 = {}
+        axis1_to_axis0 = {}
+        for axes0, axes1 in axes0_to_axes1.iteritems():
+            for axis0, axis1 in zip(axes0, axes1):
+                if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
+                    if traceback:
+                        print(
+"Field: Ambiguous axis mapping ({} -> {} and {})".format(
+    self.axis_name(axes0), other.axis_name(axis1),
+    other.axis_name(axis0_to_axis1[axis0])))
+                    return False
+                elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
+                    if traceback:
+                        print(
+"Field: Ambiguous axis mapping ({} -> {} and {})".format(
+    self.axis_name(axis0), self.axis_name(axis1_to_axis0[axis0]),
+    other.axis_name(axes1)))
+                    return False
+
+                axis0_to_axis1[axis0] = axis1
+                axis1_to_axis0[axis1] = axis0
+        #--- End: for     
 
 #--- End: class

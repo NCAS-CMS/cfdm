@@ -199,6 +199,13 @@ True
             return self.array.astype(dtype[0])
     #--- End: def
 
+    def __data__(self):
+        '''Return self
+
+        '''
+        return self
+    #--- End: def
+
     def __deepcopy__(self, memo):
         '''Used if `copy.deepcopy` is called.
 
@@ -317,6 +324,7 @@ elements.
         # If value has Units then make sure that they're the same
         # as self.Units
         if (isinstance(value, self.__class__) and
+            self.Units and value.Units and
             value.Units != self.Units):
             raise ValueError(
 "Can't set to values with different units: {!r}".format(value.Units))
@@ -331,7 +339,7 @@ elements.
             
         indices = parse_indices(array.shape, indices)
 
-        self._set_subspace(array, indices, value)
+        self._set_subspace(array, indices, numpy.asanyarray(value))
 
         self._array = NumpyArray(array)
     #--- End: def
@@ -391,10 +399,12 @@ TypeError: iteration over a 0-d Data
     #--- End: def
 
     def __eq__(self, y):
-        return type(self)(self.varray == y)
+        array = numpy.isclose(self.varray, y, atol=ATOL(), rtol=RTOL())
+        return type(self)(array)
 
     def __ne__(self, y):
-        return type(self)(self.varray != y)
+        array = (self == y).varray
+        return type(self)(~array)
     
     @property
     def isscalar(self):
@@ -760,15 +770,132 @@ True
 <CF Data: [1, 2]>
 
         '''
-        data = getattr(d, '__data__', None)
-        if data is None:
+        __data__ = getattr(d, '__data__', None)
+        if __data__ is None:
             return cls(d)
 
-        data = data()
+        data = __data__()
         if copy:
             return data.copy()
         else:
             return data
+    #--- End: def
+
+    def allclose(self, y, rtol=None, atol=None):
+        '''Returns True if two broadcastable arrays have equal values, False
+otherwise.
+
+For numeric data arrays ``d.allclose(y, rtol, atol)`` is equivalent to
+``(abs(d - y) <= atol + rtol*abs(y)).all()``, otherwise it is
+equivalent to ``(d == y).all()``.
+
+.. seealso:: `all`, `any`, `isclose`
+
+:Parameters:
+
+    y: data_like
+
+    atol: `float`, optional
+        The absolute tolerance for all numerical comparisons. By
+        default the value returned by the `ATOL` function is used.
+
+    rtol: `float`, optional
+        The relative tolerance for all numerical comparisons. By
+        default the value returned by the `RTOL` function is used.
+
+:Returns:
+
+     out: `bool`
+
+:Examples:
+
+>>> d = cf.Data([1000, 2500], 'metre')
+>>> e = cf.Data([1, 2.5], 'km')
+>>> d.allclose(e)
+True
+
+>>> d = cf.Data(['ab', 'cdef'])
+>>> d.allclose([[['ab', 'cdef']]])
+True
+
+>>> d.allclose(e)
+True
+
+>>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
+>>> e = cf.Data([1, 2.5], 'km')
+>>> d.allclose(e)
+True
+
+>>> d = cf.Data([1, 1, 1], 's')
+>>> d.allclose(1)
+True
+
+        '''  
+        return self.isclose(y, atol=atol, rtol=rtol).varray.all()
+    #--- End: def
+
+    def isclose(self, y, rtol=None, atol=None):
+        '''Return a boolean data array showing where two broadcastable arrays
+have equal values within a tolerance.
+
+For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
+``abs(d - y) <= ``atol + rtol*abs(y)``, otherwise it is equivalent to
+``d == y``.
+
+:Parameters:
+
+    y: data_like
+
+    atol: `float`, optional
+        The absolute tolerance for all numerical comparisons. By
+        default the value returned by the `ATOL` function is used.
+
+    rtol: `float`, optional
+        The relative tolerance for all numerical comparisons. By
+        default the value returned by the `RTOL` function is used.
+
+:Returns:
+
+     out: `Data`
+
+:Examples:
+
+>>> d = cf.Data([1000, 2500], 'metre')
+>>> e = cf.Data([1, 2.5], 'km')
+>>> print d.isclose(e).array
+[ True  True]
+
+>>> d = cf.Data(['ab', 'cdef'])
+>>> print d.isclose([[['ab', 'cdef']]]).array
+[[[ True  True]]]
+
+>>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
+>>> e = cf.Data([1, 2.5], 'km')
+>>> print d.isclose(e).array
+[[ True  True]
+ [ True  True]]
+
+>>> d = cf.Data([1, 1, 1], 's')
+>>> print d.isclose(1).array
+[ True  True  True]
+
+        '''     
+        if isinstance(y, self.__class__):
+            if y.Units and y.Units != self.Units:
+                array = numpy.zeros(self.shape, dtype=bool)
+                return type(self)(array)
+        #--- End: if
+
+        if atol is None:
+            atol = ATOL()        
+        if rtol is None:
+            rtol = RTOL()
+
+        y = numpy.asanyarray(y)
+
+        array = numpy.isclose(self.varray, y, atol=atol, rtol=rtol)
+
+        return type(self)(array)
     #--- End: def
 
     def close(self):
@@ -1108,7 +1235,7 @@ Missing data array elements are omitted from the calculation.
         '''
         '''
         gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
-    
+
         if len(gg) < 2: 
             # ------------------------------------------------------------
             # At most one axis has a list-of-integers index so we can do a
@@ -1137,7 +1264,8 @@ Missing data array elements are omitted from the calculation.
                 else:
                     indices1[i] = (x,)
             #--- End: for
-    
+#            print 'indices1 =',    indices1
+ 
     #        if not numpy.ndim(value) :
             if numpy.size(value) == 1:
                 for i in itertools.product(*indices1):
@@ -1161,8 +1289,9 @@ Missing data array elements are omitted from the calculation.
                     else:
                         indices2.append((slice(None),))
                 #--- End: for
-    
+#                print 'indices2 =',    indices2
                 for i, j in zip(itertools.product(*indices1), itertools.product(*indices2)):
+#                    print 'i, j =',i,j
                     array[i] = value[j]
     #--- End: def
 
