@@ -5,9 +5,12 @@ from .field     import Field
 from .fieldlist import FieldList
 from .functions import flat
 
-from .netcdf.read import netcdf_read
-from .netcdf.read import is_netcdf_file
+#from .netcdf.read import netcdf_read
+#from .netcdf.read import is_netcdf_file
 
+from .netcdf2 import NetCDF
+
+X = NetCDF()
 
 def read(files, verbose=False, ignore_read_error=False, squeeze=False,
          unsqueeze=False, uncompress=True, field=None, _debug=False):
@@ -266,8 +269,10 @@ Read the contents of a single file into a field list.
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
-    fields = netcdf_read(filename, field=field, verbose=verbose,
-                         uncompress=uncompress, _debug=_debug)
+#    fields = netcdf_read(filename, field=field, verbose=verbose,
+#                         uncompress=uncompress, _debug=_debug)
+    fields = X.read(filename, field=field, verbose=verbose,
+                    uncompress=uncompress, _debug=_debug)
         
     # ----------------------------------------------------------------
     # Return the fields
@@ -302,7 +307,7 @@ def file_type(filename):
     # ----------------------------------------------------------------
     # netCDF
     # ----------------------------------------------------------------
-    if is_netcdf_file(filename):
+    if X.is_netcdf_file(filename):
         return 'netCDF'
 
     # Still here?

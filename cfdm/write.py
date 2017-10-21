@@ -1,5 +1,9 @@
 from .netcdf.write import write as netcdf_write
 
+from .netcdf2 import NetCDF
+
+X = NetCDF()
+
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           verbose=False, mode='w', least_significant_digit=None,
           endian='native', compress=0, fletcher32=False,
@@ -255,14 +259,15 @@ which have equal values across all input fields.
 
     '''      
     if fields:
-        netcdf_write(fields, filename, fmt=fmt, overwrite=overwrite,
-                     verbose=verbose, mode=mode,
-                     least_significant_digit=least_significant_digit,
-                     endian=endian, compress=compress,
-                     no_shuffle=no_shuffle, fletcher32=fletcher32,
-                     datatype=datatype, single=single, double=double,
-                     reference_datetime=reference_datetime,
-                     variable_attributes=variable_attributes,
-                     HDF_chunks=HDF_chunksizes, unlimited=unlimited,
-                     _debug=_debug)
+#        netcdf_write(fields, filename, fmt=fmt, overwrite=overwrite,
+        X.write(fields, filename, fmt=fmt, overwrite=overwrite,
+                verbose=verbose, mode=mode,
+                least_significant_digit=least_significant_digit,
+                endian=endian, compress=compress,
+                no_shuffle=no_shuffle, fletcher32=fletcher32,
+                datatype=datatype, single=single, double=double,
+                reference_datetime=reference_datetime,
+                variable_attributes=variable_attributes,
+                HDF_chunks=HDF_chunksizes, unlimited=unlimited,
+                _debug=_debug)
 #--- End: def
