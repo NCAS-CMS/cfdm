@@ -426,7 +426,8 @@ If the file is not open then no action is taken.
         if nc is not None:
             nc.close()
             del self.nc
-            self.keep_open = False
+
+        self.keep_open = False
     #--- End: def
 
     def open(self, keep_open=False):
@@ -446,16 +447,35 @@ array.
 
 '''
         nc = getattr(self, 'nc', None)
-        if nc is None:
-            try:        
-                nc = netCDF4.Dataset(self.file, 'r')
-            except RuntimeError as runtime_error:
-                raise RuntimeError("{}: {}".format(runtime_error, self.file))        
+        if nc is None or not nc.isopen():
+            self.nc = self.open_netcdf_file(self.file, 'r')
 
-            self.nc = nc
+        self.keep_open = keep_open
+        
+        return nc
+    #--- End: def
 
-            self.keep_open = keep_open
-        #--- End: if
+    @classmethod
+    def open_netcdf_file(cls, filename, mode, fmt=None):
+        '''
+
+Return a `netCDF4.Dataset` object for the file containing the data
+array.
+
+:Returns:
+
+    out: `netCDF4.Dataset`
+
+:Examples:
+
+>>> f.open_netcdf_file(filename)
+<netCDF4.Dataset at 0x115a4d0>
+
+'''        
+        try:        
+            nc = netCDF4.Dataset(filename, mode, format=fmt)
+        except RuntimeError as runtime_error:
+            raise RuntimeError("{}: {}".format(runtime_error, filename))        
 
         return nc
     #--- End: def

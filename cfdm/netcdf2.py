@@ -24,7 +24,7 @@ from .units     import Units
 from .data.data  import Data
 from .data.array import NetCDFArray
 
-from .functions import abspath, _open_netcdf_file, flat
+from .functions import abspath, flat
 
 class NetCDF(object):
     '''
@@ -159,8 +159,10 @@ ancillaries, field ancillaries).
         filename = abspath(filename)
         g['filename'] = filename
         
-        # Read the netCDF file 
-        nc = _open_netcdf_file(filename, 'r')
+        # ------------------------------------------------------------
+        # Open the netCDF file to be read
+        # ------------------------------------------------------------        
+        nc = self.NetCDFArray.open_netcdf_file(filename, 'r')
         g['nc'] = nc
         
         if _debug:
@@ -1630,7 +1632,7 @@ ancillaries, field ancillaries).
         #--- End: if
     
         filearray = self.NetCDFArray(file=g['filename'],
-                                     ncvar=ncvar, #iable._name,
+                                     ncvar=ncvar,
                                      dtype=dtype,
                                      ndim=ndim,
                                      shape=shape,
@@ -2062,9 +2064,11 @@ and auxiliary coordinate roles for different data variables.
     #        _close_netcdf_file(filename)
             os.remove(filename)
         #--- End: if          
-    
-        g['netcdf'] = _open_netcdf_file(filename, mode, fmt)
-    #netCDF4.Dataset(filename, mode, format=fmt)
+
+        # ------------------------------------------------------------
+        # Open the netCDF file to be written
+        # ------------------------------------------------------------
+        g['netcdf'] = self.NetCDFArray.open_netcdf_file(filename, mode, fmt)
     
         # ---------------------------------------------------------------
         # Set the fill mode for a Dataset open for writing to off. This

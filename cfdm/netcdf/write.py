@@ -8,7 +8,7 @@ from ..cfdatetime      import dt2rt
 from ..functions       import equals, flat, abspath
 
 #from .filearray import NetCDFFileArray
-from ..functions import _open_netcdf_file
+#from ..functions import _open_netcdf_file
 
 class NetCDFError(Exception):
     '''A runtime netCDF error'''

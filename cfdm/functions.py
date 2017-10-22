@@ -411,15 +411,6 @@ def parse_indices(shape, indices):
 #
 ##--- End: def
 
-def _open_netcdf_file(filename, mode, fmt='NETCDF4'):
-    try:        
-        nc = netCDF4.Dataset(filename, mode, format=fmt)
-    except RuntimeError as runtime_error:
-        raise RuntimeError("{}: {}".format(runtime_error, filename))
-    
-    return nc
-#--- End: def
-
 def ATOL(*arg):
     '''The absolute difference when testing for numerically tolerant
 equality.
