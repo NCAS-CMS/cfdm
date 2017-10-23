@@ -30,7 +30,7 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_write_HDF_chunks']
-#    test_only = ['test_read_write_unlimited']
+    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
 #    test_only = ['test_write_datatype']
     

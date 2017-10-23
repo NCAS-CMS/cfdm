@@ -22,13 +22,14 @@ from .fieldlist import FieldList
 from .units     import Units
 
 from .data.data  import Data
-from .data.array import NetCDFArray
+from .data.array import NetCDFArray, _file_to_fh_write
 
 from .functions import abspath, flat
 
 class NetCDF(object):
     '''
     '''
+    
     AuxiliaryCoordinate = AuxiliaryCoordinate
     CellMeasure         = CellMeasure
     CellMethods         = CellMethods
@@ -154,7 +155,8 @@ ancillaries, field ancillaries).
                          'dimension_coordinate', 'auxiliary_coordinate',
                          'cell_measure'))
     
-        g['field'] = field
+        g['field']    = field
+        g['promoted'] = []
         
         filename = abspath(filename)
         g['filename'] = filename
@@ -162,7 +164,7 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------        
-        nc = self.NetCDFArray.open_netcdf_file(filename, 'r')
+        nc = self.NetCDFArray.file_open(filename, 'r')
         g['nc'] = nc
         
         if _debug:
@@ -220,8 +222,8 @@ ancillaries, field ancillaries).
     
             # Check for bad units
             try:
-                Units(attributes[ncvar].get('units', None), 
-                      attributes[ncvar].get('calendar', None))
+                self.Units(attributes[ncvar].get('units', None), 
+                           attributes[ncvar].get('calendar', None))
             except (ValueError, TypeError):
                 # Units in file have been set to unknown units so 1) give
                 # a warning, 2) set the 'nonCF_units' property to the bad
@@ -235,8 +237,8 @@ ancillaries, field ancillaries).
                     pass
                 if verbose:
                     print(
-    "WARNING: Moving unsupported units to 'nonCF_Units': {0}".format(
-        attributes[ncvar]['nonCF_Units']))
+"WARNING: Moving unsupported units to 'nonCF_Units': {0}".format(
+    attributes[ncvar]['nonCF_Units']))
         #--- End: for
     
         # ----------------------------------------------------------------
@@ -263,7 +265,8 @@ ancillaries, field ancillaries).
             compressed_ncdims = attributes[ncvar].get('compress', None)
             if compressed_ncdims is not None:
                 # This variable is a list variable for gathering arrays
-                _parse_compression_gathered(nc, ncvar, attributes, compressed_ncdims)
+                self._parse_compression_gathered(
+                    ncvar, attributes, compressed_ncdims)
                 variables.discard(ncvar)
             
             if g['global_attributes'].get('featureType'):
@@ -271,24 +274,27 @@ ancillaries, field ancillaries).
                     # This variable is a count variable for DSG contiguous
                     # ragged arrays
                     sample_ncdimension = attributes[ncvar]['sample_dimension']        
-                    element_dimension_2 = _parse_DSG_contiguous_compression(nc, ncvar,
-                                                                            attributes,
-                                                                            sample_ncdimension)
+                    element_dimension_2 = self._parse_DSG_contiguous_compression(
+                        ncvar,
+                        attributes,
+                        sample_ncdimension)
                     variables.discard(ncvar)
                 
                 if 'instance_dimension' in attributes[ncvar]:
                     # This variable is an index variable for DSG indexed
                     # ragged arrays
                     instance_ncdimension = attributes[ncvar]['instance_dimension']
-                    element_dimension_1 = _parse_DSG_indexed_compression(nc, ncvar,
-                                                                         attributes,
-                                                                         instance_ncdimension)
+                    element_dimension_1 = self._parse_DSG_indexed_compression(
+                        ncvar,
+                        attributes,
+                        instance_ncdimension)
                     variables.discard(ncvar)
                 
                 if sample_ncdimension and instance_ncdimension:
-                    _parse_DSG_indexed_contiguous_compression(nc, ncvar,
-                                                              sample_ncdimension,
-                                                              instance_ncdimension)
+                    self._parse_DSG_indexed_contiguous_compression(
+                        ncvar,
+                        sample_ncdimension,
+                        instance_ncdimension)
                     sample_ncdimension   = None
                     instance_ncdimension = None
             #--- End: if
@@ -305,7 +311,7 @@ ancillaries, field ancillaries).
                         # top-level fields, so that it doesn't get demoted
                         # if the auxiliary coordinate is also in a
                         # coordinate reference.
-                        pass
+                        g['promoted'].append(ncvar)
                     else:
                         # Do not promote a dimension coordinate to also
                         # appear as a top-level field
@@ -346,14 +352,14 @@ ancillaries, field ancillaries).
                         if _debug:
                             print '        Has formula_terms'
                             
-                        self._formula_terms_variables(nc, ncvar, formula_terms,
+                        self._formula_terms_variables(ncvar, formula_terms,
                                                       variables, coord=True)
     
                         bounds = attributes[ncvar].get('bounds', None)
                         if bounds is not None and 'formula_terms' in attributes[bounds]:
                             bounds_formula_terms = attributes[bounds]['formula_terms']
     
-                            self._formula_terms_variables(nc, ncvar,
+                            self._formula_terms_variables(ncvar,
                                                           bounds_formula_terms,
                                                           variables,
                                                           bounds=True)
@@ -378,7 +384,7 @@ ancillaries, field ancillaries).
                             # top-level fields, so that it doesn't get
                             # demoted if the auxiliary coordinate is also
                             # in a coordinate reference.
-                            pass
+                            g['promoted'].append(ncvar)
                         else:
                             # Do not promote an auxiliary coordinate to
                             # also appear as a top-level field
@@ -406,7 +412,7 @@ ancillaries, field ancillaries).
                                 del attributes[aux][attr]
                                 if verbose:
                                     print(
-    "WARNING: Missing bounds variable {0!r} in {1}".format(bounds, filename))
+"WARNING: Missing bounds variable {0!r} in {1}".format(bounds, filename))
                 #--- End: for
             #--- End: if
             
@@ -455,21 +461,20 @@ ancillaries, field ancillaries).
         dimension_coordinates = {}
         auxiliary_coordinates = {}
         cell_measures         = {}
-        coordref_parameters   = {}
+#        coordref_parameters   = {}
         list_variables        = {}
     
         fields_in_file = FieldList()
     
         for data_ncvar in variables:
-            f = self._create_Field(nc,
-                                   data_ncvar,
+            f = self._create_Field(data_ncvar,
                                    attributes,
                                    dimension_coordinates,
                                    auxiliary_coordinates,
                                    cell_measures,
                                    domain_ancillaries,
                                    field_ancillaries,
-                                   coordref_parameters,
+#                                   coordref_parameters,
                                    list_variables,
                                    verbose=verbose)
     
@@ -479,7 +484,7 @@ ancillaries, field ancillaries).
         return fields_in_file
     #--- End: def
     
-    def _parse_compression_gathered(self, nc, ncvar, attributes,
+    def _parse_compression_gathered(self, ncvar, attributes,
                                     compressed_ncdims):
         '''
         '''
@@ -490,7 +495,7 @@ ancillaries, field ancillaries).
             print '        List variable: compress =', compressed_ncdims
     
         compression_type = 'gathered'
-        gathered_ncdimension = nc[ncvar].dimensions[0]
+        gathered_ncdimension = g['nc'][ncvar].dimensions[0]
         indices = self._create_Data(ncvar, attributes)
         
         g['compression'][gathered_ncdimension] = {
@@ -498,7 +503,7 @@ ancillaries, field ancillaries).
                          'implied_ncdimensions': compressed_ncdims.split()}}
     #--- End: def
     
-    def _parse_DSG_contiguous_compression(self, nc, ncvar, attributes,
+    def _parse_DSG_contiguous_compression(self, ncvar, attributes,
                                           sample_ncdimension):
         '''
         ncvar: `str`
@@ -515,7 +520,7 @@ ancillaries, field ancillaries).
         if _debug:
             print '    DSG count variable: sample_dimension =', sample_ncdimension
     
-        variable = nc[ncvar]
+        variable = g['nc'][ncvar]
         instance_ncdimension = variable.dimensions[0]
     
         elements_per_instance = self._create_Data(ncvar, attributes)
@@ -547,7 +552,7 @@ ancillaries, field ancillaries).
     
         base = element_dimension
         n = 0
-        while (element_dimension in nc.dimensions or
+        while (element_dimension in g['nc'].dimensions or
                element_dimension in g['new_dimensions']):
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
@@ -571,7 +576,7 @@ ancillaries, field ancillaries).
         return element_dimension
     #--- End: def
     
-    def _parse_DSG_indexed_compression(self, nc, ncvar, attributes,
+    def _parse_DSG_indexed_compression(self, ncvar, attributes,
                                        instance_ncdimension):
         '''
         ncvar: `str`
@@ -606,7 +611,7 @@ ancillaries, field ancillaries).
         # example, the elements_per_instance array is [7, 5, 7].
         elements_per_instance = self.Data(count)
     
-        instance_dimension_size = nc.dimensions[instance_ncdimension].size
+        instance_dimension_size = g['nc'].dimensions[instance_ncdimension].size
         element_dimension_size  = int(elements_per_instance.max())
     
         # Create an empty Data array which has dimensions
@@ -633,12 +638,12 @@ ancillaries, field ancillaries).
     
         base = element_dimension
         n = 0
-        while (element_dimension in nc.dimensions or
+        while (element_dimension in g['nc'].dimensions or
                element_dimension in g['new_dimensions']):
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
             
-        indexed_sample_dimension = nc[ncvar].dimensions[0]
+        indexed_sample_dimension = g['nc'][ncvar].dimensions[0]
         
         g['compression'].setdefault(indexed_sample_dimension, {})['DSG_indexed'] = {
             'empty_data'             : data,
@@ -659,23 +664,25 @@ ancillaries, field ancillaries).
         return element_dimension
     #--- End: def
     
-    def _parse_DSG_indexed_contiguous_compression(self, nc, ncvar,
+    def _parse_DSG_indexed_contiguous_compression(self, ncvar,
                                                   sample_ncdimension,
                                                   instance_ncdimension):
-        ''':Parameters:
-    
-        sample_ncdimension: `str`
-            The netCDF dimension name of the DSG sample dimension.
-    
-        element_dimension_1: `str`
-            The name of the implied element dimension whose size is the
-            maximum number of sub-features in any instance.
-    
-        element_dimension_2: `str`
-            The name of the implied element dimension whose size is the
-            maximum number of elements in any sub-feature.
-    
         '''
+
+:Parameters:
+    
+    sample_ncdimension: `str`
+        The netCDF dimension name of the DSG sample dimension.
+
+    element_dimension_1: `str`
+        The name of the implied element dimension whose size is the
+        maximum number of sub-features in any instance.
+
+    element_dimension_2: `str`
+        The name of the implied element dimension whose size is the
+        maximum number of elements in any sub-feature.
+
+    '''
         g = self.read_vars
                 
         _debug = g['_debug']
@@ -745,12 +752,10 @@ ancillaries, field ancillaries).
         del g['compression'][sample_ncdimension]['DSG_contiguous']
     #--- End: def
     
-    def _formula_terms_variables(self, nc, ncvar, formula_terms,
+    def _formula_terms_variables(self, ncvar, formula_terms,
                                  variables, coord=False, bounds=False):
         '''
     :Parameters:
-    
-        nc: 
     
         ncvar: `str`
     
@@ -774,7 +779,7 @@ ancillaries, field ancillaries).
         for name, term in zip(formula_terms[0::2],
                               formula_terms[1::2]):
             # Skip terms which are in the list but not in the file
-            if term not in nc.variables:
+            if term not in g['nc'].variables:
                 continue
             
             if g['_debug']:
@@ -784,11 +789,14 @@ ancillaries, field ancillaries).
                 # Do not promote a domain ancillary to also appear as a
                 # top-level field
                 variables.discard(term)
-    
+            else:
+                g['promoted'].append(term)
+                
             if bounds and term not in g['formula_terms'][ncvar]['coord'].values():
                 # Do not promote a domain ancillary's bounds to also
                 # appear as a top-level field
                 variables.discard(term)
+                g['promoted'].append(term)
     
             if coord:
                 g['formula_terms'][ncvar]['coord'][name] = term
@@ -796,37 +804,34 @@ ancillaries, field ancillaries).
                 g['formula_terms'][ncvar]['bounds'][name] = term
     #--- End: def
     
-    def _create_Field(self, nc, data_ncvar, attributes,
+    def _create_Field(self, data_ncvar, attributes,
                       dimension_coordinates, auxiliary_coordinates,
                       cell_measures, domain_ancillaries,
-                      field_ancillaries, coordref_parameters,
+                      field_ancillaries,
+#                      coordref_parameters,
                       list_variables, verbose=False):
-        '''
+        '''Create a field for a given netCDF variable.
     
-    Create a field for a given netCDF variable.
-    
-    :Parameters:
-    
-        filename: `str`
-            The name of the netCDF file.
-    
-        nc: `netCDF4.Dataset`
-            The entire netCDF file in a `netCDF4.Dataset` instance.
-    
-        data_ncvar: `str`
-            The name of the netCDF variable to be turned into a field.
-    
-        attributes: `dict`
-            Dictionary of the data variable's netCDF attributes.
-    
-    :Returns:
-    
-        out: `Field`
-            The new field.
-    
-    '''
-        g = self.read_vars
+:Parameters:
 
+    filename: `str`
+        The name of the netCDF file.
+
+    data_ncvar: `str`
+        The name of the netCDF variable to be turned into a field.
+
+    attributes: `dict`
+        Dictionary of the data variable's netCDF attributes.
+
+:Returns:
+
+    out: `Field`
+        The new field.
+
+        '''
+        g = self.read_vars
+        nc = g['nc']
+        
         _debug = g['_debug']
         if _debug:
             print 'Converting data variable {!r} to a Field:'.format(data_ncvar)
@@ -854,8 +859,8 @@ ancillaries, field ancillaries).
                 cell_methods = None
                 if verbose:
                     print(
-    "WARNING: Moving unsupported cell methods to 'nonCF_cell_methods': {0!r}".format(
-        cell_methods))
+"WARNING: Moving unsupported cell methods to 'nonCF_cell_methods': {0!r}".format(
+    cell_methods))
     
         # Take add_offset and scale_factor out of the data variable's
         # properties since they will be dealt with by the variable's Data
@@ -880,10 +885,10 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Initialize the field with the data variable and its attributes
         # ----------------------------------------------------------------
-        f_Units = Units(properties.pop('units', None),
-                        properties.pop('calendar', None))
+        f_Units = self.Units(properties.pop('units', None),
+                             properties.pop('calendar', None))
     
-        f = Field(properties=properties, copy=False)
+        f = self.Field(properties=properties, copy=False)
     
         f.ncvar = data_ncvar
         f.file  = g['filename']
@@ -923,7 +928,6 @@ ancillaries, field ancillaries).
                                                       dimension=True,
                                                       verbose=verbose)
                     dimension_coordinates[ncdim] = coord
-                #--- End: if
                 
                 if _debug:
                     print '    Inserting', repr(coord)
@@ -996,11 +1000,9 @@ ancillaries, field ancillaries).
                     continue
     
                 # Set dimensions for this variable 
-                aux_ncdimensions = self._ncdimensions(ncvar)
-    #            print 'aux_ncdimensions=',aux_ncdimensions
-                dimensions = [ncdim_to_axis[ncdim] for ncdim in aux_ncdimensions
+                dimensions = [ncdim_to_axis[ncdim]
+                              for ncdim in self._ncdimensions(ncvar)
                               if ncdim in ncdim_to_axis]
-    #            print 'dimensions=',dimensions
     
                 if ncvar in auxiliary_coordinates:
                     coord = auxiliary_coordinates[ncvar].copy()
@@ -1028,6 +1030,7 @@ ancillaries, field ancillaries).
                         dim = f.insert_axis(axis)
                         if _debug:
                             print '    Inserting', repr(axis)
+
                         # Record the netCDF dimension name for this axis
                         f.axes()[dim].ncdim = ncdim
                         dimensions = [dim]
@@ -1071,56 +1074,60 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Add coordinate references from formula_terms properties
         # ----------------------------------------------------------------
-        for key, coord in f.items(role=('d', 'a')).iteritems():
-            formula_terms = attributes[coord.ncvar].get('formula_terms', None)
-            if formula_terms is None:
-                # This coordinate doesn't have a formula_terms attribute
-                continue
-    
-            for term, ncvar in g['formula_terms'][coord.ncvar]['coord'].iteritems():
-                # Set dimensions 
-                anc_ncdimensions = self._ncdimensions(ncvar)
-                axes = [ncdim_to_axis[ncdim] for ncdim in anc_ncdimensions
-                        if ncdim in ncdim_to_axis]    
-                
-                if not axes:
-                    # Variable is scalar => term is a parameter, not a
-                    # DomainAncillary
-                    if ncvar not in coordref_parameters:
-                        variable = _create_Data(ncvar, attributes)
-                        coordref_parameters[ncvar] = variable
+        if data_ncvar not in g['promoted']:
+            # Only add coordinate references to metadata variables
+
+            for key, coord in f.items(role=('d', 'a')).iteritems():
+                formula_terms = attributes[coord.ncvar].get('formula_terms', None)
+                if formula_terms is None:
+                    # This coordinate doesn't have a formula_terms attribute
                     continue
-    
-                # Still here? Then the term is a DomainAncillary, not a
-                # parameter.
-                if ncvar in domain_ancillaries:
-                    domain_anc = domain_ancillaries[ncvar][1].copy()
-                else:
-                    bounds = g['formula_terms'][coord.ncvar]['bounds'].get(term)
-                    if bounds == ncvar:
-                        bounds = None
-    
-                    domain_anc = self._create_bounded_item(ncvar,
-                                                           attributes,
-                                                           f,
-                                                           domainancillary=True,
-                                                           bounds=bounds,
-                                                           verbose=verbose)
-                #--- End: if
-                
-                # Insert domain ancillary
-                da_key = f.insert_domain_anc(domain_anc, axes=axes, copy=False)
-                if ncvar not in ncvar_to_key:
-                    ncvar_to_key[ncvar] = da_key
-    
-                domain_ancillaries[ncvar] = (da_key, domain_anc)
+        
+                for term, ncvar in g['formula_terms'][coord.ncvar]['coord'].iteritems():
+                    # Set dimensions 
+                    axes = [ncdim_to_axis[ncdim]
+                            for ncdim in self._ncdimensions(ncvar)
+                            if ncdim in ncdim_to_axis]    
+                    
+    #                if not axes:
+    #                    # Variable is scalar => term is a parameter, not a
+    #                    # DomainAncillary
+    #                    if ncvar not in coordref_parameters:
+    #                        variable = self._create_Data(ncvar, attributes)
+    #                        coordref_parameters[ncvar] = variable
+    #                    continue
+    #    
+    ##                # Still here? Then the term is a DomainAncillary, not a
+    #                # parameter.
+                    if ncvar in domain_ancillaries:
+                        domain_anc = domain_ancillaries[ncvar][1].copy()
+                    else:
+                        bounds = g['formula_terms'][coord.ncvar]['bounds'].get(term)
+                        if bounds == ncvar:
+                            bounds = None
+        
+                        domain_anc = self._create_bounded_item(ncvar,
+                                                               attributes,
+                                                               f,
+                                                               domainancillary=True,
+                                                               bounds=bounds,
+                                                               verbose=verbose)
+                    #--- End: if
+                    
+                    # Insert domain ancillary
+                    da_key = f.insert_domain_anc(domain_anc, axes=axes, copy=False)
+                    if ncvar not in ncvar_to_key:
+                        ncvar_to_key[ncvar] = da_key
+        
+                    domain_ancillaries[ncvar] = (da_key, domain_anc)
+                #--- End: for
+        
+                self._create_formula_terms_ref(f, key, coord,
+                                               g['formula_terms'][coord.ncvar]['coord'],
+                                               domain_ancillaries)
+    #                                           coordref_parameters)
             #--- End: for
-    
-            self._create_formula_terms_ref(f, key, coord,
-                                           g['formula_terms'][coord.ncvar]['coord'],
-                                           domain_ancillaries,
-                                           coordref_parameters)
-        #--- End: for
+        #--- End: if
     
         # ----------------------------------------------------------------
         # Add grid mapping coordinate references
@@ -1245,8 +1252,8 @@ ancillaries, field ancillaries).
         
         properties = attributes[ncvar].copy()
       
-        c_Units = Units(properties.pop('units', None),
-                        properties.pop('calendar', None))
+        c_Units = self.Units(properties.pop('units', None),
+                             properties.pop('calendar', None))
     
         properties.pop('formula_terms', None)
     
@@ -1366,29 +1373,27 @@ ancillaries, field ancillaries).
     
     def _create_item(self, ncvar, attributes, f, cell_measure=False,
                      field_ancillary=False):
+        '''Create a cell measure or field ancillary object.
+    
+:Parameters:
+    
+    nc : netCDF4.Dataset
+        The entire netCDF file in a `netCDF4.Dataset` instance.
+
+    ncvar : str
+        The netCDF name of the cell measure variable.
+
+    attributes : dict
+        Dictionary of the cell measure variable's netCDF attributes.
+
+    f: `Field`
+
+:Returns:
+
+    out: `CellMeasure`
+        The new cell measure.
+
         '''
-    
-    Create a cell measure or field ancillary object.
-    
-    :Parameters:
-    
-        nc : netCDF4.Dataset
-            The entire netCDF file in a `netCDF4.Dataset` instance.
-    
-        ncvar : str
-            The netCDF name of the cell measure variable.
-    
-        attributes : dict
-            Dictionary of the cell measure variable's netCDF attributes.
-    
-        f: `Field`
-    
-    :Returns:
-    
-        out: `CellMeasure`
-            The new cell measure.
-    
-    '''
         g = self.read_vars
                 
         if cell_measure:
@@ -1409,21 +1414,21 @@ ancillaries, field ancillaries).
         '''Return a list of the netCDF dimensions corresponding to a netCDF
     variable.
     
-    :Parameters:
-    
-        ncvar: `str`
-            The netCDF variable name.
-    
-    :Returns:
-    
-        out: `list`
-            The list of netCDF dimension names spanned by the netCDF
-            variable.
-    
-    :Examples: 
-    
-    >>> _ncdimensions('humidity')
-    ['time', 'lat', 'lon']
+:Parameters:
+
+    ncvar: `str`
+        The netCDF variable name.
+
+:Returns:
+
+    out: `list`
+        The list of netCDF dimension names spanned by the netCDF
+        variable.
+
+:Examples: 
+
+>>> _ncdimensions('humidity')
+['time', 'lat', 'lon']
     
         '''
         g = self.read_vars
@@ -1472,29 +1477,30 @@ ancillaries, field ancillaries).
         return map(str, ncdimensions)
     #--- End: def
     
-    def _create_grid_mapping_ref(self, f, grid_mapping, attributes, ncvar_to_key):
+    def _create_grid_mapping_ref(self, f, grid_mapping, attributes,
+                                 ncvar_to_key):
         '''
     
-    :Parameters:
-    
-        f: `Field`
-    
-        grid_mapping : str
-    
-        attributes : dict
-    
-        ncvar_to_key : dict
-    
-    :Returns:
-    
-        None
-    
-    '''
+:Parameters:
+
+    f: `Field`
+
+    grid_mapping : str
+
+    attributes : dict
+
+    ncvar_to_key : dict
+
+:Returns:
+
+    None
+
+        '''
         g = self.read_vars
                 
         if ':' not in grid_mapping:
             grid_mapping = '{0}:'.format(grid_mapping)
-    
+
         coordinates = []
         for x in re.sub('\s*:\s*', ': ', grid_mapping).split()[::-1]:
             if not x.endswith(':'):
@@ -1532,7 +1538,8 @@ ancillaries, field ancillaries).
     #--- End: def
     
     def _create_formula_terms_ref(self, f, key, coord, formula_terms,
-                                  domain_ancillaries, coordref_parameters):
+                                  domain_ancillaries):
+#, coordref_parameters):
         '''
     
     :Parameters:
@@ -1548,7 +1555,7 @@ ancillaries, field ancillaries).
     
         domain_ancillaries: `dict`
     
-        coordref_parameters: `dict`
+#        coordref_parameters: `dict`
     
     :Returns:
     
@@ -1561,20 +1568,21 @@ ancillaries, field ancillaries).
         ancillaries = {}
     
         for term, ncvar in formula_terms.iteritems():
-            if ncvar in domain_ancillaries:
-                # The term's value is a domain ancillary of the field, so
-                # we put its identifier into the coordinate reference.
-                ancillaries[term] = domain_ancillaries[ncvar][0]
-    
-            elif ncvar in coordref_parameters:
-                # The term's value is a parameter
-                parameters[term] = coordref_parameters[ncvar].copy()
-        #--- End: for 
+#            if ncvar in domain_ancillaries:
+
+            # The term's value is a domain ancillary of the field, so
+            # we put its identifier into the coordinate reference.
+            ancillaries[term] = domain_ancillaries[ncvar][0]
+
+#            elif ncvar in coordref_parameters:
+#                # The term's value is a parameter
+#                parameters[term] = coordref_parameters[ncvar].copy()
+#        #--- End: for 
     
         coordref = CoordinateReference(name=coord.getprop('standard_name', None),
                                        crtype='formula_terms',
                                        coordinates=(key,),
-                                       parameters=parameters,
+#                                       parameters=parameters,
                                        ancillaries=ancillaries)
     
         f.insert_ref(coordref, copy=False)
@@ -2061,14 +2069,13 @@ and auxiliary coordinate roles for different data variables.
                     "Can't overwrite an existing file without permission: {}".format(
                         abspath(filename)))
                 
-    #        _close_netcdf_file(filename)
             os.remove(filename)
         #--- End: if          
 
         # ------------------------------------------------------------
         # Open the netCDF file to be written
         # ------------------------------------------------------------
-        g['netcdf'] = self.NetCDFArray.open_netcdf_file(filename, mode, fmt)
+        g['netcdf'] = self.NetCDFArray.file_open(filename, mode, fmt)
     
         # ---------------------------------------------------------------
         # Set the fill mode for a Dataset open for writing to off. This
@@ -2121,7 +2128,7 @@ and auxiliary coordinate roles for different data variables.
         # ---------------------------------------------------------------
         # Write all of the buffered data to disk
         # ---------------------------------------------------------------
-        g['netcdf'].close()
+        self.NetCDFArray.file_close(filename)
     #--- End: def
     
     def _check_name(self, base, dimsize=None):
@@ -2168,12 +2175,12 @@ and auxiliary coordinate roles for different data variables.
         return ncvar
     #--- End: def
     
-    def _write_attributes(self, netcdf_var, netcdf_attrs):
+    def _write_attributes(self, ncvar, netcdf_attrs):
         '''
     
     :Parameters:
     
-        netcdf_var : netCDF4.Variable
+        ncvar: `str`
     
         netcdf_attrs : dict
     
@@ -2184,7 +2191,9 @@ and auxiliary coordinate roles for different data variables.
     :Examples:
     
     
-    '''
+        '''
+        netcdf_var = self.write_vars['nc'][ncvar]
+
         if hasattr(netcdf_var, 'setncatts'):
             # Use the faster setncatts
             netcdf_var.setncatts(netcdf_attrs)
@@ -2483,37 +2492,34 @@ coordinate or cell measures objects.
         return coord2
     #--- End: def
     
-    def _write_dimension_coordinate(self, f, axis, coord, key_to_ncvar, axis_to_ncdim):
-        '''
+    def _write_dimension_coordinate(self, f, axis, coord,
+                                    key_to_ncvar, axis_to_ncdim):
+        '''Write a dimension coordinate and its bounds to the netCDF file.
     
-    Write a dimension coordinate and bounds to the netCDF file.
-    
-    This also writes a new netCDF dimension to the file and, if required,
-    a new netCDF bounds dimension.
-    
-    .. note:: This function updates ``axis_to_ndim``, ``g['seen']``.
-    
-    :Parameters:
-    
-        f : `Field`
-       
-        axis : str
-    
-        coord : `DimensionCoordinate`
-    
-        key_to_ncvar : dict
-            Mapping of field item identifiers to netCDF dimension names.
-    
-        axis_to_ncdim : dict
-            Mapping of field axis identifiers to netCDF dimension names.
-    
-        g : dict
-    
-    :Returns:
-    
-        out : str
-            The netCDF name of the dimension coordinate.
-    
+This also writes a new netCDF dimension to the file and, if required,
+a new netCDF bounds dimension.
+
+.. note:: This function updates ``axis_to_ndim``, ``g['seen']``.
+
+:Parameters:
+
+    f: `Field`
+   
+    axis: `str`
+
+    coord: `DimensionCoordinate`
+
+    key_to_ncvar: `dict`
+        Mapping of field item identifiers to netCDF dimension names.
+
+    axis_to_ncdim: `dict`
+        Mapping of field axis identifiers to netCDF dimension names.
+
+:Returns:
+
+    out : str
+        The netCDF name of the dimension coordinate.
+
     '''       
         g = self.write_vars
 
@@ -2717,7 +2723,7 @@ dictionary.
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 ncdim_to_size[ncdim] = size
-                g['netcdf'].createDimension(ncdim, size) #ncdim_to_size[ncdim])
+                g['netcdf'].createDimension(ncdim, size)
             #--- End: if
             
             ncvar = getattr(bounds, 'ncvar', coord_ncvar+'_bounds')
@@ -2749,46 +2755,44 @@ dictionary.
             
     def _write_scalar_coordinate(self, f, axis, coord, coordinates,
                                  key_to_ncvar, axis_to_ncscalar):
-        '''Write a scalar coordinate and bounds to the netCDF file.
+        '''Write a scalar coordinate and its bounds to the netCDF file.
     
-    It is assumed that the input coordinate is has size 1, but this is not
-    checked.
+It is assumed that the input coordinate is has size 1, but this is not
+checked.
     
-    If an equal scalar coordinate has already been written to the file
-    then the input coordinate is not written.
+If an equal scalar coordinate has already been written to the file
+then the input coordinate is not written.
     
-    .. note:: This function updates ``key_to_ncvar``,
-              ``axis_to_ncscalar``.
+.. note:: This function updates ``key_to_ncvar``,
+          ``axis_to_ncscalar``.
     
-    :Parameters:
-    
-        f: `Field`
-       
-        axis : str
-            The field's axis identifier for the scalar coordinate.
-    
-        key_to_ncvar : dict
-            Mapping of field item identifiers to netCDF dimension names.
-    
-        axis_to_ncscalar : dict
-            Mapping of field axis identifiers to netCDF scalar coordinate
-            variable names.
-    
-        coordinates : list
-    
-        g : dict
-    
-    :Returns:
-    
-        coordinates : list
-            The updated list of netCDF auxiliary coordinate names.
-    
+:Parameters:
+
+    f: `Field`
+   
+    axis : str
+        The field's axis identifier for the scalar coordinate.
+
+    key_to_ncvar : dict
+        Mapping of field item identifiers to netCDF dimension names.
+
+    axis_to_ncscalar : dict
+        Mapping of field axis identifiers to netCDF scalar coordinate
+        variable names.
+
+    coordinates : list
+
+:Returns:
+
+    coordinates: `list`
+        The updated list of netCDF auxiliary coordinate names.
+
         '''
         g = self.write_vars
 
         coord = self._change_reference_datetime(coord)
             
-        coord = _squeeze_coordinate(coord)
+        coord = self._squeeze_coordinate(coord)
     
         if not self._seen(coord, ()):
             ncvar = self._variable_ncvar(coord, default='scalar')
@@ -3236,7 +3240,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
     #
     #    if _debug:
     #        print '  chunksizes:', chunksizes
-            
+#        print  ncdimensions
         try:
             g['nc'][ncvar] = g['netcdf'].createVariable(
                 ncvar,
@@ -3255,15 +3259,16 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         cfvar.dtype.name, cfvar, g['netcdf'].file_format))
                 
             message = "Can't create variable in {} file from {} ({})".format(g['netcdf'].file_format, cfvar, error)
-    
+
             if error == 'NetCDF: NC_UNLIMITED in the wrong index':            
                 raise NetCDFError(
     message+". Unlimited dimension must be the first (leftmost) dimension of the variable. Consider using a netCDF4 format.")
                     
             raise NetCDFError(message)
         #--- End: try
-    
-        self._write_attributes(g['nc'][ncvar], netcdf_attrs)
+#        print ncvar
+        self._write_attributes(ncvar, netcdf_attrs)
+#        print 'CCC', g['nc'][ncvar]    , '-CCC'
     
         #-------------------------------------------------------------
         # Add data to the netCDF variable
@@ -3287,15 +3292,13 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 missing_data = [value for value in (_FillValue, missing_value)
                                 if value is not None]
             #--- End: if
-    
+
             self._write_data_to_variable(data, ncvar, missing_data)
-            
+
             # Update the 'seen' dictionary
             g['seen'][id(cfvar)] = {'variable': cfvar,
                                     'ncvar'   : ncvar,
                                     'ncdims'  : dimensions}
-    
-            return
     #--- End: def
     
     def _write_data_to_variable(self, data, ncvar, missing_data):
@@ -3304,14 +3307,14 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         g = self.write_vars
 
         convert_dtype = g['datatype']
-        
+
         array = data.array
-        
+
         # Convert data type
         new_dtype = convert_dtype.get(array.dtype, None)
         if new_dtype is not None:
             array = array.astype(new_dtype)  
-                    
+
         # Check that the array doesn't contain any elements
         # which are equal to any of the missing data values
         if missing_data:
@@ -3326,7 +3329,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         #--- End: if
     
         # Copy the array into the netCDF variable
-        g['nc'][ncvar][...] = array        
+        g['nc'][ncvar][...] = array
     #--- End: def
     
     def _convert_to_char(self, data):
@@ -3402,7 +3405,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # For each of the field's axes ...
         for axis in sorted(f.axes()):
             dim_coord = f.item(axis, role='d')
-    
+#            print repr(dim_coord), axis
             if dim_coord is not None:
                 # --------------------------------------------------------
                 # A dimension coordinate exists for this axis
@@ -3416,6 +3419,8 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 else:
                     # The data array does not span this axis (and
                     # therefore it must have size 1).
+#                    print 'DDD',axis,f.items(role=('a', 'm', 'c', 'f')),f.items(role=('a', 'm', 'c', 'f'), axes=axis)
+#                    print  f.Items._axes
                     if f.items(role=('a', 'm', 'c', 'f'), axes=axis):
                         # There ARE auxiliary coordinates, cell measures,
                         # domain ancillaries or field ancillaries which
@@ -3564,12 +3569,12 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                     if domain_anc is None:
                         continue
     
-                    if id(domain_anc) not in g['seen']:
+                    if id(domain_anc) not in seen:
                         continue
     
                     # Get the netCDF variable name for the domain
                     # ancillary and add it to the formula_terms attribute
-                    ncvar = g['seen'][id(domain_anc)]['ncvar']                
+                    ncvar = seen[id(domain_anc)]['ncvar']                
                     formula_terms.append('{0}: {1}'.format(term, ncvar))
     
                     bounds = g['bounds'].get(ncvar, None)
@@ -3586,6 +3591,12 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             # Add the formula_terms attribute to the parent coordinate
             # variable
             if formula_terms:
+#                print ncvar
+#                print formula_terms
+#                print repr(owning_coord), id(owning_coord)
+#                print sorted(seen.keys())
+#                print sorted([repr(x['variable']) for x in seen.values()])
+                    
                 ncvar = seen[id(owning_coord)]['ncvar']
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
@@ -3664,9 +3675,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         
         # Update the 'seen' dictionary, if required
         if add_to_seen:
-            g['seen'][id_f] = {'variable': org_f,
-                               'ncvar'   : ncvar,
-                               'ncdims'  : ncdimensions}
+            seen[id_f] = {'variable': org_f,
+                          'ncvar'   : ncvar,
+                          'ncdims'  : ncdimensions}
     #--- End: def
     
     def _unlimited(self, f, axis):

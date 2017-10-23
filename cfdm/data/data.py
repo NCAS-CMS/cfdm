@@ -347,7 +347,7 @@ elements.
     def __int__(self):
         if self.size != 1:
             raise TypeError(
-                "only length-1 arrays can be converted to Python scalars")
+                "only length-1 arrays can be converted to Python scalars. Got {}".format(self))
         return int(self.datum())
     #--- End: def
 
@@ -898,17 +898,18 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
         return type(self)(array)
     #--- End: def
 
-    def close(self):
-        '''
-'''
-        self._array.close()
-    #--- End: def
-    
-    def open(self):
-        '''
-'''
-        self._array.open(keep_open=True)
-    #--- End: def
+#    def close(self):
+#        '''
+#'''
+#        self._array.close()
+#    #--- End: def
+#    
+#    def open(self):
+#        '''
+#'''
+#        self._array.open()
+#        self._array.keep_open(True)
+#    #--- End: def
 
     def copy(self):
         '''Return a deep copy.
@@ -2120,6 +2121,8 @@ element_dimension_size  = count.max()
         position of each profile of each instance.
 
         '''
+        print 'ARSE'
+        print 'elements_per_profile.shape =',elements_per_profile.shape
         data.dtype = dtype
         data.Units = units
         data.fill_value = fill_value
@@ -2139,6 +2142,7 @@ element_dimension_size  = count.max()
 
             # Loop over profiles in this instance
             for j in range(uncompressed_array.shape[1]):
+                print 'j=',j
                 if j >= n_profiles:
                     continue
                 
@@ -2150,8 +2154,9 @@ element_dimension_size  = count.max()
                     start = 0
                 else:                    
                     start = int(elements_per_profile[:profile_index].sum())
-                    
-                stop  = start + int(elements_per_profile[profile_index])
+
+                print profile_index, elements_per_profile.shape,  elements_per_profile[j, profile_index], elements_per_profile
+                stop  = start + int(elements_per_profile[j, profile_index])
                 
                 sample_indices = slice(start, stop)
                 

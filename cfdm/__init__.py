@@ -66,9 +66,10 @@ from .write               import write
 from .units               import Units
 from .cfdatetime          import Datetime, dt
 from .data.data           import Data
+from .data.array          import NetCDFArray
 from .flags               import Flags
 from .cellmethods         import CellMethod, CellMethods
-from .netcdf.read         import netcdf_read
+#from .netcdf.read         import netcdf_read
 from .constants           import *
 from .functions           import *
 #from .functions           import _open_netcdf_file

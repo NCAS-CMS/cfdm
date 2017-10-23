@@ -25,17 +25,17 @@ class create_fieldTest(unittest.TestCase):
         bounds[-1,:] = [30, 36]
         dim0.insert_bounds(cfdm.Bounds(data=bounds))
         
-        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data(1.5), bounds=cfdm.Bounds(data=cfdm.Data([1, 2.])))
+        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]), bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
         dim2.standard_name = 'atmosphere_hybrid_height_coordinate'
         
         # Auxiliary coordinates
-        ak = cfdm.DomainAncillary(data=cfdm.Data(10., 'm'))
+        ak = cfdm.DomainAncillary(data=cfdm.Data([10.], 'm'))
         ak.id = 'atmosphere_hybrid_height_coordinate_ak'
-        ak.insert_bounds(cfdm.Bounds(data=cfdm.Data([5, 15.])), ak.Units)
+        ak.insert_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]])), ak.Units)
         
-        bk = cfdm.DomainAncillary(data=cfdm.Data(20.))
+        bk = cfdm.DomainAncillary(data=cfdm.Data([20.]))
         bk.id = 'atmosphere_hybrid_height_coordinate_bk'
-        bk.insert_bounds(cfdm.Bounds(data=cfdm.Data([14, 26.])))
+        bk.insert_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
         
         aux2 = cfdm.AuxiliaryCoordinate(
             data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9),
@@ -79,8 +79,8 @@ class create_fieldTest(unittest.TestCase):
         f.insert_aux(aux3)
         f.insert_aux(aux4, axes=['Y'])
 
-        ak = f.insert_domain_anc(ak)
-        bk = f.insert_domain_anc(bk)
+        ak = f.insert_domain_anc(ak, axes=[z])
+        bk = f.insert_domain_anc(bk, axes=[z])
 
         f.insert_measure(msr0)
 
@@ -129,10 +129,14 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
         # Write the file, and read it in
 #        print f.shape
+ 
+#        print 'MADE:'
+#        print f.Items._axes
+#        print '============================'
         cfdm.write(f, self.filename, _debug=False)
 
         g = cfdm.read(self.filename, _debug=False, squeeze=True)
-        
+#        g.dump()
 #        print '\n GGGG =============================================='
 #        print f
 #        print g

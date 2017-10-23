@@ -6,6 +6,9 @@ import netCDF4
 
 from ..functions import parse_indices, abspath
 
+_file_to_fh       = {}
+_file_to_fh_write = {}
+
 _debug = False
 
 # ====================================================================
@@ -100,6 +103,8 @@ x.__str__() <==> str(x)
     #--- End: def
     
     def close(self):
+        '''
+        '''
         pass
     #--- End: def
 
@@ -158,10 +163,12 @@ indices must contain an index for each dimension of the input array.
         #--- End: if
     #--- End: def
 
-    def open(self, keep_open=False):
+    def open(self):
+        '''
+        '''
         pass
-    #--- End: def
-
+    #---End: def
+    
 #--- End: class
 
 # ====================================================================
@@ -285,7 +292,7 @@ class NetCDFArray(Array):
                         dtype=v.dtype, ndim=v.ndim, shape=v.shape,
                         size=v.size)
 
-    '''
+    '''    
     def __init__(self, **kwargs):
         '''
         
@@ -370,9 +377,6 @@ Returns a numpy array.
 
             array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
-
-        if not getattr(self, 'keep_open', False):
-            self.close()
         
         return array
     #--- End: def
@@ -407,11 +411,25 @@ x.__str__() <==> str(x)
 
         return "%s%s in %s" % (name, self.shape, self.file)
     #--- End: def
-    
-    def close(self):
-        '''Close the file containing the array.
 
-If the file is not open then no action is taken.
+    def close(self):
+        '''Close the `netCDF4.Dataset` for the file containing the data.
+
+:Returns:
+
+    out: `netCDF4.Dataset`
+
+:Examples:
+
+>>> f.close()
+
+        '''
+        self.file_close(self.file)
+    #--- End: def
+
+    @classmethod
+    def file_close(cls, filename):
+        '''Close the `netCDF4.Dataset` for a netCDF file.
 
 :Returns:
 
@@ -419,22 +437,58 @@ If the file is not open then no action is taken.
 
 :Examples:
 
->>> f.close()
+>>> f.file_close(filename)
 
         '''
-        nc = getattr(self, 'nc', None)
-        if nc is not None:
+        nc = _file_to_fh.pop(filename, None)
+        if nc is not None and nc.isopen():
             nc.close()
-            del self.nc
 
-        self.keep_open = False
+        nc = _file_to_fh_write.pop(filename, None)
+        if nc is not None and nc.isopen():
+            nc.close()
     #--- End: def
 
-    def open(self, keep_open=False):
-        '''
+    @classmethod
+    def file_open(cls, filename, mode, fmt=None):
+        '''Return an open `netCDF4.Dataset` for a netCDF file.
 
-Return a `netCDF4.Dataset` object for the file containing the data
-array.
+:Returns:
+
+    out: `netCDF4.Dataset`
+
+:Examples:
+
+>>> f.file_open(filename, 'r')
+<netCDF4.Dataset at 0x115a4d0>
+
+        '''
+        if mode == 'r':
+            files = _file_to_fh
+        else:
+            files = _file_to_fh_write
+
+        nc = files.get(filename)
+
+        if nc is None or not nc.isopen():
+            # Close an arbitrary file that has been opened for reading
+            for f in _file_to_fh:                    
+                cls.file_close(f)
+                break
+                
+            try:        
+                nc = netCDF4.Dataset(filename, mode, format=fmt)
+            except RuntimeError as runtime_error:
+                raise RuntimeError("{}: {}".format(runtime_error, filename))        
+
+            files[filename] = nc                
+        #--- End: if
+        
+        return nc
+    #--- End: def
+
+    def open(self):
+        '''Return an open `netCDF4.Dataset` for the file containing the array.
 
 :Returns:
 
@@ -445,39 +499,8 @@ array.
 >>> f.open()
 <netCDF4.Dataset at 0x115a4d0>
 
-'''
-        nc = getattr(self, 'nc', None)
-        if nc is None or not nc.isopen():
-            self.nc = self.open_netcdf_file(self.file, 'r')
-
-        self.keep_open = keep_open
-        
-        return nc
-    #--- End: def
-
-    @classmethod
-    def open_netcdf_file(cls, filename, mode, fmt=None):
         '''
-
-Return a `netCDF4.Dataset` object for the file containing the data
-array.
-
-:Returns:
-
-    out: `netCDF4.Dataset`
-
-:Examples:
-
->>> f.open_netcdf_file(filename)
-<netCDF4.Dataset at 0x115a4d0>
-
-'''        
-        try:        
-            nc = netCDF4.Dataset(filename, mode, format=fmt)
-        except RuntimeError as runtime_error:
-            raise RuntimeError("{}: {}".format(runtime_error, filename))        
-
-        return nc
+        return self.file_open(self.file, 'r')
     #--- End: def
 
 #--- End: class

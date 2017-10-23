@@ -19,7 +19,6 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
-    
     @property
     def isdomainancillary(self):
         '''True, denoting that the variable is a domain ancillary object.

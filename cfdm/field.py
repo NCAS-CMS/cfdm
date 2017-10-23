@@ -210,8 +210,7 @@ functionality:
 
         # Open any files that contained the original data (this not
         # necessary, is an optimsation)
-        new.open()
-
+        
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
@@ -246,9 +245,6 @@ functionality:
         Axes = new._Axes
         for axis, size in izip(data_axes, new.shape):
             Axes[axis] = DomainAxis(size, ncdim=Axes[axis].ncdim)
-
-        # Close any files that contained the original data
-        new.close()
 
         return new
     #--- End: def
@@ -1811,18 +1807,19 @@ axes, use the `remove_axes` method.
             ndim = item.ndim
             if not ndim and not allow_scalar:
                 ndim = 1
+
             axes = list(self.axes(axes, ordered=True))
             if len(set(axes)) != ndim:
                 raise ValueError(
-"Can't insert {} {}: Mismatched number of axes ({} != {})".format(
-    item.name(default=''), item.__class__.__name__, len(set(axes)), ndim))
+"Can't insert {} {}: Mismatched axis size (got {}, expected {})".format(
+    item.__class__.__name__, item.name(default=''), len(set(axes)), ndim))
 
             axes2 = []                
             for axis, size in izip_longest(axes, item.shape, fillvalue=1):
                 if size != self.axis_size(axis):
                     raise ValueError(
-"Can't insert {} {}: Mismatched axis size ({} != {})".format(
-    item.name(default=''), item.__class__.__name__, size, self.axis_size(axis)))
+"Can't insert {} {}: Mismatched axis size (got {}, expected {})".format(
+    item.__class__.__name__, item.name(default=''), size, self.axis_size(axis)))
 
                 axes2.append(axis)
             #--- End: for
@@ -2380,7 +2377,8 @@ To multiply the field by the cosine of its latitudes:
             ancillaries = []
             for term in ref.ancillaries:
                 key = ref[term]
-                domain_anc = f.item(key, role='c', axes_superset=item_axes)
+                domain_anc = self.item(key, role='c', axes_superset=item_axes)
+                print repr(domain_anc),item_axes, key
                 if domain_anc is not None:
                     ancillaries.append(term)
                     f.insert_item('c', domain_anc, key=key, axes=self.item_axes(key))
@@ -3578,16 +3576,6 @@ The domain is not updated.
         return key
     #--- End: def
 
-    def open(self):
-        '''
-'''
-        if self.hasdata:
-            self.data.open()
-
-        for item in self.items().itervalues():
-            item.open()
-    #--- End: def
-    
     def insert_field_anc(self, item, key=None, axes=None, copy=True,
                          replace=True):
         '''Insert a field ancillary object into the {+variable}.
@@ -3630,14 +3618,13 @@ The domain is not updated.
 "Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
 
         axes = self._insert_item_parse_axes(item, 'domain ancillary', 
-                                            axes, allow_scalar=False)
-
+                                            axes, allow_scalar=True)
         if copy:
             item = item.copy()
 
-        # Turn a scalar domain ancillary into 1-d
-        if item.isscalar:
-            item = item.expand_dims(0, copy=False)
+#        # Turn a scalar domain ancillary into 1-d
+#        if item.isscalar:
+#            item = item.expand_dims(0, copy=False)
 
         self.Items.insert_domain_anc(item, key=key, axes=axes, copy=False)
 
@@ -4012,6 +3999,8 @@ and domain ancillaries where possible.
 
         # Turn a scalar dimension coordinate into 1-d
         if item.isscalar:
+            print type(item)
+            print item.__class__.__mro__
             item = item.expand_dims(0, copy=False)
         
         self.Items.insert_dim(item, key=key, axes=axes, copy=False)
@@ -5520,30 +5509,6 @@ None
                 identity = 'axis%{0}'.format(axis)
 
         return identity
-    #--- End: def
-            #--- End: if
-
-    def close(self):
-        '''
-Close all files referenced by all of the items.
-
-Note that a closed file will be automatically reopened if its contents
-are subsequently required.
-
-:Examples 1:
-
->>> i.close()
-
-:Returns:
-
-    `None`
-
-'''
-        if self.hasdata:
-            self.data.close()
-            
-        for item in self.items().itervalues():
-            item.close()
     #--- End: def
 
     def copy(self, shallow=False):
