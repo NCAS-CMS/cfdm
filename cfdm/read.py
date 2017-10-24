@@ -1,16 +1,44 @@
 import glob
 import os
 
-from .field     import Field
-from .fieldlist import FieldList
 from .functions import flat
 
-#from .netcdf.read import netcdf_read
-#from .netcdf.read import is_netcdf_file
+from .auxiliarycoordinate import AuxiliaryCoordinate
+from .cellmethods         import CellMethods
+from .cellmeasure         import CellMeasure
+from .coordinatereference import CoordinateReference
+from .dimensioncoordinate import DimensionCoordinate
+from .domainancillary     import DomainAncillary
+from .domainaxis          import DomainAxis
+from .field               import Field
+from .fieldancillary      import FieldAncillary
 
-from .netcdf2 import NetCDF
+from .bounds    import Bounds
+from .fieldlist import FieldList
+from .units     import Units
+from .netcdf2   import NetCDF
 
-X = NetCDF()
+from .data.data  import Data
+from .data.array import NetCDFArray
+
+
+netcdf = NetCDF(mode='read',
+                AuxiliaryCoordinate = AuxiliaryCoordinate,
+                CellMeasure         = CellMeasure,
+                CellMethods         = CellMethods,
+                CoordinateReference = CoordinateReference,
+                DimensionCoordinate = DimensionCoordinate,
+                DomainAncillary     = DomainAncillary,
+                DomainAxis          = DomainAxis,
+                Field               = Field,
+                FieldAncillary      = FieldAncillary,
+                
+                Bounds    = Bounds,
+                Data      = Data,
+                FieldList = FieldList,
+                Units     = Units,        
+                
+                NetCDFArray = NetCDFArray)
 
 def read(files, verbose=False, ignore_read_error=False, squeeze=False,
          unsqueeze=False, uncompress=True, field=None, _debug=False):
@@ -20,11 +48,11 @@ Files may be on disk or on a OPeNDAP server.
 
 Any amount of netCDF files may be read.
 
-.. seealso:: `cf.write`
+.. seealso:: `write`
 
 :Examples 1:
 
->>> f = cf.read('file.nc')
+>>> f = read('file.nc')
 
 :Parameters:
 
@@ -269,10 +297,8 @@ Read the contents of a single file into a field list.
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
-#    fields = netcdf_read(filename, field=field, verbose=verbose,
-#                         uncompress=uncompress, _debug=_debug)
-    fields = X.read(filename, field=field, verbose=verbose,
-                    uncompress=uncompress, _debug=_debug)
+    fields = netcdf.read(filename, field=field, verbose=verbose,
+                         uncompress=uncompress, _debug=_debug)
         
     # ----------------------------------------------------------------
     # Return the fields
@@ -307,7 +333,7 @@ def file_type(filename):
     # ----------------------------------------------------------------
     # netCDF
     # ----------------------------------------------------------------
-    if X.is_netcdf_file(filename):
+    if netcdf.is_netcdf_file(filename):
         return 'netCDF'
 
     # Still here?

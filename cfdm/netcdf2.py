@@ -6,48 +6,78 @@ import sys
 import numpy
 import netCDF4
 
-from .auxiliarycoordinate import AuxiliaryCoordinate
-from .cellmethods         import CellMethods
-from .cellmeasure         import CellMeasure
-from .coordinatereference import CoordinateReference
-from .dimensioncoordinate import DimensionCoordinate
-from .domainancillary     import DomainAncillary
-from .domainaxis          import DomainAxis
-from .field               import Field
-from .fieldancillary      import FieldAncillary
-
-from .          import __Conventions__
-from .bounds    import Bounds
-from .fieldlist import FieldList
-from .units     import Units
-
-from .data.data  import Data
-from .data.array import NetCDFArray, _file_to_fh_write
+#from .auxiliarycoordinate import AuxiliaryCoordinate
+#from .cellmethods         import CellMethods
+#from .cellmeasure         import CellMeasure
+#from .coordinatereference import CoordinateReference
+#from .dimensioncoordinate import DimensionCoordinate
+#from .domainancillary     import DomainAncillary
+#from .domainaxis          import DomainAxis
+#from .field               import Field
+#from .fieldancillary      import FieldAncillary
+#
+#from .          import __Conventions__
+#from .bounds    import Bounds
+#from .fieldlist import FieldList
+#from .units     import Units
+#
+#from .data.data  import Data
+#from .data.array import NetCDFArray, _file_to_fh_write
 
 from .functions import abspath, flat
 
 class NetCDF(object):
     '''
     '''
-    
-    AuxiliaryCoordinate = AuxiliaryCoordinate
-    CellMeasure         = CellMeasure
-    CellMethods         = CellMethods
-    CoordinateReference = CoordinateReference
-    DimensionCoordinate = DimensionCoordinate
-    DomainAncillary     = DomainAncillary
-    DomainAxis          = DomainAxis
-    Field               = Field
-    FieldAncillary      = FieldAncillary
+    def __init__(self, mode=None, **kwargs):
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
 
-    Bounds    = Bounds
-    Data      = Data
-    FieldList = FieldList
-    Units     = Units
+        for attr in ('NetCDFArray',):
+            if attr not in kwargs:
+                raise ValueError("Must set {}".format(attr))    
+ 
+        if mode == 'read':
+            for attr in ('AuxiliaryCoordinate',
+                         'CellMeasure',        
+                         'CellMethods',        
+                         'CoordinateReference',
+                         'DimensionCoordinate',
+                         'DomainAncillary',
+                         'DomainAxis',         
+                         'Field',     
+                         'FieldAncillary',     
+                         'Bounds', 
+                         'Data',
+                         'FieldList',
+                         'Units'):
+                if attr not in kwargs:
+                    raise ValueError("Must set {} in 'read' mode".format(attr))
+
+        elif mode == 'write':
+            for attr in ('__Conventions__',):
+                if attr not in kwargs:
+                    raise ValueError("Must set {} in 'write' mode".format(attr))    
+    #--- End: def    
     
-    __Conventions__ = __Conventions__
-    
-    NetCDFArray = NetCDFArray
+#    AuxiliaryCoordinate = AuxiliaryCoordinate
+#    CellMeasure         = CellMeasure
+#    CellMethods         = CellMethods
+#    CoordinateReference = CoordinateReference
+#    DimensionCoordinate = DimensionCoordinate
+#    DomainAncillary     = DomainAncillary
+#    DomainAxis          = DomainAxis
+#    Field               = Field
+#    FieldAncillary      = FieldAncillary
+#
+#    Bounds    = Bounds
+#    Data      = Data
+#    FieldList = FieldList
+#    Units     = Units
+#    
+#    __Conventions__ = __Conventions__
+#    
+#    NetCDFArray = NetCDFArray
     
     def read(self, filename, field=(), verbose=False, uncompress=True,
              _debug=False):
@@ -464,7 +494,7 @@ ancillaries, field ancillaries).
 #        coordref_parameters   = {}
         list_variables        = {}
     
-        fields_in_file = FieldList()
+        fields_in_file = self.FieldList()
     
         for data_ncvar in variables:
             f = self._create_Field(data_ncvar,
@@ -1523,10 +1553,10 @@ ancillaries, field ancillaries).
                 
                 name = parameter_terms.pop('grid_mapping_name', None)                 
       
-                coordref = CoordinateReference(name,
-                                               crtype='grid_mapping',
-                                               coordinates=coordinates,
-                                               parameters=parameter_terms)
+                coordref = self.CoordinateReference(name,
+                                                    crtype='grid_mapping',
+                                                    coordinates=coordinates,
+                                                    parameters=parameter_terms)
                 coordref.ncvar = grid_mapping
     
                 f.insert_ref(coordref, copy=False)
@@ -1579,11 +1609,10 @@ ancillaries, field ancillaries).
 #                parameters[term] = coordref_parameters[ncvar].copy()
 #        #--- End: for 
     
-        coordref = CoordinateReference(name=coord.getprop('standard_name', None),
-                                       crtype='formula_terms',
-                                       coordinates=(key,),
-#                                       parameters=parameters,
-                                       ancillaries=ancillaries)
+        coordref = self.CoordinateReference(name=coord.getprop('standard_name', None),
+                                            crtype='formula_terms',
+                                            coordinates=(key,),
+                                            ancillaries=ancillaries)
     
         f.insert_ref(coordref, copy=False)
     

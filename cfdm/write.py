@@ -1,8 +1,12 @@
-from .netcdf.write import write as netcdf_write
+from . import __Conventions__
 
 from .netcdf2 import NetCDF
 
-X = NetCDF()
+from .data.array import NetCDFArray
+
+netcdf = NetCDF(mode='write',
+                __Conventions__=__Conventions__,
+                NetCDFArray=NetCDFArray)
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           verbose=False, mode='w', least_significant_digit=None,
@@ -22,11 +26,11 @@ Output netCDF file global properties are those which occur in the set
 of CF global properties and non-standard data variable properties and
 which have equal values across all input fields.
 
-.. seealso:: `cf.read`
+.. seealso:: `read`
 
 :Examples 1:
 
->>> cf.write(f, new_file.nc')
+>>> write(f, new_file.nc')
 
 :Parameters:
 
@@ -70,7 +74,7 @@ which have equal values across all input fields.
            ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
                                        (see below) 
     
-           ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
+           ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file#
                                        (limited to file sizes less
                                        than 2 Gb).
 
@@ -259,15 +263,14 @@ which have equal values across all input fields.
 
     '''      
     if fields:
-#        netcdf_write(fields, filename, fmt=fmt, overwrite=overwrite,
-        X.write(fields, filename, fmt=fmt, overwrite=overwrite,
-                verbose=verbose, mode=mode,
-                least_significant_digit=least_significant_digit,
-                endian=endian, compress=compress,
-                no_shuffle=no_shuffle, fletcher32=fletcher32,
-                datatype=datatype, single=single, double=double,
-                reference_datetime=reference_datetime,
-                variable_attributes=variable_attributes,
-                HDF_chunks=HDF_chunksizes, unlimited=unlimited,
-                _debug=_debug)
+        netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
+                     verbose=verbose, mode=mode,
+                     least_significant_digit=least_significant_digit,
+                     endian=endian, compress=compress,
+                     no_shuffle=no_shuffle, fletcher32=fletcher32,
+                     datatype=datatype, single=single, double=double,
+                     reference_datetime=reference_datetime,
+                     variable_attributes=variable_attributes,
+                     HDF_chunks=HDF_chunksizes, unlimited=unlimited,
+                     _debug=_debug)
 #--- End: def
