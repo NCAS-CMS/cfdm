@@ -411,7 +411,7 @@ The Units object containing the units of the data array.
     def Units(self, value):
         Variable.Units.fset(self, value)
 
-        # Set the Units on the bounds
+NO        # Set the Units on the bounds
         if self.hasbounds:
             self.bounds.Units = value
     #--- End: def
@@ -601,6 +601,15 @@ AttributeError: {+Variable} doesn't have CF property 'foo'
             raise AttributeError("Can't delete non-existent %s CF property %r" %
                                  (self.__class__.__name__, prop))
     #--- End: def
+
+#     def close(self):
+#        '''
+#'''
+#        super(BoundedVariable, self).close()
+#
+#        if self.hasbounds:
+#            self.bounds.close()
+#    #--- End: def
 
     def dump(self, display=True, omit=(), field=None, key=None,
              _level=0, _title=None): 

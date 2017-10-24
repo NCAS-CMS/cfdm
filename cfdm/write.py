@@ -5,7 +5,7 @@ from .netcdf2 import NetCDF
 from .data.array import NetCDFArray
 
 netcdf = NetCDF(mode='write',
-                __Conventions__=__Conventions__,
+                Conventions=__Conventions__,
                 NetCDFArray=NetCDFArray)
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,

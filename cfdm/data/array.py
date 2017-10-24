@@ -4,9 +4,10 @@ import sys
 import numpy
 import netCDF4
 
-from ..functions import parse_indices, abspath
+from ..functions import parse_indices, abspath, open_files_threshold_exceeded
 
-_file_to_fh       = {}
+
+_file_to_fh_read  = {}
 _file_to_fh_write = {}
 
 _debug = False
@@ -440,7 +441,7 @@ x.__str__() <==> str(x)
 >>> f.file_close(filename)
 
         '''
-        nc = _file_to_fh.pop(filename, None)
+        nc = _file_to_fh_read.pop(filename, None)
         if nc is not None and nc.isopen():
             nc.close()
 
@@ -464,18 +465,20 @@ x.__str__() <==> str(x)
 
         '''
         if mode == 'r':
-            files = _file_to_fh
+            files = _file_to_fh_read
         else:
             files = _file_to_fh_write
 
         nc = files.get(filename)
 
         if nc is None or not nc.isopen():
-            # Close an arbitrary file that has been opened for reading
-            for f in _file_to_fh:                    
-                cls.file_close(f)
-                break
-                
+            if open_files_threshold_exceeded():
+                # Close an arbitrary file that has been opened for reading
+                for f in _file_to_fh_read:                    
+                    cls.file_close(f)
+                    break
+            #--- End: if
+
             try:        
                 nc = netCDF4.Dataset(filename, mode, format=fmt)
             except RuntimeError as runtime_error:

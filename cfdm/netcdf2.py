@@ -4,25 +4,6 @@ import struct
 import sys
 
 import numpy
-import netCDF4
-
-#from .auxiliarycoordinate import AuxiliaryCoordinate
-#from .cellmethods         import CellMethods
-#from .cellmeasure         import CellMeasure
-#from .coordinatereference import CoordinateReference
-#from .dimensioncoordinate import DimensionCoordinate
-#from .domainancillary     import DomainAncillary
-#from .domainaxis          import DomainAxis
-#from .field               import Field
-#from .fieldancillary      import FieldAncillary
-#
-#from .          import __Conventions__
-#from .bounds    import Bounds
-#from .fieldlist import FieldList
-#from .units     import Units
-#
-#from .data.data  import Data
-#from .data.array import NetCDFArray, _file_to_fh_write
 
 from .functions import abspath, flat
 
@@ -30,13 +11,12 @@ class NetCDF(object):
     '''
     '''
     def __init__(self, mode=None, **kwargs):
-        for key, value in kwargs.iteritems():
-            setattr(self, key, value)
-
+        '''
+        '''
         for attr in ('NetCDFArray',):
             if attr not in kwargs:
                 raise ValueError("Must set {}".format(attr))    
- 
+                
         if mode == 'read':
             for attr in ('AuxiliaryCoordinate',
                          'CellMeasure',        
@@ -55,29 +35,13 @@ class NetCDF(object):
                     raise ValueError("Must set {} in 'read' mode".format(attr))
 
         elif mode == 'write':
-            for attr in ('__Conventions__',):
+            for attr in ('Conventions',):
                 if attr not in kwargs:
                     raise ValueError("Must set {} in 'write' mode".format(attr))    
+
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
     #--- End: def    
-    
-#    AuxiliaryCoordinate = AuxiliaryCoordinate
-#    CellMeasure         = CellMeasure
-#    CellMethods         = CellMethods
-#    CoordinateReference = CoordinateReference
-#    DimensionCoordinate = DimensionCoordinate
-#    DomainAncillary     = DomainAncillary
-#    DomainAxis          = DomainAxis
-#    Field               = Field
-#    FieldAncillary      = FieldAncillary
-#
-#    Bounds    = Bounds
-#    Data      = Data
-#    FieldList = FieldList
-#    Units     = Units
-#    
-#    __Conventions__ = __Conventions__
-#    
-#    NetCDFArray = NetCDFArray
     
     def read(self, filename, field=(), verbose=False, uncompress=True,
              _debug=False):
@@ -1983,22 +1947,22 @@ and auxiliary coordinate roles for different data variables.
         # ----------------------------------------------------------------
         dtype_conversions = {numpy.dtype(bool)  : numpy.dtype('int32'),
                              numpy.dtype(object): numpy.dtype(float)}
-        if datatype:
-            if single:
-                raise ValueError("Can't set datatype and single")
-            if double:
-                raise ValueError("Can't set datatype and double")
-            dtype_conversions.update(datatype)
-        else:
-            if single and double:
-                raise ValueError("Can't set single and double")
-            if single:
-                dtype_conversions[numpy.dtype(float)] = numpy.dtype('float32')
-                dtype_conversions[numpy.dtype(int)]   = numpy.dtype('int32')
-            if double:
-                dtype_conversions[numpy.dtype('float32')] = numpy.dtype(float)
-                dtype_conversions[numpy.dtype('int32')]   = numpy.dtype(int)
-        datatype = dtype_conversions
+#MOVE TO CF_PYTHON#        if datatype:
+#MOVE TO CF_PYTHON#            if single:
+#MOVE TO CF_PYTHON#                raise ValueError("Can't set datatype and single")
+#MOVE TO CF_PYTHON#            if double:
+#MOVE TO CF_PYTHON#                raise ValueError("Can't set datatype and double")
+#MOVE TO CF_PYTHON#            dtype_conversions.update(datatype)
+#MOVE TO CF_PYTHON#        else:
+#MOVE TO CF_PYTHON#            if single and double:
+#MOVE TO CF_PYTHON#                raise ValueError("Can't set single and double")
+#MOVE TO CF_PYTHON#            if single:
+#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype(float)] = numpy.dtype('float32')
+#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype(int)]   = numpy.dtype('int32')
+#MOVE TO CF_PYTHON#            if double:
+#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype('float32')] = numpy.dtype(float)
+#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype('int32')]   = numpy.dtype(int)
+#MOVE TO CF_PYTHON#        datatype = dtype_conversions
     
         if not unlimited:
             unlimited = ()
@@ -2263,8 +2227,7 @@ and auxiliary coordinate roles for different data variables.
         '''
         strlen = array.dtype.itemsize
         shape  = array.shape
-    
-    #    new = numpy.ma.empty(shape + (strlen,), dtype='S1')
+
         new = numpy.ma.masked_all(shape + (strlen,), dtype='S1')
         
         for index in numpy.ndindex(shape):
@@ -3269,7 +3232,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
     #
     #    if _debug:
     #        print '  chunksizes:', chunksizes
-#        print  ncdimensions
+
         try:
             g['nc'][ncvar] = g['netcdf'].createVariable(
                 ncvar,
@@ -3434,7 +3397,6 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # For each of the field's axes ...
         for axis in sorted(f.axes()):
             dim_coord = f.item(axis, role='d')
-#            print repr(dim_coord), axis
             if dim_coord is not None:
                 # --------------------------------------------------------
                 # A dimension coordinate exists for this axis
@@ -3448,8 +3410,6 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 else:
                     # The data array does not span this axis (and
                     # therefore it must have size 1).
-#                    print 'DDD',axis,f.items(role=('a', 'm', 'c', 'f')),f.items(role=('a', 'm', 'c', 'f'), axes=axis)
-#                    print  f.Items._axes
                     if f.items(role=('a', 'm', 'c', 'f'), axes=axis):
                         # There ARE auxiliary coordinates, cell measures,
                         # domain ancillaries or field ancillaries which
@@ -3620,12 +3580,6 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             # Add the formula_terms attribute to the parent coordinate
             # variable
             if formula_terms:
-#                print ncvar
-#                print formula_terms
-#                print repr(owning_coord), id(owning_coord)
-#                print sorted(seen.keys())
-#                print sorted([repr(x['variable']) for x in seen.values()])
-                    
                 ncvar = seen[id(owning_coord)]['ncvar']
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
@@ -3801,9 +3755,7 @@ write them to the netCDF4.Dataset.
         #--- End: for
     
         # Write the global properties to the file
-        Conventions = self.__Conventions__
-    
-        g['netcdf'].setncattr('Conventions', Conventions)
+        g['netcdf'].setncattr('Conventions', self.Conventions)
         
         for attr in global_properties - set(('Conventions',)):
             g['netcdf'].setncattr(attr, f0.getprop(attr)) 

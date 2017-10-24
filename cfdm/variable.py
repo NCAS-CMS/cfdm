@@ -1069,8 +1069,8 @@ x.__str__() <==> str(x)
         private = self._private
         private['Data'] = value
 
-        # Delete Units from the variable
-        private['special_attributes'].pop('Units', None)
+#        # Delete Units from the variable
+#        private['special_attributes'].pop('Units', None)
  
         self._hasdata = True
     #--- End: def
@@ -1084,8 +1084,8 @@ x.__str__() <==> str(x)
                 "Can't delete non-existent data".format(
                     self.__class__.__name__))
 
-        # Save the Units to the variable
-        private['special_attributes']['Units'] = data.Units
+#        # Save the Units to the variable
+#        private['special_attributes']['Units'] = data.Units
 
         self._hasdata = False
     #--- End: def
@@ -1434,8 +1434,8 @@ properties respectively.
 <CF Units: days since 2014-1-1 calendar=noleap>
 
         '''
-        if self.hasdata:
-            return self.data.Units
+#        if self.hasdata:
+#            return self.data.Units
 
         try:
             return self._get_special_attr('Units')
@@ -1446,10 +1446,10 @@ properties respectively.
 
     @Units.setter
     def Units(self, value):
-        if self.hasdata:
-            self.data.Units = value
-        else:
-            self._set_special_attr('Units', value)
+#        if self.hasdata:
+#            self.data.Units = value
+#        else:
+        self._set_special_attr('Units', value)
     #--- End: def
 
     def remove_data(self):
@@ -2584,12 +2584,12 @@ properties.
             return not bool(inverse)
     #--- End: def
 
-    def close(self):
-        '''
-'''
-        if self.hasdata:
-            self.data.close()
-    #--- End: def
+#    def close(self):
+#        '''
+#'''
+#        if self.hasdata:
+#            self.data.close()
+#    #--- End: def
 
     def copy(self, _omit_data=False, _only_data=False,
              _omit_special=None, _omit_properties=False,
