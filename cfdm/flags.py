@@ -257,8 +257,8 @@ x.__repr__() <==> repr(x)
         if hasattr(self, 'flag_meanings'):
             string.append('flag_meanings=%s' % str(self.flag_meanings))
 
-        return '<CF %s: %s>' % (self.__class__.__name__,
-                                ', '.join(string))
+        return '<{0}: {1}>'.format(self.__class__.__name__,
+                                   ', '.join(string))
     #--- End: def
 
     def copy(self):

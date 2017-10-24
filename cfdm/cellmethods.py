@@ -128,12 +128,12 @@ Always returns 1.
     #--- End: def
 
     def __repr__(self):
-        '''
+        '''Called by the :py:obj:`repr` built-in function.
 
 x.__repr__() <==> repr(x)
 
-'''
-        return '<CF CellMethod: {0}>'.format(str(self))
+        '''
+        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
     def __str__(self):

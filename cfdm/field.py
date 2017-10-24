@@ -261,11 +261,6 @@ functionality:
 
 x.__repr__() <==> repr(x)
 
-:Examples:
-
->>> f
-<CF Field: air_temperature(latitude(73), longitude(96) K>
-
         '''
         if self.hasdata:
             axis_name = self.axis_name
@@ -282,26 +277,15 @@ x.__repr__() <==> repr(x)
         if calendar:
             units += '{0} calendar'.format(calendar)
 
-        return '<CF Field: {0}{1} {2}>'.format(self.name(default=''),
-                                               axis_names, units)
+        return '<{0}: {1}{2} {3}>'.format(self.__class__.__name__,
+                                          self.name(default=''),
+                                          axis_names, units)
     #--- End: def
 
     def __str__(self):
         '''Called by the :py:obj:`str` built-in function.
 
 x.__str__() <==> str(x)
-
-:Examples:
-
->>> print f
-eastward_wind field summary
----------------------------
-Data           : eastward_wind(air_pressure(15), latitude(72), longitude(96)) m s-1
-Cell methods   : time: mean
-Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
-               : air_pressure(15) = [1000.0, ..., 10.0] hPa
-               : latitude(72) = [88.75, ..., -88.75] degrees_north
-               : longitude(96) = [1.875, ..., 358.125] degrees_east
 
         '''
         string = ["{} field summary".format(self.name(''))]
@@ -3716,7 +3700,7 @@ domain ancillary identifiers.
                     axis_map[axis] = axis
                     continue
 
-                axis_map[axis] = self.axis(axis, default=axis, key=True)
+                axis_map[axis] = self.axis(axis, default=axis, ndim=1, key=True)
         #--- End: for
 
 #        self.CellMethods.change_axes(axis_map, i=True)
@@ -3999,8 +3983,6 @@ and domain ancillaries where possible.
 
         # Turn a scalar dimension coordinate into 1-d
         if item.isscalar:
-            print type(item)
-            print item.__class__.__mro__
             item = item.expand_dims(0, copy=False)
         
         self.Items.insert_dim(item, key=key, axes=axes, copy=False)

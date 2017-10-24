@@ -945,8 +945,19 @@ x.__repr__() <==> repr(x)
 .. versionadded:: 1.6
 
 '''
-        name = self.name('')
+        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
+    #--- End: def
 
+    def __str__(self):
+        '''
+
+Called by the :py:obj:`str` built-in function.
+
+x.__str__() <==> str(x)
+
+'''
+        name = self.name('')
+        
         if self.hasdata:
             dims = ', '.join([str(x) for x in self.shape])
             dims = '({0})'.format(dims)
@@ -958,20 +969,8 @@ x.__repr__() <==> repr(x)
             units = self.Units._calendar
         else:
             units = getattr(self, 'units', '')
-
-        return '<CF {0}: {1}{2} {3}>'.format(self.__class__.__name__,
-                                             self.name(''), dims, units)
-    #--- End: def
-
-    def __str__(self):
-        '''
-
-Called by the :py:obj:`str` built-in function.
-
-x.__str__() <==> str(x)
-
-'''
-        return self.__repr__()
+            
+        return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
     def _dump_simple_properties(self, omit=(), _level=0):
@@ -1056,7 +1055,7 @@ x.__str__() <==> str(x)
 :Examples:
 
 >>> f._Data
-<CF Data: [[273.15, ..., 267.56]] K>
+<Data: [[273.15, ..., 267.56]] K>
 
         '''
         if self.hasdata:
@@ -1326,7 +1325,19 @@ True
         raise AttributeError("{} object doesn't have attribute 'data'".format(
             self.__class__.__name__))
     #--- End: def
+    @data.setter
+    def data(self, value):
+        old = getattr(self, 'data', None)
 
+        if old is None:
+            raise ValueError("Can't set 'data' when data has not previously been set with 'insert_data'")
+
+        if old.shape != value.shape: 
+            raise ValueError("Can't set 'data' to new data with different shape. Use 'insert_data'")
+       
+        self._Data = value
+    #--- End: def
+    
     # ----------------------------------------------------------------
     # Attribute (read only)
     # ----------------------------------------------------------------

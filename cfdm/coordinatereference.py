@@ -22,15 +22,16 @@ for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
     _type[x[0]] = x[1]
 
 # --------------------------------------------------------------------
-# Map coordinate conversion names to their
+# Map coordinate conversion names to the set of coordinates to which
+# they apply
 # --------------------------------------------------------------------
-_coordinates = {}
+_name_to_coordinates = {}
 _file = os.path.join(os.path.dirname(__file__),
                      'etc/coordinate_reference/coordinates.txt')
 for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
     if not x or x[0] == '#':
         continue
-    _coordinates[x[0]] = set(x[1:])
+    _name_to_coordinates[x[0]] = set(x[1:])
 
 # --------------------------------------------------------------------
 # Map coordinate conversion terms to their terms default values
@@ -138,6 +139,23 @@ Attribute       Description
 
     '''
 
+    # Map coordinate conversion names to their CF-netCDF types
+    _type = _type
+    
+    # Map coordinate conversion names to their
+    _name_to_coordinates = _name_to_coordinates
+
+    # Map coordinate conversion terms to their terms default values
+    _default_values = _default_values
+
+    # Map coordinate conversion terms to their canonical units
+    _canonical_units = _canonical_units
+    
+    # Map coordinate reference names to their terms which may take
+    # non-constant values (i.e. pointers to coordinate objects or
+    # non-scalar field objects).
+    _non_constant_terms = _non_constant_terms
+
     def __init__(self, name=None, crtype=None, coordinates=None,
                  ancillaries=None, parameters=None, datum=None):
         '''**Initialization**
@@ -161,19 +179,19 @@ Attribute       Description
         ``'grid_mapping'`` or ``'formula_terms'``. By default the type
         is inferred from the *name*, if possible. For example:
 
-        >>> c = cf.CoordinateReference('transverse_mercator')
+        >>> c = CoordinateReference('transverse_mercator')
         >>> c.type
         'grid_mapping'
 
-        >>> c = cf.CoordinateReference('my_new_type', crtype='formula_terms')
+        >>> c = CoordinateReference('my_new_type', crtype='formula_terms')
         >>> c.type
         'formula_terms'
 
-        >>> c = cf.CoordinateReference('my_new_type')
+        >>> c = CoordinateReference('my_new_type')
         >>> print c.type
         None
 
-        >>> c = cf.CoordinateReference('my_new_type', crtype='grid_mapping')
+        >>> c = CoordinateReference('my_new_type', crtype='grid_mapping')
         >>> print c.type
         'grid_mapping'
 
@@ -183,7 +201,7 @@ Attribute       Description
         names of those expected by the CF conventions are used. For
         example:
 
-        >>> c = cf.CoordinateReference('transverse_mercator')
+        >>> c = CoordinateReference('transverse_mercator')
         >>> c.coordinates
         {'latitude', 'longitude', 'projection_x_coordinate', 'projection_y_coordinate'}
 
@@ -205,21 +223,21 @@ Attribute       Description
 
         For example:
 
-        >>> c = cf.CoordinateReference('orthographic', 
-        ...                            grid_north_pole_latitude=70,
-        ...                            grid_north_pole_longitude=cf.Data(120, 'degreesE'))
+        >>> c = CoordinateReference('orthographic', 
+        ...                         grid_north_pole_latitude=70,
+        ...                         grid_north_pole_longitude=cf.Data(120, 'degreesE'))
         >>> c['grid_north_pole_longitude']
         <CF Data: 120 degreesE>
 
         >>> orog_field
-        <CF Field: surface_altitude(latitude(73), longitude(96)) m>
-        >>> c = cf.CoordinateReference('atmosphere_hybrid_height_coordinate',
-        ...                            a='long_name:ak',
-        ...                            b='long_name:bk',
-        ...                            orog=orog_field)
+        <Field: surface_altitude(latitude(73), longitude(96)) m>
+        >>> c = CoordinateReference('atmosphere_hybrid_height_coordinate',
+        ...                          a='long_name:ak',
+        ...                          b='long_name:bk',
+        ...                          orog=orog_field)
 
         '''
-        t = _type.get(name, None)
+        t = self._type.get(name, None)
         if t is None:
             pass
         elif crtype is None:
@@ -230,7 +248,7 @@ Attribute       Description
         self.type = crtype
         self.datum = datum
 
-        self._coordinates = set(_coordinates.get(name, ()))
+        self._coordinates = set(self._name_to_coordinates.get(name, ()))
         if coordinates:
             self._coordinates.update(coordinates)
 
@@ -251,21 +269,6 @@ Attribute       Description
                 self.set_term('ancillary', term, value)
     #--- End: def
    
-    def __repr__(self):
-        '''
-
-The built-in function `repr`
-
-x.__repr__() <==> repr(x)
-
-''' 
-        try:
-            return '<CF {0}: {1}>'.format(self.__class__.__name__,
-                                        self.identity(''))
-        except AttributeError:
-            return '<CF {0}: >'.format(self.__class__.__name__)
-    #--- End: def
-
     def __delitem__(self, key):
         '''
 
@@ -278,6 +281,17 @@ x.__delitem__(key) <==> del x[key]
         super(CoordinateReference, self).__delitem__(key)
     #--- End: def
 
+    def __repr__(self):
+        '''
+
+The built-in function `repr`
+
+x.__repr__() <==> repr(x)
+
+''' 
+        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
+    #--- End: def
+
     def __str__(self):
         '''
 
@@ -286,7 +300,7 @@ The built-in function `str`
 x.__str__() <==> str(x)
 
 '''    
-        return 'Coord reference : {0!r}'.format(self)
+        return self.identity('')
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -351,18 +365,100 @@ term.
 
 :Returns:
 
-    out: `cf.Units` or `None`
+    out: `Units` or `None`
         The canonical units, or `None` if there are not any.
 
 :Examples:
 
->>> cf.CoordinateReference.canonical_units('perspective_point_height')
+>>> CoordinateReference.canonical_units('perspective_point_height')
 <CF Units: m>
->>> cf.CoordinateReference.canonical_units('ptop')
+>>> CoordinateReference.canonical_units('ptop')
 None
 
         '''
-        return _canonical_units.get(term, None)
+        return cls._canonical_units.get(term, None)
+    #--- End: def
+
+    # ----------------------------------------------------------------
+    # Attribute (read only)
+    # ----------------------------------------------------------------
+    @property
+    def T(self):
+        '''
+
+False. Coordinate reference objects are not T coordinates.
+
+.. seealso:: `cf.Coordinate.T`, `X`, `~cf.CoordinateReference.Y`, `Z`
+
+:Examples:
+
+>>> c.T
+False
+
+'''              
+        return False
+    #--- End: def
+
+    # ----------------------------------------------------------------
+    # Attribute (read only)
+    # ----------------------------------------------------------------
+    @property
+    def X(self):
+        '''
+
+False. Coordinate reference objects are not X coordinates.
+
+Provides compatibility with the `cf.Coordinate` API.
+
+.. seealso:: `cf.Coordinate.X`, `T`, `~cf.CoordinateReference.Y`, `Z`
+
+:Examples:
+
+>>> c.X
+False
+
+'''              
+        return False
+    #--- End: def
+
+    # ----------------------------------------------------------------
+    # Attribute (read only)
+    # ----------------------------------------------------------------
+    @property
+    def Y(self):
+        '''
+
+False. Coordinate reference objects are not Y coordinates.
+
+.. seealso:: `cf.Coordinate.Y`, `T`, `X`, `Z`
+
+:Examples:
+
+>>> c.Y
+False
+
+'''              
+        return False
+    #--- End: def
+
+    # ----------------------------------------------------------------
+    # Attribute (read only)
+    # ----------------------------------------------------------------
+    @property
+    def Z(self):
+        '''
+
+False. Coordinate reference objects are not Z coordinates.
+
+.. seealso:: `cf.Coordinate.Z`, `T`, `X`, `~cf.CoordinateReference.Y`
+
+:Examples:
+
+>>> c.Z
+False
+
+'''              
+        return False
     #--- End: def
 
     def close(self):
@@ -448,7 +544,7 @@ cf/etc/coordinate_reference/default_values.txt.
 0.0
 
         '''
-        return _default_values.get(term, 0.0)
+        return cls._default_values.get(term, 0.0)
     #--- End: def
 
     def dump(self, display=True, omit=(), field=None, key=None,
