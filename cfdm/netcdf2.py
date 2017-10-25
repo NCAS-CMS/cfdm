@@ -20,7 +20,7 @@ class NetCDF(object):
         if mode == 'read':
             for attr in ('AuxiliaryCoordinate',
                          'CellMeasure',        
-                         'CellMethods',        
+                         'CellMethod',        
                          'CoordinateReference',
                          'DimensionCoordinate',
                          'DomainAncillary',
@@ -877,7 +877,8 @@ ancillaries, field ancillaries).
         cell_methods = properties.pop('cell_methods', None)
         if cell_methods is not None:
             try:
-                cell_methods = self.CellMethods(cell_methods)
+#                cell_methods = self.CellMethods(cell_methods)
+                cell_methods = self.CellMethod.parse(cell_methods)
             except:
                 # Something went wrong whilst trying to parse the cell
                 # methods string
@@ -1201,7 +1202,7 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Add cell methods to the field
         # ----------------------------------------------------------------
-        if cell_methods is not None:
+        if cell_methods: # is not None:
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
             for cm in cell_methods:
@@ -3667,11 +3668,13 @@ created. The ``seen`` dictionary is updated for *cfvar*.
     
         # name can be a dimension of the variable, a scalar coordinate
         # variable, a valid standard name, or the word 'area'
-        cell_methods = f.CellMethods
+        cell_methods = f.Items.cell_methods
         if cell_methods:
             axis_map = axis_to_ncdim.copy()
             axis_map.update(axis_to_ncscalar)
-            extra['cell_methods'] = cell_methods.write(axis_map)
+            extra['cell_methods'] = ' '.join([cm.write(axis_map)
+                                              for cm in cell_methods])            
+#            extra['cell_methods'] = cell_methods.write(axis_map)
     
         # Create a new data variable
         self._create_netcdf_variable(ncvar, ncdimensions, f,

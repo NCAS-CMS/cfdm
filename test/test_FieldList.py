@@ -108,8 +108,8 @@ class FieldTest(unittest.TestCase):
         f = cfdm.read(self.filename)
         f += f
 
-        s = '''[<CF Field: eastward_wind(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) m s-1>,
- <CF Field: eastward_wind(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) m s-1>]'''
+        s = '''[<Field: eastward_wind(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) m s-1>,
+ <Field: eastward_wind(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) m s-1>]'''
 
         self.assertTrue(repr(f) == s)
     #--- End: def

@@ -16,63 +16,64 @@ class DatetimeTest(unittest.TestCase):
         d = cfdm.Datetime(2003, 2, 30, 0, 0, 0)
         d = cfdm.Datetime(2003, 4, 5, 12, 30, 15)
         d = cfdm.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15)
-        self.assertTrue((d.year, d.month, d.day, d.hour, d.minute, d.second) == 
-                        (2003, 4, 5, 12, 30, 15))
-        self.assertTrue(d.timetuple() == (2003, 4, 5, 12, 30, 15, -1, 1, -1))
-        self.assertTrue( d == d)
-        self.assertFalse(d >  d)
-        self.assertTrue( d >= d)
-        self.assertFalse(d <  d)
-        self.assertTrue( d <= d)
-        self.assertFalse(d != d)
-        e = cfdm.Datetime(2003, 4, 5, 12, 30, 16)
-        self.assertFalse(d == e)
-        self.assertFalse(d >  e)
-        self.assertFalse(d >= e)
-        self.assertTrue( d <  e)
-        self.assertTrue( d <= e)
-        self.assertTrue( d != e)
-        e = cfdm.Datetime(2003, 4, 5, 12, 30, 14)
-        self.assertFalse(d == e)
-        self.assertTrue( d >  e)
-        self.assertTrue( d >= e)
-        self.assertFalse(d <  e)
-        self.assertFalse(d <= e)
-        self.assertTrue( d != e)
+#        self.assertTrue((d.year, d.month, d.day, d.hour, d.minute, d.second) == 
+#                        (2003, 4, 5, 12, 30, 15))
+#        self.assertTrue(d.timetuple() == (2003, 4, 5, 12, 30, 15, -1, 1, -1))
+#        self.assertTrue( d == d)
+#        self.assertFalse(d >  d)
+#        self.assertTrue( d >= d)
+#        self.assertFalse(d <  d)
+#        self.assertTrue( d <= d)
+#        self.assertFalse(d != d)
+#        e = cfdm.Datetime(2003, 4, 5, 12, 30, 16)
+#        self.assertFalse(d == e)
+#        self.assertFalse(d >  e)
+#        self.assertFalse(d >= e)
+#        self.assertTrue( d <  e)
+#        self.assertTrue( d <= e)
+#        self.assertTrue( d != e)
+#        e = cfdm.Datetime(2003, 4, 5, 12, 30, 14)
+#        self.assertFalse(d == e)
+#        self.assertTrue( d >  e)
+#        self.assertTrue( d >= e)
+#        self.assertFalse(d <  e)
+#        self.assertFalse(d <= e)
+#        self.assertTrue( d != e)
+#
+#        d = cfdm.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15,
+#                        microsecond=12)
+#        self.assertTrue( d == d)
+#        self.assertFalse(d >  d)
+#        self.assertTrue( d >= d)
+#        self.assertFalse(d <  d)
+#        self.assertTrue( d <= d)
+#        self.assertFalse(d != d)
+#        e = cfdm.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15,
+#                        microsecond=11)
+#        self.assertFalse(e == d)
+#        self.assertFalse(e >  d)
+#        self.assertFalse(e >= d)
+#        self.assertTrue( e <  d)
+#        self.assertTrue( e <= d)
+#        self.assertTrue( e != d)
+#        e = cfdm.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15,
+#                        microsecond=13)
+#        self.assertFalse(e == d)
+#        self.assertTrue( e >  d)
+#        self.assertTrue( e >= d)
+#        self.assertFalse(e <  d)
+#        self.assertFalse(e <= d)
+#        self.assertTrue( e != d)
+#    #--- End: def        
 
-        d = cfdm.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15,
-                        microsecond=12)
-        self.assertTrue( d == d)
-        self.assertFalse(d >  d)
-        self.assertTrue( d >= d)
-        self.assertFalse(d <  d)
-        self.assertTrue( d <= d)
-        self.assertFalse(d != d)
-        e = cfdm.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15,
-                        microsecond=11)
-        self.assertFalse(e == d)
-        self.assertFalse(e >  d)
-        self.assertFalse(e >= d)
-        self.assertTrue( e <  d)
-        self.assertTrue( e <= d)
-        self.assertTrue( e != d)
-        e = cfdm.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15,
-                        microsecond=13)
-        self.assertFalse(e == d)
-        self.assertTrue( e >  d)
-        self.assertTrue( e >= d)
-        self.assertFalse(e <  d)
-        self.assertFalse(e <= d)
-        self.assertTrue( e != d)
-    #--- End: def        
-
-    def test_Datetime_utcnow(self):  
-        d = cfdm.Datetime.utcnow()
-    #--- End: def
+#    def test_Datetime_utcnow(self):  
+#        d = cfdm.Datetime.utcnow()
+#    #--- End: def
 
     def test_Datetime_copy(self):  
-        d = cfdm.Datetime.utcnow()
-        self.assertTrue(d.equals(d.copy()))
+        d = datetime.datetime.utcnow()
+        e = cfdm.dt(d)
+        self.assertTrue(e.equals(e.copy()))
     #--- End: def
 
     def test_Datetime_equals(self):  

@@ -1,6 +1,4 @@
-from numpy import argsort    as numpy_argsort
-from numpy import atleast_1d as numpy_atleast_1d
-from numpy import ndarray    as numpy_ndarray
+import numpy
 
 from copy import deepcopy
 
@@ -130,8 +128,8 @@ array([1])
     #--- End: def
     @flag_values.setter
     def flag_values(self, value):
-        if not isinstance(value, numpy_ndarray):
-            value = numpy_atleast_1d(value)
+        if not isinstance(value, numpy.ndarray):
+            value = numpy.atleast_1d(value)
         self._flag_values = value
     #--- End: def
     @flag_values.deleter
@@ -172,8 +170,8 @@ array([1])
     #--- End: def
     @flag_masks.setter
     def flag_masks(self, value):
-        if not isinstance(value, numpy_ndarray):
-            value = numpy_atleast_1d(value)
+        if not isinstance(value, numpy.ndarray):
+            value = numpy.atleast_1d(value)
 
         self._flag_masks = value
     #--- End: def
@@ -227,9 +225,9 @@ array(['a', 'b'],
     @flag_meanings.setter
     def flag_meanings(self, value):
         if isinstance(value, basestring):
-            value = numpy_atleast_1d(value.split())
-        elif not isinstance(value, numpy_ndarray):
-            value = numpy_atleast_1d(value)
+            value = numpy.atleast_1d(value.split())
+        elif not isinstance(value, numpy.ndarray):
+            value = numpy.atleast_1d(value)
 
         self._flag_meanings = value
     #--- End: def
@@ -447,13 +445,13 @@ flag_masks.
         # Sort all three attributes
         for attr in ('flag_values', '_flag_meanings', '_flag_masks'):
             if hasattr(self, attr):
-                indices = numpy_argsort(getattr(self, attr))
+                indices = numpy.argsort(getattr(self, attr))
                 break
         #--- End: for
 
         for attr in ('_flag_values', '_flag_meanings', '_flag_masks'):
             if hasattr(self, attr):
-                array      = getattr(self, attr).view()
+                array = getattr(self, attr).view()
                 array[...] = array[indices]
         #--- End: for
     #--- End: def

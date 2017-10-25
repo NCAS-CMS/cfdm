@@ -54,7 +54,7 @@ for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
     if not x or x[0] == '#':
         continue
     try:
-        _canonical_units[x[0]] = Units(x[1])
+        _canonical_units[x[0]] = Units(x[1]) # DCH 
     except:
         _canonical_units[x[0]] = x[1]
 
@@ -138,16 +138,17 @@ Attribute       Description
 ==============  ======================================================
 
     '''
-
+    _Data = Data
+    
     # Map coordinate conversion names to their CF-netCDF types
     _type = _type
     
     # Map coordinate conversion names to their
     _name_to_coordinates = _name_to_coordinates
-
+    
     # Map coordinate conversion terms to their terms default values
     _default_values = _default_values
-
+    
     # Map coordinate conversion terms to their canonical units
     _canonical_units = _canonical_units
     
@@ -155,7 +156,7 @@ Attribute       Description
     # non-constant values (i.e. pointers to coordinate objects or
     # non-scalar field objects).
     _non_constant_terms = _non_constant_terms
-
+    
     def __init__(self, name=None, crtype=None, coordinates=None,
                  ancillaries=None, parameters=None, datum=None):
         '''**Initialization**
@@ -370,8 +371,8 @@ term.
 
 :Examples:
 
->>> CoordinateReference.canonical_units('perspective_point_height')
-<CF Units: m>
+>>> print CoordinateReference.canonical_units('perspective_point_height')
+'m'
 >>> CoordinateReference.canonical_units('ptop')
 None
 

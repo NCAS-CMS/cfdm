@@ -4,7 +4,7 @@ import os
 from .functions import flat
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .cellmethods         import CellMethods
+from .cellmethod          import CellMethod
 from .cellmeasure         import CellMeasure
 from .coordinatereference import CoordinateReference
 from .dimensioncoordinate import DimensionCoordinate
@@ -25,7 +25,7 @@ from .data.array import NetCDFArray
 netcdf = NetCDF(mode='read',
                 AuxiliaryCoordinate = AuxiliaryCoordinate,
                 CellMeasure         = CellMeasure,
-                CellMethods         = CellMethods,
+                CellMethod          = CellMethod,
                 CoordinateReference = CoordinateReference,
                 DimensionCoordinate = DimensionCoordinate,
                 DomainAncillary     = DomainAncillary,

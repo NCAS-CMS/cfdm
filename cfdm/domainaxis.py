@@ -163,121 +163,121 @@ Return a deep copy.
 #--- End: class
 
 
-# ====================================================================
+## ====================================================================
+##
+## Axes object
+##
+## ====================================================================
+#class Axes(dict):
+#    '''
+#    A dictionary of domain axis objects with extra methods.
 #
-# Axes object
+#:Example:
 #
-# ====================================================================
-class Axes(dict):
-    '''
-    A dictionary of domain axis objects with extra methods.
-
-:Example:
-
->>> a
-{'dim1': <CF DomainAxis: 73>,
- 'dim0': <CF DomainAxis: 12>,
- 'dim2': <CF DomainAxis: 96>}
->>> a.equals(a)
-True
-
-    '''
-    def __deepcopy__(self, memo):
-        '''
-Called by the `copy.deepcopy` standard library function.
-'''
-        return self.copy()
-    #--- End: def
-
-    def copy(self):
-        '''Return a deep copy.
-        
-``a.copy()`` is equivalent to ``copy.deepcopy(a)``.
-        
-:Returns:
-
-    out: `Axes`
-        The deep copy.
-
-:Examples:
-
->>> b = a.copy()
-
-'''
-        new = type(self)()
-        for key, value in self.iteritems():
-            new[key] = value.copy()
-    
-        return new
-    #--- End: def
-
-    def equals(self, other, rtol=None, atol=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               traceback=False):
-        '''
-
-:Parameters:
-
-    other:
-        The object to compare for equality.
-
-    traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        instances differ.
-
-    atol: optional
-        Ignored.
-
-    rtol: optional
-        Ignored.
-
-    ignore_fill_value: optional
-        Ignored.
-
-:Returns: 
-
-    out: `bool`
-        Whether or not the two instances are equal.
-
-:Examples:
-
->>> d.equals(e)
-True
->>> d.equals(f)
-False
->>> d.equals(f, traceback=True)
-
-'''
-        if self is other:
-            return True
-
-        # Check that each instance is the same type
-
-        if type(self) != type(other):
-            if traceback:
-                print("{0}: Different types: {0}, {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-        #--- End: if
-
-        self_sizes  = [d.size for d in self.values()]
-        other_sizes = [d.size for d in other.values()]
-        
-        if sorted(self_sizes) != sorted(other_sizes):
-            # There is not a 1-1 correspondence between axis sizes
-            if traceback:
-                print("{}: Different domain axis sizes: {} != {}".format(
-                    self.__class__.__name__,
-                    sorted(self.values()),
-                    sorted(other.values())))
-            return False
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Still here? Then the two collections of domain axis objects
-        # are equal
-        # ------------------------------------------------------------
-        return True
-    #--- End: def
-
-#--- End: class
+#>>> a
+#{'dim1': <CF DomainAxis: 73>,
+# 'dim0': <CF DomainAxis: 12>,
+# 'dim2': <CF DomainAxis: 96>}
+#>>> a.equals(a)
+#True
+#
+#    '''
+#    def __deepcopy__(self, memo):
+#        '''
+#Called by the `copy.deepcopy` standard library function.
+#'''
+#        return self.copy()
+#    #--- End: def
+#
+#    def copy(self):
+#        '''Return a deep copy.
+#        
+#``a.copy()`` is equivalent to ``copy.deepcopy(a)``.
+#        
+#:Returns:
+#
+#    out: `Axes`
+#        The deep copy.
+#
+#:Examples:
+#
+#>>> b = a.copy()
+#
+#'''
+#        new = type(self)()
+#        for key, value in self.iteritems():
+#            new[key] = value.copy()
+#    
+#        return new
+#    #--- End: def
+#
+#    def equals(self, other, rtol=None, atol=None,
+#               ignore_data_type=False, ignore_fill_value=False,
+#               traceback=False):
+#        '''
+#
+#:Parameters:
+#
+#    other:
+#        The object to compare for equality.
+#
+#    traceback: `bool`, optional
+#        If True then print a traceback highlighting where the two
+#        instances differ.
+#
+#    atol: optional
+#        Ignored.
+#
+#    rtol: optional
+#        Ignored.
+#
+#    ignore_fill_value: optional
+#        Ignored.
+#
+#:Returns: 
+#
+#    out: `bool`
+#        Whether or not the two instances are equal.
+#
+#:Examples:
+#
+#>>> d.equals(e)
+#True
+#>>> d.equals(f)
+#False
+#>>> d.equals(f, traceback=True)
+#
+#'''
+#        if self is other:
+#            return True
+#
+#        # Check that each instance is the same type
+#
+#        if type(self) != type(other):
+#            if traceback:
+#                print("{0}: Different types: {0}, {1}".format(
+#                    self.__class__.__name__, other.__class__.__name__))
+#            return False
+#        #--- End: if
+#
+#        self_sizes  = [d.size for d in self.values()]
+#        other_sizes = [d.size for d in other.values()]
+#        
+#        if sorted(self_sizes) != sorted(other_sizes):
+#            # There is not a 1-1 correspondence between axis sizes
+#            if traceback:
+#                print("{}: Different domain axis sizes: {} != {}".format(
+#                    self.__class__.__name__,
+#                    sorted(self.values()),
+#                    sorted(other.values())))
+#            return False
+#        #--- End: if
+#
+#        # ------------------------------------------------------------
+#        # Still here? Then the two collections of domain axis objects
+#        # are equal
+#        # ------------------------------------------------------------
+#        return True
+#    #--- End: def
+#
+##--- End: class

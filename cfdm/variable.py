@@ -23,7 +23,7 @@ from .constants    import masked
 
 from .data.data import Data
 
-_units_None = Units()
+
 
 docstring = {
     
@@ -663,6 +663,10 @@ def _update_docstring(name, f, attr_name, docstring):
 
     kwargs = {}
     for arg in set(re_findall('{\+.*?}', doc)):
+        
+        if arg in ('{+mod,}',):
+            continue
+        
         if arg == '{+bounds}':
             if name not in ('DimensionCoordinate',):
                 doc = doc.replace('{+bounds}',
@@ -771,12 +775,14 @@ describe the physical nature of the data.
 All components of a variable are optional.
 
 '''
-
     __metaclass__ = RewriteDocstringMeta
 
     _special_properties = set(('units', 'calendar',
                                '_FillValue', 'missing_value'))
 
+    _Units = Units
+
+    
     def __init__(self, properties={}, attributes=None, data=None,
                  source=None, copy=True):
         '''**Initialization**
@@ -1052,11 +1058,6 @@ x.__str__() <==> str(x)
 
 .. versionadded:: 1.6
 
-:Examples:
-
->>> f._Data
-<Data: [[273.15, ..., 267.56]] K>
-
         '''
         if self.hasdata:
             return self._private['Data']
@@ -1069,8 +1070,8 @@ x.__str__() <==> str(x)
         private = self._private
         private['Data'] = value
 
-#        # Delete Units from the variable
-#        private['special_attributes'].pop('Units', None)
+        # Delete Units from the variable
+        private['special_attributes'].pop('Units', None)
  
         self._hasdata = True
     #--- End: def
@@ -1084,8 +1085,8 @@ x.__str__() <==> str(x)
                 "Can't delete non-existent data".format(
                     self.__class__.__name__))
 
-#        # Save the Units to the variable
-#        private['special_attributes']['Units'] = data.Units
+        # Save the Units to the variable
+        private['special_attributes']['Units'] = data.Units
 
         self._hasdata = False
     #--- End: def
@@ -1108,8 +1109,8 @@ of the following:
 
 :Examples:
 
->>> c.Units
-<CF Units: seconds since 1992-10-8>
+>>> print c.Units
+'seconds since 1992-10-8'
 >>> c.T
 True
 
@@ -1152,8 +1153,8 @@ the following:
 
 :Examples:
 
->>> c.Units
-<CF Units: degreeE>
+>>> print c.Units
+'degree_east'
 >>> c.X
 True
  
@@ -1201,7 +1202,7 @@ of the following:
 :Examples:
 
 >>> c.Units
-<CF Units: degree_north>
+'degrees_north'
 >>> c.Y
 True
 
@@ -1250,8 +1251,8 @@ following:
 
 :Examples:
 
->>> c.Units
-<CF Units: Pa>
+>>> print c.Units
+'Pa'
 >>> c.Z
 True
 
@@ -1263,8 +1264,8 @@ True
 >>> c.axis == 'Z' and c.Z
 True
 
->>> c.Units
-<CF Units: sigma_level>
+>>> print c.Units
+'sigma_level'
 >>> c.Z
 True
 
@@ -1311,10 +1312,8 @@ The `Data` object containing the data array.
 
 :Examples:
 
->>> f.hasdata
-True
->>> f.data
-<CF Data: [[267.3, ..., 234.5]] K>
+>>> if f.hasdata:
+...     print f.data
 
 '''       
         if self.hasdata:
@@ -1425,31 +1424,24 @@ properties respectively.
 
 .. versionadded:: 1.6
 
-:Examples:
-
->>> f.Units
-<CF Units: K>
-
->>> f.Units
-<CF Units: days since 2014-1-1 calendar=noleap>
-
         '''
-#        if self.hasdata:
-#            return self.data.Units
+        if self.hasdata:
+            return self.data.Units
 
         try:
             return self._get_special_attr('Units')
         except AttributeError:
-            self._set_special_attr('Units', _units_None)
-            return _units_None
+            units_None = self._Units()
+            self._set_special_attr('Units', units_None)
+            return units_None
     #--- End: def
 
     @Units.setter
     def Units(self, value):
-#        if self.hasdata:
-#            self.data.Units = value
-#        else:
-        self._set_special_attr('Units', value)
+        if self.hasdata:
+            self.data.Units = value
+        else:
+            self._set_special_attr('Units', value)
     #--- End: def
 
     def remove_data(self):
@@ -1468,10 +1460,11 @@ properties respectively.
 
 >>> f.hasdata
 True
->>> f.data
-<CF Data: [0, ..., 9] m>
->>> f.remove_data()
-<CF Data: [0, ..., 9] m>
+>>> print f.data
+[0, ..., 9] m
+>>> d = f.remove_data()
+>>> print d
+[0, ..., 9] m
 >>> f.hasdata
 False
 >>> print f.remove_data()
@@ -1562,7 +1555,7 @@ http://cfconventions.org/latest.html for details.
 
     @calendar.setter
     def calendar(self, value):
-        self.Units = Units(getattr(self, 'units', None), value)
+        self.Units = self._Units(getattr(self, 'units', None), value)
     #--- End: def
 
     @calendar.deleter
@@ -1571,7 +1564,7 @@ http://cfconventions.org/latest.html for details.
             raise AttributeError("Can't delete non-existent %s CF property 'calendar'" %
                                  self.__class__.__name__)
         
-        self.Units = Units(getattr(self, 'units', None))
+        self.Units = self._Units(getattr(self, 'units', None))
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -1976,12 +1969,12 @@ http://cfconventions.org/latest.html for details.
 
     @units.setter
     def units(self, value):
-        self.Units = Units(value, getattr(self, 'calendar', None))
+        self.Units = self._Units(value, getattr(self, 'calendar', None))
     #--- End: def
     @units.deleter
     def units(self):
         if getattr(self, 'units', None) is None:
-            self.Units = Units(None, getattr(self, 'calendar', None))
+            self.Units = self._Units(None, getattr(self, 'calendar', None))
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -2298,8 +2291,8 @@ dtype('float64')
 
 :Examples 1:
 
->>> f.data
-<CF Data: [0, ... 4] kg m-1 s-2>
+>>> print f.data
+[0, ... 4] kg m-1 s-2
 >>> a = f.array
 >>> type(a)
 <type 'numpy.ndarray'>
@@ -2310,8 +2303,8 @@ dtype('float64')
 [999 1 2 3 4]
 >>> print f.array
 [0 1 2 3 4]
->>> f.data
-<CF Data: [0, ... 4] kg m-1 s-2>
+>>> print f.data
+[0, ... 4] kg m-1 s-2
 
         '''
         if self.hasdata:
@@ -2453,7 +2446,7 @@ properties.
             # ----------------------------------------------------
             if 'units' in match or 'calendar' in match:
                 match = match.copy()
-                units = Units(match.pop('units', None), match.pop('calendar', None))
+                units = self._Units(match.pop('units', None), match.pop('calendar', None))
                 
                 if not exact:
                     found_match = self.Units.equivalent(units)
@@ -3180,8 +3173,8 @@ Values of True indicate masked elements.
 (12, 73, 96)
 >>> m.dtype
 dtype('bool')
->>> m.data
-<CF Data: [[[True, ..., False]]] >
+>>> print m.data
+[[[True, ..., False]]]
 
         '''
         if not self.hasdata:

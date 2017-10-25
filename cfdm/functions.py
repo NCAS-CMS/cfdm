@@ -527,8 +527,9 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
     return old
 #--- End: def
 
-def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
-           ignore_fill_value=False, ignore_type=False, traceback=False):
+def equals(x, y, rtol=None, atol=None, **kwargs): #ignore_data_type=False,
+#           ignore_fill_value=False, ignore_type=False,
+#           traceback=False):
     '''True if and only if two objects are logically equal.
 
 If the first argument, *x*, has an :meth:`equals` method then it is
@@ -603,20 +604,20 @@ False
 
     if callable(eq):
         # x has a callable equals method
-        return eq(y, rtol=rtol, atol=atol,
-                  ignore_data_type=ignore_data_type,
-                  ignore_fill_value=ignore_fill_value,
-                  ignore_type=ignore_type,
-                  traceback=traceback)
+        return eq(y, rtol=rtol, atol=atol, **kwargs)
+#                  ignore_data_type=ignore_data_type,
+#                  ignore_fill_value=ignore_fill_value,
+#                  ignore_type=ignore_type,
+#                  traceback=traceback)
 
     eq = getattr(y, 'equals', None)
     if callable(eq):
         # y has a callable equals method
-        return eq(x, rtol=rtol, atol=atol,
-                  ignore_data_type=ignore_data_type,
-                  ignore_fill_value=ignore_fill_value,
-                  ignore_type=ignore_type,
-                  traceback=traceback)
+        return eq(x, rtol=rtol, atol=atol, **kwargs)
+#                  ignore_data_type=ignore_data_type,
+ #                 ignore_fill_value=ignore_fill_value,
+ #                 ignore_type=ignore_type,
+ #                 traceback=traceback)
 
     if isinstance(x, numpy.ndarray):
         if isinstance(y, numpy.ndarray):
