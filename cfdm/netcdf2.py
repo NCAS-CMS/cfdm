@@ -121,7 +121,7 @@ ancillaries, field ancillaries).
             name = filename.name
             filename.close()
             filename = name
-    
+            
         g = {'new_dimensions': {},
              'formula_terms' : {},
              #
@@ -477,7 +477,39 @@ ancillaries, field ancillaries).
     
         return fields_in_file
     #--- End: def
+
+    @classmethod
+    def file_type(cls, filename):
+        '''
     
+:Parameters:
+    
+    filename: `str`
+        The file name.
+    
+:Returns:
+ 
+    out: `str`
+        The format type of the file.
+    
+:Examples:
+
+>>> filetype = file_type(filename)
+    
+    '''
+        # ----------------------------------------------------------------
+        # Assume that URLs are in netCDF format
+        # ----------------------------------------------------------------
+        if filename.startswith('http://'):
+           return 'netCDF'
+    
+        # ----------------------------------------------------------------
+        # netCDF
+        # ----------------------------------------------------------------
+        if netcdf.is_netcdf_file(filename):
+            return 'netCDF'
+    #--- End: def
+
     def _parse_compression_gathered(self, ncvar, attributes,
                                     compressed_ncdims):
         '''
@@ -845,7 +877,7 @@ ancillaries, field ancillaries).
         cell_methods = properties.pop('cell_methods', None)
         if cell_methods is not None:
             try:
-                cell_methods = CellMethods(cell_methods)
+                cell_methods = self.CellMethods(cell_methods)
             except:
                 # Something went wrong whilst trying to parse the cell
                 # methods string
@@ -1774,6 +1806,10 @@ ancillaries, field ancillaries).
     False
     
         '''
+        # Assume that URLs are in netCDF format
+        if filename.startswith('http://'):
+            return True
+
         # Read the magic number 
         try:
             fh = open(filename, 'rb')
@@ -1796,7 +1832,8 @@ ancillaries, field ancillaries).
               verbose=False, mode='w', least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
               no_shuffle=False, datatype=None, single=False,
-              double=False, reference_datetime=None,
+              double=False,
+#              reference_datetime=None,
               variable_attributes=None, HDF_chunks=None,
               unlimited=None, _debug=False):
         '''Write fields to a CF-netCDF file.
@@ -1947,23 +1984,9 @@ and auxiliary coordinate roles for different data variables.
         # ----------------------------------------------------------------
         dtype_conversions = {numpy.dtype(bool)  : numpy.dtype('int32'),
                              numpy.dtype(object): numpy.dtype(float)}
-#MOVE TO CF_PYTHON#        if datatype:
-#MOVE TO CF_PYTHON#            if single:
-#MOVE TO CF_PYTHON#                raise ValueError("Can't set datatype and single")
-#MOVE TO CF_PYTHON#            if double:
-#MOVE TO CF_PYTHON#                raise ValueError("Can't set datatype and double")
-#MOVE TO CF_PYTHON#            dtype_conversions.update(datatype)
-#MOVE TO CF_PYTHON#        else:
-#MOVE TO CF_PYTHON#            if single and double:
-#MOVE TO CF_PYTHON#                raise ValueError("Can't set single and double")
-#MOVE TO CF_PYTHON#            if single:
-#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype(float)] = numpy.dtype('float32')
-#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype(int)]   = numpy.dtype('int32')
-#MOVE TO CF_PYTHON#            if double:
-#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype('float32')] = numpy.dtype(float)
-#MOVE TO CF_PYTHON#                dtype_conversions[numpy.dtype('int32')]   = numpy.dtype(int)
-#MOVE TO CF_PYTHON#        datatype = dtype_conversions
-    
+        if datatype:
+            dtype_conversions.update(datatype)
+
         if not unlimited:
             unlimited = ()
     
@@ -2018,11 +2041,11 @@ and auxiliary coordinate roles for different data variables.
              # ------------------------------------------------------------
              # Specify data type conversions to be applied prior to writing
              # ------------------------------------------------------------
-             'datatype': datatype,
-             # ------------------------------------------------------------
-             # Specify unit conversions to be applied prior to writing
-             # ------------------------------------------------------------
-             'reference_datetime': reference_datetime,
+             'datatype': dtype_conversions,
+#             # ------------------------------------------------------------
+#             # Specify unit conversions to be applied prior to writing
+#             # ------------------------------------------------------------
+#             'reference_datetime': reference_datetime,
              # ------------------------------------------------------------
              # 
              # ------------------------------------------------------------
@@ -2437,52 +2460,52 @@ coordinate or cell measures objects.
     
                 error = str(error)
                 if error == 'NetCDF: NC_UNLIMITED size already in use':
-                    raise NetCDFError(
+                    raise RuntimeError(
     message+" Only one unlimited dimension allowed. Consider using a netCDF4 format.")
                     
-                raise NetCDFError(message)
+                raise RuntimeError(message)
         else:
             try:
                 g['netcdf'].createDimension(ncdim, size)
             except RuntimeError as error:
-                raise NetCDFError(
+                raise RuntimeError(
     "Can't create dimension of size {} in {} file ({})".format(
         size, g['netcdf'].file_format, error))
     #--- End: def
     
-    def _change_reference_datetime(self, coord):
-        '''
-    
-    :Parameters:
-    
-        coord : `Coordinate`
-    
-        g : dict
-    
-    :Returns:
-    
-        out : `Coordinate`
-    
-    '''
-        g = self.write_vars
-
-        if not coord.Units.isreftime:
-            return coord
-    
-        reference_datetime = g['reference_datetime']
-        if not reference_datetime:
-            return coord
-    
-        coord2 = coord.copy()
-        try:
-            coord2.reference_datetime = reference_datetime
-        except ValueError:
-            raise ValueError(
-    "Can't override coordinate reference date-time {!r} with {!r}".format(
-        coord.reference_datetime, reference_datetime))
-    
-        return coord2
-    #--- End: def
+#    def _change_reference_datetime(self, coord):
+#        '''
+#    
+#    :Parameters:
+#    
+#        coord : `Coordinate`
+#    
+#        g : dict
+#    
+#    :Returns:
+#    
+#        out : `Coordinate`
+#    
+#    '''
+#        g = self.write_vars
+#
+#        if not coord.Units.isreftime:
+#            return coord
+#    
+#        reference_datetime = g['reference_datetime']
+#        if not reference_datetime:
+#            return coord
+#    
+#        coord2 = coord.copy()
+#        try:
+#            coord2.reference_datetime = reference_datetime
+#        except ValueError:
+#            raise ValueError(
+#    "Can't override coordinate reference date-time {!r} with {!r}".format(
+#        coord.reference_datetime, reference_datetime))
+#    
+#        return coord2
+#    #--- End: def
     
     def _write_dimension_coordinate(self, f, axis, coord,
                                     key_to_ncvar, axis_to_ncdim):
@@ -2517,7 +2540,7 @@ a new netCDF bounds dimension.
 
         seen = g['seen']
     
-        coord = self._change_reference_datetime(coord)
+#        coord = self._change_reference_datetime(coord)
     
         create = False
         if not self._seen(coord):
@@ -2782,7 +2805,7 @@ then the input coordinate is not written.
         '''
         g = self.write_vars
 
-        coord = self._change_reference_datetime(coord)
+#        coord = self._change_reference_datetime(coord)
             
         coord = self._squeeze_coordinate(coord)
     
@@ -2863,7 +2886,7 @@ then the input coordinate is not written.
         '''
         g = self.write_vars
 
-        coord = self._change_reference_datetime(coord)
+#        coord = self._change_reference_datetime(coord)
     
         ncdimensions = self._grid_ncdimensions(f, key, axis_to_ncdim)
     
@@ -3253,10 +3276,10 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             message = "Can't create variable in {} file from {} ({})".format(g['netcdf'].file_format, cfvar, error)
 
             if error == 'NetCDF: NC_UNLIMITED in the wrong index':            
-                raise NetCDFError(
+                raise RuntimeError(
     message+". Unlimited dimension must be the first (leftmost) dimension of the variable. Consider using a netCDF4 format.")
                     
-            raise NetCDFError(message)
+            raise RuntimeError(message)
         #--- End: try
 #        print ncvar
         self._write_attributes(ncvar, netcdf_attrs)

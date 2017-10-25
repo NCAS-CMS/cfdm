@@ -2,21 +2,14 @@ from collections import OrderedDict
 from itertools   import izip, izip_longest
 from re          import match as re_match
 
-from .cellmeasure         import CellMeasure
 from .cellmethods         import CellMethod, CellMethods
 from .constants           import masked as cf_masked
-from .dimensioncoordinate import DimensionCoordinate
-from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis, Axes
-from .fieldancillary      import FieldAncillary
 from .flags               import Flags
 
 from .functions import (parse_indices, equals, RTOL, ATOL,
                         RELAXED_IDENTITIES)
-from .units     import Units
 from .variable  import Variable
-
-from .data.data import Data
 
 _debug = False
 
@@ -82,13 +75,19 @@ and institution).
 Field objects are picklable.
 
     '''
-
+#    _DomainAxis = DomainAxis
+    
     _special_properties = Variable._special_properties.union(        
         ('cell_methods',
          'flag_values',
          'flag_masks',
          'flag_meanings')
          )
+    
+    def __new__(cls, **kwargs):
+        cls = object.__new__(cls)
+        cls._DomainAxis = DomainAxis
+        return cls
     
     def __init__(self, properties={}, attributes={}, data=None,
                  source=None, copy=True):
@@ -244,7 +243,7 @@ functionality:
         # Replace existing domain axes
         Axes = new._Axes
         for axis, size in izip(data_axes, new.shape):
-            Axes[axis] = DomainAxis(size, ncdim=Axes[axis].ncdim)
+            Axes[axis] = self._DomainAxis(size, ncdim=Axes[axis].ncdim)
 
         return new
     #--- End: def
@@ -1693,7 +1692,7 @@ by the data array may be selected.
         # Expand the dims in the field's data array
         f = super(Field, self).expand_dims(position, copy=copy)
 
-        axis = f.insert_axis(DomainAxis(1), key=axis, replace=False)
+        axis = f.insert_axis(self._DomainAxis(1), key=axis, replace=False)
 
         f._data_axes.insert(position, axis)
 
@@ -2021,7 +2020,7 @@ ValueError: Can't initialize data: Data already exists
                         raise ValueError("asdasdasdasdadass7y87g y boih8 ")
                     
                 for key, size in zip(axes, data.shape):
-                    self.insert_axis(DomainAxis(size), key=key)
+                    self.insert_axis(self._DomainAxis(size), key=key)
             else: 
                 # The domain has axes: Check the input axes.
                 axes = list(self.axes(axes, ordered=True))
@@ -2051,7 +2050,7 @@ ValueError: Can't initialize data: Data already exists
                 # array
                 axes = []
                 for size in data.shape:
-                    axes.append(self.insert_axis(DomainAxis(size)))
+                    axes.append(self.insert_axis(self._DomainAxis(size)))
             else:
                 # The domain already has some axes
                 data_shape = data.shape
@@ -2082,7 +2081,7 @@ ValueError: Can't initialize data: Data already exists
             
             for axis, size in izip(axes, data.shape):
                 try:
-                    self.insert_axis(DomainAxis(size), axis, replace=False)
+                    self.insert_axis(self._DomainAxis(size), axis, replace=False)
                 except ValueError:
                     raise ValueError(
 "Can't insert data: Incompatible size for axis {!r}: {}".format(axis, size))
@@ -3433,19 +3432,19 @@ None
 
 :Parameters:
 
-    item: `str` or `CellMethods`
+    item: `CellMethods`
 
 :Returns:
 
-    out: `CellMethods`
-        The identifier of the new axis.
+    out: `str`
+        The identifier of 
 
 
 :Examples:
 
         '''
-        cm = CellMethods(item)
-        self.Items.cell_methods.extend(cm)
+#        cm = CellMethods(item)
+        self.Items.cell_methods.extend(item)
         self._conform_cell_methods(self.CellMethods, copy=False)
     #--- End: def
 
@@ -3703,7 +3702,6 @@ domain ancillary identifiers.
                 axis_map[axis] = self.axis(axis, default=axis, ndim=1, key=True)
         #--- End: for
 
-#        self.CellMethods.change_axes(axis_map, i=True)
         return cms.change_axes(axis_map, copy=copy)
     #--- End: def
 
@@ -3948,10 +3946,10 @@ and domain ancillaries where possible.
             if len(c) == 1:
                 key = c[0]
                 if self.items(role='d', axes_all=key):
-                    key = self.insert_axis(DomainAxis(item_size))
+                    key = self.insert_axis(self._DomainAxis(item_size))
                 axes = [key]
             elif not c:
-                key = self.insert_axis(DomainAxis(item_size))
+                key = self.insert_axis(self._DomainAxis(item_size))
                 axes = [key]
             else:
                 raise ValueError(
@@ -3962,7 +3960,7 @@ and domain ancillaries where possible.
                 # Key is set, axes is not set
                 axes = [key]
                 if key not in self._Axes:
-                    key = self.insert_axis(DomainAxis(item.size), key=key)
+                    key = self.insert_axis(self._DomainAxis(item.size), key=key)
             elif axes != [key]:
                 # Key is set, axes is set
                 raise ValueError(
@@ -4840,20 +4838,28 @@ coordinate or cell measure object of the field.
 
 #--- End: class
 
-class Items(dict):
+class Items(object): #dict):
     '''
 Keys are item identifiers, values are item objects.
     '''
-    
-    # Mapping of role name to single-character id (DO NOT CHANGE)
-    _role_name = {
-        'f': 'field ancillary',
-        'a': 'auxiliary coordinate',
-        'c': 'domain ancillary',
-        'd': 'dimension coordinate',
-        'm': 'cell measure',
-        'r': 'coordinate reference',
-    }
+    def __new__(cls, **kwargs):
+        cls = object.__new__(cls)
+
+        # Mapping of role name to single-character id (DO NOT CHANGE)
+        _role_name = {
+            'f': 'field ancillary',
+            'a': 'auxiliary coordinate',
+            'c': 'domain ancillary',
+            'd': 'dimension coordinate',
+            'm': 'cell measure',
+            'r': 'coordinate reference',
+        }
+
+        cls._CellMethods = CellMethods
+        cls._Axes        = Axes
+
+        return cls
+   #--- End: def
 
     def __init__(self):
         '''
@@ -4873,16 +4879,52 @@ Keys are item identifiers, values are item objects.
         # self._role['aux2'] = ['dim1, 'dim0']
         self._axes = {}
 
-        # Domain axis objects. For example: self.Axes['dim1'] = DomainAxis(20)
-        self.Axes = Axes()
+        self._items = {}
         
-        self.cell_methods = CellMethods()
+        # Domain axis objects. For example: self.Axes['dim1'] = DomainAxis(20)
+        self.Axes = self._Axes()
+        
+        self.cell_methods = self._CellMethods()
     #--- End: def
 
+    def __setitem__(self, key, value):
+        self._items[key] = value
+        
+    def __getitem__(self, key):
+        return self._items[key]
+        
+    def __delitem__(self, key):
+        del self._items[key]
+        
+    def get(self, k, *d):
+        '''D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None.
+        '''
+        return self._items.get(k, *d)
+        
+    def pop(self, k, *d):
+        '''D.pop(k[,d]) -> v, remove specified key and return the
+corresponding value. If key is not found, d is returned if given,
+otherwise KeyError is raised
+        '''
+        return self._items.pop(k, *d)
+        
+    def values(self):
+        '''D.values() -> list of D's values '''
+        return self._items.values()
+        
+    def items(self):
+        '''D.items() -> list of D's (key, value) pairs, as 2-tuples'''
+        return self._items.items()
+        
+    def iteritems(self):
+        '''D.iteritems() -> an iterator over the (key, value) items of D'''
+        return self._items.iteritems()
+        
     def __call__(self, description=None, role=None, axes=None,
                  axes_all=None, axes_subset=None, axes_superset=None,
                  ndim=None, match_and=True, exact=False,
                  inverse=False, copy=False):#, _restrict_inverse=False):
+
         '''Return items which span domain axes.
 
 The set of all items comprises:
@@ -5012,7 +5054,7 @@ names contain the string "qwerty":
 
         '''
         if role is None:
-            pool = dict(self)
+            pool = dict(self.items())
         else:
             pool = {}
             for r in role:
@@ -5517,7 +5559,8 @@ Return a deep or shallow copy.
 
 '''
         X = type(self)
-        new = X.__new__(X)
+        new = X()
+
 
         # Copy the domain axes
         new.Axes = self.Axes.copy()

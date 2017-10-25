@@ -911,8 +911,60 @@ The rich comparison operator ``==``
 
 x.__eq__(y) <==> x==y
 
+:Examples:
+
+>>> u = Units('km')
+>>> v = Units('1000m')
+>>> w = Units('100000m')
+>>> u.equals(v)
+True
+>>> u.equals(w)
+False
+
+>>> u = Units('m s-1')
+>>> m = Units('m')
+>>> s = Units('s')
+>>> u.equals(m)
+False
+>>> u.equals(m/s)
+True
+>>> (m/s).equals(u)
+True
+
+Undefined units are considered equal:
+
+>>> u = Units()
+>>> v = Units()
+>>> u.equals(v)
+True
+
 '''
-        return self.equals(other)
+        try:
+            if _ut_compare(self._ut_unit, other._ut_unit):
+                return False
+        except AttributeError:
+            return False
+
+        isreftime1 = self._isreftime
+        isreftime2 = other._isreftime
+
+        if not isreftime1 and not isreftime2:
+            # Neither units is reference-time so they're equal
+            return True
+
+        if isreftime1 and isreftime2:
+            # Both units are reference-time
+            utime0 = self._utime
+            utime1 = other._utime
+            if utime0.calendar != utime1.calendar:
+                return False
+            
+            return utime0.origin_equals(utime1)
+        #--- End: if
+
+        # One unit is a reference-time and the other is not so they're
+        # not equal
+        return False
     #--- End: def
 
     def __ne__(self, other):
@@ -2109,7 +2161,7 @@ Return a string containing a description of the units.
             return string
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None):
+    def equals(self, other, **kwargs):
         '''
 
 Return True if and only if numeric values in one unit are convertible
@@ -2156,32 +2208,7 @@ Undefined units are considered equal:
 True
 
 '''
-        try:
-            if _ut_compare(self._ut_unit, other._ut_unit):
-                return False
-        except AttributeError:
-            return False
-
-        isreftime1 = self._isreftime
-        isreftime2 = other._isreftime
-
-        if not isreftime1 and not isreftime2:
-            # Neither units is reference-time so they're equal
-            return True
-
-        if isreftime1 and isreftime2:
-            # Both units are reference-time
-            utime0 = self._utime
-            utime1 = other._utime
-            if utime0.calendar != utime1.calendar:
-                return False
-            
-            return utime0.origin_equals(utime1)
-        #--- End: if
-
-        # One unit is a reference-time and the other is not so they're
-        # not equal
-        return False
+        return self == other
     #--- End: def
 
     def log(self, base):

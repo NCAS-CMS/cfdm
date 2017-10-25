@@ -123,7 +123,7 @@ class create_fieldTest(unittest.TestCase):
         f.flag_values = [1,2,4]
         f.flag_meanings = ['a', 'bb', 'ccc']      
 
-        f.insert_cell_methods('grid_longitude: mean grid_latitude: max')
+        f.insert_cell_methods(cfdm.CellMethods('grid_longitude: mean grid_latitude: max'))
 
 
 #        f.dump()

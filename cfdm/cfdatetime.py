@@ -167,7 +167,7 @@ x.__hash__() <==> hash(x)
 x__repr__() <==> repr(x)
 
 '''   
-        out = '<CF {0}: {1}>'.format(self.__class__.__name__, self)
+        out = '<{0}: {1}>'.format(self.__class__.__name__, str(self))
         calendar = self._calendar
         if calendar is not None:
             out = out.replace('>', ' '+calendar+'>')
@@ -187,94 +187,94 @@ x__str__() <==> str(x)
         return out
     #--- End: def
 
-    def __eq__(self, other):
-        '''
-
-x__eq__(y) <==> x==y
-
-'''
-        try:
-            out = super(Datetime, self).__eq__(other)
-            if out:
-                # Check the microseconds
-                out = self.microsecond == other.microsecond
-            return out
-        except:
-            return NotImplemented
-    #--- End: def
-
-    def __ne__(self, other):
-        '''
-
-x__ne__(y) <==> x!=y
-
-'''
-        return not (self == other)
-    #--- End: def
-
-    def __ge__(self, other):
-        '''
-
-x__ge__(y) <==> x>=y
-
-'''
-        try:
-            out = super(Datetime, self).__ge__(other)
-            if out and super(Datetime, self).__eq__(other):
-                # Check the microseconds
-                out = self.microsecond >= other.microsecond
-            return out
-        except:
-            return NotImplemented
-    #--- End: def
-
-    def __gt__(self, other):
-        '''
-
-x__gt__(y) <==> x>y
-
-'''
-        try:
-            out = super(Datetime, self).__ge__(other)
-            if out and super(Datetime, self).__eq__(other):
-                # Check the microseconds
-                out = self.microsecond > other.microsecond
-            return out
-        except:
-            return NotImplemented
-    #--- End: def
-
-    def __le__(self, other):
-        '''
-
-x__le__(y) <==> x<=y
-
-'''
-        try:
-            out = super(Datetime, self).__le__(other)
-            if out and super(Datetime, self).__eq__(other):
-                # Check the microseconds
-                out = self.microsecond <= other.microsecond
-            return out
-        except:
-            return NotImplemented
-    #--- End: def
-
-    def __lt__(self, other):
-        '''
-
-x__lt__(y) <==> x<y
-
-'''
-        try:
-            out = super(Datetime2, self).__le__(other)
-            if out and super(Datetime, self).__eq__(other):
-                # Check the microseconds
-                out = self.microsecond < other.microsecond
-            return out
-        except:
-            return NotImplemented
-    #--- End: def
+#    def __eq__(self, other):
+#        '''
+#
+#x__eq__(y) <==> x==y
+#
+#'''
+#        try:
+#            out = super(Datetime, self).__eq__(other)
+#            if out:
+#                # Check the microseconds
+#                out = self.microsecond == other.microsecond
+#            return out
+#        except:
+#            return NotImplemented
+#    #--- End: def
+#
+#    def __ne__(self, other):
+#        '''
+#
+#x__ne__(y) <==> x!=y
+#
+#'''
+#        return not (self == other)
+#    #--- End: def
+#
+#    def __ge__(self, other):
+#        '''
+#
+#x__ge__(y) <==> x>=y
+#
+#'''
+#        try:
+#            out = super(Datetime, self).__ge__(other)
+#            if out and super(Datetime, self).__eq__(other):
+#                # Check the microseconds
+#                out = self.microsecond >= other.microsecond
+#            return out
+#        except:
+#            return NotImplemented
+#    #--- End: def
+#
+#    def __gt__(self, other):
+#        '''
+#
+#x__gt__(y) <==> x>y
+#
+#'''
+#        try:
+#            out = super(Datetime, self).__ge__(other)
+#            if out and super(Datetime, self).__eq__(other):
+#                # Check the microseconds
+#                out = self.microsecond > other.microsecond
+#            return out
+#        except:
+#            return NotImplemented
+#    #--- End: def
+#
+#    def __le__(self, other):
+#        '''
+#
+#x__le__(y) <==> x<=y
+#
+#'''
+#        try:
+#            out = super(Datetime, self).__le__(other)
+#            if out and super(Datetime, self).__eq__(other):
+#                # Check the microseconds
+#                out = self.microsecond <= other.microsecond
+#            return out
+#        except:
+#            return NotImplemented
+#    #--- End: def
+#
+#    def __lt__(self, other):
+#        '''
+#
+#x__lt__(y) <==> x<y
+#
+#'''
+#        try:
+#            out = super(Datetime2, self).__le__(other)
+#            if out and super(Datetime, self).__eq__(other):
+#                # Check the microseconds
+#                out = self.microsecond < other.microsecond
+#            return out
+#        except:
+#            return NotImplemented
+#    #--- End: def
 
     def copy(self):
         '''
@@ -383,35 +383,35 @@ for example ``2000-01-02T03:04:05.000786Z``.
             *self.timetuple()[:6])
     #--- End: def
 
-    @classmethod
-    def utcnow(cls):
-        '''
-
-Return the current Gregorian calendar UTC date and time.
-
-:Examples 1:
-
->>> cf.Datetime.utcnow()
-<CF Datetime: 2016-10-10T12:15:24.002376Z>
-
-:Returns:
-
-    out: `cf.Datetime`
-        The current UTC date and time.
-
-:Examples 2:
-
->>> cf.Datetime.utcnow()
-<CF Datetime: 2016-10-10T12:15:25.422179Z>
->>> d = cf.Datetime(2005, 6, 7)
->>> d.utcnow()
-<CF Datetime: 2016-10-10T12:15:50.375309Z>
->>> d
-<CF Datetime: 2005-06-07T00:00:00Z>
-
-'''
-        return cls(*elements(datetime.utcnow()))
-    #--- End: def
+#    @classmethod
+#    def utcnow(cls):
+#        '''
+#
+#Return the current Gregorian calendar UTC date and time.
+#
+#:Examples 1:
+#
+#>>> cf.Datetime.utcnow()
+#<CF Datetime: 2016-10-10T12:15:24.002376Z>
+#
+#:Returns:
+#
+#    out: `cf.Datetime`
+#        The current UTC date and time.
+#
+#:Examples 2:
+#
+#>>> cf.Datetime.utcnow()
+#<CF Datetime: 2016-10-10T12:15:25.422179Z>
+#>>> d = cf.Datetime(2005, 6, 7)
+#>>> d.utcnow()
+#<CF Datetime: 2016-10-10T12:15:50.375309Z>
+#>>> d
+#<CF Datetime: 2005-06-07T00:00:00Z>
+#
+#'''
+#        return cls(*elements(datetime.utcnow()))
+#    #--- End: def
 
 #--- End: class
 

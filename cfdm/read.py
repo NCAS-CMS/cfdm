@@ -283,16 +283,8 @@ Read the contents of a single file into a field list.
         The fields in the file.
 
 '''
-    # Find the file type
-    try:
-        ftype = file_type(filename)        
-    except Exception as error:
-        if ignore_read_error: 
-            if verbose:
-                print('WARNING: {}'.format(error))
-            return FieldList()
-        raise Exception(error)
-    #--- End: if
+    # Check the file type
+    ftype = file_type(filename)        
     
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
@@ -323,16 +315,7 @@ def file_type(filename):
 
 >>> filetype = file_type(filename)
 
-''' 
-    # ----------------------------------------------------------------
-    # Assume that URLs are in netCDF format
-    # ----------------------------------------------------------------
-    if filename.startswith('http://'):
-       return 'netCDF'
-
-    # ----------------------------------------------------------------
-    # netCDF
-    # ----------------------------------------------------------------
+'''
     if netcdf.is_netcdf_file(filename):
         return 'netCDF'
 

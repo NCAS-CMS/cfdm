@@ -1529,6 +1529,7 @@ Return a deep copy.
             cms = self
 
         for cm in cms:
+            print type(cm)
             cm.change_axes(axis_map, copy=False)
 
         return cms

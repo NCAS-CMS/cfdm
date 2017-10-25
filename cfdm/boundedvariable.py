@@ -411,7 +411,7 @@ The Units object containing the units of the data array.
     def Units(self, value):
         Variable.Units.fset(self, value)
 
-NO        # Set the Units on the bounds
+        # Set the Units on the bounds # DCH NOOOOOOOOOO
         if self.hasbounds:
             self.bounds.Units = value
     #--- End: def
