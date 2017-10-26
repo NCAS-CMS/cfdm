@@ -14,7 +14,7 @@ from .field               import Field
 from .fieldancillary      import FieldAncillary
 
 from .bounds    import Bounds
-from .fieldlist import FieldList
+#from .fieldlist import FieldList
 from .units     import Units
 from .netcdf2   import NetCDF
 
@@ -35,7 +35,7 @@ netcdf = NetCDF(mode='read',
                 
                 Bounds    = Bounds,
                 Data      = Data,
-                FieldList = FieldList,
+#                FieldList = FieldList,
                 Units     = Units,        
                 
                 NetCDFArray = NetCDFArray)
@@ -165,7 +165,7 @@ Any amount of netCDF files may be read.
         raise ValueError("The squeeze and unsqueeze parameters can not both be True")
 
     # Initialize the output list of fields
-    field_list = FieldList()
+    field_list = [] #FieldList()
 
     # Parse the field parameter
     if field is None:

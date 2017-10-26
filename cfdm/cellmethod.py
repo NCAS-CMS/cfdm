@@ -821,8 +821,9 @@ corresponding dimension or dimensions.
 
 >>> d = c.copy()
 
-        '''       
-        new = CellMethod.__new__(CellMethod)
+        '''   
+        X = type(self)
+        new = X.__new__(X)
 
         new._axes    = self._axes     
         new._method  = self._method   

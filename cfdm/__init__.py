@@ -59,7 +59,7 @@ from .cellmeasure         import CellMeasure
 from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
 from .field               import Field, Items
-from .fieldlist           import FieldList
+#from .fieldlist           import FieldList
 from .fieldancillary      import FieldAncillary
 from .read                import read
 from .write               import write

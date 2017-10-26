@@ -2,7 +2,6 @@ from collections import OrderedDict
 from itertools   import izip, izip_longest
 from re          import match as re_match
 
-from .cellmethod import CellMethod
 from .constants  import masked as cf_masked
 from .domainaxis import DomainAxis
 from .flags      import Flags
@@ -76,7 +75,6 @@ Field objects are picklable.
 
     '''
     _DomainAxis = DomainAxis
-    _CellMethod = CellMethod
     
     _special_properties = Variable._special_properties.union(        
         ('cell_methods',
@@ -449,34 +447,34 @@ A `Flags` object stores the `flag_values`, `flag_meanings` and
         return out
     #--- End: def
 
-    @property
-    def rank(self):
-        '''The number of axes in the domain.
-
-Note that this may be greater the number of data array axes.
-
-.. seealso:: `ndim`
-
-:Examples:
-
->>> print f
-air_temperature field summary
------------------------------
-Data           : air_temperature(time(12), latitude(64), longitude(128)) K
-Cell methods   : time: mean
-Axes           : time(12) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap
-               : latitude(64) = [-87.8638000488, ..., 87.8638000488] degrees_north
-               : longitude(128) = [0.0, ..., 357.1875] degrees_east
-               : height(1) = [2.0] m
->>> f.rank, f.ndim
-(4, 3)
->>> g = f.unsqueeze()
->>> f.rank, f.ndim
-(4, 4)
-
-        '''
-        return len(self.Axes)
-    #--- End: def
+#    @property
+#    def rank(self):
+#        '''The number of axes in the domain.
+#
+#Note that this may be greater the number of data array axes.
+#
+#.. seealso:: `ndim`
+#
+#:Examples:
+#
+#>>> print f
+#air_temperature field summary
+#-----------------------------
+#Data           : air_temperature(time(12), latitude(64), longitude(128)) K
+#Cell methods   : time: mean
+#Axes           : time(12) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap
+#               : latitude(64) = [-87.8638000488, ..., 87.8638000488] degrees_north
+#               : longitude(128) = [0.0, ..., 357.1875] degrees_east
+#               : height(1) = [2.0] m
+#>>> f.rank, f.ndim
+#(4, 3)
+#>>> g = f.unsqueeze()
+#>>> f.rank, f.ndim
+#(4, 4)
+#
+#        '''
+#        return len(self.Axes)
+#    #--- End: def
 
     # ----------------------------------------------------------------
     # CF property
@@ -1125,39 +1123,39 @@ field.
 #        else:
 #            return string
 #    #--- End: def
-
-    def direction(self, axis):
-        '''
-
-Return True if an axis is increasing, otherwise return False.
-
-An axis is considered to be increasing if its dimension coordinate
-values are increasing in index space or if it has no dimension
-coordinates.
-
-
-:Parameters:
-
-    axis: `str`
-        A domain axis identifier, such as ``'dim0'``.
-
-:Returns:
-
-    out: `bool`
-        Whether or not the axis is increasing.
-        
-:Examples:
-
->>> i.direction('dim0')
-True
->>> i.direction('dim2')
-False
-        '''
-        axis = self.axis(axis)
-        
-
-        return self.Items.direction(axis)
-    #--- End: def
+#
+#    def direction(self, axis):
+#        '''
+#
+#Return True if an axis is increasing, otherwise return False.
+#
+#An axis is considered to be increasing if its dimension coordinate
+#values are increasing in index space or if it has no dimension
+#coordinates.
+#
+#
+#:Parameters:
+#
+#    axis: `str`
+#        A domain axis identifier, such as ``'dim0'``.
+#
+#:Returns:
+#
+#    out: `bool`
+#        Whether or not the axis is increasing.
+#        
+#:Examples:
+#
+#>>> i.direction('dim0')
+#True
+#>>> i.direction('dim2')
+#False
+#        '''
+#        axis = self.axis(axis)
+#        
+#
+#        return self.Items.direction(axis)
+#    #--- End: def
         
     def dump(self, display=True, _level=0, _title='Field', _q='-'):
         '''A full description of the field.
@@ -1626,7 +1624,7 @@ by the data array may be selected.
 "Can't insert an axis of size {}: {!r}".format(self.axis_size(axis), axis))
             elif axis in self.data_axes():
                 raise ValueError(
-                    "Can't insert a duplicate axis: {!r}" % axis)
+                    "Can't insert a duplicate axis: {!r}",.format(axis))
         #--- End: if
        
         # Expand the dims in the field's data array
@@ -3346,7 +3344,7 @@ None
             return axes[1]
     #--- End: def
 
-    def insert_cell_methods(self, item):
+    def insert_cell_method(self, item):
         '''Insert cell method objects into the {+variable}.
 
 .. seealso:: `insert_aux`, `insert_measure`, `insert_ref`,
@@ -3354,23 +3352,20 @@ None
 
 :Parameters:
 
-    item: `CellMethods`
+    item: `CellMethod`
 
 :Returns:
 
-    out: `str`
-        The identifier of 
-
+    `None`
 
 :Examples:
 
         '''
-        if isinstance(item, basestring):
-            item = self._CellMethod.parse(item)
+#        if isinstance(item, basestring):
+#            item = self._CellMethod.parse(item)
             
-        self.Items.cell_methods.extend(item)
+        self.Items.cell_methods.append(item)
         self.Items.cell_methods = self._conform_cell_methods()
-
     #--- End: def
 
     def insert_axis(self, axis, key=None, replace=True, copy=True):
@@ -4658,8 +4653,8 @@ coordinate or cell measure object of the field.
 
         # Replace the axis in cell methods with a standard name, if
         # possible.
-        cms = self.Items.cell_methods
-        if cms:            
+        cell_methods = self.Items.cell_methods
+        if cell_methods:            
             axis_map = {}
             del_axes = []
             for axis in axes:
@@ -4707,9 +4702,9 @@ coordinate or cell measure object of the field.
             
         # Replace the axis in cell methods with a standard name, if
         # possible.
-        if cms:
-            self.items.cell_methods = [cm.change_axes(axis_map) for cm in cms]
-            self.Items.cell_methods = [cm.remove_axes(del_axes) for cm in cms]
+        if cell_methods:
+            self.items.cell_methods = [cm.change_axes(axis_map) for cm in cell_methods]
+            self.Items.cell_methods = [cm.remove_axes(del_axes) for cm in cell_methods]
 
         # Remove the axes
         for axis in axes:
@@ -4798,7 +4793,9 @@ Keys are item identifiers, values are item objects.
 
         self.cell_methods = []
         
-        # Domain axis objects. For example: self.Axes['dim1'] = DomainAxis(20)
+        # Domain axes
+        # 
+        # For example: self.Axes = {'dim1': DomainAxis(20)}
         self.Axes = {} #Axes
         
     #--- End: def
@@ -5169,37 +5166,37 @@ names contain the string "qwerty":
         '''
         return dict([(key, self[key]) for key in self.d])
  
-    def direction(self, axis):
-        '''
-
-Return True if an axis is increasing, otherwise return False.
-
-An axis is considered to be increasing if its dimension coordinate
-values are increasing in index space or if it has no dimension
-coordinates.
-
-:Parameters:
-
-    axis: `str`
-        A domain axis identifier, such as ``'dim0'``.
-
-:Returns:
-
-    out: `bool`
-        Whether or not the axis is increasing.
-        
-:Examples:
-
->>> i.direction('dim0')
-True
->>> i.direction('dim2')
-False
-        '''
-        if axis not in self.d:
-            return 
-
-        return self[axis].direction()
-    #--- End: def
+#    def direction(self, axis):
+#        '''
+#
+#Return True if an axis is increasing, otherwise return False.
+#
+#An axis is considered to be increasing if its dimension coordinate
+#values are increasing in index space or if it has no dimension
+#coordinates.
+#
+#:Parameters:
+#
+#    axis: `str`
+#        A domain axis identifier, such as ``'dim0'``.
+#
+#:Returns:
+#
+#    out: `bool`
+#        Whether or not the axis is increasing.
+#        
+#:Examples:
+#
+#>>> i.direction('dim0')
+#True
+#>>> i.direction('dim2')
+#False
+#        '''
+#        if axis not in self.d:
+#            return 
+#
+#        return self[axis].direction()
+#    #--- End: def
         
     def domain_ancs(self):
         '''Return domain ancillary objects and their identifiers
@@ -5772,8 +5769,8 @@ Return a deep or shallow copy.
                               traceback=traceback):
                 if traceback:
                     print (
-"Field: Different cell methods: {0!r}, {1!r}".format(
-    self.cell_methods, other.cell_methods))
+                        "Field: Different cell methods: {0!r}, {1!r}".format(
+                            self.cell_methods, other.cell_methods))
                 return False                
         #--- End: for
 

@@ -29,7 +29,7 @@ class NetCDF(object):
                          'FieldAncillary',     
                          'Bounds', 
                          'Data',
-                         'FieldList',
+#                         'FieldList',
                          'Units'):
                 if attr not in kwargs:
                     raise ValueError("Must set {} in 'read' mode".format(attr))
@@ -91,7 +91,7 @@ ancillaries, field ancillaries).
     
 :Returns:
 
-    out: `FieldList`
+    out: `list`
         The fields in the file.
 
 :Examples:
@@ -458,7 +458,7 @@ ancillaries, field ancillaries).
 #        coordref_parameters   = {}
         list_variables        = {}
     
-        fields_in_file = self.FieldList()
+        fields_in_file = [] #self.FieldList()
     
         for data_ncvar in variables:
             f = self._create_Field(data_ncvar,
@@ -1207,8 +1207,8 @@ ancillaries, field ancillaries).
             name_to_axis.update(ncscalar_to_axis)
             for cm in cell_methods:
                 cm.axes = tuple([name_to_axis.get(axis, axis) for axis in cm.axes])
-                
-            f.insert_cell_methods(cell_methods)
+                f.insert_cell_method(cm)
+#            f.insert_cell_methods(cell_methods)
     
         # ----------------------------------------------------------------
         # Add field ancillaries to the field
