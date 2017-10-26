@@ -1624,7 +1624,7 @@ by the data array may be selected.
 "Can't insert an axis of size {}: {!r}".format(self.axis_size(axis), axis))
             elif axis in self.data_axes():
                 raise ValueError(
-                    "Can't insert a duplicate axis: {!r}",.format(axis))
+                    "Can't insert a duplicate axis: {!r}".format(axis))
         #--- End: if
        
         # Expand the dims in the field's data array

@@ -6,7 +6,7 @@ import unittest
 
 import cfdm
 
-class CellMethodsTest(unittest.TestCase):
+class CellMethodTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
 
@@ -50,22 +50,26 @@ class CellMethodsTest(unittest.TestCase):
            )
 
     test_only = []
-#    test_only = ['test_CellMethods___str__']
-#    test_only = ['test_CellMethods_equals']
-#    test_only = ['test_CellMethods_equivalent']
-#    test_only = ['test_CellMethods_get_set_delete']
+#    test_only = ['test_CellMethod___str__']
+#    test_only = ['test_CellMethod_equals']
+#    test_only = ['test_CellMethod_equivalent']
+#    test_only = ['test_CellMethod_get_set_delete']
 
-    def test_CellMethods___str__(self):
+    def test_CellMethod___str__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        print '~~~~~~~'
         for s in self.strings:
-            print s
-            cm = cfdm.CellMethods(s)           
-            self.assertTrue(s == str(cm), '{!r} != {!r}'.format(s, str(cm)))
+            print s,
+#            cm = cfdm.CellMethods(s)
+            cms = cfdm.CellMethod.parse(s)
+            str_cms = ' '.join(str(cm) for cm in cms)
+            self.assertTrue(s == str_cms, '{!r} != {!r}'.format(s, str_cms))
+            print '...OK'
     #--- End: def
 
-    def test_CellMethods_equals(self):
+    def test_CellMethod_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -77,7 +81,7 @@ class CellMethodsTest(unittest.TestCase):
         #--- End: for
     #--- End: def
 
-    def test_CellMethods_equivalent(self):
+    def test_CellMethod_equivalent(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -120,35 +124,46 @@ class CellMethodsTest(unittest.TestCase):
         #--- End: for
     #--- End: def
 
-    def test_CellMethods_get_set_delete(self):
+    def test_CellMethod_get_set_delete(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        c = cfdm.CellMethods('time: minimum within days time: sum over years')
+        c = cfdm.CellMethod.parse('time: minimum within days time: sum over years')
 
-        self.assertTrue(c[0].__class__.__name__ == 'CellMethod')
-        self.assertTrue(c[1].__class__.__name__ == 'CellMethod')
-        self.assertTrue(c[-1].__class__.__name__ == 'CellMethod')
-        self.assertTrue(c[-2].__class__.__name__ == 'CellMethod')
+        self.assertTrue(len(c) == 2)
+        
+#        self.assertTrue(c[0].__class__.__name__ == 'CellMethod')
+#        self.assertTrue(c[1].__class__.__name__ == 'CellMethod')
+#        self.assertTrue(c[-1].__class__.__name__ == 'CellMethod')
+#        self.assertTrue(c[-2].__class__.__name__ == 'CellMethod')
+#
+#        self.assertTrue(c[0:1].__class__.__name__ == 'CellMethods')
+#        self.assertTrue(c[0:-1].__class__.__name__ == 'CellMethods')
+#        self.assertTrue(c[0:2].__class__.__name__ == 'CellMethods')
+#        self.assertTrue(c[0:99].__class__.__name__ == 'CellMethods')
+#        self.assertTrue(c[0:0].__class__.__name__ == 'CellMethods')
+#
+#        self.assertTrue(len(c[0:1]) == 1)
+#        self.assertTrue(len(c[0:-1]) == 1)
+#        self.assertTrue(len(c[0:2]) == 2)
+#        self.assertTrue(len(c[0:-2]) == 0)
+#        self.assertTrue(len(c[0:99]) == 2)
+#        self.assertTrue(len(c[0:0]) == 0)
 
-        self.assertTrue(c[0:1].__class__.__name__ == 'CellMethods')
-        self.assertTrue(c[0:-1].__class__.__name__ == 'CellMethods')
-        self.assertTrue(c[0:2].__class__.__name__ == 'CellMethods')
-        self.assertTrue(c[0:99].__class__.__name__ == 'CellMethods')
-        self.assertTrue(c[0:0].__class__.__name__ == 'CellMethods')
+        self.assertTrue(c[0].within == 'days')
+        self.assertTrue(c[1].within == None)
 
-        self.assertTrue(len(c[0:1]) == 1)
-        self.assertTrue(len(c[0:-1]) == 1)
-        self.assertTrue(len(c[0:2]) == 2)
-        self.assertTrue(len(c[0:-2]) == 0)
-        self.assertTrue(len(c[0:99]) == 2)
-        self.assertTrue(len(c[0:0]) == 0)
+        self.assertTrue(c[0].where == None)
+        self.assertTrue(c[1].where == None)
 
-        self.assertTrue(c.within == ('days', None))
-        self.assertTrue(c.where == (None, None))
-        self.assertTrue(c.over == (None, 'years'))
-        self.assertTrue(c.method == ('minimum', 'sum'))
-        self.assertTrue(c.axes == (('time',), ('time',)))
+        self.assertTrue(c[0].over == None)
+        self.assertTrue(c[1].over == 'years')
+
+        self.assertTrue(c[0].method == 'minimum')
+        self.assertTrue(c[1].method == 'sum')
+
+        self.assertTrue(c[0].axes == ('time',))
+        self.assertTrue(c[1].axes == ('time',))
     #--- End: def
 
 #--- End: class

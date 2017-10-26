@@ -556,9 +556,10 @@ ancillaries, field ancillaries).
     
         # Create an empty Data array which has dimensions (instance
         # dimension, element dimension).
-        data = Data.compression_initialize_contiguous(instance_dimension_size,
-                                                      element_dimension_size,
-                                                      elements_per_instance)
+        data = self.Data.compression_initialize_contiguous(
+            instance_dimension_size,
+            element_dimension_size,
+            elements_per_instance)
     
         if _debug:
             print '    DSG contiguous array implied shape:', data.shape
@@ -642,9 +643,10 @@ ancillaries, field ancillaries).
     
         # Create an empty Data array which has dimensions
         # (instance dimension, element dimension)
-        data = Data.compression_initialize_indexed(instance_dimension_size,
-                                                   element_dimension_size,
-                                                   instance_indices)
+        data = self.Data.compression_initialize_indexed(
+            instance_dimension_size,
+            element_dimension_size,
+            instance_indices)
         
         if _debug:        
             print '    DSG indexed array implied shape:', data.shape
@@ -742,12 +744,13 @@ ancillaries, field ancillaries).
         
         # Create an empty Data array which has dimensions
         # (instance_dimension, element_dimension_1, element_dimension_2)
-        data = Data.compression_initialize_indexed_contiguous(instance_dimension_size,
-                                                              element_dimension_1_size,
-                                                              element_dimension_2_size,
-                                                              profiles_per_instance,
-                                                              elements_per_profile,
-                                                              profile_indices)
+        data = self.Data.compression_initialize_indexed_contiguous(
+            instance_dimension_size,
+            element_dimension_1_size,
+            element_dimension_2_size,
+            profiles_per_instance,
+            elements_per_profile,
+            profile_indices)
         
         if _debug:
             print '    DSG indexed and contiguous array implied shape:', data.shape
@@ -1706,7 +1709,7 @@ ancillaries, field ancillaries).
                         ncdims = self._ncdimensions(ncvar)
                         uncompressed_shape = tuple([nc[dim].size for dim in ncdims])
     
-                        empty_data = Data.compression_initialize_gathered(uncompressed_shape)
+                        empty_data = self.Data.compression_initialize_gathered(uncompressed_shape)
     
                         # The position of the compressed axis in the
                         # gathered array
@@ -1722,13 +1725,13 @@ ancillaries, field ancillaries).
     #                                                             sample_axis=sample_axis, 
     #                                                             indices=indices)
     
-                        data = Data.compression_fill_gathered(empty_data,
-                                                              dtype,
-                                                              units,
-                                                              fill_value,
-                                                              filearray,
-                                                              sample_axis,
-                                                              indices)
+                        data = self.Data.compression_fill_gathered(empty_data,
+                                                                   dtype,
+                                                                   units,
+                                                                   fill_value,
+                                                                   filearray,
+                                                                   sample_axis,
+                                                                   indices)
     
                     elif 'DSG_indexed_contiguous' in c:
                         # DSG contiguous indexed ragged array. Check
@@ -1740,38 +1743,41 @@ ancillaries, field ancillaries).
                         elements_per_profile  = c['DSG_indexed_contiguous']['elements_per_profile']
                         profile_indices       = c['DSG_indexed_contiguous']['profile_indices']
     
-                        data = Data.compression_fill_indexed_contiguous(empty_data,
-                                                                        dtype,
-                                                                        units,
-                                                                        fill_value,
-                                                                        filearray,
-                                                                        profiles_per_instance,
-                                                                        elements_per_profile,
-                                                                        profile_indices)
-    
+                        data = self.Data.compression_fill_indexed_contiguous(
+                            empty_data,
+                            dtype,
+                            units,
+                            fill_value,
+                            filearray,
+                            profiles_per_instance,
+                            elements_per_profile,
+                            profile_indices)
+                        
                     elif 'DSG_contiguous' in c:                    
                         # DSG contiguous ragged array
                         empty_data            = c['DSG_contiguous']['empty_data'].copy()
                         elements_per_instance = c['DSG_contiguous']['elements_per_instance']
                                             
-                        data = Data.compression_fill_contiguous(empty_data,
-                                                                dtype,
-                                                                units,
-                                                                fill_value,
-                                                                filearray,
-                                                                elements_per_instance)
-                                            
+                        data = self.Data.compression_fill_contiguous(
+                            empty_data,
+                            dtype,
+                            units,
+                            fill_value,
+                            filearray,
+                            elements_per_instance)
+                        
                     elif 'DSG_indexed' in c:
                         # DSG indexed ragged array
                         empty_data       = c['DSG_indexed']['empty_data'].copy()
                         instance_indices = c['DSG_indexed']['instance_indices']
                         
-                        data = Data.compression_fill_indexed(empty_data,
-                                                             dtype,
-                                                             units,
-                                                             fill_value,
-                                                             filearray,
-                                                             instance_indices)
+                        data = self.Data.compression_fill_indexed(
+                            empty_data,
+                            dtype,
+                            units,
+                            fill_value,
+                            filearray,
+                            instance_indices)
                             
                     else:
                         raise ValueError("Bad compression vibes. c.keys()={}".format(c.keys()))

@@ -115,8 +115,9 @@ class DSGTest(unittest.TestCase):
 
         f = cfdm.read(self.contiguous)
 
-        q = f.select('specific')[0]
-            
+#        q = f.select('specific')[0]
+        q = [g.match('specific') for g in f][0]
+        
         self.assertTrue(cfdm.functions._numpy_allclose(q.array, self.a))
     #--- End: def        
 
@@ -126,8 +127,9 @@ class DSGTest(unittest.TestCase):
 
         f = cfdm.read(self.indexed)
 
-        q = f.select('specific')[0]
-
+#        q = f.select('specific')[0]
+        q = [g.match('specific') for g in f][0]
+        
         self.assertTrue(cfdm.functions._numpy_allclose(q.array, self.a))
     #--- End: def        
 
@@ -137,8 +139,9 @@ class DSGTest(unittest.TestCase):
 
         f = cfdm.read(self.indexed_contiguous)
 
-        q = f.select('specific')[0]
-
+#        q = f.select('specific')[0]
+        q = [g.match('specific') for g in f][0]
+        
         message= repr(q.array-self.b) +'\n'+repr(q.array[2,0])+'\n'+repr(self.b[2, 0])
         self.assertTrue(cfdm.functions._numpy_allclose(q.array, self.b),
                         message)
