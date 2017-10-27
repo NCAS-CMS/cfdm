@@ -57,6 +57,7 @@ ancillary object.
 :Examples:
 
         '''
+        print '_title=', title
         if _title is None:
             _title = 'Domain Ancillary: ' + self.name(default='')
 

@@ -32,19 +32,6 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(t.equals(t.copy(), traceback=True))
     #--- End: def
 
-    def test_Field_ref_refs(self):
-        f = cfdm.read(self.filename)[0]
-        
-        self.assertTrue(f.item('BLAH',  role='r') is None)
-        self.assertTrue(f.item('atmos', role='r', key=True) == 'ref0')
-        self.assertTrue(f.item('atmos', role='r', key=True, inverse=True) == 'ref1')
-
-        self.assertTrue(set(f.items(role='r')) == set(['ref0', 'ref1']))
-        self.assertTrue(set(f.items('BLAH', role='r')) == set())
-        self.assertTrue(set(f.items('rot', role='r')) == set(['ref1']))
-        self.assertTrue(set(f.items('rot', role='r', inverse=True)) == set(['ref0']))
-        self.assertTrue(set(f.items('atmosphere_hybrid_height_coordinate', role='r', exact=True)) == set(['ref0']))
-    #--- End: def
 #--- End: class
 
 if __name__ == '__main__':

@@ -28,7 +28,6 @@ class read_writeTest(unittest.TestCase):
 
     test_only = []
 #    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_write_HDF_chunks']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_field']
@@ -118,24 +117,6 @@ class read_writeTest(unittest.TestCase):
         g = cfdm.read(tmpfile)[0]
         self.assertTrue(g.dtype == numpy.dtype('float32'), 
                         'datatype read in is '+str(g.dtype))
-    #--- End: def
-
-    def test_write_reference_datetime(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        for reference_datetime in ('1751-2-3', '1492-12-30'):
-            f = cfdm.read(self.filename)[0]
-            t = cfdm.DimensionCoordinate(data=cfdm.Data(123, 'days since 1750-1-1'))
-            t.standard_name = 'time'
-            dim = f.insert_axis(cfdm.DomainAxis(1))
-            f.insert_dim(t, key=dim)
-            cfdm.write(f, tmpfile, fmt='NETCDF4', reference_datetime=reference_datetime)
-            g = cfdm.read(tmpfile)[0]
-            t = g.item('T', role='d')
-            self.assertTrue(t.Units == cfdm.Units('days since '+reference_datetime),
-                            'Units written were '+repr(t.Units.reftime)+' not '+repr(reference_datetime))
-        #--- End: for
     #--- End: def
 
     def test_write_HDF_chunks(self):

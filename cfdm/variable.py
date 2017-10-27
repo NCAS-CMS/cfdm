@@ -1,14 +1,10 @@
 from copy      import deepcopy
 from functools import partial as functools_partial
-from re        import escape  as re_escape
-from re        import match   as re_match
-from re        import findall as re_findall
+import re
 from textwrap  import fill as textwrap_fill
 from itertools import izip
 from cPickle   import dumps, loads, PicklingError
-from re        import search as re_search
 from netCDF4   import default_fillvals as _netCDF4_default_fillvals
-from re        import compile as re_compile
 
 from numpy import array       as numpy_array
 from numpy import asanyarray  as numpy_asanyarray
@@ -642,7 +638,7 @@ Role                Items of the given component type   *role*
     # ----------------------------------------------------------------
 }
 
-p = re_compile('(?<=.)([A-Z])') # E.g. DimensionCoordinate or Variable
+p = re.compile('(?<=.)([A-Z])') # E.g. DimensionCoordinate or Variable
 
 def _update_docstring(name, f, attr_name, docstring):
     '''
@@ -662,7 +658,7 @@ def _update_docstring(name, f, attr_name, docstring):
     doc = doc.replace('{+variable}', name_lc)
 
     kwargs = {}
-    for arg in set(re_findall('{\+.*?}', doc)):
+    for arg in set(re.findall('{\+.*?}', doc)):
         
         if arg in ('{+mod,}',):
             continue
@@ -2543,11 +2539,11 @@ properties.
     
                 if x is None:
                     found_match = False
-                elif isinstance(x, basestring) and isinstance(value, basestring):
-                    if exact:
-                        found_match = re_match(value, x)
-                    else:
-                        found_match = re_match(value, x)
+                elif not exact and isinstance(x, basestring) and isinstance(value, basestring):
+#                    if exact:
+#                        found_match = re.match(value, x)
+#                    else:
+                    found_match = re.match(value, x)
                 else:	
                     found_match = (value == x)
                     try:

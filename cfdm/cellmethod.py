@@ -39,11 +39,10 @@ Attribute     Description
         '''
 '''
         if cell_method:
-            cell_method = CellMethods(*cell_method)
+            cell_method = self.parse(cell_method[0])
             if len(cell_method) > 1:
                 raise ValueError(" e5y 6sdf ")
 
-            cell_method = cell_method[0]
             self.__dict__ = cell_method[0].__dict__.copy()
         else:
             self._axes      = ()
@@ -64,49 +63,49 @@ Used if copy.deepcopy is called on the variable.
         return self.copy()
     #--- End: def
 
-    def __getitem__(self, index):
-        '''Called to implement evaluation of c[index].
-
-c.__getitem__(index) <==> c[index]
-
-The cell method is treated as if it were a single element cell methods
-list containing itself, i.e. ``c[index]`` is equivalent to
-``cf.CellMethods(c)[index]``.
-
-:Examples 1:
-
->>> d = c[0]
->>> d = c[:1]
->>> d = c[1:]
-
-:Returns:
-
-    out : cf.CellMethod or cf.CellMethods
-        If *index* is the integer 0 or -1 then the cell method itself
-        is returned. If *index* is a slice then a cell methods list is
-        returned which is either empty or else contains a single
-        element of the cell method itself.
-          
-.. seealso:: `cf.CellMethods.__getitem__`
-
-:Examples 2:
-
->>> c[0] is c[-1] is c
-True
->>> c[0:1].equals(cf.FieldList(f))   
-True
->>> c[0:1][0] is c
-True
->>> c[1:].equals(cf.CellMethods())
-True
->>> c[1:]       
-[]
->>> c[-1::3][0] is c
-True
-
-        '''
-        return CellMethods((self,))[index]
-    #--- End: def
+#    def __getitem__(self, index):
+#        '''Called to implement evaluation of c[index].
+#
+#c.__getitem__(index) <==> c[index]
+#
+#The cell method is treated as if it were a single element cell methods
+#list containing itself, i.e. ``c[index]`` is equivalent to
+#``cf.CellMethods(c)[index]``.
+#
+#:Examples 1:
+#
+#>>> d = c[0]
+#>>> d = c[:1]
+#>>> d = c[1:]
+#
+#:Returns:
+#
+#    out : cf.CellMethod or cf.CellMethods
+#        If *index* is the integer 0 or -1 then the cell method itself
+#        is returned. If *index* is a slice then a cell methods list is
+#        returned which is either empty or else contains a single
+#        element of the cell method itself.
+#          
+#.. seealso:: `cf.CellMethods.__getitem__`
+#
+#:Examples 2:
+#
+#>>> c[0] is c[-1] is c
+#True
+#>>> c[0:1].equals(cf.FieldList(f))   
+#True
+#>>> c[0:1][0] is c
+#True
+#>>> c[1:].equals(cf.CellMethods())
+#True
+#>>> c[1:]       
+#[]
+#>>> c[-1::3][0] is c
+#True
+#
+#        '''
+#        return CellMethods((self,))[index]
+#    #--- End: def
 
     def __hash__(self):
         '''
@@ -117,21 +116,21 @@ x.__hash__() <==> hash(x)
         return hash(str(self))
     #--- End: def
 
-    def __len__(self):
-        '''Called by the :py:obj:`len` built-in function.
-
-x.__len__() <==> len(x)
-
-Always returns 1.
-
-:Examples:
-
->>> len(c)
-1
-
-        '''
-        return 1
-    #--- End: def
+#    def __len__(self):
+#        '''Called by the :py:obj:`len` built-in function.
+#
+#x.__len__() <==> len(x)
+#
+#Always returns 1.
+#
+#:Examples:
+#
+#>>> len(c)
+#1
+#
+#        '''
+#        return 1
+#    #--- End: def
 
     def __repr__(self):
         '''Called by the :py:obj:`repr` built-in function.
@@ -189,23 +188,23 @@ modified, where appropriate, to reflect netCDF variable names.
         return ' '.join(string)
     #--- End: def
 
-    def __eq__(self, y):
-        '''
-
-x.__eq__(y) <==> x==y
-
-'''
-        return self.equals(y)
-    #--- End: def
-
-    def __ne__(self, other):
-        '''
-
-x.__ne__(y) <==> x!=y
-
-'''
-        return not self.__eq__(other)
-    #--- End: def
+#    def __eq__(self, y):
+#        '''
+#
+#x.__eq__(y) <==> x==y
+#
+#'''
+#        return self.equals(y)
+#    #--- End: def
+#
+#    def __ne__(self, other):
+#        '''
+#
+#x.__ne__(y) <==> x!=y
+#
+#'''
+#        return not self.__eq__(other)
+#    #--- End: def
 
     @classmethod
     def parse(cls, string=None, field=None):
@@ -314,9 +313,9 @@ Cell methods    : time: minimum within years
                             raise ValueError(
 "Unparseable cell methods interval: {!r}".format(
     interval+' '+units if units is not None else interval))
-                            
+
                         try:
-                            intervals.append(self._Data(parsed_interval, units))
+                            intervals.append(cls._Data(parsed_interval, units))
                         except:
                             raise ValueError(
 "Unparseable cell methods interval: {!r}".format(
@@ -735,30 +734,30 @@ corresponding dimension or dimensions.
         return c
     #--- End: def
 
-    def sort(self, argsort=None):
-        axes = self._axes
-        if len(axes) == 1:
-            return
-
-        if argsort is None:
-            argsort = numpy_argsort(axes)
-        elif len(argsort) != len(axes):
-            raise ValueError(".sjdn ;siljdf vlkjndf jk")
-
-        axes2 = []
-        for i in argsort:
-            axes2.append(axes[i])
-        self._axes = tuple(axes2)
-
-        intervals = self._intervals
-        if len(intervals) <= 1:
-            return
-
-        intervals2 = []
-        for i in argsort:
-            intervals2.append(intervals[i])
-        self._intervals = tuple(intervals2)
-    #--- End: def
+#    def sort(self, argsort=None):
+#        axes = self._axes
+#        if len(axes) == 1:
+#            return
+#
+#        if argsort is None:
+#            argsort = numpy_argsort(axes)
+#        elif len(argsort) != len(axes):
+#            raise ValueError(".sjdn ;siljdf vlkjndf jk")
+#
+#        axes2 = []
+#        for i in argsort:
+#            axes2.append(axes[i])
+#        self._axes = tuple(axes2)
+#
+#        intervals = self._intervals
+#        if len(intervals) <= 1:
+#            return
+#
+#        intervals2 = []
+#        for i in argsort:
+#            intervals2.append(intervals[i])
+#        self._intervals = tuple(intervals2)
+#    #--- End: def
 
     def remove_axes(self, axes):
         '''
@@ -939,84 +938,84 @@ The `!axes` attribute is ignored in the comparison.
         return True
     #--- End: def
 
-    def equivalent(self, other, rtol=None, atol=None, traceback=False):
-        '''True if two cell methods are equivalent, False otherwise.
-
-The `axes` and `intervals` attributes are ignored in the comparison.
-
-:Parameters:
-
-    other : 
-        The object to compare for equality.
-
-    atol : float, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
-
-    rtol : float, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
-
-:Returns: 
-
-    out : bool
-        Whether or not the two instances are equivalent.
-
-:Examples:
-
-        '''
-        if self is other:
-            return True
-
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
-            if traceback:
-                print("{0}: Different types: {0} != {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-
-        axes0 = self.axes
-        axes1 = other.axes
-            
-        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-            if traceback:
-                print("{}: Nonequivalent axes: {!r}, {!r}".format(
-                    self.__class__.__name__, axes0, axes1))
-            return False
-            
-        other1 = other.copy()
-        argsort = [axes1.index(axis0) for axis0 in axes0]
-        other1.sort(argsort=argsort)
-        self1 = self
-
-        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('intervals',)):
-            if traceback:
-                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
-                    self.__class__.__name__, self, other))
-            return False
-
-        if len(self1.intervals) != len(other1.intervals):
-            self1 = self1.expand_intervals(copy=False)
-            other1.expand_intervals(copy=False)
-            if len(self1.intervals) != len(other1.intervals):
-                if traceback:
-                    print("{0}: Different numbers of intervals: {1!r} != {2!r}".format(
-                        self.__class__.__name__, self1.intervals, other1.intervals))
-                return False
-
-        intervals0 = self1.intervals
-        if intervals0:
-            for data0, data1 in zip(intervals0, other1.intervals):
-                if not data0.allclose(data1, rtol=rtol, atol=atol):
-                    if traceback:
-                        print("{0}: Different interval data: {1!r} != {2!r}".format(
-                            self.__class__.__name__, self.intervals, other.intervals))
-                    return False
-        #--- End: if
-
-        # Still here? Then they are equivalent
-        return True
-    #--- End: def
+#    def equivalent(self, other, rtol=None, atol=None, traceback=False):
+#        '''True if two cell methods are equivalent, False otherwise.
+#
+#The `axes` and `intervals` attributes are ignored in the comparison.
+#
+#:Parameters:
+#
+#    other : 
+#        The object to compare for equality.
+#
+#    atol : float, optional
+#        The absolute tolerance for all numerical comparisons, By
+#        default the value returned by the `ATOL` function is used.
+#
+#    rtol : float, optional
+#        The relative tolerance for all numerical comparisons, By
+#        default the value returned by the `RTOL` function is used.
+#
+#:Returns: 
+#
+#    out : bool
+#        Whether or not the two instances are equivalent.
+#
+#:Examples:
+#
+#        '''
+#        if self is other:
+#            return True
+#
+#        # Check that each instance is the same type
+#        if self.__class__ != other.__class__:
+#            if traceback:
+#                print("{0}: Different types: {0} != {1}".format(
+#                    self.__class__.__name__, other.__class__.__name__))
+#            return False
+#
+#        axes0 = self.axes
+#        axes1 = other.axes
+#            
+#        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
+#            if traceback:
+#                print("{}: Nonequivalent axes: {!r}, {!r}".format(
+#                    self.__class__.__name__, axes0, axes1))
+#            return False
+#            
+#        other1 = other.copy()
+#        argsort = [axes1.index(axis0) for axis0 in axes0]
+#        other1.sort(argsort=argsort)
+#        self1 = self
+#
+#        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('intervals',)):
+#            if traceback:
+#                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
+#                    self.__class__.__name__, self, other))
+#            return False
+#
+#        if len(self1.intervals) != len(other1.intervals):
+#            self1 = self1.expand_intervals(copy=False)
+#            other1.expand_intervals(copy=False)
+#            if len(self1.intervals) != len(other1.intervals):
+#                if traceback:
+#                    print("{0}: Different numbers of intervals: {1!r} != {2!r}".format(
+#                        self.__class__.__name__, self1.intervals, other1.intervals))
+#                return False
+#
+#        intervals0 = self1.intervals
+#        if intervals0:
+#            for data0, data1 in zip(intervals0, other1.intervals):
+#                if not data0.allclose(data1, rtol=rtol, atol=atol):
+#                    if traceback:
+#                        print("{0}: Different interval data: {1!r} != {2!r}".format(
+#                            self.__class__.__name__, self.intervals, other.intervals))
+#                    return False
+#        #--- End: if
+#
+#        # Still here? Then they are equivalent
+#        return True
+#    #--- End: def
 
     def write(self, axis_map={}):
         '''

@@ -617,7 +617,7 @@ AttributeError: {+Variable} doesn't have CF property 'foo'
 
 Return a string containing a full description of the variable.
 
-.. versionadded:: 2.0 
+.. versionadded:: 1.6
 
 :Parameters:
 

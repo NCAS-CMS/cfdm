@@ -57,7 +57,7 @@ Axes           : latitude(10) = [0, ..., 9] degrees_north
 
         aux.long_name = 'extra'
         f.insert_aux(aux, axes=['dim0'])
-        f.insert_cell_methods('latitude: point')
+        f.insert_cell_method(cfdm.CellMethod('latitude: point'))
         f.long_name = 'wind' 
         print_f = str(f)
 
@@ -134,7 +134,7 @@ Axes           : latitude(10) = [0, ..., 9] degrees_north
         # Finally, create the field
         f = cfdm.Field(properties=properties)
 
-        f.insert_cell_methods('latitude: point')
+        f.insert_cell_method(cfdm.CellMethod('latitude: point'))
 
         f.insert_dim(T)
         f.insert_dim(X)
@@ -215,7 +215,7 @@ Coord refs     : rotated_latitude_longitude
         # Finally, create the field
         f = cfdm.Field(properties=properties)
 
-        f.insert_cell_methods('latitude: point')
+        f.insert_cell_method(cfdm.CellMethod('latitude: point'))
 
         f.insert_dim(T)
         f.insert_dim(X)

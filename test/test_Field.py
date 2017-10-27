@@ -369,6 +369,19 @@ class FieldTest(unittest.TestCase):
 #        print y
 #    #--- End: def
 
+    def test_Field_item_items_role_r(self):
+        f = cfdm.read(self.filename)[0]
+        
+        self.assertTrue(f.item('BLAH',  role='r') is None)
+        self.assertTrue(f.item('atmos', role='r', key=True) == 'ref0')
+        self.assertTrue(f.item('atmos', role='r', key=True, inverse=True) == 'ref1')
+
+        self.assertTrue(set(f.items(role='r')) == set(['ref0', 'ref1']))
+        self.assertTrue(set(f.items('BLAH', role='r')) == set())
+        self.assertTrue(set(f.items('rot', role='r')) == set(['ref1']))
+        self.assertTrue(set(f.items('rot', role='r', inverse=True)) == set(['ref0']))
+        self.assertTrue(set(f.items('atmosphere_hybrid_height_coordinate', role='r', exact=True)) == set(['ref0']))
+    #--- End: def
 #--- End: class
 
 if __name__ == '__main__':
