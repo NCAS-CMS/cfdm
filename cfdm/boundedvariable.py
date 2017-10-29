@@ -43,7 +43,8 @@ domain ancillary objects.
         If False then do not copy arguments prior to
         initialization. By default arguments are deep copied.
   
-        '''         
+        '''
+        print 'CFDM BOUNDEDEDVARIABLE __INIT__'
         if source is not None:
             if bounds is None:
                 if isinstance(source, BoundedVariable):
@@ -59,9 +60,7 @@ domain ancillary objects.
         # Bounds
         if bounds is not None:
             self.insert_bounds(bounds, copy=copy)
-  
-    
-    #--- End: def
+      #--- End: def
 
     def __getitem__(self, indices):
         '''
@@ -637,6 +636,7 @@ Return a string containing a full description of the variable.
 :Examples:
 
 '''
+        print 'CFDM NOUNDED VARIABLE DUMP', type(self)
         indent0 = '    ' * _level
         indent1 = '    ' * (_level+1)
 

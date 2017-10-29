@@ -6,7 +6,7 @@ class DomainAncillary(BoundedVariable):
 A domain ancillary construct provides information which is needed for
 computing the location of cells in an alternative coordinate
 system. It is the value of a term of a coordinate conversion formula
-that contains a data array which depends on one or more of the domain
+that contains a data array which depends on zero or more of the domain
 axes.
 
 It also contains an optional array of cell bounds recording the
@@ -42,6 +42,7 @@ ancillary object.
 
     display: `bool`, optional
         If False then return the description as a string. By default
+
         the description is printed, i.e. ``f.dump()`` is equivalent to
         ``print f.dump(display=False)``.
 
@@ -57,7 +58,8 @@ ancillary object.
 :Examples:
 
         '''
-        print '_title=', title
+        print 'CFDM DOMAINANC DUMP'
+        print '_title=', _title
         if _title is None:
             _title = 'Domain Ancillary: ' + self.name(default='')
 

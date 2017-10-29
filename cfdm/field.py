@@ -1261,7 +1261,7 @@ last values.
                                      key=key, _level=_level))
         # Domain ancillaries
         for key, value in sorted(self.Items.domain_ancs().iteritems()):
-            value.dump() #dch
+            print type(value), value.dump() #dch
             string.append('') 
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
