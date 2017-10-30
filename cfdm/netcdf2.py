@@ -1,3 +1,4 @@
+import copy
 import re
 import os
 import struct
@@ -10,12 +11,54 @@ from .functions import abspath, flat
 class NetCDF(object):
     '''
     '''
+
+#    _write_vars =  {
+#        # Format of output file
+#        'fmt': None,
+#        # netCDF4.Dataset instance
+#        'netcdf'           : None,    
+#        # Map netCDF variable names to netCDF4.Variable instances
+#        'nc': {},      
+#        # Map netCDF dimension names to netCDF dimension sizes
+#        'ncdim_to_size': {},
+#        # Dictionary of netCDF variable names and netCDF dimensions
+#        # keyed by items of the field (such as a coordinate or a
+#        # coordinate reference)
+#        'seen': {},
+#        # Set of all netCDF dimension and netCDF variable names.
+#        'ncvar_names': set(()),
+#        # Set of global or non-standard CF properties which have
+#        # identical values across all input fields.
+#        'global_properties': set(()), 
+#        'variable_attributes': set(()),
+#        'bounds': {},
+#        # Compression/endian
+#        'compression': {},
+#        'endian': 'native',
+#        'least_significant_digit': None,
+#        # CF properties which need not be set on bounds if they're set
+#        # on the parent coordinate
+#        'omit_bounds_properties': ('units', 'standard_name', 'axis',
+#                                   'positive', 'calendar', 'month_lengths',
+#                                   'leap_year', 'leap_month'),
+#        # Data type conversions to be applied prior to writing
+#        'datatype': {},
+#        #
+#        'unlimited': (),
+#        # Print statements
+#        'verbose': False,
+#        '_debug' : False,
+#    }
+
     def __init__(self, mode=None, **kwargs):
         '''
         '''
         for attr in ('NetCDFArray',):
             if attr not in kwargs:
                 raise ValueError("Must set {}".format(attr))    
+                
+        self._write_vars =  {}
+        self._read_vars  =  {}
                 
         if mode == 'read':
             for attr in ('AuxiliaryCoordinate',
@@ -37,7 +80,45 @@ class NetCDF(object):
         elif mode == 'write':
             for attr in ('Conventions',):
                 if attr not in kwargs:
-                    raise ValueError("Must set {} in 'write' mode".format(attr))    
+                    raise ValueError("Must set {} in 'write' mode".format(attr))
+
+            self._write_vars =  {
+                # Format of output file
+                'fmt': None,
+                # netCDF4.Dataset instance
+                'netcdf'           : None,    
+                # Map netCDF variable names to netCDF4.Variable instances
+                'nc': {},      
+                # Map netCDF dimension names to netCDF dimension sizes
+                'ncdim_to_size': {},
+                # Dictionary of netCDF variable names and netCDF
+                # dimensions keyed by items of the field (such as a
+                # coordinate or a coordinate reference)
+                'seen': {},
+                # Set of all netCDF dimension and netCDF variable names.
+                'ncvar_names': set(()),
+                # Set of global or non-standard CF properties which have
+                # identical values across all input fields.
+                'global_properties': set(()), 
+                'variable_attributes': set(()),
+                'bounds': {},
+                # Compression/endian
+                'compression': {},
+                'endian': 'native',
+                'least_significant_digit': None,
+                # CF properties which need not be set on bounds if they're set
+                # on the parent coordinate
+                'omit_bounds_properties': ('units', 'standard_name', 'axis',
+                                           'positive', 'calendar', 'month_lengths',
+                                           'leap_year', 'leap_month'),
+                # Data type conversions to be applied prior to writing
+                'datatype': {},
+                #
+                'unlimited': (),
+                # Print statements
+                'verbose': False,
+                '_debug' : False,
+            }
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
@@ -1839,9 +1920,7 @@ ancillaries, field ancillaries).
               verbose=False, mode='w', least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
               no_shuffle=False, datatype=None, single=False,
-              double=False,
-#              reference_datetime=None,
-              variable_attributes=None, HDF_chunks=None,
+              double=False, variable_attributes=None, HDF_chunks=None,
               unlimited=None, _debug=False):
         '''Write fields to a CF-netCDF file.
         
@@ -1962,7 +2041,13 @@ and auxiliary coordinate roles for different data variables.
         '''    
         if _debug:
             print 'Writing to netCDF:'
-    
+
+        # ------------------------------------------------------------
+        # Initialize dictionary of useful global variables
+        # ------------------------------------------------------------
+        self.write_vars = copy.deepcopy(self._write_vars)
+        g = self.write_vars
+
         compress = int(compress)
         zlib = bool(compress) 
     
@@ -1973,98 +2058,45 @@ and auxiliary coordinate roles for different data variables.
         if compress and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT'):
             raise ValueError("Can't compress {} format file".format(fmt))
         
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Set up non-global attributes
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         if variable_attributes:
             if isinstance(variable_attributes, basestring):
                 variable_attributes = set((variable_attributes,))
             else:
                 variable_attributes = set(variable_attributes)
-        else:
-            variable_attributes = set()
+
+            g['variable_attributes'] = variable_attributes
+        #--- End: def
     
-        # ----------------------------------------------------------------
-        # Set up data type conversions. By default, booleans are converted
-        # to 32-bit integers and python objects are converted to 64-bit
-        # floats.
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
+        # Set up data type conversions. By default, booleans are
+        # converted to 32-bit integers and python objects are
+        # converted to 64-bit floats.
+        # ------------------------------------------------------------
         dtype_conversions = {numpy.dtype(bool)  : numpy.dtype('int32'),
                              numpy.dtype(object): numpy.dtype(float)}
         if datatype:
-            dtype_conversions.update(datatype)
+            g['dtype_conversions'].update(datatype)
 
-        if not unlimited:
-            unlimited = ()
+        if unlimited:
+            g['unlimited'] = unlimited
     
-        # ----------------------------------------------------------------
-        # Initialize dictionary of useful global variables
-        # ----------------------------------------------------------------
-        g = {'netcdf'           : None,    # - netCDF4.Dataset instance
-                                           #-----------------------------
-             'nc'               : {},      # - Map netCDF variable names
-                                           #   to netCDF4.Variable
-                                           #   instances
-             'ncdim_to_size'    : {},      # - Map netCDF dimension names
-                                           #   to netCDF dimension sizes
-             'ncpdim_to_size'   : {},      # - Dictionary of PARTITION
-                                           #   dimension sizes keyed by
-                                           #   netCDF dimension names.
-                                           #-----------------------------
-             'seen'             : {},      # - Dictionary of netCDF
-                                           #   variable names and netCDF
-                                           #   dimensions keyed by items
-                                           #   of the field (such as a
-                                           #   coordinate or a coordinate
-                                           #   reference).
-                                           #-----------------------------
-             'ncvar_names'      : set(()), # - Set of all netCDF
-                                           #   dimension and netCDF
-                                           #   variable names.
-             'global_properties': set(()), # - Set of global or
-                                           #   non-standard CF properties
-                                           #   which have identical
-                                           #   values across all input
-                                           #   fields.
-                                           #-----------------------------
-             'variable_attributes': variable_attributes,
-             'bounds': {},
-             # -----------------------------------------------------------
-             # Compression/endian
-             # -----------------------------------------------------------
-             'compression'            : {'zlib'       : zlib,
-                                         'complevel'  : compress,
-                                         'fletcher32' : fletcher32,
-                                         'shuffle'    : not no_shuffle},
-             'endian'                 : endian,
-             'least_significant_digit': least_significant_digit,
-             # -----------------------------------------------------------
-             # cf properties which need not be set on bounds if they're
-             # set on the parent coordinate
-             # -----------------------------------------------------------
-             'omit_bounds_properties': ('units', 'standard_name', 'axis',
-                                        'positive', 'calendar', 'month_lengths',
-                                        'leap_year', 'leap_month'),
-             # ------------------------------------------------------------
-             # Specify data type conversions to be applied prior to writing
-             # ------------------------------------------------------------
-             'datatype': dtype_conversions,
-#             # ------------------------------------------------------------
-#             # Specify unit conversions to be applied prior to writing
-#             # ------------------------------------------------------------
-#             'reference_datetime': reference_datetime,
-             # ------------------------------------------------------------
-             # 
-             # ------------------------------------------------------------
-             'unlimited': unlimited,
-             # -----------------------------------------------------------
-             # Miscellaneous
-             # -----------------------------------------------------------
-             'verbose': verbose,
-             '_debug' : _debug,
-        }
-
-        self.write_vars = g
+        # -------------------------------------------------------
+        # Compression/endian
+        # -------------------------------------------------------
+        g['compression'].update(
+            {'zlib'       : zlib,
+             'complevel'  : compress,
+             'fletcher32' : fletcher32,
+             'shuffle'    : not no_shuffle,
+            })
+        g['endian'] = endian
+        g['least_significant_digit'] = least_significant_digit
+        
+        g['verbose'] = verbose
+        g['_debug']  = _debug        
         
         g['fmt'] = fmt
     
@@ -2154,7 +2186,7 @@ and auxiliary coordinate roles for different data variables.
         self.NetCDFArray.file_close(filename)
     #--- End: def
     
-    def _check_name(self, base, dimsize=None):
+    def _write_check_name(self, base, dimsize=None):
         '''
     
     :Parameters:
@@ -2345,7 +2377,7 @@ and auxiliary coordinate roles for different data variables.
         # ----------------------------------------------------------------
         # Create a new dimension for the maximum string length
         # ----------------------------------------------------------------
-        ncdim = self._check_name('strlen{0}'.format(size), dimsize=size)
+        ncdim = self._write_check_name('strlen{0}'.format(size), dimsize=size)
         
         if ncdim not in g['ncdim_to_size']:
             # This string length dimension needs creating
@@ -2400,7 +2432,7 @@ coordinate or cell measures objects.
         g = self.write_vars
 
         ncvar = getattr(variable, 'ncvar', variable.identity(default=default))    
-        return self._check_name(ncvar)
+        return self._write_check_name(ncvar)
     #--- End: def
     
     def _data_ncvar(self, ncvar):
@@ -2417,7 +2449,7 @@ coordinate or cell measures objects.
         '''
         g = self.write_vars
 
-        return self._check_name(ncvar, None)
+        return self._write_check_name(ncvar, None)
     #--- End: def
     
     def _write_dimension(self, ncdim, f, axis, axis_to_ncdim, unlimited=False):
@@ -2621,7 +2653,7 @@ a new netCDF bounds dimension.
         create = not self._seen(value, ncdims=())
     
         if create:
-            ncvar = self._check_name(ncvar) # DCH ?
+            ncvar = self._write_check_name(ncvar) # DCH ?
             
             # Create a new dimension coordinate variable
             self._create_netcdf_variable(ncvar, (), value)
@@ -2728,7 +2760,7 @@ dictionary.
     
         size = bounds.shape[-1]
     
-        ncdim = self._check_name('bounds{0}'.format(size), dimsize=size)
+        ncdim = self._write_check_name('bounds{0}'.format(size), dimsize=size)
     
         # Check if this bounds variable has not been previously
         # created.
@@ -2750,7 +2782,7 @@ dictionary.
             
             ncvar = getattr(bounds, 'ncvar', coord_ncvar+'_bounds')
             
-            ncvar = self._check_name(ncvar)
+            ncvar = self._write_check_name(ncvar)
             
             # Note that, in a field, bounds always have equal units to
             # their parent coordinate
@@ -3481,7 +3513,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 # netCDF dimension for it
                 if axis in data_axes:
                     ncdim = getattr(f, 'ncdimensions', {}).get(axis, 'dim')
-                    ncdim = self._check_name(ncdim)
+                    ncdim = self._write_check_name(ncdim)
     
                     unlimited = self._unlimited(f, axis)
                     self._write_dimension(ncdim, f, axis, axis_to_ncdim,
