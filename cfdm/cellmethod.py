@@ -734,30 +734,30 @@ corresponding dimension or dimensions.
         return c
     #--- End: def
 
-#    def sort(self, argsort=None):
-#        axes = self._axes
-#        if len(axes) == 1:
-#            return
-#
-#        if argsort is None:
-#            argsort = numpy_argsort(axes)
-#        elif len(argsort) != len(axes):
-#            raise ValueError(".sjdn ;siljdf vlkjndf jk")
-#
-#        axes2 = []
-#        for i in argsort:
-#            axes2.append(axes[i])
-#        self._axes = tuple(axes2)
-#
-#        intervals = self._intervals
-#        if len(intervals) <= 1:
-#            return
-#
-#        intervals2 = []
-#        for i in argsort:
-#            intervals2.append(intervals[i])
-#        self._intervals = tuple(intervals2)
-#    #--- End: def
+    def sort(self, argsort=None):
+        axes = self._axes
+        if len(axes) == 1:
+            return
+
+        if argsort is None:
+            argsort = numpy_argsort(axes)
+        elif len(argsort) != len(axes):
+            raise ValueError(".sjdn ;siljdf vlkjndf jk")
+
+        axes2 = []
+        for i in argsort:
+            axes2.append(axes[i])
+        self._axes = tuple(axes2)
+
+        intervals = self._intervals
+        if len(intervals) <= 1:
+            return
+
+        intervals2 = []
+        for i in argsort:
+            intervals2.append(intervals[i])
+        self._intervals = tuple(intervals2)
+    #--- End: def
 
     def remove_axes(self, axes):
         '''

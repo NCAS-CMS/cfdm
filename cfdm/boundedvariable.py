@@ -44,7 +44,6 @@ domain ancillary objects.
         initialization. By default arguments are deep copied.
   
         '''
-        print 'CFDM BOUNDEDEDVARIABLE __INIT__'
         if source is not None:
             if bounds is None:
                 if isinstance(source, BoundedVariable):
@@ -636,7 +635,6 @@ Return a string containing a full description of the variable.
 :Examples:
 
 '''
-        print 'CFDM NOUNDED VARIABLE DUMP', type(self)
         indent0 = '    ' * _level
         indent1 = '    ' * (_level+1)
 

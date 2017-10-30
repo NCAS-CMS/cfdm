@@ -1325,10 +1325,12 @@ The `Data` object containing the data array.
         old = getattr(self, 'data', None)
 
         if old is None:
-            raise ValueError("Can't set 'data' when data has not previously been set with 'insert_data'")
+            raise ValueError(
+"Can't set 'data' when data has not previously been set with the 'insert_data' method")
 
         if old.shape != value.shape: 
-            raise ValueError("Can't set 'data' to new data with different shape. Use 'insert_data'")
+            raise ValueError(
+"Can't set 'data' to new data with different shape. Consider the 'insert_data' method.")
        
         self._Data = value
     #--- End: def
@@ -2585,13 +2587,13 @@ properties.
              _omit_attributes=False):
         '''Return a deep copy.
 
-``f.{+name}()`` is equivalent to ``copy.deepcopy(f)``.
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
 .. versionadded:: 1.6
 
 :Examples 1:
 
->>> g = f.{+name}()
+>>> g = f.copy()
 
 :Returns:
 
@@ -2600,7 +2602,7 @@ properties.
 
 :Examples 2:
 
->>> g = f.{+name}()
+>>> g = f.copy()
 >>> g is f
 False
 >>> f.equals(g)

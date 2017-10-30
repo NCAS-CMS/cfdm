@@ -58,8 +58,6 @@ ancillary object.
 :Examples:
 
         '''
-        print 'CFDM DOMAINANC DUMP'
-        print '_title=', _title
         if _title is None:
             _title = 'Domain Ancillary: ' + self.name(default='')
 
