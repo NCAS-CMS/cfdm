@@ -1065,8 +1065,8 @@ x.__str__() <==> str(x)
         private = self._private
         private['Data'] = value
 
-#        # Delete Units from the variable
-#        private['special_attributes'].pop('Units', None)
+        # Delete Units from the variable
+        private['special_attributes'].pop('Units', None)
  
         self._hasdata = True
     #--- End: def
@@ -1080,8 +1080,8 @@ x.__str__() <==> str(x)
                 "Can't delete non-existent data".format(
                     self.__class__.__name__))
 
-#        # Save the Units to the variable
-#        private['special_attributes']['Units'] = data.Units
+        # Save the Units to the variable
+        private['special_attributes']['Units'] = data.Units
 
         self._hasdata = False
     #--- End: def
@@ -1422,8 +1422,8 @@ properties respectively.
 .. versionadded:: 1.6
 
         '''
-#        if self.hasdata:
-#            return self.data.Units
+        if self.hasdata:
+            return self.data.Units
 
         try:
             return self._get_special_attr('Units')
@@ -1435,10 +1435,10 @@ properties respectively.
 
     @Units.setter
     def Units(self, value):
-#        if self.hasdata:
-#            self.data.Units = value
-#        else:
-        self._set_special_attr('Units', value)
+        if self.hasdata:
+            self.data.Units = value
+        else:
+            self._set_special_attr('Units', value)
     #--- End: def
 
     def remove_data(self):
@@ -1545,8 +1545,9 @@ http://cfconventions.org/latest.html for details.
         '''
         value = getattr(self.Units, 'calendar', None)
         if value is None:
-            raise AttributeError("%s doesn't have CF property 'calendar'" %
-                                 self.__class__.__name__)
+            raise AttributeError(
+                "{} doesn't have CF property 'calendar'".format(
+                    self.__class__.__name__))
         return value
     #--- End: def
 
@@ -1558,8 +1559,9 @@ http://cfconventions.org/latest.html for details.
     @calendar.deleter
     def calendar(self):
         if getattr(self, 'calendar', None) is None:
-            raise AttributeError("Can't delete non-existent %s CF property 'calendar'" %
-                                 self.__class__.__name__)
+            raise AttributeError(
+                "Can't delete non-existent {} CF property 'calendar'".format(
+                    self.__class__.__name__))
         
         self.Units = self._Units(getattr(self, 'units', None))
     #--- End: def
@@ -1967,7 +1969,6 @@ http://cfconventions.org/latest.html for details.
     @units.setter
     def units(self, value):
         self.Units = self._Units(value, getattr(self, 'calendar', None))
-    #--- End: def
     @units.deleter
     def units(self):
         if getattr(self, 'units', None) is None:

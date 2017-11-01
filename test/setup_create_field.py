@@ -14,11 +14,13 @@ class create_fieldTest(unittest.TestCase):
     def test_create_field(self):
 
         # Dimension coordinates
-        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.), 'degrees'))
+        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.))) #, 'degrees'))
         dim1.standard_name = 'grid_latitude'
+        dim1.units = 'degrees'
 
-        dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(9.) + 20, 'degrees'))
+        dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(9.) + 20)) #, 'degrees'))
         dim0.standard_name = 'grid_longitude'
+        dim0.units = 'degrees'
         dim0.data[-1] = 34
         bounds = cfdm.Data(numpy.array([dim0.data.array-0.5, dim0.data.array+0.5]).transpose((1,0)))
         bounds[-2,1] = 30
@@ -29,24 +31,26 @@ class create_fieldTest(unittest.TestCase):
         dim2.standard_name = 'atmosphere_hybrid_height_coordinate'
         
         # Auxiliary coordinates
-        ak = cfdm.DomainAncillary(data=cfdm.Data([10.], 'm'))
+        ak = cfdm.DomainAncillary(data=cfdm.Data([10.])) #, 'm'))
+        ak.units = 'm'
         ak.id = 'atmosphere_hybrid_height_coordinate_ak'
-        ak.insert_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]])), ak.Units)
+        ak.insert_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]]))) # , ak.Units)
         
         bk = cfdm.DomainAncillary(data=cfdm.Data([20.]))
         bk.id = 'atmosphere_hybrid_height_coordinate_bk'
         bk.insert_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
         
         aux2 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9),
-                         units='degree_N'))
+            data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9))) #, units='degree_N'))
         aux2.standard_name = 'latitude'
+        aux2.units = 'degree_N'
         
         aux3 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10),
-                         units='degreesE'))
+            data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10))) #,
+#                         units='degreesE'))
         aux3.standard_name = 'longitude'
-        
+        aux3.units = 'degreeE'
+                
         aux4 = cfdm.AuxiliaryCoordinate(
             data=cfdm.Data(['alpha','beta','gamma','delta','epsilon',
                           'zeta','eta','theta','iota','kappa']))
@@ -55,8 +59,9 @@ class create_fieldTest(unittest.TestCase):
     
         # Cell measures
         msr0 = cfdm.CellMeasure(
-            data=cfdm.Data(1+numpy.arange(90.).reshape(9, 10)*1234, 'km2'))
+            data=cfdm.Data(1+numpy.arange(90.).reshape(9, 10)*1234)) #, 'km2'))
         msr0.measure = 'area'
+        msr0.units = 'km2'
         
         # Coordinate references
         ref0 = cfdm.CoordinateReference(
@@ -65,12 +70,13 @@ class create_fieldTest(unittest.TestCase):
                         'grid_north_pole_longitude': 190.0})
         
         # Data          
-        data = cfdm.Data(numpy.arange(90.).reshape(10, 9), 'm s-1')
+        data = cfdm.Data(numpy.arange(90.).reshape(10, 9)) #, 'm s-1')
 
-        properties = {'standard_name': 'eastward_wind'}
+        properties = {'standard_name': 'eastward_wind', 'units': 'm s-1'} WHY does units here not work?
         
         f = cfdm.Field(properties=properties, data=data)
-
+        f.units = 'm s-1'
+        
         x = f.insert_dim(dim0)
         y = f.insert_dim(dim1)
         z = f.insert_dim(dim2)
@@ -126,7 +132,8 @@ class create_fieldTest(unittest.TestCase):
         for cm in cfdm.CellMethod.parse('grid_longitude: mean grid_latitude: max'):
             f.insert_cell_method(cm)
 
-#        f.dump()
+        f.dump()
+        print f
         # Write the file, and read it in
 #        print f.shape
  

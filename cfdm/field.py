@@ -301,6 +301,7 @@ x.__str__() <==> str(x)
         
         # Data
         if self.hasdata:
+
             x = ['{0}({1})'.format(axis_name(axis), axis_size(axis))
                  for axis in self.data_axes()]
             string.append('Data           : {0}({1}) {2}'.format(
@@ -1229,7 +1230,7 @@ last values.
             string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
                                                            ', '.join(x),
                                                            str(self.data))))
-        # Cell methods        
+        # Cell methods
         cell_methods = self.Items.cell_methods
         if cell_methods:
             string.append('') 

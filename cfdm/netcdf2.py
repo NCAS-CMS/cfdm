@@ -556,7 +556,7 @@ ancillaries, field ancillaries).
     
         compression_type = 'gathered'
         gathered_ncdimension = g['nc'][ncvar].dimensions[0]
-        indices = self._create_Data(ncvar, attributes)
+        indices = self._create_array(ncvar, attributes)
         
         g['compression'][gathered_ncdimension] = {
             'gathered': {'indices'             : indices,
@@ -583,7 +583,7 @@ ancillaries, field ancillaries).
         variable = g['nc'][ncvar]
         instance_ncdimension = variable.dimensions[0]
     
-        elements_per_instance = self._create_Data(ncvar, attributes)
+        elements_per_instance = self._create_array(ncvar, attributes)
     
         instance_dimension_size = elements_per_instance.size    
         element_dimension_size  = int(elements_per_instance.max())
@@ -655,7 +655,7 @@ ancillaries, field ancillaries).
         if _debug:
             print '    DSG index variable: instance_dimension =', instance_ncdimension
         
-        index = self._create_Data(ncvar, attributes)
+        index = self._create_array(ncvar, attributes)
         
         (instance, inverse, count) = numpy.unique(index,
                                                   return_inverse=True,
@@ -666,11 +666,11 @@ ancillaries, field ancillaries).
         # there are 3 instances then the instance_indices arary might look
         # like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1, 2, 2, 1, 0, 0, 0, 2,
         # 0].
-        instance_indices = self.Data(inverse)
+        instance_indices = self._cretae_Data(inverse)
     
         # The number of elements per instance. For the instance_indices
         # example, the elements_per_instance array is [7, 5, 7].
-        elements_per_instance = self.Data(count)
+        elements_per_instance = self._create_Data(array=count)
     
         instance_dimension_size = g['nc'].dimensions[instance_ncdimension].size
         element_dimension_size  = int(elements_per_instance.max())
@@ -1162,7 +1162,7 @@ ancillaries, field ancillaries).
     #                    # Variable is scalar => term is a parameter, not a
     #                    # DomainAncillary
     #                    if ncvar not in coordref_parameters:
-    #                        variable = self._create_Data(ncvar, attributes)
+    #                        variable = self._create_array(ncvar, attributes)
     #                        coordref_parameters[ncvar] = variable
     #                    continue
     #    
@@ -1424,7 +1424,7 @@ ancillaries, field ancillaries).
         return c
     #--- End: def
     
-    def _create_Data(self, ncvar, attributes):
+    def _create_array(self, ncvar, attributes):
         '''Create
     
 :Parameters:
@@ -1746,7 +1746,9 @@ ancillaries, field ancillaries).
             # --------------------------------------------------------
             # The array is not compressed
             # --------------------------------------------------------
-            data = self.Data(filearray, units=units, fill_value=fill_value)
+            data = self._create_Data(array=filearray,
+                                     variable=variable,
+                                     fill_value=fill_value)
             
         else:
             # --------------------------------------------------------
@@ -1840,6 +1842,12 @@ ancillaries, field ancillaries).
         return data
     #--- End: def
 
+    def _create_Data(self, array=None, variable=None, fill_value=None):
+        '''
+        '''    
+        return self.Data(array, fill_value=fill_value)        
+    #--- End: def
+    
     @classmethod    
     def is_netcdf_file(cls, filename):
         '''Return True if the file is a netCDF file.
