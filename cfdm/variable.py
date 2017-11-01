@@ -1,14 +1,14 @@
-from copy      import deepcopy
-from functools import partial as functools_partial
 import re
-from textwrap  import fill as textwrap_fill
-from itertools import izip
-from cPickle   import dumps, loads, PicklingError
-from netCDF4   import default_fillvals as _netCDF4_default_fillvals
+import textwrap
 
-from numpy import array       as numpy_array
-from numpy import asanyarray  as numpy_asanyarray
-from numpy import result_type as numpy_result_type
+from copy      import deepcopy
+from cPickle   import dumps, loads, PicklingError
+from functools import partial as functools_partial
+from itertools import izip
+
+import numpy
+
+from netCDF4 import default_fillvals as _netCDF4_default_fillvals
 
 from .cfdatetime   import dt
 from .flags        import Flags
@@ -18,7 +18,6 @@ from .units        import Units
 from .constants    import masked
 
 from .data.data import Data
-
 
 
 docstring = {
@@ -967,8 +966,8 @@ x.__str__() <==> str(x)
             dims = ''
 
         # Units
-        if self.Units._calendar:
-            units = self.Units._calendar
+        if self.Units.isreftime:
+            units = getattr(self, 'calendar', '')
         else:
             units = getattr(self, 'units', '')
             
@@ -1008,7 +1007,7 @@ x.__str__() <==> str(x)
             if value.startswith("'") or value.startswith('"'):
                 indent = '%(indent)s ' % locals()
 
-            string.append(textwrap_fill(name+value, 79,
+            string.append(textwrap.fill(name+value, 79,
                                         subsequent_indent=indent))
         #--- End: for
 
@@ -1066,8 +1065,8 @@ x.__str__() <==> str(x)
         private = self._private
         private['Data'] = value
 
-        # Delete Units from the variable
-        private['special_attributes'].pop('Units', None)
+#        # Delete Units from the variable
+#        private['special_attributes'].pop('Units', None)
  
         self._hasdata = True
     #--- End: def
@@ -1081,8 +1080,8 @@ x.__str__() <==> str(x)
                 "Can't delete non-existent data".format(
                     self.__class__.__name__))
 
-        # Save the Units to the variable
-        private['special_attributes']['Units'] = data.Units
+#        # Save the Units to the variable
+#        private['special_attributes']['Units'] = data.Units
 
         self._hasdata = False
     #--- End: def
@@ -1423,8 +1422,8 @@ properties respectively.
 .. versionadded:: 1.6
 
         '''
-        if self.hasdata:
-            return self.data.Units
+#        if self.hasdata:
+#            return self.data.Units
 
         try:
             return self._get_special_attr('Units')
@@ -1436,10 +1435,10 @@ properties respectively.
 
     @Units.setter
     def Units(self, value):
-        if self.hasdata:
-            self.data.Units = value
-        else:
-            self._set_special_attr('Units', value)
+#        if self.hasdata:
+#            self.data.Units = value
+#        else:
+        self._set_special_attr('Units', value)
     #--- End: def
 
     def remove_data(self):
@@ -1510,7 +1509,7 @@ scaled. See http://cfconventions.org/latest.html for details.
     @add_offset.setter
     def add_offset(self, value):
         self.setprop('add_offset', value)
-        self.dtype = numpy_result_type(self.dtype, numpy_array(value).dtype)
+        self.dtype = numpy.result_type(self.dtype, numpy.array(value).dtype)
     #--- End: def
     @add_offset.deleter
     def add_offset(self):
@@ -1972,7 +1971,11 @@ http://cfconventions.org/latest.html for details.
     @units.deleter
     def units(self):
         if getattr(self, 'units', None) is None:
-            self.Units = self._Units(None, getattr(self, 'calendar', None))
+            raise AttributeError(
+                "Can't delete non-existent CF property 'units' from {!r}".format(
+                    self.__class__.__name__))
+
+        self.Units = self._Units(None, getattr(self, 'calendar', None))
     #--- End: def
 
     # ----------------------------------------------------------------

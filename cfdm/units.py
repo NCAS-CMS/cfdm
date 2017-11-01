@@ -663,10 +663,21 @@ array([-31., -30., -29., -28., -27.])
         representation. This should be an integer returned by a call
         to `ut_parse` function of Udunits. Ignored if `units` is set.
 
-'''
+        '''
+        self._isvalid = True
+        
         if isinstance(units, self.__class__):
             self.__dict__ = units.__dict__
             return
+
+        # Set the calendar
+        _calendar = None
+        if calendar is not None:
+            _calendar = _canonical_calendar.get(calendar.lower())
+            if _calendar is None:
+                self._isvalid = False
+                _calendar = calendar
+        #--- End: if
 
         if units is not None:
             try:
@@ -681,8 +692,6 @@ array([-31., -30., -29., -28., -27.])
                 # Set the calendar
                 if calendar is None:
                     _calendar = _default_calendar
-                else:
-                    _calendar = _canonical_calendar[calendar.lower()]
 
                 units_split = units.split(' since ')
                 unit        = units_split[0].strip()
@@ -691,19 +700,20 @@ array([-31., -30., -29., -28., -27.])
                 if ut_unit is None:                    
                     ut_unit = _ut_parse(_ut_system, _c_char_p(unit), _UT_ASCII)
                     if not ut_unit or not _ut_are_convertible(ut_unit, _day_ut_unit):
-                        raise ValueError(
-                            "Can't set unsupported unit in reference time: '%s'" % 
-                            value)
-                    _cached_ut_unit[unit] = ut_unit
+                        ut_unit = None
+                        self._isvalid = False
+                    else:
+                        _cached_ut_unit[unit] = ut_unit
                 #--- End: if
 
                 utime = _cached_utime.get((_calendar, units), None)
 
                 if not utime:                       
                     # Create a new Utime object
-                    unit_string = '%s since %s' % (unit, units_split[1].strip())
+                    unit_string = '{0} since {1}'.format(unit, units_split[1].strip())
                     utime = _cached_utime.get((_calendar, unit_string), None)
 
+                    # DCH attention here for the new allowed bad calendars!
                     if utime is None:
                         try:
                             utime = Utime(_calendar, unit_string)
@@ -719,7 +729,7 @@ array([-31., -30., -29., -28., -27.])
                             # another error, this time untrapped
                             # (possibly due to a wrong calendar).
                             utime = Utime(_calendar, 
-                                          'days since %s' % units_split[1].strip())
+                                          'days since {0}'.format(units_split[1].strip()))
                             utime.unit_string = unit_string
                             utime.units       = unit
                         #--- End: try
@@ -740,13 +750,14 @@ array([-31., -30., -29., -28., -27.])
                 if ut_unit is None:
                     ut_unit = _ut_parse(_ut_system, _c_char_p(units), _UT_ASCII)
                     if not ut_unit:
-                        raise ValueError(
-                            "Can't set unsupported unit: %r" % units)
-                    _cached_ut_unit[units] = ut_unit
+                        ut_unit = None
+                        self._isvalid = False
+                    else:
+                        _cached_ut_unit[units] = ut_unit
                 #--- End: if
 
                 self._isreftime = False
-                self._calendar  = None
+                self._calendar  = _calendar
                 self._utime     = None
             #--- End: if
 
@@ -766,7 +777,11 @@ array([-31., -30., -29., -28., -27.])
             self._ut_unit   = None
             self._isreftime = True
             self._calendar  = calendar
-            self._utime     = Utime(_canonical_calendar[calendar.lower()])
+        
+            if _calendar is None:
+                self._utime = None
+            else:
+                self._utime = Utime(_calendar)
 
             return
         #--- End: if
@@ -786,7 +801,6 @@ array([-31., -30., -29., -28., -27.])
             self._utime     = None
  
             return
-        #--- End: if
 
         #-------------------------------------------------------------
         # Nothing has been set
@@ -1637,6 +1651,16 @@ False
         return bool(_ut_are_convertible(ut_unit, _day_ut_unit))
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Attribute (read only)
+    # ----------------------------------------------------------------
+    @property
+    def isvalid(self):
+        '''
+        '''
+        return getattr(self, '_isvalid', False)
+    #--- End: def
+                          
     # ----------------------------------------------------------------
     # Attribute (read only)
     # ----------------------------------------------------------------

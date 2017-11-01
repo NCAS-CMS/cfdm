@@ -35,7 +35,6 @@ netcdf = NetCDF(mode='read',
                 
                 Bounds    = Bounds,
                 Data      = Data,
-#                FieldList = FieldList,
                 Units     = Units,        
                 
                 NetCDFArray = NetCDFArray)

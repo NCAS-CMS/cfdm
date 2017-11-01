@@ -11,57 +11,12 @@ from .functions import abspath, flat
 class NetCDF(object):
     '''
     '''
-
-#    _write_vars =  {
-#        # Format of output file
-#        'fmt': None,
-#        # netCDF4.Dataset instance
-#        'netcdf'           : None,    
-#        # Map netCDF variable names to netCDF4.Variable instances
-#        'nc': {},      
-#        # Map netCDF dimension names to netCDF dimension sizes
-#        'ncdim_to_size': {},
-#        # Dictionary of netCDF variable names and netCDF dimensions
-#        # keyed by items of the field (such as a coordinate or a
-#        # coordinate reference)
-#        'seen': {},
-#        # Set of all netCDF dimension and netCDF variable names.
-#        'ncvar_names': set(()),
-#        # Set of global or non-standard CF properties which have
-#        # identical values across all input fields.
-#        'global_properties': set(()), 
-#        'variable_attributes': set(()),
-#        'bounds': {},
-#        # Compression/endian
-#        'compression': {},
-#        'endian': 'native',
-#        'least_significant_digit': None,
-#        # CF properties which need not be set on bounds if they're set
-#        # on the parent coordinate
-#        'omit_bounds_properties': ('units', 'standard_name', 'axis',
-#                                   'positive', 'calendar', 'month_lengths',
-#                                   'leap_year', 'leap_month'),
-#        # Data type conversions to be applied prior to writing
-#        'datatype': {},
-#        #
-#        'unlimited': (),
-#        # Print statements
-#        'verbose': False,
-#        '_debug' : False,
-#    }
-
     def __init__(self, mode=None, **kwargs):
         '''
         '''
-        for attr in ('NetCDFArray',):
-            if attr not in kwargs:
-                raise ValueError("Must set {}".format(attr))    
-                
-        self._write_vars =  {}
-        self._read_vars  =  {}
-                
         if mode == 'read':
-            for attr in ('AuxiliaryCoordinate',
+            for attr in ('NetCDFArray',
+                         'AuxiliaryCoordinate',
                          'CellMeasure',        
                          'CellMethod',        
                          'CoordinateReference',
@@ -72,56 +27,70 @@ class NetCDF(object):
                          'FieldAncillary',     
                          'Bounds', 
                          'Data',
-#                         'FieldList',
                          'Units'):
                 if attr not in kwargs:
-                    raise ValueError("Must set {} in 'read' mode".format(attr))
-
+                    raise ValueError("Must set {!r} parameter in 'read' mode".format(attr))
         elif mode == 'write':
-            for attr in ('Conventions',):
+            for attr in ('NetCDFArray',
+                         'Conventions'):
                 if attr not in kwargs:
-                    raise ValueError("Must set {} in 'write' mode".format(attr))
-
-            self._write_vars =  {
-                # Format of output file
-                'fmt': None,
-                # netCDF4.Dataset instance
-                'netcdf'           : None,    
-                # Map netCDF variable names to netCDF4.Variable instances
-                'nc': {},      
-                # Map netCDF dimension names to netCDF dimension sizes
-                'ncdim_to_size': {},
-                # Dictionary of netCDF variable names and netCDF
-                # dimensions keyed by items of the field (such as a
-                # coordinate or a coordinate reference)
-                'seen': {},
-                # Set of all netCDF dimension and netCDF variable names.
-                'ncvar_names': set(()),
-                # Set of global or non-standard CF properties which have
-                # identical values across all input fields.
-                'global_properties': set(()), 
-                'variable_attributes': set(()),
-                'bounds': {},
-                # Compression/endian
-                'compression': {},
-                'endian': 'native',
-                'least_significant_digit': None,
-                # CF properties which need not be set on bounds if they're set
-                # on the parent coordinate
-                'omit_bounds_properties': ('units', 'standard_name', 'axis',
-                                           'positive', 'calendar', 'month_lengths',
-                                           'leap_year', 'leap_month'),
-                # Data type conversions to be applied prior to writing
-                'datatype': {},
-                #
-                'unlimited': (),
-                # Print statements
-                'verbose': False,
-                '_debug' : False,
-            }
+                    raise ValueError("Must set {!r} parameter in 'write' mode".format(attr))
+        #--- End: if
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
+            
+        self._read_vars = {
+            #
+            'new_dimensions': {},
+            #
+            'formula_terms': {},
+            #
+            'compression': {},
+            'uncompress' : True,
+            # Chatty?
+            'verbose': False,
+            # Debug  print statements?
+            '_debug': False,
+        }
+        
+        self._write_vars =  {
+            # Format of output file
+            'fmt': None,
+            # netCDF4.Dataset instance
+            'netcdf'           : None,    
+            # Map netCDF variable names to netCDF4.Variable instances
+            'nc': {},      
+            # Map netCDF dimension names to netCDF dimension sizes
+            'ncdim_to_size': {},
+            # Dictionary of netCDF variable names and netCDF
+            # dimensions keyed by items of the field (such as a
+            # coordinate or a coordinate reference)
+            'seen': {},
+            # Set of all netCDF dimension and netCDF variable names.
+            'ncvar_names': set(()),
+            # Set of global or non-standard CF properties which have
+            # identical values across all input fields.
+            'global_properties': set(()), 
+            'variable_attributes': set(()),
+            'bounds': {},
+            # Compression/endian
+            'compression': {},
+            'endian': 'native',
+            'least_significant_digit': None,
+            # CF properties which need not be set on bounds if they're set
+            # on the parent coordinate
+            'omit_bounds_properties': ('units', 'standard_name', 'axis',
+                                       'positive', 'calendar', 'month_lengths',
+                                       'leap_year', 'leap_month'),
+            # Data type conversions to be applied prior to writing
+            'datatype': {},
+            #
+            'unlimited': (),
+            # Print statements
+            'verbose': False,
+            '_debug' : False,
+        }
     #--- End: def    
     
     def read(self, filename, field=(), verbose=False, uncompress=True,
@@ -202,17 +171,13 @@ ancillaries, field ancillaries).
             name = filename.name
             filename.close()
             filename = name
-            
-        g = {'new_dimensions': {},
-             'formula_terms' : {},
-             #
-             'compression'     : {},
-             'uncompress'      : uncompress,
-             # Debug  print statements?
-             '_debug': _debug,
-        }
 
-        self.read_vars = g
+        self.read_vars = copy.deepcopy(self._read_vars)
+        g = self.read_vars
+        
+        g['uncompress'] = uncompress
+        g['verbose']    = verbose
+        g['_debug']     = _debug
         
         compression = {}
         
@@ -295,25 +260,13 @@ ancillaries, field ancillaries).
                     pass
             #--- End: for  
     
-            # Check for bad units
-            try:
-                self.Units(attributes[ncvar].get('units', None), 
-                           attributes[ncvar].get('calendar', None))
-            except (ValueError, TypeError):
-                # Units in file have been set to unknown units so 1) give
-                # a warning, 2) set the 'nonCF_units' property to the bad
-                # units and 3) remove the offending units.
-                attributes[ncvar]['nonCF_Units'] = \
-                    attributes[ncvar].pop('units', '')
-                try:
-                    attributes[ncvar]['nonCF_Units'] += \
-                     ' '+attributes[ncvar].pop('calendar', '')
-                except:
-                    pass
-                if verbose:
-                    print(
-"WARNING: Moving unsupported units to 'nonCF_Units': {0}".format(
-    attributes[ncvar]['nonCF_Units']))
+#            # Check for bad units
+#            units = self.Units(attributes[ncvar].get('units', None), 
+#                               attributes[ncvar].get('calendar', None))
+#            if verbose and not units.isvalid:
+#                print(
+#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+#    filename, ncvar, units))
         #--- End: for
     
         # ----------------------------------------------------------------
@@ -998,7 +951,12 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         f_Units = self.Units(properties.pop('units', None),
                              properties.pop('calendar', None))
-    
+
+        if g['verbose'] and not f_Units.isvalid:
+            print(
+"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+    g['filename'], data_ncvar, f_Units))
+
         f = self.Field(properties=properties, copy=False)
     
         f.ncvar = data_ncvar
@@ -1137,7 +1095,7 @@ ancillaries, field ancillaries).
                         # compliant? Don't worry about it - we'll just
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
-                        axis = DomainAxis(1)
+                        axis = self.DomainAxis(1)
                         dim = f.insert_axis(axis)
                         if _debug:
                             print '    Inserting', repr(axis)
@@ -1157,7 +1115,7 @@ ancillaries, field ancillaries).
                     if _debug:
                         print '    Inserting', repr(coord)
     
-                    axis = DomainAxis(coord.size)
+                    axis = self.DomainAxis(coord.size)
                     dim = f.insert_axis(axis, copy=False)
                     
                     dim = f.insert_dim(coord, axes=[dim], copy=False)
@@ -1366,6 +1324,11 @@ ancillaries, field ancillaries).
         c_Units = self.Units(properties.pop('units', None),
                              properties.pop('calendar', None))
     
+        if g['verbose'] and not c_Units.isvalid:
+            print(
+"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+    g['filename'], ncvar, c_Units))
+
         properties.pop('formula_terms', None)
     
         if bounds is not None:
@@ -1393,7 +1356,7 @@ ancillaries, field ancillaries).
             c = self.DomainAncillary(properties=properties)
         else:
             raise ValueError(
-    "Must set one of the dimension, auxiliary or domainancillary parmaeters to True")
+"Must set one of the dimension, auxiliary or domainancillary parmaeters to True")
     
         c.ncvar = ncvar
         c.Units = c_Units
@@ -1415,6 +1378,11 @@ ancillaries, field ancillaries).
             b_Units = self.Units(properties.pop('units', None),
                                  properties.pop('calendar', None))
     
+            if g['verbose'] and not b_Units.isvalid:
+                print(
+"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+    g['filename'], ncbounds, b_Units))
+
             bounds = self.Bounds(properties=properties, copy=False)
     
             if not b_Units:
@@ -1477,6 +1445,11 @@ ancillaries, field ancillaries).
         units = self.Units(properties.get('units'),
                            properties.get('calendar'))
     
+        if self.read_vars['verbose'] and not units.isvalid:
+            print(
+"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+    self.read_vars['filename'], ncvar, units))
+
         data = self._set_Data(ncvar, units=units)
     
         return data

@@ -5,13 +5,13 @@ import numpy
 
 from ..constants  import masked
 from ..cfdatetime import rt2dt, st2rt, st2dt
-from ..units      import Units
+#from ..units      import Units
 from ..functions  import RTOL, ATOL, parse_indices, _numpy_allclose
 
 from .array import Array, NumpyArray
 
-_units_None = Units()
-_units_1    = Units('1')
+#_units_None = Units()
+#_units_1    = Units('1')
 
 
 # ====================================================================
@@ -81,8 +81,8 @@ There are three extensions to the numpy indexing functionality:
 
     '''
 
-    def __init__(self, data=None, units=None, fill_value=None,
-                 dt=False):
+#    def __init__(self, data=None, units=None, fill_value=None,
+    def __init__(self, data=None, fill_value=None, dt=False):
         '''**Initialization**
 
 :Parameters:
@@ -112,9 +112,9 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''      
-        units = Units(units)
+#        units = Units(units)
         
-        self._Units       = units
+#        self._Units       = units
         self._fill_value  = fill_value
         self._array       = None
 
@@ -132,41 +132,41 @@ There are three extensions to the numpy indexing functionality:
             if not isinstance(data, numpy.ndarray):
                 data = numpy.asanyarray(data)
 
-            if (data.dtype.kind == 'O' and not dt and 
-                hasattr(data.item((0,)*data.ndim), 'timetuple')):
-                # We've been given one or more date-time objects
-                dt = True
+#            if (data.dtype.kind == 'O' and not dt and 
+#                hasattr(data.item((0,)*data.ndim), 'timetuple')):
+#                # We've been given one or more date-time objects
+#                dt = True
         #--- End: if
         
-        # ------------------------------------------------------------
-        # Deal with date-times
-        # ------------------------------------------------------------
-        if dt or units.isreftime:
-            kind = data.dtype.kind
-            first = (0,)*data.ndim
-            if kind == 'S':
-                # Convert date-time strings to reference time floats
-                if not units:
-                    x = st2dt(data[first]).item()
-                    YMD = '-'.join(map(str, (x.year, x.month, x.day)))
-                    units = Units('days since '+YMD, units._calendar)
-                    self._Units = units
-            
-                data = st2rt(data, None, units)
-            elif kind == 'O':
-                # Convert date-time objects to reference time floats
-                if not units:
-                    # Set the units to something that is (hopefully)
-                    # close to all of the datetimes, in an attempt to
-                    # reduce errors arising from the conversion to
-                    # reference times
-                    x = data.item(first)
-                    YMD = '-'.join(map(str, (x.year, x.month, x.day)))
-                    units = Units('days since '+YMD, units._calendar)
-                    self._Units = units
-                    
-                data = dt2rt(data, None, units)
-        #--- End: if
+#        # ------------------------------------------------------------
+#        # Deal with date-times
+#        # ------------------------------------------------------------
+#        if dt or units.isreftime:
+#            kind = data.dtype.kind
+#            first = (0,)*data.ndim
+#            if kind == 'S':
+#                # Convert date-time strings to reference time floats
+#                if not units:
+#                    x = st2dt(data[first]).item()
+#                    YMD = '-'.join(map(str, (x.year, x.month, x.day)))
+#                    units = Units('days since '+YMD, units._calendar)
+#                    self._Units = units
+#            
+#                data = st2rt(data, None, units)
+#            elif kind == 'O':
+#                # Convert date-time objects to reference time floats
+#                if not units:
+#                    # Set the units to something that is (hopefully)
+#                    # close to all of the datetimes, in an attempt to
+#                    # reduce errors arising from the conversion to
+#                    # reference times
+#                    x = data.item(first)
+#                    YMD = '-'.join(map(str, (x.year, x.month, x.day)))
+#                    units = Units('days since '+YMD, units._calendar)
+#                    self._Units = units
+#                    
+#                data = dt2rt(data, None, units)
+#        #--- End: if
 
         if isinstance(data, Array):
             self._array = data
@@ -228,15 +228,15 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-        self_units = self.Units
-        isreftime = self_units.isreftime
-
-        if not self_units or self_units.equals(_units_1):
-            units = None
-        elif not isreftime:
-            units = self_units.units
-        else:
-            units = getattr(self_units, 'calendar', '')
+#        self_units = self.Units
+#        isreftime = self_units.isreftime
+#
+#        if not self_units or self_units.equals(_units_1):
+#            units = None
+#        elif not isreftime:
+#            units = self_units.units
+#        else:
+#            units = getattr(self_units, 'calendar', '')
                      
         size = self.size
         ndim = self.ndim
@@ -247,23 +247,23 @@ x.__str__() <==> str(x)
             first = self.datum(0)
         except:            
             out = ''
-            if units:
-                out += ' {0}'.format(units)
+#            if units:
+#                out += ' {0}'.format(units)
                 
             return out
         #--- End: try
         
         if size == 1:
-            if isreftime:
-                # Convert reference time to date-time
-                first = rt2dt(first, self_units).item()
+#            if isreftime:
+#                # Convert reference time to date-time
+#                first = rt2dt(first, self_units).item()
 
             out = '{0}{1}{2}'.format(open_brackets, first, close_brackets)
         else:
             last = self.datum(-1)
-            if isreftime:
-                # Convert reference times to date-times
-                first, last = rt2dt(numpy.ma.array((first, last)), self_units)
+#            if isreftime:
+#                # Convert reference times to date-times
+#                first, last = rt2dt(numpy.ma.array((first, last)), self_units)
 
             if size >= 3:
                 out = '{0}{1}, ..., {2}{3}'.format(open_brackets, first,
@@ -274,8 +274,8 @@ x.__str__() <==> str(x)
                                               last, close_brackets)
         #--- End: if
         
-        if units:
-            out += ' {0}'.format(units)
+#        if units:
+#            out += ' {0}'.format(units)
             
         return out
     #--- End: def
@@ -287,8 +287,8 @@ x.__getitem__(indices) <==> x[indices]
 
         '''
         return type(self)(self._array[indices],
-                          self.Units,
-                          self.fill_value)
+#                          self.Units,
+                          fill_value=self.fill_value)
     #--- End: def
 
     def __setitem__(self, indices, value):
@@ -321,13 +321,13 @@ elements.
 :Examples:
 
         '''            
-        # If value has Units then make sure that they're the same
-        # as self.Units
-        if (isinstance(value, self.__class__) and
-            self.Units and value.Units and
-            value.Units != self.Units):
-            raise ValueError(
-"Can't set to values with different units: {!r}".format(value.Units))
+#        # If value has Units then make sure that they're the same
+#        # as self.Units
+#        if (isinstance(value, self.__class__) and
+#            self.Units and value.Units and
+#            value.Units != self.Units):
+#            raise ValueError(
+#"Can't set to values with different units: {!r}".format(value.Units))
 
         array = self._array[...]
 
@@ -428,30 +428,30 @@ False
         return not self.ndim
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
-    @property
-    def Units(self):
-        '''The `Units` object containing the units of the data array.
-
-..versionadded:: 1.6
-
-:Examples:
-
->>> d.Units = Units('m')
->>> d.Units
-<CF Units: m>
->>> del d.Units
->>> d.Units
-<CF Units: >
-
-        '''
-        return self._Units
-    #--- End: def
-    @Units.setter    
-    def Units(self, value):
-        self._Units = Units(value)
+#    # ----------------------------------------------------------------
+#    # Attribute
+#    # ----------------------------------------------------------------
+#    @property
+#    def Units(self):
+#        '''The `Units` object containing the units of the data array.
+#
+#..versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> d.Units = Units('m')
+#>>> d.Units
+#<CF Units: m>
+#>>> del d.Units
+#>>> d.Units
+#<CF Units: >
+#
+#        '''
+#        return self._Units
+#    #--- End: def
+#    @Units.setter    
+#    def Units(self, value):
+#        self._Units = Units(value)
 
     # ----------------------------------------------------------------
     # Attribute (read only)
@@ -701,7 +701,7 @@ True
     # ----------------------------------------------------------------
     # Attribute (read only)
     # ----------------------------------------------------------------
-    @property
+    @property  # MAKE METHOD with units argument
     def dtarray(self):
         '''
         '''
@@ -880,11 +880,11 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 [ True  True  True]
 
         '''     
-        if isinstance(y, self.__class__):
-            if y.Units and y.Units != self.Units:
-                array = numpy.zeros(self.shape, dtype=bool)
-                return type(self)(array)
-        #--- End: if
+#        if isinstance(y, self.__class__):
+#            if y.Units and y.Units != self.Units:
+#                array = numpy.zeros(self.shape, dtype=bool)
+#                return type(self)(array)
+#        #--- End: if
 
         if atol is None:
             atol = ATOL()        
@@ -926,7 +926,8 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 >>> e = d.copy()
 
         '''        
-        new = type(self)(self._array, self.Units, self.fill_value)
+#        new = type(self)(self._array, self.Units, self.fill_value)
+        new = type(self)(self._array, fill_value=self.fill_value)
 
         new.HDF_chunks(self.HDF_chunks())
 
@@ -1552,8 +1553,9 @@ missing values.
 
         if numpy.ma.is_masked(array):
             array = array.compressed()
-            
-        return type(self)(array, self.Units, self.fill_value)
+
+#        return type(self)(array, self.Units, self.fill_value)
+        return type(self)(array, fill_value=self.fill_value)
     #--- End: def
 
     def dump(self, display=True, prefix=None):
@@ -1584,7 +1586,8 @@ Return a string containing a full description of the instance.
             prefix = self.__class__.__name__
             
         string = []
-        for attr in ('ndim', 'shape', 'size', 'dtype', 'fill_value', 'Units', 'array'):
+#        for attr in ('ndim', 'shape', 'size', 'dtype', 'fill_value', 'Units', 'array'):
+        for attr in ('ndim', 'shape', 'size', 'dtype', 'fill_value', 'array'):
             string.append('{0}.{1} = {2!r}'.format(prefix, attr, getattr(self, attr)))
 
         string = '\n'.join(string)
@@ -1608,7 +1611,7 @@ Two `Data` objects are equal if
 
   * They have the same fill value (unless *ignore_fill_value* is True)
 
-  * The have the same units
+####  * The have the same units
 
   * They have the same missing data mask
 
@@ -1674,15 +1677,15 @@ False
             return False
         #--- End: if
 
-        # Check that each instance has the same units
-        self_Units  = self.Units
-        other_Units = other.Units
-        if self_Units != other_Units:
-            if traceback:
-                print("{0}: Different units: {1!r}, {2!r}".format(
-                    self.__class__.__name__, self.Units, other.Units))
-            return False
-        #--- End: if
+#        # Check that each instance has the same units
+#        self_Units  = self.Units
+#        other_Units = other.Units
+#        if self_Units != other_Units:
+#            if traceback:
+#                print("{0}: Different units: {1!r}, {2!r}".format(
+#                    self.__class__.__name__, self.Units, other.Units))
+#            return False
+#        #--- End: if
 
         # Check that each instance has the same fill value
         if not ignore_fill_value and self.fill_value != other.fill_value:
@@ -1996,7 +1999,7 @@ element_dimension_size  = count.max()
 
         '''
         data.dtype = dtype
-        data.Units = units
+#        data.Units = units
         data.fill_value = fill_value
 
         uncompressed_array = data.varray 
@@ -2048,7 +2051,7 @@ element_dimension_size  = count.max()
 
         '''
         data.dtype = dtype
-        data.Units = units
+#        data.Units = units
         data.fill_value = fill_value
 
         uncompressed_array = data.varray
@@ -2079,7 +2082,7 @@ element_dimension_size  = count.max()
 
         '''
         data.dtype = dtype
-        data.Units = units
+#        data.Units = units
         data.fill_value = fill_value
 
         uncompressed_array = data.varray 
@@ -2121,10 +2124,9 @@ element_dimension_size  = count.max()
         position of each profile of each instance.
 
         '''
-        print 'ARSE'
         print 'elements_per_profile.shape =',elements_per_profile.shape
         data.dtype = dtype
-        data.Units = units
+#        data.Units = units
         data.fill_value = fill_value
 
         uncompressed_array = data.varray 
