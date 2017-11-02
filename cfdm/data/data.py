@@ -82,7 +82,6 @@ There are three extensions to the numpy indexing functionality:
     '''
 
     def __init__(self, data=None, units=None, fill_value=None, dt=False):
-#    def __init__(self, data=None, fill_value=None, dt=False):
         '''**Initialization**
 
 :Parameters:
@@ -112,10 +111,9 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''
-#        if units is not None:
         units = Units(units)
+        self.Units = units
         
-        self._Units       = units
         self._fill_value  = fill_value
         self._array       = None
 
@@ -151,7 +149,7 @@ There are three extensions to the numpy indexing functionality:
                     x = st2dt(data[first]).item()
                     YMD = '-'.join(map(str, (x.year, x.month, x.day)))
                     units = Units('days since '+YMD, units._calendar)
-                    self._Units = units
+                    self.Units = units
             
                 data = st2rt(data, None, units)
             elif kind == 'O':
@@ -164,7 +162,7 @@ There are three extensions to the numpy indexing functionality:
                     x = data.item(first)
                     YMD = '-'.join(map(str, (x.year, x.month, x.day)))
                     units = Units('days since '+YMD, units._calendar)
-                    self._Units = units
+                    self.Units = units
                     
                 data = dt2rt(data, None, units)
         #--- End: if
@@ -220,7 +218,7 @@ True
 x.__repr__() <==> repr(x)
 
         '''
-        return '<CFDM {0}: {1}>'.format(self.__class__.__name__, str(self))
+        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
     def __str__(self):
@@ -372,8 +370,8 @@ x.__iter__() <==> iter(x)
 >>> for e in d:
 ...    print repr(e)
 ...
-<CF Data: [1, 2] metres>
-<CF Data: [4, 5] metres>
+<Data: [1, 2] metres>
+<Data: [4, 5] metres>
 
 >>> d = Data(34, 'metres')
 >>> for e in d:
@@ -427,31 +425,6 @@ False
 '''
         return not self.ndim
     #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
-    @property
-    def Units(self):
-        '''The `Units` object containing the units of the data array.
-
-..versionadded:: 1.6
-
-:Examples:
-
->>> d.Units = Units('m')
->>> d.Units
-<CF Units: m>
->>> del d.Units
->>> d.Units
-<CF Units: >
-
-        '''
-        return self._Units
-    #--- End: def
-    @Units.setter    
-    def Units(self, value):
-        self._Units = Units(value)
 
     # ----------------------------------------------------------------
     # Attribute (read only)
@@ -721,7 +694,7 @@ otherwise.
 (12, 73, 96)
 >>> m = d.mask
 >>> m
-<CF Data: [[[False, ..., True]]]>
+<Data: [[[False, ..., True]]]>
 >>> m.dtype
 dtype('bool')
 >>> m.shape
@@ -764,10 +737,10 @@ True
 True
 
 >>> Data.asdata([1, 2])
-<CF Data: [1, 2]>
+<Data: [1, 2]>
 
 >>> Data.asdata(numpy.array([1, 2]))
-<CF Data: [1, 2]>
+<Data: [1, 2]>
 
         '''
         __data__ = getattr(d, '__data__', None)
@@ -928,7 +901,6 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
         '''        
         new = type(self)(self._array, units=self.Units,
                          fill_value=self.fill_value)
-#        new = type(self)(self._array, fill_value=self.fill_value)
 
         new.HDF_chunks(self.HDF_chunks())
 
@@ -1049,56 +1021,6 @@ dimension is iterated over first.
         return itertools.product(*[xrange(0, r) for r in self.shape])  
     #--- End: def
 
-#    def override_units(self, units, copy=True):
-#        '''Override the data array units.
-#
-#Not to be confused with setting the `Units` attribute to units which
-#are equivalent to the original units. This is different because in
-#this case the new units need not be equivalent to the original ones
-#and the data array elements will not be changed to reflect the new
-#units.
-#
-#..versionadded:: 1.6
-#
-#.. seealso:: `Units`
-#
-#:Parameters:
-#
-#    units: `str` or `Units`
-#        The new units for the data array.
-#
-#    copy: `bool`, optional
-#        If False then update the data array in place. By default a new
-#        data array is created.
-#
-#:Returns:
-#
-#    out: `Data`
-#
-#:Examples:
-#
-#>>> d = Data(1012.0, 'hPa')
-#>>> d.override_units('km')
-#>>> d.Units
-#<CF Units: km>
-#>>> d.datum(0)
-#1012.0
-#>>> d.override_units(Units('watts'))
-#>>> d.Units
-#<CF Units: watts>
-#>>> d.datum(0)
-#1012.0
-#
-#        '''
-#        if copy:
-#            d = self.copy()
-#        else:
-#            d = self
-#
-#        d._Units = Units(units)
-#
-#        return d
-#    #--- End: def
 
     def sum(self, axes=None):
         '''Return the sum of an array or the sum along axes.
@@ -1544,10 +1466,10 @@ missing values.
 
 >>> d = Data([[4, 2, 1], [1, 2, 3]], 'metre')
 >>> d.unique()
-<CF Data: [1, 2, 3, 4] metre>
+<Data: [1, 2, 3, 4] metre>
 >>> d[1, -1] = masked
 >>> d.unique()
-<CF Data: [1, 2, 4] metre>
+<Data: [1, 2, 4] metre>
 
         '''
         array = numpy.unique(self.array)
@@ -1557,7 +1479,6 @@ missing values.
 
         return type(self)(array, units=self.Units,
                           fill_value=self.fill_value)
-#        return type(self)(array, fill_value=self.fill_value)
     #--- End: def
 
     def dump(self, display=True, prefix=None):
@@ -1589,7 +1510,6 @@ Return a string containing a full description of the instance.
             
         string = []
         for attr in ('ndim', 'shape', 'size', 'dtype', 'fill_value', 'Units', 'array'):
-#        for attr in ('ndim', 'shape', 'size', 'dtype', 'fill_value', 'array'):
             string.append('{0}.{1} = {2!r}'.format(prefix, attr, getattr(self, attr)))
 
         string = '\n'.join(string)

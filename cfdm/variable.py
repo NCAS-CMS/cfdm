@@ -775,9 +775,6 @@ All components of a variable are optional.
     _special_properties = set(('units', 'calendar',
                                '_FillValue', 'missing_value'))
 
-    _Units = Units
-
-    
     def __init__(self, properties={}, attributes=None, data=None,
                  source=None, copy=True):
         '''**Initialization**
@@ -1062,12 +1059,18 @@ x.__str__() <==> str(x)
     #--- End: def
     @_Data.setter
     def _Data(self, value):
+        if not value.Units:
+            # If the data does not have any units, copy the variable's
+            # units
+            value = value.copy()
+            value.Units = self.Units
+
         private = self._private
         private['Data'] = value
 
         # Delete Units from the variable
         private['special_attributes'].pop('Units', None)
- 
+            
         self._hasdata = True
     #--- End: def
     @_Data.deleter
@@ -1428,7 +1431,7 @@ properties respectively.
         try:
             return self._get_special_attr('Units')
         except AttributeError:
-            units_None = self._Units()
+            units_None = Units()
             self._set_special_attr('Units', units_None)
             return units_None
     #--- End: def
@@ -1553,7 +1556,7 @@ http://cfconventions.org/latest.html for details.
 
     @calendar.setter
     def calendar(self, value):
-        self.Units = self._Units(getattr(self, 'units', None), value)
+        self.Units = Units(getattr(self, 'units', None), value)
     #--- End: def
 
     @calendar.deleter
@@ -1563,7 +1566,7 @@ http://cfconventions.org/latest.html for details.
                 "Can't delete non-existent {} CF property 'calendar'".format(
                     self.__class__.__name__))
         
-        self.Units = self._Units(getattr(self, 'units', None))
+        self.Units = Units(getattr(self, 'units', None))
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -1968,7 +1971,7 @@ http://cfconventions.org/latest.html for details.
 
     @units.setter
     def units(self, value):
-        self.Units = self._Units(value, getattr(self, 'calendar', None))
+        self.Units = Units(value, getattr(self, 'calendar', None))
     @units.deleter
     def units(self):
         if getattr(self, 'units', None) is None:
@@ -1976,7 +1979,7 @@ http://cfconventions.org/latest.html for details.
                 "Can't delete non-existent CF property 'units' from {!r}".format(
                     self.__class__.__name__))
 
-        self.Units = self._Units(None, getattr(self, 'calendar', None))
+        self.Units = Units(None, getattr(self, 'calendar', None))
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -2332,7 +2335,7 @@ Changing the elements of the returned view changes the data array.
 :Examples 1:
 
 >>> f.data
-<CF Data: [0, ... 4] kg m-1 s-2>
+<Data: [0, ..., 4] kg m-1 s-2>
 >>> a = f.array
 >>> type(a)
 <type 'numpy.ndarray'>
@@ -2344,7 +2347,7 @@ Changing the elements of the returned view changes the data array.
 >>> print f.array
 [999 1 2 3 4]
 >>> f.data
-<CF Data: [999, ... 4] kg m-1 s-2>
+<Data: [999, ..., 4] kg m-1 s-2>
 
         '''
         if self.hasdata:
@@ -2448,7 +2451,7 @@ properties.
             # ----------------------------------------------------
             if 'units' in match or 'calendar' in match:
                 match = match.copy()
-                units = self._Units(match.pop('units', None), match.pop('calendar', None))
+                units = Units(match.pop('units', None), match.pop('calendar', None))
                 
                 if not exact:
                     found_match = self.Units.equivalent(units)

@@ -293,8 +293,8 @@ ancillaries, field ancillaries).
             compressed_ncdims = attributes[ncvar].get('compress', None)
             if compressed_ncdims is not None:
                 # This variable is a list variable for gathering arrays
-                self._parse_compression_gathered(
-                    ncvar, attributes, compressed_ncdims)
+                self._read_parse_compression_gathered( ncvar,
+                                                       attributes, compressed_ncdims)
                 variables.discard(ncvar)
             
             if g['global_attributes'].get('featureType'):
@@ -302,7 +302,7 @@ ancillaries, field ancillaries).
                     # This variable is a count variable for DSG contiguous
                     # ragged arrays
                     sample_ncdimension = attributes[ncvar]['sample_dimension']        
-                    element_dimension_2 = self._parse_DSG_contiguous_compression(
+                    element_dimension_2 = self._read_parse_DSG_contiguous_compression(
                         ncvar,
                         attributes,
                         sample_ncdimension)
@@ -312,14 +312,14 @@ ancillaries, field ancillaries).
                     # This variable is an index variable for DSG indexed
                     # ragged arrays
                     instance_ncdimension = attributes[ncvar]['instance_dimension']
-                    element_dimension_1 = self._parse_DSG_indexed_compression(
+                    element_dimension_1 = self._read_parse_DSG_indexed_compression(
                         ncvar,
                         attributes,
                         instance_ncdimension)
                     variables.discard(ncvar)
                 
                 if sample_ncdimension and instance_ncdimension:
-                    self._parse_DSG_indexed_contiguous_compression(
+                    self._read_parse_DSG_indexed_contiguous_compression(
                         ncvar,
                         sample_ncdimension,
                         instance_ncdimension)
@@ -380,17 +380,17 @@ ancillaries, field ancillaries).
                         if _debug:
                             print '        Has formula_terms'
                             
-                        self._formula_terms_variables(ncvar, formula_terms,
-                                                      variables, coord=True)
+                        self._read_formula_terms_variables(ncvar, formula_terms,
+                                                           variables, coord=True)
     
                         bounds = attributes[ncvar].get('bounds', None)
                         if bounds is not None and 'formula_terms' in attributes[bounds]:
                             bounds_formula_terms = attributes[bounds]['formula_terms']
     
-                            self._formula_terms_variables(ncvar,
-                                                          bounds_formula_terms,
-                                                          variables,
-                                                          bounds=True)
+                            self._read_formula_terms_variables(ncvar,
+                                                               bounds_formula_terms,
+                                                               variables,
+                                                               bounds=True)
                     #--- End: if
     
                 #--- End: if
@@ -495,16 +495,15 @@ ancillaries, field ancillaries).
         fields_in_file = [] #self.FieldList()
     
         for data_ncvar in variables:
-            f = self._create_Field(data_ncvar,
-                                   attributes,
-                                   dimension_coordinates,
-                                   auxiliary_coordinates,
-                                   cell_measures,
-                                   domain_ancillaries,
-                                   field_ancillaries,
-#                                   coordref_parameters,
-                                   list_variables,
-                                   verbose=verbose)
+            f = self._read_create_Field(data_ncvar,
+                                        attributes,
+                                        dimension_coordinates,
+                                        auxiliary_coordinates,
+                                        cell_measures,
+                                        domain_ancillaries,
+                                        field_ancillaries,
+                                        list_variables,
+                                        verbose=verbose)
     
             fields_in_file.append(f)
         #--- End: for
@@ -544,8 +543,8 @@ ancillaries, field ancillaries).
             return 'netCDF'
     #--- End: def
 
-    def _parse_compression_gathered(self, ncvar, attributes,
-                                    compressed_ncdims):
+    def _read_parse_compression_gathered(self, ncvar, attributes,
+                                         compressed_ncdims):
         '''
         '''
         g = self.read_vars
@@ -556,15 +555,16 @@ ancillaries, field ancillaries).
     
         compression_type = 'gathered'
         gathered_ncdimension = g['nc'][ncvar].dimensions[0]
-        indices = self._create_array(ncvar, attributes)
+        indices = self._read_create_array(ncvar, attributes)
         
         g['compression'][gathered_ncdimension] = {
             'gathered': {'indices'             : indices,
                          'implied_ncdimensions': compressed_ncdims.split()}}
     #--- End: def
     
-    def _parse_DSG_contiguous_compression(self, ncvar, attributes,
-                                          sample_ncdimension):
+    def _read_parse_DSG_contiguous_compression(self, ncvar,
+                                               attributes,
+                                               sample_ncdimension):
         '''
         ncvar: `str`
             The netCDF variable name of the DSG count variable.
@@ -583,7 +583,7 @@ ancillaries, field ancillaries).
         variable = g['nc'][ncvar]
         instance_ncdimension = variable.dimensions[0]
     
-        elements_per_instance = self._create_array(ncvar, attributes)
+        elements_per_instance = self._read_create_array(ncvar, attributes)
     
         instance_dimension_size = elements_per_instance.size    
         element_dimension_size  = int(elements_per_instance.max())
@@ -637,8 +637,8 @@ ancillaries, field ancillaries).
         return element_dimension
     #--- End: def
     
-    def _parse_DSG_indexed_compression(self, ncvar, attributes,
-                                       instance_ncdimension):
+    def _read_parse_DSG_indexed_compression(self, ncvar, attributes,
+                                            instance_ncdimension):
         '''
         ncvar: `str`
             The netCDF variable name of the DSG index variable.
@@ -655,7 +655,7 @@ ancillaries, field ancillaries).
         if _debug:
             print '    DSG index variable: instance_dimension =', instance_ncdimension
         
-        index = self._create_array(ncvar, attributes)
+        index = self._read_create_array(ncvar, attributes)
         
         (instance, inverse, count) = numpy.unique(index,
                                                   return_inverse=True,
@@ -666,11 +666,11 @@ ancillaries, field ancillaries).
         # there are 3 instances then the instance_indices arary might look
         # like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1, 2, 2, 1, 0, 0, 0, 2,
         # 0].
-        instance_indices = self._cretae_Data(inverse)
+        instance_indices = self._read_create_Data(inverse)
     
         # The number of elements per instance. For the instance_indices
         # example, the elements_per_instance array is [7, 5, 7].
-        elements_per_instance = self._create_Data(array=count)
+        elements_per_instance = self._read_create_Data(array=count)
     
         instance_dimension_size = g['nc'].dimensions[instance_ncdimension].size
         element_dimension_size  = int(elements_per_instance.max())
@@ -726,9 +726,9 @@ ancillaries, field ancillaries).
         return element_dimension
     #--- End: def
     
-    def _parse_DSG_indexed_contiguous_compression(self, ncvar,
-                                                  sample_ncdimension,
-                                                  instance_ncdimension):
+    def _read_parse_DSG_indexed_contiguous_compression(self, ncvar,
+                                                       sample_ncdimension,
+                                                       instance_ncdimension):
         '''
 
 :Parameters:
@@ -815,8 +815,8 @@ ancillaries, field ancillaries).
         del g['compression'][sample_ncdimension]['DSG_contiguous']
     #--- End: def
     
-    def _formula_terms_variables(self, ncvar, formula_terms,
-                                 variables, coord=False, bounds=False):
+    def _read_formula_terms_variables(self, ncvar, formula_terms,
+                                      variables, coord=False, bounds=False):
         '''
     :Parameters:
     
@@ -867,12 +867,11 @@ ancillaries, field ancillaries).
                 g['formula_terms'][ncvar]['bounds'][name] = term
     #--- End: def
     
-    def _create_Field(self, data_ncvar, attributes,
-                      dimension_coordinates, auxiliary_coordinates,
-                      cell_measures, domain_ancillaries,
-                      field_ancillaries,
-#                      coordref_parameters,
-                      list_variables, verbose=False):
+    def _read_create_Field(self, data_ncvar, attributes,
+                           dimension_coordinates,
+                           auxiliary_coordinates, cell_measures,
+                           domain_ancillaries, field_ancillaries,
+                           list_variables, verbose=False):
         '''Create a field for a given netCDF variable.
     
 :Parameters:
@@ -993,9 +992,11 @@ ancillaries, field ancillaries).
                 if ncdim in dimension_coordinates:
                     coord = dimension_coordinates[ncdim].copy()
                 else:
-                    coord = self._create_bounded_item(ncdim, attributes, f,
-                                                      dimension=True,
-                                                      verbose=verbose)
+                    coord = self._read_create_bounded_item(ncdim,
+                                                           attributes,
+                                                           f,
+                                                           dimension=True,
+                                                           verbose=verbose)
                     dimension_coordinates[ncdim] = coord
                 
                 if _debug:
@@ -1076,10 +1077,11 @@ ancillaries, field ancillaries).
                 if ncvar in auxiliary_coordinates:
                     coord = auxiliary_coordinates[ncvar].copy()
                 else:
-                    coord = self._create_bounded_item(ncvar,
-                                                      attributes, f,
-                                                      auxiliary=True,
-                                                      verbose=verbose)
+                    coord = self._read_create_bounded_item(ncvar,
+                                                           attributes,
+                                                           f,
+                                                           auxiliary=True,
+                                                           verbose=verbose)
                     auxiliary_coordinates[ncvar] = coord
                 #--- End: if
     
@@ -1162,7 +1164,7 @@ ancillaries, field ancillaries).
     #                    # Variable is scalar => term is a parameter, not a
     #                    # DomainAncillary
     #                    if ncvar not in coordref_parameters:
-    #                        variable = self._create_array(ncvar, attributes)
+    #                        variable = self._read_create_array(ncvar, attributes)
     #                        coordref_parameters[ncvar] = variable
     #                    continue
     #    
@@ -1175,12 +1177,12 @@ ancillaries, field ancillaries).
                         if bounds == ncvar:
                             bounds = None
         
-                        domain_anc = self._create_bounded_item(ncvar,
-                                                               attributes,
-                                                               f,
-                                                               domainancillary=True,
-                                                               bounds=bounds,
-                                                               verbose=verbose)
+                        domain_anc = self._read_create_bounded_item(ncvar,
+                                                                    attributes,
+                                                                    f,
+                                                                    domainancillary=True,
+                                                                    bounds=bounds,
+                                                                    verbose=verbose)
                     #--- End: if
                     
                     # Insert domain ancillary
@@ -1191,10 +1193,9 @@ ancillaries, field ancillaries).
                     domain_ancillaries[ncvar] = (da_key, domain_anc)
                 #--- End: for
         
-                self._create_formula_terms_ref(f, key, coord,
-                                               g['formula_terms'][coord.ncvar]['coord'],
-                                               domain_ancillaries)
-    #                                           coordref_parameters)
+                self._read_create_formula_terms_ref(f, key, coord,
+                                                    g['formula_terms'][coord.ncvar]['coord'],
+                                                    domain_ancillaries)
             #--- End: for
         #--- End: if
     
@@ -1203,7 +1204,8 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         grid_mapping = f.getprop('grid_mapping', None)
         if grid_mapping is not None:
-            self._create_grid_mapping_ref(f, grid_mapping, attributes, ncvar_to_key)
+            self._read_create_grid_mapping_ref(f, grid_mapping,
+                                               attributes, ncvar_to_key)
     
         # ----------------------------------------------------------------
         # Add cell measures to the field
@@ -1228,7 +1230,8 @@ ancillaries, field ancillaries).
                     # Copy the cell measure as it already exists
                     cell = cell_measures[ncvar].copy()
                 else:
-                    cell = self._create_item(ncvar, attributes, f, cell_measure=True)
+                    cell = self._read_create_item(ncvar, attributes,
+                                                  f, cell_measure=True)
                     cell.measure = measure
                     cell_measures[ncvar] = cell
                 #--- End: if
@@ -1272,8 +1275,9 @@ ancillaries, field ancillaries).
                 if ncvar in field_ancillaries:
                     field_anc = field_ancillaries[ncvar].copy()
                 else:
-                    field_anc = self._create_item(ncvar, attributes, f,
-                                                  field_ancillary=True)
+                    field_anc = self._read_create_item(ncvar,
+                                                       attributes, f,
+                                                       field_ancillary=True)
                     field_ancillaries[ncvar] = field_anc
                     
                 # Insert the field ancillary
@@ -1285,10 +1289,10 @@ ancillaries, field ancillaries).
         return f
     #--- End: def
     
-    def _create_bounded_item(self, ncvar, attributes, f,
-                             dimension=False, auxiliary=False,
-                             domainancillary=False, bounds=None,
-                             verbose=False):
+    def _read_create_bounded_item(self, ncvar, attributes, f,
+                                  dimension=False, auxiliary=False,
+                                  domainancillary=False, bounds=None,
+                                  verbose=False):
         '''Create a variable which might have bounds.
     
     :Parameters:
@@ -1424,7 +1428,7 @@ ancillaries, field ancillaries).
         return c
     #--- End: def
     
-    def _create_array(self, ncvar, attributes):
+    def _read_create_array(self, ncvar, attributes):
         '''Create
     
 :Parameters:
@@ -1455,8 +1459,8 @@ ancillaries, field ancillaries).
         return data
     #--- End: def
     
-    def _create_item(self, ncvar, attributes, f, cell_measure=False,
-                     field_ancillary=False):
+    def _read_create_item(self, ncvar, attributes, f,
+                          cell_measure=False, field_ancillary=False):
         '''Create a cell measure or field ancillary object.
     
 :Parameters:
@@ -1561,8 +1565,8 @@ ancillaries, field ancillaries).
         return map(str, ncdimensions)
     #--- End: def
     
-    def _create_grid_mapping_ref(self, f, grid_mapping, attributes,
-                                 ncvar_to_key):
+    def _read_create_grid_mapping_ref(self, f, grid_mapping,
+                                      attributes, ncvar_to_key):
         '''
     
 :Parameters:
@@ -1621,9 +1625,8 @@ ancillaries, field ancillaries).
         f.delprop('grid_mapping')
     #--- End: def
     
-    def _create_formula_terms_ref(self, f, key, coord, formula_terms,
-                                  domain_ancillaries):
-#, coordref_parameters):
+    def _read_create_formula_terms_ref(self, f, key, coord,
+                                       formula_terms, domain_ancillaries):
         '''
     
     :Parameters:
@@ -1746,9 +1749,8 @@ ancillaries, field ancillaries).
             # --------------------------------------------------------
             # The array is not compressed
             # --------------------------------------------------------
-            data = self._create_Data(array=filearray,
-                                     variable=variable,
-                                     fill_value=fill_value)
+            data = self._read_create_Data(filearray, units=units,
+                                          fill_value=fill_value)
             
         else:
             # --------------------------------------------------------
@@ -1842,10 +1844,10 @@ ancillaries, field ancillaries).
         return data
     #--- End: def
 
-    def _create_Data(self, array=None, variable=None, fill_value=None):
+    def _read_create_Data(self, array=None, units=None, fill_value=None):
         '''
         '''    
-        return self.Data(array, fill_value=fill_value)        
+        return self.Data(array, units=units, fill_value=fill_value)        
     #--- End: def
     
     @classmethod    
@@ -1900,8 +1902,8 @@ ancillaries, field ancillaries).
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               verbose=False, mode='w', least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
-              no_shuffle=False, datatype=None, single=False,
-              double=False, variable_attributes=None, HDF_chunks=None,
+              no_shuffle=False, datatype=None,
+              variable_attributes=None, HDF_chunks=None,
               unlimited=None, _debug=False):
         '''Write fields to a CF-netCDF file.
         
@@ -2126,7 +2128,7 @@ and auxiliary coordinate roles for different data variables.
         # also creates the g['global_properties'] set, which is used in
         # the _write_a_field function.
         # ---------------------------------------------------------------
-        self._create_global_properties(fields)
+        self._write_global_properties(fields)
     
         # ---------------------------------------------------------------
         # ---------------------------------------------------------------
@@ -2239,34 +2241,34 @@ and auxiliary coordinate roles for different data variables.
                 netcdf_var.setncattr(attr, value)
     #--- End: def
     
-    def _character_array(self, array):
-        '''Convert a numpy string array to a numpy character array wih an extra
-    trailing dimension.
+    def _write_character_array(self, array):
+        '''Convert a numpy string array to a numpy character array wih an
+extra trailing dimension.
     
-    :Parameters:
-    
-        array: `numpy.ndarray`
-    
-    :Returns:
-    
-        out: `numpy.ndarray`
-    
-    :Examples:
-    
-    >>> print a, a.shape, a.dtype.itemsize
-    ['fu' 'bar'] (2,) 3
-    >>> b = _character_array(a)
-    >>> print b, b.shape, b.dtype.itemsize
-    [['f' 'u' ' ']
-     ['b' 'a' 'r']] (2, 3) 1
-    
-    >>> print a, a.shape, a.dtype.itemsize
-    [-- 'bar'] (2,) 3
-    >>> b = _character_array(a)
-    >>> print b, b.shape, b.dtype.itemsize
-    [[-- -- --]
-     ['b' 'a' 'r']] (2, 3) 1
-    
+:Parameters:
+
+    array: `numpy.ndarray`
+
+:Returns:
+
+    out: `numpy.ndarray`
+
+:Examples:
+
+>>> print a, a.shape, a.dtype.itemsize
+['fu' 'bar'] (2,) 3
+>>> b = _character_array(a)
+>>> print b, b.shape, b.dtype.itemsize
+[['f' 'u' ' ']
+ ['b' 'a' 'r']] (2, 3) 1
+
+>>> print a, a.shape, a.dtype.itemsize
+[-- 'bar'] (2,) 3
+>>> b = _character_array(a)
+>>> print b, b.shape, b.dtype.itemsize
+[[-- -- --]
+ ['b' 'a' 'r']] (2, 3) 1
+
         '''
         strlen = array.dtype.itemsize
         shape  = array.shape
@@ -2284,39 +2286,35 @@ and auxiliary coordinate roles for different data variables.
         return new
     #--- End: def
     
-    def _datatype(self, variable):
+    def _write_datatype(self, variable):
+        '''Return the netCDF4.createVariable datatype corresponding to the
+datatype of the array of the input variable
+    
+For example, if variable.dtype is 'float32', then 'f4' will be
+returned.
+    
+Numpy string data types will return 'S1' regardless of the numpy
+string length. This means that the required conversion of
+multi-character datatype numpy arrays into single-character datatype
+numpy arrays (with an extra trailing dimension) is expected to be done
+elsewhere (currently in the _write_create_netcdf_variable method).
+    
+If the input variable has no `!dtype` attribute (or it is None) then
+'S1' is returned.
+    
+ :Parameters:
+ 
+     variable: 
+         Any object with a `!dtype` attribute whose value is a
+         `numpy.dtype` object or `None`.
+ 
+ :Returns:
+ 
+     out: `str`
+        The `netCDF4.createVariable` data type corresponding to the
+        datatype of the array of the input variable.
+
         '''
-    
-    Return the netCDF4.createVariable datatype corresponding to the
-    datatype of the array of the input variable
-    
-    For example, if variable.dtype is 'float32', then 'f4' will be
-    returned.
-    
-    Numpy string data types will return 'S1' regardless of the numpy
-    string length. This means that the required conversion of
-    multi-character datatype numpy arrays into single-character datatype
-    numpy arrays (with an extra trailing dimension) is expected to be done
-    elsewhere (currently in the _create_netcdf_variable function).
-    
-    If the input variable has no `!dtype` attribute (or it is None) then
-    'S1' is returned.
-    
-    :Parameters:
-    
-        variable : 
-            Any object with a `!dtype` attribute whose value is a
-            `numpy.dtype` object or None.
-    
-        g : dict
-    
-    :Returns:
-    
-        out : str
-            The netCDF4.createVariable datatype corresponding to the
-            datatype of the array of the input variable.
-    
-    '''
         g = self.write_vars
 
         if not hasattr(variable, 'dtype'):
@@ -2335,24 +2333,19 @@ and auxiliary coordinate roles for different data variables.
         return '{0}{1}'.format(dtype.kind, dtype.itemsize)
     #--- End: def
     
-    def _string_length_dimension(self, size):
+    def _write_string_length_dimension(self, size):
+        '''Create, if necessary, a netCDF dimension for string variables.
+    
+:Parameters:
+
+    size: `int`
+
+:Returns:
+
+    out: `str`
+        The netCDF dimension name.
+
         '''
-    
-    Create, if necessary, a netCDF dimension for string variables.
-    
-    :Parameters:
-    
-        size : int
-    
-        g : dict
-    
-    
-    :Returns:
-    
-        out : str
-            The netCDF dimension name.
-    
-    '''
         g = self.write_vars
 
         # ----------------------------------------------------------------
@@ -2369,7 +2362,7 @@ and auxiliary coordinate roles for different data variables.
         return ncdim
     #--- End: def
     
-    def _grid_ncdimensions(self, f, key, axis_to_ncdim):
+    def _write_grid_ncdimensions(self, f, key, axis_to_ncdim):
         '''Return a tuple of the netCDF dimension names for the axes of a
 coordinate or cell measures objects.
     
@@ -2398,7 +2391,7 @@ coordinate or cell measures objects.
         return tuple([axis_to_ncdim[axis] for axis in f.item_axes(key)])
     #--- End: def
         
-    def _variable_ncvar(self, variable, default):
+    def _write_create_netcdf_variable_name(self, variable, default):
         '''
         
     :Returns:
@@ -2574,7 +2567,8 @@ a new netCDF bounds dimension.
         #--- End: if
     
         if create:
-            ncdim = self._variable_ncvar(coord, default='coordinate')
+            ncdim = self._write_create_netcdf_variable_name(coord,
+                                               default='coordinate')
     
             # Create a new dimension, if it is not a scalar coordinate
             if coord.ndim > 0:
@@ -2582,7 +2576,8 @@ a new netCDF bounds dimension.
                 self._write_dimension(ncdim, f, axis, axis_to_ncdim,
                                       unlimited=unlimited)
     
-            ncdimensions = self._grid_ncdimensions(f, axis, axis_to_ncdim)
+            ncdimensions = self._write_grid_ncdimensions(f, axis,
+                                                         axis_to_ncdim)
             
             # If this dimension coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
@@ -2590,8 +2585,8 @@ a new netCDF bounds dimension.
             extra = self._write_bounds(coord, ncdimensions, ncdim)
     
             # Create a new dimension coordinate variable
-            self._create_netcdf_variable(ncdim, ncdimensions, coord, 
-                                         extra=extra)
+            self._write_create_netcdf_variable(ncdim, ncdimensions,
+                                               coord, extra=extra)
         else:
             ncdim = seen[id(coord)]['ncvar']
     
@@ -2637,7 +2632,7 @@ a new netCDF bounds dimension.
             ncvar = self._write_check_name(ncvar) # DCH ?
             
             # Create a new dimension coordinate variable
-            self._create_netcdf_variable(ncvar, (), value)
+            self._write_create_netcdf_variable(ncvar, (), value)
         else:
             ncvar = seen[id(value)]['ncvar']
     
@@ -2775,7 +2770,8 @@ dictionary.
                     omit.append(prop)
     
             # Create the bounds netCDF variable
-            self._create_netcdf_variable(ncvar, ncdimensions, bounds, omit=omit)
+            self._write_create_netcdf_variable(ncvar, ncdimensions,
+                                               bounds, omit=omit)
         #--- End: if
     
         if getattr(coord, 'climatology', None):
@@ -2830,7 +2826,8 @@ then the input coordinate is not written.
         coord = self._squeeze_coordinate(coord)
     
         if not self._seen(coord, ()):
-            ncvar = self._variable_ncvar(coord, default='scalar')
+            ncvar = self._write_create_netcdf_variable_name(coord,
+                                               default='scalar')
     
             # If this scalar coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
@@ -2838,7 +2835,8 @@ then the input coordinate is not written.
             extra = self._write_bounds(coord, (), ncvar)
     
             # Create a new auxiliary coordinate variable
-            self._create_netcdf_variable(ncvar, (), coord, extra=extra)
+            self._write_create_netcdf_variable(ncvar, (), coord,
+                                               extra=extra)
     
         else:
             # This scalar coordinate has already been written to the
@@ -2908,13 +2906,15 @@ then the input coordinate is not written.
 
 #        coord = self._change_reference_datetime(coord)
     
-        ncdimensions = self._grid_ncdimensions(f, key, axis_to_ncdim)
+        ncdimensions = self._write_grid_ncdimensions(f, key,
+                                                     axis_to_ncdim)
     
         if self._seen(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
         
         else:
-            ncvar = self._variable_ncvar(coord, default='auxiliary')
+            ncvar = self._write_create_netcdf_variable_name(coord,
+                                               default='auxiliary')
             
             # If this auxiliary coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
@@ -2922,7 +2922,8 @@ then the input coordinate is not written.
             extra = self._write_bounds(coord, ncdimensions, ncvar)
     
             # Create a new auxiliary coordinate variable
-            self._create_netcdf_variable(ncvar, ncdimensions, coord, extra=extra)
+            self._write_create_netcdf_variable(ncvar, ncdimensions,
+                                               coord, extra=extra)
         #--- End: if
     
         key_to_ncvar[key] = ncvar
@@ -2975,13 +2976,15 @@ then the input coordinate is not written.
             ncvar = g['seen'][id(anc)]['ncvar']
         
         else:
-            ncvar = self._variable_ncvar(anc, default='domain_ancillary')
+            ncvar = self._write_create_netcdf_variable_name(anc,
+                                               default='domain_ancillary')
     
             # If this domain ancillary has bounds then create the bounds
             # netCDF variable
             self._write_bounds(anc, ncdimensions, ncvar)
     
-            self._create_netcdf_variable(ncvar, ncdimensions, anc, extra={})
+            self._write_create_netcdf_variable(ncvar, ncdimensions,
+                                               anc, extra={})
         #--- End: if
     
         key_to_ncvar[key] = ncvar
@@ -3030,8 +3033,8 @@ then the input coordinate is not written.
         if not create:
             ncvar = g['seen'][id(anc)]['ncvar']    
         else:
-            ncvar = self._variable_ncvar(anc, 'ancillary_data')
-            self._create_netcdf_variable(ncvar, ncdimensions, anc)
+            ncvar = self._write_create_netcdf_variable_name(anc, 'ancillary_data')
+            self._write_create_netcdf_variable(ncvar, ncdimensions, anc)
     
         key_to_ncvar[key] = ncvar
     
@@ -3072,7 +3075,8 @@ then the input coordinate is not written.
     '''
         g = self.write_vars
 
-        ncdimensions = self._grid_ncdimensions(f, key, axis_to_ncdim)
+        ncdimensions = self._write_grid_ncdimensions(f, key,
+                                                     axis_to_ncdim)
     
         create = not self._seen(msr, ncdimensions)
     
@@ -3083,9 +3087,9 @@ then the input coordinate is not written.
                 raise ValueError(
     "Can't create a cell measure variable without a 'measure' attribute")
     
-            ncvar = self._variable_ncvar(msr, 'cell_measure')
+            ncvar = self._write_create_netcdf_variable_name(msr, 'cell_measure')
     
-            self._create_netcdf_variable(ncvar, ncdimensions, msr)
+            self._write_create_netcdf_variable(ncvar, ncdimensions, msr)
         #--- End: if
                 
         key_to_ncvar[key] = ncvar
@@ -3131,7 +3135,7 @@ then the input coordinate is not written.
     
         else:
             # Create a new grid mapping
-            ncvar = self._variable_ncvar(ref, 'grid_mapping')
+            ncvar = self._write_create_netcdf_variable_name(ref, 'grid_mapping')
     
             g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
                                                         endian=g['endian'],
@@ -3169,38 +3173,34 @@ then the input coordinate is not written.
             return ncvar
     #--- End: def
     
-    def _create_netcdf_variable(self, ncvar, dimensions, cfvar, omit=(),
-                                extra={}, data_variable=False):
+    def _write_create_netcdf_variable(self, ncvar, dimensions, cfvar,
+                                      omit=(), extra={},
+                                      data_variable=False):
         '''Create a netCDF variable from *cfvar* with name *ncvar* and
 dimensions *ncdimensions*. The new netCDF variable's properties are
 given by cfvar.properties(), less any given by the *omit* argument. If
 a new string-length netCDF dimension is required then it will also be
 created. The ``seen`` dictionary is updated for *cfvar*.
     
-    .. note:: This function updates ``g['ncdim_to_size']``,
-              ``g['netcdf']``, ``g['nc']``, ``g['seen']``.
-    
-    :Parameters:
-    
-        ncvar: `str`
-            The netCDF name of the variable.
-    
-        dimensions: `tuple`
-            The netCDF dimension names of the variable
-    
-        cfvar: `Variable`
-            The coordinate, cell measure or field object to write to the
-            file.
-    
-        omit: sequence of `str`, optional
-    
-        extra: `dict`, optional
-    
-        g: `dict`
-    
-    :Returns:
-    
-        `None`
+:Parameters:
+
+    ncvar: `str`
+        The netCDF name of the variable.
+
+    dimensions: `tuple`
+        The netCDF dimension names of the variable
+
+    cfvar: `Variable`
+        The coordinate, cell measure or field object to write to the
+        file.
+
+    omit: sequence of `str`, optional
+
+    extra: `dict`, optional
+
+:Returns:
+
+    `None`
 
         '''
         g = self.write_vars
@@ -3216,7 +3216,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ----------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
         # ----------------------------------------------------------------
-        datatype = self._datatype(cfvar)
+        datatype = self._write_datatype(cfvar)
     
         # ----------------------------------------------------------------
         # Set the netCDF4.createVariable dimensions
@@ -3235,8 +3235,8 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 # --------------------------------------------------------
                 strlen = data.dtype.itemsize
                 if strlen > 1:
-                    data = self._convert_to_char(data)
-                    ncdim = self._string_length_dimension(strlen)            
+                    data = self._write_convert_to_char(data)
+                    ncdim = self._write_string_length_dimension(strlen)            
                     ncdimensions = dimensions + (ncdim,)
         #--- End: if
     
@@ -3367,7 +3367,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         g['nc'][ncvar][...] = array
     #--- End: def
     
-    def _convert_to_char(self, data):
+    def _write_convert_to_char(self, data):
         '''Convert a string array into a character array (data type 'S1') with
      an extra trailing dimension.
     
@@ -3380,7 +3380,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         if strlen > 1:
             data = data.copy()
             
-            array = self._character_array(data.array)
+            array = self._write_character_array(data.array)
             
             data._shape = array.shape
             data._ndim  = array.ndim
@@ -3651,7 +3651,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ----------------------------------------------------------------
         # Create the CF-netCDF data variable
         # ----------------------------------------------------------------
-        ncvar = self._variable_ncvar(f, 'data')
+        ncvar = self._write_create_netcdf_variable_name(f, 'data')
     
         ncdimensions = tuple([axis_to_ncdim[axis] for axis in f.data_axes()])
     
@@ -3696,10 +3696,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 #            extra['cell_methods'] = cell_methods.write(axis_map)
     
         # Create a new data variable
-        self._create_netcdf_variable(ncvar, ncdimensions, f,
-                                     omit=g['global_properties'],
-                                     extra=extra,
-                                     data_variable=True)
+        self._write_create_netcdf_variable(ncvar, ncdimensions, f,
+                                           omit=g['global_properties'],
+                                           extra=extra, data_variable=True)
         
         # Update the 'seen' dictionary, if required
         if add_to_seen:
@@ -3725,7 +3724,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         return unlimited
     #--- End: def
     
-    def _create_global_properties(self, fields):
+    def _write_global_properties(self, fields):
         '''Find the netCDF global properties from all of the input fields and
 write them to the netCDF4.Dataset.
     

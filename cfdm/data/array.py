@@ -82,6 +82,10 @@ x.__str__() <==> str(x)
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
     #--- End: def
 
+    @property
+    def isunique(self):
+        raise NotImplementedError("Subclass of 'Array' must define 'isunique'")
+    
     def copy(self):
         '''Return a deep copy.
 
@@ -106,7 +110,7 @@ x.__str__() <==> str(x)
     def close(self):
         '''
         '''
-        pass
+        raise NotImplementedError("Subclass of 'Array' must define 'close'")
     #--- End: def
 
     @classmethod
@@ -167,7 +171,7 @@ indices must contain an index for each dimension of the input array.
     def open(self):
         '''
         '''
-        pass
+        raise NotImplementedError("Subclass of 'Array' must define 'open'")
     #---End: def
     
 #--- End: class
@@ -200,10 +204,10 @@ class NumpyArray(Array):
 
 x.__getitem__(indices) <==> x[indices]
 
-Returns a numpy array.
+Returns an independent numpy array.
 
 '''
-        if sys.getrefcount(self.array) <= 2:
+        if self.isunique:
             array = self.array
         else:
             if numpy.ma.isMA and not self.ndim:
@@ -239,6 +243,10 @@ Returns a numpy array.
     def dtype(self):
         return self.array.dtype
 
+    @property
+    def isunique(self):
+        return sys.getrefcount(self.array) <= 2
+    
 #--- End: class
 
 # ====================================================================
@@ -489,6 +497,10 @@ x.__str__() <==> str(x)
         
         return nc
     #--- End: def
+
+    @property
+    def isunique(self):
+        return True
 
     def open(self):
         '''Return an open `netCDF4.Dataset` for the file containing the array.

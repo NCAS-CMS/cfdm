@@ -70,9 +70,9 @@ class create_fieldTest(unittest.TestCase):
                         'grid_north_pole_longitude': 190.0})
         
         # Data          
-        data = cfdm.Data(numpy.arange(90.).reshape(10, 9)) #, 'm s-1')
+        data = cfdm.Data(numpy.arange(90.).reshape(10, 9), 'm s-1')
 
-        properties = {'standard_name': 'eastward_wind', 'units': 'm s-1'} WHY does units here not work?
+        properties = {'standard_name': 'eastward_wind'} #, 'units': 'm s-1'} #WHY does units here not work?
         
         f = cfdm.Field(properties=properties, data=data)
         f.units = 'm s-1'
@@ -132,8 +132,8 @@ class create_fieldTest(unittest.TestCase):
         for cm in cfdm.CellMethod.parse('grid_longitude: mean grid_latitude: max'):
             f.insert_cell_method(cm)
 
-        f.dump()
-        print f
+#        f.dump()
+#        print f
         # Write the file, and read it in
 #        print f.shape
  

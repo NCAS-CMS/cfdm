@@ -11,9 +11,7 @@ netcdf = NetCDF(mode='write',
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           verbose=False, mode='w', least_significant_digit=None,
           endian='native', compress=0, fletcher32=False,
-          no_shuffle=False, datatype=None, single=False, double=False,
-#          reference_datetime=None,
-          variable_attributes=None,
+          no_shuffle=False, variable_attributes=None, datatype=None,
           HDF_chunksizes=None, unlimited=None, _debug=False):
     '''Write fields to a netCDF file.
     
@@ -269,9 +267,7 @@ which have equal values across all input fields.
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      no_shuffle=no_shuffle, fletcher32=fletcher32,
-                     datatype=datatype, single=single, double=double,
-#                     reference_datetime=reference_datetime,
                      variable_attributes=variable_attributes,
-                     HDF_chunks=HDF_chunksizes, unlimited=unlimited,
-                     _debug=_debug)
+                     datatype=datatype, HDF_chunks=HDF_chunksizes,
+                     unlimited=unlimited, _debug=_debug)
 #--- End: def

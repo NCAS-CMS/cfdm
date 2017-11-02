@@ -112,6 +112,7 @@ class read_writeTest(unittest.TestCase):
 
         f = cfdm.read(self.filename)[0] 
         self.assertTrue(f.dtype == numpy.dtype(float))
+
         cfdm.write(f, tmpfile, fmt='NETCDF4', 
                  datatype={numpy.dtype(float): numpy.dtype('float32')})
         g = cfdm.read(tmpfile)[0]
