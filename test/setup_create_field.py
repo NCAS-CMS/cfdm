@@ -14,13 +14,12 @@ class create_fieldTest(unittest.TestCase):
     def test_create_field(self):
 
         # Dimension coordinates
-        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.))) #, 'degrees'))
+        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.)))
         dim1.standard_name = 'grid_latitude'
         dim1.units = 'degrees'
 
-        dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(9.) + 20)) #, 'degrees'))
+        dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(9.) + 20, 'degrees'))
         dim0.standard_name = 'grid_longitude'
-        dim0.units = 'degrees'
         dim0.data[-1] = 34
         bounds = cfdm.Data(numpy.array([dim0.data.array-0.5, dim0.data.array+0.5]).transpose((1,0)))
         bounds[-2,1] = 30
@@ -41,13 +40,11 @@ class create_fieldTest(unittest.TestCase):
         bk.insert_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
         
         aux2 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9))) #, units='degree_N'))
+            data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9), units='degree_N'))
         aux2.standard_name = 'latitude'
-        aux2.units = 'degree_N'
         
         aux3 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10))) #,
-#                         units='degreesE'))
+            data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10)))
         aux3.standard_name = 'longitude'
         aux3.units = 'degreeE'
                 

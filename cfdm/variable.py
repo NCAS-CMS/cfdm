@@ -1164,7 +1164,15 @@ True
 >>> c.axis == 'X' and c.X
 True
 
-        '''              
+>>> c.standard_name == 'grid_longitude'
+>>> c.X
+True
+
+>>> c.standard_name == 'projection_x_coordinate'
+>>> c.X
+True
+
+        '''
         if self.ndim > 1:
             return self.getprop('axis', None) == 'X'
             
@@ -1207,7 +1215,16 @@ True
 >>> c.standard_name == 'latitude'
 >>> c.Y
 True
-'''              
+
+>>> c.standard_name == 'grid_latitude'
+>>> c.Y
+True
+
+>>> c.standard_name == 'projection_y_coordinate'
+>>> c.Y
+True
+
+        '''              
         if self.ndim > 1:
             return self.getprop('axis', None) == 'Y'
 
@@ -3731,12 +3748,13 @@ first axis which is to have a chunk size of 12:
         dictionary are deep copied
 
     clear: `bool`, optional
-        If True then delete all CF properties.
+        If True then delete all CF properties, with the exceptions of
+        ``'units'`` and ``'calendar'``.
 
     copy: `bool`, optional
-        If True then the values in the returned dictionary are deep
-        copies of the {+variable}'s attribute values. By default they
-        are not copied.
+        If False then any property values provided bythe *props*
+        parameter are not copied before insertion into the
+        {+variable}. By default they are deep copied.
 
 :Returns:
 
@@ -3747,11 +3765,19 @@ first axis which is to have a chunk size of 12:
 :Examples 2:
 
         '''
-        if copy:            
-            out = deepcopy(self._simple_properties())
-        else:
-            out = self._simple_properties().copy()
+#        if copy:            
+        out = deepcopy(self._simple_properties())
+#        else:
+#            out = self._simple_properties().copy()
             
+        # Include properties that are not listed in the simple
+        # properties dictionary
+        for prop in ('units', 'calendar'):
+            _ = getattr(self, prop, None)
+            if _ is not None:
+                out[prop] = _
+        #--- End: for
+
         if clear:
             self._simple_properties().clear()
             return out
@@ -3821,10 +3847,10 @@ first axis which is to have a chunk size of 12:
 
         ''' 
  
-        if copy:
-            out = deepcopy(self.__dict__)
-        else:
-            out = self.__dict__.copy()
+#        if copy:
+        out = deepcopy(self.__dict__)
+#        else:
+#            out = self.__dict__.copy()
 
         del out['_hasbounds']
         del out['_hasdata']
