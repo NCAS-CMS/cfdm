@@ -2218,7 +2218,13 @@ and auxiliary coordinate roles for different data variables.
     
 :Parameters:
 
+    variable: `Variable` or `Data`
+
     ncvar: `str`
+
+    extra: `dict`, optional
+    
+    omit : sequence of `str`, optional
 
 :Returns:
 
@@ -2229,13 +2235,20 @@ and auxiliary coordinate roles for different data variables.
         '''  
         netcdf_var = self.write_vars['nc'][ncvar]
 
-        netcdf_attrs = variable.properties()
+        try:
+            netcdf_attrs = variable.properties()
+        except AttributeError:
+            netcdf_attrs = {}
+
         netcdf_attrs.update(extra)
         netcdf_attrs.pop('_FillValue', None)
     
         for attr in omit:
             netcdf_attrs.pop(attr, None) 
     
+        if not netcdf_attrs:
+            return
+
         if hasattr(netcdf_var, 'setncatts'):
             # Use the faster setncatts
             netcdf_var.setncatts(netcdf_attrs)
