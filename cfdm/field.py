@@ -83,11 +83,6 @@ Field objects are picklable.
          'flag_meanings')
          )
     
-#    def __new__(cls, **kwargs):
-#        cls = object.__new__(cls)
-#        cls._DomainAxis = DomainAxis
-#        return cls
-    
     def __init__(self, properties={}, attributes={}, data=None,
                  source=None, copy=True):
         '''**Initialization**
@@ -454,35 +449,6 @@ A `Flags` object stores the `flag_values`, `flag_meanings` and
 
         return out
     #--- End: def
-
-#    @property
-#    def rank(self):
-#        '''The number of axes in the domain.
-#
-#Note that this may be greater the number of data array axes.
-#
-#.. seealso:: `ndim`
-#
-#:Examples:
-#
-#>>> print f
-#air_temperature field summary
-#-----------------------------
-#Data           : air_temperature(time(12), latitude(64), longitude(128)) K
-#Cell methods   : time: mean
-#Axes           : time(12) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap
-#               : latitude(64) = [-87.8638000488, ..., 87.8638000488] degrees_north
-#               : longitude(128) = [0.0, ..., 357.1875] degrees_east
-#               : height(1) = [2.0] m
-#>>> f.rank, f.ndim
-#(4, 3)
-#>>> g = f.unsqueeze()
-#>>> f.rank, f.ndim
-#(4, 4)
-#
-#        '''
-#        return len(self.Axes)
-#    #--- End: def
 
     # ----------------------------------------------------------------
     # CF property
@@ -1086,85 +1052,6 @@ field.
             return string
     #--- End: def
 
-#    def _dump_cell_methods(self, display=True, _level=0):
-#        '''Return a string containing a description of the cell methods of the
-#field.
-#    
-#:Parameters:
-#    
-#    display: `bool`, optional
-#
-#        If False then return the description as a string. By default
-#        the description is printed.
-#    
-#    _level: `int`, optional
-#
-#:Returns:
-#    
-#    out: `str`
-#        A string containing the description.
-#    
-#:Examples:
-#
-#        '''
-#        indent1 = '    ' * _level
-#        indent2 = '    ' * (_level+1)
-#
-#        data_axes = self.data_axes()
-#        if data_axes is None:
-#            data_axes = ()
-#
-#        axis_name = self.axis_name
-#        axis_size = self.axis_size
-#
-#        w = sorted(["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), size)
-#                    for axis, size in self.axes().iteritems()
-#                    if axis not in data_axes])
-#
-#        x = ["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), axis_size(axis))
-#             for axis in data_axes]
-#
-#        string = '\n'.join(w+x)
-#
-#        if display:
-#            print string
-#        else:
-#            return string
-#    #--- End: def
-#
-#    def direction(self, axis):
-#        '''
-#
-#Return True if an axis is increasing, otherwise return False.
-#
-#An axis is considered to be increasing if its dimension coordinate
-#values are increasing in index space or if it has no dimension
-#coordinates.
-#
-#
-#:Parameters:
-#
-#    axis: `str`
-#        A domain axis identifier, such as ``'dim0'``.
-#
-#:Returns:
-#
-#    out: `bool`
-#        Whether or not the axis is increasing.
-#        
-#:Examples:
-#
-#>>> i.direction('dim0')
-#True
-#>>> i.direction('dim2')
-#False
-#        '''
-#        axis = self.axis(axis)
-#        
-#
-#        return self.Items.direction(axis)
-#    #--- End: def
-        
     def dump(self, display=True, _level=0, _title='Field', _q='-'):
         '''A full description of the field.
 
@@ -1798,8 +1685,6 @@ axes, use the `remove_axes` method.
 >>>
 
         '''
-
-#        item = item._asauxiliary(AuxiliaryCoordinate, copy=copy)            
         if copy:
             item = item.copy()
             
@@ -1808,7 +1693,7 @@ axes, use the `remove_axes` method.
 
         if key in self.axes() and not replace:
             raise ValueError(
-"Can't insert auxiliary coordinate object: Identifier {0!r} already exists".format(key))
+"Can't insert auxiliary coordinate object: Identifier {!r} already exists".format(key))
 
         axes = self._insert_item_parse_axes(item, 'auxiliary coordinate', axes,
                                             allow_scalar=False)
@@ -1915,9 +1800,13 @@ ValueError: Can't initialize data: Data already exists
 
         '''
         if force:
-            if data.shape != self.shape:
-                print "WARNING: Forcing insertion of new data with a different shape to existing data"
-
+            if self.hasdata and data.shape != self.shape:
+                print(
+"WARNING: Forcing insertion of new data with a different shape to existing data")
+            else:
+                print(
+"WARNING: Forcing insertion of new data without checking for consistency with domain axes")
+                
             self._Data = data
             return
         #--- End: if
@@ -2712,7 +2601,9 @@ arguments.
             cf.dtge(1990) & cf.cellsize(cf.wi(28, 31, 'days'))}`` (see
             `cf.dtge`, `cf.cellsize` and `cf.wi`).
 
-    rank: *optional*
+    {+rank}
+
+    OLD rank: *optional*
         Specify a condition on the number of axes in the field.  The
         field matches if its number of domain axes equals *rank*. A
         range of values may be selected if *rank* is a `cf.Query`
@@ -5168,39 +5059,8 @@ names contain the string "qwerty":
 
         '''
         return dict([(key, self[key]) for key in self.d])
- 
-#    def direction(self, axis):
-#        '''
-#
-#Return True if an axis is increasing, otherwise return False.
-#
-#An axis is considered to be increasing if its dimension coordinate
-#values are increasing in index space or if it has no dimension
-#coordinates.
-#
-#:Parameters:
-#
-#    axis: `str`
-#        A domain axis identifier, such as ``'dim0'``.
-#
-#:Returns:
-#
-#    out: `bool`
-#        Whether or not the axis is increasing.
-#        
-#:Examples:
-#
-#>>> i.direction('dim0')
-#True
-#>>> i.direction('dim2')
-#False
-#        '''
-#        if axis not in self.d:
-#            return 
-#
-#        return self[axis].direction()
-#    #--- End: def
-        
+    #--- End: def
+
     def domain_ancs(self):
         '''Return domain ancillary objects and their identifiers
 
@@ -5217,7 +5077,8 @@ names contain the string "qwerty":
 
         '''
         return dict([(key, self[key]) for key in self.c])
-        
+    #--- End: def
+            
     def field_ancs(self):
         '''Return field ancillary objects and their identifiers
         
@@ -5234,7 +5095,8 @@ names contain the string "qwerty":
 
         '''
         return dict([(key, self[key]) for key in self.f])
-
+    #--- End: def
+    
     def msrs(self):
         '''Return cell measure objects and their identifiers
         
@@ -5251,7 +5113,8 @@ names contain the string "qwerty":
 
         '''        
         return dict([(key, self[key]) for key in self.m])
-        
+    #--- End: def
+    
     def refs(self):
         '''Return coordinate reference objects and their identifiers
         
@@ -5268,7 +5131,8 @@ names contain the string "qwerty":
 
         '''  
         return dict([(key, self[key]) for key in self.r])
-
+    #--- End: def
+    
     def all_axes(self):
         '''
         '''        
@@ -5277,7 +5141,8 @@ names contain the string "qwerty":
             out.extend(item_axes)
 
         return set(out)
-
+    #--- End: def
+    
     def axes(self, key=None, axes=None, default=None):
         '''
 :Examples 1:

@@ -165,15 +165,13 @@ Role                Items of the given component type   *role*
 ==================  ==================================  ==================''',
     
     # ----------------------------------------------------------------
-    '{+ndim}': '''ndim: optional
-        Select the items whose number of data array dimensions satisfy
-        the given condition. A range of dimensions may be selected if
-        *ndim* is a `cf.Query` object.
+    '{+ndim}': '''ndim: `int`, optional
+        Select each item that has a data array with exactly *ndim*
+        dimensions.
     
           *Example:*
-            ``ndim=1`` selects one-dimensional items and
-            ``ndim=cf.ge(2)`` selects items which span two or more
-            axes (see `cf.ge`).''',
+            ``ndim=1`` selects items with one-dimensional data
+            arrays.''',
     
     # ----------------------------------------------------------------
     '{+axes}': '''axes: optional
@@ -189,7 +187,8 @@ Role                Items of the given component type   *role*
   
           *Example:*
             To select items which span a time axis, and possibly
-            others, you could set: ``axes='T'``.
+            others, you could set ``axes='T'``, or equivalently:
+            ``axes=['T']``.
             
           *Example:*
             To select items which span a latitude and/or longitude
@@ -198,9 +197,8 @@ Role                Items of the given component type   *role*
             
           *Example:*
             To specify axes with size 19 you could set ``axes={'size':
-            19}``. To specify depth axes with size 40 or more, you
-            could set: ``axes={'axes': 'depth', 'size': cf.ge(40)}``
-            (see `cf.ge`).''',
+            19}``. To specify depth axes with size 40 you could set:
+            ``axes={'axes': 'depth', 'size': 40}``.''',
     
     # ----------------------------------------------------------------
     '{+axes_subset}': '''axes_subset: optional 
@@ -284,7 +282,15 @@ Role                Items of the given component type   *role*
             ``axes_all={'size': 19}``. To specify depth axes with size
             40 or more, you could set: ``axes_all={'axes': 'depth',
             'size': cf.ge(40)}`` (see `cf.ge`).''',
-    
+    # ----------------------------------------------------------------
+    '{+rank}': '''rank: `int`, optional
+        Specify a condition on the number of domain axes in the
+        field. The field matches if its number of domain axes equals
+        *rank*. Not to be confused with the *ndim* parameter.
+
+          *Example:*
+            ``rank=2`` matches a field with exactly two domain axes.''',
+
     # ----------------------------------------------------------------
     '{+role}': '''role: (sequence of) `str`, optional
         Select items of the given roles. Valid roles are:
