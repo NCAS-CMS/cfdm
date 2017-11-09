@@ -287,7 +287,14 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-        string = ["{} field summary".format(self.name(''))]
+        title = "Field: {0}".format(self.name(''))
+
+        # Append the netCDF variable name
+        ncvar = getattr(self, 'ncvar', None)
+        if ncvar is not None:
+            title += " (ncvar%{0})".format(ncvar)
+        
+        string = [title]
         string.append(''.ljust(len(string[0]), '-'))
 
         # Units
@@ -1187,22 +1194,17 @@ last values.
         string.
 
         '''
-#        # List functionality
-#        if self._list:
-#            kwargs2 = self._parameters(locals())
-#            if display:
-#                for f in self:
-#                    f.dump(**kwargs2)
-#                return
-#            else:
-#                return [f.dump(**kwargs2) for f in self]
-#        #--- End: if 
-
         indent = '    '      
         indent0 = indent * _level
         indent1 = indent0 + indent
 
         title = '{0}{1}: {2}'.format(indent0, _title, self.name(''))
+
+        # Append the netCDF variable name
+        ncvar = getattr(self, 'ncvar', None)
+        if ncvar is not None:
+            title += " (ncvar%{0})".format(ncvar)
+
         line  = '{0}{1}'.format(indent0, ''.ljust(len(title)-_level*4, '-'))
 
         # Title

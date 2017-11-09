@@ -39,7 +39,10 @@ class NetCDF(object):
 
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
-            
+
+        # ------------------------------------------------------------
+        # Initialise netCDF read parameters
+        # ------------------------------------------------------------
         self._read_vars = {
             #
             'new_dimensions': {},
@@ -54,6 +57,9 @@ class NetCDF(object):
             '_debug': False,
         }
         
+        # ------------------------------------------------------------
+        # Initialise netCDF write parameters
+        # ------------------------------------------------------------
         self._write_vars =  {
             # Format of output file
             'fmt': None,
@@ -167,14 +173,14 @@ ancillaries, field ancillaries).
 <CF Field: pmsl(30, 24)>
 
         '''
+        self.read_vars = copy.deepcopy(self._read_vars)
+        g = self.read_vars
+        
         if isinstance(filename, file):
             name = filename.name
             filename.close()
             filename = name
 
-        self.read_vars = copy.deepcopy(self._read_vars)
-        g = self.read_vars
-        
         g['uncompress'] = uncompress
         g['verbose']    = verbose
         g['_debug']     = _debug
@@ -666,7 +672,7 @@ ancillaries, field ancillaries).
         # there are 3 instances then the instance_indices arary might look
         # like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1, 2, 2, 1, 0, 0, 0, 2,
         # 0].
-        instance_indices = self._read_create_Data(inverse)
+        instance_indices = self._read_create_Data(array=inverse)
     
         # The number of elements per instance. For the instance_indices
         # example, the elements_per_instance array is [7, 5, 7].
@@ -944,7 +950,8 @@ ancillaries, field ancillaries).
         for attr in ('valid_range',):
             if attr in properties:
                 properties[attr] = tuple(properties[attr])
-    
+        #--- End: for
+        
         # ----------------------------------------------------------------
         # Initialize the field with the data variable and its attributes
         # ----------------------------------------------------------------
@@ -1247,14 +1254,14 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Add cell methods to the field
         # ----------------------------------------------------------------
-        if cell_methods: # is not None:
+        if cell_methods:
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
             for cm in cell_methods:
                 cm.axes = tuple([name_to_axis.get(axis, axis) for axis in cm.axes])
                 f.insert_cell_method(cm)
-#            f.insert_cell_methods(cell_methods)
-    
+        #--- End: if
+
         # ----------------------------------------------------------------
         # Add field ancillaries to the field
         # ----------------------------------------------------------------
@@ -1400,16 +1407,6 @@ ancillaries, field ancillaries).
     
             bounds.insert_data(bounds_data, copy=False)
     
-    #        if b_Units != c_Units:
-    #            if b_Units.equivalent(c_Units):
-    #                bounds.Units = c_Units
-    #            else:
-    #                bounds.override_units(c_Units, copy=False)
-    #                print(
-    #"WARNING: Overriding {0!r} bounds units from {1!r} to {2!r}".format(
-    #    ncbounds, b_Units, c_Units))
-    #        #--- End: if
-            
             # Make sure that the bounds dimensions are in the same order
             # as its parent's dimensions
             c_ncdims = nc.variables[ncvar].dimensions
@@ -1465,37 +1462,34 @@ ancillaries, field ancillaries).
     
 :Parameters:
     
-    nc : netCDF4.Dataset
-        The entire netCDF file in a `netCDF4.Dataset` instance.
-
-    ncvar : str
+    ncvar: `str`
         The netCDF name of the cell measure variable.
 
-    attributes : dict
+    attributes: `dict`
         Dictionary of the cell measure variable's netCDF attributes.
 
     f: `Field`
 
 :Returns:
 
-    out: `CellMeasure`
-        The new cell measure.
+    out: `CellMeasure` or `FieldAncillary`
+        The new item.
 
         '''
         g = self.read_vars
                 
         if cell_measure:
-            clm = self.CellMeasure(properties=attributes[ncvar])
+            item = self.CellMeasure(properties=attributes[ncvar])
         elif field_ancillary:
-            clm = self.FieldAncillary(properties=attributes[ncvar])
+            item = self.FieldAncillary(properties=attributes[ncvar])
     
-        data = self._set_Data(ncvar, clm)
+        data = self._set_Data(ncvar, item)
     
-        clm.insert_data(data, copy=False)
+        item.insert_data(data, copy=False)
     
-        clm.ncvar = ncvar
+        item.ncvar = ncvar
     
-        return clm
+        return item
     #--- End: def
     
     def _ncdimensions(self, ncvar):
@@ -1573,15 +1567,16 @@ ancillaries, field ancillaries).
 
     f: `Field`
 
-    grid_mapping : str
+    grid_mapping: `str`
+        The value of a CF grid_mapping attribute.
 
-    attributes : dict
+    attributes: `dict`
 
-    ncvar_to_key : dict
+    ncvar_to_key: `dict`
 
 :Returns:
 
-    None
+    `None`
 
         '''
         g = self.read_vars
@@ -1629,24 +1624,22 @@ ancillaries, field ancillaries).
                                        formula_terms, domain_ancillaries):
         '''
     
-    :Parameters:
-    
-        f: `Field`
-    
-        key: `str`
-    
-        coord: `Coordinate`
-    
-        formula_terms: `dict`
-            The formula_terms attribute value from the netCDF file.
-    
-        domain_ancillaries: `dict`
-    
-#        coordref_parameters: `dict`
-    
-    :Returns:
-    
-        out: `CoordinateReference`
+:Parameters:
+
+    f: `Field`
+
+    key: `str`
+
+    coord: `Coordinate`
+
+    formula_terms: `dict`
+        The formula_terms attribute value from the netCDF file.
+
+    coordref_parameters: `dict`
+
+:Returns:
+
+    out: `CoordinateReference`
     
     '''
         g = self.read_vars
@@ -1681,27 +1674,26 @@ ancillaries, field ancillaries).
                   fill_value=None):
         '''
     
-    Set the Data attribute of a variable.
-    
-    :Parameters:
-    
-        ncvar: `str`
-    
-        variable: `Variable`, optional
-    
-        unpacked_dtype: `False` or `numpy.dtype`, optional
-    
-        g: `dict`
-    
-    :Returns:
-    
-        out: `Data`
-    
-    :Examples: 
+Set the Data attribute of a variable.
+
+:Parameters:
+
+    ncvar: `str`
+
+    variable: `Variable`, optional
+
+    unpacked_dtype: `False` or `numpy.dtype`, optional
+
+    g: `dict`
+
+:Returns:
+
+    out: `Data`
+
+:Examples: 
     
     '''
         g = self.read_vars
-
         nc = g['nc']
         
         ncvariable = nc.variables[ncvar]

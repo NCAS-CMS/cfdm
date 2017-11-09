@@ -123,6 +123,5 @@ setup(name = "cf-python",
       scripts      = ['scripts/cfdump'],
       requires     = ['netCDF4 (>=1.1.1)',
                       'numpy (>=1.7)',
-                      'psutil (>=0.6.0)',
                       ],
   )
