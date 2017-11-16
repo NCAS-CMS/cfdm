@@ -123,13 +123,18 @@ class create_fieldTest(unittest.TestCase):
         anc.standard_name = 'ancillaryC'
         f.insert_field_anc(anc, axes=['Y'])
 
-        f.flag_values = [1,2,4]
-        f.flag_meanings = ['a', 'bb', 'ccc']      
+        f.flag_values = [1, 2, 4]
+        f.flag_meanings = ['a', 'bb', 'ccc']
+        f.flag_masks = [2, 1, 0]
 
+        print repr(f.flag_meanings)
+        print repr(f.flag_masks)
+        print repr(f.flag_values)
+        
         for cm in cfdm.CellMethod.parse('grid_longitude: mean grid_latitude: max'):
             f.insert_cell_method(cm)
 
-#        f.dump()
+        f.dump()
 #        print f
         # Write the file, and read it in
 #        print f.shape

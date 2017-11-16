@@ -2,9 +2,11 @@ from collections import OrderedDict
 from itertools   import izip, izip_longest
 from re          import match as re_match
 
+import numpy
+
 from .constants  import masked as cf_masked
 from .domainaxis import DomainAxis
-from .flags      import Flags
+#from .flags      import Flags
 
 from .functions import (parse_indices, equals, RTOL, ATOL,
                         RELAXED_IDENTITIES)
@@ -77,10 +79,10 @@ Field objects are picklable.
     _DomainAxis = DomainAxis
     
     _special_properties = Variable._special_properties.union(        
-        ('cell_methods',
-         'flag_values',
-         'flag_masks',
-         'flag_meanings')
+        ('cell_methods',)
+#         'flag_values',
+#         'flag_masks',
+#         'flag_meanings')
          )
     
     def __init__(self, properties={}, attributes={}, data=None,
@@ -417,21 +419,21 @@ x.__str__() <==> str(x)
             return {}
     #--- End: def
 
-    @property
-    def Flags(self):
-        '''A `Flags` object containing self-describing CF flag values.
-
-A `Flags` object stores the `flag_values`, `flag_meanings` and
-`flag_masks` CF properties in an internally consistent manner.
-
-        '''
-        return self._get_special_attr('Flags')
-    @Flags.setter
-    def Flags(self, value):
-        self._set_special_attr('Flags', value)
-    @Flags.deleter
-    def Flags(self):
-        self._del_special_attr('Flags')
+#    @property
+#    def Flags(self):
+#        '''A `Flags` object containing self-describing CF flag values.
+#
+#A `Flags` object stores the `flag_values`, `flag_meanings` and
+#`flag_masks` CF properties in an internally consistent manner.
+#
+#        '''
+#        return self._get_special_attr('Flags')
+#    @Flags.setter
+#    def Flags(self, value):
+#        self._set_special_attr('Flags', value)
+#    @Flags.deleter
+#    def Flags(self):
+#        self._del_special_attr('Flags')
 
     @property
     def Items(self):
@@ -478,34 +480,18 @@ array([1])
 >>> f.delprop('flag_values')
 
         '''
-        try:
-            return self.Flags.flag_values
-        except AttributeError:
-            raise AttributeError(
-                "%s doesn't have CF property 'flag_values'" %
-                self.__class__.__name__)
+        return self.getprop('flag_values')
     #--- End: def
     @flag_values.setter
     def flag_values(self, value):
-        try:
-            flags = self.Flags
-        except AttributeError:
-            self.Flags = Flags(flag_values=value)
-        else:
-            flags.flag_values = value
+        if not isinstance(value, numpy.ndarray):
+            value = numpy.atleast_1d(value)
+            
+        self.setprop('flag_values', value)
     #--- End: def
     @flag_values.deleter
     def flag_values(self):
-        try:
-            del self.Flags.flag_values
-        except AttributeError:
-            raise AttributeError(
-                "Can't delete non-existent %s CF property 'flag_values'" %
-                self.__class__.__name__)
-        else:
-            if not self.Flags:
-                del self.Flags
-    #--- End: def
+        self.delprop('flag_values')
 
     # ----------------------------------------------------------------
     # CF property
@@ -535,34 +521,19 @@ array([1])
 >>> f.delprop('flag_masks')
 
         '''
-        try:
-            return self.Flags.flag_masks
-        except AttributeError:
-            raise AttributeError(
-                "%s doesn't have CF property 'flag_masks'" %
-                self.__class__.__name__)
+        return self.getprop('flag_masks')
     #--- End: def
     @flag_masks.setter
     def flag_masks(self, value):
-        try:
-            flags = self.Flags
-        except AttributeError:
-            self.Flags = Flags(flag_masks=value)
-        else:
-            flags.flag_masks = value
+        if not isinstance(value, numpy.ndarray):
+            print 'PPPPPPPPPPPPPPPPP'
+            value = numpy.atleast_1d(value)
+            
+        self.setprop('flag_masks', value)
     #--- End: def
     @flag_masks.deleter
     def flag_masks(self):
-        try:
-            del self.Flags.flag_masks
-        except AttributeError:
-            raise AttributeError(
-                "Can't delete non-existent %s CF property 'flag_masks'" %
-                self.__class__.__name__)
-        else:
-            if not self.Flags:
-                del self.Flags
-    #--- End: def
+        self.delprop('flag_masks')
 
     # ----------------------------------------------------------------
     # CF property
@@ -605,34 +576,21 @@ array(['a', 'b'],
 >>> f.delprop('flag_meanings')
 
         '''
-        try:
-            return self.Flags.flag_meanings
-        except AttributeError:
-            raise AttributeError(
-                "%s doesn't have CF property 'flag_meanings'" %
-                self.__class__.__name__)
+        return self.getprop('flag_meanings')
     #--- End: def
     @flag_meanings.setter
-    def flag_meanings(self, value): 
-        try:
-            flags = self.Flags
-        except AttributeError:
-            self.Flags = Flags(flag_meanings=value)
-        else:
-            flags.flag_meanings = value
+    def flag_meanings(self, value):
+        if isinstance(value, basestring):
+            value = value.split()
+        print 'arse'
+        if not isinstance(value, numpy.ndarray):
+            value = numpy.atleast_1d(value)
+
+        self.setprop('flag_meanings', value)
     #--- End: def
     @flag_meanings.deleter
     def flag_meanings(self):
-        try:
-            del self.Flags.flag_meanings
-        except AttributeError:
-            raise AttributeError(
-                "Can't delete non-existent %s CF property 'flag_meanings'" %
-                self.__class__.__name__)
-        else:
-            if not self.Flags:
-                del self.Flags
-    #--- End: def
+        self.delprop('flag_meanings')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1103,8 +1061,21 @@ last values.
                 self._dump_simple_properties(_level=_level,
                                              omit=('Conventions',
                                                    '_FillValue',
-                                                   'missing_value')))
-
+                                                   'missing_value',
+                                                   'flag_values', 'flag_meanings', 'flag_masks')))
+            
+        # Flags
+        x = []
+        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
+            value = getattr(self, attr, None)
+            if value is not None:
+                value = [str(v) for v in value]
+                x.append('{0}{1} = {2}'.format(indent0, attr, ', '.join(value)))
+        #--- End: for
+        if x:
+            string.append('')
+            string.extend(x)
+            
         # Axes
         axes = self._dump_axes(display=False, _level=_level)
         if axes:
@@ -1127,10 +1098,10 @@ last values.
                 string.append(
                     value.dump(display=False, field=self, _level=_level))
 
-        # Flags
-        flags = getattr(self, 'Flags', None)
-        if flags is not None:            
-            string.extend(('', flags.dump(display=False, _level=_level)))
+#        # Flags
+#        flags = getattr(self, 'Flags', None)
+#        if flags is not None:            
+#            string.extend(('', flags.dump(display=False, _level=_level)))
 
         # Field ancillaries
         for key, value in sorted(self.Items.field_ancs().iteritems()):
