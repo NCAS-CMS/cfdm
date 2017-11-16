@@ -67,7 +67,7 @@ from .units               import Units
 from .cfdatetime          import Datetime, dt
 from .data.data           import Data
 from .data.array          import NetCDFArray
-from .flags               import Flags
+#from .flags               import Flags
 from .cellmethod          import CellMethod
 #from .netcdf.read         import netcdf_read
 from .constants           import *

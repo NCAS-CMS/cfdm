@@ -127,9 +127,9 @@ class create_fieldTest(unittest.TestCase):
         f.flag_meanings = 'a bb ccc'
         f.flag_masks = numpy.array([2, 1, 0])
 
-#        print repr(f.flag_meanings)
-#        print repr(f.flag_masks)
-#        print repr(f.flag_values)
+        print repr(f.flag_meanings)
+        print repr(f.flag_masks)
+        print repr(f.flag_values)
         
         for cm in cfdm.CellMethod.parse('grid_longitude: mean grid_latitude: max'):
             f.insert_cell_method(cm)
@@ -166,6 +166,12 @@ class create_fieldTest(unittest.TestCase):
         g = g[0]
         g.squeeze(copy=False)
 
+
+        print repr(g.flag_meanings)
+        print repr(g.flag_masks)
+        print repr(g.flag_values)
+
+        
         self.assertTrue(sorted(f.items().keys()) ==  sorted(g.items().keys()))
 
 #        for key in sorted(f.items().keys()):

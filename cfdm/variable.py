@@ -11,7 +11,7 @@ import numpy
 from netCDF4 import default_fillvals as _netCDF4_default_fillvals
 
 from .cfdatetime   import dt
-from .flags        import Flags
+#from .flags        import Flags
 from .functions    import RTOL, ATOL, RELAXED_IDENTITIES
 from .functions    import equals     as cf_equals
 from .units        import Units

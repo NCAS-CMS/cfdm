@@ -80,9 +80,9 @@ Field objects are picklable.
     
     _special_properties = Variable._special_properties.union(        
         ('cell_methods',)
-         'flag_values',
-         'flag_masks',
-         'flag_meanings')
+#         'flag_values',
+#         'flag_masks',
+#         'flag_meanings')
          )
     
     def __init__(self, properties={}, attributes={}, data=None,
@@ -481,13 +481,12 @@ array([1])
 
         '''
         return self.getprop('flag_values')
-        
     #--- End: def
     @flag_values.setter
     def flag_values(self, value):
-        if not isinstance(value, numpy.ndarray):
-            value = numpy.atleast_1d(value)
-            
+#        if not isinstance(value, numpy.ndarray):
+#            value = numpy.atleast_1d(value)
+#            
         self.setprop('flag_values', value)
     #--- End: def
     @flag_values.deleter
@@ -526,9 +525,9 @@ array([1])
     #--- End: def
     @flag_masks.setter
     def flag_masks(self, value):
-        if not isinstance(value, numpy.ndarray):
-            value = numpy.atleast_1d(value)
-            
+#        if not isinstance(value, numpy.ndarray):
+#            value = numpy.atleast_1d(value)
+#            
         self.setprop('flag_masks', value)
     #--- End: def
     @flag_masks.deleter
