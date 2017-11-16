@@ -121,7 +121,7 @@ setup(name = "cf-python",
                       'cfdm.data'],
       package_data = {'cfdm': package_data},
       scripts      = ['scripts/cfdump'],
-      requires     = ['netCDF4 (>=1.1.1)',
+      requires     = ['netCDF4 (>=1.2.5)',
                       'numpy (>=1.7)',
                       ],
   )

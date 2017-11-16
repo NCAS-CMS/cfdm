@@ -80,9 +80,9 @@ Field objects are picklable.
     
     _special_properties = Variable._special_properties.union(        
         ('cell_methods',)
-#         'flag_values',
-#         'flag_masks',
-#         'flag_meanings')
+         'flag_values',
+         'flag_masks',
+         'flag_meanings')
          )
     
     def __init__(self, properties={}, attributes={}, data=None,
@@ -481,6 +481,7 @@ array([1])
 
         '''
         return self.getprop('flag_values')
+        
     #--- End: def
     @flag_values.setter
     def flag_values(self, value):
@@ -526,7 +527,6 @@ array([1])
     @flag_masks.setter
     def flag_masks(self, value):
         if not isinstance(value, numpy.ndarray):
-            print 'PPPPPPPPPPPPPPPPP'
             value = numpy.atleast_1d(value)
             
         self.setprop('flag_masks', value)
@@ -543,36 +543,20 @@ array([1])
         '''The flag_meanings CF property.
 
 Use in conjunction with `flag_values` to provide descriptive words or
-phrases for each flag value. If multi-word phrases are used to
-describe the flag values, then the words within a phrase should be
-connected with underscores. See http://cfconventions.org/latest.html
+phrases for each flag value. See
+http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#flags
 for details.
-
-Stored as a 1-d numpy string array but may be set as a space delimited
-string or any array-like object.
 
 :Examples:
 
->>> f.flag_meanings = 'low medium      high'
+>>> f.flag_meanings = 'low medium high'
 >>> f.flag_meanings
-array(['low', 'medium', 'high'],
-      dtype='|S6')
+'low medium high'
 >>> del flag_meanings
 
->>> f.flag_meanings = ['left', 'right']
->>> f.flag_meanings
-array(['left', 'right'],
-      dtype='|S5')
-
->>> f.flag_meanings = 'ok'
->>> f.flag_meanings
-array(['ok'],
-      dtype='|S2')
-
->>> f.setprop('flag_meanings', numpy.array(['a', 'b'])
+>>> f.setprop('flag_meanings', 'a b')
 >>> f.getprop('flag_meanings')
-array(['a', 'b'],
-      dtype='|S1')
+'a b'
 >>> f.delprop('flag_meanings')
 
         '''
@@ -580,14 +564,7 @@ array(['a', 'b'],
     #--- End: def
     @flag_meanings.setter
     def flag_meanings(self, value):
-        if isinstance(value, basestring):
-            value = value.split()
-        print 'arse'
-        if not isinstance(value, numpy.ndarray):
-            value = numpy.atleast_1d(value)
-
         self.setprop('flag_meanings', value)
-    #--- End: def
     @flag_meanings.deleter
     def flag_meanings(self):
         self.delprop('flag_meanings')
@@ -1062,19 +1039,20 @@ last values.
                                              omit=('Conventions',
                                                    '_FillValue',
                                                    'missing_value',
-                                                   'flag_values', 'flag_meanings', 'flag_masks')))
+                                                   'flag_values',
+                                                   'flag_meanings',
+                                                   'flag_masks')))
             
         # Flags
-        x = []
+        flags = []
         for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
             value = getattr(self, attr, None)
             if value is not None:
-                value = [str(v) for v in value]
-                x.append('{0}{1} = {2}'.format(indent0, attr, ', '.join(value)))
+                flags.append('{0}{1} = {2}'.format(indent0, attr, value))
         #--- End: for
-        if x:
+        if flags:
             string.append('')
-            string.extend(x)
+            string.extend(flags)
             
         # Axes
         axes = self._dump_axes(display=False, _level=_level)

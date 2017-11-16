@@ -1047,6 +1047,14 @@ x.__str__() <==> str(x)
         self._private['special_attributes'][attr] = value
     #--- End: def
 
+    def _del_special_attr(self, attr):
+        '''
+
+.. versionadded:: 1.6
+        '''
+        self._private['special_attributes'].pop('Units', None)
+    #--- End: def
+
     # ================================================================
     # Attributes
     # ================================================================
@@ -1075,8 +1083,9 @@ x.__str__() <==> str(x)
         private['Data'] = value
 
         # Delete Units from the variable
-        private['special_attributes'].pop('Units', None)
-            
+#        private['special_attributes'].pop('Units', None)
+        self._del_special_attr('Units' )
+
         self._hasdata = True
     #--- End: def
     @_Data.deleter
@@ -1090,7 +1099,8 @@ x.__str__() <==> str(x)
                     self.__class__.__name__))
 
         # Save the Units to the variable
-        private['special_attributes']['Units'] = data.Units
+#        private['special_attributes']['Units'] = data.Units
+        _set_special_attr('Units', data.Units)
 
         self._hasdata = False
     #--- End: def
@@ -1999,8 +2009,7 @@ http://cfconventions.org/latest.html for details.
     def units(self):
         if getattr(self, 'units', None) is None:
             raise AttributeError(
-                "Can't delete non-existent CF property 'units' from {!r}".format(
-                    self.__class__.__name__))
+"Can't delete non-existent CF property 'units'".format(self.__class__.__name__))
 
         self.Units = Units(None, getattr(self, 'calendar', None))
     #--- End: def
@@ -2972,6 +2981,7 @@ True
             if attr in ignore:
                 continue
             y = other_simple[attr]
+
             if not cf_equals(x, y, rtol=rtol, atol=atol,
                              ignore_fill_value=ignore_fill_value,
                              traceback=traceback):
@@ -3501,7 +3511,7 @@ doesn't exist; without it, an exception is raised in that case.
 :Parameters:
 
     prop: `str`
-        The name of the CF property.
+        The name of the CF property to be retrieved.
 
     default: optional
         Return *default* if and only if the variable does not have the
@@ -3514,12 +3524,14 @@ doesn't exist; without it, an exception is raised in that case.
 
 :Examples 2:
 
+>>> f.setprop('standard_name', 'air_temperature')
 >>> f.{+name}('standard_name')
->>> f.{+name}('standard_name', None)
->>> f.{+name}('foo')
-AttributeError: Field doesn't have CF property 'foo'
->>> f.{+name}('foo', 'bar')
-'bar'
+'air_temperature'
+>>> f.delprop('standard_name')
+>>> f.{+name}('standard_name')
+AttributeError: Field doesn't have CF property 'standard_name'
+>>> f.{+name}('standard_name', 'foo')
+'foo'
 
 '''        
         # Get a special attribute
@@ -3551,7 +3563,7 @@ AttributeError: Field doesn't have CF property 'foo'
 :Parameters:
 
     prop: `str`
-        The name of the CF property.
+        The name of the CF property to be deleted.
 
 :Returns:
 
@@ -3559,10 +3571,10 @@ AttributeError: Field doesn't have CF property 'foo'
 
 :Examples 2:
 
->>> f.foo = 'bar'
+>>> f.setprop('foo', 'bar')
 >>> f.{+name}('foo')
 >>> f.{+name}('foo')
-AttributeError: Can't delete non-existent Field CF property 'foo'
+AttributeError: Can't delete non-existent CF property 'foo'
 
         '''
         # Delete a special attribute
@@ -3575,8 +3587,8 @@ AttributeError: Can't delete non-existent Field CF property 'foo'
         if prop in d:
             del d[prop]
         else:
-            raise AttributeError("Can't delete non-existent %s CF property %r" %
-                                 (self.__class__.__name__, prop))
+            raise AttributeError(
+                "Can't delete non-existent CF property {!r}".format(prop))                    
     #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False,

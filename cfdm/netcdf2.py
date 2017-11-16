@@ -964,7 +964,7 @@ ancillaries, field ancillaries).
     g['filename'], data_ncvar, f_Units))
 
         f = self.Field(properties=properties, copy=False)
-    
+
         f.ncvar = data_ncvar
         f.file  = g['filename']
         f.Units = f_Units
@@ -3676,7 +3676,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
     
         # Flag meanings
         if hasattr(f, 'flag_meanings'):
-            extra['flag_meanings'] = ' '.join(f.flag_meanings)
+            extra['flag_meanings'] = f.flag_meanings
     
         # name can be a dimension of the variable, a scalar coordinate
         # variable, a valid standard name, or the word 'area'
