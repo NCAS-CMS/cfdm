@@ -268,6 +268,13 @@ x.__str__() <==> str(x)
                 out = '{0}{1}, ..., {2}{3}'.format(open_brackets, first,
                                                    last, close_brackets)
 
+            if size == 3:
+                
+                middle = self.datum(1)
+                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
+                                                   first, last, middle,
+                                                   close_brackets)
+
             else:
                 out = '{0}{1}, {2}{3}'.format(open_brackets, first,
                                               last, close_brackets)

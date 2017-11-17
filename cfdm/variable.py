@@ -778,8 +778,15 @@ All components of a variable are optional.
 '''
     __metaclass__ = RewriteDocstringMeta
 
-    _special_properties = set(('units', 'calendar',
-                               '_FillValue', 'missing_value'))
+    _special_properties = set(('units',
+                               'calendar',
+                               '_FillValue',
+                               'missing_value'))
+
+    _special_properties = set(('units',
+                               'calendar',
+                               '_FillValue',
+                               'missing_value'))
 
     def __init__(self, properties={}, attributes=None, data=None,
                  source=None, copy=True):

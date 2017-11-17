@@ -963,6 +963,9 @@ ancillaries, field ancillaries).
 "WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
     g['filename'], data_ncvar, f_Units))
 
+        if _debug:
+            print '    Field properties:', properties
+            
         f = self.Field(properties=properties, copy=False)
 
         f.ncvar = data_ncvar

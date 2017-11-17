@@ -123,12 +123,12 @@ class create_fieldTest(unittest.TestCase):
         anc.standard_name = 'ancillaryC'
         f.insert_field_anc(anc, axes=['Y'])
 
-        f.flag_values = [1, 2, 4]
+        f.flag_values = numpy.array([1, 2, 4])
         f.flag_meanings = 'a bb ccc'
-        f.flag_masks = numpy.array([2, 1, 0])
+        f.flag_masks = [2, 1, 0]
 
         print repr(f.flag_meanings)
-        print repr(f.flag_masks)
+        print 'F masks', repr(f.flag_masks)
         print repr(f.flag_values)
         
         for cm in cfdm.CellMethod.parse('grid_longitude: mean grid_latitude: max'):
@@ -144,7 +144,7 @@ class create_fieldTest(unittest.TestCase):
 #        print '============================'
         cfdm.write(f, self.filename, _debug=False)
 
-        g = cfdm.read(self.filename, _debug=False, squeeze=True)
+        g = cfdm.read(self.filename, _debug=True, squeeze=True)
 #        g[0].dump()
 #        print '\n GGGG =============================================='
 #        print f
@@ -168,7 +168,7 @@ class create_fieldTest(unittest.TestCase):
 
 
         print repr(g.flag_meanings)
-        print repr(g.flag_masks)
+        print 'G MASKS', repr(g.flag_masks)
         print repr(g.flag_values)
 
         

@@ -6,7 +6,7 @@ import numpy
 
 from .constants  import masked as cf_masked
 from .domainaxis import DomainAxis
-#from .flags      import Flags
+from .flags      import Flags
 
 from .functions import (parse_indices, equals, RTOL, ATOL,
                         RELAXED_IDENTITIES)
@@ -77,12 +77,13 @@ Field objects are picklable.
 
     '''
     _DomainAxis = DomainAxis
+    _Flags      = Flags
     
-    _special_properties = Variable._special_properties.union(        
-        ('cell_methods',)
-#         'flag_values',
-#         'flag_masks',
-#         'flag_meanings')
+    _special_properties = Variable._special_properties.union(
+        ('cell_methods',
+         'flag_values',
+         'flag_masks',
+         'flag_meanings',)
          )
     
     def __init__(self, properties={}, attributes={}, data=None,
@@ -419,21 +420,21 @@ x.__str__() <==> str(x)
             return {}
     #--- End: def
 
-#    @property
-#    def Flags(self):
-#        '''A `Flags` object containing self-describing CF flag values.
-#
-#A `Flags` object stores the `flag_values`, `flag_meanings` and
-#`flag_masks` CF properties in an internally consistent manner.
-#
-#        '''
-#        return self._get_special_attr('Flags')
-#    @Flags.setter
-#    def Flags(self, value):
-#        self._set_special_attr('Flags', value)
-#    @Flags.deleter
-#    def Flags(self):
-#        self._del_special_attr('Flags')
+    @property
+    def Flags(self):
+        '''A `Flags` object containing self-describing CF flag values.
+
+A `Flags` object stores the `flag_values`, `flag_meanings` and
+`flag_masks` CF properties in an internally consistent manner.
+
+        '''
+        return self._get_special_attr('Flags')
+    @Flags.setter
+    def Flags(self, value):
+        self._set_special_attr('Flags', value)
+    @Flags.deleter
+    def Flags(self):
+        self._del_special_attr('Flags')
 
     @property
     def Items(self):
@@ -462,7 +463,7 @@ x.__str__() <==> str(x)
 Provides a list of the flag values. Use in conjunction with
 `flag_meanings`. See http://cfconventions.org/latest.html for details.
 
-Stored as a 1-d numpy array but may be set as any array-like object.
+Stored as a 1-d `Data` array but may be set as any array-like object.
 
 :Examples:
 
@@ -480,19 +481,28 @@ array([1])
 >>> f.delprop('flag_values')
 
         '''
-        return self.getprop('flag_values')
+        return self.Flags.flag_values.array
+        try:
+            return self.Flags.flag_values.array
+        except AttributeError:
+            raise AttributeError("{} doesn't have CF property 'flag_values'".format(self.__class__.__name__))
     #--- End: def
     @flag_values.setter
     def flag_values(self, value):
-#        if not isinstance(value, numpy.ndarray):
-#            value = numpy.atleast_1d(value)
-#            
-        self.setprop('flag_values', value)
+        flags = getattr(self, 'Flags', None)
+        if flags is None:
+            self.Flags = self._Flags(values=value)
+        else:
+            flags.flag_values = value
     #--- End: def
     @flag_values.deleter
     def flag_values(self):
-        self.delprop('flag_values')
-
+        try:
+            del self.Flags.flag_values
+        except AttributeError:
+            raise AttributeError("Can't delete non-existent CF property 'flag_values'")
+    #--- End: def
+     
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
@@ -521,18 +531,26 @@ array([1])
 >>> f.delprop('flag_masks')
 
         '''
-        return self.getprop('flag_masks')
+        try:
+            return self.Flags.flag_masks.array
+        except AttributeError:
+            raise AttributeError("{} doesn't have CF property 'flag_masks'".format(self.__class__.__name__))
     #--- End: def
     @flag_masks.setter
     def flag_masks(self, value):
-#        if not isinstance(value, numpy.ndarray):
-#            value = numpy.atleast_1d(value)
-#            
-        self.setprop('flag_masks', value)
+        flags = getattr(self, 'Flags', None)
+        if flags is None:
+            self.Flags = self._Flags(masks=value)
+        else:
+            flags.flag_masks = value
     #--- End: def
     @flag_masks.deleter
     def flag_masks(self):
-        self.delprop('flag_masks')
+        try:
+            del self.Flags.flag_masks
+        except AttributeError:
+            raise AttributeError("Can't delete non-existent CF property 'flag_masks'")
+    #--- End: def
 
     # ----------------------------------------------------------------
     # CF property
@@ -557,16 +575,33 @@ for details.
 >>> f.getprop('flag_meanings')
 'a b'
 >>> f.delprop('flag_meanings')
-
+        
         '''
-        return self.getprop('flag_meanings')
+        try:
+            meanings = self.Flags.flag_meanings
+        except AttributeError:
+            raise AttributeError("{} doesn't have CF property 'flag_meanings'".format(self.__class__.__name__))
+
+        return ' '.join(meanings)
     #--- End: def
     @flag_meanings.setter
     def flag_meanings(self, value):
-        self.setprop('flag_meanings', value)
+        if isinstance(value , basestring):
+            value = value.split()
+        
+        flags = getattr(self, 'Flags', None)
+        if flags is None:
+            self.Flags = self._Flags(meanings=value)
+        else:
+            flags.flag_meanings = value
+    #--- End: def
     @flag_meanings.deleter
     def flag_meanings(self):
-        self.delprop('flag_meanings')
+        try:
+            del self.Flags.flag_meanings
+        except AttributeError:
+            raise AttributeError("Can't delete non-existent CF property 'flag_meanings'")
+    #--- End: def
 
     # ----------------------------------------------------------------
     # CF property
@@ -1191,7 +1226,8 @@ Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (
 False
 
         '''
-
+        ignore = ignore + ('flag_values', 'flag_masks', 'flag_meanings')
+        
         kwargs2 = self._parameters(locals())
         return super(Field, self).equals(**kwargs2)
     #---End: def
