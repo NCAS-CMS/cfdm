@@ -1107,7 +1107,7 @@ x.__str__() <==> str(x)
 
         # Save the Units to the variable
 #        private['special_attributes']['Units'] = data.Units
-        _set_special_attr('Units', data.Units)
+        self._set_special_attr('Units', data.Units)
 
         self._hasdata = False
     #--- End: def

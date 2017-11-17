@@ -25,27 +25,25 @@ Stores the flag_values, flag_meanings and flag_masks CF attributes in
 an internally consistent manner.
 
 '''
-    def __init__(self, values=None, masks=None, meanings=None):
-        '''
-
-**Initialization**
+    def __init__(self, flag_values=None, flag_masks=None, flag_meanings=None):
+        '''**Initialization**
 
 :Parameters:
 
-    values: optional
+    flag_values: optional
         The flag_values CF property. Sets the `flag_values` attribute.
 
-    meanings: optional
+    flag_meanings: optional
         The flag_meanings CF property. Sets the `flag_meanings`
         attribute.
 
-    masks: optional
+    flag_masks: optional
         The flag_masks CF property. Sets the `flag_masks` attribute.
 
         '''
-        self.flag_values   = values
-        self.flag_masks    = masks
-        self.flag_meanings = meanings
+        self.flag_values   = flag_values
+        self.flag_masks    = flag_masks
+        self.flag_meanings = flag_meanings
     #--- End: def
 
     def __eq__(self, other):
@@ -81,9 +79,9 @@ Note that the flags will be sorted in place.
 -956218661958673979
 
 '''
-        self.sort()
+        f = self.sorted()
 
-        x = [tuple(getattr(self, attr, ())) 
+        x = [tuple(getattr(f, attr, ())) 
              for attr in ('_flag_meanings', '_flag_values', '_flag_masks')]
 
         return hash(tuple(x))
@@ -343,7 +341,8 @@ Return a string containing a full description of the instance.
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None,
-               ignore_fill_value=False, traceback=False):
+               ignore_data_type=False, ignore_fill_value=False,
+               traceback=False):
         '''
 
 True if two groups of flags are logically equal, False otherwise.
@@ -393,14 +392,13 @@ True
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             if traceback:
-                print("%s: Different type: %s, %s" %
-                      (self.__class__.__name__,
-                       self.__class__.__name__, other.__class__.__name__))
+                print("{0}: Different type: {0}, {1}".format(
+                    self.__class__.__name__, other.__class__.__name__))
             return False
         #--- End: if
-
-        self.sort()
-        other.sort()
+                               
+        f = self.sorted()
+        g = other.sorted()
 
         # Set default tolerances
         if rtol is None:
@@ -408,30 +406,31 @@ True
         if atol is None:
             atol = ATOL()        
 
-        for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
-            if hasattr(self, attr):
-                if not hasattr(other, attr):
+        for attr in ('flag_meanings', 'flag_values', 'flag_masks'):
+            x = getattr(f, attr, None)
+            y = getattr(g, attr, None)
+            if x is not None:
+                if y is None:
                     if traceback:
                         print("%s: Different attributes: %s" %
-                              (self.__class__.__name__, attr[1:]))
+                              (f.__class__.__name__, attr))
                     return False
-
-                x = getattr(self, attr)
-                y = getattr(other, attr)
+                #--- End: if
 
                 if (x.shape != y.shape or 
                     not equals(x, y, rtol=rtol, atol=atol,
+                               ignore_data_type=ignore_data_type,
                                ignore_fill_value=ignore_fill_value,
                                traceback=traceback)):
                     if traceback:
                         print("%s: Different '%s': %r, %r" %
-                              (self.__class__.__name__, attr[1:], x, y))
+                              (f.__class__.__name__, attr, x, y))
                     return False
 
-            elif hasattr(other, attr): 
+            elif y is not None:
                 if traceback:
                     print("%s: Different attributes: %s" %
-                          (self.__class__.__name__, attr[1:]))
+                          (f.__class__.__name__, attr))
                 return False
         #--- End: for
 
@@ -453,43 +452,51 @@ True
 #        print cf_inspect(self)
 #    #--- End: def
 
-    def sort(self):
+    def sorted(self):
         '''
 
-Sort the flags in place.
+Sort the flags into a new `Flags` object.
 
 By default sort by flag values. If flag values are not present then
 sort by flag meanings. If flag meanings are not present then sort by
 flag_masks.
 
+:Examples 1:
+
+>>> g = f.sorted()
+
 :Returns:
 
-    None
+    out: `Flags`
 
-:Examples:
+:Examples 2:
 
 >>> f
-<CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>
->>> f.sort()
->>> f
-<CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
+<Flags: flag_values=[2, 1, 0], flag_masks=[2, 2, 0], flag_meanings=[high, medium, low]>
+>>> f.sorted()
+<Flags: flag_values=[0, 2, 1], flag_masks=[0, 2, 2], flag_meanings=[low, high, medium]>
 
 '''
+        f = self.copy()
+
         if not self:
-            return
+            return f
 
         # Sort all three attributes
-        for attr in ('flag_values', '_flag_meanings', '_flag_masks'):
-            if hasattr(self, attr):
-                indices = numpy.argsort(getattr(self, attr))
+        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
+            x = getattr(f, attr, None)
+            if x is not None:
+                indices = numpy.argsort(x)
                 break
         #--- End: for
 
-        for attr in ('_flag_values', '_flag_meanings', '_flag_masks'):
-            if hasattr(self, attr):
-                array      = getattr(self, attr).view()
-                array[...] = array[indices]
+        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
+            x = getattr(self, attr, None)
+            if x is not None:
+                setattr(f, attr, x.array[indices])
         #--- End: for
+
+        return f
     #--- End: def
 
 #--- End: class

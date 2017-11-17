@@ -134,7 +134,7 @@ class create_fieldTest(unittest.TestCase):
         for cm in cfdm.CellMethod.parse('grid_longitude: mean grid_latitude: max'):
             f.insert_cell_method(cm)
 
-#        f.dump()
+        f.dump()
 #        print f
         # Write the file, and read it in
 #        print f.shape
@@ -161,7 +161,7 @@ class create_fieldTest(unittest.TestCase):
 ##        print g
 #        print f.items()
 #        f.dump()
-##        g.dump()
+        g[0].dump()
 
         g = g[0]
         g.squeeze(copy=False)

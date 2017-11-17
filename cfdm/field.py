@@ -491,7 +491,7 @@ array([1])
     def flag_values(self, value):
         flags = getattr(self, 'Flags', None)
         if flags is None:
-            self.Flags = self._Flags(values=value)
+            self.Flags = self._Flags(flag_values=value)
         else:
             flags.flag_values = value
     #--- End: def
@@ -540,7 +540,7 @@ array([1])
     def flag_masks(self, value):
         flags = getattr(self, 'Flags', None)
         if flags is None:
-            self.Flags = self._Flags(masks=value)
+            self.Flags = self._Flags(flag_masks=value)
         else:
             flags.flag_masks = value
     #--- End: def
@@ -591,7 +591,7 @@ for details.
         
         flags = getattr(self, 'Flags', None)
         if flags is None:
-            self.Flags = self._Flags(meanings=value)
+            self.Flags = self._Flags(flag_meanings=value)
         else:
             flags.flag_meanings = value
     #--- End: def
@@ -1162,7 +1162,7 @@ last values.
 
     def equals(self, other, rtol=None, atol=None,
                ignore_data_type=False, ignore_fill_value=False,
-               traceback=False, ignore=('Conventions',)):
+               traceback=False, ignore=()):
         # Note: map(None, f, g) only works at python 2.x
         '''True if two {+variable}s are equal, False otherwise.
 
@@ -1226,9 +1226,10 @@ Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (
 False
 
         '''
-        ignore = ignore + ('flag_values', 'flag_masks', 'flag_meanings')
+        ignore = ignore + ('Conventions', 'flag_values', 'flag_masks', 'flag_meanings')
         
         kwargs2 = self._parameters(locals())
+
         return super(Field, self).equals(**kwargs2)
     #---End: def
 

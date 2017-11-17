@@ -2056,7 +2056,9 @@ and auxiliary coordinate roles for different data variables.
         dtype_conversions = {numpy.dtype(bool)  : numpy.dtype('int32'),
                              numpy.dtype(object): numpy.dtype(float)}
         if datatype:
-            g['dtype_conversions'].update(datatype)
+            dtype_conversions.update(datatype)
+
+        g['datatype'].update(dtype_conversions)
 
         if unlimited:
             g['unlimited'] = unlimited

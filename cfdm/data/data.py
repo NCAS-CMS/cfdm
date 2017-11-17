@@ -236,12 +236,7 @@ x.__str__() <==> str(x)
             units = self_units.units
         else:
             units = getattr(self_units, 'calendar', '')
-                     
-        size = self.size
-        ndim = self.ndim
-        open_brackets  = '[' * ndim
-        close_brackets = ']' * ndim
-
+               
         try:
             first = self.datum(0)
         except:            
@@ -252,32 +247,42 @@ x.__str__() <==> str(x)
             return out
         #--- End: try
         
+        size = self.size
+        ndim = self.ndim
+        open_brackets  = '[' * ndim
+        close_brackets = ']' * ndim
+
         if size == 1:
             if isreftime:
                 # Convert reference time to date-time
                 first = rt2dt(first, self_units).item()
 
-            out = '{0}{1}{2}'.format(open_brackets, first, close_brackets)
+            out = '{0}{1}{2}'.format(open_brackets,
+                                     first,
+                                     close_brackets)
         else:
             last = self.datum(-1)
             if isreftime:
                 # Convert reference times to date-times
                 first, last = rt2dt(numpy.ma.array((first, last)), self_units)
 
-            if size >= 3:
-                out = '{0}{1}, ..., {2}{3}'.format(open_brackets, first,
-                                                   last, close_brackets)
-
-            if size == 3:
-                
-                middle = self.datum(1)
-                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
-                                                   first, last, middle,
+            if size > 3:
+                out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
+                                                   first,last,
                                                    close_brackets)
+            elif size == 3:                
+                middle = self.datum(1)
+                if isreftime:
+                    # Convert reference times to date-times
+                    middle = rt2dt(middle, self_units).item()
 
+                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
+                                                   first, middle, last,
+                                                   close_brackets)
             else:
-                out = '{0}{1}, {2}{3}'.format(open_brackets, first,
-                                              last, close_brackets)
+                out = '{0}{1}, {2}{3}'.format(open_brackets,
+                                              first, last,
+                                              close_brackets)
         #--- End: if
         
         if units:
