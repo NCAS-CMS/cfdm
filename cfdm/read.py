@@ -1,7 +1,4 @@
-import glob
 import os
-
-from .functions import flat
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmethod          import CellMethod
@@ -14,7 +11,6 @@ from .field               import Field
 from .fieldancillary      import FieldAncillary
 
 from .bounds    import Bounds
-#from .fieldlist import FieldList
 from .units     import Units
 from .netcdf2   import NetCDF
 
@@ -39,27 +35,29 @@ netcdf = NetCDF(mode='read',
                 
                 NetCDFArray = NetCDFArray)
 
-def read(files, verbose=False, ignore_read_error=False, squeeze=False,
-         unsqueeze=False, uncompress=True, field=None, _debug=False):
+def read(filename, external_files=(), verbose=False,
+         ignore_read_error=False, uncompress=True, field=None,
+         _debug=False):
     '''Read fields from netCDF files.
 
 Files may be on disk or on a OPeNDAP server.
 
 Any amount of netCDF files may be read.
 
+.. versionadded:: 1.6
+
 .. seealso:: `write`
 
 :Examples 1:
 
->>> f = read('file.nc')
+>>> f = cfdm.read('file.nc')
 
 :Parameters:
 
-    files: (arbitrarily nested sequence of) `str`
-
-        A string or arbitrarily nested sequence of strings giving the
-        file names or OPenDAP URLs from which to read fields. Various
-        type of expansion are applied to the file names:
+    filename: `str`
+        A string giving the file name or OPenDAP URL from which to
+        read fields. Various type of expansion are applied to the file
+        name:
         
           ====================  ======================================
           Expansion             Description
@@ -71,23 +69,15 @@ Any amount of netCDF files may be read.
           Environment variable  Substrings of the form ``$name`` or
                                 ``${name}`` are replaced by the value
                                 of environment variable *name*.
-
-          Pathname              A string containing UNIX file name
-                                metacharacters as understood by the
-                                :py:obj:`glob` module is replaced by
-                                the list of matching file names. This
-                                type of expansion is ignored for
-                                OPenDAP URLs.
           ====================  ======================================
     
-        Where more than one type of expansion is used in the same
-        string, they are applied in the order given in the above
-        table.
+        When more than one type of expansion is used in the string,
+        they are applied in the order given in the above table.
 
-          Example: If the environment variable *MYSELF* has been set
-          to the "david", then ``'~$MYSELF/*.nc'`` is equivalent to
-          ``'~david/*.nc'``, which will read all netCDF files in the
-          user david's home directory.
+          *Example:*
+            If the environment variable *MYSELF* has been set to the
+            "david", then ``'~$MYSELF/data.nc'`` is equivalent to
+            ``'~david/data.nc'``.
   
     verbose: `bool`, optional
         If True then print information to stdout.
@@ -119,8 +109,6 @@ Any amount of netCDF files may be read.
             *Example:*
               To create fields from domain ancillary and cell measure
               objects: ``field=['domain_ancillary', 'measure']``.
-
-        .. versionadded:: 1.0.4
 
 :Returns:
     
@@ -160,84 +148,32 @@ Any amount of netCDF files may be read.
  <CF Field: temperature_wind(17, 29, 24)>]
 
     '''
-    if squeeze and unsqueeze:
-        raise ValueError("The squeeze and unsqueeze parameters can not both be True")
-
-    # Initialize the output list of fields
-    field_list = [] #FieldList()
-
     # Parse the field parameter
     if field is None:
         field = ()
     elif isinstance(field, basestring):
         field = (field,)
 
-    # Count the number of fields (in all files) and the number of
-    # files
-    field_counter = -1
-    file_counter  = 0
+    if os.path.isdir(filename):
+        raise IOError("Can't read directory {}".format(filename))
 
-    for file_glob in flat(files):
+    if not os.path.isfile(filename):
+        raise IOError("Can't read non-existent file {}".format(filename))
 
-        # Expand variables
-        file_glob = os.path.expanduser(os.path.expandvars(file_glob))
-
-        if file_glob.startswith('http://'):
-            # Do not glob a URL
-            files2 = (file_glob,)
-        else:
-            # Glob files on disk
-            files2 = glob.glob(file_glob)
-            
-            if not files2 and not ignore_read_error:
-                open(file_glob, 'rb')
-                
-            for x in files2:
-                if os.path.isdir(x):
-                    raise IOError("Can't read directory {}".format(x))
-        #--- End: if
-
-        for filename in files2:
-            if verbose:
-                print 'File: {0}'.format(filename)
-                
-            # --------------------------------------------------------
-            # Read the file into fields
-            # --------------------------------------------------------
-            fields = _read_a_file(filename,
-                                  ignore_read_error=ignore_read_error,
-                                  verbose=verbose,
-                                  field=field,
-                                  uncompress=uncompress,
-                                  _debug=_debug)
-
-            # --------------------------------------------------------
-            # Add this file's fields to those already read from other
-            # files
-            # --------------------------------------------------------
-            field_list.extend(fields)
-   
-            field_counter = len(field_list)
-            file_counter += 1
-        #--- End: for            
-    #--- End: for     
-            
     # ----------------------------------------------------------------
-    # Squeeze or unsqueeze size one dimensions from the data arrays
+    # Read the fields in the file
     # ----------------------------------------------------------------
-    if squeeze:
-        for f in field_list:
-            f.squeeze(copy=False) 
-    elif unsqueeze:
-        for f in field_list:
-            f.unsqueeze(copy=False)
+    field_list = _read_a_file(filename,
+                              external_files=external_files,
+                              ignore_read_error=ignore_read_error,
+                              verbose=verbose,
+                              field=field,
+                              uncompress=uncompress,
+                              _debug=_debug)
             
-    # Print some informative messages
     if verbose:
-        print("Read {0} field{1} from {2} file{3}".format( 
-            field_counter, _plural(field_counter),
-            file_counter , _plural(file_counter)))
-    #--- End: if
+        print("Read {0} field{1} from file {2}".format( 
+            len(field_list), _plural(field_counter), filename))
    
     return field_list
 #--- End: def
@@ -249,6 +185,7 @@ def _plural(n):
     return 's' if n !=1 else ''
 
 def _read_a_file(filename,
+                 external_files=(),
                  ignore_read_error=False,
                  verbose=False,
                  field=(),
@@ -262,11 +199,6 @@ Read the contents of a single file into a field list.
 
     filename: `str`
         The file name.
-
-    aggregate_options: `dict`, optional
-        The keys and values of this dictionary may be passed as
-        keyword parameters to an external call of the aggregate
-        function.
 
     ignore_read_error: `bool`, optional
         If True then return an empty field list if reading the file

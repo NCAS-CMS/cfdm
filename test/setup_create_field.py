@@ -123,7 +123,7 @@ class create_fieldTest(unittest.TestCase):
         anc.standard_name = 'ancillaryC'
         f.insert_field_anc(anc, axes=['Y'])
 
-        f.flag_values = numpy.array([1, 2, 4])
+        f.flag_values = numpy.array([1, 2, 4], 'int32')
         f.flag_meanings = 'a bb ccc'
         f.flag_masks = [2, 1, 0]
 
@@ -144,7 +144,7 @@ class create_fieldTest(unittest.TestCase):
 #        print '============================'
         cfdm.write(f, self.filename, _debug=False)
 
-        g = cfdm.read(self.filename, _debug=True, squeeze=True)
+        g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
 #        g[0].dump()
 #        print '\n GGGG =============================================='
 #        print f
@@ -155,16 +155,18 @@ class create_fieldTest(unittest.TestCase):
 #        print 'GGGG =============================================='
 
 
+
         self.assertTrue(len(g) == 1)
+
+        g = g[0].squeeze(copy=False)
         
-#        print f
+        #        print f
 ##        print g
 #        print f.items()
 #        f.dump()
-        g[0].dump()
+        g.dump()
 
-        g = g[0]
-        g.squeeze(copy=False)
+
 
 
         print repr(g.flag_meanings)

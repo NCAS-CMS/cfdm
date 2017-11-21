@@ -343,15 +343,13 @@ Return a string containing a full description of the instance.
     def equals(self, other, rtol=None, atol=None,
                ignore_data_type=False, ignore_fill_value=False,
                traceback=False):
-        '''
-
-True if two groups of flags are logically equal, False otherwise.
+        '''True if two groups of flags are logically equal, False otherwise.
 
 Note that both instances are sorted in place prior to the comparison.
 
 :Parameters:
 
-    other : 
+    other: 
         The object to compare for equality.
 
     atol : float, optional
@@ -372,7 +370,7 @@ Note that both instances are sorted in place prior to the comparison.
 
 :Returns:
 
-    out : bool
+    out: `bool`
         Whether or not the two instances are equal.
  
 :Examples:
@@ -412,8 +410,8 @@ True
             if x is not None:
                 if y is None:
                     if traceback:
-                        print("%s: Different attributes: %s" %
-                              (f.__class__.__name__, attr))
+                        print("{0}: Different attributes: {1}".format(
+                            f.__class__.__name__, attr))
                     return False
                 #--- End: if
 
@@ -423,14 +421,14 @@ True
                                ignore_fill_value=ignore_fill_value,
                                traceback=traceback)):
                     if traceback:
-                        print("%s: Different '%s': %r, %r" %
-                              (f.__class__.__name__, attr, x, y))
+                        print("{0}: Different {1!r}: {2!r}, {3!r}".format(
+                            f.__class__.__name__, attr, x, y))
                     return False
 
             elif y is not None:
                 if traceback:
-                    print("%s: Different attributes: %s" %
-                          (f.__class__.__name__, attr))
+                    print("{0}: Different attributes: {1}".format(
+                        f.__class__.__name__, attr))
                 return False
         #--- End: for
 

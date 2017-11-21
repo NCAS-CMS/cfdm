@@ -51,6 +51,8 @@ class NetCDF(object):
             #
             'compression': {},
             'uncompress' : True,
+            #
+            'external_nc': [],
             # Chatty?
             'verbose': False,
             # Debug  print statements?
@@ -188,7 +190,7 @@ ancillaries, field ancillaries).
         compression = {}
         
         # ----------------------------------------------------------------
-        # Parse field
+        # Parse field parameter
         # ----------------------------------------------------------------
         try:
             iter(field)
@@ -1230,6 +1232,7 @@ ancillaries, field ancillaries).
                                       measures[2::2]):
                 
                 if ncvar not in attributes:
+                    # EXTERNAL HERE
                     continue
     
                 # Set cell measures' dimensions 
