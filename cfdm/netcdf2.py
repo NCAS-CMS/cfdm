@@ -102,7 +102,7 @@ class NetCDF(object):
     #--- End: def    
     
     def read(self, filename, field=(), verbose=False, uncompress=True,
-             _debug=False):
+             extra_read_vars=None, _debug=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
 
@@ -175,7 +175,7 @@ ancillaries, field ancillaries).
 <CF Field: pmsl(30, 24)>
 
         '''
-        self.read_vars = copy.deepcopy(self._read_vars)
+        self.read_vars = self._read_reset_read_vars(extra_read_vars)
         g = self.read_vars
         
         if isinstance(filename, file):
@@ -517,6 +517,16 @@ ancillaries, field ancillaries).
         #--- End: for
     
         return fields_in_file
+    #--- End: def
+
+    def _read_reset_read_vars(self, extra_read_vars):
+        '''
+        '''
+        d = copy.deepcopy(self._read_vars)
+        if extra_read_vars:
+            d.update(copy.deepcopy(extra_read_vars))
+
+        return d
     #--- End: def
 
     @classmethod
@@ -1845,7 +1855,7 @@ Set the Data attribute of a variable.
     def _read_create_Data(self, array=None, units=None, fill_value=None):
         '''
         '''    
-        return self.Data(array, units=units, fill_value=fill_value)        
+        return self.Data(array, units=units, fill_value=fill_value)
     #--- End: def
     
     @classmethod    
@@ -1902,7 +1912,7 @@ Set the Data attribute of a variable.
               endian='native', compress=0, fletcher32=False,
               no_shuffle=False, datatype=None,
               variable_attributes=None, HDF_chunks=None,
-              unlimited=None, _debug=False):
+              unlimited=None, extra_write_vars=None,_debug=False,):
         '''Write fields to a CF-netCDF file.
         
 NetCDF dimension and variable names will be taken from variables'
@@ -2026,7 +2036,7 @@ and auxiliary coordinate roles for different data variables.
         # ------------------------------------------------------------
         # Initialize dictionary of useful global variables
         # ------------------------------------------------------------
-        self.write_vars = copy.deepcopy(self._write_vars)
+        self.write_vars = self._write_reset_write_vars(extra_write_vars)
         g = self.write_vars
 
         compress = int(compress)
@@ -2167,6 +2177,16 @@ and auxiliary coordinate roles for different data variables.
         # Write all of the buffered data to disk
         # ---------------------------------------------------------------
         self.NetCDFArray.file_close(filename)
+    #--- End: def
+
+    def _write_reset_write_vars(self, extra_write_vars):
+        '''
+        '''
+        d = copy.deepcopy(self._write_vars)
+        if extra_write_vars:
+            d.update(copy.deepcopy(extra_write_vars))
+
+        return d
     #--- End: def
     
     def _write_check_name(self, base, dimsize=None):

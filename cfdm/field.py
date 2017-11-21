@@ -608,17 +608,14 @@ for details.
     # ----------------------------------------------------------------
     @property
     def cell_methods(self):
-        '''
-
-The `CellMethods` object containing the CF cell methods of the data
-array
+        '''A string describing the CF cell methods of the data.
 
 :Examples:
 
 >>> f.cell_methods
 'time: maximum (interval: 1.0 month) area: mean (area-weighted)'
 
-'''
+        '''
         axis_map = self.axes_names()
         return ' '.join([cm.write(axis_map) for cm in self.Items.cell_methods])    
 
