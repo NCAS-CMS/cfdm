@@ -2787,12 +2787,34 @@ metres or less:
             something_has_matched = True
         #--- End: if
 
+        # ------------------------------------------------------------
+        # Try to match cf.Flags
+        # -----------------------------------------------------------
+        if _Flags and ('flag_masks'    in match or 
+                       'flag_meanings' in match or
+                       'flag_values'   in match):
+            f_flags = getattr(self, Flags, None)
+            
+            if not f_flags:
+                found_match = False
+                continue
+            
+            match = match.copy()
+            found_match = f_flags.equals(
+                Flags(flag_masks=match.pop('flag_masks', None),
+                      flag_meanings=match.pop('flag_meanings', None),
+                      flag_values=match.pop('flag_values', None)))
+            
+            if not found_match:
+                continue
+        #--- End: if
+        
         if description:
             conditions_have_been_set = True
              
-        # --------------------------------------------------------
+        # ------------------------------------------------------------
         # Try to match other properties and attributes
-        # --------------------------------------------------------
+        # ------------------------------------------------------------
         found_match = super(Field, self).match(
             description=description, ndim=ndim, exact=exact,
             match_and=match_and, inverse=False, _Flags=True,

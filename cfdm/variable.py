@@ -2441,8 +2441,8 @@ Changing the elements of the returned view changes the data array.
     #--- End: def
 
     def match(self, description=None, ndim=None, exact=False,
-              match_and=True, inverse=False, _Flags=False,
-              _CellMethods=False):
+              match_and=True, inverse=False):
+#              _Flags=False, _CellMethods=False):
         '''Determine whether or not a variable satisfies conditions.
 
 Conditions may be specified on the variable's attributes and CF
@@ -2501,53 +2501,53 @@ properties.
                     continue
             #--- End: if
 
-            # ----------------------------------------------------
-            # Try to match cell methods
-            # ----------------------------------------------------
-            if _CellMethods and 'cell_methods' in match:
-                f_cell_methods = self.getprop('cell_methods', None)
-                
-                if not f_cell_methods:
-                    found_match = False
-                    continue
-
-                match = match.copy()
-                cell_methods = match.pop('cell_methods')
-
-                if not exact:
-                    n = len(cell_methods)
-                    if n > len(f_cell_methods):
-                        found_match = False
-                    else:
-                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
-                else:
-                    found_match = f_cell_methods.equals(cell_methods)
-                                    
-                if not found_match:
-                    continue
-            #--- End: if
-
-            # ---------------------------------------------------
-            # Try to match cf.Flags
-            # ---------------------------------------------------
-            if _Flags and ('flag_masks'    in match or 
-                           'flag_meanings' in match or
-                           'flag_values'   in match):
-                f_flags = getattr(self, Flags, None)
-                
-                if not f_flags:
-                    found_match = False
-                    continue
-
-                match = match.copy()
-                found_match = f_flags.equals(
-                    Flags(flag_masks=match.pop('flag_masks', None),
-                          flag_meanings=match.pop('flag_meanings', None),
-                          flag_values=match.pop('flag_values', None)))
-            
-                if not found_match:
-                    continue
-            #--- End: if
+#            # --------------------------------------------------------
+#            # Try to match cell methods
+#            # --------------------------------------------------------
+#            if _CellMethods and 'cell_methods' in match:
+#                f_cell_methods = self.getprop('cell_methods', None)
+#                
+#                if not f_cell_methods:
+#                    found_match = False
+#                    continue
+#
+#                match = match.copy()
+#                cell_methods = match.pop('cell_methods')
+#
+#                if not exact:
+#                    n = len(cell_methods)
+#                    if n > len(f_cell_methods):
+#                        found_match = False
+#                    else:
+#                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
+#                else:
+#                    found_match = f_cell_methods.equals(cell_methods)
+#                                    
+#                if not found_match:
+#                    continue
+#            #--- End: if
+#
+#            # ---------------------------------------------------
+#            # Try to match cf.Flags
+#            # ---------------------------------------------------
+#            if _Flags and ('flag_masks'    in match or 
+#                           'flag_meanings' in match or
+#                           'flag_values'   in match):
+#                f_flags = getattr(self, Flags, None)
+#                
+#                if not f_flags:
+#                    found_match = False
+#                    continue
+#
+#                match = match.copy()
+#                found_match = f_flags.equals(
+#                    Flags(flag_masks=match.pop('flag_masks', None),
+#                          flag_meanings=match.pop('flag_meanings', None),
+#                          flag_values=match.pop('flag_values', None)))
+#            
+#                if not found_match:
+#                    continue
+#            #--- End: if
              
             for prop, value in match.iteritems():
                 if prop is None: 
