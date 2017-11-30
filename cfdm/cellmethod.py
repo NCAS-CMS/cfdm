@@ -887,7 +887,8 @@ The `!axes` attribute is ignored in the comparison.
                 print("{0}: Different types: {0} != {1}".format(
                     self.__class__.__name__, other.__class__.__name__))
             return False
-
+        #--- End: if
+        
         for attr in ('method', 'within', 'over', 'where', 'comment', 'axes'):
             if attr in ignore:
                 continue
@@ -899,7 +900,8 @@ The `!axes` attribute is ignored in the comparison.
                     print("{0}: Different {1}: {2!r} != {3!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
-
+        #--- End: for
+        
         if 'intervals' in ignore:
             return True
 
@@ -908,26 +910,32 @@ The `!axes` attribute is ignored in the comparison.
         if intervals0:
             if not intervals1:
                 if traceback:
-                    print("{}: Different intervals: {!r} != {!r}".format(
-                        self.__class__.__name__, self.intervals, other.intervals))
+                    print(
+"{0}: Different intervals: {1!r} != {2!r}".format(
+    self.__class__.__name__, self.intervals, other.intervals))
                 return False
-
+            #--- End: if
+            
             if len(intervals0) != len(intervals1):
                 if traceback:
-                    print("{}: Different intervals: {!r} != {!r}".format(
-                        self.__class__.__name__, self.intervals, other.intervals))
+                    print(
+"{0}: Different intervals: {1!r} != {2!r}".format(
+    self.__class__.__name__, self.intervals, other.intervals))
                 return False
-
+            #--- End: if
+            
             for data0, data1 in zip(intervals0, intervals1):
                 if not data0.equals(data1, rtol=rtol, atol=atol,
                                     ignore_data_type=ignore_data_type,
                                     ignore_fill_value=ignore_fill_value,
                                     traceback=traceback):
                     if traceback:
-                        print("{}: Different intervals: {!r} != {!r}".format(
-                            self.__class__.__name__, self.intervals, other.intervals))
+                        print(
+"{0}: Different intervals: {1!r} != {2!r}".format(
+    self.__class__.__name__, self.intervals, other.intervals))
                     return False
-     
+            #--- End: for
+
         elif intervals1:
             if traceback:
                 print("{}: Different intervals: {!r} != {!r}".format(
@@ -938,84 +946,90 @@ The `!axes` attribute is ignored in the comparison.
         return True
     #--- End: def
 
-#    def equivalent(self, other, rtol=None, atol=None, traceback=False):
-#        '''True if two cell methods are equivalent, False otherwise.
-#
-#The `axes` and `intervals` attributes are ignored in the comparison.
-#
-#:Parameters:
-#
-#    other : 
-#        The object to compare for equality.
-#
-#    atol : float, optional
-#        The absolute tolerance for all numerical comparisons, By
-#        default the value returned by the `ATOL` function is used.
-#
-#    rtol : float, optional
-#        The relative tolerance for all numerical comparisons, By
-#        default the value returned by the `RTOL` function is used.
-#
-#:Returns: 
-#
-#    out : bool
-#        Whether or not the two instances are equivalent.
-#
-#:Examples:
-#
-#        '''
-#        if self is other:
-#            return True
-#
-#        # Check that each instance is the same type
-#        if self.__class__ != other.__class__:
-#            if traceback:
-#                print("{0}: Different types: {0} != {1}".format(
-#                    self.__class__.__name__, other.__class__.__name__))
-#            return False
-#
-#        axes0 = self.axes
-#        axes1 = other.axes
-#            
-#        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-#            if traceback:
-#                print("{}: Nonequivalent axes: {!r}, {!r}".format(
-#                    self.__class__.__name__, axes0, axes1))
-#            return False
-#            
-#        other1 = other.copy()
-#        argsort = [axes1.index(axis0) for axis0 in axes0]
-#        other1.sort(argsort=argsort)
-#        self1 = self
-#
-#        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('intervals',)):
-#            if traceback:
-#                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
-#                    self.__class__.__name__, self, other))
-#            return False
-#
-#        if len(self1.intervals) != len(other1.intervals):
-#            self1 = self1.expand_intervals(copy=False)
-#            other1.expand_intervals(copy=False)
-#            if len(self1.intervals) != len(other1.intervals):
-#                if traceback:
-#                    print("{0}: Different numbers of intervals: {1!r} != {2!r}".format(
-#                        self.__class__.__name__, self1.intervals, other1.intervals))
-#                return False
-#
-#        intervals0 = self1.intervals
-#        if intervals0:
-#            for data0, data1 in zip(intervals0, other1.intervals):
-#                if not data0.allclose(data1, rtol=rtol, atol=atol):
-#                    if traceback:
-#                        print("{0}: Different interval data: {1!r} != {2!r}".format(
-#                            self.__class__.__name__, self.intervals, other.intervals))
-#                    return False
-#        #--- End: if
-#
-#        # Still here? Then they are equivalent
-#        return True
-#    #--- End: def
+    def equivalent(self, other, rtol=None, atol=None, traceback=False):
+        '''True if two cell methods are equivalent, False otherwise.
+
+The `axes` and `intervals` attributes are ignored in the comparison.
+
+:Parameters:
+
+    other : 
+        The object to compare for equality.
+
+    atol : float, optional
+        The absolute tolerance for all numerical comparisons, By
+        default the value returned by the `ATOL` function is used.
+
+    rtol : float, optional
+        The relative tolerance for all numerical comparisons, By
+        default the value returned by the `RTOL` function is used.
+
+:Returns: 
+
+    out : bool
+        Whether or not the two instances are equivalent.
+
+:Examples:
+
+        '''
+        if self is other:
+            return True
+
+        # Check that each instance is the same type
+        if self.__class__ != other.__class__:
+            if traceback:
+                print("{0}: Different types: {0} != {1}".format(
+                    self.__class__.__name__, other.__class__.__name__))
+            return False
+        #--- End: if
+
+        axes0 = self.axes
+        axes1 = other.axes
+            
+        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
+            if traceback:
+                print("{}: Nonequivalent axes: {!r}, {!r}".format(
+                    self.__class__.__name__, axes0, axes1))
+            return False
+        #--- End: if
+
+        other1 = other.copy()
+        argsort = [axes1.index(axis0) for axis0 in axes0]
+        other1.sort(argsort=argsort)
+        self1 = self
+
+        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('intervals',)):
+            if traceback:
+                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
+                    self.__class__.__name__, self, other))
+            return False
+        #--- End: if
+
+        if len(self1.intervals) != len(other1.intervals):
+            self1 = self1.expand_intervals(i=True)
+            other1.expand_intervals(i=True)
+            if len(self1.intervals) != len(other1.intervals):
+                if traceback:
+                    print(
+"{0}: Different numbers of intervals: {1!r} != {2!r}".format(
+    self.__class__.__name__, self1.intervals, other1.intervals))
+                return False
+        #--- End: if
+
+        intervals0 = self1.intervals
+        if intervals0:
+            for data0, data1 in zip(intervals0, other1.intervals):
+                if not data0.allclose(data1, rtol=rtol, atol=atol):
+                    if traceback:
+                        print(
+"{0}: Different interval data: {1!r} != {2!r}".format(
+    self.__class__.__name__, self.intervals, other.intervals))
+                    return False
+        #--- End: if
+
+        # Still here? Then they are equivalent
+        return True
+    #--- End: def
 
     def write(self, axis_map={}):
         '''

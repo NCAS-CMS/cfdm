@@ -3,7 +3,6 @@ import textwrap
 
 from copy      import deepcopy
 from cPickle   import dumps, loads, PicklingError
-from functools import partial as functools_partial
 from itertools import izip
 
 import numpy
@@ -2396,134 +2395,91 @@ Changing the elements of the returned view changes the data array.
             self.__class__.__name__))
     #--- End: def
 
-    def _parse_match(self, match):
+    def _match_parse_description(self, description):
         '''Called by `match`
 
 .. versionadded:: 1.6
 
 :Parameters:
 
-    match: 
-        As for the *match* parameter of `match` method.
+    description: 
+        As for the *description* parameter of `match` method.
 
 :Returns:
 
     out: `list`
+
         '''        
-        if not match:
-            return ()
+        if not description:
+            return []
 
-        if not isinstance(match, (list, tuple)): #basestring, dict, Query)):
-            match = (match,)
+        if not isinstance(description, (list, tuple)):
+            description = (description,)
 
-        matches = []
-        for m in match:            
-            if isinstance(m, basestring):
-                if ':' in m:
+        description2 = []
+        for d in description:            
+            if isinstance(d, basestring):
+                if ':' in d:
                     # CF property (string-valued)
-                    m = m.split(':')
-                    matches.append({m[0]: ':'.join(m[1:])})
+                    d = d.split(':')
+                    description2.append({d[0]: ':'.join(d[1:])})
                 else:
                     # Identity (string-valued) or python attribute
                     # (string-valued) or axis type
-                    matches.append({None: m})
+                    description2.append({None: d})
 
-            elif isinstance(m, dict):
+            elif isinstance(d, dict):
                 # Dictionary
-                matches.append(m)
+                description2.append(d.copy())
 
             else:
-                # Identity (not string-valued, e.g. cf.Query).
-                matches.append({None: m})
+                # Identity (not string-valued)
+                description2.append({None: d})
         #--- End: for
 
-        return matches
+        return description2
     #--- End: def
 
-    def _match_ndim(self, v, ndim, exact=False):
-        try:
-            return v.ndim == ndim
-        except AttributeError:
-            return = False
-    #--- End: def
-
-    def match(self, description=None, ndim=None, exact=False,
-              match_and=True, inverse=False, **kwargs):
-        '''Determine whether or not a variable satisfies conditions.
-
-Conditions may be specified on the variable's attributes and CF
-properties.
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-:Returns:
-
-    out: `bool`
-        Whether or not the variable matches the given criteria.
-
-:Examples:
-
+    @classmethod
+    def _match_ndim(cls, v, ndim):
         '''
-        conditions_have_been_set = False
-        something_has_matched    = False
+        '''
+        try:
+            found_match = (ndim == v.dim)
+        except AttributeError:
+            found_match = False
 
-        if '_match_ndim' in kwargs:
-            raise ValueError("Can't set keyword '_match_ndim'")
-        
-        kwargs['_match_ndim'] = ndim
-        
-#        if ndim is not None:
-#            conditions_have_been_set = True
-#            try:
-#                found_match = (self.ndim == ndim)
-#            except AttributeError:
-#                found_match = False
-#
-#            if match_and and not found_match:
-#                return bool(inverse)
-#
-#            something_has_matched = True
-#        #--- End: if
+        return found_match
+    #--- End: def
 
-        # ------------------------------------------------------------
-        #
-        # ------------------------------------------------------------
-        for func, value in kwargs.values():
-            if value is None:
-                continue
-            
-            conditions_have_been_set = True
-            
-            found_match = func(self, value, exact=exact)
-            if match_and and not found_match:
-                return bool(inverse)
-
-            something_has_matched = True
-        #--- End: for
-
-        matches = self._parse_match(description)
-
-        if matches:
-            conditions_have_been_set = True
+    @classmethod
+    def _match_description(cls, v, description):
+        '''
+        '''
+        description = v._match_parse_description(description)
 
         found_match = True
-        for match in matches:
+        for match in description:
             found_match = True
 
-            # ----------------------------------------------------
-            # Try to match Units
-            # ----------------------------------------------------
-            if 'units' in match or 'calendar' in match:
-                match = match.copy()
-                units = Units(match.pop('units', None), match.pop('calendar', None))
-                
-                if not exact:
-                    found_match = self.Units.equivalent(units)
-                else:
-                    found_match = self.Units.equals(units)
-    
+            # --------------------------------------------------------
+            # Try to match units
+            # --------------------------------------------------------
+            if 'units' in match:
+                u1 = Units(v.units)
+                u2 = Units(match.pop('units'))
+                found_match = (u1 == u2)    
+                if not found_match:
+                    continue
+            #--- End: if
+
+            # --------------------------------------------------------
+            # Try to match calendar (if units are reference time)
+            # --------------------------------------------------------
+            if 'calendar' in match and v.Units.isreftime:
+                c1 = v.Units.canonical_calendar
+                c2 = Units(calendar=match.pop('calendar')).canonical_calendar
+                found_match = (c1 == c2)
                 if not found_match:
                     continue
             #--- End: if
@@ -2534,7 +2490,7 @@ properties.
 #            # Try to match cell methods
 #            # --------------------------------------------------------
 #            if _CellMethods and 'cell_methods' in match:
-#                f_cell_methods = self.getprop('cell_methods', None)
+#                f_cell_methods = v.getprop('cell_methods', None)
 #                
 #                if not f_cell_methods:
 #                    found_match = False
@@ -2586,7 +2542,7 @@ properties.
                     if isinstance(value, basestring):
                         if value in ('T', 'X', 'Y', 'Z'):
                             # Axis type, e.g. 'T'
-                            x = getattr(self, value)
+                            x = getattr(v, value, False)
                             value = True
                         else:
                             value = value.split('%')
@@ -2595,32 +2551,27 @@ properties.
                                 if len(value) == 1:
                                     # String-valued identity,
                                     # e.g. 'air_temperature'
-                                    x = self.identity(None)
+                                    x = v.identity(default=None)
                                     value = value[0]
                                 else:
                                     # String-valued CF property,
                                     # e.g. 'long_name:rain'
-                                    x = self.getprop(value[0], None)
+                                    x = v.getprop(value[0], None)
                                     value = ':'.join(value[1:])
                             else:
                                 # String-valued python attribute,
                                 # e.g. 'ncvar%tas'
-                                x = getattr(self, value[0], None)
+                                x = getattr(v, value[0], None)
                                 value = '%'.join(value[1:])
                     else:   
-                        # Non-string-valued identity, e.g. cf.Query
-                        x = self.identity(None)
+                        # Non-string-valued identity
+                        x = v.identity(default=None)
                 else:                    
                     # CF property
-                    x = self.getprop(prop, None)
+                    x = v.getprop(prop, None)
     
                 if x is None:
-                    found_match = False
-                elif not exact and isinstance(x, basestring) and isinstance(value, basestring):
-#                    if exact:
-#                        found_match = re.match(value, x)
-#                    else:
-                    found_match = re.match(value, x)
+                    found_match = False                
                 else:	
                     found_match = (value == x)
                     try:
@@ -2634,13 +2585,206 @@ properties.
             #--- End: for
 
             if found_match:
-                something_has_matched = True
                 break
         #--- End: for
 
-        if match_and and not found_match:
-            return bool(inverse)
+        return found_match
+    #--- End: def
+    
+    def match(self, description=None, ndim=None, match_and=True,
+              inverse=False, customise={}):
+        '''Determine whether or not a variable satisfies conditions.
 
+Conditions may be specified on the variable's attributes and CF
+properties.
+
+.. versionadded:: 1.6
+
+:Parameters:
+
+:Returns:
+
+    out: `bool`
+        Whether or not the variable matches the given criteria.
+
+:Examples:
+
+        '''
+        
+        customise[self._match_description] = description
+        customise[self._match_ndim]        = ndim
+        
+#        if ndim is not None:
+#            conditions_have_been_set = True
+#            try:
+#                found_match = (self.ndim == ndim)
+#            except AttributeError:
+#                found_match = False
+#
+#            if match_and and not found_match:
+#                return bool(inverse)
+#
+#            something_has_matched = True
+#        #--- End: if
+
+        conditions_have_been_set = False
+        something_has_matched    = False
+        
+        # ------------------------------------------------------------
+        #
+        # ------------------------------------------------------------
+        for func, value in customise.iteritems():
+            if value is None:
+                continue
+            
+            conditions_have_been_set = True
+            
+            found_match = func(self, value)
+            if match_and and not found_match:
+                return bool(inverse)
+
+            something_has_matched = True
+        #--- End: for
+
+#        matches = self._match_parse_description(description)
+#
+#        if matches:
+#            conditions_have_been_set = True
+#
+#        found_match = True
+#        for match in matches:
+#            found_match = True
+#
+#            # ----------------------------------------------------
+#            # Try to match Units
+#            # ----------------------------------------------------
+#            if 'units' in match or 'calendar' in match:
+#                match = match.copy()
+#                units = Units(match.pop('units', None), match.pop('calendar', None))
+#                
+#                if not exact:
+#                    found_match = self.Units.equivalent(units)
+#                else:
+#                    found_match = self.Units.equals(units)
+#    
+#                if not found_match:
+#                    continue
+#            #--- End: if
+#
+#            
+#            
+##            # --------------------------------------------------------
+##            # Try to match cell methods
+##            # --------------------------------------------------------
+##            if _CellMethods and 'cell_methods' in match:
+##                f_cell_methods = self.getprop('cell_methods', None)
+##                
+##                if not f_cell_methods:
+##                    found_match = False
+##                    continue
+##
+##                match = match.copy()
+##                cell_methods = match.pop('cell_methods')
+##
+##                if not exact:
+##                    n = len(cell_methods)
+##                    if n > len(f_cell_methods):
+##                        found_match = False
+##                    else:
+##                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
+##                else:
+##                    found_match = f_cell_methods.equals(cell_methods)
+##                                    
+##                if not found_match:
+##                    continue
+##            #--- End: if
+##
+##            # ---------------------------------------------------
+##            # Try to match cf.Flags
+##            # ---------------------------------------------------
+##            if _Flags and ('flag_masks'    in match or 
+##                           'flag_meanings' in match or
+##                           'flag_values'   in match):
+##                f_flags = getattr(self, Flags, None)
+##                
+##                if not f_flags:
+##                    found_match = False
+##                    continue
+##
+##                match = match.copy()
+##                found_match = f_flags.equals(
+##                    Flags(flag_masks=match.pop('flag_masks', None),
+##                          flag_meanings=match.pop('flag_meanings', None),
+##                          flag_values=match.pop('flag_values', None)))
+##            
+##                if not found_match:
+##                    continue
+##            #--- End: if
+#             
+#            for prop, value in match.iteritems():
+#                if prop is None: 
+#                    if value is None:
+#                        continue
+#
+#                    if isinstance(value, basestring):
+#                        if value in ('T', 'X', 'Y', 'Z'):
+#                            # Axis type, e.g. 'T'
+#                            x = getattr(self, value)
+#                            value = True
+#                        else:
+#                            value = value.split('%')
+#                            if len(value) == 1:
+#                                value = value[0].split(':')
+#                                if len(value) == 1:
+#                                    # String-valued identity,
+#                                    # e.g. 'air_temperature'
+#                                    x = self.identity(None)
+#                                    value = value[0]
+#                                else:
+#                                    # String-valued CF property,
+#                                    # e.g. 'long_name:rain'
+#                                    x = self.getprop(value[0], None)
+#                                    value = ':'.join(value[1:])
+#                            else:
+#                                # String-valued python attribute,
+#                                # e.g. 'ncvar%tas'
+#                                x = getattr(self, value[0], None)
+#                                value = '%'.join(value[1:])
+#                    else:   
+#                        # Non-string-valued identity, e.g. cf.Query
+#                        x = self.identity(None)
+#                else:                    
+#                    # CF property
+#                    x = self.getprop(prop, None)
+#    
+#                if x is None:
+#                    found_match = False
+#                elif not exact and isinstance(x, basestring) and isinstance(value, basestring):
+##                    if exact:
+##                        found_match = re.match(value, x)
+##                    else:
+#                    found_match = re.match(value, x)
+#                else:	
+#                    found_match = (value == x)
+#                    try:
+#                        found_match == True
+#                    except ValueError:
+#                        found_match = False
+#                #--- End: if
+#     
+#                if not found_match:
+#                    break
+#            #--- End: for
+#
+#            if found_match:
+#                something_has_matched = True
+#                break
+#        #--- End: for
+#
+#        if match_and and not found_match:
+#            return bool(inverse)
+
+        # Still here?
         if conditions_have_been_set:
             if something_has_matched:            
                 return not bool(inverse)

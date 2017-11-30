@@ -70,13 +70,10 @@ Any amount of netCDF files may be read.
                                 ``${name}`` are replaced by the value
                                 of environment variable *name*.
           ====================  ======================================
-    
-        When more than one type of expansion is used in the string,
-        they are applied in the order given in the above table.
 
           *Example:*
-            If the environment variable *MYSELF* has been set to the
-            "david", then ``'~$MYSELF/data.nc'`` is equivalent to
+            If the environment variable ``MYSELF`` has been set to
+            ``david``, then ``'~$MYSELF/data.nc'`` is equivalent to
             ``'~david/data.nc'``.
   
     verbose: `bool`, optional
@@ -154,6 +151,8 @@ Any amount of netCDF files may be read.
     elif isinstance(field, basestring):
         field = (field,)
 
+    filename = os.path.expanduser(os.path.expandvars(filename))
+    
     if os.path.isdir(filename):
         raise IOError("Can't read directory {}".format(filename))
 

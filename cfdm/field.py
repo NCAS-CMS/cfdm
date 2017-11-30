@@ -1694,7 +1694,7 @@ axes, use the `remove_axes` method.
 
         # Update cell methods
         if self.Items.cell_methods:
-            self.Items.cell_methods = self._conform_cell_methods()
+            self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
 
         return key
     #--- End: def
@@ -2284,614 +2284,734 @@ Set the time axis to be unlimited when written to a netCDF file:
         return org
     #--- End: def
 
-    def match(self, description=None, items=None, rank=None, ndim=None,
-              exact=False, match_and=True, inverse=False):
-        '''Test whether or not the field satisfies the given conditions.
-
-Different types of conditions may be set with the parameters:
-         
-=============  =======================================================
-Parameter      What gets tested
-=============  =======================================================
-*description*  Field properties and attributes
-             
-*items*        Field items
-               
-*rank*         The number of domain axes
-               
-*ndim*         The number of field data array axes
-=============  =======================================================
-
-By default, when multiple criteria are given the field matches if it
-satisfies the conditions given by each one.
-
-.. seealso:: `items`, `select`
-
-**Quick start examples**
-
-There is great flexibility in the types of test which can be
-specified, and as a result the documentation is very detailed in
-places. These preliminary, simple examples show that the usage need
-not always be complicated and may help with understanding the keyword
-descriptions.
-
-1. Test if a field contains air temperature data, as given determined
-   by its `identity` method:
-
-   >>> f.match('air_temperature')
-
-2. Test if a field contains air temperature data, as given determined
-   by its `identity` method, or has a long name which contains the
-   string "temp":
-
-   >>> f.match(['air_temperature', {'long_name': cfeq('.*temp.*', regex=true)}])
-
-3. Test if a field has at least one longitude grid cell point on the
-   Greenwich meridian:
-
-   >>> f.match(items={'longitude': 0})
-
-4. Test if a field has latitude grid cells which all have a resolution
-   of less than 1 degree:
-
-   >>> f.match(items={'latitude': cf.cellsize(cf.lt(1, 'degree'))})
-
-5. Test if a field has exactly 4 domain axes:
-
-   >>> f.match(rank=4)
-
-6. Examples 1 to 4 may be combined to test if a field has exactly 4
-   domain axes, contains air temperature data, has at least one
-   longitude grid cell point on the Greenwich meridian and all
-   latitude grid cells have a resolution of less than 1 degree:
-
-   >>> f.match('air_temperature',
-   ...         items={'longitude': 0,
-   ...                'latitude': cf.cellsize(cf.lt(1, 'degree'))},
-   ...         rank=4)
-
-7. Test if a field contains Gregorian calendar monthly mean data array
-   values:
-
-   >>> f.match({'cell_methods': CellMethods('time: mean')},
-   ...         items={'time': cf.cellsize(cf.wi(28, 31, 'days'))})
-
-Further examples are given within and after the description of the
-arguments.
-
-
-:Parameters:
-
-    description: *optional*
-        Set conditions on the field's CF property and attribute
-        values. *description* may be one, or a sequence of:
-
-          * `None` or an empty dictionary. Always matches the
-            field. This is the default.
-
-     ..
-
-          * A string which identifies string-valued metadata of the
-            field and a value to compare it against. The value may
-            take one of the following forms:
-
-              ==============  ======================================
-              *description*   Interpretation
-              ==============  ======================================
-              Contains ``:``  Selects on the CF property specified
-                              before the first ``:``
-                                
-              Contains ``%``  Selects on the attribute specified
-                              before the first ``%``              
-              
-              Anything else   Selects on identity as returned by the
-                              `identity` method
-              ==============  ======================================
-
-            By default the part of the string to be compared with the
-            item is treated as a regular expression understood by the
-            :py:obj:`re` module and the field matches if its
-            appropriate value matches the regular expression using the
-            :py:obj:`re.match` method (i.e. if zero or more characters
-            at the beginning of field's value match the regular
-            expression pattern). See the *exact* parameter for
-            details.
-            
-              *Example:*
-                To match a field with `identity` beginning with "lat":
-                ``match='lat'``.
-
-              *Example:*
-                To match a field with long name beginning with "air":
-                ``match='long_name:air'``.
-
-              *Example:*
-                To match a field with netCDF variable name of exactly
-                "tas": ``match='ncvar%tas$'``.
-
-              *Example:*
-                To match a field with `identity` which ends with the
-                letter "z": ``match='.*z$'``.
-
-              *Example:*
-                To match a field with long name which starts with the
-                string ".*a": ``match='long_name%\.\*a'``. 
-
-        ..
-
-          * A `cf.Query` object to be compared with field's identity,
-            as returned by its `identity` method.
-
-              *Example:*
-                To match a field with `identity` of exactly
-                "air_temperature" you could set
-                ``match=cf.eq('air_temperature')`` (see `cf.eq`).
-
-              *Example:*
-                To match a field with `identity` ending with
-                "temperature" you could set
-                ``match=cf.eq('.*temperature$', exact=False)`` (see
-                `cf.eq`).
-
-     ..
-
-          * A `dict` that identifies properties of the field with
-            corresponding tests on their values. The field matches if
-            **all** of the tests in the dictionary are passed.
-
-            In general, each dictionary key is a CF property name with
-            a corresponding value to be compared against the field's
-            CF property value. 
-
-            If the dictionary value is a string then by default it is
-            treated as a regular expression understood by the
-            :py:obj:`re` module and the field matches if its
-            appropriate value matches the regular expression using the
-            :py:obj:`re.match` method (i.e. if zero or more characters
-            at the beginning of field's value match the regular
-            expression pattern). See the *exact* parameter for
-            details.
-            
-              *Example:*
-                To match a field with standard name of exactly
-                "air_temperature" and long name beginning with the
-                letter "a": ``match={'standard_name':
-                cf.eq('air_temperature'), 'long_name': 'a'}`` (see
-                `cf.eq`).
-
-            Some key/value pairs have a special interpretation:
-
-              ==================  ========================================
-              Special key         Value
-              ==================  ========================================
-              ``'units'``         The value must be a string and by
-                                  default is evaluated for
-                                  equivalence, rather than equality,
-                                  with the field's `units` property,
-                                  for example a value of ``'Pa'``
-                                  will match units of Pascals or
-                                  hectopascals, etc. See the *exact*
-                                  parameter.
-                            
-              ``'calendar'``      The value must be a string and by
-                                  default is evaluated for
-                                  equivalence, rather than equality,
-                                  with the field's `calendar`
-                                  property, for example a value of
-                                  ``'noleap'`` will match a calendar
-                                  of noleap or 365_day. See the
-                                  *exact* parameter.
-                              
-              ``'cell_methods'``  The value must be a `CellMethods`
-                                  object containing *N* cell methods
-                                  and by default is evaluated for
-                                  equivalence with the last *N* cell
-                                  methods contained within the field's
-                                  `cell_methods` property. See the
-                                  *exact* parameter.
-
-              `None`              The value is interpreted as for a
-                                  string value of the *description*
-                                  parameter. For example,
-                                  ``description={None: 'air'}`` is
-                                  equivalent to ``match='air'`` and
-                                  ``description={None: 'ncvar%pressure'}``
-                                  is equivalent to
-                                  ``description='ncvar%pressure'``.
-              ==================  ========================================
-            
-              *Example:*
-                To match a field with standard name starting with
-                "air", units of temperature and a netCDF variable name
-                beginning with "tas" you could set
-                ``match={'standard_name': 'air', 'units': 'K', None:
-                'ncvar%tas'}``.
-
-              *Example:*
-                To match a field whose last two cell methods are
-                equivalent to "time: minimum area: mean":
-                ``match={'cell_methods': Cellmethods('time: minimum
-                area: mean')``. This would match a field which has,
-                for example, cell methods of "height: mean time:
-                minimum area: mean".
-
-        If *description* is a sequence of any combination of the above
-        then the field matches if it matches **at least one** element
-        of the sequence:
-
-          *Example:* 
-
-            >>> f.match('air_temperature')
-            True
-            >>> f.match('air_pressure')
-            False
-            >>> f.match({'units': 'hPa', 'long_name': 'foo'})
-            False
-            >>> f.match(['air_temperature',
-            ...          'air_pressure',
-            ...          {'units': 'hPa', 'long_name': 'foo'}])
-            True
-  
-        If the sequence is empty then the field always matches.
- 
-    items: `dict`, optional
-        A dictionary which identifies items of the field (dimension
-        coordinate, auxiliary coordinate, cell measure or coordinate
-        reference objects) with corresponding tests on their
-        elements. The field matches if **all** of the specified items
-        exist and their tests are passed.
-
-        Each dictionary key specifies an item to test as the one that
-        would be returned by this call of the field's `item` method:
-        ``f.item(key, exact=exact)`` (see `Field.item`).
-
-        The corresponding value is, in general, any object for which
-        the item may be compared with for equality (``==``). The test
-        is passed if the result evaluates to True, or if the result is
-        an array of values then the test is passed if at least one
-        element evaluates to true.
-
-        If the value is `None` then the test is always passed,
-        i.e. this case tests for item existence.
-
-          *Example:*
-             To match a field which has a latitude coordinate value of
-             exactly 30: ``items={'latitude': 30}``.
-
-          *Example:*
-             To match a field whose longitude axis spans the Greenwich
-             meridien: ``items={'longitude': cf.contain(0)}`` (see
-             `cf.contain`).
-
-          *Example:*
-             To match a field which has a time coordinate value of
-             2004-06-01: ``items={'time': cf.dt('2004-06-01')}`` (see
-             `cf.dt`).
-
-          *Example:*
-             To match a field which has a height axis: ``items={'Z':
-             None}``.
-
-          *Example:*
-             To match a field which has a time axis and depth
-             coordinates greater then 1000 metres: ``items={'T': None,
-             'depth': cf.gt(1000, 'm')}`` (see `cf.gt`).
-
-          *Example:*
-            To match a field with time coordinates after than 1989 and
-            cell sizes of between 28 and 31 days: ``items={'time':
-            cf.dtge(1990) & cf.cellsize(cf.wi(28, 31, 'days'))}`` (see
-            `cf.dtge`, `cf.cellsize` and `cf.wi`).
-
-    {+rank}
-
-    OLD rank: *optional*
-        Specify a condition on the number of axes in the field.  The
-        field matches if its number of domain axes equals *rank*. A
-        range of values may be selected if *rank* is a `cf.Query`
-        object. Not to be confused with the *ndim* parameter (the
-        number of data array axes may be fewer than the number of
-        domain axes).
-
-          *Example:*
-            ``rank=2`` matches a field with exactly two domain axes
-            and ``rank=cf.wi(3, 4)`` matches a field with three or
-            four domain axes (see `cf.wi`).
-
-    ndim: *optional*
-        Specify a condition on the number of axes in the field's data
-        array. The field matches if its number of data array axes
-        equals *ndim*. A range of values may be selected if *ndim* is
-        a `cf.Query` object. Not to be confused with the *rank*
-        parameter (the number of domain axes may be greater than the
-        number of data array axes).
-
-          *Example:*
-            ``ndim=2`` matches a field with exactly two data array
-            axes and ``ndim=cf.le(2)`` matches a field with fewer than
-            three data array axes (see `cf.le`).
-
-    exact: `bool`, optional
-        The *exact* parameter applies to the interpretation of string
-        values of the *description* parameter and of keys of the
-        *items* parameter. By default *exact* is False, which means
-        that:
-
-          * A string value is treated as a regular expression
-            understood by the :py:obj:`re` module. 
-
-          * Units and calendar values in a *description* dictionary
-            are evaluated for equivalence rather then equality
-            (e.g. "metre" is equivalent to "m" and to "km").
-
-          * A cell methods value containing *N* cell methods in a
-            *description* dictionary is evaluated for equivalence with
-            *the last *N* cell methods contained within the field's
-            *`cell_methods` property.
-
-        ..
-
-          *Example:*
-            To match a field with a standard name which begins with
-            "air" and any units of pressure:
-            ``f.match({'standard_name': 'air', 'units': 'hPa'})``.
-
-          *Example:*          
-            ``f.match({'cell_methods': CellMethods('time: mean
-            (interval 1 hour)')})`` would match a field with cell
-            methods of "area: mean time: mean (interval 60 minutes)".
-
-        If *exact* is True then:
-
-          * A string value is not treated as a regular expression.
-
-          * Units and calendar values in a *description* dictionary
-            are evaluated for exact equality rather than equivalence
-            (e.g. "metre" is equal to "m", but not to "km").
-
-          * A cell methods value in a *description* dictionary is
-            evaluated for exact equality to the field's cell methods.
-          
-        ..
-
-          *Example:*          
-            To match a field with a standard name of exactly
-            "air_pressure" and units of exactly hectopascals:
-            ``f.match({'standard_name': 'air_pressure', 'units':
-            'hPa'}, exact=True)``.
-
-          *Example:*          
-            To match a field with a cell methods of exactly "time:
-            mean (interval 1 hour)": ``f.match({'cell_methods':
-            CellMethods('time: mean (interval 1 hour)')``.
-
-        Note that `cf.Query` objects provide a mechanism for
-        overriding the *exact* parameter for individual values.
-
-          *Example:*
-            ``f.match({'standard_name': cf.eq('air', exact=False),
-            'units': 'hPa'}, exact=True)`` will match a field with a
-            standard name which begins "air" but has units of exactly
-            hectopascals (see `cf.eq`).
-    
-          *Example:*
-            ``f.match({'standard_name': cf.eq('air_pressure'),
-            'units': 'hPa'})`` will match a field with a standard name
-            of exactly "air_pressure" but with units which equivalent
-            to hectopascals (see `cf.eq`).
-
-    match_and: `bool`, optional
-        By default *match_and* is True and the field matches if it
-        satisfies the conditions specified by each test parameter
-        (*description*, *items*, *rank* and *ndim*).
-
-        If *match_and* is False then the field will match if it
-        satisfies at least one test parameter's condition.
-
-          *Example:*
-            To match a field with a standard name of "air_temperature"
-            **and** 3 data array axes: ``f.match('air_temperature',
-            ndim=3)``. To match a field with a standard name of
-            "air_temperature" **or** 3 data array axes:
-            ``f.match('air_temperature", ndim=3, match_and=False)``.
-    
-    inverse: `bool`, optional
-        If True then return the field matches if it does **not**
-        satisfy the given conditions.
-
-          *Example:*
-
-            >>> f.match('air', ndim=4, inverse=True) == not f.match('air', ndim=4)
-            True
-
-:Returns:
-
-    out: `bool`
-        True if the field satisfies the given criteria, False
-        otherwise.
-
-:Examples:
-
-Field identity starts with "air":
-
->>> f.match('air')
-
-Field identity ends contains the string "temperature":
-
->>> f.match('.*temperature')
-
-Field identity is exactly "air_temperature":
-
->>> f.match('^air_temperature$')
->>> f.match('air_temperature', exact=True)
-
-Field has units of temperature:
-
->>> f.match({'units': 'K'}):
-
-Field has units of exactly Kelvin:
-
->>> f.match({'units': 'K'}, exact=True)
-
-Field identity which starts with "air" and has units of temperature:
-
->>> f.match({None: 'air', 'units': 'K'})
-
-Field identity starts with "air" and/or has units of temperature:
-
->>> f.match(['air', {'units': 'K'}])
-
-Field standard name starts with "air" and/or has units of exactly Kelvin:
-
->>> f.match([{'standard_name': cf.eq('air', exact=False), {'units': 'K'}],
-...         exact=True)
-
-Field has height coordinate values greater than 63km:
-
->>> f.match(items={'height': cf.gt(63, 'km')})
-
-Field has a height coordinate object with some values greater than
-63km and a north polar point on its horizontal grid:
-
->>> f.match(items={'height': cf.gt(63, 'km'),
-...                'latitude': cf.eq(90, 'degrees')})
-
-Field has some longitude cell sizes of 3.75:
-
->>> f.match(items={'longitude': cf.cellsize(3.75)})
-
-Field latitude cell sizes within a tropical region are all no greater
-than 1 degree:
-
->>> f.match(items={'latitude': (cf.wi(-30, 30, 'degrees') &
-...                             cf.cellsize(cf.le(1, 'degrees')))})
-
-Field contains monthly mean air pressure data and all vertical levels
-within the bottom 100 metres of the atmosphere have a thickness of 20
-metres or less:
-
->>> f.match({None: '^air_pressure$', 'cell_methods': CellMethods('time: mean')},
-...         items={'height': cf.le(100, 'm') & cf.cellsize(cf.le(20, 'm')),
-...                'time': cf.cellsize(cf.wi(28, 31, 'days'))})
-
-        '''
-        conditions_have_been_set = False
-        something_has_matched    = False
-
-        if rank is not None:
-            conditions_have_been_set = True
-            found_match = (len(self.axes()) == rank)
-            if match_and and not found_match:
-                return bool(inverse)
-
-            something_has_matched = True
-        #--- End: if
-
-#        # ------------------------------------------------------------
-#        # Try to match cf.Flags
-#        # -----------------------------------------------------------
-#        if _Flags and ('flag_masks'    in match or 
-#                       'flag_meanings' in match or
-#                       'flag_values'   in match):
-#            f_flags = getattr(self, Flags, None)
-#            
-#            if not f_flags:
-#                found_match = False
-#                continue
-#            
-#            match = match.copy()
-#            found_match = f_flags.equals(
-#                Flags(flag_masks=match.pop('flag_masks', None),
-#                      flag_meanings=match.pop('flag_meanings', None),
-#                      flag_values=match.pop('flag_values', None)))
-#            
-#            if not found_match:
-#                continue
-#        #--- End: if
-#            if _CellMethods and 'cell_methods' in match:
-#                f_cell_methods = self.getprop('cell_methods', None)
+#    @classmethod
+#    def _match_naxes(cls, f, naxes):
+#        '''????
+#
+#:Parameters:
+#
+#    f: `{+Variable}`
+#
+#    naxes: `int`
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#          '''
+#        try:
+#            found_match = (naxes == len(f.axes()))
+#        except AttributeError:
+#            found_match = False
+#
+#        return found_match
+#    #--- End: def
+#
+#    @classmethod
+#    def _match_items(cls, f, value):
+#        '''Try to match items
+#
+#:Parameters:
+#
+#    f: `{+Variable}`
+#
+#    items: `dict`
+#        A dictionary which identifies items of the field (dimension
+#        coordinate, auxiliary coordinate, cell measure or coordinate
+#        reference objects) with corresponding tests on their
+#        elements. The field matches if **all** of the specified items
+#        exist and their tests are passed.
+#
+#        Each dictionary key specifies an item to test as the one that
+#        would be returned by this call of the field's `item` method:
+#        ``f.item(key)`` (see `Field.item`).
+#
+#        The corresponding value is, in general, any object for which
+#        the item may be compared with for equality (``==``). The test
+#        is passed if the result evaluates to True, or if the result is
+#        an array of values then the test is passed if at least one
+#        element evaluates to true.
+#
+#        If the value is `None` then the test is always passed,
+#        i.e. this case tests for item existence.
+#
+#          *Example:*
+#             To match a field which has a latitude coordinate value of
+#             exactly 30: ``items={'latitude': 30}``.
+#
+#          *Example:*
+#             To match a field which has a time coordinate value of
+#             2004-06-01: ``items={'time': cf.dt('2004-06-01')}`` (see
+#             `cf.dt`).
+#
+#          *Example:*
+#             To match a field which has a height axis: ``items={'Z':
+#             None}``.
+#
+#          *Example:*
+#             To match a field which has a time axis a depth coordinate
+#             of 1000 metres: ``items={'T': None, 'depth': Data(1000,
+#             'm')}`` (see `Data`).
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#        '''
+#        found_match = True #False
+#        for identity, condition in value.iteritems():
+#            item = f.item(identity)
+#
+#            if condition is None:
+#                field_matches = (item is not None)
+#            else:
+#                field_matches = (condition == item)
+#                try:
+#                    field_matches = field_matches.any()
+#                except AttributeError:
+#                    pass
+#            #--- End: if
 #                
-#                if not f_cell_methods:
-#                    found_match = False
-#                    continue
-#
-#                match = match.copy()
-#                cell_methods = match.pop('cell_methods')
-#
-#                if not exact:
-#                    n = len(cell_methods)
-#                    if n > len(f_cell_methods):
-#                        found_match = False
-#                    else:
-#                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
+#            if match_and:                    
+#                if field_matches:
+#                    found_match = True 
 #                else:
-#                    found_match = f_cell_methods.equals(cell_methods)
-#                                    
-#                if not found_match:
-#                    continue
-#        #--- End: for
-#        
-        if description:
-            conditions_have_been_set = True
-             
-        # ------------------------------------------------------------
-        # Try to match other properties and attributes
-        # ------------------------------------------------------------
-        found_match = super(Field, self).match(
-            description=description, ndim=ndim, exact=exact,
-            match_and=match_and, inverse=False)
+#                    found_match = False
+#                    break
+#            elif field_matches:
+#                found_match = True
+#                break
+#        #--- End: for 
+#
+#        return found_match
+#    #--- End: def
+#
+#    def match(self, description=None, items=None, naxes=None,
+#              ndim=None, match_and=True, inverse=False, customize={}):
+#        '''
+#.. versionadded:: 1.6
+#        '''
+#        if naxes  is not None:
+#            customize[self._match_naxes] = naxes
+#
+#        if items is not None:
+#            customize[self._match_items] = items
+#
+#        return super(Field, self).match(description=description,
+#                                        ndim=ndim,
+#                                        match_and=match_and,
+#                                        inverse=inverse,
+#                                        customize=customize)
+#    #--- End: def
 
-        if match_and and not found_match:
-            return bool(inverse)
-
-        something_has_matched = found_match
-
-        # ------------------------------------------------------------
-        # Try to match items
-        # ------------------------------------------------------------
-        if items:
-            conditions_have_been_set = True
-
-            found_match = False
-
-            for identity, condition in items.iteritems():
-                c = self.item(identity, exact=exact)
-
-                if condition is None:
-                    field_matches = (c is not None)
-                else:
-                    field_matches = (condition == c)
-                    try:
-                        field_matches = field_matches.any()
-                    except AttributeError:
-                        pass
-                #--- End: if
-                
-                if match_and:                    
-                    if field_matches:
-                        found_match = True 
-                    else:
-                        found_match = False
-                        break
-                elif field_matches:
-                    found_match = True
-                    break
-            #--- End: for 
-
-            if match_and and not found_match:
-                return bool(inverse)
-
-            something_has_matched = found_match
-        #--- End: if
-
-        if conditions_have_been_set:
-            if something_has_matched:            
-                return not bool(inverse)
-            else:
-                return bool(inverse)
-        else:
-            return not bool(inverse)
-    #--- End: def
+#    def match(self, description=None, items=None, rank=None, ndim=None,
+#              exact=False, match_and=True, inverse=False):
+#        '''Test whether or not the field satisfies the given conditions.
+#
+#Different types of conditions may be set with the parameters:
+#         
+#=============  =======================================================
+#Parameter      What gets tested
+#=============  =======================================================
+#*description*  Field properties and attributes
+#             
+#*items*        Field items
+#               
+#*rank*         The number of domain axes
+#               
+#*ndim*         The number of field data array axes
+#=============  =======================================================
+#
+#By default, when multiple criteria are given the field matches if it
+#satisfies the conditions given by each one.
+#
+#.. seealso:: `items`, `select`
+#
+#**Quick start examples**
+#
+#There is great flexibility in the types of test which can be
+#specified, and as a result the documentation is very detailed in
+#places. These preliminary, simple examples show that the usage need
+#not always be complicated and may help with understanding the keyword
+#descriptions.
+#
+#1. Test if a field contains air temperature data, as given determined
+#   by its `identity` method:
+#
+#   >>> f.match('air_temperature')
+#
+#2. Test if a field contains air temperature data, as given determined
+#   by its `identity` method, or has a long name which contains the
+#   string "temp":
+#
+#   >>> f.match(['air_temperature', {'long_name': cfeq('.*temp.*', regex=true)}])
+#
+#3. Test if a field has at least one longitude grid cell point on the
+#   Greenwich meridian:
+#
+#   >>> f.match(items={'longitude': 0})
+#
+#4. Test if a field has latitude grid cells which all have a resolution
+#   of less than 1 degree:
+#
+#   >>> f.match(items={'latitude': cf.cellsize(cf.lt(1, 'degree'))})
+#
+#5. Test if a field has exactly 4 domain axes:
+#
+#   >>> f.match(rank=4)
+#
+#6. Examples 1 to 4 may be combined to test if a field has exactly 4
+#   domain axes, contains air temperature data, has at least one
+#   longitude grid cell point on the Greenwich meridian and all
+#   latitude grid cells have a resolution of less than 1 degree:
+#
+#   >>> f.match('air_temperature',
+#   ...         items={'longitude': 0,
+#   ...                'latitude': cf.cellsize(cf.lt(1, 'degree'))},
+#   ...         rank=4)
+#
+#7. Test if a field contains Gregorian calendar monthly mean data array
+#   values:
+#
+#   >>> f.match({'cell_methods': CellMethods('time: mean')},
+#   ...         items={'time': cf.cellsize(cf.wi(28, 31, 'days'))})
+#
+#Further examples are given within and after the description of the
+#arguments.
+#
+#
+#:Parameters:
+#
+#    description: *optional*
+#        Set conditions on the field's CF property and attribute
+#        values. *description* may be one, or a sequence of:
+#
+#          * `None` or an empty dictionary. Always matches the
+#            field. This is the default.
+#
+#     ..
+#
+#          * A string which identifies string-valued metadata of the
+#            field and a value to compare it against. The value may
+#            take one of the following forms:
+#
+#              ==============  ======================================
+#              *description*   Interpretation
+#              ==============  ======================================
+#              Contains ``:``  Selects on the CF property specified
+#                              before the first ``:``
+#                                
+#              Contains ``%``  Selects on the attribute specified
+#                              before the first ``%``              
+#              
+#              Anything else   Selects on identity as returned by the
+#                              `identity` method
+#              ==============  ======================================
+#
+#            By default the part of the string to be compared with the
+#            item is treated as a regular expression understood by the
+#            :py:obj:`re` module and the field matches if its
+#            appropriate value matches the regular expression using the
+#            :py:obj:`re.match` method (i.e. if zero or more characters
+#            at the beginning of field's value match the regular
+#            expression pattern). See the *exact* parameter for
+#            details.
+#            
+#              *Example:*
+#                To match a field with `identity` beginning with "lat":
+#                ``match='lat'``.
+#
+#              *Example:*
+#                To match a field with long name beginning with "air":
+#                ``match='long_name:air'``.
+#
+#              *Example:*
+#                To match a field with netCDF variable name of exactly
+#                "tas": ``match='ncvar%tas$'``.
+#
+#              *Example:*
+#                To match a field with `identity` which ends with the
+#                letter "z": ``match='.*z$'``.
+#
+#              *Example:*
+#                To match a field with long name which starts with the
+#                string ".*a": ``match='long_name%\.\*a'``. 
+#
+#        ..
+#
+#          * A `cf.Query` object to be compared with field's identity,
+#            as returned by its `identity` method.
+#
+#              *Example:*
+#                To match a field with `identity` of exactly
+#                "air_temperature" you could set
+#                ``match=cf.eq('air_temperature')`` (see `cf.eq`).
+#
+#              *Example:*
+#                To match a field with `identity` ending with
+#                "temperature" you could set
+#                ``match=cf.eq('.*temperature$', exact=False)`` (see
+#                `cf.eq`).
+#
+#     ..
+#
+#          * A `dict` that identifies properties of the field with
+#            corresponding tests on their values. The field matches if
+#            **all** of the tests in the dictionary are passed.
+#
+#            In general, each dictionary key is a CF property name with
+#            a corresponding value to be compared against the field's
+#            CF property value. 
+#
+#            If the dictionary value is a string then by default it is
+#            treated as a regular expression understood by the
+#            :py:obj:`re` module and the field matches if its
+#            appropriate value matches the regular expression using the
+#            :py:obj:`re.match` method (i.e. if zero or more characters
+#            at the beginning of field's value match the regular
+#            expression pattern). See the *exact* parameter for
+#            details.
+#            
+#              *Example:*
+#                To match a field with standard name of exactly
+#                "air_temperature" and long name beginning with the
+#                letter "a": ``match={'standard_name':
+#                cf.eq('air_temperature'), 'long_name': 'a'}`` (see
+#                `cf.eq`).
+#
+#            Some key/value pairs have a special interpretation:
+#
+#              ==================  ========================================
+#              Special key         Value
+#              ==================  ========================================
+#              ``'units'``         The value must be a string and by
+#                                  default is evaluated for
+#                                  equivalence, rather than equality,
+#                                  with the field's `units` property,
+#                                  for example a value of ``'Pa'``
+#                                  will match units of Pascals or
+#                                  hectopascals, etc. See the *exact*
+#                                  parameter.
+#                            
+#              ``'calendar'``      The value must be a string and by
+#                                  default is evaluated for
+#                                  equivalence, rather than equality,
+#                                  with the field's `calendar`
+#                                  property, for example a value of
+#                                  ``'noleap'`` will match a calendar
+#                                  of noleap or 365_day. See the
+#                                  *exact* parameter.
+#                              
+#              ``'cell_methods'``  The value must be a `CellMethods`
+#                                  object containing *N* cell methods
+#                                  and by default is evaluated for
+#                                  equivalence with the last *N* cell
+#                                  methods contained within the field's
+#                                  `cell_methods` property. See the
+#                                  *exact* parameter.
+#
+#              `None`              The value is interpreted as for a
+#                                  string value of the *description*
+#                                  parameter. For example,
+#                                  ``description={None: 'air'}`` is
+#                                  equivalent to ``match='air'`` and
+#                                  ``description={None: 'ncvar%pressure'}``
+#                                  is equivalent to
+#                                  ``description='ncvar%pressure'``.
+#              ==================  ========================================
+#            
+#              *Example:*
+#                To match a field with standard name starting with
+#                "air", units of temperature and a netCDF variable name
+#                beginning with "tas" you could set
+#                ``match={'standard_name': 'air', 'units': 'K', None:
+#                'ncvar%tas'}``.
+#
+#              *Example:*
+#                To match a field whose last two cell methods are
+#                equivalent to "time: minimum area: mean":
+#                ``match={'cell_methods': Cellmethods('time: minimum
+#                area: mean')``. This would match a field which has,
+#                for example, cell methods of "height: mean time:
+#                minimum area: mean".
+#
+#        If *description* is a sequence of any combination of the above
+#        then the field matches if it matches **at least one** element
+#        of the sequence:
+#
+#          *Example:* 
+#
+#            >>> f.match('air_temperature')
+#            True
+#            >>> f.match('air_pressure')
+#            False
+#            >>> f.match({'units': 'hPa', 'long_name': 'foo'})
+#            False
+#            >>> f.match(['air_temperature',
+#            ...          'air_pressure',
+#            ...          {'units': 'hPa', 'long_name': 'foo'}])
+#            True
+#  
+#        If the sequence is empty then the field always matches.
+# 
+#    items: `dict`, optional
+#        A dictionary which identifies items of the field (dimension
+#        coordinate, auxiliary coordinate, cell measure or coordinate
+#        reference objects) with corresponding tests on their
+#        elements. The field matches if **all** of the specified items
+#        exist and their tests are passed.
+#
+#        Each dictionary key specifies an item to test as the one that
+#        would be returned by this call of the field's `item` method:
+#        ``f.item(key, exact=exact)`` (see `Field.item`).
+#
+#        The corresponding value is, in general, any object for which
+#        the item may be compared with for equality (``==``). The test
+#        is passed if the result evaluates to True, or if the result is
+#        an array of values then the test is passed if at least one
+#        element evaluates to true.
+#
+#        If the value is `None` then the test is always passed,
+#        i.e. this case tests for item existence.
+#
+#          *Example:*
+#             To match a field which has a latitude coordinate value of
+#             exactly 30: ``items={'latitude': 30}``.
+#
+#          *Example:*
+#             To match a field whose longitude axis spans the Greenwich
+#             meridien: ``items={'longitude': cf.contain(0)}`` (see
+#             `cf.contain`).
+#
+#          *Example:*
+#             To match a field which has a time coordinate value of
+#             2004-06-01: ``items={'time': cf.dt('2004-06-01')}`` (see
+#             `cf.dt`).
+#
+#          *Example:*
+#             To match a field which has a height axis: ``items={'Z':
+#             None}``.
+#
+#          *Example:*
+#             To match a field which has a time axis and depth
+#             coordinates greater then 1000 metres: ``items={'T': None,
+#             'depth': cf.gt(1000, 'm')}`` (see `cf.gt`).
+#
+#          *Example:*
+#            To match a field with time coordinates after than 1989 and
+#            cell sizes of between 28 and 31 days: ``items={'time':
+#            cf.dtge(1990) & cf.cellsize(cf.wi(28, 31, 'days'))}`` (see
+#            `cf.dtge`, `cf.cellsize` and `cf.wi`).
+#
+#    {+rank}
+#
+#    OLD rank: *optional*
+#        Specify a condition on the number of axes in the field.  The
+#        field matches if its number of domain axes equals *rank*. A
+#        range of values may be selected if *rank* is a `cf.Query`
+#        object. Not to be confused with the *ndim* parameter (the
+#        number of data array axes may be fewer than the number of
+#        domain axes).
+#
+#          *Example:*
+#            ``rank=2`` matches a field with exactly two domain axes
+#            and ``rank=cf.wi(3, 4)`` matches a field with three or
+#            four domain axes (see `cf.wi`).
+#
+#    ndim: *optional*
+#        Specify a condition on the number of axes in the field's data
+#        array. The field matches if its number of data array axes
+#        equals *ndim*. A range of values may be selected if *ndim* is
+#        a `cf.Query` object. Not to be confused with the *rank*
+#        parameter (the number of domain axes may be greater than the
+#        number of data array axes).
+#
+#          *Example:*
+#            ``ndim=2`` matches a field with exactly two data array
+#            axes and ``ndim=cf.le(2)`` matches a field with fewer than
+#            three data array axes (see `cf.le`).
+#
+#    exact: `bool`, optional
+#        The *exact* parameter applies to the interpretation of string
+#        values of the *description* parameter and of keys of the
+#        *items* parameter. By default *exact* is False, which means
+#        that:
+#
+#          * A string value is treated as a regular expression
+#            understood by the :py:obj:`re` module. 
+#
+#          * Units and calendar values in a *description* dictionary
+#            are evaluated for equivalence rather then equality
+#            (e.g. "metre" is equivalent to "m" and to "km").
+#
+#          * A cell methods value containing *N* cell methods in a
+#            *description* dictionary is evaluated for equivalence with
+#            *the last *N* cell methods contained within the field's
+#            *`cell_methods` property.
+#
+#        ..
+#
+#          *Example:*
+#            To match a field with a standard name which begins with
+#            "air" and any units of pressure:
+#            ``f.match({'standard_name': 'air', 'units': 'hPa'})``.
+#
+#          *Example:*          
+#            ``f.match({'cell_methods': CellMethods('time: mean
+#            (interval 1 hour)')})`` would match a field with cell
+#            methods of "area: mean time: mean (interval 60 minutes)".
+#
+#        If *exact* is True then:
+#
+#          * A string value is not treated as a regular expression.
+#
+#          * Units and calendar values in a *description* dictionary
+#            are evaluated for exact equality rather than equivalence
+#            (e.g. "metre" is equal to "m", but not to "km").
+#
+#          * A cell methods value in a *description* dictionary is
+#            evaluated for exact equality to the field's cell methods.
+#          
+#        ..
+#
+#          *Example:*          
+#            To match a field with a standard name of exactly
+#            "air_pressure" and units of exactly hectopascals:
+#            ``f.match({'standard_name': 'air_pressure', 'units':
+#            'hPa'}, exact=True)``.
+#
+#          *Example:*          
+#            To match a field with a cell methods of exactly "time:
+#            mean (interval 1 hour)": ``f.match({'cell_methods':
+#            CellMethods('time: mean (interval 1 hour)')``.
+#
+#        Note that `cf.Query` objects provide a mechanism for
+#        overriding the *exact* parameter for individual values.
+#
+#          *Example:*
+#            ``f.match({'standard_name': cf.eq('air', exact=False),
+#            'units': 'hPa'}, exact=True)`` will match a field with a
+#            standard name which begins "air" but has units of exactly
+#            hectopascals (see `cf.eq`).
+#    
+#          *Example:*
+#            ``f.match({'standard_name': cf.eq('air_pressure'),
+#            'units': 'hPa'})`` will match a field with a standard name
+#            of exactly "air_pressure" but with units which equivalent
+#            to hectopascals (see `cf.eq`).
+#
+#    match_and: `bool`, optional
+#        By default *match_and* is True and the field matches if it
+#        satisfies the conditions specified by each test parameter
+#        (*description*, *items*, *rank* and *ndim*).
+#
+#        If *match_and* is False then the field will match if it
+#        satisfies at least one test parameter's condition.
+#
+#          *Example:*
+#            To match a field with a standard name of "air_temperature"
+#            **and** 3 data array axes: ``f.match('air_temperature',
+#            ndim=3)``. To match a field with a standard name of
+#            "air_temperature" **or** 3 data array axes:
+#            ``f.match('air_temperature", ndim=3, match_and=False)``.
+#    
+#    inverse: `bool`, optional
+#        If True then return the field matches if it does **not**
+#        satisfy the given conditions.
+#
+#          *Example:*
+#
+#            >>> f.match('air', ndim=4, inverse=True) == not f.match('air', ndim=4)
+#            True
+#
+#:Returns:
+#
+#    out: `bool`
+#        True if the field satisfies the given criteria, False
+#        otherwise.
+#
+#:Examples:
+#
+#Field identity starts with "air":
+#
+#>>> f.match('air')
+#
+#Field identity ends contains the string "temperature":
+#
+#>>> f.match('.*temperature')
+#
+#Field identity is exactly "air_temperature":
+#
+#>>> f.match('^air_temperature$')
+#>>> f.match('air_temperature', exact=True)
+#
+#Field has units of temperature:
+#
+#>>> f.match({'units': 'K'}):
+#
+#Field has units of exactly Kelvin:
+#
+#>>> f.match({'units': 'K'}, exact=True)
+#
+#Field identity which starts with "air" and has units of temperature:
+#
+#>>> f.match({None: 'air', 'units': 'K'})
+#
+#Field identity starts with "air" and/or has units of temperature:
+#
+#>>> f.match(['air', {'units': 'K'}])
+#
+#Field standard name starts with "air" and/or has units of exactly Kelvin:
+#
+#>>> f.match([{'standard_name': cf.eq('air', exact=False), {'units': 'K'}],
+#...         exact=True)
+#
+#Field has height coordinate values greater than 63km:
+#
+#>>> f.match(items={'height': cf.gt(63, 'km')})
+#
+#Field has a height coordinate object with some values greater than
+#63km and a north polar point on its horizontal grid:
+#
+#>>> f.match(items={'height': cf.gt(63, 'km'),
+#...                'latitude': cf.eq(90, 'degrees')})
+#
+#Field has some longitude cell sizes of 3.75:
+#
+#>>> f.match(items={'longitude': cf.cellsize(3.75)})
+#
+#Field latitude cell sizes within a tropical region are all no greater
+#than 1 degree:
+#
+#>>> f.match(items={'latitude': (cf.wi(-30, 30, 'degrees') &
+#...                             cf.cellsize(cf.le(1, 'degrees')))})
+#
+#Field contains monthly mean air pressure data and all vertical levels
+#within the bottom 100 metres of the atmosphere have a thickness of 20
+#metres or less:
+#
+#>>> f.match({None: '^air_pressure$', 'cell_methods': CellMethods('time: mean')},
+#...         items={'height': cf.le(100, 'm') & cf.cellsize(cf.le(20, 'm')),
+#...                'time': cf.cellsize(cf.wi(28, 31, 'days'))})
+#
+#        '''
+#        conditions_have_been_set = False
+#        something_has_matched    = False
+#
+#        if rank is not None:
+#            conditions_have_been_set = True
+#            found_match = (len(self.axes()) == rank)
+#            if match_and and not found_match:
+#                return bool(inverse)
+#
+#            something_has_matched = True
+#        #--- End: if
+#
+##        # ------------------------------------------------------------
+##        # Try to match cf.Flags
+##        # -----------------------------------------------------------
+##        if _Flags and ('flag_masks'    in match or 
+##                       'flag_meanings' in match or
+##                       'flag_values'   in match):
+##            f_flags = getattr(self, Flags, None)
+##            
+##            if not f_flags:
+##                found_match = False
+##                continue
+##            
+##            match = match.copy()
+##            found_match = f_flags.equals(
+##                Flags(flag_masks=match.pop('flag_masks', None),
+##                      flag_meanings=match.pop('flag_meanings', None),
+##                      flag_values=match.pop('flag_values', None)))
+##            
+##            if not found_match:
+##                continue
+##        #--- End: if
+##            if _CellMethods and 'cell_methods' in match:
+##                f_cell_methods = self.getprop('cell_methods', None)
+##                
+##                if not f_cell_methods:
+##                    found_match = False
+##                    continue
+##
+##                match = match.copy()
+##                cell_methods = match.pop('cell_methods')
+##
+##                if not exact:
+##                    n = len(cell_methods)
+##                    if n > len(f_cell_methods):
+##                        found_match = False
+##                    else:
+##                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
+##                else:
+##                    found_match = f_cell_methods.equals(cell_methods)
+##                                    
+##                if not found_match:
+##                    continue
+##        #--- End: for
+##        
+#        if description:
+#            conditions_have_been_set = True
+#             
+#        # ------------------------------------------------------------
+#        # Try to match other properties and attributes
+#        # ------------------------------------------------------------
+#        found_match = super(Field, self).match(
+#            description=description, ndim=ndim, exact=exact,
+#            match_and=match_and, inverse=False)
+#
+#        if match_and and not found_match:
+#            return bool(inverse)
+#
+#        something_has_matched = found_match
+#
+#        # ------------------------------------------------------------
+#        # Try to match items
+#        # ------------------------------------------------------------
+#        if items:
+#            conditions_have_been_set = True
+#
+#            found_match = False
+#
+#            for identity, condition in items.iteritems():
+#                c = self.item(identity, exact=exact)
+#
+#                if condition is None:
+#                    field_matches = (c is not None)
+#                else:
+#                    field_matches = (condition == c)
+#                    try:
+#                        field_matches = field_matches.any()
+#                    except AttributeError:
+#                        pass
+#                #--- End: if
+#                
+#                if match_and:                    
+#                    if field_matches:
+#                        found_match = True 
+#                    else:
+#                        found_match = False
+#                        break
+#                elif field_matches:
+#                    found_match = True
+#                    break
+#            #--- End: for 
+#
+#            if match_and and not found_match:
+#                return bool(inverse)
+#
+#            something_has_matched = found_match
+#        #--- End: if
+#
+#        if conditions_have_been_set:
+#            if something_has_matched:            
+#                return not bool(inverse)
+#            else:
+#                return bool(inverse)
+#        else:
+#            return not bool(inverse)
+#    #--- End: def
 
     def axis_name(self, axes=None, default=None, **kwargs):
         '''Return the canonical name for an axis.
@@ -3284,7 +3404,7 @@ None
 #            item = self._CellMethod.parse(item)
             
         self.Items.cell_methods.append(item)
-        self.Items.cell_methods = self._conform_cell_methods()
+        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
     #--- End: def
 
     def insert_axis(self, axis, key=None, replace=True, copy=True):
@@ -3510,16 +3630,12 @@ domain ancillary identifiers.
         ref.change_identifiers(identity_map, coordinate=False, copy=False)
     #--- End: def
 
-    def _conform_cell_methods(self):
+    def _conform_cell_methods(self, cell_methods):
         '''
 
 :Examples 1:
 
->>> f._conform_cell_methods()
-
-:Parameters:
-
-    cms: 
+>>> cell_methods2 = f._conform_cell_methods(cell_methods)
 
 :Returns:
 
@@ -3528,10 +3644,8 @@ domain ancillary identifiers.
 :Examples 2:
 
         '''
-        cms = self.Items.cell_methods
-        
-        axis_map = {}
-        for cm in cms:
+       axis_map = {}
+        for cm in cell_methods:
             for axis in cm.axes:
                 if axis in axis_map:
                     continue
@@ -3543,7 +3657,7 @@ domain ancillary identifiers.
                 axis_map[axis] = self.axis(axis, default=axis, ndim=1, key=True)
         #--- End: for
 
-        return [cm.change_axes(axis_map) for cm in cms]
+        return [cm.change_axes(axis_map) for cm in cell_methods]
     #--- End: def
 
 #    def _unconform_cell_methods(self, cms, copy=True):
@@ -3832,7 +3946,7 @@ and domain ancillaries where possible.
                 self._conform_ref(ref, copy=False)
                 
         if self.Items.cell_methods:
-            self.Items.cell_methods = self._conform_cell_methods()
+            self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
 
         return key
     #--- End: def
@@ -5392,6 +5506,7 @@ Return a deep or shallow copy.
         # Copy the roles
         new._role = self._role.copy()
 
+        # Copy the cell methods
         new.cell_methods = [cm.copy() for cm in self.cell_methods]
 
         # Copy item axes (this is OK because it is a dictionary of
@@ -5600,9 +5715,8 @@ Return a deep or shallow copy.
         #-------------------------------------------------------------
         if len(self.cell_methods) != len(other.cell_methods):
             if traceback:
-                print(
-"Field: Different cell methods: {0!r}, {1!r}".format(
-    self.cell_methods, other.cell_methods))
+                print("Field: Different cell methods: {0!r}, {1!r}".format(
+                    self.cell_methods, other.cell_methods))
             return False
 
         for cm0, cm1 in zip(self.cell_methods, other.cell_methods):
@@ -5647,9 +5761,8 @@ Return a deep or shallow copy.
 
             if len(cm1.axes) != len(argsort):
                 if traceback:
-                    print (
-"Field: Different cell methods: {0!r}, {1!r}".format(
-    self.cell_methods, other.cell_methods))
+                    print ("Field: Different cell methods: {0!r}, {1!r}".format(
+                        self.cell_methods, other.cell_methods))
                 return False
 
             cm1 = cm1.copy()
@@ -5661,9 +5774,8 @@ Return a deep or shallow copy.
                               ignore_fill_value=ignore_fill_value,
                               traceback=traceback):
                 if traceback:
-                    print (
-                        "Field: Different cell methods: {0!r}, {1!r}".format(
-                            self.cell_methods, other.cell_methods))
+                    print ("Field: Different cell methods: {0!r}, {1!r}".format(
+                        self.cell_methods, other.cell_methods))
                 return False                
         #--- End: for
 

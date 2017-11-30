@@ -1915,6 +1915,15 @@ Formatting is also available during object initialization:
         return out
     #--- End: def
 
+    def canonical_calendar(self):
+        '''
+        '''
+        if not self.isreftime:
+            return
+
+        return self._utime.calendar
+    #--- End: def
+
     @staticmethod
     def conform(x, from_units, to_units, copy=True):
         '''Conform values in one unit to equivalent values in another, compatible

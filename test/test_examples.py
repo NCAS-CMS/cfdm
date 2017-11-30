@@ -12,8 +12,9 @@ class ExamplesTest(unittest.TestCase):
         print_f = str(f)
         
         self.assertTrue(
-            print_f == 
-            ' field summary\n--------------\n')
+            print_f =='''Field: 
+-------
+''')
         #--- End: def
 
     def test_example2(self):
@@ -24,8 +25,9 @@ class ExamplesTest(unittest.TestCase):
         print_f = str(f)
         
         self.assertTrue(
-            print_f ==
-            'air_temperature field summary\n-----------------------------\n')
+            print_f =='''Field: air_temperature
+----------------------
+''')
     #--- End: def
 
     def test_example3(self):
@@ -44,9 +46,8 @@ class ExamplesTest(unittest.TestCase):
         print_f = str(f)
 
         self.assertTrue(
-            print_f == 
-'''eastward_wind field summary
----------------------------
+            print_f == '''Field: eastward_wind
+--------------------
 Data           : eastward_wind(latitude(10), longitude(9)) m s-1
 Axes           : latitude(10) = [0, ..., 9] degrees_north
                : longitude(9) = [0, ..., 8] degrees_east
@@ -62,8 +63,8 @@ Axes           : latitude(10) = [0, ..., 9] degrees_north
         print_f = str(f)
 
         self.assertTrue(
-            print_f == '''eastward_wind field summary
----------------------------
+            print_f == '''Field: eastward_wind
+--------------------
 Data           : eastward_wind(latitude(10), longitude(9)) m s-1
 Cell methods   : latitude: point
 Axes           : latitude(10) = [0, ..., 9] degrees_north
@@ -76,8 +77,8 @@ Aux coords     : long_name:extra(latitude(10)) = [alpha, ..., kappa]
         print_f = str(f)
 
         self.assertTrue(
-            print_f == '''eastward_wind field summary
----------------------------
+            print_f == '''Field: eastward_wind
+--------------------
 Data           : eastward_wind(latitude(10), longitude(9)) m s-1
 Axes           : latitude(10) = [0, ..., 9] degrees_north
                : longitude(9) = [0, ..., 8] degrees_east
@@ -150,8 +151,8 @@ Axes           : latitude(10) = [0, ..., 9] degrees_north
         print_f = str(f)
 
         self.assertTrue(
-            print_f == '''eastward_wind field summary
----------------------------
+            print_f == '''Field: eastward_wind
+--------------------
 Data           : eastward_wind(grid_longitude(9), grid_latitude(10)) m s-1
 Cell methods   : latitude: point
 Axes           : time(1) = [2000-01-02T00:00:00Z] noleap
@@ -231,8 +232,8 @@ Coord refs     : rotated_latitude_longitude
         print_f = str(f)
 
         self.assertTrue(
-            print_f == '''eastward_wind field summary
----------------------------
+            print_f == '''Field: eastward_wind
+--------------------
 Data           : eastward_wind(grid_latitude(10), grid_longitude(10)) m s-1
 Cell methods   : latitude: point
 Axes           : time(1) = [2000-01-02T00:00:00Z] noleap
