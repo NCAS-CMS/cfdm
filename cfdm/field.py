@@ -2435,7 +2435,7 @@ arguments.
 
      ..
 
-          * A dictionary which identifies properties of the field with
+          * A `dict` that identifies properties of the field with
             corresponding tests on their values. The field matches if
             **all** of the tests in the dictionary are passed.
 
@@ -2780,35 +2780,57 @@ metres or less:
 
         if rank is not None:
             conditions_have_been_set = True
-            found_match = len(self.axes()) == rank
+            found_match = (len(self.axes()) == rank)
             if match_and and not found_match:
                 return bool(inverse)
 
             something_has_matched = True
         #--- End: if
 
-        # ------------------------------------------------------------
-        # Try to match cf.Flags
-        # -----------------------------------------------------------
-        if _Flags and ('flag_masks'    in match or 
-                       'flag_meanings' in match or
-                       'flag_values'   in match):
-            f_flags = getattr(self, Flags, None)
-            
-            if not f_flags:
-                found_match = False
-                continue
-            
-            match = match.copy()
-            found_match = f_flags.equals(
-                Flags(flag_masks=match.pop('flag_masks', None),
-                      flag_meanings=match.pop('flag_meanings', None),
-                      flag_values=match.pop('flag_values', None)))
-            
-            if not found_match:
-                continue
-        #--- End: if
-        
+#        # ------------------------------------------------------------
+#        # Try to match cf.Flags
+#        # -----------------------------------------------------------
+#        if _Flags and ('flag_masks'    in match or 
+#                       'flag_meanings' in match or
+#                       'flag_values'   in match):
+#            f_flags = getattr(self, Flags, None)
+#            
+#            if not f_flags:
+#                found_match = False
+#                continue
+#            
+#            match = match.copy()
+#            found_match = f_flags.equals(
+#                Flags(flag_masks=match.pop('flag_masks', None),
+#                      flag_meanings=match.pop('flag_meanings', None),
+#                      flag_values=match.pop('flag_values', None)))
+#            
+#            if not found_match:
+#                continue
+#        #--- End: if
+#            if _CellMethods and 'cell_methods' in match:
+#                f_cell_methods = self.getprop('cell_methods', None)
+#                
+#                if not f_cell_methods:
+#                    found_match = False
+#                    continue
+#
+#                match = match.copy()
+#                cell_methods = match.pop('cell_methods')
+#
+#                if not exact:
+#                    n = len(cell_methods)
+#                    if n > len(f_cell_methods):
+#                        found_match = False
+#                    else:
+#                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
+#                else:
+#                    found_match = f_cell_methods.equals(cell_methods)
+#                                    
+#                if not found_match:
+#                    continue
+#        #--- End: for
+#        
         if description:
             conditions_have_been_set = True
              
@@ -2817,8 +2839,7 @@ metres or less:
         # ------------------------------------------------------------
         found_match = super(Field, self).match(
             description=description, ndim=ndim, exact=exact,
-            match_and=match_and, inverse=False, _Flags=True,
-            _CellMethods=True)
+            match_and=match_and, inverse=False)
 
         if match_and and not found_match:
             return bool(inverse)
@@ -2837,9 +2858,9 @@ metres or less:
                 c = self.item(identity, exact=exact)
 
                 if condition is None:
-                    field_matches = c is not None
+                    field_matches = (c is not None)
                 else:
-                    field_matches = condition == c
+                    field_matches = (condition == c)
                     try:
                         field_matches = field_matches.any()
                     except AttributeError:

@@ -2229,7 +2229,7 @@ The number of elements in the data array.
 >>> f.size
 1
 
->>> f.hasdata
+s>>> f.hasdata
 True
 >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
 True
@@ -2440,9 +2440,15 @@ Changing the elements of the returned view changes the data array.
         return matches
     #--- End: def
 
+    def _match_ndim(self, v, ndim, exact=False):
+        try:
+            return v.ndim == ndim
+        except AttributeError:
+            return = False
+    #--- End: def
+
     def match(self, description=None, ndim=None, exact=False,
-              match_and=True, inverse=False):
-#              _Flags=False, _CellMethods=False):
+              match_and=True, inverse=False, **kwargs):
         '''Determine whether or not a variable satisfies conditions.
 
 Conditions may be specified on the variable's attributes and CF
@@ -2463,19 +2469,40 @@ properties.
         conditions_have_been_set = False
         something_has_matched    = False
 
-        if ndim is not None:
-            conditions_have_been_set = True
-            try:
-                found_match = self.ndim == ndim
-            except AttributeError:
-                found_match = False
+        if '_match_ndim' in kwargs:
+            raise ValueError("Can't set keyword '_match_ndim'")
+        
+        kwargs['_match_ndim'] = ndim
+        
+#        if ndim is not None:
+#            conditions_have_been_set = True
+#            try:
+#                found_match = (self.ndim == ndim)
+#            except AttributeError:
+#                found_match = False
+#
+#            if match_and and not found_match:
+#                return bool(inverse)
+#
+#            something_has_matched = True
+#        #--- End: if
 
+        # ------------------------------------------------------------
+        #
+        # ------------------------------------------------------------
+        for func, value in kwargs.values():
+            if value is None:
+                continue
+            
+            conditions_have_been_set = True
+            
+            found_match = func(self, value, exact=exact)
             if match_and and not found_match:
                 return bool(inverse)
 
             something_has_matched = True
-        #--- End: if
-            
+        #--- End: for
+
         matches = self._parse_match(description)
 
         if matches:
@@ -2501,6 +2528,8 @@ properties.
                     continue
             #--- End: if
 
+            
+            
 #            # --------------------------------------------------------
 #            # Try to match cell methods
 #            # --------------------------------------------------------
@@ -2556,7 +2585,7 @@ properties.
 
                     if isinstance(value, basestring):
                         if value in ('T', 'X', 'Y', 'Z'):
-                            # Axis type
+                            # Axis type, e.g. 'T'
                             x = getattr(self, value)
                             value = True
                         else:
@@ -2564,22 +2593,22 @@ properties.
                             if len(value) == 1:
                                 value = value[0].split(':')
                                 if len(value) == 1:
-                                    # Identity
-                                    # (string-valued). E.g. 'air_temperature'
+                                    # String-valued identity,
+                                    # e.g. 'air_temperature'
                                     x = self.identity(None)
                                     value = value[0]
                                 else:
-                                    # CF property
-                                    # (string-valued). E.g. 'long_name:rain'
+                                    # String-valued CF property,
+                                    # e.g. 'long_name:rain'
                                     x = self.getprop(value[0], None)
                                     value = ':'.join(value[1:])
                             else:
-                                # Python attribute
-                                # (string-valued). E.g. 'ncvar%tas'
+                                # String-valued python attribute,
+                                # e.g. 'ncvar%tas'
                                 x = getattr(self, value[0], None)
                                 value = '%'.join(value[1:])
                     else:   
-                        # Identity (not string-valued, e.g. cf.Query)
+                        # Non-string-valued identity, e.g. cf.Query
                         x = self.identity(None)
                 else:                    
                     # CF property
