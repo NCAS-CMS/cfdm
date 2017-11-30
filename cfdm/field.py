@@ -3613,7 +3613,7 @@ domain ancillary identifiers.
         identity_map = {}
         role = ('d', 'a')        
         for identifier in ref.coordinates:
-            key = self.Items.key(identifier, role=role, exact=True)
+            key = self.Items.key(identifier, role=role) #, exact=True)
             if key is not None:
                 identity_map[identifier] = key
         #--- End: for
@@ -3622,6 +3622,7 @@ domain ancillary identifiers.
         identity_map = {}
         for identifier in ref.ancillaries.values():
             key = self.item(identifier, role='c', exact=True, key=True)
+            #key = self.Item(identifier, role='c', key=True)
             if key is not None:
                 identity_map[identifier] = key
         #--- End: for
@@ -3644,7 +3645,7 @@ domain ancillary identifiers.
 :Examples 2:
 
         '''
-       axis_map = {}
+        axis_map = {}
         for cm in cell_methods:
             for axis in cm.axes:
                 if axis in axis_map:
