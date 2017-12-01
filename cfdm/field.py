@@ -2018,8 +2018,8 @@ time axis which is to have a chunk size of 12:
         return super(Field, self).HDF_chunks(_HDF_chunks)
     #--- End: def
 
-    def field(self, description=None, role=None, axes=None, axes_all=None,
-              axes_subset=None, axes_superset=None, exact=False,
+    def field(self, description=None, role=None, axes=None,
+              axes_all=None, axes_subset=None, axes_superset=None,
               inverse=False, match_and=True, ndim=None, bounds=False):
         '''Create an independent field from a domain item.
 
@@ -2284,125 +2284,177 @@ Set the time axis to be unlimited when written to a netCDF file:
         return org
     #--- End: def
 
-#    @classmethod
-#    def _match_naxes(cls, f, naxes):
-#        '''????
+    @classmethod
+    def _match_naxes(cls, f, naxes):
+        '''????
+
+:Parameters:
+
+    f: `{+Variable}`
+
+    naxes: `int`
+
+:Returns:
+
+    out: `bool`
+
+          '''
+        try:
+            found_match = (naxes == len(f.axes()))
+        except AttributeError:
+            found_match = False
+
+        return found_match
+    #--- End: def
+
+    def _match_parse_items(self, items):
+        '''Called by `match`
+
+.. versionadded:: 1.6
+
+:Parameters:
+
+    description: 
+        As for the *description* parameter of `match` method.
+
+:Returns:
+
+    out: `list`
+
+        '''        
+        if not items:
+            return []
+
+        if isinstance(items, (basestring, dict)):
+            items = (items,)
+
+        return items
+    #--- End: def
+
+    @classmethod
+    def _match_items(cls, f, items):
+        '''Try to match items
+
+:Parameters:
+
+    f: `{+Variable}`
+
+    items: `dict`
+        A dictionary which identifies items of the field (dimension
+        coordinate, auxiliary coordinate, cell measure or coordinate
+        reference objects) with corresponding tests on their
+        elements. The field matches if **all** of the specified items
+        exist and their tests are passed.
+
+        Each dictionary key specifies an item to test as the one that
+        would be returned by this call of the field's `item` method:
+        ``f.item(key)`` (see `Field.item`).
+
+        The corresponding value is, in general, any object for which
+        the item may be compared with for equality (``==``). The test
+        is passed if the result evaluates to True, or if the result is
+        an array of values then the test is passed if at least one
+        element evaluates to true.
+
+        If the value is `None` then the test is always passed,
+        i.e. this case tests for item existence.
+
+          *Example:*
+             To match a field which has a latitude coordinate value of
+             exactly 30: ``items={'latitude': 30}``.
+
+          *Example:*
+             To match a field which has a time coordinate value of
+             2004-06-01: ``items={'time': cf.dt('2004-06-01')}`` (see
+             `cf.dt`).
+
+          *Example:*
+             To match a field which has a height axis: ``items={'Z':
+             None}``.
+
+          *Example:*
+             To match a field which has a time axis a depth coordinate
+             of 1000 metres: ``items={'T': None, 'depth': Data(1000,
+             'm')}`` (see `Data`).
+
+:Returns:
+
+    out: `bool`
+
+        '''
+        items = self._match_parse_description(items)
+
+        found_match = True
+        
+        for description in items:
+            found_match = bool(f.Items(description))
+            if not found_match:
+                break
+        #--- End: for 
+        
+        return found_match
+    #--- End: def
+
+#    def _match_parse_items(self, items):
+#        '''Called by `match`
 #
-#:Parameters:
-#
-#    f: `{+Variable}`
-#
-#    naxes: `int`
-#
-#:Returns:
-#
-#    out: `bool`
-#
-#          '''
-#        try:
-#            found_match = (naxes == len(f.axes()))
-#        except AttributeError:
-#            found_match = False
-#
-#        return found_match
-#    #--- End: def
-#
-#    @classmethod
-#    def _match_items(cls, f, value):
-#        '''Try to match items
-#
-#:Parameters:
-#
-#    f: `{+Variable}`
-#
-#    items: `dict`
-#        A dictionary which identifies items of the field (dimension
-#        coordinate, auxiliary coordinate, cell measure or coordinate
-#        reference objects) with corresponding tests on their
-#        elements. The field matches if **all** of the specified items
-#        exist and their tests are passed.
-#
-#        Each dictionary key specifies an item to test as the one that
-#        would be returned by this call of the field's `item` method:
-#        ``f.item(key)`` (see `Field.item`).
-#
-#        The corresponding value is, in general, any object for which
-#        the item may be compared with for equality (``==``). The test
-#        is passed if the result evaluates to True, or if the result is
-#        an array of values then the test is passed if at least one
-#        element evaluates to true.
-#
-#        If the value is `None` then the test is always passed,
-#        i.e. this case tests for item existence.
-#
-#          *Example:*
-#             To match a field which has a latitude coordinate value of
-#             exactly 30: ``items={'latitude': 30}``.
-#
-#          *Example:*
-#             To match a field which has a time coordinate value of
-#             2004-06-01: ``items={'time': cf.dt('2004-06-01')}`` (see
-#             `cf.dt`).
-#
-#          *Example:*
-#             To match a field which has a height axis: ``items={'Z':
-#             None}``.
-#
-#          *Example:*
-#             To match a field which has a time axis a depth coordinate
-#             of 1000 metres: ``items={'T': None, 'depth': Data(1000,
-#             'm')}`` (see `Data`).
-#
-#:Returns:
-#
-#    out: `bool`
-#
-#        '''
-#        found_match = True #False
-#        for identity, condition in value.iteritems():
-#            item = f.item(identity)
-#
-#            if condition is None:
-#                field_matches = (item is not None)
-#            else:
-#                field_matches = (condition == item)
-#                try:
-#                    field_matches = field_matches.any()
-#                except AttributeError:
-#                    pass
-#            #--- End: if
-#                
-#            if match_and:                    
-#                if field_matches:
-#                    found_match = True 
-#                else:
-#                    found_match = False
-#                    break
-#            elif field_matches:
-#                found_match = True
-#                break
-#        #--- End: for 
-#
-#        return found_match
-#    #--- End: def
-#
-#    def match(self, description=None, items=None, naxes=None,
-#              ndim=None, match_and=True, inverse=False, customize={}):
-#        '''
 #.. versionadded:: 1.6
-#        '''
-#        if naxes  is not None:
-#            customize[self._match_naxes] = naxes
 #
-#        if items is not None:
-#            customize[self._match_items] = items
+#:Parameters:
 #
-#        return super(Field, self).match(description=description,
-#                                        ndim=ndim,
-#                                        match_and=match_and,
-#                                        inverse=inverse,
-#                                        customize=customize)
-#    #--- End: def
+#    description: 
+#        As for the *description* parameter of `match` method.
+#
+#:Returns:
+#
+#    out: `list`
+#
+#        '''        
+#        if not items:
+#            return []
+#
+#        if not isinstance(items, (list, tuple)):
+#            items = (items,)
+#
+#        items2 = []
+#        for d in items:
+#           if isinstance(d, basestring):
+#               if ':' in d:
+#                   # CF property (string-valued)
+#                   d = d.split(':')
+#                   description2.append({d[0]: ':'.join(d[1:])})
+#               else:
+#                   # Identity (string-valued) or python attribute
+#                   # (string-valued) or axis type
+#                   description2.append({None: d})
+#           elif isinstance(d, dict):
+#               items2.append(d.copy())
+#           else:
+#               # Identity (not string-valued)
+#                items2.append({None: d})
+#        #--- End: for
+#
+#        return items2
+##--- End: def
+
+    def match(self, description=None, items=None, naxes=None,
+              ndim=None, match_and=True, inverse=False, customize={}):
+        '''
+.. versionadded:: 1.6
+
+        '''
+        if naxes  is not None:
+            customize[self._match_naxes] = naxes
+            
+        if items is not None:
+            customize[self._match_items] = items
+
+        return super(Field, self).match(description=description,
+                                        ndim=ndim,
+                                        match_and=match_and,
+                                        inverse=inverse,
+                                        customize=customize)
+    #--- End: def
 
 #    def match(self, description=None, items=None, rank=None, ndim=None,
 #              exact=False, match_and=True, inverse=False):
@@ -3613,7 +3665,7 @@ domain ancillary identifiers.
         identity_map = {}
         role = ('d', 'a')        
         for identifier in ref.coordinates:
-            key = self.Items.key(identifier, role=role) #, exact=True)
+            key = self.Items.key(identifier, role=role)
             if key is not None:
                 identity_map[identifier] = key
         #--- End: for
@@ -3621,8 +3673,7 @@ domain ancillary identifiers.
 
         identity_map = {}
         for identifier in ref.ancillaries.values():
-            key = self.item(identifier, role='c', exact=True, key=True)
-            #key = self.Item(identifier, role='c', key=True)
+            key = self.Items.key(identifier, role='c')
             if key is not None:
                 identity_map[identifier] = key
         #--- End: for
@@ -3711,7 +3762,7 @@ and domain ancillaries where possible.
         identity_map = {}
         role = ('d', 'a')        
         for identifier in ref.coordinates:
-            item = self.item(identifier, role=role, exact=True)
+            item = self.Items.item(identifier, role=role)
             if item is not None:
                 identity_map[identifier] = item.identity()
         #--- End: for
@@ -3720,7 +3771,7 @@ and domain ancillaries where possible.
         identity_map = {}
         role = ('c',)
         for identifier in ref.ancillaries.values():
-            anc = self.item(identifier, role=role, exact=True)
+            anc = self.Items.item(identifier, role=role)
             if anc is not None:
                 identity_map[identifier] = anc.identity()
         #--- End: for
@@ -4004,8 +4055,8 @@ and domain ancillaries where possible.
 
     def item_axes(self, description=None, role=None, axes=None,
                   axes_all=None, axes_subset=None, axes_superset=None,
-                  exact=False, inverse=False, match_and=True,
-                  ndim=None, default=None):
+                  inverse=False, match_and=True, ndim=None,
+                  default=None):
         '''Return the axes of a domain item of the field.
 
 An item is a dimension coordinate, an auxiliary coordinate, a cell
@@ -4059,8 +4110,7 @@ measure or a coordinate reference object.
 
     def key(self, description=None, role=None, axes=None,
             axes_all=None, axes_subset=None, axes_superset=None,
-            exact=False, inverse=False, match_and=True, ndim=None,
-            default=None):
+            inverse=False, match_and=True, ndim=None, default=None):
 #            _restrict_inverse=False):
         '''Return the identifier of a field item.
 
@@ -4127,8 +4177,8 @@ parameter is returned.
     #--- End: def
 
     def items_axes(self, description=None, role=None, axes=None,
-                   axes_all=None, axes_subset=None, axes_superset=None,
-                   exact=False, inverse=False, match_and=True,
+                   axes_all=None, axes_subset=None,
+                   axes_superset=None, inverse=False, match_and=True,
                    ndim=None):
         '''Return the axes of items of the field.
 
@@ -4175,8 +4225,8 @@ measure or a coordinate reference object.   ....................................
         return out
     #--- End: def
 
-    def item(self, description=None, role=None, axes=None, axes_all=None,
-             axes_subset=None, axes_superset=None, exact=False,
+    def item(self, description=None, role=None, axes=None,
+             axes_all=None, axes_subset=None, axes_superset=None,
              inverse=False, match_and=True, ndim=None, key=False,
              default=None, copy=False): #, _restrict_inverse=True):
         '''Return a field item.
@@ -4263,8 +4313,8 @@ To find multiple items, use the `~Field.{+name}s` method.
 
     def key_item(self, description=None, role=None, axes=None,
                  axes_all=None, axes_subset=None, axes_superset=None,
-                 exact=False, inverse=False, match_and=True,
-                 ndim=None, copy=False, default=(None, None)):
+                 inverse=False, match_and=True, ndim=None, copy=False,
+                 default=(None, None)):
         '''Return an item, or its identifier, from the field.
 
 {+item_definition}
@@ -4335,9 +4385,9 @@ parameter is returned.
         return items
     #--- End: def
 
-    def items(self, description=None, role=None, axes=None, axes_all=None,
-              axes_subset=None, axes_superset=None, ndim=None,
-              match_and=True, exact=False, inverse=False, copy=False):
+    def items(self, description=None, role=None, axes=None,
+              axes_all=None, axes_subset=None, axes_superset=None,
+              ndim=None, match_and=True, inverse=False, copy=False):
 #              _restrict_inverse=False):
         '''Return items of the field.
 
@@ -4473,8 +4523,8 @@ names contain the string "qwerty":
  
     def remove_item(self, description=None, role=None, axes=None,
                     axes_all=None, axes_subset=None,
-                    axes_superset=None, ndim=None, exact=False,
-                    inverse=False, match_and=True, key=False):
+                    axes_superset=None, ndim=None, inverse=False,
+                    match_and=True, key=False):
         '''Remove and return an item from the field.
 
 {+item_definition}
@@ -4545,8 +4595,8 @@ may be selected with the keyword arguments.
 
     def remove_items(self, description=None, role=None, axes=None,
                      axes_all=None, axes_subset=None,
-                     axes_superset=None, ndim=None, exact=False,
-                     inverse=False, match_and=True):
+                     axes_superset=None, ndim=None, inverse=False,
+                     match_and=True):
         '''Remove and return items from the field.
 
 An item is either a dimension coordinate, an auxiliary coordinate, a
@@ -4869,8 +4919,8 @@ Keys are item identifiers, values are item objects.
         
     def __call__(self, description=None, role=None, axes=None,
                  axes_all=None, axes_subset=None, axes_superset=None,
-                 ndim=None, match_and=True, exact=False,
-                 inverse=False, copy=False):#, _restrict_inverse=False):
+                 ndim=None, match_and=True, inverse=False, copy=False):
+        #, _restrict_inverse=False):
 
         '''Return items which span domain axes.
 
@@ -4978,8 +5028,6 @@ names contain the string "qwerty":
     {+ndim}
 
     {+match_and}
-
-    {+exact}
 
     {+inverse}
 
@@ -5126,7 +5174,7 @@ names contain the string "qwerty":
 
                 if match and pool:                
                     for key, item in pool2.iteritems():
-                        if item.match(match, exact=exact):
+                        if item.match(match):
                             # This item matches the critieria
                             items_out[key] = item
                 #--- End: if
@@ -5165,7 +5213,7 @@ names contain the string "qwerty":
         # ------------------------------------------------------------
         return out
     #--- End: def
-
+    
     def auxs(self):
         '''Auxiliary coordinate objects and their identifiers
         
@@ -5335,8 +5383,7 @@ None
                     return default
 
                 _axes = self._axes
-                for key in self(ref.coordinates | set(ref.ancillaries.values()),
-                                exact=True):
+                for key in self(ref.coordinates | set(ref.ancillaries.values())):
                     r_axes.extend(_axes.get(key, ()))
                 
                 return set(r_axes)
@@ -5794,10 +5841,10 @@ Return a deep or shallow copy.
 
                 # Coordinates
                 coordinates0 = set(
-                    [self.key(value, role='da', exact=True, default=value)
+                    [self.key(value, role='da', default=value)
                      for value in ref0.coordinates])
                 coordinates1 = set(
-                    [key1_to_key0.get(other.key(value, role='da', exact=True), value)
+                    [key1_to_key0.get(other.key(value, role='da'), value)
                      for value in ref1.coordinates])
                 if coordinates0 != coordinates1:
                     continue
@@ -5805,11 +5852,11 @@ Return a deep or shallow copy.
                 # Domain ancillary terms
                 terms0 = dict(
                     [(term,
-                      self.key(value, role='c', exact=True, default=value))
+                      self.key(value, role='c', default=value))
                      for term, value in ref0.ancillaries.iteritems()])
                 terms1 = dict(
                     [(term,
-                      key1_to_key0.get(other.key(value, role='c', exact=True), value))
+                      key1_to_key0.get(other.key(value, role='c'), value))
                      for term, value in ref1.ancillaries.iteritems()])
                 if terms0 != terms1:
                     continue

@@ -2462,78 +2462,6 @@ Changing the elements of the returned view changes the data array.
         for match in description:
             found_match = True
 
-            # --------------------------------------------------------
-            # Try to match units
-            # --------------------------------------------------------
-            if 'units' in match:
-                u1 = Units(v.units)
-                u2 = Units(match.pop('units'))
-                found_match = (u1 == u2)    
-                if not found_match:
-                    continue
-            #--- End: if
-
-            # --------------------------------------------------------
-            # Try to match calendar (if units are reference time)
-            # --------------------------------------------------------
-            if 'calendar' in match and v.Units.isreftime:
-                c1 = v.Units.canonical_calendar
-                c2 = Units(calendar=match.pop('calendar')).canonical_calendar
-                found_match = (c1 == c2)
-                if not found_match:
-                    continue
-            #--- End: if
-
-            
-            
-#            # --------------------------------------------------------
-#            # Try to match cell methods
-#            # --------------------------------------------------------
-#            if _CellMethods and 'cell_methods' in match:
-#                f_cell_methods = v.getprop('cell_methods', None)
-#                
-#                if not f_cell_methods:
-#                    found_match = False
-#                    continue
-#
-#                match = match.copy()
-#                cell_methods = match.pop('cell_methods')
-#
-#                if not exact:
-#                    n = len(cell_methods)
-#                    if n > len(f_cell_methods):
-#                        found_match = False
-#                    else:
-#                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
-#                else:
-#                    found_match = f_cell_methods.equals(cell_methods)
-#                                    
-#                if not found_match:
-#                    continue
-#            #--- End: if
-#
-#            # ---------------------------------------------------
-#            # Try to match cf.Flags
-#            # ---------------------------------------------------
-#            if _Flags and ('flag_masks'    in match or 
-#                           'flag_meanings' in match or
-#                           'flag_values'   in match):
-#                f_flags = getattr(self, Flags, None)
-#                
-#                if not f_flags:
-#                    found_match = False
-#                    continue
-#
-#                match = match.copy()
-#                found_match = f_flags.equals(
-#                    Flags(flag_masks=match.pop('flag_masks', None),
-#                          flag_meanings=match.pop('flag_meanings', None),
-#                          flag_values=match.pop('flag_values', None)))
-#            
-#                if not found_match:
-#                    continue
-#            #--- End: if
-             
             for prop, value in match.iteritems():
                 if prop is None: 
                     if value is None:
@@ -2566,8 +2494,19 @@ Changing the elements of the returned view changes the data array.
                     else:   
                         # Non-string-valued identity
                         x = v.identity(default=None)
+ 
+                elif prop == 'units':
+                    # units
+                    x     = Units(v.units)
+                    value = Units(value)
+
+                elif prop == 'calendar' and v.Units.isreftime:
+                    # calendar (if units are reference time)
+                    x     = v.Units.canonical_calendar
+                    value = Units(calendar=value).canonical_calendar
+
                 else:                    
-                    # CF property
+                    # Any other CF property
                     x = v.getprop(prop, None)
     
                 if x is None:
@@ -2591,7 +2530,7 @@ Changing the elements of the returned view changes the data array.
         return found_match
     #--- End: def
     
-    def match(self, description=None, ndim=None, match_and=True,
+    def match(self, description=None, # match_and=True,
               inverse=False, customise={}):
         '''Determine whether or not a variable satisfies conditions.
 
@@ -2612,23 +2551,14 @@ properties.
         '''
         
         customise[self._match_description] = description
-        customise[self._match_ndim]        = ndim
-        
-#        if ndim is not None:
-#            conditions_have_been_set = True
-#            try:
-#                found_match = (self.ndim == ndim)
-#            except AttributeError:
-#                found_match = False
-#
-#            if match_and and not found_match:
-#                return bool(inverse)
-#
-#            something_has_matched = True
-#        #--- End: if
 
-        conditions_have_been_set = False
-        something_has_matched    = False
+        if not customise:
+            return not bool(inverse)
+        
+#        conditions_have_been_set = False
+#        something_has_matched    = False
+
+        found_match = False
         
         # ------------------------------------------------------------
         #
@@ -2637,161 +2567,26 @@ properties.
             if value is None:
                 continue
             
-            conditions_have_been_set = True
+#            conditions_have_been_set = True
             
             found_match = func(self, value)
-            if match_and and not found_match:
+#            if match_and and not found_match:
+#                return bool(inverse)
+
+            if not found_match:
                 return bool(inverse)
 
-            something_has_matched = True
+#            something_has_matched = True
         #--- End: for
 
-#        matches = self._match_parse_description(description)
-#
-#        if matches:
-#            conditions_have_been_set = True
-#
-#        found_match = True
-#        for match in matches:
-#            found_match = True
-#
-#            # ----------------------------------------------------
-#            # Try to match Units
-#            # ----------------------------------------------------
-#            if 'units' in match or 'calendar' in match:
-#                match = match.copy()
-#                units = Units(match.pop('units', None), match.pop('calendar', None))
-#                
-#                if not exact:
-#                    found_match = self.Units.equivalent(units)
-#                else:
-#                    found_match = self.Units.equals(units)
-#    
-#                if not found_match:
-#                    continue
-#            #--- End: if
-#
-#            
-#            
-##            # --------------------------------------------------------
-##            # Try to match cell methods
-##            # --------------------------------------------------------
-##            if _CellMethods and 'cell_methods' in match:
-##                f_cell_methods = self.getprop('cell_methods', None)
-##                
-##                if not f_cell_methods:
-##                    found_match = False
-##                    continue
-##
-##                match = match.copy()
-##                cell_methods = match.pop('cell_methods')
-##
-##                if not exact:
-##                    n = len(cell_methods)
-##                    if n > len(f_cell_methods):
-##                        found_match = False
-##                    else:
-##                        found_match = f_cell_methods[-n:].equivalent(cell_methods)
-##                else:
-##                    found_match = f_cell_methods.equals(cell_methods)
-##                                    
-##                if not found_match:
-##                    continue
-##            #--- End: if
-##
-##            # ---------------------------------------------------
-##            # Try to match cf.Flags
-##            # ---------------------------------------------------
-##            if _Flags and ('flag_masks'    in match or 
-##                           'flag_meanings' in match or
-##                           'flag_values'   in match):
-##                f_flags = getattr(self, Flags, None)
-##                
-##                if not f_flags:
-##                    found_match = False
-##                    continue
-##
-##                match = match.copy()
-##                found_match = f_flags.equals(
-##                    Flags(flag_masks=match.pop('flag_masks', None),
-##                          flag_meanings=match.pop('flag_meanings', None),
-##                          flag_values=match.pop('flag_values', None)))
-##            
-##                if not found_match:
-##                    continue
-##            #--- End: if
-#             
-#            for prop, value in match.iteritems():
-#                if prop is None: 
-#                    if value is None:
-#                        continue
-#
-#                    if isinstance(value, basestring):
-#                        if value in ('T', 'X', 'Y', 'Z'):
-#                            # Axis type, e.g. 'T'
-#                            x = getattr(self, value)
-#                            value = True
-#                        else:
-#                            value = value.split('%')
-#                            if len(value) == 1:
-#                                value = value[0].split(':')
-#                                if len(value) == 1:
-#                                    # String-valued identity,
-#                                    # e.g. 'air_temperature'
-#                                    x = self.identity(None)
-#                                    value = value[0]
-#                                else:
-#                                    # String-valued CF property,
-#                                    # e.g. 'long_name:rain'
-#                                    x = self.getprop(value[0], None)
-#                                    value = ':'.join(value[1:])
-#                            else:
-#                                # String-valued python attribute,
-#                                # e.g. 'ncvar%tas'
-#                                x = getattr(self, value[0], None)
-#                                value = '%'.join(value[1:])
-#                    else:   
-#                        # Non-string-valued identity, e.g. cf.Query
-#                        x = self.identity(None)
-#                else:                    
-#                    # CF property
-#                    x = self.getprop(prop, None)
-#    
-#                if x is None:
-#                    found_match = False
-#                elif not exact and isinstance(x, basestring) and isinstance(value, basestring):
-##                    if exact:
-##                        found_match = re.match(value, x)
-##                    else:
-#                    found_match = re.match(value, x)
-#                else:	
-#                    found_match = (value == x)
-#                    try:
-#                        found_match == True
-#                    except ValueError:
-#                        found_match = False
-#                #--- End: if
-#     
-#                if not found_match:
-#                    break
-#            #--- End: for
-#
-#            if found_match:
-#                something_has_matched = True
-#                break
-#        #--- End: for
-#
-#        if match_and and not found_match:
-#            return bool(inverse)
-
-        # Still here?
-        if conditions_have_been_set:
-            if something_has_matched:            
-                return not bool(inverse)
-            else:
-                return bool(inverse)
-        else:
-            return not bool(inverse)
+        # Still here? Then we have a match
+#        if conditions_have_been_set:
+#            if found_match: #something_has_matched:            
+#                return not bool(inverse)
+#            else:
+#                return bool(inverse)
+#        else:
+        return not bool(inverse)
     #--- End: def
 
 #    def close(self):
