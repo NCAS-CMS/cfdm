@@ -2445,11 +2445,9 @@ Changing the elements of the returned view changes the data array.
         '''
         '''
         try:
-            found_match = (ndim == v.dim)
+            return ndim == v.dim
         except AttributeError:
-            found_match = False
-
-        return found_match
+            return False
     #--- End: def
 
     @classmethod
@@ -2530,8 +2528,8 @@ Changing the elements of the returned view changes the data array.
         return found_match
     #--- End: def
     
-    def match(self, description=None, # match_and=True,
-              inverse=False, customise={}):
+    def match(self, description=None, ndim=None, inverse=False,
+              customise={}):
         '''Determine whether or not a variable satisfies conditions.
 
 Conditions may be specified on the variable's attributes and CF
@@ -2549,43 +2547,21 @@ properties.
 :Examples:
 
         '''
-        
         customise[self._match_description] = description
+        customise[self._match_ndim]        = ndim
 
-        if not customise:
-            return not bool(inverse)
-        
-#        conditions_have_been_set = False
-#        something_has_matched    = False
-
-        found_match = False
-        
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
         for func, value in customise.iteritems():
             if value is None:
                 continue
-            
-#            conditions_have_been_set = True
-            
-            found_match = func(self, value)
-#            if match_and and not found_match:
-#                return bool(inverse)
 
-            if not found_match:
+            if not func(self, value)
                 return bool(inverse)
-
-#            something_has_matched = True
         #--- End: for
-
-        # Still here? Then we have a match
-#        if conditions_have_been_set:
-#            if found_match: #something_has_matched:            
-#                return not bool(inverse)
-#            else:
-#                return bool(inverse)
-#        else:
+        
+        # Still here?
         return not bool(inverse)
     #--- End: def
 
