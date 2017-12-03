@@ -2353,7 +2353,7 @@ Set the time axis to be unlimited when written to a netCDF file:
     out: `bool`
 
         '''
-        for description in self._match_parse_description(items):
+        for description in f._match_parse_description(items):
             if not bool(f.Items(description)):
                 return False
         #--- End: for 
@@ -2373,17 +2373,17 @@ Set the time axis to be unlimited when written to a netCDF file:
     out: `bool`
 
         '''
-        for a in self._match_parse_description(axes):
+        for a in f._match_parse_description(axes):
             if isinstance(a, dict):
                 # Convert:
                 # {None: 'ncdim%x'} to 'ncdim%x'
                 # {None: 'size%96'} to 'size%96'
                 if len(a) == 1:
                     key, value = a.items()[0]
-                    if (key is None and 
-                        (value.startswith('ncdim%') or
-                         value.startswith('size%'))):
-                        a = value
+                    if key is None:
+                        if (value.startswith('ncdim%') or
+                            value.startswith('size%')):
+                            a = value # NEED TO CODE UP size% IN def axes
             #--- End: if
              
             if not bool(f.axes(a, ndim=1)):
@@ -2394,24 +2394,29 @@ Set the time axis to be unlimited when written to a netCDF file:
     #--- End: def
 
     def match(self, description=None, ndim=None, items=None,
-              axes=None, naxes=None, inverse=False, customize={}):
+              axes=None, naxes=None, inverse=False, customise=None):
         '''
 .. versionadded:: 1.6
 
         '''
+        if customise:
+            customise = customise.copy()
+        else:
+            customise = {}
+            
         if naxes is not None:
-            customize[self._match_naxes] = naxes
+            customise[self._match_naxes] = naxes
             
         if items is not None:
-            customize[self._match_items] = items
+            customise[self._match_items] = items
 
         if axes is not None:
-            customize[self._match_axes] = axes
+            customise[self._match_axes] = axes
 
         return super(Field, self).match(description=description,
                                         ndim=ndim,
                                         inverse=inverse,
-                                        customize=customize)
+                                        customise=customise)
     #--- End: def
 
     def axis_name(self, axes=None, default=None, **kwargs):

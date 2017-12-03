@@ -2445,7 +2445,7 @@ Changing the elements of the returned view changes the data array.
         '''
         '''
         try:
-            return ndim == v.dim
+            return ndim == v.ndim
         except AttributeError:
             return False
     #--- End: def
@@ -2509,7 +2509,7 @@ Changing the elements of the returned view changes the data array.
     
                 if x is None:
                     found_match = False                
-                else:	
+                else:
                     found_match = (value == x)
                     try:
                         found_match == True
@@ -2529,7 +2529,7 @@ Changing the elements of the returned view changes the data array.
     #--- End: def
     
     def match(self, description=None, ndim=None, inverse=False,
-              customise={}):
+              customise=None):
         '''Determine whether or not a variable satisfies conditions.
 
 Conditions may be specified on the variable's attributes and CF
@@ -2547,6 +2547,11 @@ properties.
 :Examples:
 
         '''
+        if customise:
+            customise = customise.copy()
+        else:
+            customise = {}
+            
         customise[self._match_description] = description
         customise[self._match_ndim]        = ndim
 
@@ -2557,10 +2562,22 @@ properties.
             if value is None:
                 continue
 
-            if not func(self, value)
+            if not func(self, value):
                 return bool(inverse)
         #--- End: for
-        
+        customise[self._match_description] = description
+        customise[self._match_ndim]        = ndim
+
+        # ------------------------------------------------------------
+        #
+        # ------------------------------------------------------------
+        for func, value in customise.iteritems():
+            if value is None:
+                continue
+
+                return bool(inverse)
+        #--- End: for
+
         # Still here?
         return not bool(inverse)
     #--- End: def
