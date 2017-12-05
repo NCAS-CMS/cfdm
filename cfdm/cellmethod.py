@@ -1075,6 +1075,14 @@ Return a string of the cell method.
         return ' '.join(string)
     #--- End: def
 
+    def match(self, cell_method=None, axes=None, method=None,
+              where=None, within=None, over=None, interval=None,
+              comment=None):
+        '''
+'''
+        
+        #--- End: def
+
 #--- End: class
 
 ## ====================================================================
