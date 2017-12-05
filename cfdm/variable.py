@@ -51,11 +51,6 @@ docstring = {
         {+variable}. By default the returned items are not copies.''',
 
     # ----------------------------------------------------------------
-    '{+copy_item_in}': ''' copy: `bool`, optional
-        If False then the item is inserted without being copied. By
-        default a copy of the item is inserted''',
-
-    # ----------------------------------------------------------------
     '{+data-like}': '''A data-like object is any object containing array-like or
         scalar data which could be used to create a `Data` object.
     
@@ -129,158 +124,14 @@ the size and shape of the data block that users will read from the
 file.''',
     
     # ----------------------------------------------------------------
-    '{+item_definition}': '''An item of the field is one of the following field components:
-
-  * dimension coordinate
-  * auxiliary coordinate
-  * cell measure
-  * domain ancillary
-  * field ancillary
-  * coordinate reference''',
-
-    # ----------------------------------------------------------------
-    '{+item_selection}': '''Items are selected with the criteria specified by the keyword
-parameters. If no parameters are set then all items are selected. If
-multiple criteria are given then items that meet all of them are
-selected (see the *match_and* parameter).''',
-    
-    # ----------------------------------------------------------------
-    '{+items_criteria}': '''Item selection criteria have the following categories:
-    
-==================  ==================================  ==================
-Selection criteria  Description                         Keyword parameters
-==================  ==================================  ==================
-CF properties       Items with given CF properties      *description*
-                                               
-Attributes          Items with given attributes         *description*
-                                               
-Domain axes         Items which span given domain axes  *axes*,
-                                                        *axes_all*,
-                                                        *axes_subset*,
-                                                        *axes_superset*,
-                                                        *ndim*
-                                               
-Role                Items of the given component type   *role*
-==================  ==================================  ==================''',
-    
-    # ----------------------------------------------------------------
     '{+ndim}': '''ndim: `int`, optional
         Select each item that has a data array with exactly *ndim*
         dimensions.
     
           *Example:*
-            ``ndim=1`` selects items with one-dimensional data
+            ``ndim=2`` selects items with two-dimensional data
             arrays.''',
     
-    # ----------------------------------------------------------------
-    '{+axes}': '''axes: optional
-        Select items which span at least one of the specified axes,
-        taken in any order, and possibly others. Axes are defined by
-        identfiying items of the field (such as dimension coordinate
-        objects) or by specifying axis sizes. In the former case the
-        selected axes are those which span the identified items. The
-        axes are interpreted as those that would be returned by the
-        field's `~Field.axes` method, i.e. by ``f.axes(axes)`` or,
-        if *axes* is a dictionary, ``f.axes(**axes)``. See
-        `axes` for details.
-  
-          *Example:*
-            To select items which span a time axis, and possibly
-            others, you could set ``axes='T'``, or equivalently:
-            ``axes=['T']``.
-            
-          *Example:*
-            To select items which span a latitude and/or longitude
-            axes, and possibly others, you could set: ``axes=['X',
-            'Y']``.
-            
-          *Example:*
-            To specify axes with size 19 you could set ``axes={'size':
-            19}``. To specify depth axes with size 40 you could set:
-            ``axes={'axes': 'depth', 'size': 40}``.''',
-    
-    # ----------------------------------------------------------------
-    '{+axes_subset}': '''axes_subset: optional 
-        Select items whose data array spans all of the specified axes,
-        taken in any order, and possibly others. The axes are those
-        that would be selected by this call of the field's
-        `~Field.axes` method: ``f.axes(axes_subset)`` or, if
-        *axes_subset* is a dictionary of parameters ,
-        ``f.axes(**axes_subset)``. Axes are defined by identfiying
-        items of the field (such as dimension coordinate objects) or
-        by specifying axis sizes. In the former case the selected axes
-        are those which span the identified field items. See
-        `Field.axes` for details.
-    
-          *Example:*            
-            To select items which span a time axes, and possibly
-            others, you could set: ``axes_subset='T'``.
-            
-          *Example:*
-            To select items which span latitude and longitude axes,
-            and possibly others, you could set: ``axes_subset=['X',
-            'Y']``.
-            
-          *Example:*
-            To specify axes with size 19 you could set
-            ``axes_subset={'size': 19}``. To specify depth axes with
-            size 40 or more, you could set: ``axes_subset={'axes':
-            'depth', 'size': cf.ge(40)}`` (see `cf.ge`).''',
-    
-    # ----------------------------------------------------------------
-    '{+axes_superset}': '''axes_superset: optional
-        Select items whose data arrays span a subset of the specified
-        axes, taken in any order, and no others. The axes are those
-        that would be selected by this call of the field's
-        `~Field.axes` method: ``f.axes(axes_superset)`` or, if
-        *axes_superset* is a dictionary of parameters,
-        ``f.axes(**axes_superset)``. Axes are defined by identfiying
-        items of the field (such as dimension coordinate objects) or
-        by specifying axis sizes. In the former case the selected axes
-        are those which span the identified field items. See
-        `Field.axes` for details.
-    
-          *Example:*
-            To select items which span a time axis, and no others, you
-            could set: ``axes_superset='T'``.
-            
-          *Example:*
-            To select items which span latitude and/or longitude axes,
-            and no others, you could set: ``axes_superset=['X',
-            'Y']``.
-            
-          *Example:*
-            To specify axes with size 19 you could set
-            ``axes_superset={'size': 19}``. To specify depth axes with
-            size 40 or more, you could set: ``axes_superset={'axes':
-            'depth', 'size': cf.ge(40)}`` (see `cf.ge`).''',
-    
-    
-    # ----------------------------------------------------------------
-    '{+axes_all}': '''axes_all: optional
-        Select items whose data arrays span all of the specified axes,
-        taken in any order, and no others. The axes are those that
-        would be selected by this call of the field's `~Field.axes`
-        method: ``f.axes(axes_all)`` or, if *axes_all* is a dictionary
-        of parameters, ``f.axes(**axes_all)``. Axes are defined by
-        identfiying items of the field (such as dimension coordinate
-        objects) or by specifying axis sizes. In the former case the
-        selected axes are those which span the identified field
-        items. See `Field.axes` for details.
-    
-          *Example:*
-            To select items which span a time axis, and no others, you
-            could set: ``axes_all='T'``.
-            
-          *Example:*
-            To select items which span latitude and longitude axes,
-            and no others, you could set: ``axes_all=['X', 'Y']``.
-            
-          *Example:*
-            To specify axes with size 19 you could set
-            ``axes_all={'size': 19}``. To specify depth axes with size
-            40 or more, you could set: ``axes_all={'axes': 'depth',
-            'size': cf.ge(40)}`` (see `cf.ge`).''',
     # ----------------------------------------------------------------
     '{+rank}': '''rank: `int`, optional
         Specify a condition on the number of domain axes in the
@@ -290,36 +141,6 @@ Role                Items of the given component type   *role*
           *Example:*
             ``rank=2`` matches a field with exactly two domain axes.''',
 
-    # ----------------------------------------------------------------
-    '{+role}': '''role: (sequence of) `str`, optional
-        Select items of the given roles. Valid roles are:
-    
-          =======  ==========================
-          Role     Items selected
-          =======  ==========================
-          ``'d'``  Dimension coordinate items
-          ``'a'``  Auxiliary coordinate items
-          ``'m'``  Cell measure items
-          ``'c'``  Domain ancillary items
-          ``'f'``  Field ancillary items
-          ``'r'``  Coordinate reference items
-          =======  ==========================
-    
-        Multiple roles may be specified by a sequence of role
-        identifiers. By default all roles except coordinate reference
-        items are considered, i.e. by default ``role=('d', 'a', 'm',
-        'f', 'c')``.
-    
-          *Example:*
-            To select dimension coordinate items: ``role='d'`` or
-            ``role=['d']`.
-
-          *Example:*
-            Selecting auxiliary coordinate and cell measure items may
-            be done with any of the following values of *role*:
-            ``'am'``, ``'ma'``, ``('a', 'm')``, ``['m', 'a']``,
-            ``set(['a', 'm'])``, etc.''',
-       
     # ----------------------------------------------------------------
     '{+exact}': '''exact: `bool`, optional
         The *exact* parameter applies to the interpretation of
@@ -380,24 +201,6 @@ Role                Items of the given component type   *role*
             'units': 'hPa'})`` will select items with a standard name
             of exactly "air_pressure" but with any units of pressure
             (see `cf.eq`).''',
-    
-    # ----------------------------------------------------------------
-    '{+match_and}': '''match_and: `bool`, optional
-        By default *match_and* is True and items are selected if they
-        satisfy the all of the specified conditions.
-        
-        If *match_and* is False then items are selected if they
-        satisfy at least one of the specified conditions.
-    
-          *Example:*
-            To select items with identity beginning with "ocean"
-            **and** two data array axes: ``f.{+name}('ocean',
-            ndim=2)``.
-    
-          *Example:*
-            To select items with identity beginning with "ocean"
-            **or** two data array axes: ``f.{+name}('ocean', ndim=2,
-            match_and=False)``.''',
     
     # ----------------------------------------------------------------
     '{+inverse}': '''inverse: `bool`, optional

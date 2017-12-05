@@ -14,7 +14,197 @@ from .variable  import Variable
 
 _debug = False
 
+from .variable import docstring
 
+docstring['{+item_definition}'] = '''\
+\
+An item of the field is one of the following field components:
+
+  * dimension coordinate
+  * auxiliary coordinate
+  * cell measure
+  * domain ancillary
+  * field ancillary
+  * coordinate reference'''
+
+docstring['{+item_selection}'] = '''\
+\
+Items are selected with the criteria specified by the keyword
+parameters. If no parameters are set then all items are selected. If
+multiple criteria are given then items that meet all of them are
+selected.'''
+    
+docstring['{+items_criteria}'] = '''\
+\
+Item selection criteria have the following categories:
+    
+==================  ==================================  ==================
+Selection criteria  Description                         Keyword parameters
+==================  ==================================  ==================
+CF properties       Items with given CF properties      *description*
+                                               
+Attributes          Items with given attributes         *description*
+                                               
+Domain axes         Items which span given domain axes  *axes*,
+                                                        *axes_all*,
+                                                        *axes_subset*,
+                                                        *axes_superset*,
+                                                        *ndim*
+                                               
+Role                Items of the given component type   *role*
+==================  ==================================  =================='''
+
+docstring['{+axes}'] = '''\
+\
+axes: optional
+        Select items which span at least one of the specified axes,
+        taken in any order, and possibly others. Axes are defined by
+        identfiying items of the field (such as dimension coordinate
+        objects) or by specifying axis sizes. In the former case the
+        selected axes are those which span the identified items. The
+        axes are interpreted as those that would be returned by the
+        field's `~Field.axes` method, i.e. by ``f.axes(axes)`` or,
+        if *axes* is a dictionary, ``f.axes(**axes)``. See
+        `axes` for details.
+  
+          *Example:*
+            To select items which span a time axis, and possibly
+            others, you could set ``axes='T'``, or equivalently:
+            ``axes=['T']``.
+            
+          *Example:*
+            To select items which span a latitude and/or longitude
+            axes, and possibly others, you could set: ``axes=['X',
+            'Y']``.
+            
+          *Example:*
+            To specify axes with size 19 you could set ``axes={'size':
+            19}``. To specify depth axes with size 40 you could set:
+            ``axes={'axes': 'depth', 'size': 40}``.'''
+
+docstring['{+axes_subset}'] = '''\
+\
+axes_subset: optional 
+        Select items whose data array spans all of the specified axes,
+        taken in any order, and possibly others. The axes are those
+        that would be selected by this call of the field's
+        `~Field.axes` method: ``f.axes(axes_subset)`` or, if
+        *axes_subset* is a dictionary of parameters ,
+        ``f.axes(**axes_subset)``. Axes are defined by identfiying
+        items of the field (such as dimension coordinate objects) or
+        by specifying axis sizes. In the former case the selected axes
+        are those which span the identified field items. See
+        `Field.axes` for details.
+    
+          *Example:*            
+            To select items which span a time axes, and possibly
+            others, you could set: ``axes_subset='T'``.
+            
+          *Example:*
+            To select items which span latitude and longitude axes,
+            and possibly others, you could set: ``axes_subset=['X',
+            'Y']``.
+            
+          *Example:*
+            To specify axes with size 19 you could set
+            ``axes_subset={'size': 19}``. To specify depth axes with
+            size 40 or more, you could set: ``axes_subset={'axes':
+            'depth', 'size': cf.ge(40)}`` (see `cf.ge`).'''
+    
+docstring['{+axes_superset}'] = '''\
+\
+axes_superset: optional
+        Select items whose data arrays span a subset of the specified
+        axes, taken in any order, and no others. The axes are those
+        that would be selected by this call of the field's
+        `~Field.axes` method: ``f.axes(axes_superset)`` or, if
+        *axes_superset* is a dictionary of parameters,
+        ``f.axes(**axes_superset)``. Axes are defined by identfiying
+        items of the field (such as dimension coordinate objects) or
+        by specifying axis sizes. In the former case the selected axes
+        are those which span the identified field items. See
+        `Field.axes` for details.
+    
+          *Example:*
+            To select items which span a time axis, and no others, you
+            could set: ``axes_superset='T'``.
+            
+          *Example:*
+            To select items which span latitude and/or longitude axes,
+            and no others, you could set: ``axes_superset=['X',
+            'Y']``.
+            
+          *Example:*
+            To specify axes with size 19 you could set
+            ``axes_superset={'size': 19}``. To specify depth axes with
+            size 40 or more, you could set: ``axes_superset={'axes':
+            'depth', 'size': cf.ge(40)}`` (see `cf.ge`).'''
+
+docstring['{+axes_all}'] = '''\
+\
+axes_all: optional
+        Select items whose data arrays span all of the specified axes,
+        taken in any order, and no others. The axes are those that
+        would be selected by this call of the field's `~Field.axes`
+        method: ``f.axes(axes_all)`` or, if *axes_all* is a dictionary
+        of parameters, ``f.axes(**axes_all)``. Axes are defined by
+        identfiying items of the field (such as dimension coordinate
+        objects) or by specifying axis sizes. In the former case the
+        selected axes are those which span the identified field
+        items. See `Field.axes` for details.
+    
+          *Example:*
+            To select items which span a time axis, and no others, you
+            could set: ``axes_all='T'``.
+            
+          *Example:*
+            To select items which span latitude and longitude axes,
+            and no others, you could set: ``axes_all=['X', 'Y']``.
+            
+          *Example:*
+            To specify axes with size 19 you could set
+            ``axes_all={'size': 19}``. To specify depth axes with size
+            40 or more, you could set: ``axes_all={'axes': 'depth',
+            'size': cf.ge(40)}`` (see `cf.ge`).'''
+
+docstring['{+copy_item_in}'] = '''\
+\
+copy: `bool`, optional
+        If False then the item is inserted without being copied. By
+        default a copy of the item is inserted'''
+
+docstring['{+role}'] = '''\
+\
+role: (sequence of) `str`, optional
+        Select items of the given roles. Valid roles are:
+    
+          =======  ==========================
+          Role     Items selected
+          =======  ==========================
+          ``'d'``  Dimension coordinate items
+          ``'a'``  Auxiliary coordinate items
+          ``'m'``  Cell measure items
+          ``'c'``  Domain ancillary items
+          ``'f'``  Field ancillary items
+          ``'r'``  Coordinate reference items
+          =======  ==========================
+    
+        Multiple roles may be specified by a sequence of role
+        identifiers. By default all roles except coordinate reference
+        items are considered, i.e. by default ``role=('d', 'a', 'm',
+        'f', 'c')``.
+    
+          *Example:*
+            To select dimension coordinate items: ``role='d'`` or
+            ``role=['d']`.
+
+          *Example:*
+            Selecting auxiliary coordinate and cell measure items may
+            be done with any of the following values of *role*:
+            ``'am'``, ``'ma'``, ``('a', 'm')``, ``['m', 'a']``,
+            ``set(['a', 'm'])``, etc.'''
+
+       
 # ====================================================================
 #
 # Field object
@@ -2020,7 +2210,7 @@ time axis which is to have a chunk size of 12:
 
     def field(self, description=None, role=None, axes=None,
               axes_all=None, axes_subset=None, axes_superset=None,
-              inverse=False, match_and=True, ndim=None, bounds=False):
+              inverse=False, ndim=None, bounds=False):
         '''Create an independent field from a domain item.
 
 An item is either a dimension coordinate, auxiliary coordinate, cell
@@ -2060,10 +2250,6 @@ Create a field whose data are the latitude coordinates
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-       
     {+inverse}
 
     bounds: `bool`, optional
@@ -2368,24 +2554,21 @@ Set the time axis to be unlimited when written to a netCDF file:
 
     f: `{+Variable}`
 
+    axes: 
+
 :Returns:
 
     out: `bool`
 
         '''
         for a in f._match_parse_description(axes):
-            if isinstance(a, dict):
-                # Convert:
-                # {None: 'ncdim%x'} to 'ncdim%x'
-                # {None: 'size%96'} to 'size%96'
-                if len(a) == 1:
-                    key, value = a.items()[0]
-                    if key is None:
-                        if (value.startswith('ncdim%') or
-                            value.startswith('size%')):
-                            a = value # NEED TO CODE UP size% IN def axes
+            if isinstance(a, dict) and len(a) == 1:
+                # Convert {None: value} to value
+                key, value = a.items()[0]
+                if key is None:
+                    a = value
             #--- End: if
-             
+
             if not bool(f.axes(a, ndim=1)):
                 return False
         #--- End: for 
@@ -2397,6 +2580,8 @@ Set the time axis to be unlimited when written to a netCDF file:
               axes=None, naxes=None, inverse=False, customise=None):
         '''
 .. versionadded:: 1.6
+
+:Parameters:
 
         '''
         if customise:
@@ -2620,11 +2805,11 @@ Axes which are not spanned by the data array:
                         a = items_axes[axes][:]
                     else:
                         try:
-                            axes_is_ncdim_name = axes.startswith('ncdim%')
+                            ncdim_name = axes.startswith('ncdim%')
                         except AttributeError:
-                            axes_is_ncdim_name = False
+                            ncdim_name = False
 
-                        if axes_is_ncdim_name:
+                        if ncdim_name:
                             # ----------------------------------------
                             # axes is a netCDF dimension name
                             # ----------------------------------------
@@ -3093,22 +3278,24 @@ domain ancillary identifiers.
 #    #--- End: def
 
     def _unconform_ref(self, ref, copy=True):
-        '''Replace the content of ref.coordinates with coordinate identifiers
-and domain ancillaries where possible.
+        '''Replace the contents of ref.coordinates with coordinate identities
+and ref.ancillaries with domain ancillary identities where possible.
 
 :Parameters:
 
     ref: `CoordinateReference`
 
+    copy: `bool`, optional
+
 :Returns:
 
-    `None`
+    out: `CoordinateReference`
 
 :Examples:
 
 >>> s = f._unconform_ref(r)
 >>> s = f._unconform_ref(r, copy=False)
-        
+
         '''
         if copy:
             ref = ref.copy()
@@ -3130,7 +3317,7 @@ and domain ancillaries where possible.
                 identity_map[identifier] = anc.identity()
         #--- End: for
         ref.change_identifiers(identity_map, coordinate=False, strict=True, copy=False)
-# DCH inplace??
+
         return ref
     #--- End: def
 
@@ -3409,8 +3596,7 @@ and domain ancillaries where possible.
 
     def item_axes(self, description=None, role=None, axes=None,
                   axes_all=None, axes_subset=None, axes_superset=None,
-                  inverse=False, match_and=True, ndim=None,
-                  default=None):
+                  inverse=False, ndim=None, default=None):
         '''Return the axes of a domain item of the field.
 
 An item is a dimension coordinate, an auxiliary coordinate, a cell
@@ -3434,10 +3620,6 @@ measure or a coordinate reference object.
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-       
     {+inverse}
 
 :Returns:
@@ -3464,7 +3646,7 @@ measure or a coordinate reference object.
 
     def key(self, description=None, role=None, axes=None,
             axes_all=None, axes_subset=None, axes_superset=None,
-            inverse=False, match_and=True, ndim=None, default=None):
+            inverse=False, ndim=None, default=None):
 #            _restrict_inverse=False):
         '''Return the identifier of a field item.
 
@@ -3499,10 +3681,6 @@ parameter is returned.
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-       
     {+inverse}
 
     {+default}
@@ -3532,8 +3710,7 @@ parameter is returned.
 
     def items_axes(self, description=None, role=None, axes=None,
                    axes_all=None, axes_subset=None,
-                   axes_superset=None, inverse=False, match_and=True,
-                   ndim=None):
+                   axes_superset=None, inverse=False, ndim=None):
         '''Return the axes of items of the field.
 
 An item is a dimension coordinate, an auxiliary coordinate, a cell
@@ -3557,10 +3734,6 @@ measure or a coordinate reference object.   ....................................
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-       
     {+inverse}
 
 :Returns:
@@ -3581,8 +3754,8 @@ measure or a coordinate reference object.   ....................................
 
     def item(self, description=None, role=None, axes=None,
              axes_all=None, axes_subset=None, axes_superset=None,
-             inverse=False, match_and=True, ndim=None, key=False,
-             default=None, copy=False): #, _restrict_inverse=True):
+             inverse=False, ndim=None, key=False, default=None,
+             copy=False): #, _restrict_inverse=True):
         '''Return a field item.
 
 {+item_definition}
@@ -3622,10 +3795,6 @@ To find multiple items, use the `~Field.{+name}s` method.
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-       
     {+inverse}
 
     {+key}
@@ -3667,7 +3836,7 @@ To find multiple items, use the `~Field.{+name}s` method.
 
     def key_item(self, description=None, role=None, axes=None,
                  axes_all=None, axes_subset=None, axes_superset=None,
-                 inverse=False, match_and=True, ndim=None, copy=False,
+                 inverse=False, ndim=None, copy=False,
                  default=(None, None)):
         '''Return an item, or its identifier, from the field.
 
@@ -3702,10 +3871,6 @@ parameter is returned.
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-       
     {+inverse}
 
     {+default}
@@ -3741,7 +3906,7 @@ parameter is returned.
 
     def items(self, description=None, role=None, axes=None,
               axes_all=None, axes_subset=None, axes_superset=None,
-              ndim=None, match_and=True, inverse=False, copy=False):
+              ndim=None, inverse=False, copy=False):
 #              _restrict_inverse=False):
         '''Return items of the field.
 
@@ -3757,8 +3922,7 @@ then the dictionary will be empty.
 
 To find a unique item, use the `item` method.
 
-.. seealso:: `auxs`, `axes`, `measures`, `coords`, `dims`, `item`, `match`
-             `remove_items`, `refs`
+.. seealso:: `axes`, `item`, `match` `remove_items`
 
 :Examples 1:
 
@@ -3820,10 +3984,6 @@ names contain the string "qwerty":
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-
     {+inverse}
 
           *Example:*
@@ -3878,7 +4038,7 @@ names contain the string "qwerty":
     def remove_item(self, description=None, role=None, axes=None,
                     axes_all=None, axes_subset=None,
                     axes_superset=None, ndim=None, inverse=False,
-                    match_and=True, key=False):
+                    copy=True, key=False):
         '''Remove and return an item from the field.
 
 {+item_definition}
@@ -3906,18 +4066,14 @@ may be selected with the keyword arguments.
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-
     {+inverse}
+
+    {+copy}
 
 :Returns:
 
     out: 
-        A dictionary whose keys are domain item identifiers with
-        corresponding values of the removed items. The dictionary may
-        be empty.
+        The removed item.
 
 :Examples:
 
@@ -3937,8 +4093,10 @@ may be selected with the keyword arguments.
             out = self.remove_items(**kwargs2)
             if key:
                 return out.popitem()[0]
+
             return out.popitem()[1]
-            
+        #--- End: if
+
         if not len(items):
             raise ValueError(
 "Can't remove non-existent item defined by parameters {0}".format(kwargs2))
@@ -3949,8 +4107,7 @@ may be selected with the keyword arguments.
 
     def remove_items(self, description=None, role=None, axes=None,
                      axes_all=None, axes_subset=None,
-                     axes_superset=None, ndim=None, inverse=False,
-                     match_and=True):
+                     axes_superset=None, ndim=None, inverse=False):
         '''Remove and return items from the field.
 
 An item is either a dimension coordinate, an auxiliary coordinate, a
@@ -3977,10 +4134,6 @@ may be selected with the keyword arguments.
 
     {+ndim}
 
-    {+match_and}
-
-    {+exact}
-
     {+inverse}
 
 :Returns:
@@ -4006,12 +4159,14 @@ may be selected with the keyword arguments.
 
         out = {}
  
+        # Remove coordinate references items
         for key, item in items.items():
             if role(key) == 'r':
                 ref = Items.remove_item(key)
                 out[key ] = self._unconform_ref(ref)
                 del items[key]
                 
+        # Remove other items
         for key, item in items.iteritems():
             item_role = role(key)
 
@@ -4273,7 +4428,7 @@ Keys are item identifiers, values are item objects.
         
     def __call__(self, description=None, role=None, axes=None,
                  axes_all=None, axes_subset=None, axes_superset=None,
-                 ndim=None, match_and=True, inverse=False, copy=False):
+                 ndim=None, inverse=False, copy=False):
         #, _restrict_inverse=False):
 
         '''Return items which span domain axes.
@@ -4381,8 +4536,6 @@ names contain the string "qwerty":
 
     {+ndim}
 
-    {+match_and}
-
     {+inverse}
 
           *Example:*
@@ -4429,11 +4582,11 @@ names contain the string "qwerty":
                 if axes.intersection(self.axes(key)):
                     axes_out[key] = value
 
-            if match_and:
-                out = pool = axes_out
-            else:                
-                for key in axes_out:
-                    out[key] = pool.pop(key)
+#            if match_and:
+            out = pool = axes_out
+#            else:                
+#                for key in axes_out:
+#                    out[key] = pool.pop(key)
         #--- End: if
 
         if pool and axes_subset is not None:
@@ -4446,11 +4599,11 @@ names contain the string "qwerty":
                 if axes_subset.issubset(self.axes(key)):
                     axes_out[key] = value                            
 
-            if match_and:
-                out = pool = axes_out
-            else:                
-                for key in axes_out:
-                    out[key] = pool.pop(key)
+#            if match_and:
+            out = pool = axes_out
+#            else:                
+#                for key in axes_out:
+#                    out[key] = pool.pop(key)
         #--- End: if
 
         if pool and axes_superset is not None:
@@ -4463,11 +4616,11 @@ names contain the string "qwerty":
                 if axes_superset.issuperset(self.axes(key)):
                     axes_out[key] = value                            
 
-            if match_and:
-                out = pool = axes_out
-            else:                
-                for key in axes_out:
-                    out[key] = pool.pop(key)
+#            if match_and:
+            out = pool = axes_out
+#            else:                
+#                for key in axes_out:
+#                    out[key] = pool.pop(key)
         #--- End: if
 
         if pool and axes_all is not None:
@@ -4480,11 +4633,11 @@ names contain the string "qwerty":
                 if axes_all == set(self.axes(key)):
                     axes_out[key] = value                            
 
-            if match_and:
-                out = pool = axes_out
-            else:                
-                for key in axes_out:
-                    out[key] = pool.pop(key)
+#            if match_and:
+            out = pool = axes_out
+#            else:                
+#                for key in axes_out:
+#                    out[key] = pool.pop(key)
         #--- End: if
 
         if pool and ndim is not None:
@@ -4498,11 +4651,11 @@ names contain the string "qwerty":
                     ndim_out[key] = item
             #--- End: for
 
-            if match_and:                
-                out = pool = ndim_out
-            else:
-                for key in ndim_out:
-                    out[key] = pool.pop(key)
+#            if match_and:                
+            out = pool = ndim_out
+#            else:
+#                for key in ndim_out:
+#                    out[key] = pool.pop(key)
         #--- End: if
 
         if pool and description is not None:
@@ -4533,11 +4686,11 @@ names contain the string "qwerty":
                             items_out[key] = item
                 #--- End: if
 
-                if match_and:                
-                    out = pool = items_out
-                else:
-                    for key in items_out:
-                        out[key] = pool.pop(key)
+#                if match_and:                
+                out = pool = items_out
+#                else:
+#                    for key in items_out:
+#                        out[key] = pool.pop(key)
             #--- End: if
         #--- End: if
 
@@ -5232,55 +5385,55 @@ Return a deep or shallow copy.
         return True
     #--- End: def
 
-    def analyse_axis(self, axis):
-        '''
-        '''
-        if axis in self.d:
-            # This axis of the domain has a dimension coordinate
-            dim = self[axis]
-
-            identity = dim.identity()
-            if identity is None:
-                # Dimension coordinate has no identity, but it may
-                # have a recognised axis.
-                for ctype in ('T', 'X', 'Y', 'Z'):
-                    if getattr(dim, ctype, False):
-                        identity = ctype
-                        break
-            #--- End: if
-
-            if identity is not None and dim.hasdata:
-                axis_to_id[axis]      = identity
-                id_to_axis[identity]  = axis
-                axis_to_coord[axis]   = key
-                id_to_coord[identity] = key
-                axis_to_dim[axis]     = key
-                id_to_dim[identity]   = key
-        else:
-            auxs = self(role='a', ndim=1)
-            if len(auxs) == 1:                
-                # This axis of the domain does not have a
-                # dimension coordinate but it does have exactly
-                # one 1-d auxiliary coordinate, so that will do.
-                key, aux = auxs.popitem()
-                identity = aux.identity()
-                if identity is None:
-                    # Auxiliary coordinate has no identity, but it may
-                    # have a recognised axis.
-                    for ctype in ('T', 'X', 'Y', 'Z'):
-                        if getattr(dim, ctype, False):
-                            identity = ctype
-                            break
-                #--- End: if
-
-                if identity is not None and aux.hasdata:                
-                    axis_to_id[axis]      = identity
-                    id_to_axis[identity]  = axis
-                    axis_to_coord[axis]   = key
-                    id_to_coord[identity] = key
-                    axis_to_aux[axis]     = key
-                    id_to_aux[identity]   = key
-    #--- End: def
+#    def analyse_axis(self, axis):
+#        '''
+#        '''
+#        if axis in self.d:
+#            # This axis of the domain has a dimension coordinate
+#            dim = self[axis]
+#
+#            identity = dim.identity()
+#            if identity is None:
+#                # Dimension coordinate has no identity, but it may
+#                # have a recognised axis.
+#                for ctype in ('T', 'X', 'Y', 'Z'):
+#                    if getattr(dim, ctype, False):
+#                        identity = ctype
+#                        break
+#            #--- End: if
+#
+#            if identity is not None and dim.hasdata:
+#                axis_to_id[axis]      = identity
+#                id_to_axis[identity]  = axis
+#                axis_to_coord[axis]   = key
+#                id_to_coord[identity] = key
+#                axis_to_dim[axis]     = key
+#                id_to_dim[identity]   = key
+#        else:
+#            auxs = self(role='a', ndim=1)
+#            if len(auxs) == 1:                
+#                # This axis of the domain does not have a
+#                # dimension coordinate but it does have exactly
+#                # one 1-d auxiliary coordinate, so that will do.
+#                key, aux = auxs.popitem()
+#                identity = aux.identity()
+#                if identity is None:
+#                    # Auxiliary coordinate has no identity, but it may
+#                    # have a recognised axis.
+#                    for ctype in ('T', 'X', 'Y', 'Z'):
+#                        if getattr(dim, ctype, False):
+#                            identity = ctype
+#                            break
+#                #--- End: if
+#
+#                if identity is not None and aux.hasdata:                
+#                    axis_to_id[axis]      = identity
+#                    id_to_axis[identity]  = axis
+#                    axis_to_coord[axis]   = key
+#                    id_to_coord[identity] = key
+#                    axis_to_aux[axis]     = key
+#                    id_to_aux[identity]   = key
+#    #--- End: def
 
     def insert_field_anc(self, item, key, axes, copy=True):
         if copy:
