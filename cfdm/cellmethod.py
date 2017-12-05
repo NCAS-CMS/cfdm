@@ -15,18 +15,18 @@ from .data.data import Data
 class CellMethod(object):
     '''**Attributes**
 
-============  ========================================================
-Attribute     Description
-============  ========================================================
+===========  =========================================================
+Attribute    Description
+===========  =========================================================
 `!names`      
-`!intervals`  
+`!interval`  
 `!method`     
 `!over`       
 `!where`      
 `!within`     
 `!comment`    
 `!axes`       
-============  ========================================================
+===========  =========================================================
 
     '''
     _Data = Data
@@ -35,23 +35,25 @@ Attribute     Description
 #        cls._Data = Data
 #        return cls
 
-    def __init__(self, *cell_method):
+    def __init__(self, cell_method=None, name=(), method=None,
+                 where=None, within=None, over=None, interval=(),
+                 comment=None):
         '''
 '''
-        if cell_method:
-            cell_method = self.parse(cell_method[0])
+        if cell_method is not None:
+            cell_method = self.parse(cell_method)
             if len(cell_method) > 1:
                 raise ValueError(" e5y 6sdf ")
 
             self.__dict__ = cell_method[0].__dict__.copy()
         else:
-            self._axes      = ()
-            self._intervals = ()
-            self._method    = None
-            self._comment   = None
-            self._where     = None
-            self._within    = None
-            self._over      = None
+            self.axes     = name
+            self._method  = method 
+            self._where   = where  
+            self._within  = within 
+            self._over    = over   
+            self.interval = interval
+            self._comment = comment
     #--- End: def
 
     def __deepcopy__(self, memo):
@@ -168,7 +170,7 @@ modified, where appropriate, to reflect netCDF variable names.
                 string.extend((portion, p))
         #--- End: for
 
-        intervals = self.intervals
+        intervals = self.interval
         if intervals:
             x = ['(']
 
@@ -245,7 +247,7 @@ Cell methods    : time: minimum within years
         cell_methods = re_sub('(?<=[^\s])\)', ' )', cell_methods).split()
 
         while cell_methods:
-            cm = cls() #CellMethod()
+            cm = cls()
 
             axes  = []
             while cell_methods:
@@ -346,7 +348,7 @@ Cell methods    : time: minimum within years
             if n_intervals > 1 and n_intervals != len(axes):
                 raise ValueError("0798798  ")
 
-            cm.intervals = tuple(intervals)
+            cm.interval = tuple(intervals)
 
             out.append(cm)
         #--- End: while
@@ -542,7 +544,7 @@ Describes how the cell values have been determined or derived.
 #    def names(self):
 #        self._.names = ()
     @property
-    def intervals(self):
+    def interval(self):
         '''
 
 Each cell method's interval keyword(s).
@@ -551,36 +553,36 @@ Each cell method's interval keyword(s).
 
 >>> c
 <CF CellMethod: time: minimum>
->>> c.intervals
+>>> c.interval
 ()
->>> c.intervals = ['1 hr']
+>>> c.interval = ['1 hr']
 >>> c
 <CF CellMethod: time: minimum (interval: 1 hr)>
->>> c.intervals
+>>> c.interval
 (<CF Data: 1 hr>,)
->>> c.intervals = [cf.Data(7.5 'minutes')]
+>>> c.interval = [cf.Data(7.5 'minutes')]
 >>> c
 <CF CellMethod: time: minimum (interval: 7.5 minutes)>
->>> c.intervals
+>>> c.interval
 (<CF Data: 7.5 minutes>,)
->>> del c.intervals        
+>>> del c.interval
 >>> c
 <CF CellMethods: time: minimum>
 
 >>> c
 <CF CellMethod: lat: lon: mean>
->>> c.intervals = ['0.2 degree_N', cf.Data(0.1 'degree_E')]
+>>> c.interval = ['0.2 degree_N', cf.Data(0.1 'degree_E')]
 >>> c
 <CF CellMethod: lat: lon: mean (interval: 0.1 degree_N interval: 0.2 degree_E)>
 
         '''
-        return self._intervals
+        return self._interval
 
-    @intervals.setter
-    def intervals(self, value):
+    @interval.setter
+    def interval(self, value):
         if not isinstance(value, (tuple, list)):
             raise ValueError(
-"intervals attribute must be a tuple or list, not {0!r}".format(
+"interval attribute must be a tuple or list, not {0!r}".format(
     value.__class__.__name__))
         
         # Parse the intervals
@@ -623,11 +625,11 @@ Each cell method's interval keyword(s).
             values.append(d)
         #--- End: for
 
-        self._intervals = tuple(values)
+        self._interval = tuple(values)
     #--- End: def
-    @intervals.deleter
-    def intervals(self):
-        self._intervals = ()
+    @interval.deleter
+    def interval(self):
+        self._interval = ()
 
     @property
     def axes(self):
@@ -695,7 +697,7 @@ corresponding dimension or dimensions.
                 string.extend((portion, p))
         #--- End: for
 
-        intervals = self.intervals
+        intervals = self.interval
         if intervals:
             x = ['(']
 
@@ -727,9 +729,9 @@ corresponding dimension or dimensions.
             c = self
 
         n_axes = len(c._axes)
-        intervals = c._intervals
+        intervals = c._interval
         if n_axes > 1 and len(intervals) == 1:
-            c._intervals *= n_axes
+            c._interval *= n_axes
 
         return c
     #--- End: def
@@ -749,14 +751,14 @@ corresponding dimension or dimensions.
             axes2.append(axes[i])
         self._axes = tuple(axes2)
 
-        intervals = self._intervals
+        intervals = self._interval
         if len(intervals) <= 1:
             return
 
         intervals2 = []
         for i in argsort:
             intervals2.append(intervals[i])
-        self._intervals = tuple(intervals2)
+        self._interval = tuple(intervals2)
     #--- End: def
 
     def remove_axes(self, axes):
@@ -771,23 +773,23 @@ corresponding dimension or dimensions.
     None
 
         '''
-        if len(self._intervals) <= 1:
+        if len(self._interval) <= 1:
             self._axes = tuple([axis for axis in self._axes if axis not in axes])
             if not len(self._axes):
-                self._intervals = ()
+                self._interval = ()
             return
         
         # Still here?
         _axes = []
         _intervals = []
 
-        for axis, interval in zip(self._axes, self._intervals):
+        for axis, interval in zip(self._axes, self._interval):
             if axis not in axes:
                 _axes.append(axis)
                 _intervals.append(interval)
 
-        self._axes      = tuple(_axes)
-        self._intervals = tuple(_intervals)
+        self._axes     = tuple(_axes)
+        self._interval = tuple(_intervals)
     #--- End: def
 
     def change_axes(self, axis_map, copy=True):
@@ -831,11 +833,11 @@ corresponding dimension or dimensions.
         new._within  = self._within   
         new._over    = self._over     
 
-        intervals = self.intervals
+        intervals = self.interval
         if intervals:
-            new.intervals = tuple([i.copy() for i in intervals])
+            new.interval = tuple([i.copy() for i in intervals])
         else:
-            new.intervals = ()
+            new.interval = ()
 
         return new
     #--- End: def
@@ -905,14 +907,14 @@ The `!axes` attribute is ignored in the comparison.
         if 'intervals' in ignore:
             return True
 
-        intervals0 = self.intervals
-        intervals1 = other.intervals
+        intervals0 = self.interval
+        intervals1 = other.interval
         if intervals0:
             if not intervals1:
                 if traceback:
                     print(
 "{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.intervals, other.intervals))
+    self.__class__.__name__, self.interval, other.interval))
                 return False
             #--- End: if
             
@@ -920,7 +922,7 @@ The `!axes` attribute is ignored in the comparison.
                 if traceback:
                     print(
 "{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.intervals, other.intervals))
+    self.__class__.__name__, self.interval, other.interval))
                 return False
             #--- End: if
             
@@ -932,14 +934,14 @@ The `!axes` attribute is ignored in the comparison.
                     if traceback:
                         print(
 "{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.intervals, other.intervals))
+    self.__class__.__name__, self.interval, other.interval))
                     return False
             #--- End: for
 
         elif intervals1:
             if traceback:
                 print("{}: Different intervals: {!r} != {!r}".format(
-                    self.__class__.__name__, self.intervals, other.intervals))
+                    self.__class__.__name__, self.interval, other.interval))
             return False
         #--- End: if
 
@@ -949,7 +951,7 @@ The `!axes` attribute is ignored in the comparison.
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
         '''True if two cell methods are equivalent, False otherwise.
 
-The `axes` and `intervals` attributes are ignored in the comparison.
+The `axes` and `interval` attributes are ignored in the comparison.
 
 :Parameters:
 
@@ -998,32 +1000,32 @@ The `axes` and `intervals` attributes are ignored in the comparison.
         other1.sort(argsort=argsort)
         self1 = self
 
-        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('intervals',)):
+        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('interval',)):
             if traceback:
                 print("{0}: Nonequivalent: {1!r}, {2!r}".format(
                     self.__class__.__name__, self, other))
             return False
         #--- End: if
 
-        if len(self1.intervals) != len(other1.intervals):
+        if len(self1.interval) != len(other1.interval):
             self1 = self1.expand_intervals(i=True)
             other1.expand_intervals(i=True)
-            if len(self1.intervals) != len(other1.intervals):
+            if len(self1.interval) != len(other1.interval):
                 if traceback:
                     print(
 "{0}: Different numbers of intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self1.intervals, other1.intervals))
+    self.__class__.__name__, self1.interval, other1.interval))
                 return False
         #--- End: if
 
-        intervals0 = self1.intervals
+        intervals0 = self1.interval
         if intervals0:
-            for data0, data1 in zip(intervals0, other1.intervals):
+            for data0, data1 in zip(intervals0, other1.interval):
                 if not data0.allclose(data1, rtol=rtol, atol=atol):
                     if traceback:
                         print(
 "{0}: Different interval data: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.intervals, other.intervals))
+    self.__class__.__name__, self.interval, other.interval))
                     return False
         #--- End: if
 
@@ -1053,7 +1055,7 @@ Return a string of the cell method.
                 string.extend((portion, p))
         #--- End: for
 
-        intervals = self.intervals
+        intervals = self.interval
         if intervals:
             x = ['(']
 
