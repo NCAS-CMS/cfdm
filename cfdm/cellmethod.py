@@ -1035,84 +1035,96 @@ The `axes` and `interval` attributes are ignored in the comparison.
 #        return ' '.join(string)
 #    #--- End: def
 
-    def match(self, cell_method=None, axes=None, method=None,
-              where=None, within=None, over=None, interval=None,
-              comment=None):
+    def match(self, description=None, inverse=False):
         '''
         '''
-        if cell_method is not None:
-            if isinstance(cell_method, self.__class__):
-                c = cell_method.copy()
-            else:
-                c = self.parse(cell_method)
-                n = len(c)
-                if not n:
-                    return True
-                elif n > 1:
-                    raise ValueError("asdasd q3e 1q2z tribu de dana")
+        if not isinstance(description (list, tuple)):
+            description = (description,)
+
+        found_match = True
+
+        for d in description:
+            found_match = True
+            
+            if isinstance(d , basestring):
+                description = {'cell_method': d}
                 
-                c = c[0]
-        else:
-            c = type(self)(axes=axes, method=method, where=where,
-                           within=within, over=over, comment=comment,
-                           interval=interval)            
-        #--- End: if
+            c = type(self)(**d)
 
-        if c.axes:
-            if len(self.axes) != len(c.axes):
-                return False
-
-            c.sort(argsort=[c.axes.index(axis) for axis in self.axes])
-            
-            if self.axes != c.axes:
-                return False
-        #--- End: if
-        
-        if c.method:
-            if self.method != c.method:
-                return False
-        
-        if c.within:
-            if self.within != c.within:
-                return False
-            
-        if c.where:
-            if self.where != c.where:
-                return False
-            
-        if c.over:
-            if self.over != c.over:
-                return False
-        
-        if c.comment:
-            if self.comment != c.comment:
-                return False
-
-        if c.interval:
-            d = self.expand_intervals()
-            c.expand_intervals(copy=False)
-
-            intervals0 = list(self.interval)
-            intervals1 = list(c.interval)
-
-            if len(intervals0) != len(intervals1):
-                return False
-
-            for i0 in intervals0:
-                found_match = False
-                for n, i1 in enumerate(intervals1):
-                    if i0 == i1:
-                        del intervals1[n]
-                        found_match = True
-                        break
-                #--- End: for
-                
-                if not found_match:
+            has_axes = False
+            if c.axes:
+                has_axes = True
+                if len(self.axes) != len(c.axes):
                     return False
+    
+                c.sort(argsort=[c.axes.index(axis) for axis in self.axes])
+                
+                if self.axes != c.axes:
+                    found_match = False
+                    continue
+            #--- End: if
+    
+            for attr in ('method', 'within', 'over', 'where', 'comment'):
+                x = getattr(c, attr)
+                if x and x != getattr(self, attr):
+                    found_match = False
+                    break
             #--- End: for
-        #--- End: if
+        
+            if not found_match:
+                continue
+    
+            if c.interval:
+                d = self.expand_intervals()
+                c.expand_intervals(copy=False)
+                    
+                intervals0 = list(self.interval)
+                intervals1 = list(c.interval)
+    
+                if len(intervals0) != len(intervals1):
+                    return False
+    
+                if has_axes:                
+                    for i0, i1 in zip(intervals0, intervals1):
+                        if i0 != i1:
+                            found_match = False
+                            break
+                else:            
+                    for i0 in intervals0:
+                        found_match = False
+                        for n, i1 in enumerate(intervals1):
+                            if i0 == i1:
+                                del intervals1[n]
+                                found_match = True
+                                break
+            #--- End: if
 
-        return True
+            if not found_match:
+                continue
+        #--- End: for
+
+        return not bool(inverse)
     #--- End: def
 
+
+    def properties(self):
+        '''
+    '''
+        out = {'axes'    : self.axes    ,
+               'method'  : self.method  ,
+               'where'   : self.where   ,
+               'within'  : self.within  ,
+               'over'    : self.over    ,
+               'interval': self.interval,
+               'comment' : self.comment ,
+        }
+
+        for key, value in out.items():
+            if not value:
+                del out[key]
+        #--- End: for
+        
+        return out
+    #--- End: def
+    
 #--- End: class
