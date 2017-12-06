@@ -806,9 +806,17 @@ for details.
 'time: maximum (interval: 1.0 month) area: mean (area-weighted)'
 
         '''
-        axis_map = self.axes_names()
-        return ' '.join([cm.write(axis_map) for cm in self.Items.cell_methods])    
-
+        
+        return ' '.join(
+            [str(cm) #cm.write()
+             for cm in self._unconform_cell_methods(self.Items.cell_methods)]
+        )
+    #--- End: def
+    @cell_methods.setter
+    def cell_methods(self, value):
+        cm = self._CellMethod.parse(value)
+        self.Items.cell_methods = self._conform_cell_methods(cm)
+        
     @cell_methods.deleter
     def cell_methods(self):
         self.Items.cell_methods = []
@@ -1167,7 +1175,6 @@ field.
 :Parameters:
     
     display: `bool`, optional
-
         If False then return the description as a string. By default
         the description is printed.
     
@@ -1184,8 +1191,6 @@ field.
         indent1 = '    ' * _level
         indent2 = '    ' * (_level+1)
 
-#        string = ['%sAxes:' % indent1]
-        
         data_axes = self.data_axes()
         if data_axes is None:
             data_axes = ()
@@ -1292,15 +1297,11 @@ last values.
         # Cell methods
         cell_methods = self.Items.cell_methods
         if cell_methods:
-            string.append('') 
-            for value in cell_methods:
-                string.append(
-                    value.dump(display=False, field=self, _level=_level))
-
-#        # Flags
-#        flags = getattr(self, 'Flags', None)
-#        if flags is not None:            
-#            string.extend(('', flags.dump(display=False, _level=_level)))
+            cell_methods = self._unconform_cell_methods(cell_methods)
+            string.append('')
+            for cm in cell_methods:
+                string.append(cm.dump(display=False, _level=_level))
+#                   cm.dump(display=False, field=self, _level=_level))
 
         # Field ancillaries
         for key, value in sorted(self.Items.field_ancs().iteritems()):
@@ -1883,8 +1884,7 @@ axes, use the `remove_axes` method.
                 self._conform_ref(ref, copy=False)
 
         # Update cell methods
-        if self.Items.cell_methods:
-            self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
+        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
 
         return key
     #--- End: def
@@ -2470,23 +2470,23 @@ Set the time axis to be unlimited when written to a netCDF file:
         return org
     #--- End: def
 
-    @classmethod
-    def _match_naxes(cls, f, naxes):
-        '''????
-
-:Parameters:
-
-    f: `{+Variable}`
-
-    naxes: `int`
-
-:Returns:
-
-    out: `bool`
-
-        '''
-        return naxes == len(f.axes())
-    #--- End: def
+#    @classmethod
+#    def _match_naxes(cls, f, naxes):
+#        '''????
+#
+#:Parameters:
+#
+#    f: `{+Variable}`
+#
+#    naxes: `int`
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#        '''
+#        return naxes == len(f.axes())
+#    #--- End: def
 
     @classmethod
     def _match_items(cls, f, items):
@@ -2562,7 +2562,7 @@ Set the time axis to be unlimited when written to a netCDF file:
 
         '''
         for a in f._match_parse_description(axes):
-            if isinstance(a, dict) and len(a) == 1:
+            if len(a) == 1:
                 # Convert {None: value} to value
                 key, value = a.items()[0]
                 if key is None:
@@ -2576,39 +2576,56 @@ Set the time axis to be unlimited when written to a netCDF file:
         return True
     #--- End: def
 
-    def _match_cell_method(cls, f, cell_method):
-        '''Try to match items
+    def _match_cell_methods(cls, f, cell_methods):
+        '''Try to match cell methods
 
 :Parameters:
 
     f: `{+Variable}`
 
-    axes: 
+    cell_methods: `list` or `tuple` or `str` or `dict` or `CellMethod`
 
 :Returns:
 
     out: `bool`
 
         '''
-        if not f.cell_methods:
+        if not isinstance(cell_methods, (list, tuple)):
+            cell_methods = (cell_methods,)
+
+        cell_methods2 = []
+        for d in cell_methods:
+            if isinstance(d, dict):
+                cell_methods2.append(f._CellMethod(**d))
+            elif isinstance(d, basestring):
+                cell_methods2.extend(f._CellMethod.parse(d))
+            elif isinstance(d, f._CellMethod):
+                cell_methods2.append(d)
+        #--- End: for
+        cell_methods = cell_methods2
+
+        
+        f_cell_methods = f.items.cell_methods
+        nf = len(f_cell_methods)
+        n  = len(cell_methods) 
+         
+        n = len(cell_methods) 
+        if nf < n:
             return False
-
-        f_cell_method = f.cell_methods[-1]
-
-
-        for d in f._match_parse_description(cell_method):
-            c = f._CellMethod(**d)
-            c = f._conform_cell_methods((c,))[0]
-            if not f_cell_method.match(_CellMethod=c):
+        
+        # Still here?
+        cell_methods = f._conform_cell_methods(cell_methods)
+        for i, j in enumerate(range(nf-n, nf)):
+            if not f_cell_methods[j].match(cell_methods[i]):
                 return False
-        #--- End: for 
+        #--- End: for
         
         return True
     #--- End: def
 
     def match(self, description=None, ndim=None, items=None,
-              axes=None, naxes=None, inverse=False, cell_method=None,
-              customise=None):
+              axes=None, cell_methods=None, coordinate_references=None,
+              inverse=False, customise=None):
         '''
 .. versionadded:: 1.6
 
@@ -2628,20 +2645,17 @@ Set the time axis to be unlimited when written to a netCDF file:
         else:
             customise = {}
             
-        if naxes is not None:
-            customise[self._match_naxes] = naxes
-            
         if items is not None:
             customise[self._match_items] = items
 
         if axes is not None:
             customise[self._match_axes] = axes
 
-        if cell_method is not None:
-            customise[self._match_cell_method] = cell_method
+        if cell_methods is not None:
+            customise[self._match_cell_methods] = cell_methods
 
-        if coordinate_reference is not None:
-            customise[self._match_coordinate_reference] = coordinate_reference
+        if coordinate_references is not None:
+            customise[self._match_coordinate_references] = coordinate_references
 
         return super(Field, self).match(description=description,
                                         ndim=ndim,
@@ -3019,7 +3033,7 @@ None
             return axes[1]
     #--- End: def
 
-    def insert_cell_method(self, item):
+    def insert_cell_method(self, item, copy=True, axis_map=None):
         '''Insert cell method objects into the {+variable}.
 
 .. seealso:: `insert_aux`, `insert_measure`, `insert_ref`,
@@ -3036,11 +3050,12 @@ None
 :Examples:
 
         '''
-#        if isinstance(item, basestring):
-#            item = self._CellMethod.parse(item)
+        if copy:
+            item = item.copy()
             
         self.Items.cell_methods.append(item)
-        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
+        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods,
+                                                             axis_map=axis_map)
     #--- End: def
 
     def insert_axis(self, axis, key=None, replace=True, copy=True):
@@ -3266,7 +3281,7 @@ domain ancillary identifiers.
         ref.change_identifiers(identity_map, coordinate=False, copy=False)
     #--- End: def
 
-    def _conform_cell_methods(self, cell_methods):
+    def _conform_cell_methods(self, cell_methods, axis_map=None):
         '''
 
 :Examples 1:
@@ -3280,47 +3295,55 @@ domain ancillary identifiers.
 :Examples 2:
 
         '''
-        axis_map = {}
-        for cm in cell_methods:
-            for axis in cm.axes:
-                if axis in axis_map:
-                    continue
+        if not cell_methods:
+            return []
+        
+        if axis_map is None:
+            axis_map = {}
+            for cm in cell_methods:
+                for axis in cm.axes:
+                    if axis in axis_map:
+                        continue
 
-                if axis == 'area':
-                    axis_map[axis] = axis
-                    continue
+                    if axis == 'area':
+                        axis_map[axis] = axis
+                        continue
 
-                axis_map[axis] = self.axis(axis, default=axis, ndim=1, key=True)
-        #--- End: for
+                    axis_map[axis] = self.axis(axis, default=axis, ndim=1, key=True)
+        #--- End: if
 
         return [cm.change_axes(axis_map) for cm in cell_methods]
     #--- End: def
 
-#    def _unconform_cell_methods(self, cms, copy=True):
-#        '''
-#
-#:Parameters:
-#
-#:Returns:
-#
-#    out: `CellMethods`
-#
-#:Examples:
-#
-#>>> f._unconform_cell_methods()
-#
-#        '''
-#        axes_names = self.axes_names()
-#
-#        axis_map = {}
-#        for cm in cms:
-#            for axis in cm.axes:
-#                if axis in axes_names:
-#                    axis_map[axis] = axes_names.pop(axis)
-#        #--- End: for
-#
-#        return [cm.change_axes(axis_map) for cm in cms]
-#    #--- End: def
+    def _unconform_cell_methods(self, cell_methods, axis_map=None):
+        '''
+
+:Parameters:
+
+:Returns:
+
+    out: `CellMethods`
+
+:Examples:
+
+>>> f._unconform_cell_methods()
+
+        '''
+        if not cell_methods:
+            return []
+      
+        if axis_map is None:
+            axes_names = self.axes_names()
+            
+            axis_map = {}
+            for cm in cell_methods:
+                for axis in cm.axes:
+                    if axis in axes_names:
+                        axis_map[axis] = axes_names.pop(axis)
+        #--- End: if
+
+        return [cm.change_axes(axis_map) for cm in cell_methods]
+    #--- End: def
 
     def _unconform_ref(self, ref, copy=True):
         '''Replace the contents of ref.coordinates with coordinate identities
@@ -3582,9 +3605,9 @@ and ref.ancillaries with domain ancillary identities where possible.
         if refs:
             for ref in refs.itervalues():
                 self._conform_ref(ref, copy=False)
-                
-        if self.Items.cell_methods:
-            self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
+
+        # Update cell methods
+        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
 
         return key
     #--- End: def
@@ -4152,7 +4175,8 @@ may be selected with the keyword arguments.
 
     def remove_items(self, description=None, role=None, axes=None,
                      axes_all=None, axes_subset=None,
-                     axes_superset=None, ndim=None, inverse=False):
+                     axes_superset=None, ndim=None, inverse=False,
+                     copy=True):
         '''Remove and return items from the field.
 
 An item is either a dimension coordinate, an auxiliary coordinate, a
@@ -4206,6 +4230,7 @@ may be selected with the keyword arguments.
  
         # Remove coordinate references items
         for key, item in items.items():
+            
             if role(key) == 'r':
                 ref = Items.remove_item(key)
                 out[key ] = self._unconform_ref(ref)

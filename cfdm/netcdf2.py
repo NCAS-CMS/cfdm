@@ -931,7 +931,6 @@ ancillaries, field ancillaries).
         cell_methods = properties.pop('cell_methods', None)
         if cell_methods is not None:
             try:
-#                cell_methods = self.CellMethods(cell_methods)
                 cell_methods = self.CellMethod.parse(cell_methods)
             except:
                 # Something went wrong whilst trying to parse the cell
@@ -1274,8 +1273,8 @@ ancillaries, field ancillaries).
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
             for cm in cell_methods:
-                cm.axes = tuple([name_to_axis.get(axis, axis) for axis in cm.axes])
-                f.insert_cell_method(cm)
+                cm = cm.change_axes(name_to_axis)
+                f.insert_cell_method(cm, copy=False)
         #--- End: if
 
         # ----------------------------------------------------------------
@@ -2269,13 +2268,7 @@ and auxiliary coordinate roles for different data variables.
         if not netcdf_attrs:
             return
 
-        if hasattr(netcdf_var, 'setncatts'):
-            # Use the faster setncatts
-            netcdf_var.setncatts(netcdf_attrs)
-        else:
-            # Otherwise use the slower setncattr
-            for attr, value in netcdf_attrs.iteritems():
-                netcdf_var.setncattr(attr, value)
+        netcdf_var.setncatts(netcdf_attrs)
     #--- End: def
     
     def _write_character_array(self, array):
@@ -3592,9 +3585,9 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
             if formula_terms_name is None:
                 owning_coord = None
             else:
-                owning_coord = f.item(formula_terms_name, role=('d', 'a'), exact=True)
+                owning_coord = f.item(formula_terms_name, role=('d', 'a'))
     
-            z_axis = f.item_axes(formula_terms_name, role=('d', 'a'), exact=True)[0]
+            z_axis = f.item_axes(formula_terms_name, role=('d', 'a'))[0]
                 
             if owning_coord is not None:
                 # This formula_terms coordinate reference matches up with
@@ -3712,7 +3705,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         if cell_methods:
             axis_map = axis_to_ncdim.copy()
             axis_map.update(axis_to_ncscalar)
-            extra['cell_methods'] = ' '.join([cm.write(axis_map)
+            extra['cell_methods'] = ' '.join([str(cm.change_axes(axis_map))
                                               for cm in cell_methods])
     
         # Create a new data variable

@@ -154,9 +154,8 @@ Note that if the intention use this string in a CF-netCDF cell_methods
 attribute then the cell method's `!name` attribute may need to be
 modified, where appropriate, to reflect netCDF variable names.
 
-'''
-        return self.dump(display=False, prefix='')
-        string = ['{0}:'.format(axis) for axis in self._axes]
+'''      
+        string = ['{0}:'.format(axis) for axis in self.axes]
 
         method = self.method
         if method is None:
@@ -209,7 +208,7 @@ modified, where appropriate, to reflect netCDF variable names.
 #    #--- End: def
 
     @classmethod
-    def parse(cls, string=None, field=None):
+    def parse(cls, string=None): #, field=None):
         '''Parse a CF cell_methods string into this `cf.CellMethods` instance
 in place.
 
@@ -260,8 +259,8 @@ Cell methods    : time: minimum within years
 #                axes.append(None)
 
                 axis = cell_methods.pop(0)[:-1]
-                if field is not None:
-                    axis = field.axis(axis, key=True)
+#                if field is not None:
+#                    axis = field.axis(axis, key=True)
 
                 axes.append(axis)
             #--- End: while
@@ -649,7 +648,7 @@ Each cell method's interval keyword(s).
     def axes(self):
         self._axes = ()
 
-    def dump(self, display=True, prefix=None, field=None, _level=0):
+    def dump(self, display=True, _title=None, _level=0):
         '''
         
 Return a string containing a full description of the instance.
@@ -665,7 +664,7 @@ corresponding dimension or dimensions.
         the description is printed, i.e. ``c.dump()`` is equivalent to
         ``print c.dump(display=False)``.
 
-    field: `cf.Field`, optional
+#    field: `cf.Field`, optional
 
 :Returns:
 
@@ -675,51 +674,12 @@ corresponding dimension or dimensions.
 :Examples:
          
         '''
-        if prefix is None:
-            prefix = 'Cell Method: '
+        indent0 = '    ' * _level
 
-        if not field:
-            names = self.axes
-        else:
-            names = [field.axis_name(axis, default=axis) for axis in self.axes]
+        if _title is None:
+            _title = 'Cell Method: '
 
-        string = ['{0}{1}:'.format(prefix, axis) for axis in names]
-
-        method = self.method
-        if method is None:
-            method = ''
-
-        string.append(method)
-
-        for portion in ('within', 'where', 'over'):
-            p = getattr(self, portion, None)
-            if p is not None:
-                string.extend((portion, p))
-        #--- End: for
-
-        intervals = self.interval
-        if intervals:
-            x = ['(']
-
-            y = ['interval: {0}'.format(data) for data in intervals]
-            x.append(' '.join(y))
-
-            if self.comment is not None:
-                x.append(' comment: {0}'.format(self.comment))
-
-            x.append(')')
-
-            string.append(''.join(x))
-
-        elif self.comment is not None:
-            string.append('({0})'.format(self.comment))
-
-        string = ' '.join(string)
-
-        if display:
-            print string
-        else:
-            return string
+        return indent0 + _title + str(self)
     #--- End: def
 
     def expand_intervals(self, copy=True):
@@ -1033,1085 +993,126 @@ The `axes` and `interval` attributes are ignored in the comparison.
         return True
     #--- End: def
 
-    def write(self, axis_map={}):
-        '''
-
-Return a string of the cell method.
-
-
-'''
-        string = ['{0}:'.format(axis_map.get(axis, axis))
-                  for axis in self._axes]
-
-        method = self._method
-        if method is None:
-            return ''
-
-        string.append(method)
-
-        for portion in ('within', 'where', 'over'):
-            p = getattr(self, portion, None)
-            if p is not None:
-                string.extend((portion, p))
-        #--- End: for
-
-        intervals = self.interval
-        if intervals:
-            x = ['(']
-
-            y = ['interval: {0}'.format(data) for data in intervals]
-            x.append(' '.join(y))
-
-            if self.comment is not None:
-                x.append(' comment: {0}'.format(self.comment))
-
-            x.append(')')
-
-            string.append(''.join(x))
-
-        elif self.comment is not None:
-            string.append('({0})'.format(self.comment))
-
-        return ' '.join(string)
-    #--- End: def
+#    def write(self, axis_map={}):
+#        '''
+#
+#Return a string of the cell method.
+#
+#
+#'''
+#        string = ['{0}:'.format(axis)
+#                  for axis in self.change_axes(axis_map).axes]
+#
+#        method = self._method
+#        if method is None:
+#            return ''
+#
+#        string.append(method)
+#
+#        for portion in ('within', 'where', 'over'):
+#            p = getattr(self, portion, None)
+#            if p is not None:
+#                string.extend((portion, p))
+#        #--- End: for
+#
+#        intervals = self.interval
+#        if intervals:
+#            x = ['(']
+#
+#            y = ['interval: {0}'.format(data) for data in intervals]
+#            x.append(' '.join(y))
+#
+#            if self.comment is not None:
+#                x.append(' comment: {0}'.format(self.comment))
+#
+#            x.append(')')
+#
+#            string.append(''.join(x))
+#
+#        elif self.comment is not None:
+#            string.append('({0})'.format(self.comment))
+#
+#        return ' '.join(string)
+#    #--- End: def
 
     def match(self, cell_method=None, axes=None, method=None,
-              where=None, within=None, over=None, comment=None): #interval=None, ):
+              where=None, within=None, over=None, interval=None,
+              comment=None):
         '''
         '''
-        c = type(self)(cell_method=cell_method, axes=axes,
-                       method=method, where=where, within=within,
-                       over=over, interval=interval, comment=comment)
+        if cell_method is not None:
+            if isinstance(cell_method, self.__class__):
+                c = cell_method.copy()
+            else:
+                c = self.parse(cell_method)
+                n = len(c)
+                if not n:
+                    return True
+                elif n > 1:
+                    raise ValueError("asdasd q3e 1q2z tribu de dana")
+                
+                c = c[0]
+        else:
+            c = type(self)(axes=axes, method=method, where=where,
+                           within=within, over=over, comment=comment,
+                           interval=interval)            
+        #--- End: if
 
-        is_sorted = False
-        
         if c.axes:
             if len(self.axes) != len(c.axes):
                 return False
-            
+
             c.sort(argsort=[c.axes.index(axis) for axis in self.axes])
-            is_sorted = True
             
             if self.axes != c.axes:
                 return False
         #--- End: if
         
         if c.method:
-            if self.method != method:
+            if self.method != c.method:
                 return False
         
         if c.within:
-            if self.within != within:
+            if self.within != c.within:
                 return False
             
-         if c.where:
-            if self.where != where:
+        if c.where:
+            if self.where != c.where:
                 return False
             
-         if c.over:
-            if self.over != over
+        if c.over:
+            if self.over != c.over:
                 return False
-            
-         if c.comment:
-            if self.comment != comment
+        
+        if c.comment:
+            if self.comment != c.comment:
                 return False
 
         if c.interval:
+            d = self.expand_intervals()
             c.expand_intervals(copy=False)
-            if len(self.interval) != len(c.interval):
+
+            intervals0 = list(self.interval)
+            intervals1 = list(c.interval)
+
+            if len(intervals0) != len(intervals1):
                 return False
 
-            if not is_sorted:
-                c_interval = sorted(c.interval)
-                self_interval = sorted(self.interval)
-            
-            if self_interval != c_interval:
-                return False
+            for i0 in intervals0:
+                found_match = False
+                for n, i1 in enumerate(intervals1):
+                    if i0 == i1:
+                        del intervals1[n]
+                        found_match = True
+                        break
+                #--- End: for
+                
+                if not found_match:
+                    return False
+            #--- End: for
         #--- End: if
 
         return True
     #--- End: def
 
 #--- End: class
-
-## ====================================================================
-##
-## CellMethods object
-##
-## ====================================================================
-#
-#class CellMethods(list):
-#    '''
-#
-#A CF cell methods object to describe the characteristic of a field
-#that is represented by cell values.
-#
-#'''
-#
-#    def __init__(self, *cell_methods):
-#        '''
-#
-#**Initialization**
-#
-#:Parameters:
-#
-#    string : str or cf.CellMethod or cf.CellMethods, optional
-#        Initialize new instance from a CF-netCDF-like cell methods
-#        string. See the `parse` method for details. By default an
-#        empty cell methods is created.
-#
-#:Examples:
-#
-#>>> c = cf.CellMethods()
-#>>> c = cf.CellMethods('time: max: height: mean')
-#        '''
-#        if cell_methods and len(cell_methods) == 1:
-#            cell_methods = cell_methods[0]
-#            if isinstance(cell_methods, basestring):
-#                cell_methods = self._parse(cell_methods)
-#
-#        super(CellMethods, self).__init__(cell_methods)
-#    #--- End: def
-#
-#    # ================================================================
-#    # Overloaded list methods
-#    # ================================================================
-#    def __getslice__(self, i, j):
-#        '''
-#
-#Called to implement evaluation of f[i:j]
-#
-#f.__getslice__(i, j) <==> f[i:j]
-#
-#:Examples 1:
-#
-#>>> g = f[0:1]
-#>>> g = f[1:-4]
-#>>> g = f[:1]
-#>>> g = f[1:]
-#
-#:Returns:
-#
-#    out : cf.CellMethods
-#
-#'''
-#        return type(self)(list.__getslice__(self, i, j))
-#    #--- End: def
-#
-#    def __getitem__(self, index):
-#        '''Called to implement evaluation of f[index]
-#
-#f.__getitem_(index) <==> f[index]
-#
-#:Examples 1:
-#
-#>>> g = f[0]
-#>>> g = f[-1:-4:-1]
-#>>> g = f[2:2:2]
-#
-#:Returns:
-#
-#    out : cf.CellMethod or cf.CellMethods
-#        If *index* is an integer then a cell method is returned. If
-#        *index* is a slice then a sequence of cell methods are
-#        returned, which may be empty.
-#
-#        '''
-#        out = list.__getitem__(self, index)
-#        if isinstance(out, list):
-#            return type(self)(out)
-#        return out
-#    #--- End: def
-#
-#    def __deepcopy__(self, memo):
-#        '''
-#Used if copy.deepcopy is called on the variable.
-#
-#'''
-#        return self.copy()
-#    #--- End: def
-#
-#    def __hash__(self):
-#        '''
-#
-#x.__hash__() <==> hash(x)
-#
-#'''
-#        return hash(str(self))
-#    #--- End: def
-#
-#    def __repr__(self):
-#        '''
-#x.__repr__() <==> repr(x)
-#
-#'''
-#        return '<CF %s: %s>' % (self.__class__.__name__, str(self))
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''
-#
-#x.__str__() <==> str(x)
-#
-#'''        
-#        return ' '.join([str(cm) for cm in self])
-#    #--- End: def
-#
-#    def __eq__(self, other):
-#        '''
-#
-#x.__eq__(y) <==> x==y
-#
-#'''
-#        return self.equals(other)
-#    #--- End: def
-#
-#    def __ne__(self, other):
-#        '''
-#
-#x.__ne__(y) <==> x!=y
-#
-#'''
-#        return not self.__eq__(other)
-#    #--- End: def
-#
-#    def _parse(self, string=None, field=None):
-#        '''Parse a CF cell_methods string into this `cf.CellMethods` instance in
-#place.
-#
-#:Parameters:
-#
-#    string: `str`, optional
-#        The CF cell_methods string to be parsed into the
-#        `cf.CellMethods` object. By default the cell methods will be
-#        empty.
-#
-#:Returns:
-#
-#    out: `list`
-#
-#:Examples:
-#
-#>>> c = cf.CellMethods()
-#>>> c = c._parse('time: minimum within years time: mean over years (ENSO years)')    
-#>>> print c
-#Cell methods    : time: minimum within years
-#                  time: mean over years (ENSO years)
-#
-#        '''
-#        if not string:
-#            return []
-#
-#        out = []
-#
-#        # Split the cell_methods string into a list of strings ready
-#        # for parsing into the result list. E.g.
-#        #   'lat: mean (interval: 1 hour)'
-#        # maps to 
-#        #   ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
-#        cell_methods = re_sub('\((?=[^\s])' , '( ', string)
-#        cell_methods = re_sub('(?<=[^\s])\)', ' )', cell_methods).split()
-#
-#        while cell_methods:
-#            cm = CellMethod()
-#
-#            axes  = []
-#            while cell_methods:
-#                if not cell_methods[0].endswith(':'):
-#                    break
-#
-#                # Check that "name" ebds with colon? How? ('lat: mean (area-weighted) or lat: mean (interval: 1 degree_north comment: area-weighted)')
-#
-##                names.append(cell_methods.pop(0)[:-1])            
-##                axes.append(None)
-#
-#                axis = cell_methods.pop(0)[:-1]
-#                if field is not None:
-#                    axis = field.axis(axis, key=True)
-#
-#                axes.append(axis)
-#            #--- End: while
-#            cm.axes  = axes
-#
-#            if not cell_methods:
-#                out.append(cm)
-#                break
-#
-#            # Method
-#            cm.method = cell_methods.pop(0)
-#
-#            if not cell_methods:
-#                out.append(cm)
-#                break
-#
-#            # Climatological statistics and statistics which apply to
-#            # portions of cells
-#            while cell_methods[0] in ('within', 'where', 'over'):
-#                attr = cell_methods.pop(0)
-#                setattr(cm, attr, cell_methods.pop(0))
-#                if not cell_methods:
-#                    break
-#            #--- End: while
-#            if not cell_methods: 
-#                out.append(cm)
-#                break
-#
-#            # interval and comment
-#            intervals = []
-#            if cell_methods[0].endswith('('):
-#                cell_methods.pop(0)
-#
-#                if not (re_search('^(interval|comment):$', cell_methods[0])):
-#                    cell_methods.insert(0, 'comment:')
-#                           
-#                while not re_search('^\)$', cell_methods[0]):
-#                    term = cell_methods.pop(0)[:-1]
-#
-#                    if term == 'interval':
-#                        interval = cell_methods.pop(0)
-#                        if cell_methods[0] != ')':
-#                            units = cell_methods.pop(0)
-#                        else:
-#                            units = None
-#
-#                        try:
-##                            parsed_interval = float(ast_literal_eval(interval))
-#                            parsed_interval = ast_literal_eval(interval)
-#                        except:
-#                            raise ValueError(
-#"Unparseable cell methods interval: {!r}".format(
-#    interval+' '+units if units is not None else interval))
-#                            
-#                        try:
-#                            intervals.append(self._Data(parsed_interval, units))
-#                        except:
-#                            raise ValueError(
-#"Unparseable cell methods interval: {!r}".format(
-#    interval+' '+units if units is not None else interval))
-#                            
-#                        continue
-#                    #--- End: if
-#
-#                    if term == 'comment':
-#                        comment = []
-#                        while cell_methods:
-#                            if cell_methods[0].endswith(')'):
-#                                break
-#                            if cell_methods[0].endswith(':'):
-#                                break
-#                            comment.append(cell_methods.pop(0))
-#                        #--- End: while
-#                        cm.comment = ' '.join(comment)
-#                    #--- End: if
-#
-#                #--- End: while 
-#
-#                if cell_methods[0].endswith(')'):
-#                    cell_methods.pop(0)
-#            #--- End: if
-#
-#            n_intervals = len(intervals)          
-#            if n_intervals > 1 and n_intervals != len(axes):
-#                raise ValueError("0798798  ")
-#
-#            cm.intervals = tuple(intervals)
-#
-#            out.append(cm)
-#        #--- End: while
-#
-#        return out
-#    #--- End: def
-#
-#    @property
-#    def axes(self):
-#        return tuple([cm.axes for cm in self])
-# 
-#    @axes.setter
-#    def axes(self, value):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#        if not self:
-#            raise ValueError("Can't update empty cell methods list")
-#
-#        if not isinstance(value, (tuple, list)):
-#            raise ValueError("%s axes attribute must be a tuple or list" %
-#                             self.__class__.__name__)
-#        
-#        self[0].axes = value
-#    #--- End: def
-#
-#    @axes.deleter
-#    def axes(self):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#
-#        if self:
-#            self[0].axes = ()
-#    #--- End: def
-#
-#    @property
-#    def comment(self):
-#        '''
-#         
-#Each cell method's comment keyword.
-#
-#'''
-#        return tuple([cm.comment for cm in self])
-#
-#    @comment.deleter
-#    def comment(self):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#        
-#        if self:
-#            self[0].comment = None
-#    #--- End: def
-# 
-#    @property
-#    def method(self):
-#        '''
-#
-#Each cell method's method keyword.
-#
-#These describe how the cell values of field have been determined or
-#derived.
-#
-#:Examples:
-#
-#>>> c = cf.CellMethods('time: minimum area: mean')       
-#>>> c
-#<CF CellMethods: time: minimum area: mean>
-#>>> c.method
-#['minimum', 'mean']
-#>>> c[1].method = 'variance'
-#>>> c.method
-#['minimum', 'variance']
-#>>> c
-#<CF CellMethods: time: minimum area: variance>
-#>>> d = c[1]
-#>>> d
-#<CF CellMethods: area: variance>
-#>>> d.method
-#['variance']
-#>>> d.method = 'maximum'
-#>>> d.method
-#['maximum']
-#>>> c
-#<CF CellMethods: time: minimum area: maximum>
-#
-#'''
-#        return tuple([cm.method for cm in self])
-#    #--- End: def
-#
-#    @method.setter
-#    def method(self, value):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#        if not self:
-#            raise ValueError("Can't update empty cell methods list")
-#        
-#        self[0].method = value
-#    #--- End: def
-# 
-#    @method.deleter
-#    def method(self):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#
-#        if self:
-#            self[0].method = None
-#    #--- End: def
-# 
-#    @property
-#    def intervals(self):
-#        '''
-#
-#Each cell method's interval keyword(s).
-#
-#'''
-#        return tuple([cm.intervals for cm in self])
-#
-#    @intervals.setter
-#    def intervals(self, value):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#        if not self:
-#            raise ValueError("Can't update empty cell methods list")
-#            
-#        if not isinstance(value, (tuple, list)):
-#            raise ValueError(
-#"{0} intervals attribute must be a tuple or list, not a {1}".format(
-#    self.__class__.__name__, value.__class__.__name__))
-#        
-#        # Parse the intervals
-#        values = []
-#        for interval in value:
-#            if isinstance(interval, basestring):
-#                i = interval.split()
-#
-#                try:
-#                    x = ast_literal_eval(i.pop(0))
-#                except:
-#                    raise ValueError(
-#"Unparseable cell methods interval: {0!r}".format(interval))
-#
-#                if interval:
-#                    units = ' '.join(i)
-#                else:
-#                    units = None
-#                    
-#                try:
-#                    d = self._Data(x, units)
-#                except:
-#                    raise ValueError(
-#"Unparseable cell method interval: {0!r}".format(interval))
-#            else:
-#                try:
-#                    d = self._Data.asdata(interval, copy=True)
-#                except:
-#                    raise ValueError(
-#"Unparseable cell method interval: {0!r}".format(interval))
-#            #--- End: if
-#            
-#            if d.size != 1:
-#                raise ValueError(
-#"Unparseable cell method interval: {0!r}".format(interval))
-#                
-#            if d.ndim > 1:
-#                d.squeeze(copy=False)
-#
-#            values.append(d)
-#        #--- End: for
-#
-#        self[0].intervals = tuple(values)
-#    #--- End: def
-# 
-#    @intervals.deleter
-#    def intervals(self):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider del c[i].intervals")
-#        
-#        if self:
-#            self[0].intervals = ()
-#    #--- End: def
-# 
-#    @property
-#    def over(self):
-#        '''
-#         
-#Each cell method's over keyword.
-#
-#These describe how climatological statistics have been derived.
-#
-#.. seealso:: `within`
-#
-#:Examples:
-#
-#>>> c = cf.CellMethods('time: minimum area: mean')       
-#>>> c
-#<CF CellMethods: time: minimum time: mean>
-#>>> c.over
-#[None, None]
-#>>> c[0].within = 'years'
-#>>> c[1].over = 'years'
-#>>> c.over
-#>>> [None, 'years']
-#>>> c
-#<CF CellMethods: time: minimum within years time: mean over years>
-#>>> d = c[1]
-#>>> d
-#<CF CellMethods: time: mean over years>
-#>>> del d.over
-#>>> d.over
-#[None]
-#>>> d
-#<CF CellMethods: time: mean>
-#>>> del c[0].within
-#>>> c.within
-#()        
-#>>> c
-#<CF CellMethods: time: minimum time: mean>
-#
-#'''
-#        return tuple([cm.over for cm in self])
-#    #--- End: def
-#
-#    @over.setter
-#    def over(self, value):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].over=value")
-#        if not self:
-#            raise ValueError("Can't update empty cell methods list")
-#
-#        self[0].over = value
-#    #--- End: def
-# 
-#    @over.deleter
-#    def over(self):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].over=value")
-#        
-#        if self:
-#            self[0].over = None
-#    #--- End: def
-# 
-#    @property
-#    def where(self):
-#        '''
-#         
-#Each cell method's where keyword.
-#
-#'''
-#        return tuple([cm.where for cm in self])
-#    #--- End: def
-# 
-#    @where.setter
-#    def where(self, value):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#        if not self:
-#            raise ValueError("Can't update empty cell methods list")
-#
-#        self[0].where = value
-#    #--- End: def
-# 
-#    @where.deleter
-#    def where(self):
-#        if len(self) > 1:
-#            raise ValueError(
-#"Must select a cell method to update. Consider c[i].intervals=value")
-#        
-#        if self:
-#            self[0].where = None
-#    #--- End: def
-# 
-#    @property
-#    def within(self):
-#        '''
-#         
-#Each cell method's within keyword.
-#
-#These describe how climatological statistics have been derived.
-#
-#.. seealso:: `over`
-#
-#:Examples:
-#
-#>>> c = cf.CellMethods('time: minimum area: mean')       
-#>>> c
-#<CF CellMethods: time: minimum time: mean>
-#>>> c.within
-#(None, None)
-#>>> c[0].within = 'years'
-#>>> c[1].over = 'years'
-#>>> c
-#<CF CellMethods: time: minimum within years area: mean over years>
-#>>> c.within
-#>>> ('years', None)
-#>>> del c[0].within
-#>>> c
-#<CF CellMethods: time: minimum time: mean over years>
-#>>> c.within
-#>>> (None, None)
-#'''
-#        return tuple([cm.within for cm in self])
-#    #--- End: def
-# 
-#    def copy(self):
-#        '''
-#
-#Return a deep copy.
-#
-#``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
-#
-#:Returns:
-#
-#    out : 
-#        The deep copy.
-#
-#:Examples:
-#
-#>>> d = c.copy()
-#
-#'''   
-#        return type(self)([cm.copy() for cm in self])
-#    #--- End: def
-#
-#    def change_axes(self, axis_map, copy=False):
-#        '''
-#    '''
-#        if copy:
-#            cms = self.copy()
-#        else:
-#            cms = self
-#
-#        for cm in cms:
-#            cm.change_axes(axis_map, copy=False)
-#
-#        return cms
-#    #--- End: def
-#
-#    def dump(self, display=True, prefix=None, field=None, _level=0):
-#        '''
-#        
-#Return a string containing a full description of the instance.
-#
-#If a cell methods 'name' is followed by a '*' then that cell method is
-#relevant to the data in a way which may not be precisely defined its
-#corresponding dimension or dimensions.
-#
-#:Parameters:
-#
-#    display: `bool`, optional
-#        If False then return the description as a string. By default
-#        the description is printed, i.e. ``c.dump()`` is equivalent to
-#        ``print c.dump(display=False)``.
-#
-#    prefix: `str`, optional
-#       Set the common prefix of component names. By default the
-#       instance's class name is used.
-#
-#    field: `cf.Field`, optional
-#
-#:Returns:
-#
-#    out: `str` or `None`
-#        A string containing the description.
-#
-#:Examples:
-#
-#        '''
-#        indent1 = '    ' * _level        
-#        
-#        if prefix is None:
-#            prefix = ''
-#        else:
-#            prefix = '{0}: '.format(prefix)
-#
-#        string = ['{0}{1}'.format(prefix, 
-#                                  cm.dump(display=False, field=field, _level=_level))
-#                  for cm in self]
-#        string = '\n'.join(string)
-#        
-#        if display:
-#            print string
-#        else:
-#            return string
-#    #--- End: def
-#
-#    def equals(self, other, rtol=None, atol=None,
-#               ignore_fill_value=False, traceback=False):
-#        '''
-#
-#True if two cell methods are equal, False otherwise.
-#
-#The `axes` attribute is ignored in the comparison.
-#
-#:Parameters:
-#
-#    other : 
-#        The object to compare for equality.
-#
-#    atol : float, optional
-#        The absolute tolerance for all numerical comparisons, By
-#        default the value returned by the `ATOL` function is used.
-#
-#    rtol : float, optional
-#        The relative tolerance for all numerical comparisons, By
-#        default the value returned by the `RTOL` function is used.
-#
-#    ignore_fill_value : bool, optional
-#        If True then data arrays with different fill values are
-#        considered equal. By default they are considered unequal.
-#
-#    traceback : bool, optional
-#        If True then print a traceback highlighting where the two
-#        instances differ.
-#
-#:Returns: 
-#
-#    out : bool
-#        Whether or not the two instances are equal.
-#
-#:Examples:
-#
-#'''
-#        if self is other:
-#            return True
-#
-#        # Check that each instance is the same type
-#        if self.__class__ != other.__class__:
-#            if traceback:
-#                print("{0}: Different types: {0} != {1}".format(
-#                    self.__class__.__name__,
-#                    other.__class__.__name__))
-#            return False
-#
-#        if len(self) != len(other):
-#            if traceback:
-#                print(
-#                    "{0}: Different numbers of cell methods: {1} != {2}".format(
-#                        self.__class__.__name__, len(self), len(other)))
-#            return False
-#    
-#        for cm0, cm1 in zip(self, other):
-#            if not cm0.equals(cm1, rtol=rtol, atol=atol,
-#                              ignore_fill_value=ignore_fill_value,
-#                              traceback=traceback):
-#                return False 
-#        #--- End: for
-#
-#        return True
-#    #--- End: def
-#
-#    def equivalent(self, other, rtol=None, atol=None, traceback=False):
-#        '''
-#
-#True if two cell methods are equivalent, False otherwise.
-#
-#The `axes` attributes are ignored in the comparison.
-#
-#:Parameters:
-#
-#    other : 
-#        The object to compare for equality.
-#
-#    atol : float, optional
-#        The absolute tolerance for all numerical comparisons, By
-#        default the value returned by the `ATOL` function is used.
-#
-#    rtol : float, optional
-#        The relative tolerance for all numerical comparisons, By
-#        default the value returned by the `RTOL` function is used.
-#
-#:Returns: 
-#
-#    out : bool
-#        Whether or not the two instances are equivalent.
-#
-#:Examples:
-#
-#'''
-#        if self is other:
-#            return True
-#
-#        # Check that each instance is the same type
-#        if self.__class__ != other.__class__:
-#            if traceback:
-#                print("{0}: Different types: {0} != {1}".format(
-#                    self.__class__.__name__, other.__class__.__name__))
-#            return False
-#
-#        if len(self) != len(other):
-#            if traceback:
-#                print(
-#"{0}: Different numbers of methods: {1} != {2}".format(
-#    self.__class__.__name__, len(self), len(other)))
-#            return False
-#    
-#        for cm0, cm1 in zip(self, other):
-#            if not cm0.equivalent(cm1, rtol=rtol, atol=atol, 
-#                                  traceback=traceback):
-#                if traceback:
-#                    print("{0}: Different cell method".format(self.__class__.__name__))
-#                return False 
-#        #--- End: for
-#
-#        return True
-#    #--- End: def
-#
-##    def has_cellmethod(self, other):
-##        '''
-##
-##Return True if and only if this cell methods is a super set of another.
-##
-##:Parameters:
-##
-##    other : cf.CellMethods
-##        The other cell methods for comparison.
-##
-##:Returns:
-##    out : bool
-##        Whether or not this cell methods is a super set of the other.
-##
-##:Examples:
-##
-##'''
-##        if len(other) != 1:
-##            return False
-##
-##        found_match = False
-##
-##        cm1 = other[0]
-##        for cm in self:
-##            if cm.equivalent(cm1):
-##                found_match = True
-##                break
-##        #--- End: for
-##
-##        return found_match
-##    #--- End: def
-#
-#    def inspect(self):
-#        '''
-#
-#Inspect the attributes.
-#
-#.. seealso:: `cf.inspect`
-#
-#:Returns: 
-#
-#    None
-#
-#'''
-#        print cf_inspect(self)
-#    #--- End: def
-#
-#    def remove_axes(self, axes):
-#        '''
-#        '''
-#        for cm in self:
-#            cm.remove_axes(axes)
-#    #--- End: def
-#
-#    def translate_from_netcdf(self, field):
-#        '''
-#
-#Translate netCDF variable names stored in the `!names` attribute into 
-#`axes` and `names` attributes.
-#
-#:Parameters:
-#
-#    field : cf.Field
-#        The field which provides the translation.
-#
-#:Returns:
-#
-#    out : cf.CellMethods
-#        A new cell methods instance with translated names.
-#
-#:Examples:
-#
-#>>> c = cf.CellMethods('t: mean lon: mean')
-#>>> c.names = (('t',), ('lon',))
-#>>> c.axes = ((None,), (None,))
-#>>> d = c.translate_from_net(f)
-#>>> d.names = (('time',), ('longitude',))
-#>>> d.axes = (('dim0',), ('dim2',))
-#>>> d
-#<CF CellMethods: 'time: mean longitude: mean')
-#
-#        '''
-#        cell_methods = self.copy()
-#
-#        # Change each names value to a standard_name (or coordinate
-#        # identifier) and create the axes attribute.
-#            
-#        # CF conventions (version 1.7): In the specification of this
-#        # attribute, name can be a dimension of the variable, a scalar
-#        # coordinate variable, a valid standard name, or the word
-#        # 'area'.
-#        for cm in cell_methods:
-#            names = cm.names
-#
-#            if names == ('area',):
-#                cm.axes = (None,)
-#                continue
-#
-#            names = list(names)
-#            axes  = []
-#
-#            dim_coords = field.dims()
-#
-#            # Still here?
-#            for i, name in enumerate(names):
-#                axis = None
-#                for axis, ncdim in field.ncdimensions.iteritems():
-#                    if name == ncdim:
-#                        break
-#                    
-#                    axis = None
-#                #--- End: for                    
-#
-#                if axis is not None:
-#                    # name is a netCDF dimension name (including
-#                    # scalar coordinates).
-#                    axes.append(axis)
-#                    if axis in dim_coords:
-#                        names[i] = dim_coords[axis].name(default=axis)
-#                    else:
-#                        names[i] = None
-#                else:                    
-#                    # name must (ought to) be a standard name
-#                    axes.append(field.axis({'standard_name': name},
-#                                           role='d', exact=True, key=True))
-#            #--- End: for
-#
-#            cm.names = tuple(names)
-#            cm.axes  = tuple(axes)
-#        #--- End: for
-#    
-#        return cell_methods
-#    #--- End: def
-#
-#    def translate_to_netcdf(self, axis_to_ncdim, axis_to_ncscalar):
-#        '''
-#
-#Translate `names` to CF-netCDF names.
-#
-#:Parameters:
-#
-#    axis_to_ncdim: dict
-#        The first dictionary which provides the translation.
-#
-#    axis_to_ncscalar: dict
-#        The alternative dictionary which provides the translation.
-#
-#:Returns:
-#
-#    out : cf.CellMethods
-#        A new cell methods instance with translated names.
-#
-#:Examples:
-#
-#>>> c = cf.CellMethods('t: mean lon: mean')
-#>>> c.names = (('t',), ('lon',))
-#>>> c.axes = ((None,), (None,))
-#>>> d = c.translate_to_netcdf(f)
-#>>> d.names = (('time',), ('longitude',))
-#>>> d.axes = (('dim0',), ('dim2',))
-#>>> d
-#<CF CellMethods: 'time: mean longitude: mean')
-#
-#        '''
-#        new = self.copy()
-#
-#        for cm in new:
-#            names = cm.names
-#            if names == ('area',):
-#                continue
-#
-#            cm.names = tuple([axis_to_ncdim.get(a, axis_to_ncscalar.get(a, n))
-#                              for a, n in zip(cm.axes, names)])
-#        #--- End: for
-#
-#        return new
-#    #--- End: def
-#
-#    def write(self, axis_map={}):
-#        '''
-#'''
-#        return ' '.join([c.write(axis_map) for c in self])
-#    #--- End: def
-#
-##--- End: class

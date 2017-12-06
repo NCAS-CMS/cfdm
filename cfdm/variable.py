@@ -2239,10 +2239,11 @@ Changing the elements of the returned view changes the data array.
     def _match_ndim(cls, v, ndim):
         '''
         '''
-        try:
-            return ndim == v.ndim
-        except AttributeError:
+        n = getattr(v, 'ndim', None)
+        if n is None:
             return False
+
+        return ndim == n
     #--- End: def
 
     @classmethod
@@ -2290,13 +2291,13 @@ Changing the elements of the returned view changes the data array.
  
                 elif prop == 'units':
                     # units
-                    x     = Units(v.units)
+                    x     = Units(getattr(v, 'units', None))
                     value = Units(value)
 
                 elif prop == 'calendar' and v.Units.isreftime:
                     # calendar (if units are reference time)
-                    x     = v.Units.canonical_calendar
-                    value = Units(calendar=value).canonical_calendar
+                    x     = Units(calendar=v.calendar)
+                    value = Units(calendar=value)
 
                 else:                    
                     # Any other CF property

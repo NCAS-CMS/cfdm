@@ -18,7 +18,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['test_Field_transpose','test_Field_squeeze']
-#        self.test_only = ['test_Field_match','test_Field_items']
+        self.test_only = ['test_Field_match','test_Field_items']
 #        self.test_only = ['test_Field_items']
 #        self.test_only = ['test_Field_axes','test_Field_data_axes']
 #        self.test_only = ['test_Field___getitem__']
@@ -225,17 +225,14 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(len(f.items('X', inverse=True)) == 12)
         self.assertTrue(len(f.items('Y', inverse=True)) == 12)
         self.assertTrue(len(f.items('Z', inverse=True)) == 12)
-        self.assertTrue(len(f.items(['X', 'Y', {'standard_name': 'longitude', 'units': 'radians'}])) == 3)
+        self.assertTrue(len(f.items(['X', 'Y', {'standard_name': 'longitude', 'units': 'degrees_east'}])) == 3)
         self.assertTrue(len(f.items(['X', 'Y', {'standard_name': 'longitude', 'units': 'K'}])) == 2)
 
         self.assertTrue(len(f.items(ndim=2)) == 5)
         self.assertTrue(len(f.items(axes='X', ndim=2)) == 5)
 
-        self.assertTrue(len(f.items(axes='X', ndim=2, match_and=False)) == 7)
-
         self.assertTrue(len(f.items('longitude', axes='X', ndim=2)) == 1)
         self.assertTrue(len(f.items('grid_longitude', axes='X', ndim=2)) == 0)
-        self.assertTrue(len(f.items('grid_longitude', axes='X', ndim=2, match_and=False)) == 7)
 
         self.assertTrue(len(f.items('atmosphere_hybrid_height_coordinate')) == 1)
 
@@ -278,48 +275,31 @@ class FieldTest(unittest.TestCase):
         f.long_name = 'qwerty'
         f.ncvar = 'tas'
         all_kwargs = (
-            {'inverse': False},
-            {'inverse': False, 'description': None},
-            {'inverse': False, 'description': {}},
-            {'inverse': False, 'description': []},
-            {'inverse': False, 'description': [None]},
-            {'inverse': False, 'description': [{}]},
-            {'inverse': False, 'description': [None, {}]},
-            {'inverse': False, 'description':  'eastward_wind'},
-            {'inverse': False, 'description':  'eastward_wind', 'exact': True},
-            {'inverse': False, 'description':  'eastward_'},
-            {'inverse': False, 'description':  'e.*_wind$'},
-            {'inverse': False, 'description':  'standard_name:eastward_wind'},
-            {'inverse': False, 'description':  'standard_name:eastward_wind', 'exact': True},
-            {'inverse': False, 'description':  'standard_name:eastward_'},
-            {'inverse': False, 'description': {'standard_name': 'eastward_wind'}},
-            {'inverse': False, 'description': {'standard_name': 'eastward_'}},
-            {'inverse': False, 'description': '.*_wind', 'exact': False},
-            {'inverse': False, 'description':  'long_name:qwerty'},
-            {'inverse': False, 'description':  'long_name:qwerty', 'exact': True},
-            {'inverse': False, 'description':  'long_name:qwe'},
-            {'inverse': False, 'description': {'long_name': 'qwerty'}},
-            {'inverse': False, 'description': {'long_name': 'qwe'}},
-            {'inverse': False, 'description': {'long_name': 'qwerty'}},
-            {'inverse': False, 'description': {'long_name': 'qwe'}, 'exact': False},
-            {'inverse': False, 'description': 'ncvar%tas'},
-            {'inverse': False, 'description': 'ncvar%tas', 'exact': True},
-            {'inverse': False, 'description': 'ncvar%ta'},
-            {'inverse': False, 'description': {None: 'ncvar%.*as$'}},
-            {'inverse': False, 'description': {None: 'ncvar%tas$'}},
-            {'inverse': False, 'description': {None: 'ncvar%tas'}},
-            {'inverse': False, 'description': {None: 'ncvar%ta'}},
-            #          
-            {'inverse': False, 'description':  'eastward_wind', 'ndim': 3},
-            {'inverse': False, 'description':  'BBB', 'ndim': 3, 'match_and': False},
-            {'inverse': False, 'description':  ['BBB', 'east'], 'ndim': 3, 'match_and': True},
-            {'inverse': False, 'ndim': 3},
+            {'description': None},
+            {'description': {}},
+            {'description': []},
+            {'description': [None]},
+            {'description': [{}]},
+            {'description': [None, {}]},
+            {'description': 'eastward_wind'},
+            {'description': 'ncvar%tas'},
+            {'description': 'long_name:qwerty'},
+            {'description': 'standard_name:eastward_wind'},
+            {'description': {'standard_name': 'eastward_wind'}},
+            {'description': {'long_name': 'qwerty'}},
+            {'description': {None: 'ncvar%tas'}},
+            {'description': {None: 'eastward_wind'}},
+            {'description': ['eastward_wind', 'foobar']},
+            {'description': ['eastward_wind', 'ncvar%tas']},
+            {'description': ['eastward_wind', 'ncvar%foo']},
+            {'description': ['eastward_wind', {'long_name': 'qwerty'}]},
+            {'description': ['eastward_wind', {'long_name': 'foobar'}]},
         )
 
         for kwargs in all_kwargs:
             self.assertTrue(f.match(**kwargs), 
                             'f.match(**{}) failed'.format(kwargs))
-            kwargs['inverse'] = not kwargs['inverse']
+            kwargs['inverse'] = True
             self.assertFalse(f.match(**kwargs),
                              'f.match(**{}) failed'.format(kwargs))
         #--- End: for
