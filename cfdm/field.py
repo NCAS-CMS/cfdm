@@ -2576,12 +2576,51 @@ Set the time axis to be unlimited when written to a netCDF file:
         return True
     #--- End: def
 
+    def _match_cell_method(cls, f, cell_method):
+        '''Try to match items
+
+:Parameters:
+
+    f: `{+Variable}`
+
+    axes: 
+
+:Returns:
+
+    out: `bool`
+
+        '''
+        if not f.cell_methods:
+            return False
+
+        f_cell_method = f.cell_methods[-1]
+
+
+        for d in f._match_parse_description(cell_method):
+            c = f._CellMethod(**d)
+            c = f._conform_cell_methods((c,))[0]
+            if not f_cell_method.match(_CellMethod=c):
+                return False
+        #--- End: for 
+        
+        return True
+    #--- End: def
+
     def match(self, description=None, ndim=None, items=None,
-              axes=None, naxes=None, inverse=False, customise=None):
+              axes=None, naxes=None, inverse=False, cell_method=None,
+              customise=None):
         '''
 .. versionadded:: 1.6
 
+:Examples 1:
+
 :Parameters:
+
+:Returns:
+
+    out: `bool`
+
+:Examples 2:
 
         '''
         if customise:
@@ -2597,6 +2636,12 @@ Set the time axis to be unlimited when written to a netCDF file:
 
         if axes is not None:
             customise[self._match_axes] = axes
+
+        if cell_method is not None:
+            customise[self._match_cell_method] = cell_method
+
+        if coordinate_reference is not None:
+            customise[self._match_coordinate_reference] = coordinate_reference
 
         return super(Field, self).match(description=description,
                                         ndim=ndim,

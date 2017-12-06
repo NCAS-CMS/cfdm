@@ -1091,27 +1091,19 @@ following:
 
 :Examples:
 
->>> print c.Units
-'Pa'
->>> c.Z
+>>> c.Units.equivalent(Units('Pa')) and c.Z
 True
 
->>> c.Units.equivalent(Units('K')) and c.positive == 'up'
-True
->>> c.Z
-True 
-
->>> c.axis == 'Z' and c.Z
+>>> (c.positive == 'up') and c.Z
 True
 
->>> print c.Units
-'sigma_level'
->>> c.Z
+>>> (c.ndim >= 1) and (c.axis == 'Z') and c.Z
 True
 
->>> c.standard_name
-'ocean_sigma_coordinate'
->>> c.Z
+>>> (c.units == 'sigma_level') and c.Z
+True
+
+>>> (c.standard_name == 'ocean_sigma_coordinate') and  c.Z
 True
 
 '''   

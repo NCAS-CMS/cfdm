@@ -35,7 +35,7 @@ Attribute    Description
 #        cls._Data = Data
 #        return cls
 
-    def __init__(self, cell_method=None, name=(), method=None,
+    def __init__(self, cell_method=None, axes=(), method=None,
                  where=None, within=None, over=None, interval=(),
                  comment=None):
         '''
@@ -47,7 +47,7 @@ Attribute    Description
 
             self.__dict__ = cell_method[0].__dict__.copy()
         else:
-            self.axes     = name
+            self.axes     = axes
             self._method  = method 
             self._where   = where  
             self._within  = within 
@@ -1008,8 +1008,8 @@ The `axes` and `interval` attributes are ignored in the comparison.
         #--- End: if
 
         if len(self1.interval) != len(other1.interval):
-            self1 = self1.expand_intervals(i=True)
-            other1.expand_intervals(i=True)
+            self1 = self1.expand_intervals(copy=False)
+            other1.expand_intervals(copy=False)
             if len(self1.interval) != len(other1.interval):
                 if traceback:
                     print(
@@ -1076,12 +1076,61 @@ Return a string of the cell method.
     #--- End: def
 
     def match(self, cell_method=None, axes=None, method=None,
-              where=None, within=None, over=None, interval=None,
-              comment=None):
+              where=None, within=None, over=None, comment=None): #interval=None, ):
         '''
-'''
+        '''
+        c = type(self)(cell_method=cell_method, axes=axes,
+                       method=method, where=where, within=within,
+                       over=over, interval=interval, comment=comment)
+
+        is_sorted = False
         
-        #--- End: def
+        if c.axes:
+            if len(self.axes) != len(c.axes):
+                return False
+            
+            c.sort(argsort=[c.axes.index(axis) for axis in self.axes])
+            is_sorted = True
+            
+            if self.axes != c.axes:
+                return False
+        #--- End: if
+        
+        if c.method:
+            if self.method != method:
+                return False
+        
+        if c.within:
+            if self.within != within:
+                return False
+            
+         if c.where:
+            if self.where != where:
+                return False
+            
+         if c.over:
+            if self.over != over
+                return False
+            
+         if c.comment:
+            if self.comment != comment
+                return False
+
+        if c.interval:
+            c.expand_intervals(copy=False)
+            if len(self.interval) != len(c.interval):
+                return False
+
+            if not is_sorted:
+                c_interval = sorted(c.interval)
+                self_interval = sorted(self.interval)
+            
+            if self_interval != c_interval:
+                return False
+        #--- End: if
+
+        return True
+    #--- End: def
 
 #--- End: class
 
