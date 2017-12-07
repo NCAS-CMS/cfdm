@@ -2540,7 +2540,7 @@ Set the time axis to be unlimited when written to a netCDF file:
 
         '''
         for description in f._match_parse_description(items):
-            if not bool(f.Items(description)):
+            if not bool(f.items(description)):
                 return False
         #--- End: for 
         
@@ -2603,8 +2603,7 @@ Set the time axis to be unlimited when written to a netCDF file:
                 cell_methods2.append(d)
         #--- End: for
         cell_methods = cell_methods2
-
-        
+    
         f_cell_methods = f.items.cell_methods
         nf = len(f_cell_methods)
         n  = len(cell_methods) 
@@ -2640,32 +2639,19 @@ Set the time axis to be unlimited when written to a netCDF file:
         if not isinstance(coordinate_references, (list, tuple)):
             coordinate_references = (coordinate_references,)
 
-        cell_methods2 = []
-        for d in cell_methods:
-            if isinstance(d, dict):
-                cell_methods2.append(f._CellMethod(**d))
-            elif isinstance(d, basestring):
-                cell_methods2.extend(f._CellMethod.parse(d))
-            elif isinstance(d, f._CellMethod):
-                cell_methods2.append(d)
+        coordinate_references2 = []
+        for d in coordinate_references:
+            if isinstance(d, basestring):
+                coordinate_references2.append({None: d})
+            else:
+                coordinate_references2.append(d)
         #--- End: for
-        cell_methods = cell_methods2
+        coordinate_references = coordinate_references2
 
-        
-        f_cell_methods = f.items.cell_methods
-        nf = len(f_cell_methods)
-        n  = len(cell_methods) 
-         
-        n = len(cell_methods) 
-        if nf < n:
-            return False
-        
-        # Still here?
-        cell_methods = f._conform_cell_methods(cell_methods)
-        for i, j in enumerate(range(nf-n, nf)):
-            if not f_cell_methods[j].match(cell_methods[i]):
+        for description in coordinate_references:
+            if not bool(f.Items(description, role='r')):
                 return False
-        #--- End: for
+        #--- End: for 
         
         return True
     #--- End: def
