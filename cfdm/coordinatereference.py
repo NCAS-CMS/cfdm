@@ -339,7 +339,7 @@ False
                 # units is a standard_name of a coordinate
                 if field is None:
                     raise ValueError("Set the field parameter")
-                coord = field.coord(canonical_units, exact=True)
+                coord = field.coord(canonical_units)
                 if coord is not None:
                     canonical_units = coord.Units
 
@@ -967,7 +967,6 @@ reference.
             self._ancillaries.clear()
     #---End: def
 
-# MOVE TO FUNCTIONS
     def _parse_match(self, match):
         '''Called by `match`
 
@@ -1010,7 +1009,7 @@ reference.
         return matches
     #--- End: def
 
-    def match(self, match=None, exact=False, match_all=True, inverse=False):
+    def match(self, description=None, inverse=False):
         '''Test whether or not the coordinate reference satisfies the given
 conditions.
 
@@ -1023,48 +1022,46 @@ conditions.
 :Examples:
 
         '''
-        conditions_have_been_set = False
-        something_has_matched    = False
+#        conditions_have_been_set = False
+#        something_has_matched    = False
 
-        matches = self._parse_match(match)
+        description = self._parse_match(description)
 
-        if matches:
-            conditions_have_been_set = True
+#        if description:
+#            conditions_have_been_set = True
 
         found_match = True
-        for match in matches:
+        for match in description:
             found_match = True
-
+            
             for prop, value in match.iteritems():
-                if prop is None:
+                if prop is None: 
                     if isinstance(value, basestring):
                         if value in ('T', 'X', 'Y', 'Z'):
-                            # Axis type
-                            x = getattr(self, value)
+                            # Axis type, e.g. 'T'
+                            x = getattr(v, value, False)
                             value = True
-                        elif '%' in value:
-                            # Python attribute (string-valued)
-                            value = value.split('%')
-                            x = getattr(self, value[0], None)
-                            value = '%'.join(value[1:])
                         else:
-                            # Identity (string-valued)
-                            x = self.identity(None)
+                            y = value.split('%')
+                            if len(y) > 1:
+                                # String-valued python attribute,
+                                # e.g. 'ncvar%latlon'
+                                x = getattr(v, y[0], None)
+                                value = '%'.join(y[1:])
+                            else:
+                                # String-valued identity
+                                x = v.identity(default=None)
                     else:   
-                        # Identity (not string-valued, e.g. cf.Query)
-                        x = self.identity(None)
+                        # Non-string-valued identity
+                        x = v.identity(default=None)
                 else:
-                    # CF term name                    
-                    x = self.get(prop, None)
+                    x = v.get(prop)
 
                 if x is None:
                     found_match = False
-                elif isinstance(x, basestring) and isinstance(value, basestring):
-                    if exact:
-                        found_match = (value == x)
-                    else:
-                        found_match = re_match(value, x)
-                else:	
+                elif value is None:
+                    found_match = True
+                else:
                     found_match = (value == x)
                     try:
                         found_match == True
@@ -1072,27 +1069,24 @@ conditions.
                         found_match = False
                 #--- End: if
 
-                if found_match:
+                if not found_match:
                     break
             #--- End: for
 
             if found_match:
-                something_has_matched = True
                 break
         #--- End: for
 
-        if match_all and not found_match:
-            return bool(inverse)
-
-        if conditions_have_been_set:
-            if something_has_matched:            
-                return not bool(inverse)
-            else:
-                return bool(inverse)
-        else:
-            return not bool(inverse)
+        return not bool(inverse)
     #--- End: def
 
+
+    def properties(self):
+        '''
+    '''
+        return dict(self)
+    #--- End: def
+    
     def set_term(self, term_type, term, value):
         '''
 '''

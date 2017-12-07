@@ -2258,9 +2258,6 @@ Changing the elements of the returned view changes the data array.
 
             for prop, value in match.iteritems():
                 if prop is None: 
-                    if value is None:
-                        continue
-
                     if isinstance(value, basestring):
                         if value in ('T', 'X', 'Y', 'Z'):
                             # Axis type, e.g. 'T'
@@ -2304,7 +2301,9 @@ Changing the elements of the returned view changes the data array.
                     x = v.getprop(prop, None)
     
                 if x is None:
-                    found_match = False                
+                    found_match = False
+                elif value is None:
+                    found_match = True
                 else:
                     found_match = (value == x)
                     try:
@@ -2361,19 +2360,7 @@ properties.
             if not func(self, value):
                 return bool(inverse)
         #--- End: for
-        customise[self._match_description] = description
-        customise[self._match_ndim]        = ndim
-
-        # ------------------------------------------------------------
-        #
-        # ------------------------------------------------------------
-        for func, value in customise.iteritems():
-            if value is None:
-                continue
-
-                return bool(inverse)
-        #--- End: for
-
+       
         # Still here?
         return not bool(inverse)
     #--- End: def

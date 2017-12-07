@@ -270,11 +270,10 @@ Field objects are picklable.
     _Flags      = Flags
     
     _special_properties = Variable._special_properties.union(
-        ('cell_methods',
-         'flag_values',
+        ('flag_values',
          'flag_masks',
          'flag_meanings',)
-         )
+    )
     
     def __init__(self, properties={}, attributes={}, data=None,
                  source=None, copy=True):
@@ -505,26 +504,29 @@ x.__str__() <==> str(x)
             string.append('Data           : {0}'.format(units))
 
         # Cell methods
-        cell_methods = getattr(self, 'cell_methods', None)
+        #        cell_methods = getattr(self, 'cell_methods', None)
+        cell_methods = self.cell_methods().values()
         if cell_methods:
-            string.append('Cell methods   : {0}'.format(self.cell_methods))
-
+            c = ' '.join([str(cm) for cm in
+                          self._unconform_cell_methods(cell_methods)])
+            string.append('Cell methods : {0}'.format(c))
+            
         axis_to_name = {}
         def _print_item(self, key, variable, dimension_coord):
             '''Private function called by __str__'''
-
+            
             if dimension_coord:
                 # Dimension coordinate
                 name = "{0}({1})".format(axis_name(key), axis_size(key))
                 axis_to_name[key] = name
                 
                 variable = self.Items.get(key, None)
-
+                
                 if variable is None:
                     return name
-                
+                          
                 x = [name]
-
+                
             else:
                 # Auxiliary coordinate
                 # Cell measure
@@ -536,13 +538,13 @@ x.__str__() <==> str(x)
                 x = [variable.name(key)]
                 x.append(shape)
             #--- End: if
-
+                    
             if variable.hasdata:
                 x.append(' = {}'.format(variable.data))
-
+                
             return ''.join(x)
         #--- End: def
-
+                          
         # Axes and dimension coordinates
         ddd = self.data_axes()
         if ddd is None:
@@ -556,28 +558,28 @@ x.__str__() <==> str(x)
         if x:
             string.append('Axes           : {}'.format(
                 '\n               : '.join(x)))
-            
+                          
         # Auxiliary coordinates
         x = [_print_item(self, aux, v, False) 
              for aux, v in sorted(self.Items.auxs().iteritems())]
         if x:
             string.append('Aux coords     : {}'.format(
                 '\n               : '.join(x)))
-
+        
         # Cell measures
         x = [_print_item(self, msr, v, False)
              for msr, v in sorted(self.Items.msrs().iteritems())]
         if x:
             string.append('Cell measures  : {}'.format(
                 '\n               : '.join(x)))
-
+            
         # Coordinate references
         x = sorted([ref.name(default='')
                     for ref in self.Items.refs().itervalues()])
         if x:
             string.append('Coord refs     : {}'.format(
                 '\n               : '.join(x)))
-
+            
         # Domain ancillary variables
         x = [_print_item(self, key, anc, False)
              for key, anc in sorted(self.Items.domain_ancs().iteritems())]
@@ -591,12 +593,12 @@ x.__str__() <==> str(x)
         if x:
             string.append('Field ancils   : {}'.format(
                 '\n               : '.join(x)))
-            
+                          
         string.append('')
         
         return '\n'.join(string)
     #--- End def
-
+                          
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -609,15 +611,15 @@ x.__str__() <==> str(x)
         except (AttributeError, KeyError):
             return {}
     #--- End: def
-
+    
     @property
     def Flags(self):
-        '''A `Flags` object containing self-describing CF flag values.
-
+    '''A `Flags` object containing self-describing CF flag values.
+    
 A `Flags` object stores the `flag_values`, `flag_meanings` and
 `flag_masks` CF properties in an internally consistent manner.
 
-        '''
+    '''
         return self._get_special_attr('Flags')
     @Flags.setter
     def Flags(self, value):
@@ -625,11 +627,11 @@ A `Flags` object stores the `flag_values`, `flag_meanings` and
     @Flags.deleter
     def Flags(self):
         self._del_special_attr('Flags')
-
+    
     @property
     def Items(self):
         return self._private['special_attributes']['items']
-        
+    
     @property
     def ncdimensions(self):
         '''
@@ -639,17 +641,17 @@ A `Flags` object stores the `flag_values`, `flag_meanings` and
             ncdim = axis.ncdim
             if ncdim is not None:
                 out[dim] = ncdim
-
-        return out
+    
+        return out 
     #--- End: def
-
+    
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
     @property
     def flag_values(self):
         '''The flag_values CF property.
-
+    
 Provides a list of the flag values. Use in conjunction with
 `flag_meanings`. See http://cfconventions.org/latest.html for details.
 
@@ -670,12 +672,11 @@ array([1, 2, 3, 4])
 array([1])
 >>> f.delprop('flag_values')
 
-        '''
+    '''
+    try:
         return self.Flags.flag_values.array
-        try:
-            return self.Flags.flag_values.array
-        except AttributeError:
-            raise AttributeError("{} doesn't have CF property 'flag_values'".format(self.__class__.__name__))
+    except AttributeError:
+        raise AttributeError("{} doesn't have CF property 'flag_values'".format(self.__class__.__name__))
     #--- End: def
     @flag_values.setter
     def flag_values(self, value):
@@ -692,14 +693,14 @@ array([1])
         except AttributeError:
             raise AttributeError("Can't delete non-existent CF property 'flag_values'")
     #--- End: def
-     
+    
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
     @property
     def flag_masks(self):
-        '''The flag_masks CF property.
-
+    '''The flag_masks CF property.
+    
 Provides a list of bit fields expressing Boolean or enumerated
 flags. See http://cfconventions.org/latest.html for details.
 
@@ -720,7 +721,7 @@ array([1, 2, 4, 8], dtype=int8)
 array([1])
 >>> f.delprop('flag_masks')
 
-        '''
+'''
         try:
             return self.Flags.flag_masks.array
         except AttributeError:
@@ -741,14 +742,14 @@ array([1])
         except AttributeError:
             raise AttributeError("Can't delete non-existent CF property 'flag_masks'")
     #--- End: def
-
+                          
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
     @property
     def flag_meanings(self):
         '''The flag_meanings CF property.
-
+    
 Use in conjunction with `flag_values` to provide descriptive words or
 phrases for each flag value. See
 http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#flags
@@ -765,20 +766,20 @@ for details.
 >>> f.getprop('flag_meanings')
 'a b'
 >>> f.delprop('flag_meanings')
-        
+    
         '''
         try:
             meanings = self.Flags.flag_meanings
         except AttributeError:
             raise AttributeError("{} doesn't have CF property 'flag_meanings'".format(self.__class__.__name__))
-
+    
         return ' '.join(meanings)
     #--- End: def
     @flag_meanings.setter
     def flag_meanings(self, value):
         if isinstance(value , basestring):
             value = value.split()
-        
+    
         flags = getattr(self, 'Flags', None)
         if flags is None:
             self.Flags = self._Flags(flag_meanings=value)
@@ -792,42 +793,42 @@ for details.
         except AttributeError:
             raise AttributeError("Can't delete non-existent CF property 'flag_meanings'")
     #--- End: def
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def cell_methods(self):
-        '''A string describing the CF cell methods of the data.
-
-:Examples:
-
->>> f.cell_methods
-'time: maximum (interval: 1.0 month) area: mean (area-weighted)'
-
-        '''
-        
-        return ' '.join(
-            [str(cm) #cm.write()
-             for cm in self._unconform_cell_methods(self.Items.cell_methods)]
-        )
-    #--- End: def
-    @cell_methods.setter
-    def cell_methods(self, value):
-        cm = self._CellMethod.parse(value)
-        self.Items.cell_methods = self._conform_cell_methods(cm)
-        
-    @cell_methods.deleter
-    def cell_methods(self):
-        self.Items.cell_methods = []
- 
+                          
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def cell_methods(self):
+#        '''A string describing the CF cell methods of the data.
+#
+#:Examples:
+#
+#>>> f.cell_methods
+#'time: maximum (interval: 1.0 month) area: mean (area-weighted)'
+#
+#        '''
+#        
+#        return ' '.join(
+#            [str(cm)
+#             for cm in self._unconform_cell_methods(self.Items.cell_methods)]
+#        )
+#    #--- End: def
+#    @cell_methods.setter
+#    def cell_methods(self, value):
+#        cm = self._CellMethod.parse(value)
+#        self.Items.cell_methods = self._conform_cell_methods(cm)
+#        
+#    @cell_methods.deleter
+#    def cell_methods(self):
+#        self.Items.cell_methods = []
+                          
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
     @property 
     def Conventions(self):
-        '''The Conventions CF property.
-
+    '''The Conventions CF property.
+    
 The name of the conventions followed by the field. See
 http://cfconventions.org/latest.html for details.
 
@@ -843,26 +844,27 @@ http://cfconventions.org/latest.html for details.
 'CF-1.6'
 >>> f.delprop('Conventions')
 
-        '''
+    '''
         return self.getprop('Conventions')
     #--- End: def
-
     @Conventions.setter
-    def Conventions(self, value): self.setprop('Conventions', value)
+    def Conventions(self, value):
+        self.setprop('Conventions', value)
     @Conventions.deleter
-    def Conventions(self):        self.delprop('Conventions')
-
+    def Conventions(self):
+        self.delprop('Conventions')
+                          
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
     @property
     def featureType(self):
-        '''The featureType CF property.
-
+    '''The featureType CF property.
+    
 The type of discrete sampling geometry, such as ``point`` or
 ``timeSeriesProfile``. See http://cfconventions.org/latest.html for
 details.
-
+    
 .. versionadded:: 1.6
 
 :Examples:
@@ -877,24 +879,23 @@ details.
 'profile'
 >>> f.delprop('featureType')
 
-        '''
+    '''
         return self.getprop('featureType')
     #--- End: def
-
     @featureType.setter
     def featureType(self, value):
         self.setprop('featureType', value)
     @featureType.deleter
     def featureType(self):        
         self.delprop('featureType')
-
+    
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
     @property
     def institution(self):
-        '''The institution CF property.
-
+    '''The institution CF property.
+    
 Specifies where the original data was produced. See
 http://cfconventions.org/latest.html for details.
 
@@ -910,7 +911,7 @@ http://cfconventions.org/latest.html for details.
 'University of Reading'
 >>> f.delprop('institution')
 
-        '''
+    '''
         return self.getprop('institution')
     #--- End: def
     @institution.setter
@@ -1113,7 +1114,7 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
         '''
         out = [self]
         out.extend(self.Axes.values())
-        out.extend(self.Items.cell_methods)
+        out.extend(self.Items.cell_methods.values())
         out.extend(self.Items().values())
         return out
     #--- End: def
@@ -1295,7 +1296,7 @@ last values.
                                                            ', '.join(x),
                                                            str(self.data))))
         # Cell methods
-        cell_methods = self.Items.cell_methods
+        cell_methods = self.Items.cell_methods.values()
         if cell_methods:
             cell_methods = self._unconform_cell_methods(cell_methods)
             string.append('')
@@ -1884,7 +1885,11 @@ axes, use the `remove_axes` method.
                 self._conform_ref(ref, copy=False)
 
         # Update cell methods
-        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
+        cell_methods = self.Items.cell_methods
+        if cell_methods:
+            for key, value in zip(cell_methods,
+                                  self._conform_cell_methods(cell_methods.values())):
+                cell_methods[key] =value
 
         return key
     #--- End: def
@@ -2488,6 +2493,66 @@ Set the time axis to be unlimited when written to a netCDF file:
 #        return naxes == len(f.axes())
 #    #--- End: def
 
+    def cell_methods(self, description=None, inverse=False, key=False,
+                     copy=False):
+        '''
+        '''
+        if not description:
+            return "OrdereDict: {'cel1': <>, 'cel0': <>}"
+        
+        if not isinstance(description, (list, tuple)):
+            description = (description,)
+            
+        cms = []
+        for d in description:
+            if isinstance(d, dict):
+                cms.append([self._CellMethod(**d)])
+            elif isinstance(d, basestring):
+                cms.append(self._CellMethod.parse(d))
+            elif isinstance(d, self._CellMethod):
+                cms.append([d])
+            else:
+                raise ValueError("asd 123948u m  BAD DESCRIPTION TYPE")
+        #--- End: for
+
+        keys = self.Items.cell_methods.keys()                    
+        f_cell_methods = self.Items.cell_methods.values()
+        nf = len(f_cell_methods)
+
+        out = {}
+        
+        for d in cms:
+            c = self._conform_cell_methods(d)
+
+            n = len(c)
+            for j in range(nf-n+1):
+                found_match = True
+                for i in range(0, n):
+                    if not f_cell_methods[j+i].match(c[i].properties()):
+                        found_match = False
+                        break
+                #--- End: for
+            
+                if not found_match:
+                    continue
+
+                # Still here?
+                key = tuple(keys[j:j+n])
+                if len(key) == 1:
+                    key = key[0]
+
+                if key not in out:
+                    value = f_cell_methods[j:j+n]
+                    if copy:
+                    value = [cm.copy() for cm in value]                        
+
+                out[key] = value
+            #--- End: for
+        #--- End: for
+        
+        return out
+    #--- End: def
+    
     @classmethod
     def _match_items(cls, f, items):
         '''Try to match items
@@ -3066,7 +3131,7 @@ None
             return axes[1]
     #--- End: def
 
-    def insert_cell_method(self, item, copy=True, axis_map=None):
+    def insert_cell_method(self, cell_method, key=None, _axis_map=None):
         '''Insert cell method objects into the {+variable}.
 
 .. seealso:: `insert_aux`, `insert_measure`, `insert_ref`,
@@ -3074,7 +3139,7 @@ None
 
 :Parameters:
 
-    item: `CellMethod`
+    cell_method: `CellMethod`
 
 :Returns:
 
@@ -3083,12 +3148,12 @@ None
 :Examples:
 
         '''
-        if copy:
-            item = item.copy()
-            
-        self.Items.cell_methods.append(item)
-        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods,
-                                                             axis_map=axis_map)
+        if key is None:
+            key = self.new_identifier('cmd')
+
+        self.Items.cell_methods[key] = self._conform_cell_methods(
+            [cell_method],
+            axis_map=_axis_map)[0]
     #--- End: def
 
     def insert_axis(self, axis, key=None, replace=True, copy=True):
@@ -3345,7 +3410,7 @@ domain ancillary identifiers.
                     axis_map[axis] = self.axis(axis, default=axis, ndim=1, key=True)
         #--- End: if
 
-        return [cm.change_axes(axis_map) for cm in cell_methods]
+        return [cm.change_axes(axis_map, copy=True) for cm in cell_methods]
     #--- End: def
 
     def _unconform_cell_methods(self, cell_methods, axis_map=None):
@@ -3640,7 +3705,11 @@ and ref.ancillaries with domain ancillary identities where possible.
                 self._conform_ref(ref, copy=False)
 
         # Update cell methods
-        self.Items.cell_methods = self._conform_cell_methods(self.Items.cell_methods)
+        cell_methods = self.Items.cell_methods
+        if cell_methods:
+            conformed = self._conform_cell_methods(cell_methods.values())
+            for key, value in zip(cell_methods, conformed):
+                cell_methods[key] =value
 
         return key
     #--- End: def
@@ -3856,7 +3925,8 @@ measure or a coordinate reference object.   ....................................
     def item(self, description=None, role=None, axes=None,
              axes_all=None, axes_subset=None, axes_superset=None,
              inverse=False, ndim=None, key=False, default=None,
-             copy=False): #, _restrict_inverse=True):
+             copy=False):
+                          #, _restrict_inverse=True):
         '''Return a field item.
 
 {+item_definition}
@@ -4399,7 +4469,7 @@ coordinate or cell measure object of the field.
         # Replace the axis in cell methods with a standard name, if
         # possible.
         if cell_methods:
-            self.items.cell_methods = [cm.change_axes(axis_map) for cm in cell_methods]
+            self.Items.cell_methods = [cm.change_axes(axis_map) for cm in cell_methods]
             self.Items.cell_methods = [cm.remove_axes(del_axes) for cm in cell_methods]
 
         # Remove the axes
@@ -4487,7 +4557,7 @@ Keys are item identifiers, values are item objects.
         # self._role['aux2'] = ['dim1, 'dim0']
         self._axes = {}
 
-        self.cell_methods = []
+        self.cell_methods = OrderedDict()
         
         # Domain axes
         # 
@@ -4665,7 +4735,10 @@ names contain the string "qwerty":
             for r in role:
                 for key in getattr(self, r):
                     pool[key] = self[key]
-                    
+        #--- End: if
+
+        
+        
         if inverse:
             master = pool.copy()            
 
@@ -4823,7 +4896,7 @@ names contain the string "qwerty":
         # ------------------------------------------------------------
         return out
     #--- End: def
-    
+
     def auxs(self):
         '''Auxiliary coordinate objects and their identifiers
         
@@ -4941,6 +5014,160 @@ names contain the string "qwerty":
         return set(out)
     #--- End: def
     
+    def axes2(self, axes=None, size=None, ordered=False, **kwargs):
+        '''Return domain axis identifiers from the field.
+
+The output is a set of domain axis identifiers, which may be empty.
+
+{+axis_selection}
+
+.. seealso:: `axis`, `data_axes`, `item_axes`, `items`, `remove_axes`
+
+:Parameters:
+
+    {+axes, kwargs}
+
+          *Example:*
+
+            >>> x = f.axes(['dim2', 'time', {'units': 'degree_north'}])
+            >>> y = set()
+            >>> for axes in ['dim2', 'time', {'units': 'degree_north'}]:
+            ...     y.update(f.axes(axes))
+            ...
+            >>> x == y
+            True
+ 
+    {+size}
+
+    ordered: `bool`, optional
+        Return an ordered list of axes instead of an unordered
+        set. The order of the list will reflect any ordering specified
+        by the *axes* and *kwargs* parameters.
+
+          *Example:*
+            If the data array axes, as returned by the field's
+            `data_axes` method, are ``['dim0', 'dim1', 'dim2']``, then
+            ``f.axes([2, 0, 1, 2])`` will return ``set(['dim0',
+            'dim1', 'dim2'])``, but ``f.axes([2, 0, 1, 2],
+            ordered=True)`` will return ``['dim2', 'dim0', 'dim1',
+            'dim2']``.
+
+:Returns:
+
+    out: `dict` or `OrderedDict`
+        A dictionary of domain axis identifiers and their sizes, or an
+        `OrderedDict` if *ordered* is True.
+
+:Examples:
+
+All axes and their identities:
+
+>>> f.axes()
+set(['dim0', 'dim1', 'dim2', 'dim3'])
+>>> dict([(axis, f.domain.axis_name(axis)) for axis in f.axes()])
+{'dim0': time(12)
+ 'dim1': height(19)
+ 'dim2': latitude(73)
+ 'dim3': longitude(96)}
+
+Axes which are not spanned by the data array:
+
+>>> f.axes().difference(f.data_axes())
+
+        '''
+        def _axes(self, axes, size, items_axes, domain_axes, kwargs):
+            ''':Parameters:
+
+        items_axes: `dict`
+            Dictionary of item axes keyed by the item identifiers.
+            
+        domain_axes: `dict`
+            Dictionary of `DomainAxis` objects keyed by their
+            identifiers.
+
+            '''
+            a = None
+
+            if axes is not None:
+                if axes.__hash__:
+                    if axes in domain_axes:
+                        # --------------------------------------------
+                        # axes is a domain axis identifier
+                        # --------------------------------------------
+                        a = [axes]
+                    elif axes in items_axes and not kwargs:
+                        # --------------------------------------------
+                        # axes is a domain item identifier
+                        # --------------------------------------------
+                        a = items_axes[axes][:]
+                    else:
+                        try:
+                            ncdim_name = axes.startswith('ncdim%')
+                        except AttributeError:
+                            a = None
+                        else:
+                            # ----------------------------------------
+                            # axes is a netCDF dimension name
+                            # ----------------------------------------
+                            ncdimensions = self.ncdimensions
+                            if ncdimensions:
+                                ncdim = axes[6:]  # Note: There are 6 chars in 'ncdim%'
+#                                tmp = []
+#                                for axis, value in ncdimensions.iteritems():
+#                                    if value == ncdim:
+#                                        tmp.append(axis)
+                                a = [axis
+                                     for axis, value in ncdimensions.items()
+                                     if value == ncdim]
+                                if not a:
+                                    a = None
+                     #-- End: if
+                #--- End: if
+ 
+            elif not kwargs:
+                a = domain_axes
+
+            if a is None:
+                # ----------------------------------------------------
+                # Assume that axes is a value accepted by the items
+                # method
+                # ----------------------------------------------------
+                a = [] 
+                kwargs2 = kwargs.copy()
+                kwargs2['axes'] = None
+                for key in self(axes, **kwargs2):
+                    a += items_axes.get(key, ())
+            #--- End: if
+
+            if size:
+                a = [axis for axis in a if size == domain_axes[axis]]
+
+            return a
+        #--- End: def
+
+        domain_axes = self.Axes
+        items_axes = self.axes()
+
+        if axes is None or isinstance(axes, (basestring, dict)):
+            axes = (axes,)
+
+        a = []
+        for x in axes:
+            a += _axes(self, x, size, items_axes, domain_axes,
+                       kwargs)
+        #--- End: if
+
+        if ordered:
+            out = OrderedDict()
+        else:
+            out = {}    
+
+        for x in a:
+            out[x] = domain_axes[x]
+            
+        return out
+    #--- End: def
+        
     def axes(self, key=None, axes=None, default=None):
         '''
 :Examples 1:
@@ -5140,9 +5367,12 @@ Return a deep or shallow copy.
         new = X.__new__(X)
 
         # Copy the domain axes
-        new.Axes = {}
-        for key, axis in self.Axes.iteritems():
-            new.Axes[key] = axis.copy()
+        if shallow:
+            new.Axes = self.Axes.copy()
+        else:
+            new.Axes = {}
+            for key, axis in self.Axes.iteritems():
+                new.Axes[key] = axis.copy()
 
         # Copy the actual items (e.g. dimension coordinates, field
         # ancillaries, etc.)
@@ -5165,7 +5395,14 @@ Return a deep or shallow copy.
         new._role = self._role.copy()
 
         # Copy the cell methods
-        new.cell_methods = [cm.copy() for cm in self.cell_methods]
+        if shallow:
+            new.cell_methods = self.cell_methods.copy()
+        else:
+            new.cell_methods = OrderedDict()
+            for key, value in self.cell_methods.iteritems():
+                new[key] = value.copy()
+
+#            new.cell_methods = [cm.copy() for cm in self.cell_methods]
 
         # Copy item axes (this is OK because it is a dictionary of
         # tuples).
@@ -5377,7 +5614,8 @@ Return a deep or shallow copy.
                     self.cell_methods, other.cell_methods))
             return False
 
-        for cm0, cm1 in zip(self.cell_methods, other.cell_methods):
+        for cm0, cm1 in zip(self.cell_methods.values(),
+                            other.cell_methods.values()):
             # Check that there are the same number of axes
             axes0 = cm0.axes
             axes1 = list(cm1.axes)
@@ -5590,6 +5828,43 @@ Return a deep or shallow copy.
         if copy:
             item = item.copy()
         self[key] = item
+        self.r.add(key)
+        self._role[key] = 'r'
+
+        
+    def conform_cell_method(self, cell_method, axis_map=None):
+        '''
+
+:Examples 1:
+
+>>> cell_methods2 = f._conform_cell_methods(cell_methods)
+
+:Returns:
+
+    out: `list`
+
+:Examples 2:
+
+        '''
+        if axis_map is None:
+            axis_map = {}
+            for cm in cell_methods:
+                for axis in cm.axes:
+                    if axis in axis_map:
+                        continue
+
+                    if axis == 'area':
+                        axis_map[axis] = axis
+                        continue
+
+                    axis_map[axis] = self.axis(axis, default=axis, ndim=1, key=True)
+        #--- End: if
+
+        return cm.change_axes(axis_map, copy=True)
+    #--- End: def
+
+    def insert_cell_method(self, item, key):
+        self.cell_methods[key] = item
         self.r.add(key)
         self._role[key] = 'r'
 
