@@ -10,7 +10,6 @@ import numpy
 from netCDF4 import default_fillvals as _netCDF4_default_fillvals
 
 from .cfdatetime   import dt
-#from .flags        import Flags
 from .functions    import RTOL, ATOL, RELAXED_IDENTITIES
 from .functions    import equals     as cf_equals
 from .units        import Units
@@ -673,21 +672,6 @@ All components of a variable are optional.
             self.__class__.__name__))
     #--- End: def
 
-    def __contains__(self, value):
-        '''
-
-Called to implement membership test operators.
-
-x.__contains__(y) <==> y in x
-
-.. versionadded:: 1.6
-'''
-        if not self.hasdata:    
-            return False
-        
-        return value in self.data
-    #--- End: def
-
     def __data__(self):
         '''
 Returns a new reference to self.data.
@@ -915,224 +899,6 @@ x.__str__() <==> str(x)
     #--- End: def
 
     @property
-    def T(self):
-        '''True if and only if the coordinates are for a CF T axis.
-        
-CF T axis coordinates are for a reference time axis hhave one or more
-of the following:
-
-  * The `axis` property has the value ``'T'``
-  * Units of reference time (see `Units.isreftime` for details)
-  * The `standard_name` property is one of ``'time'`` or
-    ``'forecast_reference_time'longitude'``
-
-.. versionadded:: 1.6
-
-.. seealso:: `X`, `Y`, `Z`
-
-:Examples:
-
->>> print c.Units
-'seconds since 1992-10-8'
->>> c.T
-True
-
->>> c.standard_name in ('time', 'forecast_reference_time')
-True
->>> c.T
-True
-
->>> c.axis == 'T' and c.T
-True
-
-        '''      
-        if self.ndim > 1:
-            return self.getprop('axis', None) == 'T'
-
-        if (self.Units.isreftime or
-            self.getprop('standard_name', 'T') in ('time',
-                                                   'forecast_reference_time') or
-            self.getprop('axis', None) == 'T'):
-            return True
-        else:
-            return False
-    #--- End: def
-
-    @property
-    def X(self):
-        '''True if and only if the coordinates are for a CF X axis.
-        
-CF X axis coordinates are for a horizontal axis have one or more of
-the following:
-
-  * The `axis` property has the value ``'X'``
-  * Units of longitude (see `Units.islongitude` for details)
-  * The `standard_name` property is one of ``'longitude'``,
-    ``'projection_x_coordinate'`` or ``'grid_longitude'``
-
-.. versionadded:: 1.6
-
-.. seealso:: `T`, `Y`, `Z`
-
-:Examples:
-
->>> print c.Units
-'degree_east'
->>> c.X
-True
- 
->>> c.standard_name
-'longitude'
->>> c.X
-True
-
->>> c.axis == 'X' and c.X
-True
-
->>> c.standard_name == 'grid_longitude'
->>> c.X
-True
-
->>> c.standard_name == 'projection_x_coordinate'
->>> c.X
-True
-
-        '''
-        if self.ndim > 1:
-            return self.getprop('axis', None) == 'X'
-            
-        if (self.Units.islongitude or
-            self.getprop('axis', None) == 'X' or
-            self.getprop('standard_name', None) in ('longitude',
-                                                    'projection_x_coordinate',
-                                                    'grid_longitude')):
-            return True
-        else:
-            return False
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute: Y (read only)
-    # ----------------------------------------------------------------
-    @property
-    def Y(self):
-        '''True if and only if the coordinates are for a CF Y axis.
-
-CF Y axis coordinates are for a horizontal axis and have one or more
-of the following:
-
-  * The `axis` property has the value ``'Y'``
-  * Units of latitude (see `Units.islatitude` for details)
-  * The `standard_name` property is one of ``'latitude'``,
-    ``'projection_y_coordinate'`` or ``'grid_latitude'``
-
-.. versionadded:: 1.6
-
-.. seealso:: `T`, `X`, `Z`
-
-:Examples:
-
->>> c.Units
-'degrees_north'
->>> c.Y
-True
-
->>> c.standard_name == 'latitude'
->>> c.Y
-True
-
->>> c.standard_name == 'grid_latitude'
->>> c.Y
-True
-
->>> c.standard_name == 'projection_y_coordinate'
->>> c.Y
-True
-
-        '''              
-        if self.ndim > 1:
-            return self.getprop('axis', None) == 'Y'
-
-        if (self.Units.islatitude or 
-            self.getprop('axis', None) == 'Y' or 
-            self.getprop('standard_name', 'Y') in ('latitude',
-                                                   'projection_y_coordinate',
-                                                   'grid_latitude')):  
-            return True
-        else:
-            return False
-    #--- End: def
-
-    @property
-    def Z(self):
-        '''True if and only if the coordinates are for a CF Z axis.
-
-CF Z axis coordinates are for a vertical axis have one or more of the
-following:
-
-  * The `axis` property has the value ``'Z'``
-  * Units of pressure (see `Units.ispressure` for details), level,
-    layer, or sigma_level
-  * The `positive` property has the value ``'up'`` or ``'down'``
-    (case insensitive)
-  * The `standard_name` property is one of
-    ``'atmosphere_ln_pressure_coordinate'``,
-    ``'atmosphere_sigma_coordinate'``,
-    ``'atmosphere_hybrid_sigma_pressure_coordinate'``,
-    ``'atmosphere_hybrid_height_coordinate'``,
-    ``'atmosphere_sleve_coordinate``', ``'ocean_sigma_coordinate'``,
-    ``'ocean_s_coordinate'``, ``'ocean_s_coordinate_g1'``,
-    ``'ocean_s_coordinate_g2'``, ``'ocean_sigma_z_coordinate'`` or
-    ``'ocean_double_sigma_coordinate'``
-
-.. versionadded:: 1.6
-
-.. seealso:: `T`, `X`, `Y`
-
-:Examples:
-
->>> c.Units.equivalent(Units('Pa')) and c.Z
-True
-
->>> (c.positive == 'up') and c.Z
-True
-
->>> (c.ndim >= 1) and (c.axis == 'Z') and c.Z
-True
-
->>> (c.units == 'sigma_level') and c.Z
-True
-
->>> (c.standard_name == 'ocean_sigma_coordinate') and  c.Z
-True
-
-'''   
-        if self.ndim > 1:
-            return self.getprop('axis', None) == 'Z'
-        
-        units = self.Units
-        if (units.ispressure or
-            str(self.getprop('positive', 'Z')).lower() in ('up', 'down') or
-            self.getprop('axis', None) == 'Z' or
-            (units and units.units in ('level', 'layer' 'sigma_level')) or
-            self.getprop('standard_name', None) in
-            ('atmosphere_ln_pressure_coordinate',
-             'atmosphere_sigma_coordinate',
-             'atmosphere_hybrid_sigma_pressure_coordinate',
-             'atmosphere_hybrid_height_coordinate',
-             'atmosphere_sleve_coordinate',
-             'ocean_sigma_coordinate',
-             'ocean_s_coordinate',
-             'ocean_s_coordinate_g1',
-             'ocean_s_coordinate_g2',
-             'ocean_sigma_z_coordinate',
-             'ocean_double_sigma_coordinate')):
-            return True
-        else:
-            return False
-    #--- End: def
-
-    @property
     def data(self):
         '''
 
@@ -1213,36 +979,6 @@ If present, the data array is stored in the `data` attribute.
 
 '''      
         return self._hasdata
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
-    @property
-    def reference_datetime(self):
-        units = self.Units
-        if not units.isreftime:
-            raise AttributeError(
-                "{} doesn't have attribute 'reference_datetime'".format(
-                    self.__class__.__name__))
-
-        return dt(units.reftime, calendar=units._calendar)
-
-    @reference_datetime.setter
-    def reference_datetime(self, value):
-        units = self.Units
-        if not units.isreftime:
-            raise AttributeError(
-"Can't set 'reference_datetime' for non reference date-time units".format(
-    self.__class__.__name__))
-
-        units = units.units.split(' since ')
-        try:
-            self.units = "{0} since {1}".format(units[0], value)
-        except (ValueError, TypeError):
-            raise ValueError(
-                "Can't override reference date-time {0!r} with {1!r}".format(
-                    units[1], value))
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -1965,7 +1701,7 @@ The number of dimensions in the data array.
 
 .. versionadded:: 1.6
 
-.. seealso:: `data`, `hasdata`, `isscalar`, `shape`
+.. seealso:: `data`, `hasdata`, `shape`
 
 :Examples:
 
@@ -2188,181 +1924,6 @@ Changing the elements of the returned view changes the data array.
 
         raise AttributeError("{} has no data array".format(
             self.__class__.__name__))
-    #--- End: def
-
-    def _match_parse_description(self, description):
-        '''Called by `match`
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-    description: 
-        As for the *description* parameter of `match` method.
-
-:Returns:
-
-    out: `list`
-
-        '''        
-        if not description:
-            return []
-
-        if not isinstance(description, (list, tuple)):
-            description = (description,)
-
-        description2 = []
-        for d in description:            
-            if isinstance(d, basestring):
-                if ':' in d:
-                    # CF property (string-valued)
-                    d = d.split(':')
-                    description2.append({d[0]: ':'.join(d[1:])})
-                else:
-                    # Identity (string-valued) or python attribute
-                    # (string-valued) or axis type
-                    description2.append({None: d})
-
-            elif isinstance(d, dict):
-                # Dictionary
-                description2.append(d.copy())
-
-            else:
-                # Identity (not string-valued)
-                description2.append({None: d})
-        #--- End: for
-
-        return description2
-    #--- End: def
-
-    @classmethod
-    def _match_ndim(cls, v, ndim):
-        '''
-        '''
-        n = getattr(v, 'ndim', None)
-        if n is None:
-            return False
-
-        return ndim == n
-    #--- End: def
-
-    @classmethod
-    def _match_description(cls, v, description):
-        '''
-        '''
-        description = v._match_parse_description(description)
-
-        found_match = True
-        for match in description:
-            found_match = True
-
-            for prop, value in match.iteritems():
-                if prop is None: 
-                    if isinstance(value, basestring):
-                        if value in ('T', 'X', 'Y', 'Z'):
-                            # Axis type, e.g. 'T'
-                            x = getattr(v, value, False)
-                            value = True
-                        else:
-                            value = value.split('%')
-                            if len(value) == 1:
-                                value = value[0].split(':')
-                                if len(value) == 1:
-                                    # String-valued identity,
-                                    # e.g. 'air_temperature'
-                                    x = v.identity(default=None)
-                                    value = value[0]
-                                else:
-                                    # String-valued CF property,
-                                    # e.g. 'long_name:rain'
-                                    x = v.getprop(value[0], None)
-                                    value = ':'.join(value[1:])
-                            else:
-                                # String-valued python attribute,
-                                # e.g. 'ncvar%tas'
-                                x = getattr(v, value[0], None)
-                                value = '%'.join(value[1:])
-                    else:   
-                        # Non-string-valued identity
-                        x = v.identity(default=None)
- 
-                elif prop == 'units':
-                    # units
-                    x     = Units(getattr(v, 'units', None))
-                    value = Units(value)
-
-                elif prop == 'calendar' and v.Units.isreftime:
-                    # calendar (if units are reference time)
-                    x     = Units(calendar=v.calendar)
-                    value = Units(calendar=value)
-
-                else:                    
-                    # Any other CF property
-                    x = v.getprop(prop, None)
-    
-                if x is None:
-                    found_match = False
-                elif value is None:
-                    found_match = True
-                else:
-                    found_match = (value == x)
-                    try:
-                        found_match == True
-                    except ValueError:
-                        found_match = False
-                #--- End: if
-     
-                if not found_match:
-                    break
-            #--- End: for
-
-            if found_match:
-                break
-        #--- End: for
-
-        return found_match
-    #--- End: def
-    
-    def match(self, description=None, ndim=None, inverse=False,
-              customise=None):
-        '''Determine whether or not a variable satisfies conditions.
-
-Conditions may be specified on the variable's attributes and CF
-properties.
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-:Returns:
-
-    out: `bool`
-        Whether or not the variable matches the given criteria.
-
-:Examples:
-
-        '''
-        if customise:
-            customise = customise.copy()
-        else:
-            customise = {}
-            
-        customise[self._match_description] = description
-        customise[self._match_ndim]        = ndim
-
-        # ------------------------------------------------------------
-        #
-        # ------------------------------------------------------------
-        for func, value in customise.iteritems():
-            if value is None:
-                continue
-
-            if not func(self, value):
-                return bool(inverse)
-        #--- End: for
-       
-        # Still here?
-        return not bool(inverse)
     #--- End: def
 
 #    def close(self):
@@ -2941,43 +2502,43 @@ True
         return [(i + ndim if i < 0 else i) for i in axes]
     #--- End: def
     
-    @property
-    def mask(self):
-        '''The mask of the data array.
-
-Values of True indicate masked elements.
-
-.. versionadded:: 1.6
-
-.. seealso:: `binary_mask`
-
-:Examples:
-
->>> f.shape
-(12, 73, 96)
->>> m = f.mask
->>> m.long_name
-'mask'
->>> m.shape
-(12, 73, 96)
->>> m.dtype
-dtype('bool')
->>> print m.data
-[[[True, ..., False]]]
-
-        '''
-        if not self.hasdata:
-            raise ValueError(
-                "ERROR: Can't get mask when there is no data array")
-
-        out = self.copy(_omit_data=True, _omit_properties=True,
-                        _omit_attributes=True)
-
-        out.insert_data(self.data.mask, copy=False)            
-        out.long_name = 'mask'
-
-        return out
-    #--- End: def
+#    @property
+#    def mask(self):
+#        '''The mask of the data array.
+#
+#Values of True indicate masked elements.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `binary_mask`
+#
+#:Examples:
+#
+#>>> f.shape
+#(12, 73, 96)
+#>>> m = f.mask
+#>>> m.long_name
+#'mask'
+#>>> m.shape
+#(12, 73, 96)
+#>>> m.dtype
+#dtype('bool')
+#>>> print m.data
+#[[[True, ..., False]]]
+#
+#        '''
+#        if not self.hasdata:
+#            raise ValueError(
+#                "ERROR: Can't get mask when there is no data array")
+#
+#        out = self.copy(_omit_data=True, _omit_properties=True,
+#                        _omit_attributes=True)
+#
+#        out.insert_data(self.data.mask, copy=False)            
+#        out.long_name = 'mask'
+#
+#        return out
+#    #--- End: def
 
     def fill_value(self, default=None):
         '''Return the data array missing data value.
@@ -3118,37 +2679,37 @@ Return True if a CF property exists, otherise False.
         return prop in self._private['simple_properties']
     #--- End: def
 
-    @property
-    def isscalar(self):
-        '''True if the data array is scalar.
-
-.. versionadded:: 1.6
-
-.. seealso:: `hasdata`, `ndim`
-
-:Examples:
-
->>> f.ndim
-0
->>> f.isscalar
-True
-
->>> f.ndim >= 1
-True
->>> f.isscalar
-False
-
->>> f.hasdata
-False
->>> f.isscalar
-False
-
-        '''
-        if not self.hasdata:
-            return False
-
-        return self.data.isscalar
-    #--- End: def
+#    @property
+#    def isscalar(self):
+#        '''True if the data array is scalar.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `hasdata`, `ndim`
+#
+#:Examples:
+#
+#>>> f.ndim
+#0
+#>>> f.isscalar
+#True
+#
+#>>> f.ndim >= 1
+#True
+#>>> f.isscalar
+#False
+#
+#>>> f.hasdata
+#False
+#>>> f.isscalar
+#False
+#
+#        '''
+#        if not self.hasdata:
+#            return False
+#
+#        return self.data.isscalar
+#    #--- End: def
 
     @property
     def isvariable(self):
@@ -3171,11 +2732,7 @@ The identity is, by default, the first found of the following:
 
 * The `standard_name` CF property.
 
-* The `!id` attribute.
-
-* If the *relaxed* parameter is True, the `standard_name` CF property.
-
-* The `!id` attribute.
+* If the *relaxed_identity* parameter is True, the `long_name` CF property.
 
 * The value of the *default* parameter.
 
@@ -3358,8 +2915,6 @@ By default the name is the first found of the following:
   4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
   
   5. The value of the *default* parameter.
-
-Note that ``f.{+name}(identity=True)`` is equivalent to ``f.identity()``.
 
 .. versionadded:: 1.6
 
@@ -3616,15 +3171,11 @@ first axis which is to have a chunk size of 12:
 
         ''' 
  
-#        if copy:
         out = deepcopy(self.__dict__)
-#        else:
-#            out = self.__dict__.copy()
 
         del out['_hasbounds']
         del out['_hasdata']
         del out['_private']
-#        del out['_direction']
         
         if not attrs:
             return out

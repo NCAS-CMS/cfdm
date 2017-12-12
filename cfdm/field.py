@@ -2560,213 +2560,213 @@ Set the time axis to be unlimited when written to a netCDF file:
         return out
     #--- End: def
     
-    @classmethod
-    def _match_items(cls, f, items):
-        '''Try to match items
-
-:Parameters:
-
-    f: `{+Variable}`
-
-    items: `dict`
-        A dictionary which identifies items of the field (dimension
-        coordinate, auxiliary coordinate, cell measure or coordinate
-        reference objects) with corresponding tests on their
-        elements. The field matches if **all** of the specified items
-        exist and their tests are passed.
-
-        Each dictionary key specifies an item to test as the one that
-        would be returned by this call of the field's `item` method:
-        ``f.item(key)`` (see `Field.item`).
-
-        The corresponding value is, in general, any object for which
-        the item may be compared with for equality (``==``). The test
-        is passed if the result evaluates to True, or if the result is
-        an array of values then the test is passed if at least one
-        element evaluates to true.
-
-        If the value is `None` then the test is always passed,
-        i.e. this case tests for item existence.
-
-          *Example:*
-             To match a field which has a latitude coordinate value of
-             exactly 30: ``items={'latitude': 30}``.
-
-          *Example:*
-             To match a field which has a time coordinate value of
-             2004-06-01: ``items={'time': cf.dt('2004-06-01')}`` (see
-             `cf.dt`).
-
-          *Example:*
-             To match a field which has a height axis: ``items={'Z':
-             None}``.
-
-          *Example:*
-             To match a field which has a time axis a depth coordinate
-             of 1000 metres: ``items={'T': None, 'depth': Data(1000,
-             'm')}`` (see `Data`).
-
-:Returns:
-
-    out: `bool`
-
-        '''
-        for description in f._match_parse_description(items):
-            if not bool(f.items(description)):
-                return False
-        #--- End: for 
-        
-        return True
-    #--- End: def
-
-    def _match_axes(cls, f, axes):
-        '''Try to match items
-
-:Parameters:
-
-    f: `{+Variable}`
-
-    axes: 
-
-:Returns:
-
-    out: `bool`
-
-        '''
-        for a in f._match_parse_description(axes):
-            if len(a) == 1:
-                # Convert {None: value} to value
-                key, value = a.items()[0]
-                if key is None:
-                    a = value
-            #--- End: if
-
-            if not bool(f.axes(a, ndim=1)):
-                return False
-        #--- End: for 
-        
-        return True
-    #--- End: def
-
-    def _match_cell_methods(cls, f, cell_methods):
-        '''Try to match cell methods
-
-:Parameters:
-
-    f: `{+Variable}`
-
-    cell_methods: `list` or `tuple` or `str` or `dict` or `CellMethod`
-
-:Returns:
-
-    out: `bool`
-
-        '''
-        if not isinstance(cell_methods, (list, tuple)):
-            cell_methods = (cell_methods,)
-
-        cell_methods2 = []
-        for d in cell_methods:
-            if isinstance(d, dict):
-                cell_methods2.append(f._CellMethod(**d))
-            elif isinstance(d, basestring):
-                cell_methods2.extend(f._CellMethod.parse(d))
-            elif isinstance(d, f._CellMethod):
-                cell_methods2.append(d)
-        #--- End: for
-        cell_methods = cell_methods2
-    
-        f_cell_methods = f.items.cell_methods
-        nf = len(f_cell_methods)
-        n  = len(cell_methods) 
-         
-        n = len(cell_methods) 
-        if nf < n:
-            return False
-        
-        # Still here?
-        cell_methods = f._conform_cell_methods(cell_methods)
-        for i, j in enumerate(range(nf-n, nf)):
-            if not f_cell_methods[j].match(cell_methods[i].properties()):
-                return False
-        #--- End: for
-        
-        return True
-    #--- End: def
-
-    def _match_coordinate_references(cls, f, coordinate_references):
-        '''Try to match coordinate references.
-
-:Parameters:
-
-    f: `{+Variable}`
-
-    cell_methods: `list` or `tuple` or `str` or `dict` or `CellMethod`
-
-:Returns:
-
-    out: `bool`
-
-        '''
-        if not isinstance(coordinate_references, (list, tuple)):
-            coordinate_references = (coordinate_references,)
-
-        coordinate_references2 = []
-        for d in coordinate_references:
-            if isinstance(d, basestring):
-                coordinate_references2.append({None: d})
-            else:
-                coordinate_references2.append(d)
-        #--- End: for
-        coordinate_references = coordinate_references2
-
-        for description in coordinate_references:
-            if not bool(f.Items(description, role='r')): #ppp
-                return False
-        #--- End: for 
-        
-        return True
-    #--- End: def
-
-    def match(self, description=None, ndim=None, items=None,
-              axes=None, cell_methods=None, coordinate_references=None,
-              inverse=False, customise=None):
-        '''
-.. versionadded:: 1.6
-
-:Examples 1:
-
-:Parameters:
-
-:Returns:
-
-    out: `bool`
-
-:Examples 2:
-
-        '''
-        if customise:
-            customise = customise.copy()
-        else:
-            customise = {}
-            
-        if items is not None:
-            customise[self._match_items] = items
-
-        if axes is not None:
-            customise[self._match_axes] = axes
-
-        if cell_methods is not None:
-            customise[self._match_cell_methods] = cell_methods
-
-        if coordinate_references is not None:
-            customise[self._match_coordinate_references] = coordinate_references
-
-        return super(Field, self).match(description=description,
-                                        ndim=ndim,
-                                        inverse=inverse,
-                                        customise=customise)
-    #--- End: def
+#    @classmethod
+#    def _match_items(cls, f, items):
+#        '''Try to match items
+#
+#:Parameters:
+#
+#    f: `{+Variable}`
+#
+#    items: `dict`
+#        A dictionary which identifies items of the field (dimension
+#        coordinate, auxiliary coordinate, cell measure or coordinate
+#        reference objects) with corresponding tests on their
+#        elements. The field matches if **all** of the specified items
+#        exist and their tests are passed.
+#
+#        Each dictionary key specifies an item to test as the one that
+#        would be returned by this call of the field's `item` method:
+#        ``f.item(key)`` (see `Field.item`).
+#
+#        The corresponding value is, in general, any object for which
+#        the item may be compared with for equality (``==``). The test
+#        is passed if the result evaluates to True, or if the result is
+#        an array of values then the test is passed if at least one
+#        element evaluates to true.
+#
+#        If the value is `None` then the test is always passed,
+#        i.e. this case tests for item existence.
+#
+#          *Example:*
+#             To match a field which has a latitude coordinate value of
+#             exactly 30: ``items={'latitude': 30}``.
+#
+#          *Example:*
+#             To match a field which has a time coordinate value of
+#             2004-06-01: ``items={'time': cf.dt('2004-06-01')}`` (see
+#             `cf.dt`).
+#
+#          *Example:*
+#             To match a field which has a height axis: ``items={'Z':
+#             None}``.
+#
+#          *Example:*
+#             To match a field which has a time axis a depth coordinate
+#             of 1000 metres: ``items={'T': None, 'depth': Data(1000,
+#             'm')}`` (see `Data`).
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#        '''
+#        for description in f._match_parse_description(items):
+#            if not bool(f.items(description)):
+#                return False
+#        #--- End: for 
+#        
+#        return True
+#    #--- End: def
+#
+#    def _match_axes(cls, f, axes):
+#        '''Try to match items
+#
+#:Parameters:
+#
+#    f: `{+Variable}`
+#
+#    axes: 
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#        '''
+#        for a in f._match_parse_description(axes):
+#            if len(a) == 1:
+#                # Convert {None: value} to value
+#                key, value = a.items()[0]
+#                if key is None:
+#                    a = value
+#            #--- End: if
+#
+#            if not bool(f.axes(a, ndim=1)):
+#                return False
+#        #--- End: for 
+#        
+#        return True
+#    #--- End: def
+#
+#    def _match_cell_methods(cls, f, cell_methods):
+#        '''Try to match cell methods
+#
+#:Parameters:
+#
+#    f: `{+Variable}`
+#
+#    cell_methods: `list` or `tuple` or `str` or `dict` or `CellMethod`
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#        '''
+#        if not isinstance(cell_methods, (list, tuple)):
+#            cell_methods = (cell_methods,)
+#
+#        cell_methods2 = []
+#        for d in cell_methods:
+#            if isinstance(d, dict):
+#                cell_methods2.append(f._CellMethod(**d))
+#            elif isinstance(d, basestring):
+#                cell_methods2.extend(f._CellMethod.parse(d))
+#            elif isinstance(d, f._CellMethod):
+#                cell_methods2.append(d)
+#        #--- End: for
+#        cell_methods = cell_methods2
+#    
+#        f_cell_methods = f.items.cell_methods
+#        nf = len(f_cell_methods)
+#        n  = len(cell_methods) 
+#         
+#        n = len(cell_methods) 
+#        if nf < n:
+#            return False
+#        
+#        # Still here?
+#        cell_methods = f._conform_cell_methods(cell_methods)
+#        for i, j in enumerate(range(nf-n, nf)):
+#            if not f_cell_methods[j].match(cell_methods[i].properties()):
+#                return False
+#        #--- End: for
+#        
+#        return True
+#    #--- End: def
+#
+#    def _match_coordinate_references(cls, f, coordinate_references):
+#        '''Try to match coordinate references.
+#
+#:Parameters:
+#
+#    f: `{+Variable}`
+#
+#    cell_methods: `list` or `tuple` or `str` or `dict` or `CellMethod`
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#        '''
+#        if not isinstance(coordinate_references, (list, tuple)):
+#            coordinate_references = (coordinate_references,)
+#
+#        coordinate_references2 = []
+#        for d in coordinate_references:
+#            if isinstance(d, basestring):
+#                coordinate_references2.append({None: d})
+#            else:
+#                coordinate_references2.append(d)
+#        #--- End: for
+#        coordinate_references = coordinate_references2
+#
+#        for description in coordinate_references:
+#            if not bool(f.Items(description, role='r')): #ppp
+#                return False
+#        #--- End: for 
+#        
+#        return True
+#    #--- End: def
+#
+#    def match(self, description=None, ndim=None, items=None,
+#              axes=None, cell_methods=None, coordinate_references=None,
+#              inverse=False, customise=None):
+#        '''
+#.. versionadded:: 1.6
+#
+#:Examples 1:
+#
+#:Parameters:
+#
+#:Returns:
+#
+#    out: `bool`
+#
+#:Examples 2:
+#
+#        '''
+#        if customise:
+#            customise = customise.copy()
+#        else:
+#            customise = {}
+#            
+#        if items is not None:
+#            customise[self._match_items] = items
+#
+#        if axes is not None:
+#            customise[self._match_axes] = axes
+#
+#        if cell_methods is not None:
+#            customise[self._match_cell_methods] = cell_methods
+#
+#        if coordinate_references is not None:
+#            customise[self._match_coordinate_references] = coordinate_references
+#
+#        return super(Field, self).match(description=description,
+#                                        ndim=ndim,
+#                                        inverse=inverse,
+#                                        customise=customise)
+#    #--- End: def
 
     def axis_name(self, axes=None, default=None, **kwargs):
         '''Return the canonical name for an axis.
@@ -4532,7 +4532,7 @@ coordinate or cell measure object of the field.
 
 #--- End: class
 
-class Items(dict):
+class Constructs(dict):
     '''
 Keys are item identifiers, values are item objects.
     '''
@@ -4555,17 +4555,18 @@ Keys are item identifiers, values are item objects.
         self.d = set()  # Dimension coordinate identifiers, e.g. 'dim0'
         self.m = set()  # Cell measures identifier,         e.g. 'msr0'
         self.r = set()  # Coordinate reference identifiers, e.g. 'ref0'
-#        self.x = set()  # Cell method identifiers,          e.g. 'cmd0'
+        self.x = set()  # Domain axis identifiers,          e.g. 'axis0'
+        self.y = set()  # Cell method identifiers,          e.g. 'cmd0'
 
         # Map of item identifiers to their roles. For example,
         # self._role['aux2'] = 'a'
         self._role = {}
 
         # The axes identifiers for each item. For example,
-        # self._axes['aux2'] = ['dim1, 'dim0']
-        self._axes = {}
+        # self._copnstruct_axes['aux2'] = ['dim1, 'dim0']
+        self.construct_axes = {}
 
-        self.cell_methods = OrderedDict()
+        self.cell_methods = []
         
         # Domain axes
         # 
@@ -4607,10 +4608,7 @@ Keys are item identifiers, values are item objects.
 #    def values(self):
 #        return self._items.values()
         
-    def __call__(self, description=None, role=None, axes=None,
-                 axes_all=None, axes_subset=None, axes_superset=None,
-                 ndim=None, inverse=False, copy=False):
-        #, _restrict_inverse=False):
+    def items(self, role=None):
 
         '''Return items which span domain axes.
 
@@ -4706,26 +4704,6 @@ names contain the string "qwerty":
  
         By default all roles are considered, i.e. by default
         ``role=('d', 'a', 'm', 'f', 'c', 'r')``.
-    
-    {+axes}
-
-    {+axes_all}
-
-    {+axes_subset}
-
-    {+axes_superset}
-
-    {+ndim}
-
-    {+inverse}
-
-          *Example:*
-            ``i(role='da', inverse=True)`` selects the same
-            items as ``i(role='mr')``.
-
-    copy: `bool`, optional
-        If True then do not copy the returned items. By default the
-        returned items are not copies.
 
 :Returns:
 
@@ -4736,171 +4714,173 @@ names contain the string "qwerty":
 :Examples:
 
         '''
-        if role is None:
-            pool = dict(self)
-        else:
-            pool = {}
-            for r in role:
-                for key in getattr(self, r):
-                    pool[key] = self[key]
-        #--- End: if
-
-        if inverse:
-            master = pool.copy()            
-
-        if (description is None and axes is None and axes_all is None and
-            axes_subset is None and axes_superset is None and ndim is None):
-            out = pool.copy()
-        else:       
-            out = {}
-
-        if pool and axes is not None:
-            # --------------------------------------------------------
-            # Select items which span at least one of the given axes,
-            # and possibly others.
-            # --------------------------------------------------------
-            axes_out = {}
-            for key, value in pool.iteritems():
-                if axes.intersection(self.axes(key)):
-                    axes_out[key] = value
-
-#            if match_and:
-            out = pool = axes_out
-#            else:                
-#                for key in axes_out:
-#                    out[key] = pool.pop(key)
-        #--- End: if
-
-        if pool and axes_subset is not None:
-            # --------------------------------------------------------
-            # Select items whose data array spans all of the specified
-            # axes, taken in any order, and possibly others.
-            # --------------------------------------------------------
-            axes_out = {}
-            for key, value in pool.iteritems():
-                if axes_subset.issubset(self.axes(key)):
-                    axes_out[key] = value                            
-
-#            if match_and:
-            out = pool = axes_out
-#            else:                
-#                for key in axes_out:
-#                    out[key] = pool.pop(key)
-        #--- End: if
-
-        if pool and axes_superset is not None:
-            # --------------------------------------------------------
-            # Select items whose data array spans a subset of the
-            # specified axes, taken in any order, and no others.
-            # --------------------------------------------------------
-            axes_out = {}
-            for key, value in pool.iteritems():
-                if axes_superset.issuperset(self.axes(key)):
-                    axes_out[key] = value                            
-
-#            if match_and:
-            out = pool = axes_out
-#            else:                
-#                for key in axes_out:
-#                    out[key] = pool.pop(key)
-        #--- End: if
-
-        if pool and axes_all is not None:
-            # --------------------------------------------------------
-            # Select items which span all of the given axes and no
-            # others
-            # --------------------------------------------------------
-            axes_out = {}
-            for key, value in pool.iteritems():
-                if axes_all == set(self.axes(key)):
-                    axes_out[key] = value                            
-
-#            if match_and:
-            out = pool = axes_out
-#            else:                
-#                for key in axes_out:
-#                    out[key] = pool.pop(key)
-        #--- End: if
-
-        if pool and ndim is not None:
-            # --------------------------------------------------------
-            # Select items whose number of data array axes satisfies a
-            # condition
-            # --------------------------------------------------------
-            ndim_out = {}
-            for key, item in pool.iteritems():
-                if ndim == len(self.axes(key)):
-                    ndim_out[key] = item
-            #--- End: for
-
-#            if match_and:                
-            out = pool = ndim_out
-#            else:
-#                for key in ndim_out:
-#                    out[key] = pool.pop(key)
-        #--- End: if
-
-        if pool and description is not None:
-            # --------------------------------------------------------
-            # Select items whose properties satisfy conditions
-            # --------------------------------------------------------
-            items_out = {}
-
-            if isinstance(description, (basestring, dict)):
-                description = (description,)
-
-            if description:
-                pool2 = pool.copy()
-
-                match = []
-                for m in description:
-                    if m.__hash__ and m in pool:
-                        # m is an item identifier
-                        items_out[m] = pool2.pop(m)
-                    else:                    
-                        match.append(m)
-                #--- End: for
-
-                if match and pool:                
-                    for key, item in pool2.iteritems():
-                        if item.match(match):
-                            # This item matches the critieria
-                            items_out[key] = item
-                #--- End: if
-
-#                if match_and:                
-                out = pool = items_out
-#                else:
-#                    for key in items_out:
-#                        out[key] = pool.pop(key)
-            #--- End: if
-        #--- End: if
-
-        if inverse:
-            # --------------------------------------------------------
-            # Select items other than those previously selected
-            # --------------------------------------------------------
-            for key in out:
-                del master[key]
-                                
-            out = master
-        #--- End: if
-
-        if copy:
-            # --------------------------------------------------------
-            # Copy the items
-            # --------------------------------------------------------
-            out2 = {}
-            for key, item in out.iteritems():
-                out2[key] = item.copy()
+#        if role is None:
+#            pool = dict(self)
+#        else:
+        out = {}
+        for r in role:
+            for key in getattr(self, r):
+                    out[key] = self[key]
                 
-            out = out2
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Return the selected items
-        # ------------------------------------------------------------
         return out
+#        #--- End: if
+#
+#        if inverse:
+#            master = pool.copy()            
+#
+#        if (description is None and axes is None and axes_all is None and
+#            axes_subset is None and axes_superset is None and ndim is None):
+#            out = pool.copy()
+#        else:       
+#            out = {}
+#
+#        if pool and axes is not None:
+#            # --------------------------------------------------------
+#            # Select items which span at least one of the given axes,
+#            # and possibly others.
+#            # --------------------------------------------------------
+#            axes_out = {}
+#            for key, value in pool.iteritems():
+#                if axes.intersection(self.axes(key)):
+#                    axes_out[key] = value
+#
+##            if match_and:
+#            out = pool = axes_out
+##            else:                
+##                for key in axes_out:
+##                    out[key] = pool.pop(key)
+#        #--- End: if
+#
+#        if pool and axes_subset is not None:
+#            # --------------------------------------------------------
+#            # Select items whose data array spans all of the specified
+#            # axes, taken in any order, and possibly others.
+#            # --------------------------------------------------------
+#            axes_out = {}
+#            for key, value in pool.iteritems():
+#                if axes_subset.issubset(self.axes(key)):
+#                    axes_out[key] = value                            
+#
+##            if match_and:
+#            out = pool = axes_out
+##            else:                
+##                for key in axes_out:
+##                    out[key] = pool.pop(key)
+#        #--- End: if
+#
+#        if pool and axes_superset is not None:
+#            # --------------------------------------------------------
+#            # Select items whose data array spans a subset of the
+#            # specified axes, taken in any order, and no others.
+#            # --------------------------------------------------------
+#            axes_out = {}
+#            for key, value in pool.iteritems():
+#                if axes_superset.issuperset(self.axes(key)):
+#                    axes_out[key] = value                            
+#
+##            if match_and:
+#            out = pool = axes_out
+##            else:                
+##                for key in axes_out:
+##                    out[key] = pool.pop(key)
+#        #--- End: if
+#
+#        if pool and axes_all is not None:
+#            # --------------------------------------------------------
+#            # Select items which span all of the given axes and no
+#            # others
+#            # --------------------------------------------------------
+#            axes_out = {}
+#            for key, value in pool.iteritems():
+#                if axes_all == set(self.axes(key)):
+#                    axes_out[key] = value                            
+#
+##            if match_and:
+#            out = pool = axes_out
+##            else:                
+##                for key in axes_out:
+##                    out[key] = pool.pop(key)
+#        #--- End: if
+#
+#        if pool and ndim is not None:
+#            # --------------------------------------------------------
+#            # Select items whose number of data array axes satisfies a
+#            # condition
+#            # --------------------------------------------------------
+#            ndim_out = {}
+#            for key, item in pool.iteritems():
+#                if ndim == len(self.axes(key)):
+#                    ndim_out[key] = item
+#            #--- End: for
+#
+##            if match_and:                
+#            out = pool = ndim_out
+##            else:
+##                for key in ndim_out:
+##                    out[key] = pool.pop(key)
+#        #--- End: if
+#
+#        if pool and description is not None:
+#            # --------------------------------------------------------
+#            # Select items whose properties satisfy conditions
+#            # --------------------------------------------------------
+#            items_out = {}
+#
+#            if isinstance(description, (basestring, dict)):
+#                description = (description,)
+#
+#            if description:
+#                pool2 = pool.copy()
+#
+#                match = []
+#                for m in description:
+#                    if m.__hash__ and m in pool:
+#                        # m is an item identifier
+#                        items_out[m] = pool2.pop(m)
+#                    else:                    
+#                        match.append(m)
+#                #--- End: for
+#
+#                if match and pool:                
+#                    for key, item in pool2.iteritems():
+#                        if item.match(match):
+#                            # This item matches the critieria
+#                            items_out[key] = item
+#                #--- End: if
+#
+##                if match_and:                
+#                out = pool = items_out
+##                else:
+##                    for key in items_out:
+##                        out[key] = pool.pop(key)
+#            #--- End: if
+#        #--- End: if
+#
+#        if inverse:
+#            # --------------------------------------------------------
+#            # Select items other than those previously selected
+#            # --------------------------------------------------------
+#            for key in out:
+#                del master[key]
+#                                
+#            out = master
+#        #--- End: if
+#
+#        if copy:
+#            # --------------------------------------------------------
+#            # Copy the items
+#            # --------------------------------------------------------
+#            out2 = {}
+#            for key, item in out.iteritems():
+#                out2[key] = item.copy()
+#                
+#            out = out2
+#        #--- End: if
+#
+#        # ------------------------------------------------------------
+#        # Return the selected items
+#        # ------------------------------------------------------------
+#        return out
     #--- End: def
 
     def coordinate_references(self, description=None, inverse=False,
@@ -5730,44 +5710,40 @@ Return a deep or shallow copy.
         getattr(self, role).add(key)
         self._role[key] = role
 
-    def item(self, description=None, key=False, default=None, **kwargs):
-        '''
-'''    
-        if key:
-            return self.key(description=description, default=default, **kwargs)
-
-        d = self(description, **kwargs)
-        if not d:
-            return default
-
-        items = d.popitem()
-
-        return default if d else items[1]
-    #--- End: def
-
-    def key(self, description=None, default=None, **kwargs):
-        '''
-'''    
-        d = self(description, **kwargs)
-        if not d:
-            return default
-
-        items = d.popitem()
-
-        return default if d else items[0]
-    #--- End: def
-
-    def key_item(self, description=None, default=(None, None), **kwargs):
-        '''
-'''    
-        d = self(description, **kwargs)
-        if not d:
-            return default
-
-        items = d.popitem()
-
-        return default if d else items
-    #--- End: def
+#    def item(self, description=None, default=None):
+#        '''
+#'''    
+#        item = self.items().get(description)
+#
+#        if item is None:
+#            return default
+#
+#        return item
+#    #--- End: def
+#
+#    def key(self, description=None, default=None)
+#        '''
+#'''    
+#        d = self(description, **kwargs)
+#        if not d:
+#            return default
+#
+#        items = d.popitem()
+#
+#        return default if d else items[0]
+#    #--- End: def
+#
+#    def key_item(self, description=None, default=(None, None), **kwargs):
+#        '''
+#'''    
+#        d = self(description, **kwargs)
+#        if not d:
+#            return default
+#
+#        items = d.popitem()
+#
+#        return default if d else items
+#    #--- End: def
 
     def remove_item(self, key):
         '''
@@ -5780,130 +5756,5 @@ Return a deep or shallow copy.
     def role(self, key):
         return self._role[key]
     #--- End: def
-
-    def aaa(self, other, atol=None, rtol=None, _equivalent=False):
-        '''
-        '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
-        # ------------------------------------------------------------
-        # 
-        # ------------------------------------------------------------
-        axes0_to_axes1 = {}
-
-        key1_to_key0 = {}
-
-        axes_to_items0 = self.axes_to_items()
-        axes_to_items1 = other.axes_to_items()
-        
-        for axes0, items0 in axes_to_items0.iteritems():
-            matched_all_items_with_these_axes = False
-
-            len_axes0 = len(axes0) 
-            for axes1, items1 in axes_to_items1.items():
-                matched_roles = False
-
-                if len_axes0 != len(axes1):
-                    # axes1 and axes0 contain differents number of
-                    # axes.
-                    continue
-            
-                for role in ('d', 'a', 'm', 'f', 'c'):
-                    matched_role = False
-
-                    role_items0 = items0[role]
-                    role_items1 = items1[role]
-
-                    if len(role_items0) != len(role_items1):
-                        # There are the different numbers of items
-                        # with this role
-                        matched_all_items_with_these_axes = False
-                        break
-
-                    # Check that there are matching pairs of equal
-                    # items
-                    for key0, item0 in role_items0.iteritems():
-                        matched_item = False
-                        for key1, item1 in role_items1.items():
-                            if _equivalent:
-                                pass
-#                                # Flip item1 axes, if necessary
-#                                flip = [i
-#                                        for i, (d0, d1) in enumerate(zip(directions0, directions1))
-#                                        if d0 != d1]
-#                                if flip:
-#                                    item1 = item1.flip(flip)
-#
-#                                # Transpose item1 axes, if necessary
-#                                
-#
-#                                item0_compare = item0.equivalent
-                            else:
-                                item0_compare = item0.equals
-                               
-                            if item0_compare(item1, rtol=rtol,
-                                             atol=atol,
-                                             ignore_data_type=ignore_data_type,
-                                             ignore_fill_value=ignore_fill_value,
-                                             ignore=ignore,
-                                             traceback=False):
-                                del role_items1[key1]
-                                key1_to_key0[key1] = key0
-                                matched_item = True
-                                break
-                        #--- End: for
-
-                        if not matched_item:
-                            break
-                    #--- End: for
-
-                    if role_items1:
-                        break
-
-                    del items1[role]
-                #--- End: for
-
-                matched_all_items_with_these_axes = not items1
-
-                if matched_all_items_with_these_axes:
-                    del axes_to_items1[axes1]
-                    break
-            #--- End: for
-
-            # Map item axes in the two instances
-            axes0_to_axes1[axes0] = axes1
-
-            if not matched_all_items_with_these_axes:
-                if traceback:
-                    names = [self.axis_name(axis0) for axis0 in axes0]
-                    print("Can't match items spanning axes {0}".format(names))
-                return False
-        #--- End: for
-
-        axis0_to_axis1 = {}
-        axis1_to_axis0 = {}
-        for axes0, axes1 in axes0_to_axes1.iteritems():
-            for axis0, axis1 in zip(axes0, axes1):
-                if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
-                    if traceback:
-                        print(
-"Field: Ambiguous axis mapping ({} -> {} and {})".format(
-    self.axis_name(axes0), other.axis_name(axis1),
-    other.axis_name(axis0_to_axis1[axis0])))
-                    return False
-                elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
-                    if traceback:
-                        print(
-"Field: Ambiguous axis mapping ({} -> {} and {})".format(
-    self.axis_name(axis0), self.axis_name(axis1_to_axis0[axis0]),
-    other.axis_name(axes1)))
-                    return False
-
-                axis0_to_axis1[axis0] = axis1
-                axis1_to_axis0[axis1] = axis0
-        #--- End: for     
 
 #--- End: class
