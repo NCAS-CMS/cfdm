@@ -12,6 +12,8 @@ from .functions import (parse_indices, equals, RTOL, ATOL,
                         RELAXED_IDENTITIES)
 from .variable  import Variable
 
+from .constructs import Constructs
+
 _debug = False
 
 from .variable import docstring
@@ -268,6 +270,7 @@ Field objects are picklable.
     '''
     _DomainAxis = DomainAxis
     _Flags      = Flags
+    _Constructs = Constructs
     
     _special_properties = Variable._special_properties.union(
         ('flag_values',
@@ -298,7 +301,7 @@ Field objects are picklable.
         '''
         # Domain axes and items
         self._private = {'simple_properties' : {},
-                         'special_attributes': {'items': Items()}
+                         'special_attributes': {'constructs': self._Constructs()}
         }
         
         # Initialize the new field with attributes and CF properties
@@ -309,8 +312,8 @@ Field objects are picklable.
                                     copy=copy) 
 
         if getattr(source, 'isfield', False):
-            # Initialise items and axes from a source field
-            self._private['special_attributes']['items'] = source.Items.copy(shallow=not copy)
+            # Initialise constructs from a source field
+            self._private['special_attributes']['constructs'] = source.constructs.copy(shallow=not copy)
 
         self._unlimited = None
     #--- End: def
@@ -403,12 +406,12 @@ functionality:
         new._Data = self.data[tuple(indices)]
 
         # ------------------------------------------------------------
-        # Subspace items
+        # Subspace constructs
         # ------------------------------------------------------------
-        Items = new.Items
+        constructs = new.constructs
         data_axes = new.data_axes()
 
-        items = new.items(role=('d', 'a', 'm', 'f', 'c'), axes=data_axes)
+        items = new.variables(axes=data_axes)
         for key, item in items.iteritems():
             item_axes = new.item_axes(key)
             dice = []
@@ -424,7 +427,8 @@ functionality:
                 print '    dice = ', dice
                 
             # Replace existing item with its subspace
-            Items[key] = item[tuple(dice)]
+#            Items[key] = item[tuple(dice)]
+            constructs.replace(key, item[tuple(dice)])
         #--- End: for
 
         # Replace existing domain axes
@@ -520,7 +524,7 @@ x.__str__() <==> str(x)
                 name = "{0}({1})".format(axis_name(key), axis_size(key))
                 axis_to_name[key] = name
                 
-                variable = self.Items.get(key, None)
+                variable = self.constructs.get(key, None)
                 
                 if variable is None:
                     return name
@@ -532,7 +536,7 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                shape = [axis_to_name[axis] for axis in self.Items.axes(key)]
+                shape = [axis_to_name[axis] for axis in self.item_axes(key)]
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
                 x = [variable.name(key)]
@@ -629,8 +633,8 @@ A `Flags` object stores the `flag_values`, `flag_meanings` and
         self._del_special_attr('Flags')
     
     @property
-    def Items(self):
-        return self._private['special_attributes']['items']
+    def constructs(self):
+        return self._private['special_attributes']['constructs']
     
     @property
     def ncdimensions(self):
@@ -1296,7 +1300,7 @@ last values.
                                                            ', '.join(x),
                                                            str(self.data))))
         # Cell methods
-        cell_methods = self.Items.cell_methods.values()
+        cell_methods = self.cell_methods.values()
         if cell_methods:
             cell_methods = self._unconform_cell_methods(cell_methods)
             string.append('')
@@ -1305,36 +1309,36 @@ last values.
 #                   cm.dump(display=False, field=self, _level=_level))
 
         # Field ancillaries
-        for key, value in sorted(self.Items.field_ancs().iteritems()):
+        for key, value in sorted(self.field_ancillaries().iteritems()):
             string.append('') 
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
 
         # Dimension coordinates
-        for key, value in sorted(self.Items.dims().iteritems()):
+        for key, value in sorted(self.dimension_coordinates().iteritems()):
             string.append('')
             string.append(value.dump(display=False, 
                                      field=self, key=key, _level=_level))
              
         # Auxiliary coordinates
-        for key, value in sorted(self.Items.auxs().iteritems()):
+        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
             string.append('')
             string.append(value.dump(display=False, field=self, 
                                      key=key, _level=_level))
         # Domain ancillaries
-        for key, value in sorted(self.Items.domain_ancs().iteritems()):
+        for key, value in sorted(self.domain_ancillaries().iteritems()):
             string.append('') 
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
             
         # Coordinate references
-        for key, value in sorted(self.Items.refs().iteritems()):
+        for key, value in sorted(self.coordinate_references().iteritems()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
 
         # Cell measures
-        for key, value in sorted(self.Items.msrs().iteritems()):
+        for key, value in sorted(self.cell_measures().iteritems()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
@@ -1505,10 +1509,10 @@ The axes are selected with the *axes* parameter.
 
         if items:
             ndim = f.ndim
-            for key, item in f.items(role=('d', 'a', 'm', 'f', 'c')).iteritems():
+            for key, item in f.constructs.variables().iteritems():
                 item_ndim = item.ndim
                 if item.ndim < 2:
-                    # No need to transpose 1-d items
+                    # No need to transpose 1-d constructs
                     continue
                 item_axes = f.item_axes(key)
 
@@ -1555,7 +1559,7 @@ The axes are selected with the *axes* parameter.
 :Examples 2:
 
         '''     
-        key, item = self.Items.key_item(description, **kwargs)
+        key, item = self.key_item(description, **kwargs)
         item_axes = self.item_axes(key)            
         
         if iaxes is None and not kwargs:
@@ -1570,11 +1574,11 @@ The axes are selected with the *axes* parameter.
             axes2 = [item_axes[i] for i in iaxes]
         #---- End: if
 
-        # Transpose the item's data array
+        # Transpose the construct's data array
         item.transpose(iaxes, copy=False)
 
         # Reorder the field's list of axes
-        self.Items.axes(key=key, axes=axes2)
+        self.constructs.item_axes(key=key, axes=axes2)
         
         return item
     #--- End: def
@@ -1876,16 +1880,16 @@ axes, use the `remove_axes` method.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.Items.insert_aux(item, key=key, axes=axes, copy=False)
+        self.constructs.insert_auxiliary_coordinate(item, key=key, axes=axes, copy=False)
 
         # Update coordindate references
-        refs = self.items(role='r') #ppp
+        refs = self.coordinate_references()
         if refs:
             for ref in refs.itervalues():
                 self._conform_ref(ref, copy=False)
 
         # Update cell methods
-        cell_methods = self.Items.cell_methods
+        cell_methods = self.cell_methods()
         if cell_methods:
             for key, value in zip(cell_methods,
                                   self._conform_cell_methods(cell_methods.values())):
@@ -2318,7 +2322,7 @@ To multiply the field by the cosine of its latitudes:
         kwargs2 = self._parameters(locals())
         del kwargs2['bounds']
  
-        (key, item) = self.Items.key_item(**kwargs2)
+        key, item = self.key_item(**kwargs2)
         if key is None:
             raise ValueError("No unique item could be found from {}".format(
                 self._no_None_dict(kwargs2)))
@@ -2505,7 +2509,7 @@ Set the time axis to be unlimited when written to a netCDF file:
         '''
         '''
         if not description:
-            return "OrdereDict: {'cel1': <>, 'cel0': <>}"
+            return self.constructs.cell_methods()
         
         if not isinstance(description, (list, tuple)):
             description = (description,)
@@ -2522,8 +2526,8 @@ Set the time axis to be unlimited when written to a netCDF file:
                 raise ValueError("asd 123948u m  BAD DESCRIPTION TYPE")
         #--- End: for
 
-        keys = self.Items.cell_methods.keys()                    
-        f_cell_methods = self.Items.cell_methods.values()
+        keys = self.cell_methods().keys()                    
+        f_cell_methods = self.cell_methods().values()
         nf = len(f_cell_methods)
 
         out = {}
@@ -2798,7 +2802,7 @@ Set the time axis to be unlimited when written to a netCDF file:
         if axis is None:
             raise ValueError("No unique axis could be identified")
 
-        return self.Items.axis_name(axis, default=default)
+        return self.constructs.axis_name(axis, default=default)
     #--- End: def
 
     def axes_names(self, axes=None, **kwargs):
@@ -2828,8 +2832,8 @@ Set the time axis to be unlimited when written to a netCDF file:
 
         '''          
         out = {}
-        for axis in self.Axes:
-            out[axis] = self.Items.axis_name(axis)
+        for axis in self.domain_axes()
+            out[axis] = self.constructs.axis_name(axis)
 
         return out
     #--- End: def
@@ -3161,7 +3165,7 @@ None
         cell_method = self._conform_cell_methods([cell_method],
                                                  axis_map=_axis_map)[0]
         
-        self.Items.insert_cell_method(cell_method, key)
+        self.constructs.insert_cell_method(cell_method, key)
     #--- End: def
 
     def insert_axis(self, axis, key=None, replace=True, copy=True):
@@ -3284,7 +3288,7 @@ The domain is not updated.
         '''
         if key is None:
             key = self.new_identifier('fav')
-        elif key in self.Items.f and not replace:
+        elif key in self.field_ancillaries() and not replace:
             raise ValueError(
 "Can't insert field ancillary object: Identifier {0!r} already exists".format(key))
 
@@ -3298,7 +3302,7 @@ The domain is not updated.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.Items.insert_field_anc(item, key=key, axes=axes, copy=False)
+        self.constructs.insert_field_ancillary(item, key=key, axes=axes, copy=False)
 
         return key
     #--- End: def
@@ -3312,7 +3316,7 @@ The domain is not updated.
        
         if key is None:
             key = self.new_identifier('cct')
-        elif key in self.Items.c and not replace:
+        elif key in self.domain_ancillaries() and not replace:
             raise ValueError(
 "Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
 
@@ -3321,13 +3325,9 @@ The domain is not updated.
         if copy:
             item = item.copy()
 
-#        # Turn a scalar domain ancillary into 1-d
-#        if item.isscalar:
-#            item = item.expand_dims(0, copy=False)
+        self.constructs.insert_domain_ancillary(item, key=key, axes=axes, copy=False)
 
-        self.Items.insert_domain_anc(item, key=key, axes=axes, copy=False)
-
-        refs = self.items(role='r') #ppp
+        refs = self.coordinate_references()
         if refs:
             for ref in refs.itervalues():
                 self._conform_ref(ref, copy=False)
@@ -3611,7 +3611,7 @@ and ref.ancillaries with domain ancillary identities where possible.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.Items.insert_measure(item, key=key, axes=axes, copy=False)
+        self.constructs.insert_cell_measure(item, key=key, axes=axes, copy=False)
 
         return key
     #--- End: def
@@ -3696,7 +3696,7 @@ and ref.ancillaries with domain ancillary identities where possible.
             axes = self._insert_item_parse_axes(item, 'dimension coordinate',
                                                 axes, allow_scalar=False)    
 
-        if key in self.Items.d and not replace:
+        if key in self.dimension_coordinates() and not replace:
             raise ValueError(
 "Can't insert dimension coordinate object: Identifier {!r} already exists".format(key))
 
@@ -3704,15 +3704,15 @@ and ref.ancillaries with domain ancillary identities where possible.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
         
-        self.Items.insert_dim(item, key=key, axes=axes, copy=False)
+        self.constructs.insert_dimension_coordinate(item, key=key, axes=axes, copy=False)
 
-        refs = self.Items.refs()
+        refs = self.coordinate_references()
         if refs:
             for ref in refs.itervalues():
                 self._conform_ref(ref, copy=False)
 
         # Update cell methods
-        cell_methods = self.Items.cell_methods
+        cell_methods = self.cell_methods()
         if cell_methods:
             conformed = self._conform_cell_methods(cell_methods.values())
             for key, value in zip(cell_methods, conformed):
@@ -3766,7 +3766,7 @@ and ref.ancillaries with domain ancillary identities where possible.
 
         self._conform_ref(item, copy=False)
 
-        self.Items.insert_ref(item, key=key, copy=False)
+        self.insert_coordinate_reference(item, key=key, copy=False)
 
         return key
     #--- End: def
@@ -3818,7 +3818,7 @@ measure or a coordinate reference object.
         if key is None:
             return default
 
-        return list(self.Items.axes(key=key))
+        return list(self.constructs.item_axes(key=key))
     #--- End: def
 
     def key(self, description=None, role=None, axes=None,
