@@ -1300,9 +1300,9 @@ last values.
                                                            ', '.join(x),
                                                            str(self.data))))
         # Cell methods
-        cell_methods = self.cell_methods.values()
+        cell_methods = self.cell_methods()
         if cell_methods:
-            cell_methods = self._unconform_cell_methods(cell_methods)
+            cell_methods = self._unconform_cell_methods(cell_methods.values())
             string.append('')
             for cm in cell_methods:
                 string.append(cm.dump(display=False, _level=_level))
@@ -1509,7 +1509,7 @@ The axes are selected with the *axes* parameter.
 
         if items:
             ndim = f.ndim
-            for key, item in f.constructs.variables().iteritems():
+            for key, item in f.variables().iteritems():
                 item_ndim = item.ndim
                 if item.ndim < 2:
                     # No need to transpose 1-d constructs
@@ -1633,22 +1633,22 @@ Dimensions      : time(1) = [15] days since 1860-1-1
                 : height(1) = [2] m
 Auxiliary coords:
 
-        '''     
-        data_axes = self.data_axes()
-        axes = set(self.axes(axes, size=1, **kwargs)).difference(data_axes)
-
+        '''
         if copy:
             f = self.copy()
         else:
             f = self
-
-        for axis in axes:
+     
+        size_1_axes = [key for key, axis in self.domain_axes().iteritems()
+                       if axis.size == 1]
+                
+        for axis in set(size_1_axes).difference(self.data_axes()):
             f.expand_dims(0, axis, copy=False)
 
         return f
     #--- End: def
 
-    def expand_dims(self, position=0, axes=None, copy=True, **kwargs):
+    def expand_dims(self, position=0, axis=None, copy=True):
         '''Insert a size 1 axis into the data array.
 
 By default default a new size 1 axis is inserted which doesn't yet
@@ -1681,31 +1681,30 @@ by the data array may be selected.
 :Examples 2:
 
         '''
-        if axes is None and not kwargs:
-            axis = None
-        else:
-            axis = self.axis(axes, key=True, **kwargs)
-            if axis is None:
-                raise ValueError("Can't identify a unique axis to insert")
-            elif self.axis_size(axis) != 1:
+        domain_axis = self.domain_axes().get(axis)
+        
+        if domain_axis is not None:
+            if domain_axis.size != 1:
                 raise ValueError(
-"Can't insert an axis of size {}: {!r}".format(self.axis_size(axis), axis))
+"Can't insert an axis of size {}: {!r}".format(domain_axis.size, axis))
             elif axis in self.data_axes():
                 raise ValueError(
-                    "Can't insert a duplicate axis: {!r}".format(axis))
+                    "Can't insert a duplicate data array axis: {!r}".format(axis))
         #--- End: if
        
         # Expand the dims in the field's data array
         f = super(Field, self).expand_dims(position, copy=copy)
 
-        axis = f.insert_axis(self._DomainAxis(1), key=axis, replace=False)
+        if domain_axis is None:
+            domain_axis = self._DomainAxis(1)
+            axis = f.insert_axis(domain_axis, key=axis, replace=False)
 
         f._data_axes.insert(position, axis)
 
         return f
     #--- End: def
 
-    def squeeze(self, axes=None, copy=True, **kwargs):
+    def squeeze(self, axes=None, copy=True)
         '''Remove size-1 axes from the data array.
 
 By default all size 1 axes are removed, but particular size 1 axes may
@@ -1741,14 +1740,17 @@ axes, use the `remove_axes` method.
         '''     
         data_axes = self.data_axes()
 
-        if axes is None and not kwargs:
-            all_axes = self.axes()
-            axes = [axis for axis in data_axes if all_axes[axis] == 1]
+        if axes is None:
+            domain_axes = self.domain_axes()
+            axes = [axis for axis in data_axes if domain_axes[axis].size == 1]
         else:
-            axes = set(self.axes(axes, **kwargs)).intersection(data_axes)
-
-        iaxes = [data_axes.index(axis) for axis in axes]      
-
+            size_1_axes = [key for key, axis in self.domain_axes().iteritems()
+                           if axis.size == 1]
+#            axes = set(self.axes(axes, **kwargs)).intersection(data_axes)
+            axes = set(size_1_axes).intersection(data_axes)
+            
+        iaxes = [data_axes.index(axis) for axis in axes]
+        
         # Squeeze the field's data array
         f = super(Field, self).squeeze(iaxes, copy=copy)
 
@@ -1867,7 +1869,7 @@ axes, use the `remove_axes` method.
             item = item.copy()
             
         if key is None:
-            key = self.new_identifier('aux')
+            key = self.constructs.new_identifier('auxiliarycoordinate')
 
         if key in self.axes() and not replace:
             raise ValueError(
@@ -1880,7 +1882,8 @@ axes, use the `remove_axes` method.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.constructs.insert_auxiliary_coordinate(item, key=key, axes=axes, copy=False)
+        self.constructs.insert_auxiliary_coordinate(item, key=key,
+                                                    axes=axes, copy=False)
 
         # Update coordindate references
         refs = self.coordinate_references()
@@ -2336,7 +2339,7 @@ To multiply the field by the cosine of its latitudes:
             if not item.bounds.hasdata:
                 raise ValueError("No bounds data")
 
-            data_axes.append(self.new_identifier('axis'))
+            data_axes.append(self.constructs.new_identifier('domainaxis'))
             data = item.bounds.data
         else:
             data = item.data
@@ -2497,71 +2500,77 @@ Set the time axis to be unlimited when written to a netCDF file:
 #        return naxes == len(f.axes())
 #    #--- End: def
 
-    def coordinate_references(self, description=None, inverse=False,
-                              key=False, copy=False):
+    def coordinate_references(self, copy=False):
         '''
         '''
-        rrr
+        return self.constructs.coordinate_references(copy=copy)
     #--- End: def
     
-    def cell_methods(self, description=None, inverse=False, key=False,
-                     copy=False):
+    def variables(self, copy=False):
         '''
         '''
-        if not description:
-            return self.constructs.cell_methods()
-        
-        if not isinstance(description, (list, tuple)):
-            description = (description,)
-            
-        cms = []
-        for d in description:
-            if isinstance(d, dict):
-                cms.append([self._CellMethod(**d)])
-            elif isinstance(d, basestring):
-                cms.append(self._CellMethod.parse(d))
-            elif isinstance(d, self._CellMethod):
-                cms.append([d])
-            else:
-                raise ValueError("asd 123948u m  BAD DESCRIPTION TYPE")
-        #--- End: for
+        return self.constructs.variables()
+    #--- End: def
+    
+    def cell_methods(self, copy=False):
+        '''
+        '''
+        return self.constructs.cell_methods(copy=copy)
 
-        keys = self.cell_methods().keys()                    
-        f_cell_methods = self.cell_methods().values()
-        nf = len(f_cell_methods)
-
-        out = {}
-        
-        for d in cms:
-            c = self._conform_cell_methods(d)
-
-            n = len(c)
-            for j in range(nf-n+1):
-                found_match = True
-                for i in range(0, n):
-                    if not f_cell_methods[j+i].match(c[i].properties()):
-                        found_match = False
-                        break
-                #--- End: for
-            
-                if not found_match:
-                    continue
-
-                # Still here?
-                key = tuple(keys[j:j+n])
-                if len(key) == 1:
-                    key = key[0]
-
-                if key not in out:
-                    value = f_cell_methods[j:j+n]
-                    if copy:
-                    value = [cm.copy() for cm in value]                        
-
-                out[key] = value
-            #--- End: for
-        #--- End: for
-        
-        return out
+#        if not description:
+#            return self.constructs.cell_methods()
+#        
+#        if not isinstance(description, (list, tuple)):
+#            description = (description,)
+#            
+#        cms = []
+#        for d in description:
+#            if isinstance(d, dict):
+#                cms.append([self._CellMethod(**d)])
+#            elif isinstance(d, basestring):
+#                cms.append(self._CellMethod.parse(d))
+#            elif isinstance(d, self._CellMethod):
+#                cms.append([d])
+#            else:
+#                raise ValueError("asd 123948u m  BAD DESCRIPTION TYPE")
+#        #--- End: for
+#
+#        keys = self.cell_methods().keys()                    
+#        f_cell_methods = self.cell_methods().values()
+#        nf = len(f_cell_methods)
+#
+#        out = {}
+#        
+#        for d in cms:
+#            c = self._conform_cell_methods(d)
+#
+#            n = len(c)
+#            for j in range(nf-n+1):
+#                found_match = True
+#                for i in range(0, n):
+#                    if not f_cell_methods[j+i].match(c[i].properties()):
+#                        found_match = False
+#                        break
+#                #--- End: for
+#            
+#                if not found_match:
+#                    continue
+#
+#                # Still here?
+#                key = tuple(keys[j:j+n])
+#                if len(key) == 1:
+#                    key = key[0]
+#
+#                if key not in out:
+#                    value = f_cell_methods[j:j+n]
+#                    if copy:
+#                    value = [cm.copy() for cm in value]                        
+#
+#                out[key] = value
+#            #--- End: for
+#        #--- End: for
+#        
+#        return out
     #--- End: def
     
 #    @classmethod
@@ -2732,45 +2741,6 @@ Set the time axis to be unlimited when written to a netCDF file:
 #        return True
 #    #--- End: def
 #
-#    def match(self, description=None, ndim=None, items=None,
-#              axes=None, cell_methods=None, coordinate_references=None,
-#              inverse=False, customise=None):
-#        '''
-#.. versionadded:: 1.6
-#
-#:Examples 1:
-#
-#:Parameters:
-#
-#:Returns:
-#
-#    out: `bool`
-#
-#:Examples 2:
-#
-#        '''
-#        if customise:
-#            customise = customise.copy()
-#        else:
-#            customise = {}
-#            
-#        if items is not None:
-#            customise[self._match_items] = items
-#
-#        if axes is not None:
-#            customise[self._match_axes] = axes
-#
-#        if cell_methods is not None:
-#            customise[self._match_cell_methods] = cell_methods
-#
-#        if coordinate_references is not None:
-#            customise[self._match_coordinate_references] = coordinate_references
-#
-#        return super(Field, self).match(description=description,
-#                                        ndim=ndim,
-#                                        inverse=inverse,
-#                                        customise=customise)
-#    #--- End: def
 
     def axis_name(self, axes=None, default=None, **kwargs):
         '''Return the canonical name for an axis.
@@ -2797,16 +2767,12 @@ Set the time axis to be unlimited when written to a netCDF file:
 >>> f.axis_name('long_name%latitude')
 'ncdim%lat'
 
-        '''      
-        axis = self.axis(axes, key=True, **kwargs)
-        if axis is None:
-            raise ValueError("No unique axis could be identified")
-
+        ''' 
         return self.constructs.axis_name(axis, default=default)
     #--- End: def
 
     def axes_names(self, axes=None, **kwargs):
-        '''Return the canonical names for domain axes.
+        '''IS THIS REQUIRED Return the canonical names for domain axes.
 
 {+axis_selection}
 
@@ -2832,317 +2798,318 @@ Set the time axis to be unlimited when written to a netCDF file:
 
         '''          
         out = {}
-        for axis in self.domain_axes()
+        for axis in self.domain_axes():
             out[axis] = self.constructs.axis_name(axis)
 
         return out
     #--- End: def
 
-    def axis_size(self, axes=None, **kwargs):
-        '''Return the size of a domain axis.
+#    def axis_size(self, axes=None, **kwargs):
+#        '''Return the size of a domain axis.
+#
+#{+axis_selection}
+#
+#.. seealso:: `axis`, `axis_name`, `axis_identity`
+#
+#:Parameters:
+#
+#    {+axes, kwargs}
+#
+#:Returns:
+#    
+#    out: `int`
+#        The size of the axis.
+#
+#:Examples:
+#
+#>>> f
+#<CF Field: eastward_wind(time(3), air_pressure(5), latitude(110), longitude(106)) m s-1>
+#>>> f.axis_size('longitude')
+#106
+#>>> f.axis_size('Z')
+#5
+#        '''
+#        axis = self.axis(axes, key=True, **kwargs)
+#        if axis is None:
+#            return None
+#
+#        return self.Axes[axis].size
+#    #--- End: def
+#
+#    def axes(self, axes=None, size=None, ordered=False, **kwargs):
+#        '''Return domain axis identifiers from the field.
+#
+#The output is a set of domain axis identifiers, which may be empty.
+#
+#{+axis_selection}
+#
+#.. seealso:: `axis`, `data_axes`, `item_axes`, `items`, `remove_axes`
+#
+#:Parameters:
+#
+#    {+axes, kwargs}
+#
+#          *Example:*
+#
+#            >>> x = f.axes(['dim2', 'time', {'units': 'degree_north'}])
+#            >>> y = set()
+#            >>> for axes in ['dim2', 'time', {'units': 'degree_north'}]:
+#            ...     y.update(f.axes(axes))
+#            ...
+#            >>> x == y
+#            True
+# 
+#    {+size}
+#
+#    ordered: `bool`, optional
+#        Return an ordered list of axes instead of an unordered
+#        set. The order of the list will reflect any ordering specified
+#        by the *axes* and *kwargs* parameters.
+#
+#          *Example:*
+#            If the data array axes, as returned by the field's
+#            `data_axes` method, are ``['dim0', 'dim1', 'dim2']``, then
+#            ``f.axes([2, 0, 1, 2])`` will return ``set(['dim0',
+#            'dim1', 'dim2'])``, but ``f.axes([2, 0, 1, 2],
+#            ordered=True)`` will return ``['dim2', 'dim0', 'dim1',
+#            'dim2']``.
+#
+#:Returns:
+#
+#    out: `dict` or `OrderedDict`
+#        A dictionary of domain axis identifiers and their sizes, or an
+#        `OrderedDict` if *ordered* is True.
+#
+#:Examples:
+#
+#All axes and their identities:
+#
+#>>> f.axes()
+#set(['dim0', 'dim1', 'dim2', 'dim3'])
+#>>> dict([(axis, f.domain.axis_name(axis)) for axis in f.axes()])
+#{'dim0': time(12)
+# 'dim1': height(19)
+# 'dim2': latitude(73)
+# 'dim3': longitude(96)}
+#
+#Axes which are not spanned by the data array:
+#
+#>>> f.axes().difference(f.data_axes())
+#
+#        '''
+#        def _axes(self, axes, size, items_axes, data_axes, domain_axes,
+#                  kwargs):
+#            ''':Parameters:
+#
+#        items_axes: `dict`
+#            Dictionary of item axes keyed by the item identifiers.
+#
+#        data_axes: sequence of `str`
+#            The domain axis identifiers for the data array.
+#            
+#        domain_axes: `dict`
+#            Dictionary of `DomainAxis` objects keyed by their
+#            identifiers.
+#
+#            '''
+#            a = None
+#
+#            if axes is not None:
+#                if axes.__hash__:
+#                    if isinstance(axes, slice):
+#                        # --------------------------------------------
+#                        # axes is a slice object
+#                        # -------------------------------------------
+#                        if data_axes is not None:
+#                            try:                            
+#                                a = tuple(data_axes[axes])
+#                            except IndexError:
+#                                a = []
+#                        else:
+#                            a = []
+#                    elif axes in domain_axes:
+#                        # --------------------------------------------
+#                        # axes is a domain axis identifier
+#                        # --------------------------------------------
+#                        a = [axes]
+#                    elif axes in items_axes and not kwargs:
+#                        # --------------------------------------------
+#                        # axes is a domain item identifier
+#                        # --------------------------------------------
+#                        a = items_axes[axes][:]
+#                    else:
+#                        try:
+#                            ncdim_name = axes.startswith('ncdim%')
+#                        except AttributeError:
+#                            ncdim_name = False
+#
+#                        if ncdim_name:
+#                            # ----------------------------------------
+#                            # axes is a netCDF dimension name
+#                            # ----------------------------------------
+#                            ncdimensions = self.ncdimensions
+#                            if ncdimensions:
+#                                ncdim = axes[6:]  # Note: There are 6 characters in 'ncdim%'
+#                                tmp = []
+#                                for axis, value in ncdimensions.iteritems():
+#                                    if value == ncdim:
+#                                        tmp.append(axis)
+#                                if tmp:
+#                                    a = tmp
+#                        else:
+#                            try:
+#                                # --------------------------------
+#                                # If this works then axes is a
+#                                # valid integer
+#                                # --------------------------------
+#                                a = [data_axes[axes]]
+#                            except IndexError:
+#                                # axes is an out-of bounds integer
+#                                a = []
+#                            except TypeError:
+#                                # ------------------------------------
+#                                # Axes is something else, or data_axes
+#                                # is None
+#                                # ------------------------------------
+#                                a = None    
+#                #--- End: if
+# 
+#            elif not kwargs:
+#                if not data_axes:
+#                    data_axes = ()
+#                a = []
+#                for x in domain_axes:
+#                    if x not in data_axes:
+#                        a.append(x)
+#
+#                a.extend(data_axes)
+#            #--- End: if
+#
+#            if a is None:
+#                # ----------------------------------------------------
+#                # Assume that axes is a value accepted by the items
+#                # method
+#                # ----------------------------------------------------
+#                a = [] 
+#                kwargs2 = kwargs.copy()
+#                kwargs2['axes'] = None
+#                for key in self.items(axes, **kwargs2):
+#                    a += items_axes.get(key, ())
+#            #--- End: if
+#
+#            if size:
+#                a = [axis for axis in a if size == domain_axes[axis]]
+#
+#            return a
+#        #--- End: def
+#
+##        role = kwargs.get('role', None)
+##        if role is None:
+##            # By default, omit coordinate reference items from the
+##            # axis selection.
+##            kwargs['role'] = ('d', 'a', 'm', 'f', 'c')
+#
+#        domain_axes = self.Axes
+#
+#        data_axes  = self.data_axes()
+#        items_axes = self.items_axes()
+#
+#        if axes is None or isinstance(axes, (basestring, dict, slice,
+#                                             int, long)):
+#            # --------------------------------------------------------
+#            # axes is not a sequence or a set
+#            # --------------------------------------------------------
+#            a = _axes(self, axes, size, items_axes, data_axes,
+#                      domain_axes, kwargs)
+#        else:   
+#            # --------------------------------------------------------
+#            # axes is a sequence or a set
+#            # --------------------------------------------------------
+#            a = []
+#            for x in axes:
+#                a += _axes(self, x, size, items_axes, data_axes,
+#                           domain_axes, kwargs)
+#        #--- End: if
+#
+#        if ordered:
+#            out = OrderedDict()
+#        else:
+#            out = {}    
+#
+#        for x in a:
+#            out[x] = domain_axes[x]
+#            
+#        return out
+#    #--- End: def
+#        
+#    def axis(self, axes=None, size=None, default=None, key=False,
+#             **kwargs):
+#        '''Return a domain axis.
+#
+#{+axis_selection}
+#
+#.. seealso:: `axes`, `data_axes`, `item_axes`, `item`, `remove_axis`
+#
+#:Examples 1:
+#
+#>>> a = f.{+name}('time')
+#
+#:Parameters:
+#
+#    {+axes, kwargs}
+# 
+#    {+size}
+#
+#:Returns:
+#
+#    out: `str` or `None`
+#        The unique domain axis, or its identifier or, if there is no
+#        unique item, `None`.
+#
+#:Examples 2:
+#
+#>>> f
+#<CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>
+#>>> f.data_axes()
+#['dim0', 'dim1', 'dim2']
+#>>> f.axis('time')
+#'dim0'
+#>>> f.axis('Y')
+#'dim1'
+#>>> f.axis(size=64)
+#'dim1'
+#>>> f.axis('X', size=128)
+#'dim2'
+#>>> print f.axis('foo')
+#None
+#>>> print f.axis('T', size=64)
+#None
+#
+#        '''
+#        kwargs2 = self._parameters(locals())
+#
+#        key = kwargs2.pop('key')
+#
+#        del kwargs2['default'] 
+#        kwargs2['ordered'] = False
+#  
+#        d = self.axes(**kwargs2)
+#        if not d:
+#            return default
+#
+#        axes = d.popitem()
+#
+#        if d:
+#            return default 
+#
+#        if key:
+#            return axes[0]
+#        else:
+#            return axes[1]
+#    #--- End: def
 
-{+axis_selection}
-
-.. seealso:: `axis`, `axis_name`, `axis_identity`
-
-:Parameters:
-
-    {+axes, kwargs}
-
-:Returns:
-    
-    out: `int`
-        The size of the axis.
-
-:Examples:
-
->>> f
-<CF Field: eastward_wind(time(3), air_pressure(5), latitude(110), longitude(106)) m s-1>
->>> f.axis_size('longitude')
-106
->>> f.axis_size('Z')
-5
-        '''
-        axis = self.axis(axes, key=True, **kwargs)
-        if axis is None:
-            return None
-
-        return self.Axes[axis].size
-    #--- End: def
-
-    def axes(self, axes=None, size=None, ordered=False, **kwargs):
-        '''Return domain axis identifiers from the field.
-
-The output is a set of domain axis identifiers, which may be empty.
-
-{+axis_selection}
-
-.. seealso:: `axis`, `data_axes`, `item_axes`, `items`, `remove_axes`
-
-:Parameters:
-
-    {+axes, kwargs}
-
-          *Example:*
-
-            >>> x = f.axes(['dim2', 'time', {'units': 'degree_north'}])
-            >>> y = set()
-            >>> for axes in ['dim2', 'time', {'units': 'degree_north'}]:
-            ...     y.update(f.axes(axes))
-            ...
-            >>> x == y
-            True
- 
-    {+size}
-
-    ordered: `bool`, optional
-        Return an ordered list of axes instead of an unordered
-        set. The order of the list will reflect any ordering specified
-        by the *axes* and *kwargs* parameters.
-
-          *Example:*
-            If the data array axes, as returned by the field's
-            `data_axes` method, are ``['dim0', 'dim1', 'dim2']``, then
-            ``f.axes([2, 0, 1, 2])`` will return ``set(['dim0',
-            'dim1', 'dim2'])``, but ``f.axes([2, 0, 1, 2],
-            ordered=True)`` will return ``['dim2', 'dim0', 'dim1',
-            'dim2']``.
-
-:Returns:
-
-    out: `dict` or `OrderedDict`
-        A dictionary of domain axis identifiers and their sizes, or an
-        `OrderedDict` if *ordered* is True.
-
-:Examples:
-
-All axes and their identities:
-
->>> f.axes()
-set(['dim0', 'dim1', 'dim2', 'dim3'])
->>> dict([(axis, f.domain.axis_name(axis)) for axis in f.axes()])
-{'dim0': time(12)
- 'dim1': height(19)
- 'dim2': latitude(73)
- 'dim3': longitude(96)}
-
-Axes which are not spanned by the data array:
-
->>> f.axes().difference(f.data_axes())
-
-        '''
-        def _axes(self, axes, size, items_axes, data_axes, domain_axes,
-                  kwargs):
-            ''':Parameters:
-
-        items_axes: `dict`
-            Dictionary of item axes keyed by the item identifiers.
-
-        data_axes: sequence of `str`
-            The domain axis identifiers for the data array.
-            
-        domain_axes: `dict`
-            Dictionary of `DomainAxis` objects keyed by their
-            identifiers.
-
-            '''
-            a = None
-
-            if axes is not None:
-                if axes.__hash__:
-                    if isinstance(axes, slice):
-                        # --------------------------------------------
-                        # axes is a slice object
-                        # -------------------------------------------
-                        if data_axes is not None:
-                            try:                            
-                                a = tuple(data_axes[axes])
-                            except IndexError:
-                                a = []
-                        else:
-                            a = []
-                    elif axes in domain_axes:
-                        # --------------------------------------------
-                        # axes is a domain axis identifier
-                        # --------------------------------------------
-                        a = [axes]
-                    elif axes in items_axes and not kwargs:
-                        # --------------------------------------------
-                        # axes is a domain item identifier
-                        # --------------------------------------------
-                        a = items_axes[axes][:]
-                    else:
-                        try:
-                            ncdim_name = axes.startswith('ncdim%')
-                        except AttributeError:
-                            ncdim_name = False
-
-                        if ncdim_name:
-                            # ----------------------------------------
-                            # axes is a netCDF dimension name
-                            # ----------------------------------------
-                            ncdimensions = self.ncdimensions
-                            if ncdimensions:
-                                ncdim = axes[6:]  # Note: There are 6 characters in 'ncdim%'
-                                tmp = []
-                                for axis, value in ncdimensions.iteritems():
-                                    if value == ncdim:
-                                        tmp.append(axis)
-                                if tmp:
-                                    a = tmp
-                        else:
-                            try:
-                                # --------------------------------
-                                # If this works then axes is a
-                                # valid integer
-                                # --------------------------------
-                                a = [data_axes[axes]]
-                            except IndexError:
-                                # axes is an out-of bounds integer
-                                a = []
-                            except TypeError:
-                                # ------------------------------------
-                                # Axes is something else, or data_axes
-                                # is None
-                                # ------------------------------------
-                                a = None    
-                #--- End: if
- 
-            elif not kwargs:
-                if not data_axes:
-                    data_axes = ()
-                a = []
-                for x in domain_axes:
-                    if x not in data_axes:
-                        a.append(x)
-
-                a.extend(data_axes)
-            #--- End: if
-
-            if a is None:
-                # ----------------------------------------------------
-                # Assume that axes is a value accepted by the items
-                # method
-                # ----------------------------------------------------
-                a = [] 
-                kwargs2 = kwargs.copy()
-                kwargs2['axes'] = None
-                for key in self.items(axes, **kwargs2):
-                    a += items_axes.get(key, ())
-            #--- End: if
-
-            if size:
-                a = [axis for axis in a if size == domain_axes[axis]]
-
-            return a
-        #--- End: def
-
-#        role = kwargs.get('role', None)
-#        if role is None:
-#            # By default, omit coordinate reference items from the
-#            # axis selection.
-#            kwargs['role'] = ('d', 'a', 'm', 'f', 'c')
-
-        domain_axes = self.Axes
-
-        data_axes  = self.data_axes()
-        items_axes = self.items_axes()
-
-        if axes is None or isinstance(axes, (basestring, dict, slice,
-                                             int, long)):
-            # --------------------------------------------------------
-            # axes is not a sequence or a set
-            # --------------------------------------------------------
-            a = _axes(self, axes, size, items_axes, data_axes,
-                      domain_axes, kwargs)
-        else:   
-            # --------------------------------------------------------
-            # axes is a sequence or a set
-            # --------------------------------------------------------
-            a = []
-            for x in axes:
-                a += _axes(self, x, size, items_axes, data_axes,
-                           domain_axes, kwargs)
-        #--- End: if
-
-        if ordered:
-            out = OrderedDict()
-        else:
-            out = {}    
-
-        for x in a:
-            out[x] = domain_axes[x]
-            
-        return out
-    #--- End: def
-        
-    def axis(self, axes=None, size=None, default=None, key=False,
-             **kwargs):
-        '''Return a domain axis.
-
-{+axis_selection}
-
-.. seealso:: `axes`, `data_axes`, `item_axes`, `item`, `remove_axis`
-
-:Examples 1:
-
->>> a = f.{+name}('time')
-
-:Parameters:
-
-    {+axes, kwargs}
- 
-    {+size}
-
-:Returns:
-
-    out: `str` or `None`
-        The unique domain axis, or its identifier or, if there is no
-        unique item, `None`.
-
-:Examples 2:
-
->>> f
-<CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>
->>> f.data_axes()
-['dim0', 'dim1', 'dim2']
->>> f.axis('time')
-'dim0'
->>> f.axis('Y')
-'dim1'
->>> f.axis(size=64)
-'dim1'
->>> f.axis('X', size=128)
-'dim2'
->>> print f.axis('foo')
-None
->>> print f.axis('T', size=64)
-None
-
-        '''
-        kwargs2 = self._parameters(locals())
-
-        key = kwargs2.pop('key')
-
-        del kwargs2['default'] 
-        kwargs2['ordered'] = False
-  
-        d = self.axes(**kwargs2)
-        if not d:
-            return default
-
-        axes = d.popitem()
-
-        if d:
-            return default 
-
-        if key:
-            return axes[0]
-        else:
-            return axes[1]
-    #--- End: def
-
-    def insert_cell_method(self, cell_method, key=None, _axis_map=None):
+    def insert_cell_method(self, cell_method, key=None, copy=True,
+                           _axis_map=None):
         '''Insert cell method objects into the {+variable}.
 
 .. seealso:: `insert_aux`, `insert_measure`, `insert_ref`,
@@ -3160,12 +3127,12 @@ None
 
         '''
         if key is None:
-            key = self.new_identifier('cmd')
+            key = self.constructs.new_identifier('cellmethod')
 
         cell_method = self._conform_cell_methods([cell_method],
                                                  axis_map=_axis_map)[0]
         
-        self.constructs.insert_cell_method(cell_method, key)
+        self.constructs.insert_cell_method(cell_method, key=key, copy=copy)
     #--- End: def
 
     def insert_axis(self, axis, key=None, replace=True, copy=True):
@@ -3202,7 +3169,7 @@ None
 
         '''
         if key is None:
-            key = self.new_identifier('axis')
+            key = self.constructs.new_identifier('domainaxis')
 
         if not replace and key in self.Axes and self.Axes[key].size != axis.size:
             raise ValueError(
@@ -3217,68 +3184,6 @@ None
         return key
     #--- End: def
 
-    def new_identifier(self, item_type):
-        '''
-
-Return a new, unique auxiliary coordinate identifier for the domain.
-
-.. seealso:: `new_measure_identifier`, `new_dimemsion_identifier`,
-             `new_ref_identifier`
-
-The domain is not updated.
-
-:Parameters:
-
-    item_type: `str`
-
-:Returns:
-
-    out: `str`
-        The new identifier.
-
-:Examples:
-
->>> d.items().keys()
-['aux2', 'aux0', 'dim1', 'ref2']
->>> d.new_identifier('aux')
-'aux3'
->>> d.new_identifier('ref')
-'ref1'
-
->>> d.items().keys()
-[]
->>> d.new_identifier('dim')
-'dim0'
-
-
->>> d.axes()
-{'dim0', 'dim4'}
->>> d.new_identifier('axis')
-'dim2'
-
->>> d.axes()
-{}
->>> d.new_identifier('axis')
-'dim0'
-
-'''
-        if item_type in ('axis', 'dim'):
-            keys = self.Axes
-            item_type = 'dim'
-        else:
-            keys = getattr(self.Items, item_type[0])
-        
-        n = len(keys)
-        key = '{0}{1}'.format(item_type, n)
-
-        while key in keys:
-            n += 1
-            key = '{0}{1}'.format(item_type, n)
-        #--- End: while
-
-        return key
-    #--- End: def
-
     def insert_field_anc(self, item, key=None, axes=None, copy=True,
                          replace=True):
         '''Insert a field ancillary object into the {+variable}.
@@ -3287,7 +3192,7 @@ The domain is not updated.
       
         '''
         if key is None:
-            key = self.new_identifier('fav')
+            key = self.constructs.new_identifier('fieldancillary')
         elif key in self.field_ancillaries() and not replace:
             raise ValueError(
 "Can't insert field ancillary object: Identifier {0!r} already exists".format(key))
@@ -3315,7 +3220,7 @@ The domain is not updated.
         '''
        
         if key is None:
-            key = self.new_identifier('cct')
+            key = self.constructs.new_identifier('domainancillary')
         elif key in self.domain_ancillaries() and not replace:
             raise ValueError(
 "Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
@@ -3325,7 +3230,8 @@ The domain is not updated.
         if copy:
             item = item.copy()
 
-        self.constructs.insert_domain_ancillary(item, key=key, axes=axes, copy=False)
+        self.constructs.insert_domain_ancillary(item, key=key,
+                                                axes=axes, copy=False)
 
         refs = self.coordinate_references()
         if refs:
@@ -3595,7 +3501,7 @@ and ref.ancillaries with domain ancillary identities where possible.
 
         '''
         if key is None:
-            key = self.new_identifier('msr')
+            key = self.constructs.new_identifier('cellmeasure')
 
         if key in self.axes() and not replace:
             raise ValueError(
@@ -3611,7 +3517,8 @@ and ref.ancillaries with domain ancillary identities where possible.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.constructs.insert_cell_measure(item, key=key, axes=axes, copy=False)
+        self.constructs.insert_cell_measure(item, key=key, axes=axes,
+                                            copy=False)
 
         return key
     #--- End: def
@@ -3721,7 +3628,8 @@ and ref.ancillaries with domain ancillary identities where possible.
         return key
     #--- End: def
 
-    def insert_ref(self, item, key=None, axes=None, copy=True, replace=True):
+    def insert_coordinate_reference(self, item, key=None, axes=None,
+                                    copy=True, replace=True):
         '''Insert a coordinate reference object into the {+variable}.
 
 .. seealso:: `insert_axis`, `insert_aux`, `insert_measure`,
@@ -3759,14 +3667,14 @@ and ref.ancillaries with domain ancillary identities where possible.
 
         '''
         if key is None:
-            key = self.new_identifier('ref')
+            key = self.constructs.new_identifier('coordinatereference')
 
         if copy:
             item = item.copy()
 
         self._conform_ref(item, copy=False)
 
-        self.insert_coordinate_reference(item, key=key, copy=False)
+        self.constructs.insert_coordinate_reference(item, key=key, copy=False)
 
         return key
     #--- End: def

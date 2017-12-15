@@ -665,7 +665,9 @@ Return a deep or shallow copy.
         self._coordinate_references[key] = item
         self._construct_type[key] = '_coordinate_reference'
         
-    def insert_cell_method(self, item, key):
+    def insert_cell_method(self, item, key, copy=True):
+        if copy:
+            item = item.copy()
         self._cell_methods[key] = item
         self._construct_type[key] = '_cell_method'
 
@@ -675,6 +677,64 @@ Return a deep or shallow copy.
             self._item_axes[key] = tuple(axes)
     #--- End: def
     
+    def new_identifier(self, construct_type):
+        '''
+
+Return a new, unique auxiliary coordinate identifier for the domain.
+
+.. seealso:: `new_measure_identifier`, `new_dimemsion_identifier`,
+             `new_ref_identifier`
+
+The domain is not updated.
+
+:Parameters:
+
+    item_type: `str`
+
+:Returns:
+
+    out: `str`
+        The new identifier.
+
+:Examples:
+
+>>> d.items().keys()
+['aux2', 'aux0', 'dim1', 'ref2']
+>>> d.new_identifier('aux')
+'aux3'
+>>> d.new_identifier('ref')
+'ref1'
+
+>>> d.items().keys()
+[]
+>>> d.new_identifier('dim')
+'dim0'
+
+
+>>> d.axes()
+{'dim0', 'dim4'}
+>>> d.new_identifier('axis')
+'dim2'
+
+>>> d.axes()
+{}
+>>> d.new_identifier('axis')
+'dim0'
+
+        '''
+        keys = [x for x in self._construct_type.values()
+                if x.startswith(construct_type)]
+                    
+        n = len(keys)
+        key = '{0}{1}'.format(construct_type, n)
+
+        while key in keys:
+            n += 1
+            key = '{0}{1}'.format(construct_type, n)
+
+        return key
+    #--- End: def
+
     def remove_item(self, key):
         '''
 '''
