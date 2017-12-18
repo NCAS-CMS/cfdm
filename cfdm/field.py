@@ -432,9 +432,11 @@ functionality:
         #--- End: for
 
         # Replace existing domain axes
-        Axes = new.Axes
-        for axis, size in izip(data_axes, new.shape):
-            Axes[axis] = self._DomainAxis(size, ncdim=Axes[axis].ncdim)
+        axes = new.axes()
+        for key, size in izip(data_axes, new.shape):
+            domain_axis = self._DomainAxis(size)
+            domain_axis.ncdim = axes[key].ncdim
+            constructs.replace(key, domain_axis)
 
         return new
     #--- End: def
@@ -553,7 +555,7 @@ x.__str__() <==> str(x)
         ddd = self.data_axes()
         if ddd is None:
             ddd = ()
-        non_spanning_axes = set(self.Axes).difference(ddd)
+        non_spanning_axes = set(self.axes()).difference(ddd)
         x1 = [_print_item(self, dim, None, True)
               for dim in sorted(non_spanning_axes)]
         x2 = [_print_item(self, dim, None, True)
@@ -603,18 +605,18 @@ x.__str__() <==> str(x)
         return '\n'.join(string)
     #--- End def
                           
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def Axes(self):
-        '''
-        '''
-        try:
-            return self.Items.Axes
-        except (AttributeError, KeyError):
-            return {}
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Attributes
+#    # ----------------------------------------------------------------
+#    @property
+#    def Axes(self):
+#        '''
+#        '''
+#        try:
+#            return self.Items.Axes
+#        except (AttributeError, KeyError):
+#            return {}
+#    #--- End: def
     
     @property
     def Flags(self):
@@ -633,7 +635,7 @@ A `Flags` object stores the `flag_values`, `flag_meanings` and
         self._del_special_attr('Flags')
     
     @property
-    def constructs(self):
+    def Constructs(self):
         return self._private['special_attributes']['constructs']
     
     @property
@@ -641,11 +643,12 @@ A `Flags` object stores the `flag_values`, `flag_meanings` and
         '''
         '''
         out = {}
-        for dim, axis in self.Axes.iteritems():
+        for key, axis in self.axes().iteritems():
             ncdim = axis.ncdim
             if ncdim is not None:
-                out[dim] = ncdim
-    
+                out[key] = ncdim
+        #--- End: for
+        
         return out 
     #--- End: def
     
@@ -1578,7 +1581,7 @@ The axes are selected with the *axes* parameter.
         item.transpose(iaxes, copy=False)
 
         # Reorder the field's list of axes
-        self.constructs.item_axes(key=key, axes=axes2)
+        self.Constructs.item_axes(key=key, axes=axes2)
         
         return item
     #--- End: def
@@ -1697,7 +1700,7 @@ by the data array may be selected.
 
         if domain_axis is None:
             domain_axis = self._DomainAxis(1)
-            axis = f.insert_axis(domain_axis, key=axis, replace=False)
+            axis = f.insert_domain_axis(domain_axis, key=axis, replace=False)
 
         f._data_axes.insert(position, axis)
 
@@ -1828,7 +1831,7 @@ axes, use the `remove_axes` method.
     def insert_aux(self, item, key=None, axes=None, copy=True, replace=True):
         '''Insert an auxiliary coordinate object into the {+variable}.
 
-.. seealso:: `insert_axis`, `insert_measure`, `insert_data`,
+.. seealso:: `insert_domain_axis`, `insert_measure`, `insert_data`,
              `insert_dim`, `insert_ref`
 
 :Parameters:
@@ -1869,7 +1872,7 @@ axes, use the `remove_axes` method.
             item = item.copy()
             
         if key is None:
-            key = self.constructs.new_identifier('auxiliarycoordinate')
+            key = self.Constructs.new_identifier('auxiliarycoordinate')
 
         if key in self.axes() and not replace:
             raise ValueError(
@@ -1882,7 +1885,7 @@ axes, use the `remove_axes` method.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.constructs.insert_auxiliary_coordinate(item, key=key,
+        self.Constructs.insert_auxiliary_coordinate(item, key=key,
                                                     axes=axes, copy=False)
 
         # Update coordindate references
@@ -2033,7 +2036,7 @@ ValueError: Can't initialize data: Data already exists
                         raise ValueError("asdasdasdasdadass7y87g y boih8 ")
                     
                 for key, size in zip(axes, data.shape):
-                    self.insert_axis(self._DomainAxis(size), key=key)
+                    self.insert_domain_axis(self._DomainAxis(size), key=key)
             else: 
                 # The domain has axes: Check the input axes.
                 axes = list(self.axes(axes, ordered=True))
@@ -2063,7 +2066,7 @@ ValueError: Can't initialize data: Data already exists
                 # array
                 axes = []
                 for size in data.shape:
-                    axes.append(self.insert_axis(self._DomainAxis(size)))
+                    axes.append(self.insert_domain_axis(self._DomainAxis(size)))
             else:
                 # The domain already has some axes
                 data_shape = data.shape
@@ -2094,7 +2097,7 @@ ValueError: Can't initialize data: Data already exists
             
             for axis, size in izip(axes, data.shape):
                 try:
-                    self.insert_axis(self._DomainAxis(size), axis, replace=False)
+                    self.insert_domain_axis(self._DomainAxis(size), axis, replace=False)
                 except ValueError:
                     raise ValueError(
 "Can't insert data: Incompatible size for axis {!r}: {}".format(axis, size))
@@ -2339,7 +2342,7 @@ To multiply the field by the cosine of its latitudes:
             if not item.bounds.hasdata:
                 raise ValueError("No bounds data")
 
-            data_axes.append(self.constructs.new_identifier('domainaxis'))
+            data_axes.append(self.Constructs.new_identifier('domainaxis'))
             data = item.bounds.data
         else:
             data = item.data
@@ -2503,22 +2506,22 @@ Set the time axis to be unlimited when written to a netCDF file:
     def coordinate_references(self, copy=False):
         '''
         '''
-        return self.constructs.coordinate_references(copy=copy)
+        return self.Constructs.coordinate_references(copy=copy)
     #--- End: def
     
     def variables(self, copy=False):
         '''
         '''
-        return self.constructs.variables()
+        return self.Constructs.variables()
     #--- End: def
     
     def cell_methods(self, copy=False):
         '''
         '''
-        return self.constructs.cell_methods(copy=copy)
+        return self.Constructs.cell_methods(copy=copy)
 
 #        if not description:
-#            return self.constructs.cell_methods()
+#            return self.Constructs.cell_methods()
 #        
 #        if not isinstance(description, (list, tuple)):
 #            description = (description,)
@@ -2768,7 +2771,7 @@ Set the time axis to be unlimited when written to a netCDF file:
 'ncdim%lat'
 
         ''' 
-        return self.constructs.axis_name(axis, default=default)
+        return self.Constructs.axis_name(axis, default=default)
     #--- End: def
 
     def axes_names(self, axes=None, **kwargs):
@@ -2799,7 +2802,7 @@ Set the time axis to be unlimited when written to a netCDF file:
         '''          
         out = {}
         for axis in self.domain_axes():
-            out[axis] = self.constructs.axis_name(axis)
+            out[axis] = self.Constructs.axis_name(axis)
 
         return out
     #--- End: def
@@ -3127,15 +3130,15 @@ Set the time axis to be unlimited when written to a netCDF file:
 
         '''
         if key is None:
-            key = self.constructs.new_identifier('cellmethod')
+            key = self.Constructs.new_identifier('cellmethod')
 
         cell_method = self._conform_cell_methods([cell_method],
                                                  axis_map=_axis_map)[0]
         
-        self.constructs.insert_cell_method(cell_method, key=key, copy=copy)
+        self.Constructs.insert_cell_method(cell_method, key=key, copy=copy)
     #--- End: def
 
-    def insert_axis(self, axis, key=None, replace=True, copy=True):
+    def insert_domain_axis(self, domain_axis, key=None, replace=True, copy=True):
         '''Insert a domain axis into the {+variable}.
 
 .. seealso:: `insert_aux`, `insert_measure`, `insert_ref`,
@@ -3163,23 +3166,24 @@ Set the time axis to be unlimited when written to a netCDF file:
 
 :Examples:
 
->>> f.insert_axis(DomainAxis(1))
->>> f.insert_axis(DomainAxis(90), key='dim4')
->>> f.insert_axis(DomainAxis(23), key='dim0', replace=False)
+>>> f.insert_domain_axis(DomainAxis(1))
+>>> f.insert_domain_axis(DomainAxis(90), key='dim4')
+>>> f.insert_domain_axis(DomainAxis(23), key='dim0', replace=False)
 
         '''
         if key is None:
-            key = self.constructs.new_identifier('domainaxis')
+            key = self.Constructs.new_identifier('domainaxis')
 
-        if not replace and key in self.Axes and self.Axes[key].size != axis.size:
+        axes = self.axes()
+        if not replace and key in axes and axes[key].size != domain_axis.size:
             raise ValueError(
-"Can't insert axis: Existing axis {!r} has different size (got {}, expected {})".format(
-    key, axis.size, self.Axes[key].size))
+"Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
+    key, domain_axis.size, axes[key].size))
 
         if copy:
-            axis = axis.copy()
+            domain_axis = domain_axis.copy()
 
-        self.Axes[key] = axis
+        self.Constructs.insert_domain_axis(domain_axis, key=key)
 
         return key
     #--- End: def
@@ -3192,7 +3196,7 @@ Set the time axis to be unlimited when written to a netCDF file:
       
         '''
         if key is None:
-            key = self.constructs.new_identifier('fieldancillary')
+            key = self.Constructs.new_identifier('fieldancillary')
         elif key in self.field_ancillaries() and not replace:
             raise ValueError(
 "Can't insert field ancillary object: Identifier {0!r} already exists".format(key))
@@ -3207,20 +3211,20 @@ Set the time axis to be unlimited when written to a netCDF file:
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.constructs.insert_field_ancillary(item, key=key, axes=axes, copy=False)
+        self.Constructs.insert_field_ancillary(item, key=key, axes=axes, copy=False)
 
         return key
     #--- End: def
 
-    def insert_domain_anc(self, item, key=None, axes=None, copy=True,
-                          replace=True):
+    def insert_domain_ancillary(self, item, key=None, axes=None,
+                                copy=True, replace=True):
         '''Insert a domain ancillary object into the {+variable}.
       
     {+copy_item_in}
         '''
        
         if key is None:
-            key = self.constructs.new_identifier('domainancillary')
+            key = self.Constructs.new_identifier('domainancillary')
         elif key in self.domain_ancillaries() and not replace:
             raise ValueError(
 "Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
@@ -3230,8 +3234,7 @@ Set the time axis to be unlimited when written to a netCDF file:
         if copy:
             item = item.copy()
 
-        self.constructs.insert_domain_ancillary(item, key=key,
-                                                axes=axes, copy=False)
+        self.Constructs.insert_domain_ancillary(item, key=key, axes=axes)
 
         refs = self.coordinate_references()
         if refs:
@@ -3404,7 +3407,7 @@ and ref.ancillaries with domain ancillary identities where possible.
                     copy=True, replace=True):
         '''Insert an item into the {+variable}.
 
-.. seealso:: `insert_axis`, `insert_measure`, `insert_data`,
+.. seealso:: `insert_domain_axis`, `insert_measure`, `insert_data`,
              `insert_dim`, `insert_ref`
 
 :Parameters:
@@ -3443,6 +3446,7 @@ and ref.ancillaries with domain ancillary identities where possible.
 :Examples:
 
 >>>
+
         '''
         kwargs2 = self._parameters(locals())
         del kwargs2['role']
@@ -3464,8 +3468,8 @@ and ref.ancillaries with domain ancillary identities where possible.
     def insert_measure(self, item, key=None, axes=None, copy=True, replace=True):
         '''Insert a cell measure object into the {+variable}.
 
-.. seealso:: `insert_axis`, `insert_aux`, `insert_data`, `insert_dim`,
-             `insert_ref`
+.. seealso:: `insert_domain_axis`, `insert_aux`, `insert_data`,
+             `insert_dim`, `insert_ref`
 
 :Parameters:
 
@@ -3501,7 +3505,7 @@ and ref.ancillaries with domain ancillary identities where possible.
 
         '''
         if key is None:
-            key = self.constructs.new_identifier('cellmeasure')
+            key = self.Constructs.new_identifier('cellmeasure')
 
         if key in self.axes() and not replace:
             raise ValueError(
@@ -3517,7 +3521,7 @@ and ref.ancillaries with domain ancillary identities where possible.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
 
-        self.constructs.insert_cell_measure(item, key=key, axes=axes,
+        self.Constructs.insert_cell_measure(item, key=key, axes=axes,
                                             copy=False)
 
         return key
@@ -3526,7 +3530,7 @@ and ref.ancillaries with domain ancillary identities where possible.
     def insert_dim(self, item, key=None, axes=None, copy=True, replace=True):
         '''Insert a dimension coordinate object into the {+variable}.
 
-.. seealso:: `insert_aux`, `insert_axis`, `insert_item`,
+.. seealso:: `insert_aux`, `insert_domain_axis`, `insert_item`,
              `insert_measure`, `insert_data`, `insert_ref`,
              `remove_item`
 
@@ -3574,10 +3578,10 @@ and ref.ancillaries with domain ancillary identities where possible.
             if len(c) == 1:
                 key = c[0]
                 if self.items(role='d', axes_all=key):
-                    key = self.insert_axis(self._DomainAxis(item_size))
+                    key = self.insert_domain_axis(self._DomainAxis(item_size))
                 axes = [key]
             elif not c:
-                key = self.insert_axis(self._DomainAxis(item_size))
+                key = self.insert_domain_axis(self._DomainAxis(item_size))
                 axes = [key]
             else:
                 raise ValueError(
@@ -3588,7 +3592,7 @@ and ref.ancillaries with domain ancillary identities where possible.
                 # Key is set, axes is not set
                 axes = [key]
                 if key not in self.Axes:
-                    key = self.insert_axis(self._DomainAxis(item.size), key=key)
+                    key = self.insert_domain_axis(self._DomainAxis(item.size), key=key)
             elif axes != [key]:
                 # Key is set, axes is set
                 raise ValueError(
@@ -3611,7 +3615,7 @@ and ref.ancillaries with domain ancillary identities where possible.
         if item.isscalar:
             item = item.expand_dims(0, copy=False)
         
-        self.constructs.insert_dimension_coordinate(item, key=key, axes=axes, copy=False)
+        self.Constructs.insert_dimension_coordinate(item, key=key, axes=axes, copy=False)
 
         refs = self.coordinate_references()
         if refs:
@@ -3632,7 +3636,7 @@ and ref.ancillaries with domain ancillary identities where possible.
                                     copy=True, replace=True):
         '''Insert a coordinate reference object into the {+variable}.
 
-.. seealso:: `insert_axis`, `insert_aux`, `insert_measure`,
+.. seealso:: `insert_domain_axis`, `insert_aux`, `insert_measure`,
              `insert_data`, `insert_dim`
              
 :Parameters:
@@ -3667,66 +3671,14 @@ and ref.ancillaries with domain ancillary identities where possible.
 
         '''
         if key is None:
-            key = self.constructs.new_identifier('coordinatereference')
+            key = self.Constructs.new_identifier('coordinatereference')
 
         if copy:
             item = item.copy()
 
         self._conform_ref(item, copy=False)
 
-        self.constructs.insert_coordinate_reference(item, key=key, copy=False)
-
-        return key
-    #--- End: def
-
-    def item_axes(self, description=None, role=None, axes=None,
-                  axes_all=None, axes_subset=None, axes_superset=None,
-                  inverse=False, ndim=None, default=None):
-        '''Return the axes of a domain item of the field.
-
-An item is a dimension coordinate, an auxiliary coordinate, a cell
-measure or a coordinate reference object.
-
-.. seealso:: `axes`, `data_axes`, `item`
-
-:Parameters:
-
-    {+description}
-
-    {+role}
-
-    {+axes}
-
-    {+axes_all}
-
-    {+axes_subset}
-
-    {+axes_superset}
-
-    {+ndim}
-
-    {+inverse}
-
-:Returns:
-
-    out: `list` or `None`
-        The ordered list of axes for the item or, if there is no
-        unique item or the item is a coordinate reference then `None`
-        is returned.
-
-:Examples:
-
-'''    
-        kwargs2 = self._parameters(locals())
-        kwargs2['key'] = True
-
-        del kwargs2['default']
-
-        key = self.item(**kwargs2)
-        if key is None:
-            return default
-
-        return list(self.constructs.item_axes(key=key))
+        self.Constructs.item_axes(key=key))
     #--- End: def
 
     def key(self, description=None, role=None, axes=None,
@@ -4436,1233 +4388,6 @@ coordinate or cell measure object of the field.
             return
 
         return self.remove_axes(axis).pop()
-    #--- End: def
-
-#--- End: class
-
-class Constructs(dict):
-    '''
-Keys are item identifiers, values are item objects.
-    '''
-    # Mapping of role name to single-character id (DO NOT CHANGE)
-    _role_name = {
-        'f': 'field ancillary',
-        'a': 'auxiliary coordinate',
-        'c': 'domain ancillary',
-        'd': 'dimension coordinate',
-        'm': 'cell measure',
-        'r': 'coordinate reference',
-    }
-
-    def __init__(self, Axes=None):
-        '''
-'''
-        self.f = set()  # Field ancillary identifiers,      e.g. 'fav0'
-        self.a = set()  # Auxiliary coordinate identifiers, e.g. 'aux0'
-        self.c = set()  # Domain ancillary identifiers,     e.g. 'cct0'
-        self.d = set()  # Dimension coordinate identifiers, e.g. 'dim0'
-        self.m = set()  # Cell measures identifier,         e.g. 'msr0'
-        self.r = set()  # Coordinate reference identifiers, e.g. 'ref0'
-        self.x = set()  # Domain axis identifiers,          e.g. 'axis0'
-        self.y = set()  # Cell method identifiers,          e.g. 'cmd0'
-
-        # Map of item identifiers to their roles. For example,
-        # self._role['aux2'] = 'a'
-        self._role = {}
-
-        # The axes identifiers for each item. For example,
-        # self._copnstruct_axes['aux2'] = ['dim1, 'dim0']
-        self.construct_axes = {}
-
-        self.cell_methods = []
-        
-        # Domain axes
-        # 
-        # For example: self.Axes = {'dim1': DomainAxis(20)}
-        self.Axes = {} #Axes
-        
-    #--- End: def
-
-#    def __delitem__(self, key):
-#        del self._items[key]
-#
-#    def __getitem__(self, key):
-#        return self._items[key]
-#        
-#    def __iter__(self):
-#        return self._items.iteritems()
-#
-#    def __setitem__(self, key, value):
-#        self._items[key] = value
-#
-#    # ----------------------------------------------------------------
-#    # Dictionary methods
-#    # ----------------------------------------------------------------
-#    def get(self, k, *d):
-#        return self._items.get(k, *d)
-#
-#    def items(self):
-#        return self._items.items()
-#        
-#    def iteritems(self):
-#        return self._items.iteritems()
-#
-#    def itervalues(self):
-#        return self._items.itervalues()
-#        
-#    def pop(self, k, *d):
-#        return self._items.pop(k, *d)
-#        
-#    def values(self):
-#        return self._items.values()
-        
-    def items(self, role=None):
-
-        '''Return items which span domain axes.
-
-The set of all items comprises:
-
-  * Dimension coordinate objects
-  * Auxiliary coordinate objects
-  * Cell measure objects
-  * Coordinate reference objects
-  * Coordinate conversion terms
-  * Ancillary variable objects
-
-The output is a dictionary whose key/value pairs are item identifiers
-with corresponding values of items of the field.
-
-{+item_selection}
-
-{+items_criteria}
-
-.. seealso:: `auxs`, `axes`, `measures`, `coords`, `dims`, `item`, `match`
-             `remove_items`, `refs`
-
-:Examples 1:
-
-Select all items whose identities (as returned by their `!identity`
-methods) start "height":
-
->>> i('height')
-
-Select all items which span only one axis:
-
->>> i(ndim=1)
-
-Select all cell measure objects:
-
->>> i(role='m')
-
-Select all items which span the "time" axis:
-
->>> i(axes='time')
-
-Select all CF latitude coordinate objects:
-
->>> i('Y')
-
-Select all multidimensional dimension and auxiliary coordinate objects
-which span at least the "time" and/or "height" axes and whose long
-names contain the string "qwerty":
-
->>> i('long_name:.*qwerty', 
-...         role='da',
-...         axes=['time', 'height'],
-...         ndim=cf.ge(2))
-
-:Parameters:
-
-    {+description}
-
-          *Example:* 
-
-            >>> x = i(['aux1',
-            ...             'time',
-            ...             {'units': 'degreeN', 'long_name': 'foo'}])
-            >>> y = {}
-            >>> for items in ['aux1', 'time', {'units': 'degreeN', 'long_name': 'foo'}]:
-            ...     y.update(i(items))
-            ...
-            >>> set(x) == set(y)
-            True
-
-    role: (sequence of) `str`, optional
-        Select items of the given roles. Valid roles are:
-    
-        =======  ============================
-        role     Items selected
-        =======  ============================
-        ``'d'``  Dimension coordinate objects
-        ``'a'``  Auxiliary coordinate objects
-        ``'m'``  Cell measure objects
-        ``'c'``  Domain ancillary objects
-        ``'f'``  Field ancillary objects
-        ``'r'``  Coordinate reference objects
-        =======  ============================
-    
-        Multiple roles may be specified by a sequence of role
-        identifiers.
-    
-          *Example:*
-            Selecting auxiliary coordinate and cell measure objects
-            may be done with any of the following values of *role*:
-            ``'am'``, ``'ma'``, ``('a', 'm')``, ``['m', 'a']``,
-            ``set(['a', 'm'])``, etc.
- 
-        By default all roles are considered, i.e. by default
-        ``role=('d', 'a', 'm', 'f', 'c', 'r')``.
-
-:Returns:
-
-    out: `dict`
-        A dictionary whose keys are domain item identifiers with
-        corresponding values of items. The dictionary may be empty.
-
-:Examples:
-
-        '''
-#        if role is None:
-#            pool = dict(self)
-#        else:
-        out = {}
-        for r in role:
-            for key in getattr(self, r):
-                    out[key] = self[key]
-                
-        return out
-#        #--- End: if
-#
-#        if inverse:
-#            master = pool.copy()            
-#
-#        if (description is None and axes is None and axes_all is None and
-#            axes_subset is None and axes_superset is None and ndim is None):
-#            out = pool.copy()
-#        else:       
-#            out = {}
-#
-#        if pool and axes is not None:
-#            # --------------------------------------------------------
-#            # Select items which span at least one of the given axes,
-#            # and possibly others.
-#            # --------------------------------------------------------
-#            axes_out = {}
-#            for key, value in pool.iteritems():
-#                if axes.intersection(self.axes(key)):
-#                    axes_out[key] = value
-#
-##            if match_and:
-#            out = pool = axes_out
-##            else:                
-##                for key in axes_out:
-##                    out[key] = pool.pop(key)
-#        #--- End: if
-#
-#        if pool and axes_subset is not None:
-#            # --------------------------------------------------------
-#            # Select items whose data array spans all of the specified
-#            # axes, taken in any order, and possibly others.
-#            # --------------------------------------------------------
-#            axes_out = {}
-#            for key, value in pool.iteritems():
-#                if axes_subset.issubset(self.axes(key)):
-#                    axes_out[key] = value                            
-#
-##            if match_and:
-#            out = pool = axes_out
-##            else:                
-##                for key in axes_out:
-##                    out[key] = pool.pop(key)
-#        #--- End: if
-#
-#        if pool and axes_superset is not None:
-#            # --------------------------------------------------------
-#            # Select items whose data array spans a subset of the
-#            # specified axes, taken in any order, and no others.
-#            # --------------------------------------------------------
-#            axes_out = {}
-#            for key, value in pool.iteritems():
-#                if axes_superset.issuperset(self.axes(key)):
-#                    axes_out[key] = value                            
-#
-##            if match_and:
-#            out = pool = axes_out
-##            else:                
-##                for key in axes_out:
-##                    out[key] = pool.pop(key)
-#        #--- End: if
-#
-#        if pool and axes_all is not None:
-#            # --------------------------------------------------------
-#            # Select items which span all of the given axes and no
-#            # others
-#            # --------------------------------------------------------
-#            axes_out = {}
-#            for key, value in pool.iteritems():
-#                if axes_all == set(self.axes(key)):
-#                    axes_out[key] = value                            
-#
-##            if match_and:
-#            out = pool = axes_out
-##            else:                
-##                for key in axes_out:
-##                    out[key] = pool.pop(key)
-#        #--- End: if
-#
-#        if pool and ndim is not None:
-#            # --------------------------------------------------------
-#            # Select items whose number of data array axes satisfies a
-#            # condition
-#            # --------------------------------------------------------
-#            ndim_out = {}
-#            for key, item in pool.iteritems():
-#                if ndim == len(self.axes(key)):
-#                    ndim_out[key] = item
-#            #--- End: for
-#
-##            if match_and:                
-#            out = pool = ndim_out
-##            else:
-##                for key in ndim_out:
-##                    out[key] = pool.pop(key)
-#        #--- End: if
-#
-#        if pool and description is not None:
-#            # --------------------------------------------------------
-#            # Select items whose properties satisfy conditions
-#            # --------------------------------------------------------
-#            items_out = {}
-#
-#            if isinstance(description, (basestring, dict)):
-#                description = (description,)
-#
-#            if description:
-#                pool2 = pool.copy()
-#
-#                match = []
-#                for m in description:
-#                    if m.__hash__ and m in pool:
-#                        # m is an item identifier
-#                        items_out[m] = pool2.pop(m)
-#                    else:                    
-#                        match.append(m)
-#                #--- End: for
-#
-#                if match and pool:                
-#                    for key, item in pool2.iteritems():
-#                        if item.match(match):
-#                            # This item matches the critieria
-#                            items_out[key] = item
-#                #--- End: if
-#
-##                if match_and:                
-#                out = pool = items_out
-##                else:
-##                    for key in items_out:
-##                        out[key] = pool.pop(key)
-#            #--- End: if
-#        #--- End: if
-#
-#        if inverse:
-#            # --------------------------------------------------------
-#            # Select items other than those previously selected
-#            # --------------------------------------------------------
-#            for key in out:
-#                del master[key]
-#                                
-#            out = master
-#        #--- End: if
-#
-#        if copy:
-#            # --------------------------------------------------------
-#            # Copy the items
-#            # --------------------------------------------------------
-#            out2 = {}
-#            for key, item in out.iteritems():
-#                out2[key] = item.copy()
-#                
-#            out = out2
-#        #--- End: if
-#
-#        # ------------------------------------------------------------
-#        # Return the selected items
-#        # ------------------------------------------------------------
-#        return out
-    #--- End: def
-
-    def coordinate_references(self, description=None, inverse=False,
-                              key=False, copy=False):
-        '''
-        '''
-        if description is None:
-            return self.xxx.copy()
-
-        if isinstance(description, (basestring, dict)):
-            description = (description,)
-            
-
-            match = []
-            for m in description:
-                if m.__hash__ and m in self.xxx:
-                    # m is an item identifier
-                    items_out[m] = self.xxx[m]
-                else:                    
-                    match.append(m)
-            #--- End: for
-                    
-            if match:
-                for key, item in self.xxx.iteritems():
-                    if item.match(match):
-                        items_out[key] = item
-            #--- End: if
-
-            if inverse:
-                master = self.xxx.copy()
-                for key in out:
-                    del master[key]
-                    
-                out = master
-            #--- End: if
-
-            return out
-    #--- End: def
-        
-    def auxs(self):
-        '''Auxiliary coordinate objects and their identifiers
-        
-:Returns:
-        
-    out: `dict`
-          A dictionary of auxiliary coordinate objects keyed by their
-          identifiers.
-
-:Examples:
-
->>> i.auxs()
-{'aux0': <CF AuxiliaryCorodinate: >}
-
-        '''
-        return dict([(key, self[key]) for key in self.a])
-
-    def dims(self):
-        '''Return dimension coordinate objects and their identifiers
-        
-:Returns:
-        
-    out: `dict`
-          A dictionary of dimension coordinate objects keyed by their
-          identifiers.
-
-:Examples:
-
->>> i.dims()
-{'dim0': <CF DimensionCoordinate: >}
-
-        '''
-        return dict([(key, self[key]) for key in self.d])
-    #--- End: def
-
-    def domain_ancs(self):
-        '''Return domain ancillary objects and their identifiers
-
-:Returns:
-        
-    out: `dict`
-        A dictionary of domain ancillary objects keyed by their
-        identifiers.
-
-:Examples:
-
->>> i.domain_ancs()
-{'cct0': <CF DomainAncillary: >}
-
-        '''
-        return dict([(key, self[key]) for key in self.c])
-    #--- End: def
-            
-    def field_ancs(self):
-        '''Return field ancillary objects and their identifiers
-        
-:Returns:
-        
-    out: `dict`
-          A dictionary of field ancillary objects keyed by their
-          identifiers.
-
-:Examples:
-
->>> i.field_ancs()
-{'fav0': <CF FieldAncillary: >}
-
-        '''
-        return dict([(key, self[key]) for key in self.f])
-    #--- End: def
-    
-    def msrs(self):
-        '''Return cell measure objects and their identifiers
-        
-:Returns:
-        
-    out: `dict`
-          A dictionary of cell measure objects keyed by their
-          identifiers.
-
-:Examples:
-
->>> i.msrs()
-{'msr0': <CF CellMeasures: >}
-
-        '''        
-        return dict([(key, self[key]) for key in self.m])
-    #--- End: def
-    
-    def refs(self):
-        '''Return coordinate reference objects and their identifiers
-        
-:Returns:
-        
-    out: `dict`
-          A dictionary of coordinate reference objects keyed by their
-          identifiers.
-
-:Examples:
-
->>> i.refs()
-{'ref0': <CF CoordinateReference: >}
-
-        '''  
-        return dict([(key, self[key]) for key in self.r])
-    #--- End: def
-    
-    def all_axes(self):
-        '''
-        '''        
-        out = []
-        for item_axes  in self._axes.itervalues():
-            out.extend(item_axes)
-
-        return set(out)
-    #--- End: def
-    
-    def axes(self, key=None, axes=None, default=None):
-        '''
-:Examples 1:
-
->>> i.axes()
-
-:Parameters:
-
-    key: `str`, optional
-
-    axes: sequence of `str`, optional
-
-    default:
-
-:Returns:
-
-    out: `dict` or `list` or `None`
-
-:Examples 2:
-
-i.axes()
-{'aux0': ('dim1', 'dim0'),
- 'aux1': ('dim0',),
- 'aux2': ('dim0',),
- 'aux3': ('dim0',),
- 'aux4': ('dim0',),
- 'aux5': ('dim0',)}
->>>i.axes(key='aux0')
-('dim1', 'dim0')
->>> print i.axes(key='aux0', axes=['dim0', 'dim1'])
-None
->>> i.axes(key='aux0')
-('dim0', 'dim1')
-
-'''
-        if key is None:
-            # Return all of the items' axes
-            return self._axes.copy()
-
-        if axes is None:
-            if self.role(key) != 'r':                            
-                # Not a coordinate reference
-                return self._axes.get(key, default)
-            else:
-                # Is a coordinate reference
-                r_axes = []
-                ref = self.get(key, None)
-                
-                if ref is None:
-                    return default
-
-                _axes = self._axes
-                for key in self(ref.coordinates | set(ref.ancillaries.values())):
-                    r_axes.extend(_axes.get(key, ()))
-                
-                return set(r_axes)
-
-        elif self.role(key) == 'r':
-            raise ValueError("Can't set coordinate reference axes")
- 
-        # Still here? The set new item axes.
-        self._axes[key] = tuple(axes)
-    #--- End: def
-    
-    def axes_to_items(self):
-        '''
-:Examples:
-
->>> i.axes_to_items()
-{
- ('dim1',): {
-        'd': {'dim1': <>},
-        'a': {},
-        'm': {}
-        'c': {}
-        'f': {}
-        }
- ('dim1', 'dim2',): {
-        'd': {},
-        'a': {'aux0': <>, 'aux1': <>},
-        'm': {}
-        'c': {}
-        'f': {}
-        }
-}
-'''
-        axes = self._axes
-        out = {}
-
-        for item_axes in axes.values():
-            out[item_axes] = {}
-                
-        for role in ('d', 'a', 'm', 'c', 'f'):
-            for item_axes, items in out.iteritems():
-                items_role = {}
-                for key in getattr(self, role):
-                    if axes[key] == item_axes:
-                        items_role[key] = self[key]
-                items[role] = items_role
-        return out
-    #--- End: def
-
-    def axis_name(self, axis, default=None):
-        '''Return the canonical name for an axis.
-
-:Parameters:
-
-:Returns:
-
-    out: `str`
-        The canonical name for the axis.
-
-:Examples:
-
-        '''
-        if default is None:
-            default = 'axis%{}'.format(axis)
-
-        if axis in self.d:
-            # Get the name from the dimension coordinate
-            return self[axis].name(default=default)
-
-        aux = self.item(role='a', axes_all=set((axis,)))
-        if aux is not None:
-            # Get the name from the unique 1-d auxiliary coordinate
-            return aux.name(default=default)
-        
-        ncdim = self.Axes[axis].ncdim
-        if ncdim is not None:
-            # Get the name from netCDF dimension name            
-            return 'ncdim%{0}'.format(ncdim)
-        else:
-            # Get the name from the axis identifier
-            return 'axis%{0}'.format(axis)
-    #--- End: def
-
-    def axis_identity(self, axis):
-        '''Return the canonical name for an axis.
-
-:Parameters:
-
-:Returns:
-
-    out: `str`
-        The canonical name for the axis.
-
-:Examples:
-
-        '''      
-        if axis in self.d:
-            # Get the name from the dimension coordinate
-            dim = self[axis]            
-            identity = dim.identity()
-            if identity is None:
-                for ctype in ('T', 'X', 'Y', 'Z'):
-                    if getattr(dim, ctype, False):
-                        identity = ctype
-                        break
-            #--- End: if
-            if identity is None:
-                identity = 'axis%{0}'.format(axis)
-        else:
-            aux = self.item(role='a', axes_all=set((axis,)))
-            if aux is not None:
-                # Get the name from the unique 1-d auxiliary coordinate
-                identity = aux.identity(default='axis%{0}'.format(axis))
-            else:
-                identity = 'axis%{0}'.format(axis)
-
-        return identity
-    #--- End: def
-
-    def copy(self, shallow=False):
-        '''
-
-Return a deep or shallow copy.
-
-``i.copy()`` is equivalent to ``copy.deepcopy(i)``.
-
-``i.copy(shallow=True)`` is equivalent to ``copy.copy(i)``.
-
-:Parameters:
-
-    shallow: `bool`, optional
-
-:Returns:
-
-    out: `Items`
-        The copy.
-
-:Examples:
-
->>> i = j.copy()
-
-'''
-        X = type(self)
-        new = X.__new__(X)
-
-        # Copy the domain axes
-        if shallow:
-            new.Axes = self.Axes.copy()
-        else:
-            new.Axes = {}
-            for key, axis in self.Axes.iteritems():
-                new.Axes[key] = axis.copy()
-
-        # Copy the actual items (e.g. dimension coordinates, field
-        # ancillaries, etc.)
-        if shallow:
-            for key, value in self.iteritems():
-                new[key] = value
-        else:
-            for key, value in self.iteritems():
-                new[key] = value.copy()
-
-        # Copy the identifiers
-        new.f = self.f.copy()     # Field ancillaries
-        new.a = self.a.copy()     # Auxiliary coordinates
-        new.c = self.c.copy()     # Domain ancillaries
-        new.d = self.d.copy()     # Dimension coordinates
-        new.m = self.m.copy()     # Cell measures
-        new.r = self.r.copy()     # Coordinate references
-
-        # Copy the roles
-        new._role = self._role.copy()
-
-        # Copy the cell methods
-        if shallow:
-            new.cell_methods = self.cell_methods.copy()
-        else:
-            new.cell_methods = OrderedDict()
-            for key, value in self.cell_methods.iteritems():
-                new[key] = value.copy()
-
-#            new.cell_methods = [cm.copy() for cm in self.cell_methods]
-
-        # Copy item axes (this is OK because it is a dictionary of
-        # tuples).
-        new._axes = self._axes.copy()
-
-        return new
-    #--- End: def
-
-    def _Axes_equals(self, other, traceback=False):
-        '''
-        '''
-        Axes = self.Axes
-        if Axes is other:
-            return True
-        
-        # Check that each instance is the same type
-        if type(Axes) != type(other):
-            if traceback:
-                print("{0}: Different types: {1}, {2}".format(
-                    self.__class__.__name__, Axes.__class__.__name__,
-                    other.__class__.__name__))
-            return False
-        #--- End: if
-
-        Axes_sizes  = [d.size for d in Axes.values()]
-        other_sizes = [d.size for d in other.values()]
-        
-        if sorted(Axes_sizes) != sorted(other_sizes):
-            # There is not a 1-1 correspondence between axis sizes
-            if traceback:
-                print("{0}: Different domain axis sizes: {1} != {2}".format(
-                    self.__class__.__name__,
-                    sorted(Axes.values()),
-                    sorted(other.values())))
-            return False
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Still here? Then the two collections of domain axis objects
-        # are equal
-        # ------------------------------------------------------------
-        return True
-    #-- End: def
-    
-    def equals(self, other, rtol=None, atol=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               traceback=False, _equivalent=False, ignore=()):
-        '''
-        
-        '''
-        if self is other:
-            return True
-        
-        # Check that each instance is the same type
-        if type(self) != type(other):
-            if traceback:
-                print("{0}: Different object types: {0}, {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-
-        if not self._Axes_equals(other.Axes, traceback=traceback):
-            if traceback:
-                print("{0}: Different domain axes: {1}, {2}".format(
-                    self.__class__.__name__, self.Axes, other.Axes))
-            return False
-        
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
-        # ------------------------------------------------------------
-        # 
-        # ------------------------------------------------------------
-        axes0_to_axes1 = {}
-
-        key1_to_key0 = {}
-
-        axes_to_items0 = self.axes_to_items()
-        axes_to_items1 = other.axes_to_items()
-#        print
-#        for key, value in axes_to_items0.iteritems():
-#            print key
-#            print value
-#        print 
-#        print
-#        for key, value in axes_to_items1.iteritems():
-#            print key
-#            print value
-#        print
-        
-        for axes0, items0 in axes_to_items0.iteritems():
-            matched_all_items_with_these_axes = False
-
-#            directions0 = [self.direction(axis0) for axis0 in axes0]
-
-            len_axes0 = len(axes0) 
-            for axes1, items1 in axes_to_items1.items():
-                matched_roles = False
-
-                if len_axes0 != len(axes1):
-                    # axes1 and axes0 contain differents number of
-                    # axes.
-                    continue
-            
-#                directions1 = [other.direction(axis1) for axis1 in axes1]        
-
-                for role in ('d', 'a', 'm', 'f', 'c'):
-                    matched_role = False
-
-                    role_items0 = items0[role]
-                    role_items1 = items1[role]
-
-                    if len(role_items0) != len(role_items1):
-                        # There are the different numbers of items
-                        # with this role
-                        matched_all_items_with_these_axes = False
-                        break
-
-                    # Check that there are matching pairs of equal
-                    # items
-                    for key0, item0 in role_items0.iteritems():
-                        matched_item = False
-                        for key1, item1 in role_items1.items():
-                            if _equivalent:
-#                                # Flip item1 axes, if necessary
-#                                flip = [i
-#                                        for i, (d0, d1) in enumerate(zip(directions0, directions1))
-#                                        if d0 != d1]
-#                                if flip:
-#                                    item1 = item1.flip(flip)
-#
-#                                # Transpose item1 axes, if necessary
-#                                
-#
-#                                item0_compare = item0.equivalent
-                                pass
-                            else:
-                                item0_compare = item0.equals
-                               
-                            if item0_compare(item1, rtol=rtol,
-                                             atol=atol,
-                                             ignore_data_type=ignore_data_type,
-                                             ignore_fill_value=ignore_fill_value,
-                                             ignore=ignore,
-                                             traceback=False):
-                                del role_items1[key1]
-                                key1_to_key0[key1] = key0
-                                matched_item = True
-                                break
-                        #--- End: for
-
-                        if not matched_item:
-                            break
-                    #--- End: for
-
-                    if role_items1:
-                        break
-
-                    del items1[role]
-                #--- End: for
-
-                matched_all_items_with_these_axes = not items1
-
-                if matched_all_items_with_these_axes:
-                    del axes_to_items1[axes1]
-                    break
-            #--- End: for
-
-            # Map item axes in the two instances
-            axes0_to_axes1[axes0] = axes1
-
-            if not matched_all_items_with_these_axes:
-                if traceback:
-                    names = [self.axis_name(axis0) for axis0 in axes0]
-                    print("Can't match items spanning axes {0}".format(names))
-                return False
-        #--- End: for
-
-        axis0_to_axis1 = {}
-        axis1_to_axis0 = {}
-        for axes0, axes1 in axes0_to_axes1.iteritems():
-            for axis0, axis1 in zip(axes0, axes1):
-                if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
-                    if traceback:
-                        print(
-"Field: Ambiguous axis mapping ({} -> {} and {})".format(
-    self.axis_name(axes0), other.axis_name(axis1),
-    other.axis_name(axis0_to_axis1[axis0])))
-                    return False
-                elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
-                    if traceback:
-                        print(
-"Field: Ambiguous axis mapping ({} -> {} and {})".format(
-    self.axis_name(axis0), self.axis_name(axis1_to_axis0[axis0]),
-    other.axis_name(axes1)))
-                    return False
-
-                axis0_to_axis1[axis0] = axis1
-                axis1_to_axis0[axis1] = axis0
-        #--- End: for     
-
-        #-------------------------------------------------------------
-        # Cell methods
-        #-------------------------------------------------------------
-        if len(self.cell_methods) != len(other.cell_methods):
-            if traceback:
-                print("Field: Different cell methods: {0!r}, {1!r}".format(
-                    self.cell_methods, other.cell_methods))
-            return False
-
-        for cm0, cm1 in zip(self.cell_methods.values(),
-                            other.cell_methods.values()):
-            # Check that there are the same number of axes
-            axes0 = cm0.axes
-            axes1 = list(cm1.axes)
-            if len(cm0.axes) != len(axes1):
-                if traceback:
-                    print (
-"Field: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    self.cell_methods, other.cell_methods))
-                return False
-
-            argsort = []
-            for axis0 in axes0:
-                if axis0 is None:
-                    return False
-                for axis1 in axes1:
-                    if axis0 in axis0_to_axis1 and axis1 in axis1_to_axis0:
-                        if axis1 == axis0_to_axis1[axis0]:
-                            axes1.remove(axis1)
-                            argsort.append(cm1.axes.index(axis1))
-                            break
-                    elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
-                        if traceback:
-                            print (
-"Field: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    self.cell_methods, other.cell_methods))
-
-                        return False
-                    elif axis0 == axis1:
-                        # Assume that the axes are standard names
-                        axes1.remove(axis1)
-                        argsort.append(cm1.axes.index(axis1))
-                    elif axis1 is None:
-                        if traceback:
-                            print (
-"Field: Different cell methods (undefined axis): {0!r}, {1!r}".format(
-    self.cell_methods, other.cell_methods))
-                        return False
-            #--- End: for
-
-            if len(cm1.axes) != len(argsort):
-                if traceback:
-                    print ("Field: Different cell methods: {0!r}, {1!r}".format(
-                        self.cell_methods, other.cell_methods))
-                return False
-
-            cm1 = cm1.copy()
-            cm1.sort(argsort=argsort)
-            cm1.axes = axes0
-
-            if not cm0.equals(cm1, atol=atol, rtol=rtol,
-                              ignore_data_type=ignore_data_type,
-                              ignore_fill_value=ignore_fill_value,
-                              traceback=traceback):
-                if traceback:
-                    print ("Field: Different cell methods: {0!r}, {1!r}".format(
-                        self.cell_methods, other.cell_methods))
-                return False                
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Coordinate references
-        # ------------------------------------------------------------
-        refs1 = other.refs()
-        for ref0 in self.refs().values():
-            found_match = False
-            for key1, ref1 in refs1.items():
-                if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                   ignore_data_type=ignore_data_type,
-                                   ignore_fill_value=ignore_fill_value, traceback=False):
-                    continue
-
-                # Coordinates
-                coordinates0 = set(
-                    [self.key(value, role='da', default=value)
-                     for value in ref0.coordinates])
-                coordinates1 = set(
-                    [key1_to_key0.get(other.key(value, role='da'), value)
-                     for value in ref1.coordinates])
-                if coordinates0 != coordinates1:
-                    continue
-
-                # Domain ancillary terms
-                terms0 = dict(
-                    [(term,
-                      self.key(value, role='c', default=value))
-                     for term, value in ref0.ancillaries.iteritems()])
-                terms1 = dict(
-                    [(term,
-                      key1_to_key0.get(other.key(value, role='c'), value))
-                     for term, value in ref1.ancillaries.iteritems()])
-                if terms0 != terms1:
-                    continue
-
-                found_match = True
-                del refs1[key1]                                       
-                break
-            #--- End: for
-
-            if not found_match:
-                if traceback:
-                    print("Field: No match for {0!r})".format(ref0))
-                return False
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Still here? Then the two Items are equal
-        # ------------------------------------------------------------
-        return True
-    #--- End: def
-
-#    def analyse_axis(self, axis):
-#        '''
-#        '''
-#        if axis in self.d:
-#            # This axis of the domain has a dimension coordinate
-#            dim = self[axis]
-#
-#            identity = dim.identity()
-#            if identity is None:
-#                # Dimension coordinate has no identity, but it may
-#                # have a recognised axis.
-#                for ctype in ('T', 'X', 'Y', 'Z'):
-#                    if getattr(dim, ctype, False):
-#                        identity = ctype
-#                        break
-#            #--- End: if
-#
-#            if identity is not None and dim.hasdata:
-#                axis_to_id[axis]      = identity
-#                id_to_axis[identity]  = axis
-#                axis_to_coord[axis]   = key
-#                id_to_coord[identity] = key
-#                axis_to_dim[axis]     = key
-#                id_to_dim[identity]   = key
-#        else:
-#            auxs = self(role='a', ndim=1)
-#            if len(auxs) == 1:                
-#                # This axis of the domain does not have a
-#                # dimension coordinate but it does have exactly
-#                # one 1-d auxiliary coordinate, so that will do.
-#                key, aux = auxs.popitem()
-#                identity = aux.identity()
-#                if identity is None:
-#                    # Auxiliary coordinate has no identity, but it may
-#                    # have a recognised axis.
-#                    for ctype in ('T', 'X', 'Y', 'Z'):
-#                        if getattr(dim, ctype, False):
-#                            identity = ctype
-#                            break
-#                #--- End: if
-#
-#                if identity is not None and aux.hasdata:                
-#                    axis_to_id[axis]      = identity
-#                    id_to_axis[identity]  = axis
-#                    axis_to_coord[axis]   = key
-#                    id_to_coord[identity] = key
-#                    axis_to_aux[axis]     = key
-#                    id_to_aux[identity]   = key
-#    #--- End: def
-
-    def insert_field_anc(self, item, key, axes, copy=True):
-        if copy:
-            item = item.copy()
-        self[key] = item
-        self._axes[key] = tuple(axes)
-        self.f.add(key)
-        self._role[key] = 'f'
-        
-    def insert_aux(self, item, key, axes, copy=True):
-        '''
-        '''
-        if copy:
-            item = item.copy()
-        self[key] = item
-        self._axes[key] = tuple(axes)
-        self.a.add(key)
-        self._role[key] = 'a'
-
-    def insert_domain_anc(self, item, key, axes, copy=True):
-        '''
-        '''
-        if copy:
-            item = item.copy()
-        self[key] = item
-        self._axes[key] = tuple(axes)
-        self.c.add(key)
-        self._role[key] = 'c'
-
-    def insert_dim(self, item, key, axes, copy=True):
-        '''
-        '''
-        if copy:
-            item = item.copy()
-        self[key] = item
-        self._axes[key] = tuple(axes)
-        self.d.add(key)
-        self._role[key] = 'd'
-
-    def insert_measure(self, item, key, axes, copy=True):
-        '''
-        '''
-        if copy:
-            item = item.copy()
-        self[key] = item
-        self._axes[key] = tuple(axes)
-        self.m.add(key)
-        self._role[key] = 'm'
-
-    def insert_ref(self, item, key, copy=True):
-        if copy:
-            item = item.copy()
-        self[key] = item
-        self.r.add(key)
-        self._role[key] = 'r'
-
-    def insert_cell_method(self, item, key):
-        self.cell_methods[key] = item
-
-    def insert_item(self, role, item, key, copy=True):
-        if copy:
-            item = item.copy()
-        self[key] = item
-        getattr(self, role).add(key)
-        self._role[key] = role
-
-#    def item(self, description=None, default=None):
-#        '''
-#'''    
-#        item = self.items().get(description)
-#
-#        if item is None:
-#            return default
-#
-#        return item
-#    #--- End: def
-#
-#    def key(self, description=None, default=None)
-#        '''
-#'''    
-#        d = self(description, **kwargs)
-#        if not d:
-#            return default
-#
-#        items = d.popitem()
-#
-#        return default if d else items[0]
-#    #--- End: def
-#
-#    def key_item(self, description=None, default=(None, None), **kwargs):
-#        '''
-#'''    
-#        d = self(description, **kwargs)
-#        if not d:
-#            return default
-#
-#        items = d.popitem()
-#
-#        return default if d else items
-#    #--- End: def
-
-    def remove_item(self, key):
-        '''
-'''
-        self._axes.pop(key, None)
-        getattr(self, self._role.pop(key)).discard(key)
-        return self.pop(key)
-    #--- End: def
-
-    def role(self, key):
-        return self._role[key]
     #--- End: def
 
 #--- End: class
