@@ -584,11 +584,6 @@ All components of a variable are optional.
                                '_FillValue',
                                'missing_value'))
 
-    _special_properties = set(('units',
-                               'calendar',
-                               '_FillValue',
-                               'missing_value'))
-
     def __init__(self, properties={}, attributes=None, data=None,
                  source=None, copy=True):
         '''**Initialization**
@@ -650,9 +645,11 @@ All components of a variable are optional.
             attributes = a
         #--- End: if
 
+        self._properties = Attributes()
         if properties:
             self.properties(properties, copy=copy)
 
+        self._attributes = Attributes()
         if attributes:
             self.attributes(attributes, copy=copy)
 
@@ -1778,9 +1775,7 @@ True
     # ----------------------------------------------------------------
     @property
     def dtarray(self):
-        '''
-
-An independent numpy array of date-time objects.
+        '''An independent numpy array of date-time objects.
 
 Only applicable for reference time units.
 
@@ -1795,11 +1790,17 @@ The data type of the data array is unchanged.
 
 :Examples:
 
-'''
-        if self.hasdata:
-            return self.data.dtarray
+        '''
+        if not self.hasdata:
+            raise AttributeError("{} has no data".format(self.__class__.__name__))
+        
+        array = self.data.array
 
-        raise AttributeError("{} has no data".format(self.__class__.__name__))
+        utime = Utime(getprop(self, 'calendar', None), getprop(self, 'units', None))
+        
+        return rt2dt(self.array, self.Units)
+
+
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -2608,9 +2609,7 @@ dtype('float64')
     #--- End: def
 
     def setprop(self, prop, value):
-        '''
-
-Set a CF property.
+        '''Set a CF or non-CF property.
 
 .. versionadded:: 1.6
 
@@ -2619,12 +2618,12 @@ Set a CF property.
 :Examples 1:
 
 >>> f.setprop('standard_name', 'time')
->>> f.setprop('foo', 12.5)
+>>> f.setprop('project', 'CMIP7')
 
 :Parameters:
 
     prop: `str`
-        The name of the CF property.
+        The name of the property.
 
     value:
         The value for the property.
@@ -2633,7 +2632,7 @@ Set a CF property.
 
      `None`
 
-'''
+        '''
         # Set a special attribute
         if prop in self._special_properties:
             try:
@@ -2847,18 +2846,24 @@ AttributeError: Field doesn't have CF property 'standard_name'
             return getattr(self, prop, *default)
 
         # Still here? Then get a simple attribute
-        d = self._private['simple_properties']
-        if default:
-            return d.get(prop, default[0])
-        elif prop in d:
-            return d[prop]
+#        d = self._private['simple_properties']
+#        if default:
+#            return d.get(prop, default[0])
+#        elif prop in d:
+#            return d[prop]
+#
+#        raise AttributeError("{} doesn't have CF property {}".format(
+#            self.__class__.__name__, prop))
 
-        raise AttributeError("%s doesn't have CF property %r" %
-                             (self.__class__.__name__, prop))
+        try:
+            return getattr(self.property, prop, *default)
+        except AttributeError:
+            raise AttributeError("{} doesn't have CF property {}".format(
+                self.__class__.__name__, prop))
     #--- End: def
 
     def delprop(self, prop):
-        '''Delete a CF property.
+        '''Delete a CF or non-CF property.
 
 .. versionadded:: 1.6
 
@@ -2871,7 +2876,7 @@ AttributeError: Field doesn't have CF property 'standard_name'
 :Parameters:
 
     prop: `str`
-        The name of the CF property to be deleted.
+        The name of the property to be deleted.
 
 :Returns:
 
@@ -2879,10 +2884,10 @@ AttributeError: Field doesn't have CF property 'standard_name'
 
 :Examples 2:
 
->>> f.setprop('foo', 'bar')
->>> f.{+name}('foo')
->>> f.{+name}('foo')
-AttributeError: Can't delete non-existent CF property 'foo'
+>>> f.setprop('project', 'CMIP7')
+>>> f.{+name}('project')
+>>> f.{+name}('project')
+AttributeError: Can't delete non-existent property 'project'
 
         '''
         # Delete a special attribute
@@ -2891,12 +2896,18 @@ AttributeError: Can't delete non-existent CF property 'foo'
             return
 
         # Still here? Then delete a simple attribute
-        d = self._private['simple_properties']
-        if prop in d:
-            del d[prop]
-        else:
-            raise AttributeError(
-                "Can't delete non-existent CF property {!r}".format(prop))                    
+        try:
+            delattr(self.property, prop)
+        except AttributeError:
+            raise AttributeError("Can't delete non-existent property {!r}".format(prop))
+
+#        # Still here? Then delete a simple attribute
+#        d = self._private['simple_properties']
+#        if prop in d:
+#            del d[prop]
+#        else:
+#            raise AttributeError(
+#                "Can't delete non-existent CF property {!r}".format(prop))                    
     #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False,
@@ -3191,3 +3202,9 @@ first axis which is to have a chunk size of 12:
     #--- End: def
 
 #--- End: class
+
+class Attributes(object):
+    '''
+    '''
+    pass
+    
