@@ -966,13 +966,13 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Initialize the field with the data variable and its attributes
         # ----------------------------------------------------------------
-        f_Units = self.Units(properties.pop('units', None),
-                             properties.pop('calendar', None))
-
-        if g['verbose'] and not f_Units.isvalid:
-            print(
-"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-    g['filename'], data_ncvar, f_Units))
+#        f_Units = self.Units(properties.pop('units', None),
+#                             properties.pop('calendar', None))
+#
+#        if g['verbose'] and not f_Units.isvalid:
+#            print(
+#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+#    g['filename'], data_ncvar, f_Units))
 
         if _debug:
             print '    Field properties:', properties
@@ -981,7 +981,7 @@ ancillaries, field ancillaries).
 
         f.ncvar = data_ncvar
         f.file  = g['filename']
-        f.Units = f_Units
+#        f.Units = f_Units
     
         f._global_attributes = tuple(g['global_attributes'])
     
@@ -1347,13 +1347,13 @@ ancillaries, field ancillaries).
         
         properties = attributes[ncvar].copy()
       
-        c_Units = self.Units(properties.pop('units', None),
-                             properties.pop('calendar', None))
-    
-        if g['verbose'] and not c_Units.isvalid:
-            print(
-"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-    g['filename'], ncvar, c_Units))
+#        c_Units = self.Units(properties.pop('units', None),
+#                             properties.pop('calendar', None))
+#    
+#        if g['verbose'] and not c_Units.isvalid:
+#            print(
+#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+#    g['filename'], ncvar, c_Units))
 
         properties.pop('formula_terms', None)
     
@@ -1385,7 +1385,7 @@ ancillaries, field ancillaries).
 "Must set one of the dimension, auxiliary or domainancillary parmaeters to True")
     
         c.ncvar = ncvar
-        c.Units = c_Units
+#        c.Units = c_Units
     
         if climatology:
             c.climatology = climatology
@@ -1401,13 +1401,13 @@ ancillaries, field ancillaries).
             properties = attributes[ncbounds].copy()
             properties.pop('formula_terms', None)
     
-            b_Units = self.Units(properties.pop('units', None),
-                                 properties.pop('calendar', None))
-    
-            if g['verbose'] and not b_Units.isvalid:
-                print(
-"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-    g['filename'], ncbounds, b_Units))
+#            b_Units = self.Units(properties.pop('units', None),
+#                                 properties.pop('calendar', None))
+#    
+#            if g['verbose'] and not b_Units.isvalid:
+#                print(
+#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+#    g['filename'], ncbounds, b_Units))
 
             bounds = self.Bounds(properties=properties, copy=False)
     
@@ -1458,15 +1458,15 @@ ancillaries, field ancillaries).
         '''
         properties = attributes[ncvar]
     
-        units = self.Units(properties.get('units'),
-                           properties.get('calendar'))
-    
-        if self.read_vars['verbose'] and not units.isvalid:
-            print(
-"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-    self.read_vars['filename'], ncvar, units))
+#        units = self.Units(properties.get('units'),
+#                           properties.get('calendar'))
+#    
+#        if self.read_vars['verbose'] and not units.isvalid:
+#            print(
+#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
+#    self.read_vars['filename'], ncvar, units))
 
-        data = self._set_Data(ncvar, units=units)
+        data = self._set_Data(ncvar) #, units=units)
     
         return data
     #--- End: def
@@ -1685,7 +1685,7 @@ ancillaries, field ancillaries).
     #--- End: def
     
     def _set_Data(self, ncvar, variable=None, unpacked_dtype=False,
-                  uncompress_override=None, units=None,
+                  uncompress_override=None, #units=None,
                   fill_value=None):
         '''
     
@@ -1740,8 +1740,8 @@ Set the Data attribute of a variable.
                                      size=size)
     
         # Find the units for the data
-        if units is None and variable is not None:
-            units = variable.Units
+#        if units is None and variable is not None:
+        units = variable.Units
             
         # Find the fill_value for the data
         if fill_value is None and variable is not None:
@@ -1756,7 +1756,7 @@ Set the Data attribute of a variable.
             # --------------------------------------------------------
             # The array is not compressed
             # --------------------------------------------------------
-            data = self._read_create_Data(filearray, units=units,
+            data = self._read_create_Data(filearray, #units=units,
                                           fill_value=fill_value)
             
         else:
@@ -1851,10 +1851,10 @@ Set the Data attribute of a variable.
         return data
     #--- End: def
 
-    def _read_create_Data(self, array=None, units=None, fill_value=None):
+    def _read_create_Data(self, array=None, fill_value=None):
         '''
         '''    
-        return self.Data(array, units=units, fill_value=fill_value)
+        return self.Data(array, fill_value=fill_value)
     #--- End: def
     
     @classmethod    

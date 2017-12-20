@@ -12,7 +12,7 @@ from netCDF4 import default_fillvals as _netCDF4_default_fillvals
 from .cfdatetime   import dt
 from .functions    import RTOL, ATOL, RELAXED_IDENTITIES
 from .functions    import equals     as cf_equals
-from .units        import Units
+#from .units        import Units
 from .constants    import masked
 
 from .data.data import Data
@@ -579,9 +579,7 @@ All components of a variable are optional.
 '''
     __metaclass__ = RewriteDocstringMeta
 
-    _special_properties = set(('units',
-                               'calendar',
-                               '_FillValue',
+    _special_properties = set(('_FillValue',
                                'missing_value'))
 
     def __init__(self, properties={}, attributes=None, data=None,
@@ -743,13 +741,11 @@ x.__repr__() <==> repr(x)
     #--- End: def
 
     def __str__(self):
-        '''
-
-Called by the :py:obj:`str` built-in function.
+        '''Called by the :py:obj:`str` built-in function.
 
 x.__str__() <==> str(x)
 
-'''
+        '''
         name = self.name('')
         
         if self.hasdata:
@@ -759,10 +755,9 @@ x.__str__() <==> str(x)
             dims = ''
 
         # Units
-        if self.Units.isreftime:
-            units = getattr(self, 'calendar', '')
-        else:
-            units = getattr(self, 'units', '')
+        units = self.getprop('units', '')
+        if self.isreftime:
+            units += ' '+self.getprop('calendar', '')
             
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
@@ -863,18 +858,8 @@ x.__str__() <==> str(x)
     #--- End: def
     @_Data.setter
     def _Data(self, value):
-        if not value.Units:
-            # If the data does not have any units, copy the variable's
-            # units
-            value = value.copy()
-            value.Units = self.Units
-
         private = self._private
         private['Data'] = value
-
-        # Delete Units from the variable
-#        private['special_attributes'].pop('Units', None)
-        self._del_special_attr('Units' )
 
         self._hasdata = True
     #--- End: def
@@ -887,10 +872,6 @@ x.__str__() <==> str(x)
             raise AttributeError(
                 "Can't delete non-existent data".format(
                     self.__class__.__name__))
-
-        # Save the Units to the variable
-#        private['special_attributes']['Units'] = data.Units
-        self._set_special_attr('Units', data.Units)
 
         self._hasdata = False
     #--- End: def
@@ -976,39 +957,6 @@ If present, the data array is stored in the `data` attribute.
 
 '''      
         return self._hasdata
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
-    @property
-    def Units(self):
-        '''The `Units` object containing the units of the data array.
-
-Stores the units and calendar CF properties in an internally
-consistent manner. These are mirrored by the `units` and `calendar` CF
-properties respectively.
-
-.. versionadded:: 1.6
-
-        '''
-        if self.hasdata:
-            return self.data.Units
-
-        try:
-            return self._get_special_attr('Units')
-        except AttributeError:
-            units_None = Units()
-            self._set_special_attr('Units', units_None)
-            return units_None
-    #--- End: def
-
-    @Units.setter
-    def Units(self, value):
-        if self.hasdata:
-            self.data.Units = value
-        else:
-            self._set_special_attr('Units', value)
     #--- End: def
 
     def remove_data(self):
@@ -1113,28 +1061,14 @@ http://cfconventions.org/latest.html for details.
 >>> f.delprop('calendar')
 
         '''
-        value = getattr(self.Units, 'calendar', None)
-        if value is None:
-            raise AttributeError(
-                "{} doesn't have CF property 'calendar'".format(
-                    self.__class__.__name__))
-        return value
+        return self.getprop('calendar')
     #--- End: def
-
     @calendar.setter
     def calendar(self, value):
-        self.Units = Units(getattr(self, 'units', None), value)
-    #--- End: def
-
+        self.setprop('calendar', value)
     @calendar.deleter
     def calendar(self):
-        if getattr(self, 'calendar', None) is None:
-            raise AttributeError(
-                "Can't delete non-existent {} CF property 'calendar'".format(
-                    self.__class__.__name__))
-        
-        self.Units = Units(getattr(self, 'units', None))
-    #--- End: def
+        self.delprop('calendar')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1164,9 +1098,11 @@ it. See http://cfconventions.org/latest.html for details.
         return self.getprop('comment')
     #--- End: def
     @comment.setter
-    def comment(self, value): self.setprop('comment', value)
+    def comment(self, value):
+        self.setprop('comment', value)
     @comment.deleter
-    def comment(self):        self.delprop('comment')
+    def comment(self):
+        self.delprop('comment')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1498,9 +1434,11 @@ http://cfconventions.org/latest.html for details.
         return self.getprop('standard_name')
     #--- End: def
     @standard_name.setter
-    def standard_name(self, value): self.setprop('standard_name', value)
+    def standard_name(self, value):
+        self.setprop('standard_name', value)
     @standard_name.deleter
-    def standard_name(self):        self.delprop('standard_name')
+    def standard_name(self):
+        self.delprop('standard_name')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1529,24 +1467,14 @@ http://cfconventions.org/latest.html for details.
 >>> f.delprop('units')
 
         '''
-        value = getattr(self.Units, 'units', None)
-        if value is None:
-            raise AttributeError("{} doesn't have CF property 'units'".format(
-                self.__class__.__name__))
-        return value
+        return self.getprop('units')
     #--- End: def
-
     @units.setter
     def units(self, value):
-        self.Units = Units(value, getattr(self, 'calendar', None))
+        self.setprop('units', value)
     @units.deleter
     def units(self):
-        if getattr(self, 'units', None) is None:
-            raise AttributeError(
-"Can't delete non-existent CF property 'units'".format(self.__class__.__name__))
-
-        self.Units = Units(None, getattr(self, 'calendar', None))
-    #--- End: def
+        self.delprop('units')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1576,9 +1504,11 @@ http://cfconventions.org/latest.html for details.
         return self.getprop('valid_max')
     #--- End: def
     @valid_max.setter
-    def valid_max(self, value): self.setprop('valid_max', value)
+    def valid_max(self, value):
+        self.setprop('valid_max', value)
     @valid_max.deleter
-    def valid_max(self):        self.delprop('valid_max')
+    def valid_max(self):
+        self.delprop('valid_max')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1780,7 +1710,7 @@ True
 Only applicable for reference time units.
 
 If the calendar has not been set then the CF default calendar will be
-used and the units will be updated accordingly.
+used.
 
 The data type of the data array is unchanged.
 
@@ -1796,11 +1726,28 @@ The data type of the data array is unchanged.
         
         array = self.data.array
 
-        utime = Utime(getprop(self, 'calendar', None), getprop(self, 'units', None))
-        
-        return rt2dt(self.array, self.Units)
+        mask = None
+        if numpy.ma.isMA(array):
+            # num2date has issues if the mask is nomask
+            mask = array.mask
+            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+                array = array.view(numpy.ndarray)
+        #--- End: if
 
+        utime = Utime(getprop(self, 'units'),
+                      getprop(self, 'calendar', 'gregorian'))
+        array = utime.num2date(array)
+    
+        if mask is None:
+            # There is no missing data
+            array = numpy.array(array, dtype=object)
+        else:
+            # There is missing data
+            array = numpy.ma.masked_where(mask, array)
+            if not numpy.ndim(array):
+                array = numpy.ma.masked_all((), dtype=object)
 
+        return array
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -2174,7 +2121,6 @@ standard_name = 'time'
         indent1 = '    ' * (_level+1)
 
         if _title is None:
-#            construct = self.__class__.__name__  re.sub("([A-Z])"," \g<0>",label)
             string = ['{0}Variable: {1}'.format(indent0, self.name(default=''))]
         else:
             string = [indent0 + _title]
@@ -2190,9 +2136,13 @@ standard_name = 'time'
             else:
                 x = [str(s) for s in self.shape]
 
+            data = self.data
+            if self.isreftime:
+                data = data.asdata(self.dtarray)
+           
             string.append('{0}Data({1}) = {2}'.format(indent1,
                                                       ', '.join(x),
-                                                      str(self.data)))
+                                                      str(data)))
         #--- End: if
         
         string = '\n'.join(string)
@@ -3083,8 +3033,7 @@ first axis which is to have a chunk size of 12:
         dictionary are deep copied
 
     clear: `bool`, optional
-        If True then delete all CF properties, with the exceptions of
-        ``'units'`` and ``'calendar'``.
+        If True then delete all CF properties.
 
     copy: `bool`, optional
         If False then any property values provided bythe *props*
@@ -3105,13 +3054,13 @@ first axis which is to have a chunk size of 12:
 #        else:
 #            out = self._simple_properties().copy()
             
-        # Include properties that are not listed in the simple
-        # properties dictionary
-        for prop in ('units', 'calendar'):
-            _ = getattr(self, prop, None)
-            if _ is not None:
-                out[prop] = _
-        #--- End: for
+#        # Include properties that are not listed in the simple
+#        # properties dictionary
+#        for prop in ('units', 'calendar'):
+#            _ = getattr(self, prop, None)
+#            if _ is not None:
+#                out[prop] = _
+#        #--- End: for
 
         if clear:
             self._simple_properties().clear()

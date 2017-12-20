@@ -13,6 +13,7 @@ from .functions import (parse_indices, equals, RTOL, ATOL,
 from .variable  import Variable
 
 from .constructs import Constructs
+#from .data.data  import Data
 
 _debug = False
 
@@ -271,7 +272,7 @@ Field objects are picklable.
     _DomainAxis = DomainAxis
     _Flags      = Flags
     _Constructs = Constructs
-    
+
     _special_properties = Variable._special_properties.union(
         ('flag_values',
          'flag_masks',
@@ -501,7 +502,6 @@ x.__str__() <==> str(x)
         
         # Data
         if self.hasdata:
-
             x = ['{0}({1})'.format(axis_name(axis), axis_size(axis))
                  for axis in self.data_axes()]
             string.append('Data           : {0}({1}) {2}'.format(
@@ -546,7 +546,10 @@ x.__str__() <==> str(x)
             #--- End: if
                     
             if variable.hasdata:
-                x.append(' = {}'.format(variable.data))
+                if variable.isreftime:
+                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
+                else:
+                    x.append(' = {}'.format(variable.data))
                 
             return ''.join(x)
         #--- End: def
@@ -567,35 +570,35 @@ x.__str__() <==> str(x)
                           
         # Auxiliary coordinates
         x = [_print_item(self, aux, v, False) 
-             for aux, v in sorted(self.Items.auxs().iteritems())]
+             for aux, v in sorted(self.auxiliary_coordinates().items())]
         if x:
             string.append('Aux coords     : {}'.format(
                 '\n               : '.join(x)))
         
         # Cell measures
         x = [_print_item(self, msr, v, False)
-             for msr, v in sorted(self.Items.msrs().iteritems())]
+             for msr, v in sorted(self.cell_measures().items())]
         if x:
             string.append('Cell measures  : {}'.format(
                 '\n               : '.join(x)))
             
         # Coordinate references
         x = sorted([ref.name(default='')
-                    for ref in self.Items.refs().itervalues()])
+                    for ref in self.coordinate_references().values()])
         if x:
             string.append('Coord refs     : {}'.format(
                 '\n               : '.join(x)))
             
         # Domain ancillary variables
         x = [_print_item(self, key, anc, False)
-             for key, anc in sorted(self.Items.domain_ancs().iteritems())]
+             for key, anc in sorted(self.domain_ancillaries().items())]
         if x:
             string.append('Domain ancils  : {}'.format(
                 '\n               : '.join(x)))
             
         # Field ancillary variables
         x = [_print_item(self, key, anc, False)
-             for key, anc in sorted(self.Items.field_ancs().iteritems())]
+             for key, anc in sorted(self.field_ancillaries().items())]
         if x:
             string.append('Field ancils   : {}'.format(
                 '\n               : '.join(x)))
@@ -1295,9 +1298,13 @@ last values.
             axis_size = self.axis_size
             x = ['{0}({1})'.format(axis_name(axis), axis_size(axis))
                  for axis in self.data_axes()]
+            data = self.data
+            if self.isreftime:
+                data = data.asdata(self.dtarray)
+                
             string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
                                                            ', '.join(x),
-                                                           str(self.data))))
+                                                           str(data))))
         # Cell methods
         cell_methods = self.cell_methods()
         if cell_methods:
