@@ -1119,11 +1119,7 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
  <DimensionCoordinate: latitude(72) degrees_north>]
 
         '''
-        out = [self]
-        out.extend(self.Axes.values())
-        out.extend(self.Items.cell_methods.values())
-        out.extend(self.Items().values())
-        return out
+        return self.Constructs()
     #--- End: def
 
     def data_axes(self):
@@ -2372,7 +2368,7 @@ To multiply the field by the cosine of its latitudes:
             ancillaries = []
             for term in ref.ancillaries:
                 key = ref[term]
-                domain_anc = self.item(key, role='c', axes_superset=item_axes)
+                domain_anc = self.domain_ancillary(axes_superset=item_axes)
                 print repr(domain_anc),item_axes, key
                 if domain_anc is not None:
                     ancillaries.append(term)
@@ -3359,7 +3355,7 @@ domain ancillary identifiers.
         return [cm.change_axes(axis_map) for cm in cell_methods]
     #--- End: def
 
-    def _unconform_ref(self, ref, copy=True):
+    def _unconform_ref(self, coordinate_reference, copy=True):
         '''Replace the contents of ref.coordinates with coordinate identities
 and ref.ancillaries with domain ancillary identities where possible.
 
@@ -3380,27 +3376,28 @@ and ref.ancillaries with domain ancillary identities where possible.
 
         '''
         if copy:
-            ref = ref.copy()
+            coordinate_reference = coordinate_reference.copy()
             
         identity_map = {}
-        role = ('d', 'a')        
-        for identifier in ref.coordinates:
-            item = self.Items.item(identifier, role=role)
-            if item is not None:
-                identity_map[identifier] = item.identity()
+        for identifier in coordinate_reference.coordinates:
+            coordinate = self.coordinate(identifier)
+            if coordinate is not None:
+                identity_map[identifier] = coordinate.identity()
         #--- End: for
-        ref.change_identifiers(identity_map, ancillary=False, strict=True, copy=False)
+        coordinate_reference.change_identifiers(identity_map,
+                                                ancillary=False, strict=True, copy=False)
  
         identity_map = {}
         role = ('c',)
-        for identifier in ref.ancillaries.values():
-            anc = self.Items.item(identifier, role=role)
-            if anc is not None:
-                identity_map[identifier] = anc.identity()
+        for identifier in coordinate_reference.ancillaries.values():
+            domain_ancillary = self.domain_ancillary(identifier)
+            if domain_ancillary is not None:
+                identity_map[identifier] = domain_ancillary.identity()
         #--- End: for
-        ref.change_identifiers(identity_map, coordinate=False, strict=True, copy=False)
+        coordinate_reference.change_identifiers(identity_map,
+                                                coordinate=False, strict=True, copy=False)
 
-        return ref
+        return coordinate_reference
     #--- End: def
 
     def insert_item(self, role, item, key=None, axes=None,
@@ -4184,210 +4181,50 @@ may be selected with the keyword arguments.
 
 :Examples:
 
-        '''
-        kwargs2 = self._parameters(locals())
-
-        # Include coordinate references by default
-        if kwargs2['role'] is None:
-            kwargs2['role'] = ('d', 'a', 'm', 'c', 'f', 'r')
-
-        Items = self.Items
-        role  = Items.role
-
-        items = self.items(**kwargs2)
-
-        out = {}
- 
-        # Remove coordinate references items
-        for key, item in items.items():
-            
-            if role(key) == 'r':
-                ref = Items.remove_item(key)
-                out[key ] = self._unconform_ref(ref)
-                del items[key]
+        ''' 
+        # Remove coordinate reference
+        coordinate_references = self.coordinate_references()
+        if key in coordinate_references:
+            ref = self.Constructs.remove(key)
+            return self._unconform_ref(ref, copy=True)
                 
-        # Remove other items
-        for key, item in items.iteritems():
-            item_role = role(key)
+        # Remove domain axis
+        domain_axes = self.domain_axes()
+        if key in domain_axes:
+            if key in self.data_axes():
+                raise ValueError(
+"Can't remove domain axis that is spanned by the field's data")
 
-            if item_role in 'dac':
+            for k, v in self.variable_axes().items():
+                if key in v:
+                    raise ValueError(
+"Can't remove domain axis that is spanned by {!r}".format(self.construct(k)))
+            #--- End: if
+
+            return self.Constructs.remove(key).copy()
+        #--- End: if
+
+        # Remove other construct
+        if coordinate_references:
+            construct_type = self.Constructs.type(key)
+            if construct_type in ('_dimension_coordinate',
+                                  '_auxiliary_coordinate',
+                                  '_domain_ancillary'):
                 # The removed item is a dimension coordinate,
                 # auxiliary coordinate or domain ancillary, so replace
                 # its identifier in any coordinate references with its
                 # identity.
-                identity_map = {key: item.identity()}
-                for ref in self.Items.refs().itervalues():
-                    ref.change_identifiers(identity_map,
-                                           coordinate=(item_role!='c'),
-                                           ancillary=(item_role=='c'),
-                                           copy=False)
-            #--- End: if
-                
-            out[key] = Items.remove_item(key)        
-        #--- End: if        
-                                                      
-        return out
-    #--- End: def
-
-    def remove_axes(self, axes=None, size=None, **kwargs):
-        '''
-
-Remove and return axes from the field.
-
-By default all axes of the domain are removed, but particular axes may
-be selected with the keyword arguments.
-
-The axis may be selected with the keyword arguments. If no unique axis
-can be found then no axis is removed and `None` is returned.
-
-If an axis has size greater than 1 then it is not possible to remove
-it if it is spanned by the field's data array or any multidimensional
-coordinate or cell measure object of the field.
-
-.. seealso:: `axes`, `remove_axis`, `remove_item`, `remove_items`
-
-:Parameters:
-
-    {+axes, kwargs}
-
-    {+size}
-
-:Returns:
-
-    out: `dict`
-        The removed axes. The dictionary may be empty.
-
-:Examples:
-
-'''
-        axes = self.axes(axes, size=size, **kwargs)
-        if not axes:
-            return axes
-
-        axes = set(axes)
-
-        size1_data_axes = []
-        domain_axes = self.axes()
-        if self.data_axes() is not None:
-            for axis in axes.intersection(domain_axes).intersection(self.data_axes()):
-                if domain_axes[axis] == 1:
-                    size1_data_axes.append(axis)
-                else:
-                    raise ValueError(
-"Can't remove an axis with size > 1 which is spanned by the data array")
-        #---End: if
-
-        for axis in axes:
-            if (domain_axes[axis] > 1 and
-                self.items(ndim=2, axes=axis)):  ##### DCH replace 2 with equivalent to  cf.gt (1) 
-                raise ValueError(
-"Can't remove an axis with size > 1 which is spanned by a multidimensional item")
-        #--- End: for
-
-        # Replace the axis in cell methods with a standard name, if
-        # possible.
-        cell_methods = self.Items.cell_methods
-        if cell_methods:            
-            axis_map = {}
-            del_axes = []
-            for axis in axes:
-                coord = self.item(role=('d',), axes=axis)
-                standard_name = getattr(coord, 'standard_name', None)
-                if standard_name is None:
-                    coord = self.item(role=('a',), ndim=1, axes_all=axis)
-                    standard_name = getattr(coord, 'standard_name', None)
-                if standard_name is not None:
-                    axis_map[axis] = standard_name
-                else:
-                    del_axes.append(axis)
+                identity_map = {key: self.Constructs.get(key).identity()}
+                for key, ref in coordinate_references.items():
+                   ref = ref.change_identifiers(
+                       identity_map,
+                       coordinate=(construct_type != '_domain ancillary'),
+                       ancillary=(construct_type == '_domain ancillary'),
+                       copy=True)
+                   self.Constructs.replace(key, ref)
         #--- End: if
 
-        # Remove coordinate references which span any of the removed axes
-        for key in self.items(role='r'): #ppp
-            if axes.intersection(self.Items.axes(key)):
-                self.Items.remove_item(key)
-
-        for key, item in self.items(axes=axes).iteritems():
-            item_axes = self.item_axes(key)
-
-            # Remove the item if it spans only removed axes
-            if axes.issuperset(item_axes):
-                self.Items.remove_item(key)
-                continue            
-
-            # Still here? Then squeeze removed axes from the item,
-            # which must be multidimensional and have size 1 along the
-            # axes to be removed.
-            iaxes = [item_axes.index(axis) for axis in axes
-                     if axis in item_axes]
-            item.squeeze(iaxes, copy=False)
-
-            # Remove the removed axes from the multidimensional item's
-            # list of axes
-            for axis in axes.intersection(item_axes):
-                item_axes.remove(axis)
-
-            self.Items.axes(key, axes=item_axes)
-        #--- End: for
-
-        if size1_data_axes:
-            self.squeeze(size1_data_axes, copy=False)
-            
-        # Replace the axis in cell methods with a standard name, if
-        # possible.
-        if cell_methods:
-            self.Items.cell_methods = [cm.change_axes(axis_map) for cm in cell_methods]
-            self.Items.cell_methods = [cm.remove_axes(del_axes) for cm in cell_methods]
-
-        # Remove the axes
-        for axis in axes:
-            del self.Axes[axis]
-
-        # Remove axes from unlimited dictionary
-        unlimited = self._unlimited
-        if unlimited:
-            for axis in axes:
-                unlimited.pop(axis, None)
-            if not unlimited:
-                self._unlimited = None
-
-        return axes
-    #--- End: def
-
-    def remove_axis(self, axes=None, size=None, **kwargs):
-        '''
-
-Remove and return a unique axis from the field.
-
-The axis may be selected with the keyword arguments. If no unique axis
-can be found then no axis is removed and `None` is returned.
-
-If the axis has size greater than 1 then it is not possible to remove
-it if it is spanned by the field's data array or any multidimensional
-coordinate or cell measure object of the field.
-
-.. seealso:: `axis`, `remove_axes`, `remove_item`, `remove_items`
-
-:Parameters:
-
-    {+axes, kwargs}
-
-    {+size}
-
-:Returns:
-
-    out: `str`
-        The identifier of the removed axis, or `None` if there
-        isn't one.
-
-:Examples:
-
-'''      
-        axis = self.axis(axes, key=True, **kwargs)
-        if axis is None:
-            return
-
-        return self.remove_axes(axis).pop()
+        return self.Constructs.remove(key).copy()
     #--- End: def
 
 #--- End: class

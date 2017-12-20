@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-class Constructs(dict):
+class Constructs(object)
     '''
 Keys are item identifiers, values are item objects.
     '''
@@ -24,6 +24,23 @@ Keys are item identifiers, values are item objects.
         self._construct_type = {}
     #--- End: def
 
+    def __call__(self):
+        '''
+        '''
+        out = {}
+        
+        out.update(self._auxiliary_coordinates)
+        out.update(self._field_ancillaries)
+        out.update(self._domain_ancillaries)
+        out.update(self._dimension_coordinates)
+        out.update(self._cell_measures)
+        out.update(self._domain_axes)
+        out.update(self._coordinate_references)
+        out.update(self._cell_methods)
+
+        return out
+    #--- End: def
+    
     def __deepcopy__(self, memo):
         '''
 
@@ -74,6 +91,25 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
         return self._xxx(self._auxiliary_coordinates.copy(), axes)
     #--- End: def
 
+    def coordinates(self, axes=None):
+        '''Auxiliary coordinate objects and their identifiers
+        
+:Returns:
+        
+    out: `dict`
+          A dictionary of auxiliary coordinate objects keyed by their
+          identifiers.
+
+:Examples:
+
+>>> i.auxs()
+{'aux0': <CF AuxiliaryCorodinate: >}
+
+        '''
+        
+        return self.dimension_coordinates.update(self.auxiliary_coordinates)
+    #--- End: def
+
     def auxiliary_coordinate(self, key=None, axes=None, default=None, copy=False):
         '''Auxiliary coordinate objects and their identifiers
         
@@ -98,8 +134,33 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
         return item
     #--- End: def
 
+    def coordinate(self, key=None, axes=None, default=None, copy=False):
+        '''Auxiliary coordinate objects and their identifiers
+        
+:Returns:
+        
+    out: `dict`
+          A dictionary of auxiliary coordinate objects keyed by their
+          identifiers.
+
+:Examples:
+
+>>> i.auxs()
+{'aux0': <CF AuxiliaryCorodinate: >}
+
+        '''
+        x = self.coordinates(axes=axes, copy=copy)
+        key, value = x.popitem()
+
+        if x:
+            return default
+
+        return value
+    #--- End: def
+
     def variables():
-        out = self._dimension_coordinates.copy()
+        out = {}
+        out.update(self._dimension_coordinates)
         out.update(self._auxiliary_coordinates)
         out.update(self._cell_methods)
         out.update(self._field_ancillaries)
