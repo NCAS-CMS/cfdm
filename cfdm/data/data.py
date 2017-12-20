@@ -683,15 +683,15 @@ True
         return array
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def dtarray(self):
-        '''
-        '''
-        return rt2dt(self.array, self.Units)
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Attribute (read only)
+#    # ----------------------------------------------------------------
+#    @property
+#    def dtarray(self):
+#        '''
+#        '''
+#        return rt2dt(self.array, self.Units)
+#    #--- End: def
 
     @property
     def mask(self):
