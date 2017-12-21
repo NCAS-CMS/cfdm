@@ -643,10 +643,12 @@ All components of a variable are optional.
             attributes = a
         #--- End: if
 
+        self._property_names = set()
         self._properties = Attributes()
         if properties:
             self.properties(properties, copy=copy)
 
+        self._attribute_names = set()
         self._attributes = Attributes()
         if attributes:
             self.attributes(attributes, copy=copy)
@@ -2224,14 +2226,13 @@ True
         if ignore_fill_value:
             ignore += ('_FillValue', 'missing_value')
 
-        self_simple  = self._private['simple_properties']
-        other_simple = other._private['simple_properties']
-
-        if (set(self_simple).difference(ignore) != 
-            set(other_simple).difference(ignore)):
+        self_properties  = self._property_names.difference(ignore)
+        other_properties = other._property_names.difference(ignore)
+        if self_properties != other_properties:
             if traceback:
                 print("{0}: Different properties: {1}, {2}".format( 
-                    self.__class__.__name__, self_simple, other_simple))
+                    self.__class__.__name__,
+                    self_properties, other_properties))
             return False
         #--- End: if
 
@@ -2240,17 +2241,16 @@ True
         if atol is None:
             atol = ATOL()
 
-        for attr, x in self_simple.iteritems():
-            if attr in ignore:
-                continue
-            y = other_simple[attr]
+        for prop in self_properties:
+            x = self.getprop(prop)
+            y = other.getprop(prop)
 
             if not cf_equals(x, y, rtol=rtol, atol=atol,
                              ignore_fill_value=ignore_fill_value,
                              traceback=traceback):
                 if traceback:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(
-                        self.__class__.__name__, attr, x, y))
+                        self.__class__.__name__, prop, x, y))
                 return False
         #--- End: for
 
@@ -2583,17 +2583,10 @@ dtype('float64')
      `None`
 
         '''
-        # Set a special attribute
-        if prop in self._special_properties:
-            try:
-                setattr(self, prop, value)
-            except AttributeError as error:
-                raise AttributeError("{} {!r}".format(error, prop))
-
-            return
-
         # Still here? Then set a simple property
-        self._private['simple_properties'][prop] = value
+        setattr(self._properties, 'prop', value)
+
+        self._property_names.add(prop)
     #--- End: def
 
     def hasprop(self, prop):
@@ -2607,7 +2600,8 @@ Return True if a CF property exists, otherise False.
 
 :Examples 1:
 
->>> x = f.{+name}('standard_name')
+>>> if f.{+name}('standard_name'):
+...     print 'Has standard name'
 
 :Parameters:
 
@@ -2620,12 +2614,7 @@ Return True if a CF property exists, otherise False.
          True if the CF property exists, otherwise False.
 
 '''
-        # Has a special property? # DCH 
-        if prop in self._special_properties:
-            return hasattr(self, prop)
-
-        # Still here? Then has a simple property?
-        return prop in self._private['simple_properties']
+        return prop in self._property_names
     #--- End: def
 
 #    @property
@@ -2851,6 +2840,8 @@ AttributeError: Can't delete non-existent property 'project'
         except AttributeError:
             raise AttributeError("Can't delete non-existent property {!r}".format(prop))
 
+        self._property_names.discard(prop)
+        
 #        # Still here? Then delete a simple attribute
 #        d = self._private['simple_properties']
 #        if prop in d:
@@ -3155,5 +3146,3 @@ first axis which is to have a chunk size of 12:
 class Attributes(object):
     '''
     '''
-    pass
-    
