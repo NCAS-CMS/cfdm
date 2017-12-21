@@ -582,18 +582,18 @@ All components of a variable are optional.
     _special_properties = set(('_FillValue',
                                'missing_value'))
 
-    def __init__(self, properties={}, attributes=None, data=None,
+    def __init__(self, properties={}, #attributes=None,
+                 data=None,
                  source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
 
     properties: `dict`, optional
-        Initialize CF properties from the dictionary's key/value
-        pairs.
+        Initialize properties from the dictionary's key/value pairs.
 
-    attributes: `dict`, optional
-        Provide attributes from the dictionary's key/value pairs.
+#    attributes: `dict`, optional
+#        Provide attributes from the dictionary's key/value pairs.
 
     data: `Data`, optional
         Provide a data array.
@@ -621,7 +621,7 @@ All components of a variable are optional.
         # been set.
         if not hasattr(self, '_private'):
             self._private = {'special_attributes': {},
-                             'simple_properties' : {}}
+                             'properties'        : {}}
         
         if source is not None:
             if not getattr(source, 'isvariable', False):
@@ -637,21 +637,19 @@ All components of a variable are optional.
                 p.update(properties)
             properties = p
                 
-            a = source.attributes()
-            if attributes:
-                a.update(attributes) 
-            attributes = a
+#            a = source.attributes()
+#            if attributes:
+#                a.update(attributes) 
+#            attributes = a
         #--- End: if
 
-        self._property_names = set()
-        self._properties = Attributes()
         if properties:
             self.properties(properties, copy=copy)
 
-        self._attribute_names = set()
-        self._attributes = Attributes()
-        if attributes:
-            self.attributes(attributes, copy=copy)
+#        self._attribute_names = set()
+#        self._attributes = Attributes()
+#        if attributes:
+#            self.attributes(attributes, copy=copy)
 
         if data is not None:
             self.insert_data(data, copy=copy)
@@ -764,7 +762,7 @@ x.__str__() <==> str(x)
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
-    def _dump_simple_properties(self, omit=(), _level=0):
+    def _dump_properties(self, omit=(), _level=0):
         '''
 
 .. versionadded:: 1.6
@@ -788,7 +786,7 @@ x.__str__() <==> str(x)
         string = []
 
         # Simple properties
-        simple = self._simple_properties()
+        simple = self.properties()
         attrs  = sorted(set(simple) - set(omit))
         for attr in attrs:
             name   = '{0}{1} = '.format(indent0, attr)
@@ -804,13 +802,13 @@ x.__str__() <==> str(x)
         return '\n'.join(string)
     #--- End: def
 
-    def _simple_properties(self):
-        '''
-
-.. versionadded:: 1.6
-        '''        
-        return self._private['simple_properties']
-    #--- End: def
+#    def _simple_properties(self):
+#        '''
+#
+#.. versionadded:: 1.6
+#        '''        
+#        return self._private['simple_properties']
+#    #--- End: def
 
     def _get_special_attr(self, attr):
         '''
@@ -839,7 +837,11 @@ x.__str__() <==> str(x)
 
 .. versionadded:: 1.6
         '''
-        self._private['special_attributes'].pop('Units', None)
+        try:
+            del self._private['special_attributes']
+        except KeyError:
+             raise AttributeError("{} doesn't have attribute {!r}".format(
+                 self.__class__.__name__, attr))
     #--- End: def
 
     # ================================================================
@@ -997,114 +999,114 @@ None
         return data
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def add_offset(self):
-        '''The add_offset CF property.
-
-If present then this number is *subtracted* from the data prior to it
-being written to a file. If both `scale_factor` and `add_offset`
-properties are present, the offset is subtracted before the data are
-scaled. See http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.add_offset = -4.0
->>> f.add_offset
--4.0
->>> del f.add_offset
-
->>> f.setprop('add_offset', 10.5)
->>> f.getprop('add_offset')
-10.5
->>> f.delprop('add_offset')
-
-        '''
-        return self.getprop('add_offset')
-    #--- End: def
-    @add_offset.setter
-    def add_offset(self, value):
-        self.setprop('add_offset', value)
-        self.dtype = numpy.result_type(self.dtype, numpy.array(value).dtype)
-    #--- End: def
-    @add_offset.deleter
-    def add_offset(self):
-        self.delprop('add_offset')
-        if not self.hasprop('scale_factor'):
-            del self.dtype
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # CF property: calendar
-    # ----------------------------------------------------------------
-    @property
-    def calendar(self):
-        '''The calendar CF property.
-
-The calendar used for encoding time data. See
-http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.calendar = 'noleap'
->>> f.calendar
-'noleap'
->>> del f.calendar
-
->>> f.setprop('calendar', 'proleptic_gregorian')
->>> f.getprop('calendar')
-'proleptic_gregorian'
->>> f.delprop('calendar')
-
-        '''
-        return self.getprop('calendar')
-    #--- End: def
-    @calendar.setter
-    def calendar(self, value):
-        self.setprop('calendar', value)
-    @calendar.deleter
-    def calendar(self):
-        self.delprop('calendar')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def comment(self):
-        '''The comment CF property.
-
-Miscellaneous information about the data or methods used to produce
-it. See http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.comment = 'This simulation was done on an HP-35 calculator'
->>> f.comment
-'This simulation was done on an HP-35 calculator'
->>> del f.comment
-
->>> f.setprop('comment', 'a comment')
->>> f.getprop('comment')
-'a comment'
->>> f.delprop('comment')
-
-        '''
-        return self.getprop('comment')
-    #--- End: def
-    @comment.setter
-    def comment(self, value):
-        self.setprop('comment', value)
-    @comment.deleter
-    def comment(self):
-        self.delprop('comment')
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def add_offset(self):
+#        '''The add_offset CF property.
+#
+#If present then this number is *subtracted* from the data prior to it
+#being written to a file. If both `scale_factor` and `add_offset`
+#properties are present, the offset is subtracted before the data are
+#scaled. See http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.add_offset = -4.0
+#>>> f.add_offset
+#-4.0
+#>>> del f.add_offset
+#
+#>>> f.setprop('add_offset', 10.5)
+#>>> f.getprop('add_offset')
+#10.5
+#>>> f.delprop('add_offset')
+#
+#        '''
+#        return self.getprop('add_offset')
+#    #--- End: def
+#    @add_offset.setter
+#    def add_offset(self, value):
+#        self.setprop('add_offset', value)
+#        self.dtype = numpy.result_type(self.dtype, numpy.array(value).dtype)
+#    #--- End: def
+#    @add_offset.deleter
+#    def add_offset(self):
+#        self.delprop('add_offset')
+#        if not self.hasprop('scale_factor'):
+#            del self.dtype
+#    #--- End: def
+#
+#    # ----------------------------------------------------------------
+#    # CF property: calendar
+#    # ----------------------------------------------------------------
+#    @property
+#    def calendar(self):
+#        '''The calendar CF property.
+#
+#The calendar used for encoding time data. See
+#http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.calendar = 'noleap'
+#>>> f.calendar
+#'noleap'
+#>>> del f.calendar
+#
+#>>> f.setprop('calendar', 'proleptic_gregorian')
+#>>> f.getprop('calendar')
+#'proleptic_gregorian'
+#>>> f.delprop('calendar')
+#
+#        '''
+#        return self.getprop('calendar')
+#    #--- End: def
+#    @calendar.setter
+#    def calendar(self, value):
+#        self.setprop('calendar', value)
+#    @calendar.deleter
+#    def calendar(self):
+#        self.delprop('calendar')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def comment(self):
+#        '''The comment CF property.
+#
+#Miscellaneous information about the data or methods used to produce
+#it. See http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.comment = 'This simulation was done on an HP-35 calculator'
+#>>> f.comment
+#'This simulation was done on an HP-35 calculator'
+#>>> del f.comment
+#
+#>>> f.setprop('comment', 'a comment')
+#>>> f.getprop('comment')
+#'a comment'
+#>>> f.delprop('comment')
+#
+#        '''
+#        return self.getprop('comment')
+#    #--- End: def
+#    @comment.setter
+#    def comment(self, value):
+#        self.setprop('comment', value)
+#    @comment.deleter
+#    def comment(self):
+#        self.delprop('comment')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1135,7 +1137,7 @@ The recommended way of retrieving the missing data value is with the
 >>> del f._FillValue
 
         '''
-        d = self._private['simple_properties']
+        d = self._private['properties']
         if '_FillValue' in d:
             return d['_FillValue']
 
@@ -1146,148 +1148,148 @@ The recommended way of retrieving the missing data value is with the
     @_FillValue.setter
     def _FillValue(self, value):
 #        self.setprop('_FillValue', value) 
-        self._private['simple_properties']['_FillValue'] = value
+        self._private['properties']['_FillValue'] = value
         self._fill_value = self.getprop('missing_value', value)
     #--- End: def
 
     @_FillValue.deleter
     def _FillValue(self):
-        self._private['simple_properties'].pop('_FillValue', None)
+        self._private['properties'].pop('_FillValue', None)
         self._fill_value = getattr(self, 'missing_value', None)
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def history(self):
-        '''The history CF property.
-
-A list of the applications that have modified the original data. See
-http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.history = 'created on 2012/10/01'
->>> f.history
-'created on 2012/10/01'
->>> del f.history
-
->>> f.setprop('history', 'created on 2012/10/01')
->>> f.getprop('history')
-'created on 2012/10/01'
->>> f.delprop('history')
-
-        '''
-        return self.getprop('history')
-    #--- End: def
-
-    @history.setter
-    def history(self, value): self.setprop('history', value)
-    @history.deleter
-    def history(self):        self.delprop('history')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def leap_month(self):
-        '''The leap_month CF property.
-
-Specifies which month is lengthened by a day in leap years for a user
-defined calendar. See http://cfconventions.org/latest.html for
-details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.leap_month = 2
->>> f.leap_month
-2
->>> del f.leap_month
-
->>> f.setprop('leap_month', 11)
->>> f.getprop('leap_month')
-11
->>> f.delprop('leap_month')
-
-        '''
-        return self.getprop('leap_month')
-    #--- End: def
-    @leap_month.setter
-    def leap_month(self, value): self.setprop('leap_month', value)
-    @leap_month.deleter
-    def leap_month(self):        self.delprop('leap_month')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def leap_year(self):
-        '''The leap_year CF property.
-
-Provides an example of a leap year for a user defined calendar. It is
-assumed that all years that differ from this year by a multiple of
-four are also leap years. See http://cfconventions.org/latest.html for
-details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.leap_year = 1984
->>> f.leap_year
-1984
->>> del f.leap_year
-
->>> f.setprop('leap_year', 1984)
->>> f.getprop('leap_year')
-1984
->>> f.delprop('leap_year')
-
-        '''
-        return self.getprop('leap_year')
-    #--- End: def
-    @leap_year.setter
-    def leap_year(self, value): self.setprop('leap_year', value)
-    @leap_year.deleter
-    def leap_year(self):        self.delprop('leap_year')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def long_name(self):
-        '''The long_name CF property.
-
-A descriptive name that indicates a nature of the data. This name is
-not standardized. See http://cfconventions.org/latest.html for
-details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.long_name = 'zonal_wind'
->>> f.long_name
-'zonal_wind'
->>> del f.long_name
-
->>> f.setprop('long_name', 'surface air temperature')
->>> f.getprop('long_name')
-'surface air temperature'
->>> f.delprop('long_name')
-
-        '''
-        return self.getprop('long_name')
-    #--- End: def
-    @long_name.setter
-    def long_name(self, value): self.setprop('long_name', value)
-    @long_name.deleter
-    def long_name(self):        self.delprop('long_name')
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def history(self):
+#        '''The history CF property.
+#
+#A list of the applications that have modified the original data. See
+#http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.history = 'created on 2012/10/01'
+#>>> f.history
+#'created on 2012/10/01'
+#>>> del f.history
+#
+#>>> f.setprop('history', 'created on 2012/10/01')
+#>>> f.getprop('history')
+#'created on 2012/10/01'
+#>>> f.delprop('history')
+#
+#        '''
+#        return self.getprop('history')
+#    #--- End: def
+#
+#    @history.setter
+#    def history(self, value): self.setprop('history', value)
+#    @history.deleter
+#    def history(self):        self.delprop('history')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def leap_month(self):
+#        '''The leap_month CF property.
+#
+#Specifies which month is lengthened by a day in leap years for a user
+#defined calendar. See http://cfconventions.org/latest.html for
+#details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.leap_month = 2
+#>>> f.leap_month
+#2
+#>>> del f.leap_month
+#
+#>>> f.setprop('leap_month', 11)
+#>>> f.getprop('leap_month')
+#11
+#>>> f.delprop('leap_month')
+#
+#        '''
+#        return self.getprop('leap_month')
+#    #--- End: def
+#    @leap_month.setter
+#    def leap_month(self, value): self.setprop('leap_month', value)
+#    @leap_month.deleter
+#    def leap_month(self):        self.delprop('leap_month')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def leap_year(self):
+#        '''The leap_year CF property.
+#
+#Provides an example of a leap year for a user defined calendar. It is
+#assumed that all years that differ from this year by a multiple of
+#four are also leap years. See http://cfconventions.org/latest.html for
+#details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.leap_year = 1984
+#>>> f.leap_year
+#1984
+#>>> del f.leap_year
+#
+#>>> f.setprop('leap_year', 1984)
+#>>> f.getprop('leap_year')
+#1984
+#>>> f.delprop('leap_year')
+#
+#        '''
+#        return self.getprop('leap_year')
+#    #--- End: def
+#    @leap_year.setter
+#    def leap_year(self, value): self.setprop('leap_year', value)
+#    @leap_year.deleter
+#    def leap_year(self):        self.delprop('leap_year')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def long_name(self):
+#        '''The long_name CF property.
+#
+#A descriptive name that indicates a nature of the data. This name is
+#not standardized. See http://cfconventions.org/latest.html for
+#details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.long_name = 'zonal_wind'
+#>>> f.long_name
+#'zonal_wind'
+#>>> del f.long_name
+#
+#>>> f.setprop('long_name', 'surface air temperature')
+#>>> f.getprop('long_name')
+#'surface air temperature'
+#>>> f.delprop('long_name')
+#
+#        '''
+#        return self.getprop('long_name')
+#    #--- End: def
+#    @long_name.setter
+#    def long_name(self, value): self.setprop('long_name', value)
+#    @long_name.deleter
+#    def long_name(self):        self.delprop('long_name')
 
     # ----------------------------------------------------------------
     # CF property
@@ -1318,7 +1320,7 @@ The recommended way of retrieving the missing data value is with the
 1e+30
 >>> del f.missing_value
         '''        
-        d = self._private['simple_properties']
+        d = self._private['properties']
         if 'missing_value' in d:
             return d['missing_value']
 
@@ -1327,256 +1329,256 @@ The recommended way of retrieving the missing data value is with the
      #--- End: def
     @missing_value.setter
     def missing_value(self, value):
-        self._private['simple_properties']['missing_value'] = value
+        self._private['properties']['missing_value'] = value
         self._fill_value = value
     #--- End: def
     @missing_value.deleter
     def missing_value(self):
-        self._private['simple_properties'].pop('missing_value', None)
+        self._private['properties'].pop('missing_value', None)
         self._fill_value = getattr(self, '_FillValue', None)
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def month_lengths(self):
-        '''The month_lengths CF property.
-
-Specifies the length of each month in a non-leap year for a user
-defined calendar. See http://cfconventions.org/latest.html for
-details.
-
-Stored as a tuple but may be set as any array-like object.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.month_lengths = numpy.array([34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
->>> f.month_lengths
-(34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)
->>> del f.month_lengths
-
->>> f.setprop('month_lengths', [34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
->>> f.getprop('month_lengths')
-(34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)
->>> f.delprop('month_lengths')
-
-        '''
-        return self.getprop('month_lengths')
-    #--- End: def
-
-    @month_lengths.setter
-    def month_lengths(self, value): self.setprop('month_lengths', tuple(value))
-    @month_lengths.deleter
-    def month_lengths(self):        self.delprop('month_lengths')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def scale_factor(self):
-        '''The scale_factor CF property.
-
-If present then the data are *divided* by this factor prior to it
-being written to a file. If both `scale_factor` and `add_offset`
-properties are present, the offset is subtracted before the data are
-scaled. See http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.scale_factor = 10.0
->>> f.scale_factor
-10.0
->>> del f.scale_factor
-
->>> f.setprop('scale_factor', 10.0)
->>> f.getprop('scale_factor')
-10.0
->>> f.delprop('scale_factor')
-
-        '''
-        return self.getprop('scale_factor')
-    #--- End: def
-    @scale_factor.setter
-    def scale_factor(self, value): self.setprop('scale_factor', value)
-    @scale_factor.deleter
-    def scale_factor(self):        self.delprop('scale_factor')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def standard_name(self):
-        '''The standard_name CF property.
-
-A standard name that references a description of a data in the
-standard name table
-(http://cfconventions.org/standard-names.html). See
-http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.standard_name = 'time'
->>> f.standard_name
-'time'
->>> del f.standard_name
-
->>> f.setprop('standard_name', 'time')
->>> f.getprop('standard_name')
-'time'
->>> f.delprop('standard_name')
-
-        '''
-        return self.getprop('standard_name')
-    #--- End: def
-    @standard_name.setter
-    def standard_name(self, value):
-        self.setprop('standard_name', value)
-    @standard_name.deleter
-    def standard_name(self):
-        self.delprop('standard_name')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def units(self):
-        '''The units CF property.
-
-The units of the data. The value of the `units` property is a string
-that can be recognized by UNIDATA's Udunits package
-(http://www.unidata.ucar.edu/software/udunits). See
-http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.units = 'K'
->>> f.units
-'K'
->>> del f.units
-
->>> f.setprop('units', 'm.s-1')
->>> f.getprop('units')
-'m.s-1'
->>> f.delprop('units')
-
-        '''
-        return self.getprop('units')
-    #--- End: def
-    @units.setter
-    def units(self, value):
-        self.setprop('units', value)
-    @units.deleter
-    def units(self):
-        self.delprop('units')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def valid_max(self):
-        '''The valid_max CF property.
-
-The largest valid value of the data. See
-http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.valid_max = 100.0
->>> f.valid_max
-100.0
->>> del f.valid_max
-
->>> f.setprop('valid_max', 100.0)
->>> f.getprop('valid_max')
-100.0
->>> f.delprop('valid_max')
-
-        '''
-        return self.getprop('valid_max')
-    #--- End: def
-    @valid_max.setter
-    def valid_max(self, value):
-        self.setprop('valid_max', value)
-    @valid_max.deleter
-    def valid_max(self):
-        self.delprop('valid_max')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def valid_min(self):
-        '''The valid_min CF property.	
-
-The smallest valid value of the data. See
-http://cfconventions.org/latest.html for details.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.valid_min = 8.0
->>> f.valid_min
-8.0
->>> del f.valid_min
-
->>> f.setprop('valid_min', 8.0)
->>> f.getprop('valid_min')
-8.0
->>> f.delprop('valid_min')
-
-        '''
-        return self.getprop('valid_min')
-    #--- End: def
-    @valid_min.setter
-    def valid_min(self, value): self.setprop('valid_min', value)
-    @valid_min.deleter
-    def valid_min(self):        self.delprop('valid_min')
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def valid_range(self):
-        '''The valid_range CF property.
-
-The smallest and largest valid values the data. See
-http://cfconventions.org/latest.html for details.
-
-Stored as a tuple but may be set as any array-like object.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.valid_range = numpy.array([100., 400.])
->>> f.valid_range
-(100.0, 400.0)
->>> del f.valid_range
-
->>> f.setprop('valid_range', [100.0, 400.0])
->>> f.getprop('valid_range')
-(100.0, 400.0)
->>> f.delprop('valid_range')
-
-        '''
-        return tuple(self.getprop('valid_range'))
-    #--- End: def
-    @valid_range.setter
-    def valid_range(self, value): self.setprop('valid_range', tuple(value))
-    @valid_range.deleter
-    def valid_range(self):        self.delprop('valid_range')
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def month_lengths(self):
+#        '''The month_lengths CF property.
+#
+#Specifies the length of each month in a non-leap year for a user
+#defined calendar. See http://cfconventions.org/latest.html for
+#details.
+#
+#Stored as a tuple but may be set as any array-like object.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.month_lengths = numpy.array([34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
+#>>> f.month_lengths
+#(34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)
+#>>> del f.month_lengths
+#
+#>>> f.setprop('month_lengths', [34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
+#>>> f.getprop('month_lengths')
+#(34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)
+#>>> f.delprop('month_lengths')
+#
+#        '''
+#        return self.getprop('month_lengths')
+#    #--- End: def
+#
+#    @month_lengths.setter
+#    def month_lengths(self, value): self.setprop('month_lengths', tuple(value))
+#    @month_lengths.deleter
+#    def month_lengths(self):        self.delprop('month_lengths')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def scale_factor(self):
+#        '''The scale_factor CF property.
+#
+#If present then the data are *divided* by this factor prior to it
+#being written to a file. If both `scale_factor` and `add_offset`
+#properties are present, the offset is subtracted before the data are
+#scaled. See http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.scale_factor = 10.0
+#>>> f.scale_factor
+#10.0
+#>>> del f.scale_factor
+#
+#>>> f.setprop('scale_factor', 10.0)
+#>>> f.getprop('scale_factor')
+#10.0
+#>>> f.delprop('scale_factor')
+#
+#        '''
+#        return self.getprop('scale_factor')
+#    #--- End: def
+#    @scale_factor.setter
+#    def scale_factor(self, value): self.setprop('scale_factor', value)
+#    @scale_factor.deleter
+#    def scale_factor(self):        self.delprop('scale_factor')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def standard_name(self):
+#        '''The standard_name CF property.
+#
+#A standard name that references a description of a data in the
+#standard name table
+#(http://cfconventions.org/standard-names.html). See
+#http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.standard_name = 'time'
+#>>> f.standard_name
+#'time'
+#>>> del f.standard_name
+#
+#>>> f.setprop('standard_name', 'time')
+#>>> f.getprop('standard_name')
+#'time'
+#>>> f.delprop('standard_name')
+#
+#        '''
+#        return self.getprop('standard_name')
+#    #--- End: def
+#    @standard_name.setter
+#    def standard_name(self, value):
+#        self.setprop('standard_name', value)
+#    @standard_name.deleter
+#    def standard_name(self):
+#        self.delprop('standard_name')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def units(self):
+#        '''The units CF property.
+#
+#The units of the data. The value of the `units` property is a string
+#that can be recognized by UNIDATA's Udunits package
+#(http://www.unidata.ucar.edu/software/udunits). See
+#http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.units = 'K'
+#>>> f.units
+#'K'
+#>>> del f.units
+#
+#>>> f.setprop('units', 'm.s-1')
+#>>> f.getprop('units')
+#'m.s-1'
+#>>> f.delprop('units')
+#
+#        '''
+#        return self.getprop('units')
+#    #--- End: def
+#    @units.setter
+#    def units(self, value):
+#        self.setprop('units', value)
+#    @units.deleter
+#    def units(self):
+#        self.delprop('units')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def valid_max(self):
+#        '''The valid_max CF property.
+#
+#The largest valid value of the data. See
+#http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.valid_max = 100.0
+#>>> f.valid_max
+#100.0
+#>>> del f.valid_max
+#
+#>>> f.setprop('valid_max', 100.0)
+#>>> f.getprop('valid_max')
+#100.0
+#>>> f.delprop('valid_max')
+#
+#        '''
+#        return self.getprop('valid_max')
+#    #--- End: def
+#    @valid_max.setter
+#    def valid_max(self, value):
+#        self.setprop('valid_max', value)
+#    @valid_max.deleter
+#    def valid_max(self):
+#        self.delprop('valid_max')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def valid_min(self):
+#        '''The valid_min CF property.	
+#
+#The smallest valid value of the data. See
+#http://cfconventions.org/latest.html for details.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.valid_min = 8.0
+#>>> f.valid_min
+#8.0
+#>>> del f.valid_min
+#
+#>>> f.setprop('valid_min', 8.0)
+#>>> f.getprop('valid_min')
+#8.0
+#>>> f.delprop('valid_min')
+#
+#        '''
+#        return self.getprop('valid_min')
+#    #--- End: def
+#    @valid_min.setter
+#    def valid_min(self, value): self.setprop('valid_min', value)
+#    @valid_min.deleter
+#    def valid_min(self):        self.delprop('valid_min')
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def valid_range(self):
+#        '''The valid_range CF property.
+#
+#The smallest and largest valid values the data. See
+#http://cfconventions.org/latest.html for details.
+#
+#Stored as a tuple but may be set as any array-like object.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> f.valid_range = numpy.array([100., 400.])
+#>>> f.valid_range
+#(100.0, 400.0)
+#>>> del f.valid_range
+#
+#>>> f.setprop('valid_range', [100.0, 400.0])
+#>>> f.getprop('valid_range')
+#(100.0, 400.0)
+#>>> f.delprop('valid_range')
+#
+#        '''
+#        return tuple(self.getprop('valid_range'))
+#    #--- End: def
+#    @valid_range.setter
+#    def valid_range(self, value): self.setprop('valid_range', tuple(value))
+#    @valid_range.deleter
+#    def valid_range(self):        self.delprop('valid_range')
 
     # ----------------------------------------------------------------
     # Attribute (read only)
@@ -1736,8 +1738,8 @@ The data type of the data array is unchanged.
                 array = array.view(numpy.ndarray)
         #--- End: if
 
-        utime = Utime(getprop(self, 'units'),
-                      getprop(self, 'calendar', 'gregorian'))
+        utime = Utime(self.getprop('units'),
+                      self.getptop('calendar', 'gregorian'))
         array = utime.num2date(array)
     
         if mask is None:
@@ -1963,11 +1965,11 @@ True
 
         if not _omit_properties:
             try:
-                private['simple_properties'] = loads(dumps(self_private['simple_properties'], -1))
+                private['properties'] = loads(dumps(self_private['properties'], -1))
             except PicklingError:
-                private['simple_properties'] = deepcopy(self_private['simple_properties'])
+                private['properties'] = deepcopy(self_private['properties'])
         else:
-            private['simple_properties'] = {}
+            private['properties'] = {}
 
         new._private = private
 
@@ -2127,9 +2129,9 @@ standard_name = 'time'
         else:
             string = [indent0 + _title]
 
-        simple_properties = self._dump_simple_properties(omit=omit, _level=_level+1)
-        if simple_properties:
-            string.append(simple_properties)
+        _properties = self._dump_properties(omit=omit, _level=_level+1)
+        if _properties:
+            string.append(_properties)
 
         if self.hasdata:
             if field and key:
@@ -2226,8 +2228,8 @@ True
         if ignore_fill_value:
             ignore += ('_FillValue', 'missing_value')
 
-        self_properties  = self._property_names.difference(ignore)
-        other_properties = other._property_names.difference(ignore)
+        self_properties  = set(self.properties()).difference(ignore)
+        other_properties = set(other.properties()).difference(ignore)
         if self_properties != other_properties:
             if traceback:
                 print("{0}: Different properties: {1}, {2}".format( 
@@ -2583,10 +2585,12 @@ dtype('float64')
      `None`
 
         '''
-        # Still here? Then set a simple property
-        setattr(self._properties, 'prop', value)
+#        # Still here? Then set a simple property
+#        setattr(self._properties, 'prop', value)
+#
+#        self._property_names.add(prop)
 
-        self._property_names.add(prop)
+        self._private['properties'][prop] = value
     #--- End: def
 
     def hasprop(self, prop):
@@ -2614,7 +2618,7 @@ Return True if a CF property exists, otherise False.
          True if the CF property exists, otherwise False.
 
 '''
-        return prop in self._property_names
+        return prop in self._private['properties']
     #--- End: def
 
 #    @property
@@ -2697,11 +2701,11 @@ This is altered if the *relaxed* parameter is True.
 
 :Examples 2:
 
->>> f.standard_name = 'Kelvin'
+>>> f.setprop('standard_name', 'Kelvin')
 >>> f.id = 'foo'
 >>> f.{+name}()
 'Kelvin'
->>> del f.standard_name
+>>> f.delprop('standard_name')
 >>> f.{+name}()
 'foo'
 >>> del f.id
@@ -2780,23 +2784,14 @@ AttributeError: Field doesn't have CF property 'standard_name'
 'foo'
 
 '''        
-        # Get a special attribute
-        if prop in self._special_properties:
-            return getattr(self, prop, *default)
+        d = self._private['properties']
 
-        # Still here? Then get a simple attribute
-#        d = self._private['simple_properties']
-#        if default:
-#            return d.get(prop, default[0])
-#        elif prop in d:
-#            return d[prop]
-#
-#        raise AttributeError("{} doesn't have CF property {}".format(
-#            self.__class__.__name__, prop))
+        if default:
+            return d.get(prop, default[0])
 
         try:
-            return getattr(self.property, prop, *default)
-        except AttributeError:
+            return d[prop]
+        except KeyError:
             raise AttributeError("{} doesn't have CF property {}".format(
                 self.__class__.__name__, prop))
     #--- End: def
@@ -2829,26 +2824,27 @@ AttributeError: Field doesn't have CF property 'standard_name'
 AttributeError: Can't delete non-existent property 'project'
 
         '''
-        # Delete a special attribute
-        if prop in self._special_properties:
-            delattr(self, prop)
-            return
-
+        
+        
+#        # Delete a special attribute
+#        if prop in self._special_properties:
+#            delattr(self, prop)
+#            return
+#
+#        # Still here? Then delete a simple attribute
+#        try:
+#            delattr(self.property, prop)
+#        except AttributeError:
+#            raise AttributeError("Can't delete non-existent property {!r}".format(prop))
+#
+#        self._property_names.discard(prop)
+#        
         # Still here? Then delete a simple attribute
         try:
-            delattr(self.property, prop)
-        except AttributeError:
-            raise AttributeError("Can't delete non-existent property {!r}".format(prop))
-
-        self._property_names.discard(prop)
-        
-#        # Still here? Then delete a simple attribute
-#        d = self._private['simple_properties']
-#        if prop in d:
-#            del d[prop]
-#        else:
-#            raise AttributeError(
-#                "Can't delete non-existent CF property {!r}".format(prop))                    
+            del self._private['properties'][prop]
+        else KeyError:
+            raise AttributeError(
+                "Can't delete non-existent CF property {!r}".format(prop))                    
     #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False,
@@ -2897,28 +2893,27 @@ By default the name is the first found of the following:
 
 :Examples 2:
 
->>> f.standard_name = 'air_temperature'
->>> f.long_name = 'temperature of the air'
->>> f.ncvar = 'tas'
+>>> f.setprop('standard_name', 'air_temperature')
+>>> f.setprop('long_name', 'temperature of the air')
+>>> f.ncvar('tas')
 >>> f.{+name}()
 'air_temperature'
->>> del f.standard_name
+>>> f.delprop('standard_name')
 >>> f.{+name}()
 'long_name:temperature of the air'
->>> del f.long_name
+>>> f.delprop('long_name')
 >>> f.{+name}()
-'ncvar:tas'
->>> del f.ncvar
+'ncvar%tas'
+>>> f.ncvar(None)
 >>> f.{+name}()
 None
 >>> f.{+name}('no_name')
 'no_name'
->>> f.standard_name = 'air_temperature'
+>>> f.setprop('standard_name', 'air_temperature')
 >>> f.{+name}('no_name')
 'air_temperature'
 
         '''
-
         if relaxed_identity is None:
             relaxed_identity = RELAXED_IDENTITIES()
 
@@ -3041,7 +3036,7 @@ first axis which is to have a chunk size of 12:
 
         '''
 #        if copy:            
-        out = deepcopy(self._simple_properties())
+        out = deepcopy(self._private['properties'])
 #        else:
 #            out = self._simple_properties().copy()
             
@@ -3054,7 +3049,7 @@ first axis which is to have a chunk size of 12:
 #        #--- End: for
 
         if clear:
-            self._simple_properties().clear()
+            self._private['properties'].clear()
             return out
 
         if not props:
@@ -3080,69 +3075,65 @@ first axis which is to have a chunk size of 12:
         return out
     #--- End: def
 
-    def attributes(self, attrs=None, copy=True):
-        '''Inspect or change attributes which are not CF properties.
-
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> f.{+name}()
-
-:Parameters:
-
-    attrs: `dict`, optional
-        Set {+variable} attributes from the dictionary of values. If
-        the *copy* parameter is True then the values in the *attrs*
-        dictionary are deep copied
-
-    copy: `bool`, optional
-        If True then the values in the returned dictionary are deep
-        copies of the {+variable}'s attribute values. By default they
-        are not copied.
-
-:Returns:
-
-    out: `dict`
-
-:Examples:
-
->>> f.{+name}()
-{}
->>> f.foo = 'bar'
->>> f.{+name}()
-{'foo': 'bar'}
->>> f.{+name}().pop('foo')
-'bar'
->>> f.{+name}()
-{'foo': 'bar'}
-
->>> f.{+name}({'name': 'value'})
-{'foo': 'bar', 'name': 'value'}
-
-        ''' 
- 
-        out = deepcopy(self.__dict__)
-
-        del out['_hasbounds']
-        del out['_hasdata']
-        del out['_private']
-        
-        if not attrs:
-            return out
-
-        if copy:
-            for attr, value in attrs.iteritems():
-                setattr(self, attr, deepcopy(value))
-        else:
-            for attr, value in attrs.iteritems():
-                setattr(self, attr, value)
-
-        return out
-    #--- End: def
+#    def attributes(self, attrs=None, copy=True):
+#        '''Inspect or change attributes which are not CF properties.
+#
+#.. versionadded:: 1.6
+#
+#:Examples 1:
+#
+#>>> f.{+name}()
+#
+#:Parameters:
+#
+#    attrs: `dict`, optional
+#        Set {+variable} attributes from the dictionary of values. If
+#        the *copy* parameter is True then the values in the *attrs*
+#        dictionary are deep copied
+#
+#    copy: `bool`, optional
+#        If True then the values in the returned dictionary are deep
+#        copies of the {+variable}'s attribute values. By default they
+#        are not copied.
+#
+#:Returns:
+#
+#    out: `dict`
+#
+#:Examples:
+#
+#>>> f.{+name}()
+#{}
+#>>> f.foo = 'bar'
+#>>> f.{+name}()
+#{'foo': 'bar'}
+#>>> f.{+name}().pop('foo')
+#'bar'
+#>>> f.{+name}()
+#{'foo': 'bar'}
+#
+#>>> f.{+name}({'name': 'value'})
+#{'foo': 'bar', 'name': 'value'}
+#
+#        ''' 
+# 
+#        out = deepcopy(self.__dict__)
+#
+#        del out['_hasbounds']
+#        del out['_hasdata']
+#        del out['_private']
+#        
+#        if not attrs:
+#            return out
+#
+#        if copy:
+#            for attr, value in attrs.iteritems():
+#                setattr(self, attr, deepcopy(value))
+#        else:
+#            for attr, value in attrs.iteritems():
+#                setattr(self, attr, value)
+#
+#        return out
+#    #--- End: def
 
 #--- End: class
-
-class Attributes(object):
-    '''
-    '''
