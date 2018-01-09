@@ -237,69 +237,10 @@ def parse_indices(shape, indices):
 
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         is_slice = False
+
         if isinstance(index, slice):            
             is_slice = True
-            start = index.start
-            stop  = index.stop
-            step  = index.step
-            if start is None or stop is None:
-                step = 0
-            elif step is None:
-                step = 1
 
-            if step > 0:
-                if 0 < start < size and 0 <= stop <= start:
-                    # 6:0:1 => -4:0:1
-                    # 6:1:1 => -4:1:1
-                    # 6:3:1 => -4:3:1
-                    # 6:6:1 => -4:6:1
-                    start = size-start
-                elif -size <= start < 0 and -size <= stop <= start:
-                    # -4:-10:1  => -4:1:1
-                    # -4:-9:1   => -4:1:1
-                    # -4:-7:1   => -4:3:1
-                    # -4:-4:1   => -4:6:1 
-                    # -10:-10:1 => -10:0:1
-                    stop += size
-            elif step < 0:
-                if -size <= start < 0 and start <= stop < 0:
-                    # -4:-1:-1   => 6:-1:-1
-                    # -4:-2:-1   => 6:-2:-1
-                    # -4:-4:-1   => 6:-4:-1
-                    # -10:-2:-1  => 0:-2:-1
-                    # -10:-10:-1 => 0:-10:-1
-                    start += size
-                elif 0 <= start < size and start < stop < size:
-                    # 0:6:-1 => 0:-4:-1
-                    # 3:6:-1 => 3:-4:-1
-                    # 3:9:-1 => 3:-1:-1
-                    stop -= size
-            #--- End: if            
-                        
-            if step > 0 and -size <= start < 0 and 0 <= stop <= size+start:
-                index = slice(start, stop, step)
-
-            elif step < 0 and 0 <= start < size and start-size <= stop < 0:
-                # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-                # 0:-4:-1  => [0, 9, 8, 7]
-                # 6:-1:-1  => [6, 5, 4, 3, 2, 1, 0]
-                # 6:-2:-1  => [6, 5, 4, 3, 2, 1, 0, 9]
-                # 6:-4:-1  => [6, 5, 4, 3, 2, 1, 0, 9, 8, 7]
-                # 0:-2:-1  => [0, 9]
-                # 0:-10:-1 => [0, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-                index = slice(start, stop, step)
-
-            else:
-                start, stop, step = index.indices(size)
-                if (start == stop or
-                    (start < stop and step < 0) or
-                    (start > stop and step > 0)):
-                    raise IndexError(
-"Invalid indices {} for array with shape {}".format(parsed_indices, shape))
-                if step < 0 and stop < 0:
-                    stop = None
-                index = slice(start, stop, step)
-         
         elif isinstance(index, (int, long)):
             if index < 0: 
                 index += size
@@ -355,16 +296,6 @@ def parse_indices(shape, indices):
                                 
                         index = slice(start, stop, step)
                         is_slice = True
-#                    else:
-#                        if ((step > 0 and (steps <= 0).any()) or
-#                            (step < 0 and (steps >= 0).any()) or
-#                            not step):
-#                           raise ValueError("Bad index (not strictly monotonic): %s" % index)
-#                        pass
-#                        if not (steps > 0).all():
-#                            raise ValueError(
-#"Bad index (not strictly monotonically increasing sequence): {}".format(index))
-                            
                 else:
                     raise IndexError(
                         "Invalid indices {} for array with shape {}".format(
@@ -618,22 +549,23 @@ False
  #                 ignore_fill_value=ignore_fill_value,
  #                 ignore_type=ignore_type,
  #                 traceback=traceback)
-
-    if isinstance(x, numpy.ndarray):
-        if isinstance(y, numpy.ndarray):
-            if x.shape != y.shape:
-                return False
-
-            if rtol is None:
-                rtol = RTOL()
-            if atol is None:
-                atol = ATOL()
-                    
-            return _numpy_allclose(x, y, rtol=rtol, atol=atol)
-        else:
+ 
+    if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
+#        if isinstance(y, numpy.ndarray):
+        if numpy.shape(x) != numpy.shape(y):
             return False
-    elif isinstance(y, numpy.ndarray):
-        return False
+
+        if rtol is None:
+            rtol = RTOL()
+        if atol is None:
+            atol = ATOL()
+                
+        return _numpy_allclose(x, y, rtol=rtol, atol=atol)
+#        else:
+#            return False
+#    elif isinstance(y, numpy.ndarray):
+#        print 'rrrr2'
+#        return False
 
     else:
         return x == y

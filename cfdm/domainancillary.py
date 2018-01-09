@@ -58,6 +58,12 @@ ancillary object.
 :Examples:
 
         '''
+        ncvar = self.ncvar()
+        if ncvar is not None:
+            ncvar = ' (ncvar%{0})'.format(ncvar)
+        else:
+            ncvar = ''
+
         if _title is None:
             _title = 'Domain Ancillary: ' + self.name(default='')
 

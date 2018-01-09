@@ -1024,12 +1024,12 @@ ancillaries, field ancillaries).
                     print '    Inserting', repr(coord)
     
                 axis = self.DomainAxis(coord.size)
-                dim = f.insert_axis(axis, copy=False)
+                dim = f.insert_domain_axis(axis, copy=False)
                 
-                dim = f.insert_dim(coord, axes=[dim], copy=False)            
+                dim = f.insert_dimension_coordinate(coord, axes=[dim], copy=False)            
     
                 # Record the netCDF dimension name for this axis
-                f.axes()[dim].ncdim = ncdim
+                f.axes()[dim].ncdim(ncdim)
     
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
@@ -1048,7 +1048,7 @@ ancillaries, field ancillaries).
                 axis = self.DomainAxis(size)
                 if _debug:
                     print '    Inserting', repr(axis)
-                dim = f.insert_axis(axis)
+                dim = f.insert_domain_axis(axis)
                 # Record the netCDF dimension name for this axis
                 f.axes()[dim].ncdim = ncdim
                 
@@ -1119,12 +1119,12 @@ ancillaries, field ancillaries).
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
                         axis = self.DomainAxis(1)
-                        dim = f.insert_axis(axis)
+                        dim = f.insert_domain_axis(axis)
                         if _debug:
                             print '    Inserting', repr(axis)
 
                         # Record the netCDF dimension name for this axis
-                        f.axes()[dim].ncdim = ncdim
+                        f.axes()[dim].ncdim(ncdim)
                         dimensions = [dim]
                     else:  
                         # Numeric valued scalar coordinate
@@ -1139,12 +1139,12 @@ ancillaries, field ancillaries).
                         print '    Inserting', repr(coord)
     
                     axis = self.DomainAxis(coord.size)
-                    dim = f.insert_axis(axis, copy=False)
+                    dim = f.insert_domain_axis(axis, copy=False)
                     
-                    dim = f.insert_dim(coord, axes=[dim], copy=False)
+                    dim = f.insert_dimension_coordinate(coord, axes=[dim], copy=False)
     
                     # Record the netCDF dimension name for this axis
-                    f.axes()[dim].ncdim = ncvar
+                    f.axes()[dim].ncdim(ncvar)
                     dimensions = [dim]
                     ncvar_to_key[ncvar] = dim
                     dimension_coordinates[ncvar] = coord
@@ -1153,7 +1153,7 @@ ancillaries, field ancillaries).
                     # Insert auxiliary coordinate
                     if _debug:
                         print '    Inserting', repr(coord)
-                    aux = f.insert_aux(coord, axes=dimensions, copy=False)
+                    aux = f.insert_auxiliary_coordinate(coord, axes=dimensions, copy=False)
                     ncvar_to_key[ncvar] = aux
                 
                 if scalar:
@@ -1207,7 +1207,7 @@ ancillaries, field ancillaries).
                     #--- End: if
                     
                     # Insert domain ancillary
-                    da_key = f.insert_domain_anc(domain_anc, axes=axes, copy=False)
+                    da_key = f.insert_domain_ancillary(domain_anc, axes=axes, copy=False)
                     if ncvar not in ncvar_to_key:
                         ncvar_to_key[ncvar] = da_key
         
@@ -1258,7 +1258,7 @@ ancillaries, field ancillaries).
                     cell_measures[ncvar] = cell
                 #--- End: if
     
-                clm = f.insert_measure(cell, axes=axes, copy=False)
+                clm = f.insert_cell_measure(cell, axes=axes, copy=False)
     
                 ncvar_to_key[ncvar] = clm
             #--- End: for
@@ -1303,7 +1303,7 @@ ancillaries, field ancillaries).
                     field_ancillaries[ncvar] = field_anc
                     
                 # Insert the field ancillary
-                key = f.insert_field_anc(field_anc, axes=axes, copy=False)
+                key = f.insert_field_ancillary(field_anc, axes=axes, copy=False)
                 ncvar_to_key[ncvar] = key
         #--- End: if
     
@@ -1627,7 +1627,7 @@ ancillaries, field ancillaries).
                                                     parameters=parameter_terms)
                 coordref.ncvar = grid_mapping
     
-                f.insert_ref(coordref, copy=False)
+                f.insert_coordinate_reference(coordref, copy=False)
     
                 coordinates = []      
         #--- End: for
@@ -1679,7 +1679,7 @@ ancillaries, field ancillaries).
                                             coordinates=(key,),
                                             ancillaries=ancillaries)
     
-        f.insert_ref(coordref, copy=False)
+        f.insert_coordinate_reference(coordref, copy=False)
     
         return coordref
     #--- End: def

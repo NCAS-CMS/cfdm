@@ -58,11 +58,11 @@ from .coordinatereference import CoordinateReference
 from .cellmeasure         import CellMeasure
 from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
-from .field               import Field, Items
-#from .fieldlist           import FieldList
+from .domain              import Domain
+from .field               import Field
 from .fieldancillary      import FieldAncillary
-from .read                import read
-from .write               import write
+from .read.read           import read
+from .write.write         import write
 from .units               import Units
 from .cfdatetime          import Datetime, dt
 from .data.data           import Data

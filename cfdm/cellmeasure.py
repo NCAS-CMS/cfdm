@@ -36,6 +36,38 @@ Attribute   Type   Description
 ==========  =====  ===================================================
 
     '''   
+    def __init__(self, properties={}, data=None, source=None,
+                 copy=True):
+        '''**Initialization**
+
+:Parameters:
+
+    properties: `dict`, optional
+        Initialize properties from the dictionary's key/value pairs.
+
+#    attributes: `dict`, optional
+#        Provide attributes from the dictionary's key/value pairs.
+
+    data: `Data`, optional
+        Provide a data array.
+        
+    source: `{+Variable}`, optional
+        Take the attributes, CF properties and data array from the
+        source {+variable}. Any attributes, CF properties or data
+        array specified with other parameters are set after
+        initialisation from the source {+variable}.
+
+    copy: `bool`, optional
+        If False then do not deep copy arguments prior to
+        initialization. By default arguments are deep copied.
+
+        '''
+        super(CellMeasure, self).__init__(properties=properties,
+                                          source=source, data=data, copy=copy)
+        
+        self._measure = None
+    #--- End: def
+
     @property
     def ismeasure(self): 
         '''
@@ -114,11 +146,23 @@ The identity is first found of:
 :Examples:
 
 '''
-        n = getattr(self, 'measure', None)
+        n = self.measure()
         if n is not None:
             return n
         
         return super(CellMeasure, self).identity(default, relaxed_identity=relaxed_identity)
+    #--- End: def
+
+    def measure(self, *name):
+        '''
+        '''
+        if not name:
+            return self._measure
+
+        name = name[0]
+        self._measure = name
+
+        return name
     #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False, relaxed_identity=None):
@@ -197,12 +241,13 @@ None
 #        #--- End: if
 
         if not ncvar:
-            n = getattr(self, 'measure', None)
+            n = self.measure()
             if n is not None:
                 return n
 
         return super(CellMeasure, self).name(default,
-                                             identity=identity, ncvar=ncvar,
+                                             identity=identity,
+                                             ncvar=ncvar,
                                              relaxed_identity=relaxed_identity)
     #--- End: def
 

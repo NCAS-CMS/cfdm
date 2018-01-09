@@ -6,8 +6,7 @@ from cPickle   import dumps, loads, PicklingError
 from itertools import izip
 
 import numpy
-
-from netCDF4 import default_fillvals as _netCDF4_default_fillvals
+import netCDF4
 
 from .cfdatetime   import dt
 from .functions    import RTOL, ATOL, RELAXED_IDENTITIES
@@ -611,6 +610,8 @@ All components of a variable are optional.
         '''
         self._fill_value = None
 
+        self._ncvar = None
+        
         # _hasbounds is True if and only if there are cell bounds.
         self._hasbounds = False
 
@@ -898,7 +899,9 @@ The `Data` object containing the data array.
 '''       
         if self.hasdata:
             data = self._Data
-            data.fill_value = self._fill_value
+            data.fill_value = self._fill_value            
+            data.units      = self.getprop('units', None)
+            data.calendar   = self.getprop('calendar', None)
             return data 
 
         raise AttributeError("{} object doesn't have attribute 'data'".format(
@@ -1727,31 +1730,33 @@ The data type of the data array is unchanged.
         '''
         if not self.hasdata:
             raise AttributeError("{} has no data".format(self.__class__.__name__))
-        
-        array = self.data.array
 
-        mask = None
-        if numpy.ma.isMA(array):
-            # num2date has issues if the mask is nomask
-            mask = array.mask
-            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
-                array = array.view(numpy.ndarray)
-        #--- End: if
-
-        utime = Utime(self.getprop('units'),
-                      self.getptop('calendar', 'gregorian'))
-        array = utime.num2date(array)
-    
-        if mask is None:
-            # There is no missing data
-            array = numpy.array(array, dtype=object)
-        else:
-            # There is missing data
-            array = numpy.ma.masked_where(mask, array)
-            if not numpy.ndim(array):
-                array = numpy.ma.masked_all((), dtype=object)
-
-        return array
+        return self.data.dtarray
+#
+#        array = self.data.array
+#
+#        mask = None
+#        if numpy.ma.isMA(array):
+#            # num2date has issues if the mask is nomask
+#            mask = array.mask
+#            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+#                array = array.view(numpy.ndarray)
+#        #--- End: if
+#
+#        utime = Utime(self.getprop('units'),
+#                      self.getptop('calendar', 'gregorian'))
+#        array = utime.num2date(array)
+#    
+#        if mask is None:
+#            # There is no missing data
+#            array = numpy.array(array, dtype=object)
+#        else:
+#            # There is missing data
+#            array = numpy.ma.masked_where(mask, array)
+#            if not numpy.ndim(array):
+#                array = numpy.ma.masked_all((), dtype=object)
+#
+#        return array
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -2125,18 +2130,20 @@ standard_name = 'time'
         indent1 = '    ' * (_level+1)
 
         if _title is None:
-            string = ['{0}Variable: {1}'.format(indent0, self.name(default=''))]
+            string = ['{0}Variable: {1}{2})'.format(indent0,
+                                                    self.name(default=''))]
         else:
             string = [indent0 + _title]
-
+                        
         _properties = self._dump_properties(omit=omit, _level=_level+1)
         if _properties:
             string.append(_properties)
 
         if self.hasdata:
             if field and key:
-                x = ['{0}({1})'.format(field.axis_name(axis), field.axis_size(axis))
-                     for axis in field.item_axes(key)]
+                x = ['{0}({1})'.format(field.domain_axis_name(axis),
+                                       field.domain_axes()[axis].size)
+                     for axis in field.construct_axes(key)]
             else:
                 x = [str(s) for s in self.shape]
 
@@ -2157,9 +2164,56 @@ standard_name = 'time'
             return string
     #--- End: def
 
+    def _parse_axes(self, axes):
+        if axes is None:
+            return axes
+
+        ndim = self.ndim
+        return [(i + ndim if i < 0 else i) for i in axes]
+    #--- End: def
+    
+#    @property
+#    def mask(self):
+#        '''The mask of the data array.
+#
+#Values of True indicate masked elements.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `binary_mask`
+#
+#:Examples:
+#
+#>>> f.shape
+#(12, 73, 96)
+#>>> m = f.mask
+#>>> m.long_name
+#'mask'
+#>>> m.shape
+#(12, 73, 96)
+#>>> m.dtype
+#dtype('bool')
+#>>> print m.data
+#[[[True, ..., False]]]
+#
+#        '''
+#        if not self.hasdata:
+#            raise ValueError(
+#                "ERROR: Can't get mask when there is no data array")
+#
+#        out = self.copy(_omit_data=True, _omit_properties=True,
+#                        _omit_attributes=True)
+#
+#        out.insert_data(self.data.mask, copy=False)            
+#        out.long_name = 'mask'
+#
+#        return out
+#    #--- End: def
+
+
     def equals(self, other, rtol=None, atol=None,
                ignore_data_type=False, ignore_fill_value=False,
-               traceback=False, ignore=(), ignore_type=False):
+               traceback=False, ignore=(), ignore_type=False, **kwargs):
         '''
 
 True if two {+variable}s are equal, False otherwise.
@@ -2305,51 +2359,6 @@ True
         return True
     #--- End: def
 
-    def squeeze(self, axes=None, copy=True):
-        '''Remove size 1 dimensions from the data array
-
-.. versionadded:: 1.6
-
-.. seealso:: `expand_dims`, `flip`, `transpose`
-
-:Examples 1:
-
->>> f.{+name}()
-
-:Parameters:
-
-    axes: (sequence of) `int`, optional
-        The size 1 axes to remove. By default, all size 1 axes are
-        removed. Size 1 axes for removal are identified by their
-        integer positions in the data array.
-    
-    {+copy}
-
-:Returns:
-
-    out: `{+Variable}`
-
-:Examples:
-
->>> f.{+name}(1)
->>> f.{+name}([1, 2])
-
-        '''
-        if copy:
-            v = self.copy()
-        else:
-            v = self
-
-        if v.hasdata:
-            v.data.squeeze(axes, copy=False)
-
-        if v.hasbounds:
-            axes = self._parse_axes(axes)
-            v.bounds.squeeze(axes, copy=False)
-
-        return v
-    #--- End: def
-    
     def expand_dims(self, position=0, copy=True):
         '''Insert a size 1 axis into the data array.
 
@@ -2394,105 +2403,7 @@ True
 
         return v
     #--- End: def
-
-    def transpose(self, axes=None, copy=True):
-        '''Permute the axes of the data array.
-
-.. versionadded:: 1.6
-
-.. seealso:: `expand_dims`, `squeeze`
-
-:Examples 1:
-
->>> g = f.{+name}()
-
-:Parameters:
-
-    axes: (sequence of) `int`
-        The new axis order of the data array. By default the order is
-        reversed. Each axis of the new order is identified by its
-        original integer position.
-
-    copy: `bool`, optional
-        If False then update the data in place. By default a new data
-        array is created.
-
-:Returns:
-
-    out: `{+Variable}`
-
-:Examples 2:
-
->>> f.shape
-(2, 3, 4)
->>> f.{+name}()
->>> f.shape
-(4, 3, 2)
->>> f.{+name}([1, 2, 0])
->>> f.shape
-(3, 2, 4)
->>> f.{+name}((1, 0, 2))
->>> f.shape
-(2, 3, 4)
-
-        '''       
-        if copy:
-            v = self.copy()
-        else:
-            v = self
-
-        if self.hasdata:
-            v.data.transpose(axes, copy=False)
-        
-        return v
-    #--- End: def
-
-    def _parse_axes(self, axes):
-        if axes is None:
-            return axes
-
-        ndim = self.ndim
-        return [(i + ndim if i < 0 else i) for i in axes]
-    #--- End: def
     
-#    @property
-#    def mask(self):
-#        '''The mask of the data array.
-#
-#Values of True indicate masked elements.
-#
-#.. versionadded:: 1.6
-#
-#.. seealso:: `binary_mask`
-#
-#:Examples:
-#
-#>>> f.shape
-#(12, 73, 96)
-#>>> m = f.mask
-#>>> m.long_name
-#'mask'
-#>>> m.shape
-#(12, 73, 96)
-#>>> m.dtype
-#dtype('bool')
-#>>> print m.data
-#[[[True, ..., False]]]
-#
-#        '''
-#        if not self.hasdata:
-#            raise ValueError(
-#                "ERROR: Can't get mask when there is no data array")
-#
-#        out = self.copy(_omit_data=True, _omit_properties=True,
-#                        _omit_attributes=True)
-#
-#        out.insert_data(self.data.mask, copy=False)            
-#        out.long_name = 'mask'
-#
-#        return out
-#    #--- End: def
-
     def fill_value(self, default=None):
         '''Return the data array missing data value.
 
@@ -2552,7 +2463,7 @@ dtype('float64')
         if fillval is None:
             if default == 'netCDF':
                 d = self.dtype
-                fillval = _netCDF4_default_fillvals[d.kind + str(d.itemsize)]
+                fillval = netCDF4.default_fillvals[d.kind + str(d.itemsize)]
             else:
                 fillval = default 
         #--- End: if
@@ -2593,6 +2504,51 @@ dtype('float64')
         self._private['properties'][prop] = value
     #--- End: def
 
+    def squeeze(self, axes=None, copy=True):
+        '''Remove size 1 dimensions from the data array
+
+.. versionadded:: 1.6
+
+.. seealso:: `expand_dims`, `flip`, `transpose`
+
+:Examples 1:
+
+>>> f.{+name}()
+
+:Parameters:
+
+    axes: (sequence of) `int`, optional
+        The size 1 axes to remove. By default, all size 1 axes are
+        removed. Size 1 axes for removal are identified by their
+        integer positions in the data array.
+    
+    {+copy}
+
+:Returns:
+
+    out: `{+Variable}`
+
+:Examples:
+
+>>> f.{+name}(1)
+>>> f.{+name}([1, 2])
+
+        '''
+        if copy:
+            v = self.copy()
+        else:
+            v = self
+
+        if v.hasdata:
+            v.data.squeeze(axes, copy=False)
+
+#        if v.hasbounds:
+#            axes = self._parse_axes(axes)
+#            v.bounds.squeeze(axes, copy=False)
+
+        return v
+    #--- End: def
+
     def hasprop(self, prop):
         '''
 
@@ -2621,37 +2577,51 @@ Return True if a CF property exists, otherise False.
         return prop in self._private['properties']
     #--- End: def
 
-#    @property
-#    def isscalar(self):
-#        '''True if the data array is scalar.
-#
-#.. versionadded:: 1.6
-#
-#.. seealso:: `hasdata`, `ndim`
-#
-#:Examples:
-#
-#>>> f.ndim
-#0
-#>>> f.isscalar
-#True
-#
-#>>> f.ndim >= 1
-#True
-#>>> f.isscalar
-#False
-#
-#>>> f.hasdata
-#False
-#>>> f.isscalar
-#False
-#
-#        '''
-#        if not self.hasdata:
-#            return False
-#
-#        return self.data.isscalar
-#    #--- End: def
+    @property
+    def isscalar(self):
+        '''True if the data array is scalar.
+
+.. versionadded:: 1.6
+
+.. seealso:: `hasdata`, `ndim`
+
+:Examples:
+
+>>> f.ndim
+0
+>>> f.isscalar
+True
+
+>>> f.ndim >= 1
+True
+>>> f.isscalar
+False
+
+>>> f.hasdata
+False
+>>> f.isscalar
+False
+
+        '''
+        if not self.hasdata:
+            return False
+
+        return self.data.isscalar
+    #--- End: def
+
+    @property
+    def isreftime(self):
+        '''
+
+.. versionadded:: 1.6
+
+        '''
+        units = self.getprop('units', None)
+        if units is None:
+            return bool(self.getprop('calendar', False))
+
+        return 'since' in units
+    #--- End: def
 
     @property
     def isvariable(self):
@@ -2842,13 +2812,13 @@ AttributeError: Can't delete non-existent property 'project'
         # Still here? Then delete a simple attribute
         try:
             del self._private['properties'][prop]
-        else KeyError:
+        except KeyError:
             raise AttributeError(
                 "Can't delete non-existent CF property {!r}".format(prop))                    
     #--- End: def
 
-    def name(self, default=None, identity=False, ncvar=False,
-             relaxed_identity=None):
+    def name(self, default=None, identity=False, ncvar=True,
+             relaxed_identity=None, id=True):
         '''Return a name for the {+variable}.
 
 By default the name is the first found of the following:
@@ -2860,7 +2830,7 @@ By default the name is the first found of the following:
 
   3. The `!id` attribute.
 
-  4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
+  4. The netCDF variable name as returned by the `ncvar` method.
   
   5. The value of the *default* parameter.
 
@@ -2917,21 +2887,21 @@ None
         if relaxed_identity is None:
             relaxed_identity = RELAXED_IDENTITIES()
 
-        if ncvar:
-            if identity:
-                raise ValueError(
-"Can't find identity/ncvar: ncvar and identity parameters can't both be True")
-
-            if relaxed_identity:
-                raise ValueError(
-"Can't find identity/ncvar: ncvar and relaxed_identity parameters can't both be True")
-
-            n = getattr(self, 'ncvar', None)
-            if n is not None:
-                return 'ncvar%{0}'.format(n)
-            
-            return default
-        #--- End: if
+#        if ncvar:
+#            if identity:
+#                raise ValueError(
+#"Can't find identity/ncvar: ncvar and identity parameters can't both be True")
+#
+#            if relaxed_identity:
+#                raise ValueError(
+#"Can't find identity/ncvar: ncvar and relaxed_identity parameters can't both be True")
+#
+#            n = getattr(self, 'ncvar', None)
+#            if n is not None:
+#                return 'ncvar%{0}'.format(n)
+#            
+#            return default
+#        #--- End: if
 
         n = self.getprop('standard_name', None)
         if n is not None:
@@ -2945,6 +2915,7 @@ None
             if not relaxed_identity:
                 return default
 
+
         n = self.getprop('long_name', None)
         if n is not None:
             return 'long_name:{0}'.format(n)
@@ -2954,13 +2925,27 @@ None
             if n is not None:
                 return 'id%{0}'.format(n) #n
 
-        n = getattr(self, 'ncvar', None)
-        if n is not None:
-            return 'ncvar%{0}'.format(n)
-
+        if ncvar:
+            n = self.ncvar()
+            if n is not None:
+                return 'ncvar%{0}'.format(n)
+            
         return default
     #--- End: def
 
+    def ncvar(self, *name):
+        '''
+        '''
+        if not name:
+            return self._ncvar
+
+
+        name = name[0]
+        self._ncvar = name
+
+        return name
+    #--- End: def
+    
     def open(self):
         '''
 '''

@@ -13,7 +13,8 @@ class BoundedVariable(Variable):
     '''Base class for CF dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
     '''
-    def __init__(self, properties={}, attributes={}, data=None,
+    def __init__(self, properties={}, #attributes={},
+                 data=None,
                  bounds=None, source=None, copy=True):
         '''**Initialization**
 
@@ -23,9 +24,9 @@ domain ancillary objects.
         Initialize a new instance with CF properties from a
         dictionary's key/value pairs.
   
-    attributes: `dict`, optional
-        Provide the new instance with attributes from a dictionary's
-        key/value pairs.
+#    attributes: `dict`, optional
+#        Provide the new instance with attributes from a dictionary's
+#        key/value pairs.
   
     data: `Data`, optional
         Provide the new instance with an N-dimensional data array.
@@ -51,7 +52,7 @@ domain ancillary objects.
                 
         # Set attributes, CF properties and data
         super(BoundedVariable, self).__init__(properties=properties,
-                                              attributes=attributes,
+#                                              attributes=attributes,
                                               data=data,
                                               source=source,
                                               copy=copy)
@@ -355,251 +356,251 @@ AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
         self._hasbounds = False
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
-    @property
-    def dtype(self):
-        '''Numpy data-type of the data array.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> c.dtype
-dtype('float64')
->>> import numpy
->>> c.dtype = numpy.dtype('float32')
-
-        '''
-        if self.hasdata:
-            return self.data.dtype
-        
-        if self.hasbounds and self.bounds.hasdata:
-            return self.bounds.dtype
-
-        raise AttributeError("{} does not have attribute 'dtype'".format(
-            self.__class__.__name__))
-    #--- End: def
-    @dtype.setter
-    def dtype(self, value):
-        if self.hasdata:
-            self.data.dtype = value
-
-        if self.hasbounds and self.bounds.hasdata:
-            self.bounds.dtype = value
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
-    @property
-    def Units(self):
-        '''
-
-The Units object containing the units of the data array.
-
-.. versionadded:: 1.6
-
-'''
-        return Variable.Units.fget(self)
-    #--- End: def
-
-    @Units.setter
-    def Units(self, value):
-        Variable.Units.fset(self, value)
-
-        # Set the Units on the bounds # DCH NOOOOOOOOOO
-        if self.hasbounds:
-            self.bounds.Units = value
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # CF property: calendar
-    # ----------------------------------------------------------------
-    @property
-    def calendar(self):
-        '''
-
-The calendar CF property.
-
-This property is a mirror of the calendar stored in the `Units`
-attribute.
-
-.. versionadded:: 2.0 
-
-:Examples:
-
->>> c.calendar = 'noleap'
->>> c.calendar
-'noleap'
->>> del c.calendar
-
->>> c.setprop('calendar', 'proleptic_gregorian')
->>> c.getprop('calendar')
-'proleptic_gregorian'
->>> c.delprop('calendar')
-
-'''
-        return Variable.calendar.fget(self)
-    #--- End: def
-
-    @calendar.setter
-    def calendar(self, value):
-        Variable.calendar.fset(self, value)
-        # Set the calendar of the bounds
-        if self.hasbounds:
-            self.bounds.setprop('calendar', value)
-    #--- End: def
-
-    @calendar.deleter
-    def calendar(self):
-        Variable.calendar.fdel(self)
-        # Delete the calendar of the bounds
-        if self.hasbounds:
-            try:
-                self.bounds.delprop('calendar')
-            except AttributeError:
-                pass
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def standard_name(self):
-        '''
-
-The standard_name CF property.
-
-.. versionadded:: 2.0 
-
-:Examples:
-
->>> c.standard_name = 'time'
->>> c.standard_name
-'time'
->>> del c.standard_name
-
->>> c.setprop('standard_name', 'time')
->>> c.getprop('standard_name')
-'time'
->>> c.delprop('standard_name')
-
-'''
-        return self.getprop('standard_name')
-    #--- End: def
-    @standard_name.setter
-    def standard_name(self, value): 
-        self.setprop('standard_name', value)
-    @standard_name.deleter
-    def standard_name(self):       
-        self.delprop('standard_name')
-
-    # ----------------------------------------------------------------
-    # CF property: units
-    # ----------------------------------------------------------------
-    # DCH possible inconsistency when setting self.Units.units ??
-    @property
-    def units(self):
-        '''
-
-The units CF property.
-
-This property is a mirror of the units stored in the `Units`
-attribute.
-
-.. versionadded:: 2.0 
-
-:Examples:
-
->>> c.units = 'degrees_east'
->>> c.units
-'degree_east'
->>> del c.units
-
->>> c.setprop('units', 'days since 2004-06-01')
->>> c.getprop('units')
-'days since 2004-06-01'
->>> c.delprop('units')
-
-'''
-        return Variable.units.fget(self)
-    #--- End: def
-
-    @units.setter
-    def units(self, value):
-        Variable.units.fset(self, value)
-
-        if self.hasbounds:
-            # Set the units on the bounds        
-            self.bounds.setprop('units', value)
-
-#        self._direction = None
-    #--- End: def
-    
-    @units.deleter
-    def units(self):
-        Variable.units.fdel(self)
-
-        if self.hasbounds:
-            # Delete the units from the bounds
-            try:                
-                self.bounds.delprop('units')
-            except AttributeError:
-                pass
-    #--- End: def
-
-    def delprop(self, prop):
-        '''
-
-Delete a CF property.
-
-.. versionadded:: 2.0 
-
-.. seealso:: `getprop`, `hasprop`, `setprop`
-
-:Parameters:
-
-    prop : str
-        The name of the CF property.
-
-:Returns:
-
-     None
-
-:Examples:
-
->>> c.delprop('standard_name')
->>> c.delprop('foo')
-AttributeError: {+Variable} doesn't have CF property 'foo'
-
-'''
-        # Delete a special attribute
-        if prop in self._special_properties:
-            delattr(self, prop)
-            return
-
-        # Still here? Then delete a simple attribute
-
-        # Delete selected simple properties from the bounds
-        if self.hasbounds and prop in ('standard_name', 'axis', 'positive',
-                                       'leap_month', 'leap_year',
-                                       'month_lengths'):
-            try:
-                self.bounds.delprop(prop)
-            except AttributeError:
-                pass
-        #--- End: if
-
-        d = self._private['simple_properties']
-        if prop in d:
-            del d[prop]
-        else:
-            raise AttributeError("Can't delete non-existent %s CF property %r" %
-                                 (self.__class__.__name__, prop))
-    #--- End: def
-
+#    # ----------------------------------------------------------------
+#    # Attribute
+#    # ----------------------------------------------------------------
+#    @property
+#    def dtype(self):
+#        '''Numpy data-type of the data array.
+#
+#.. versionadded:: 1.6
+#
+#:Examples:
+#
+#>>> c.dtype
+#dtype('float64')
+#>>> import numpy
+#>>> c.dtype = numpy.dtype('float32')
+#
+#        '''
+#        if self.hasdata:
+#            return self.data.dtype
+#        
+#        if self.hasbounds and self.bounds.hasdata:
+#            return self.bounds.dtype
+#
+#        raise AttributeError("{} does not have attribute 'dtype'".format(
+#            self.__class__.__name__))
+#    #--- End: def
+#    @dtype.setter
+#    def dtype(self, value):
+#        if self.hasdata:
+#            self.data.dtype = value
+#
+#        if self.hasbounds and self.bounds.hasdata:
+#            self.bounds.dtype = value
+#    #--- End: def
+#
+#    # ----------------------------------------------------------------
+#    # Attribute
+#    # ----------------------------------------------------------------
+#    @property
+#    def Units(self):
+#        '''
+#
+#The Units object containing the units of the data array.
+#
+#.. versionadded:: 1.6
+#
+#'''
+#        return Variable.Units.fget(self)
+#    #--- End: def
+#
+#    @Units.setter
+#    def Units(self, value):
+#        Variable.Units.fset(self, value)
+#
+#        # Set the Units on the bounds # DCH NOOOOOOOOOO
+#        if self.hasbounds:
+#            self.bounds.Units = value
+#    #--- End: def
+#
+#    # ----------------------------------------------------------------
+#    # CF property: calendar
+#    # ----------------------------------------------------------------
+#    @property
+#    def calendar(self):
+#        '''
+#
+#The calendar CF property.
+#
+#This property is a mirror of the calendar stored in the `Units`
+#attribute.
+#
+#.. versionadded:: 2.0 
+#
+#:Examples:
+#
+#>>> c.calendar = 'noleap'
+#>>> c.calendar
+#'noleap'
+#>>> del c.calendar
+#
+#>>> c.setprop('calendar', 'proleptic_gregorian')
+#>>> c.getprop('calendar')
+#'proleptic_gregorian'
+#>>> c.delprop('calendar')
+#
+#'''
+#        return Variable.calendar.fget(self)
+#    #--- End: def
+#
+#    @calendar.setter
+#    def calendar(self, value):
+#        Variable.calendar.fset(self, value)
+#        # Set the calendar of the bounds
+#        if self.hasbounds:
+#            self.bounds.setprop('calendar', value)
+#    #--- End: def
+#
+#    @calendar.deleter
+#    def calendar(self):
+#        Variable.calendar.fdel(self)
+#        # Delete the calendar of the bounds
+#        if self.hasbounds:
+#            try:
+#                self.bounds.delprop('calendar')
+#            except AttributeError:
+#                pass
+#    #--- End: def
+#
+#    # ----------------------------------------------------------------
+#    # CF property
+#    # ----------------------------------------------------------------
+#    @property
+#    def standard_name(self):
+#        '''
+#
+#The standard_name CF property.
+#
+#.. versionadded:: 2.0 
+#
+#:Examples:
+#
+#>>> c.standard_name = 'time'
+#>>> c.standard_name
+#'time'
+#>>> del c.standard_name
+#
+#>>> c.setprop('standard_name', 'time')
+#>>> c.getprop('standard_name')
+#'time'
+#>>> c.delprop('standard_name')
+#
+#'''
+#        return self.getprop('standard_name')
+#    #--- End: def
+#    @standard_name.setter
+#    def standard_name(self, value): 
+#        self.setprop('standard_name', value)
+#    @standard_name.deleter
+#    def standard_name(self):       
+#        self.delprop('standard_name')
+#
+#    # ----------------------------------------------------------------
+#    # CF property: units
+#    # ----------------------------------------------------------------
+#    # DCH possible inconsistency when setting self.Units.units ??
+#    @property
+#    def units(self):
+#        '''
+#
+#The units CF property.
+#
+#This property is a mirror of the units stored in the `Units`
+#attribute.
+#
+#.. versionadded:: 2.0 
+#
+#:Examples:
+#
+#>>> c.units = 'degrees_east'
+#>>> c.units
+#'degree_east'
+#>>> del c.units
+#
+#>>> c.setprop('units', 'days since 2004-06-01')
+#>>> c.getprop('units')
+#'days since 2004-06-01'
+#>>> c.delprop('units')
+#
+#'''
+#        return Variable.units.fget(self)
+#    #--- End: def
+#
+#    @units.setter
+#    def units(self, value):
+#        Variable.units.fset(self, value)
+#
+#        if self.hasbounds:
+#            # Set the units on the bounds        
+#            self.bounds.setprop('units', value)
+#
+##        self._direction = None
+#    #--- End: def
+#    
+#    @units.deleter
+#    def units(self):
+#        Variable.units.fdel(self)
+#
+#        if self.hasbounds:
+#            # Delete the units from the bounds
+#            try:                
+#                self.bounds.delprop('units')
+#            except AttributeError:
+#                pass
+#    #--- End: def
+#
+#    def delprop(self, prop):
+#        '''
+#
+#Delete a CF property.
+#
+#.. versionadded:: 2.0 
+#
+#.. seealso:: `getprop`, `hasprop`, `setprop`
+#
+#:Parameters:
+#
+#    prop : str
+#        The name of the CF property.
+#
+#:Returns:
+#
+#     None
+#
+#:Examples:
+#
+#>>> c.delprop('standard_name')
+#>>> c.delprop('foo')
+#AttributeError: {+Variable} doesn't have CF property 'foo'
+#
+#'''
+#        # Delete a special attribute
+#        if prop in self._special_properties:
+#            delattr(self, prop)
+#            return
+#
+#        # Still here? Then delete a simple attribute
+#
+#        # Delete selected simple properties from the bounds
+#        if self.hasbounds and prop in ('standard_name', 'axis', 'positive',
+#                                       'leap_month', 'leap_year',
+#                                       'month_lengths'):
+#            try:
+#                self.bounds.delprop(prop)
+#            except AttributeError:
+#                pass
+#        #--- End: if
+#
+#        d = self._private['simple_properties']
+#        if prop in d:
+#            del d[prop]
+#        else:
+#            raise AttributeError("Can't delete non-existent %s CF property %r" %
+#                                 (self.__class__.__name__, prop))
+#    #--- End: def
+#
 #     def close(self):
 #        '''
 #'''
@@ -643,13 +644,14 @@ Return a string containing a full description of the variable.
         else:
             string = [indent0 + _title]
 
-        if self._simple_properties():
-            string.append(self._dump_simple_properties(_level=_level+1))
+        if self.properties():
+            string.append(self._dump_properties(_level=_level+1))
 
         if self.hasdata:
             if field and key:
-                x = ['{0}({1})'.format(field.axis_name(axis), field.axis_size(axis))
-                     for axis in field.item_axes(key)]
+                x = ['{0}({1})'.format(field.domain_axis_name(axis),
+                                       field.domain_axes()[axis].size)
+                     for axis in field.construct_axes(key)]
             else:
                 x = [str(s) for s in self.shape]
 
@@ -690,33 +692,10 @@ Return a string containing a full description of the variable.
 
         '''
         if not getattr(bounds, 'isbounds', False):
-            raise ValueError("bounds must be a `Bounds` object")
-
-        # Check dimensionality
-        if bounds.ndim != self.ndim + 1:
-            raise ValueError(
-"Can't set bounds: Incorrect number of dimemsions: {} (expected {})".format(
-    bounds.ndim, self.ndim+1))
-
-        # Check shape
-        if bounds.shape[:-1] != self.shape:
-            raise ValueError(
-                "Can't set bounds: Incorrect shape: {} (expected {})".format(
-                    bounds.shape, self.shape+(bounds.shape[-1],)))
+            raise ValueError("bounds must be a 'Bounds' object")
 
         if copy:            
             bounds = bounds.copy()
-
-        # Copy units
-        if not bounds.Units:
-            bounds.Units = self.Units
-            
-        # Copy selected properties to the bounds
-        for prop in ('standard_name', 'axis', 'positive',
-                     'leap_months', 'leap_years', 'month_lengths'):
-            value = self.getprop(prop, None)
-            if value is not None:
-                bounds.setprop(prop, value)
 
         self._set_special_attr('bounds', bounds)        
 
@@ -788,44 +767,44 @@ False
         return self._infer_direction()
     #--- End: def
 
-    def setprop(self, prop, value):
-        '''Set a CF property.
-
-.. versionadded:: 1.6
-
-.. seealso:: `delprop`, `getprop`, `hasprop`
-
-:Parameters:
-
-    prop : str
-        The name of the CF property.
-
-    value :
-        The value for the property.
-
-:Returns:
-
-     None
-
-:Examples:
-
->>> c.setprop('standard_name', 'time')
->>> c.setprop('foo', 12.5)
-
-        '''
-        # Set a special attribute
-        if prop in self._special_properties:
-            setattr(self, prop, value)
-            return
-
-        # Still here? Then set a simple property
-        self._private['simple_properties'][prop] = value
-
-        # Set selected simple properties on the bounds
-        if self.hasbounds and prop in ('standard_name', 'axis', 'positive', 
-                                       'leap_month', 'leap_year',
-                                       'month_lengths'):
-            self.bounds.setprop(prop, value)
-    #--- End: def
+#    def setprop(self, prop, value):
+#        '''Set a CF property.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `delprop`, `getprop`, `hasprop`
+#
+#:Parameters:
+#
+#    prop : str
+#        The name of the CF property.
+#
+#    value :
+#        The value for the property.
+#
+#:Returns:
+#
+#     None
+#
+#:Examples:
+#
+#>>> c.setprop('standard_name', 'time')
+#>>> c.setprop('foo', 12.5)
+#
+#        '''
+##        # Set a special attribute
+##        if prop in self._special_properties:
+##            setattr(self, prop, value)
+##            return
+#
+#        # Still here? Then set a simple property
+#        self._private['properties'][prop] = value
+#
+#        # Set selected simple properties on the bounds
+#        if self.hasbounds and prop in ('standard_name', 'axis', 'positive', 
+#                                       'leap_month', 'leap_year',
+#                                       'month_lengths'):
+#            self.bounds.setprop(prop, value)
+#    #--- End: def
 
 #--- End: class

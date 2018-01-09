@@ -28,7 +28,7 @@ Attribute  Type     Description
 =========  =======  ==================================================
 
     '''
-    def __init__(self, size=None, ncdim=None):
+    def __init__(self, size=None):
         '''**Initialization**
 
 :Parameters:
@@ -41,7 +41,7 @@ Attribute  Type     Description
 
         '''
         self.size  = size
-        self.ncdim = ncdim
+        self._ncdim = None
     #--- End: def
 
     def __deepcopy__(self, memo):
@@ -158,6 +158,23 @@ Return a deep copy.
         #--- End: if
 
         return True
+    #--- End: def
+
+    def ncdim(self, *name):
+        '''
+        '''
+        if not name:
+            name = self._ncdim
+            if name is not None:
+                raise ValueError("No ncdim")
+
+            return name
+        #--- End: if
+
+        name = name[0]
+        self._ncdim = name
+
+        return name
     #--- End: def
 
 #--- End: class

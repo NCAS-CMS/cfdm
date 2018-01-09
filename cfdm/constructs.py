@@ -1,44 +1,37 @@
 from collections import OrderedDict
 
-class Constructs(object)
+from .domain import Domain
+
+class Constructs(object):
     '''
 Keys are item identifiers, values are item objects.
     '''
-    def __init__(self, Axes=None):
+    def __init__(self, array_constructs=(), non_array_constructs=(),
+                 ordered_constructs=()):
         '''
 '''
-        self._auxiliary_coordinates = {}
+        self._domain = Domain()
+        
+#        self._auxiliary_coordinates = {}
         self._field_ancillaries     = {}
-        self._domain_ancillaries    = {}
-        self._dimension_coordinates = {}
-        self._cell_measures         = {}
-        self._domain_axes           = {}
-        self._coordinate_references = {}
-
-        self._cell_methods = OrderedDict()
+#        self._domain_ancillaries    = {}
+#        self._dimension_coordinates = {}
+#        self._cell_measures         = {}
+#        self._domain_axes           = {}
+#        self._coordinate_references = {}
+        self._cell_methods          = OrderedDict()
 
         # The axes identifiers for each item. For example,
-        # self._variable_axes['aux2'] = ['dim1, 'dim0']
-        self._variable_axes = {}
-
+        # {'aux2': ('dim1, 'dim0')}
+        self._construct_axes = {}
+               
         self._construct_type = {}
     #--- End: def
 
     def __call__(self):
         '''
         '''
-        out = {}
-        
-        out.update(self._auxiliary_coordinates)
-        out.update(self._field_ancillaries)
-        out.update(self._domain_ancillaries)
-        out.update(self._dimension_coordinates)
-        out.update(self._cell_measures)
-        out.update(self._domain_axes)
-        out.update(self._coordinate_references)
-        out.update(self._cell_methods)
-
-        return out
+        return self.constructs()
     #--- End: def
     
     def __deepcopy__(self, memo):
@@ -53,19 +46,26 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
     #--- End: def
 
 
-    def _xxx(out, axes=None, copy=False):
-        '''
-        '''
-        if axes is not None:
-            axes = set(axes)
-            variable_axes = self.variable_axes()
-            for key, item in out.items():
-                if set(variable_axes[key]) == axes:
-                    out[key] = item.copy()
-        #--- End: if
-                
+#    def _xxx(out, axes=None, copy=False):
+#        '''
+#        '''
+#        if axes is not None:
+#            axes = set(axes)
+#            variable_axes = self.variable_axes()
+#            for key, item in out.items():
+#                if set(variable_axes[key]) == axes:
+#                    out[key] = item.copy()
+#        #--- End: if
+#                
+#        return out
+#    #--- End: def
+
+    def construct_types(self):
+        out = self.domain().construct_types()
+        out.update(self._construct_type)
         return out
     #--- End: def
+
 
     def coordinate_references(self):
         '''
@@ -107,7 +107,9 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
 
         '''
         
-        return self.dimension_coordinates.update(self.auxiliary_coordinates)
+        out = self.dimension_coordinates()
+        out.update(self.auxiliary_coordinates())
+        return out
     #--- End: def
 
     def auxiliary_coordinate(self, key=None, axes=None, default=None, copy=False):
@@ -158,14 +160,23 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
         return value
     #--- End: def
 
-    def variables():
-        out = {}
-        out.update(self._dimension_coordinates)
-        out.update(self._auxiliary_coordinates)
-        out.update(self._cell_methods)
-        out.update(self._field_ancillaries)
-        out.update(self._domain_ancillaries)
+    def array_constructs(self):
+        out = self.domain().array_constructs()
+        out.update(self.field_ancillaries())
         return out
+    
+    def domain(self):
+        return self._domain
+    
+    def constructs(self):
+        out = self.domain().constructs()
+        out.update(self._field_ancillaries)
+        out.update(self._cell_methods)
+        return out
+
+    
+    def domain_constructs(self):
+        return self.domain().constructs()
     
     def variable(key, default=None):
         return self.variables.get(key, default)
@@ -185,20 +196,22 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
 {'dim0': <CF DimensionCoordinate: >}
 
         '''
-        return _xxx(self._dimension_coordinates.copy(), axes, copy)
+#        return _xxx(self._dimension_coordinates.copy(), axes, copy)
+        return self.domain().dimension_coordinates()
     #--- End: def
 
     def domain_axes(self, copy=False):
         '''
         '''
-        return self._xxx(self._domain_axes.copy(), axes=None, copy=copy)
+#        return self._xxx(self._domain_axes.copy(), axes=None, copy=copy)
+        return self.domain().domain_axes(copy=copy)
     #--- End: def
     
-    def variable_axes(self, key=None, new_axes=None, default=None):
+    def construct_axes(self, key=None, new_axes=None, default=None):
         '''
 :Examples 1:
 
->>> x = c.variable_axes()
+>>> x = c.construct_axes()
 
 :Parameters:
 
@@ -229,23 +242,80 @@ None
 ('dim0', 'dim1')
 
 '''
+        domain_construct_axes = self.domain().construct_axes()
         if key is None:
             # Return all of the items' axes
-            return self._item_axes.copy()
+            out = domain_construct_axes.copy()
+            out.update(self._construct_axes)
+            return out
 
         if new_axes is None:
             # Return a particular item's axes
-            return self._item_axes.get(key, default)
+            axes = domain_construct_axes.get(key)
+            if axes is None:
+                axes = self.construct_axes().get(key)
+            if axes is None:
+                return default
+            return axes
  
         # Still here? The set new item axes.
-        self._item_axes[key] = tuple(new_axes)
+        if key in domain_construct_axes:
+            self.domain().construct_axes(key, new_axes)
+        else:
+            self._construct_axes[key] = tuple(new_axes)
     #--- End: def
-    
-    def axes_to_items(self):
+
+    def copy(self, shallow=False):
+        '''
+Return a deep or shallow copy.
+
+``i.copy()`` is equivalent to ``copy.deepcopy(i)``.
+
+``i.copy(shallow=True)`` is equivalent to ``copy.copy(i)``.
+
+:Parameters:
+
+    shallow: `bool`, optional
+
+:Returns:
+
+    out: `Items`
+        The copy.
+
+:Examples:
+
+>>> i = j.copy()
+
+'''
+        X = type(self)
+        new = X.__new__(X)
+
+        
+        new._domain = self._domain.copy(shallow=shallow)
+        
+        for role in ('_field_ancillaries',
+                     '_cell_methods'):
+            d = getattr(self, role).copy()
+            setattr(new, role, d)
+            if not shallow:
+                for key, value in d.items():
+                    d[key] = value.copy()
+        #--- End: for
+        
+        # Copy item axes (this is OK because it is a dictionary of
+        # tuples).
+        new._construct_axes = self._construct_axes.copy()
+
+        new._construct_type = self._construct_type.copy()
+
+        return new
+    #--- End: def
+       
+    def axes_to_constructs(self):
         '''
 :Examples:
 
->>> i.axes_to_items()
+>>> i.axes_to_constructs()
 {
  ('dim1',): {
         '_dimension_coordinates': {'dim1': <DimensionCoordinate>},
@@ -264,7 +334,7 @@ None
         }
 }
 '''
-        item_axes = self.variable_axes()
+        item_axes = self.construct_axes()
         out = {}
 
         for axes in item_axes.values():
@@ -343,60 +413,8 @@ None
         return default
     #--- End: def
 
-    def copy(self, shallow=False):
-        '''
-
-Return a deep or shallow copy.
-
-``i.copy()`` is equivalent to ``copy.deepcopy(i)``.
-
-``i.copy(shallow=True)`` is equivalent to ``copy.copy(i)``.
-
-:Parameters:
-
-    shallow: `bool`, optional
-
-:Returns:
-
-    out: `Items`
-        The copy.
-
-:Examples:
-
->>> i = j.copy()
-
-'''
-        X = type(self)
-        new = X.__new__(X)
-
-        for role in ('_dimension_coordinates', 
-                     '_auxiliary_coordinates', 
-                     '_cell_measures',         
-                     '_domain_ancillaries',    
-                     '_field_ancillaries',
-                     '_cell_methods',
-                     '_coordinate_references',
-                     '_domain_axes'):
-            setattr(new, role, setattr(self, role).copy())
-            d = getattr(new, role)
-            if shallow:
-                for key, value in self.iteritems():
-                    d[key] = value
-            else:
-                for key, value in self.iteritems():
-                    d[key] = value.copy()
-        #--- End: for
-        
-        # Copy item axes (this is OK because it is a dictionary of
-        # tuples).
-        new._variable_axes = self._variable_axes.copy()
-
-        return new
-    #--- End: def
-    
-    def equals(self, other, rtol=None, atol=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               traceback=False, _equivalent=False, ignore=()):
+    def equals(self, other, rtol=None, atol=None, traceback=False,
+               **kwargs):
         '''
         
         '''
@@ -414,8 +432,8 @@ Return a deep or shallow copy.
         # ------------------------------------------------------------
         # Domain axes
         # ------------------------------------------------------------
-        self_sizes  = [d.size for d in self._domain_axes.values()]
-        other_sizes = [d.size for d in other._domain_axes.values()]
+        self_sizes  = [d.size for d in self.domain_axes().values()]
+        other_sizes = [d.size for d in other.domain_axes().values()]
         
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes
@@ -439,8 +457,8 @@ Return a deep or shallow copy.
 
         key1_to_key0 = {}
 
-        axes_to_items0 = self.axes_to_items()
-        axes_to_items1 = other.axes_to_items()
+        axes_to_items0 = self.axes_to_constructs()
+        axes_to_items1 = other.axes_to_constructs()
         
         for axes0, items0 in axes_to_items0.iteritems():
             matched_all_items_with_these_axes = False
@@ -476,11 +494,7 @@ Return a deep or shallow copy.
                         matched_item = False
                         for key1, item1 in role_items1.items():
                             if item0.equals(item1, rtol=rtol,
-                                            atol=atol,
-                                            ignore_data_type=ignore_data_type,
-                                            ignore_fill_value=ignore_fill_value,
-                                            ignore=ignore,
-                                            traceback=False):
+                                            atol=atol, traceback=False, **kwargs):
                                 del role_items1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_item = True
@@ -598,9 +612,7 @@ Return a deep or shallow copy.
             cm1.axes = axes0
 
             if not cm0.equals(cm1, atol=atol, rtol=rtol,
-                              ignore_data_type=ignore_data_type,
-                              ignore_fill_value=ignore_fill_value,
-                              traceback=traceback):
+                              traceback=traceback, **kwargs):
                 if traceback:
                     print ("Field: Different cell methods: {0!r}, {1!r}".format(
                         self.cell_methods, other.cell_methods))
@@ -615,8 +627,7 @@ Return a deep or shallow copy.
             found_match = False
             for key1, ref1 in refs1.items():
                 if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                   ignore_data_type=ignore_data_type,
-                                   ignore_fill_value=ignore_fill_value, traceback=False):
+                                   traceback=False, **kwargs):
                     continue
 
                 # Coordinates
@@ -625,25 +636,15 @@ Return a deep or shallow copy.
                 for value in ref1.coordinates:
                     coordinates1.add(key1_to_key0.get(value, value))
                     
-#                coordinates1 = set(
-#                    [key1_to_key0.get(other.key(value, role='da'), value)
-#                     for value in ref1.coordinates])
                 if coordinates0 != coordinates1:
                     continue
 
                 # Domain ancillary terms
-                terms0 = ref0.ancillaries
+                terms0 = ref0.domain_ancillaries
                 terms1 = {}
-                for key, value in ref1.ancillaries.items():
-                    terms1[key] = key1_to_key0.get(value, value))
-#                terms0 = dict(
-#                    [(term,
-#                      self.key(value, role='c', default=value))
-#                     for term, value in ref0.ancillaries.iteritems()])
-#                terms1 = dict(
-#                    [(term,
-#                      key1_to_key0.get(other.key(value, role='c'), value))
-#                     for term, value in ref1.ancillaries.iteritems()])
+                for term, key in ref1.domain_ancillaries.items():
+                    terms1[term] = key1_to_key0.get(key, key)
+
                 if terms0 != terms1:
                     continue
 
@@ -672,69 +673,77 @@ Return a deep or shallow copy.
         return d.get(key, default)
     #--- End: def
     
-    def insert_field_ancillary(self, item, key, axes, copy=True):
-        if copy:
-            item = item.copy()
-        self._itemaxes[key] = tuple(axes)
+    def insert_field_ancillary(self, item, key, axes):
+        self._construct_axes[key] = tuple(axes)
         self._field_ancillaries[key] = item
         self._construct_type[key] = '_field_ancillary'
         
-    def insert_auxilary_coordinate(self, item, key, axes, copy=True):
+    def insert_auxiliary_coordinate(self, item, key, axes, copy=True):
         '''
         '''
-        if copy:
-            item = item.copy()
-        self._variable_axes[key] = tuple(axes)
-        self._auxiliary_coordinate[key] = item
-        self._construct_type[key] = '_auxiliary_coordinate'
+        self.domain().insert_auxiliary_coordinate(item, key, axes)
+#        if copy:
+#            item = item.copy()
+#        self._construct_axes[key] = tuple(axes)
+#        self._auxiliary_coordinate[key] = item
+#        self._construct_type[key] = 'auxiliary_coordinate'
   
     def insert_domain_ancillary(self, item, key, axes):
         '''
         '''
-        self._variable_axes[key] = tuple(axes)
-        self._domain_ancillaries[key] = item
-        self._construct_type[key] = '_domain_ancillary'
+        self.domain().insert_dimension_coordinate(item, key, axes)
+#        self._construct_axes[key] = tuple(axes)
+#        self._domain_ancillaries[key] = item
+#        self._construct_type[key] = 'domain_ancillary'
         
     def insert_domain_axis(self, item, key):
         '''
         '''
-        self._domain_axis[key] = item
-        self._construct_type[key] = '_domain_axis'
+        self.domain().insert_domain_axis(item, key)
+#        self._domain_axis[key] = item
+#        self._construct_type[key] = 'domain_axis'
         
     def insert_dimension_coordinate(self, item, key, axes, copy=True):
         '''
         '''
-        if copy:
-            item = item.copy()
-        self._variable_axes[key] = tuple(axes)
-        self._dimension_cordinates[key] = item
-        self._construct_type[key] = '_dimension_coordinate'
+        self.domain().insert_dimension_coordinate(item, key, axes)
+#        if copy:
+#            item = item.copy()
+#        self._construct_axes[key] = tuple(axes)
+#        self._dimension_cordinates[key] = item
+#        self._construct_type[key] = 'dimension_coordinate'
         
     def insert_cell_measure(self, item, key, axes, copy=True):
         '''
         '''
-        if copy:
-            item = item.copy()
-        self._variable_axes[key] = tuple(axes)
-        self._cell_measure[key] = item
-        self._construct_type[key] = '_cell_measure'
+        self.domain().insert_cell_measure(item, key, axes)
+#        if copy:
+#            item = item.copy()
+#        self._construct_axes[key] = tuple(axes)
+#        self._cell_measure[key] = item
+#        self._construct_type[key] = 'cell_measure'
         
     def insert_coordinate_reference(self, item, key, copy=True):
-        if copy:
-            item = item.copy()
-        self._coordinate_references[key] = item
-        self._construct_type[key] = '_coordinate_reference'
+        '''
+'''
+        self.domain().insert_coordinate_reference(item, key)
+#        if copy:
+#            item = item.copy()
+#        self._coordinate_references[key] = item
+#        self._construct_type[key] = 'coordinate_reference'
         
     def insert_cell_method(self, item, key, copy=True):
+        '''
+        '''
         if copy:
             item = item.copy()
         self._cell_methods[key] = item
-        self._construct_type[key] = '_cell_method'
+        self._construct_type[key] = 'cell_method'
 
     def replace(self, key,  item, axes=None):
-        getattr(self, self._construct_type[key])[key] = item
+        getattr(self, self._construct_type[key])()[key] = item
         if axes is not None:
-            self._variable_axes[key] = tuple(axes)
+            self._construct_axes[key] = tuple(axes)
     #--- End: def
     
     def new_identifier(self, construct_type):
@@ -782,9 +791,10 @@ The domain is not updated.
 'dim0'
 
         '''
-        keys = [x for x in self._construct_type.values()
-                if x.startswith(construct_type)]
-                    
+        keys = getattr(self, construct_type)().keys()
+
+        construct_type = construct_type.replace('_', '')
+        
         n = len(keys)
         key = '{0}{1}'.format(construct_type, n)
 
@@ -798,8 +808,12 @@ The domain is not updated.
     def remove_item(self, key):
         '''
 '''
-        self._variable_axes.pop(key, None)
-        return getattr(self, self._construct_type.pop(key)).pop(key, None)
+        self._construct_axes.pop(key, None)
+        try:
+            return getattr(self, '_'+self._construct_type.pop(key)).pop(key, None)
+        except AttributeError, KeyError:
+            domain = self.domain()
+            return getattr(domain, '_'+domain._construct_type.pop(key)).pop(key, None)
     #--- End: def
 
 #--- End: class

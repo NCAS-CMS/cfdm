@@ -2,6 +2,7 @@ import itertools
 import operator
 
 import numpy
+import netCDF4
 
 from ..constants  import masked
 from ..cfdatetime import rt2dt, st2rt, st2dt
@@ -81,7 +82,8 @@ There are three extensions to the numpy indexing functionality:
 
     '''
 
-    def __init__(self, data=None, fill_value=None):
+    def __init__(self, data=None, units=None, calendar=None,
+                 fill_value=None):
         '''**Initialization**
 
 :Parameters:
@@ -104,6 +106,8 @@ There are three extensions to the numpy indexing functionality:
         '''
 #        units = Units(units)
 #        self.Units = units
+        self.units    = units
+        self.calendar = calendar
         
         self._fill_value  = fill_value
         self._array       = None
@@ -188,23 +192,23 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-#        self_units = self.Units
-#        isreftime = self_units.isreftime
-#
-#        if not self_units or self_units.equals(_units_1):
-#            units = None
-#        elif not isreftime:
-#            units = self_units.units
-#        else:
-#            units = getattr(self_units, 'calendar', '')
-               
+        units    = self.units
+        calendar = self.calendar
+
+        if units is not None:
+            isreftime = ('since' in units)
+        else:
+            isreftime = False
+            
         try:
             first = self.datum(0)
         except:            
             out = ''
-#            if units:
-#                out += ' {0}'.format(units)
- #               
+            if units:
+                out += ' {0}'.format(units)
+            if calendar:
+                out += ' {0}'.format(calendar)
+               
             return out
         #--- End: try
         
@@ -214,18 +218,21 @@ x.__str__() <==> str(x)
         close_brackets = ']' * ndim
 
         if size == 1:
-#            if isreftime:
-#                # Convert reference time to date-time
-#                first = rt2dt(first, self_units).item()
+            if isreftime:
+                # Convert reference time to date-time
+#                first = netCDF4.num2date(first, units, calendar)
+                first = type(self)(first, units, calendar).dtarray
 
             out = '{0}{1}{2}'.format(open_brackets,
                                      first,
                                      close_brackets)
         else:
             last = self.datum(-1)
-#            if isreftime:
-#                # Convert reference times to date-times
-#                first, last = rt2dt(numpy.ma.array((first, last)), self_units)
+            if isreftime:
+                # Convert reference times to date-times
+                first, last = type(self)([first, last], units, calendar).dtarray
+#                first, last = netCDF4.num2date(numpy.ma.array((first, last)),
+#                                               units, calendar)
 
             if size > 3:
                 out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
@@ -233,9 +240,10 @@ x.__str__() <==> str(x)
                                                    close_brackets)
             elif size == 3:                
                 middle = self.datum(1)
-#                if isreftime:
-#                    # Convert reference times to date-times
-#                    middle = rt2dt(middle, self_units).item()
+                if isreftime:
+                    # Convert reference times to date-times
+#                    middle = netCDF4.num2date(middle, units, calendar)
+                    middle = type(self)(middle, units, calendar).dtarray
 
                 out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
                                                    first, middle, last,
@@ -246,8 +254,10 @@ x.__str__() <==> str(x)
                                               close_brackets)
         #--- End: if
         
-#        if units:
-#            out += ' {0}'.format(units)
+        if isreftime:
+            out += ' {0}'.format(calendar)
+        elif units:
+            out += ' {0}'.format(units)
             
         return out
     #--- End: def
@@ -258,7 +268,8 @@ x.__str__() <==> str(x)
 x.__getitem__(indices) <==> x[indices]
 
         '''
-        return type(self)(self._array[indices], #, units=self.Units,
+        return type(self)(self._array[indices], units=self.units,
+                          calendar=self.calendar,
                           fill_value=self.fill_value)
     #--- End: def
 
@@ -308,7 +319,7 @@ elements.
             # one.
             array = array.view(numpy.ma.MaskedArray)
             
-        indices = parse_indices(array.shape, indices)
+        indices = self.parse_indices(indices)
 
         self._set_subspace(array, indices, numpy.asanyarray(value))
 
@@ -644,15 +655,39 @@ True
         return array
     #--- End: def
 
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def dtarray(self):
-#        '''
-#        '''
-#        return rt2dt(self.array, self.Units)
-#    #--- End: def
+    # ----------------------------------------------------------------
+    # Attribute (read only)
+    # ----------------------------------------------------------------
+    @property
+    def dtarray(self):
+        '''
+        '''
+        array = self.array
+
+        mask = None
+        if numpy.ma.isMA(array):
+            # num2date has issues if the mask is nomask
+            mask = array.mask
+            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+                array = array.view(numpy.ndarray)
+        #--- End: if
+
+        calendar = self.calendar
+        if calendar is None:
+            calendar = 'standard'
+            
+        array = netCDF4.num2date(array, self.units, calendar)    
+        if mask is None:
+            # There is no missing data
+            array = numpy.array(array, dtype=object)
+        else:
+            # There is missing data
+            array = numpy.ma.masked_where(mask, array)
+            if not numpy.ndim(array):
+                array = numpy.ma.masked_all((), dtype=object)
+
+        return array
+    #--- End: def
 
     @property
     def mask(self):
@@ -725,6 +760,105 @@ True
             return data.copy()
         else:
             return data
+    #--- End: def
+
+    def parse_indices(self, indices):
+        '''
+    
+:Parameters:
+    
+    indices: `tuple` (not a `list`!)
+    
+:Returns:
+    
+    out: `list`
+    
+:Examples:
+    
+    '''
+        shape = self.shape
+        
+        parsed_indices = []
+        roll           = {}
+        flip           = []
+        compressed_indices = []
+    
+        if not isinstance(indices, tuple):
+            indices = (indices,)
+    
+        # Initialize the list of parsed indices as the input indices with any
+        # Ellipsis objects expanded
+        length = len(indices)
+        n = len(shape)
+        ndim = n
+        for index in indices:
+            if index is Ellipsis:
+                m = n - length + 1
+                parsed_indices.extend([slice(None)] * m)
+                n -= m            
+            else:
+                parsed_indices.append(index)
+                n -= 1
+    
+            length -= 1
+        #--- End: for
+        len_parsed_indices = len(parsed_indices)
+    
+        if ndim and len_parsed_indices > ndim:
+            raise IndexError("Invalid indices %s for array with shape %s" %
+                             (parsed_indices, shape))
+    
+        if len_parsed_indices < ndim:
+            parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
+    
+        if not ndim and parsed_indices:
+            raise IndexError("Scalar array can only be indexed with () or Ellipsis")
+    
+        for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+            if isinstance(index, slice):            
+                continue
+    
+            if isinstance(index, (int, long)):
+                if index < 0: 
+                    index += size
+    
+                index = slice(index, index+1, 1)
+            else:
+                if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
+                    # Convert booleans to non-negative integers. We're
+                    # assuming that anything with a dtype attribute also
+                    # has a size attribute.
+                    if index.size != size:
+                        raise IndexError(
+    "Invalid indices {} for array with shape {}".format(parsed_indices, shape))
+                    
+                    index = numpy.where(index)[0]
+                #--- End: if
+    
+                if not numpy.ndim(index):
+                    if index < 0:
+                        index += size
+    
+                    index = slice(index, index+1, 1)
+                else:
+                    len_index = len(index)
+                    if len_index == 1:                
+                        index = index[0]
+                        if index < 0:
+                            index += size
+                        
+                        index = slice(index, index+1, 1)
+                    else:
+                        raise IndexError(
+                            "Invalid indices {} for array with shape {}".format(
+                                parsed_indices, shape))                
+                #--- End: if
+            #--- End: if
+            
+            parsed_indices[i] = index    
+        #--- End: for
+    
+        return parsed_indices
     #--- End: def
 
     def allclose(self, y, rtol=None, atol=None):
@@ -872,7 +1006,8 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 >>> e = d.copy()
 
         '''        
-        new = type(self)(self._array, #units=self.Units,
+        new = type(self)(self._array, units=self.units,
+                         calendar=self.calendar,
                          fill_value=self.fill_value)
 
         new.HDF_chunks(self.HDF_chunks())
@@ -1450,7 +1585,8 @@ missing values.
         if numpy.ma.is_masked(array):
             array = array.compressed()
 
-        return type(self)(array, # units=self.Units,
+        return type(self)(array, units=self.units,
+                          calendar=self.calendar,
                           fill_value=self.fill_value)
     #--- End: def
 
@@ -1570,20 +1706,21 @@ False
             return False
         #--- End: if
 
-#        # Check that each instance has the same units
-#        self_Units  = self.Units
-#        other_Units = other.Units
-#        if self_Units != other_Units:
-#            if traceback:
-#                print("{0}: Different units: {1!r}, {2!r}".format(
-#                    self.__class__.__name__, self.Units, other.Units))
-#            return False
-#        #--- End: if
-
+        # Check that each instance has the same units
+        for attr in ('units', 'calendar'):
+            x = getattr(self, attr)
+            y = getattr(other, attr)
+            if x != y:
+                if traceback:
+                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+                        self.__class__.__name__, attr, x, y))
+                return False
+        #--- End: for
+           
         # Check that each instance has the same fill value
         if not ignore_fill_value and self.fill_value != other.fill_value:
             if traceback:
-                print("{0}: Different fill values: {1}, {2}".format(
+                print("{0}: Different fill value: {1}, {2}".format(
                     self.__class__.__name__, 
                     self.fill_value, other.fill_value))
             return False

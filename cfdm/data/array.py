@@ -1,10 +1,11 @@
+import abc
 import operator
 import sys
 
 import numpy
 import netCDF4
 
-from ..functions import parse_indices, abspath, open_files_threshold_exceeded
+from ..functions import abspath, open_files_threshold_exceeded
 
 
 _file_to_fh_read  = {}
@@ -25,6 +26,8 @@ class Array(object):
           `!__getitem__`, `!__str__`, `!close` and `!open`.
 
     '''
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, **kwargs):
         '''
         
@@ -49,10 +52,6 @@ class Array(object):
 
 '''
         self.__dict__ = kwargs
-
-#        f = getattr(self, 'file', None)
-#        if f is not None:
-#            self.file = abspath(f)
     #--- End: def
             
     def __deepcopy__(self, memo):
@@ -82,9 +81,9 @@ x.__str__() <==> str(x)
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
     #--- End: def
 
-    @property
+    @abc.abstractproperty
     def isunique(self):
-        raise NotImplementedError("Subclass of 'Array' must define 'isunique'")
+        pass
     
     def copy(self):
         '''Return a deep copy.
@@ -106,12 +105,112 @@ x.__str__() <==> str(x)
         new.__dict__ = self.__dict__.copy()
         return new
     #--- End: def
-    
+
+    @abc.abstractmethod
     def close(self):
         '''
         '''
-        raise NotImplementedError("Subclass of 'Array' must define 'close'")
+        pass
     #--- End: def
+
+#    def parse_indices(self, indices):
+#        '''
+#    
+#:Parameters:
+#    
+#    indices: `tuple` (not a `list`!)
+#    
+#:Returns:
+#    
+#    out: `list`
+#    
+#:Examples:
+#    
+#    '''
+#        shape = self.shape
+#        
+#        parsed_indices = []
+#        roll           = {}
+#        flip           = []
+#        compressed_indices = []
+#    
+#        if not isinstance(indices, tuple):
+#            indices = (indices,)
+#    
+#        # Initialize the list of parsed indices as the input indices with any
+#        # Ellipsis objects expanded
+#        length = len(indices)
+#        n = len(shape)
+#        ndim = n
+#        for index in indices:
+#            if index is Ellipsis:
+#                m = n - length + 1
+#                parsed_indices.extend([slice(None)] * m)
+#                n -= m            
+#            else:
+#                parsed_indices.append(index)
+#                n -= 1
+#    
+#            length -= 1
+#        #--- End: for
+#        len_parsed_indices = len(parsed_indices)
+#    
+#        if ndim and len_parsed_indices > ndim:
+#            raise IndexError("Invalid indices %s for array with shape %s" %
+#                             (parsed_indices, shape))
+#    
+#        if len_parsed_indices < ndim:
+#            parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
+#    
+#        if not ndim and parsed_indices:
+#            raise IndexError("Scalar array can only be indexed with () or Ellipsis")
+#    
+#        for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+#            if isinstance(index, slice):            
+#                continue
+#    
+#            if isinstance(index, (int, long)):
+#                if index < 0: 
+#                    index += size
+#    
+#                index = slice(index, index+1, 1)
+#            else:
+#                if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
+#                    # Convert booleans to non-negative integers. We're
+#                    # assuming that anything with a dtype attribute also
+#                    # has a size attribute.
+#                    if index.size != size:
+#                        raise IndexError(
+#    "Invalid indices {} for array with shape {}".format(parsed_indices, shape))
+#                    
+#                    index = numpy.where(index)[0]
+#                #--- End: if
+#    
+#                if not numpy.ndim(index):
+#                    if index < 0:
+#                        index += size
+#    
+#                    index = slice(index, index+1, 1)
+#                else:
+#                    len_index = len(index)
+#                    if len_index == 1:                
+#                        index = index[0]
+#                        if index < 0:
+#                            index += size
+#                        
+#                        index = slice(index, index+1, 1)
+#                    else:
+#                        raise IndexError(
+#                            "Invalid indices {} for array with shape {}".format(
+#                                parsed_indices, shape))                
+#                #--- End: if
+#            #--- End: if
+#            
+#            parsed_indices[i] = index    
+#        #--- End: for
+#    
+#        return parsed_indices
+#    #--- End: def
 
     @classmethod
     def get_subspace(cls, array, indices):
@@ -168,10 +267,11 @@ indices must contain an index for each dimension of the input array.
         #--- End: if
     #--- End: def
 
+    @abc.abstractmethod
     def open(self):
         '''
         '''
-        raise NotImplementedError("Subclass of 'Array' must define 'open'")
+        pass
     #---End: def
     
 #--- End: class
@@ -222,7 +322,7 @@ Returns an independent numpy array.
         if indices is Ellipsis:
             return array
             
-        indices = parse_indices(array.shape, indices)
+#        indices = self.parse_indices(indices)
 
         return self.get_subspace(array, indices)
     #--- End: def
@@ -246,7 +346,12 @@ Returns an independent numpy array.
     @property
     def isunique(self):
         return sys.getrefcount(self.array) <= 2
-    
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
 #--- End: class
 
 # ====================================================================
@@ -342,7 +447,7 @@ Returns a numpy array.
 '''
         nc = self.open()
         
-        indices = tuple(parse_indices(self.shape, indices))
+#        indices = tuple(self.parse_indices(indices))
         
         ncvar = getattr(self, 'ncvar', None)
 
@@ -558,7 +663,7 @@ class GatheredArray(Array):
         if indices is Ellpisis:
             return array
 
-        indices = parse_indices(array.shape, indices)
+#        indices = self.parse_indices(indices)
         array = self.get_subspace(array, indices)
         
         return array
