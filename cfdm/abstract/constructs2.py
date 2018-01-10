@@ -1,9 +1,12 @@
-from collections import OrderedDict
+from collections import abc, OrderedDict
 
-class Constructs(object):
+class AbstractConstructs(object):
     '''
 Keys are item identifiers, values are item objects.
     '''
+
+    __metaclass__ = abc.ABCMeta
+    
     def __init__(self, array_constructs=(), non_array_constructs=(),
                  ordered_constructs=()):
         '''
@@ -310,344 +313,19 @@ Return a deep or shallow copy.
         return out
     #--- End: def
 
-    def domain_axis_name(self, axis): #, default=None):
-        '''Return the canonical name for an axis.
-
-:Parameters:
-
-    axis: `str`
-        The identifier of the axis.
-
-          *Example:*
-            ``axis='axis2'``
-
-    default: optional
-
-:Returns:
-
-    out: `str`
-        The canonical name for the axis.
-
-:Examples:
-
+    @abc.abstractmethod
+    def equals(self, rtol=None, atol=None, traceback=False, **kwargs):
         '''
-        domain_axes = self.domain_axes()
-        
-        if axis not in domain_axes:
-            return default
-
-        construct_axes = self.construct_axes()
-
-        name = None
-        
-        for key, dim in self.dimension_coordinates().iteritems():
-            if construct_axes[key] == (axis,):
-                # Get the name from a dimension coordinate
-                name = dim.name(ncvar=False, id=False, default=None)
-                break
-        #--- End: for
-        if name is not None:
-            return name
-
-        found = False
-        for key, aux in self.auxiliary_coordinates().iteritems():
-            if construct_axes[key] == (axis,):
-                if found:
-                    name = None
-                    break
-                
-                # Get the name from an auxiliary coordinate
-                name = aux.name(ncvar=False, id=False, default=None)
-                found = True
-        #--- End: for
-        if name is not None:
-            return name
-
-        ncdim = domain_axes[axis].ncdim()
-        if ncdim is not None:
-            # Get the name from netCDF dimension name            
-            return 'ncdim%{0}'.format(ncdim)
-        
-        return 'id%{0}'.format(axis)
+        '''
+        pass
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None, traceback=False,
-               **kwargs):
-        '''
-        
-        '''
-        if self is other:
-            return True
-        
-        # Check that each instance is the same type
-        if type(self) != type(other):
-            if traceback:
-                print("{0}: Different object types: {0}, {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Domain axes
-        # ------------------------------------------------------------
-        self_sizes  = [d.size for d in self.domain_axes().values()]
-        other_sizes = [d.size for d in other.domain_axes().values()]
-        
-        if sorted(self_sizes) != sorted(other_sizes):
-            # There is not a 1-1 correspondence between axis sizes
-            if traceback:
-                print("{0}: Different domain axes: {1} != {2}".format(
-                    self.__class__.__name__,
-                    sorted(self.values()),
-                    sorted(other.values())))
-            return False
-        #--- End: if
-        
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
-        # ------------------------------------------------------------
-        # 
-        # ------------------------------------------------------------
-        axes0_to_axes1 = {}
-
-        key1_to_key0 = {}
-
-        axes_to_items0 = self.axes_to_constructs()
-        axes_to_items1 = other.axes_to_constructs()
-        
-        for axes0, items0 in axes_to_items0.iteritems():
-            matched_all_items_with_these_axes = False
-
-            len_axes0 = len(axes0) 
-            for axes1, items1 in axes_to_items1.items():
-                matched_roles = False
-
-                if len_axes0 != len(axes1):
-                    # axes1 and axes0 contain differents number of
-                    # axes.
-                    continue
-            
-                for construct_type in self._array_constructs:
-                    matched_role = False
-
-                    role_items0 = items0[construct_type]
-                    role_items1 = items1[construct_type]
-
-                    if len(role_items0) != len(role_items1):
-                        # There are the different numbers of items
-                        # with this role
-                        matched_all_items_with_these_axes = False
-                        break
-
-                    # Check that there are matching pairs of equal
-                    # items
-                    for key0, item0 in role_items0.iteritems():
-                        matched_item = False
-                        for key1, item1 in role_items1.items():
-                            if item0.equals(item1, rtol=rtol,
-                                            atol=atol, traceback=False, **kwargs):
-                                del role_items1[key1]
-                                key1_to_key0[key1] = key0
-                                matched_item = True
-                                break
-                        #--- End: for
-
-                        if not matched_item:
-                            break
-                    #--- End: for
-
-                    if role_items1:
-                        break
-
-                    del items1[construct_type]
-                #--- End: for
-
-                matched_all_items_with_these_axes = not items1
-
-                if matched_all_items_with_these_axes:
-                    del axes_to_items1[axes1]
-                    break
-            #--- End: for
-
-            # Map item axes in the two instances
-            axes0_to_axes1[axes0] = axes1
-
-            if not matched_all_items_with_these_axes:
-                if traceback:
-                    names = [self.domain_axis_name(axis0) for axis0 in axes0]
-                    print("Can't match items spanning axes {0}".format(names))
-                return False
-        #--- End: for
-
-        axis0_to_axis1 = {}
-        axis1_to_axis0 = {}
-        for axes0, axes1 in axes0_to_axes1.iteritems():
-            for axis0, axis1 in zip(axes0, axes1):
-                if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
-                    if traceback:
-                        print(
-"Field: Ambiguous axis mapping ({} -> both {} and {})".format(
-    self.domain_axis_name(axes0), other.domain_axis_name(axis1),
-    other.domain_axis_name(axis0_to_axis1[axis0])))
-                    return False
-                elif axis1 in axis1_to_axis0 and axis0 != axis1_to_axis0[axis1]:
-                    if traceback:
-                        print(
-"Field: Ambiguous axis mapping ({} -> both {} and {})".format(
-    self.domain_axis_name(axis0), self.domain_axis_name(axis1_to_axis0[axis0]),
-    other.domain_axis_name(axes1)))
-                    return False
-
-                axis0_to_axis1[axis0] = axis1
-                axis1_to_axis0[axis1] = axis0
-        #--- End: for     
-
-        #-------------------------------------------------------------
-        # Cell methods
-        #-------------------------------------------------------------
-        cell_methods0 = self.cell_methods()
-        cell_methods1 = other.cell_methods()
-
-        if len(cell_methods0) != len(cell_methods1):
-            if traceback:
-                print("Field: Different cell methods: {0!r}, {1!r}".format(
-                    cell_methods0, cell_methods1))
-            return False
-
-        if cell_methods0:
-            for cm0, cm1 in zip(cell_methods0.values(),
-                                cell_methods1.values()):
-                # Check that there are the same number of axes
-                axes0 = cm0.axes
-                axes1 = list(cm1.axes)
-                if len(cm0.axes) != len(axes1):
-                    if traceback:
-                        print (
-"Field: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
-                    return False
-    
-                argsort = []
-                for axis0 in axes0:
-                    if axis0 is None:
-                        return False
-                    for axis1 in axes1:
-                        if axis0 in axis0_to_axis1 and axis1 in axis1_to_axis0:
-                            if axis1 == axis0_to_axis1[axis0]:
-                                axes1.remove(axis1)
-                                argsort.append(cm1.axes.index(axis1))
-                                break
-                        elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
-                            if traceback:
-                                print (
-"Field: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
-    
-                            return False
-                        elif axis0 == axis1:
-                            # Assume that the axes are standard names
-                            axes1.remove(axis1)
-                            argsort.append(cm1.axes.index(axis1))
-                        elif axis1 is None:
-                            if traceback:
-                                print (
-"Field: Different cell methods (undefined axis): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
-                            return False
-                #--- End: for
-    
-                if len(cm1.axes) != len(argsort):
-                    if traceback:
-                        print ("Field: Different cell methods: {0!r}, {1!r}".format(
-                            cell_methods0, cell_methods1))
-                    return False
-    
-                cm1 = cm1.copy()
-                cm1.sort(argsort=argsort)
-                cm1.axes = axes0
-    
-                if not cm0.equals(cm1, atol=atol, rtol=rtol,
-                                  traceback=traceback, **kwargs):
-                    if traceback:
-                        print ("Field: Different cell methods: {0!r}, {1!r}".format(
-                            cell_methods0, cell_methods1))
-                    return False                
-            #--- End: for
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Coordinate references
-        # ------------------------------------------------------------
-        refs0 = self.coordinate_references()
-        refs1 = other.coordinate_references()
-
-        if len(refs0) != len(refs1):
-            if traceback:
-                print("Field: Different coordinate references: {0!r}, {1!r}".format(
-                    refs0, refs1))
-            return False
-
-        if refs0:
-            for ref0 in refs0.values():
-                found_match = False
-                for key1, ref1 in refs1.items():
-                    if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       traceback=True, **kwargs): ####
-                        continue
-    
-                    # Coordinates
-                    coordinates0 = ref0.coordinates
-                    coordinates1 = set()
-                    for value in ref1.coordinates:
-                        coordinates1.add(key1_to_key0.get(value, value))
-                        
-                    if coordinates0 != coordinates1:
-                        continue
-    
-                    # Domain ancillary terms
-                    terms0 = ref0.domain_ancillaries
-                    terms1 = {}
-                    for term, key in ref1.domain_ancillaries.items():
-                        terms1[term] = key1_to_key0.get(key, key)
-    
-                    if terms0 != terms1:
-                        continue
-    
-                    found_match = True
-                    del refs1[key1]                                       
-                    break
-                #--- End: for
-    
-                if not found_match:
-                    if traceback:
-                        print("Field: No match for {0!r})".format(ref0))
-                    return False
-            #--- End: for
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Still here? Then the two Constructs are equal
-        # ------------------------------------------------------------
-        return True
-    #--- End: def
-    
-    def auxiliary_coordinates(self, copy=False):
-        return self.constructs('auxiliarycoordinate', copy=copy)
-    #--- End: def
-   
     def cell_methods(self, copy=False):
         return self.constructs('cellmethod', copy=copy)
     #--- End: def
     
     def coordinate_references(self, copy=False):
         return self.constructs('coordinatereference', copy=copy)
-    #--- End: def
-
-    def dimension_coordinates(self, copy=False):
-        return self.constructs('dimensioncoordinate', copy=copy)
     #--- End: def
 
     def domain_axes(self, copy=False):
@@ -703,16 +381,11 @@ Return a deep or shallow copy.
     def new_identifier(self, construct_type):
         '''
 
-Return a new, unique auxiliary coordinate identifier for the domain.
-
-.. seealso:: `new_measure_identifier`, `new_dimemsion_identifier`,
-             `new_ref_identifier`
-
-The domain is not updated.
+Return a new, unique identifier for the construct.
 
 :Parameters:
 
-    item_type: `str`
+    construct_type: `str`
 
 :Returns:
 
@@ -785,5 +458,5 @@ The domain is not updated.
             
             self._constructs[construct_type][key] = construct
     #--- End: def
-
+    
 #--- End: class

@@ -218,15 +218,7 @@ ancillaries, field ancillaries).
                             attributes[ncvar][attr] = attributes[ncvar][attr].encode(errors='ignore')
                 except UnicodeDecodeError:
                     pass
-            #--- End: for  
-    
-#            # Check for bad units
-#            units = self._Units(attributes[ncvar].get('units', None), 
-#                                attributes[ncvar].get('calendar', None))
-#            if verbose and not units.isvalid:
-#                print(
-#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-#    filename, ncvar, units))
+            #--- End: for
         #--- End: for
     
         # ----------------------------------------------------------------
