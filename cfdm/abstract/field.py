@@ -502,174 +502,174 @@ functionality:
         return new
     #--- End: def
 
-    def __str__(self):
-        '''Called by the :py:obj:`str` built-in function.
-
-x.__str__() <==> str(x)
-
-        '''
-        title = "Field: {0}".format(self.name(''))
-
-        # Append the netCDF variable name
-        ncvar = self.ncvar()
-        if ncvar is not None:
-            title += " (ncvar%{0})".format(ncvar)
-        
-        string = [title]
-        string.append(''.ljust(len(string[0]), '-'))
-
-        # Units
-        units = getattr(self, 'units', '')
-        calendar = getattr(self, 'calendar', None)
-        if calendar is not None:
-            units += ' {0} {1}'.format(calendar)
-            
-        axis_name = self.domain_axis_name
-
-        # Axes
-        data_axes = self.data_axes()
-        if data_axes is None:
-            data_axes = ()
-        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
-
-        axis_names = {}
-        for key, domain_axis in self.domain_axes().iteritems():
-            axis_names[key] = '{0}({1})'.format(axis_name(key),
-                                                domain_axis.size)
-        
-        # Data
-        if self.hasdata:
-            axes = self.domain_axes()
-            x = ['{0}'.format(axis_names[axis]) for axis in self.data_axes()]
-            string.append('Data            : {0}({1}) {2}'.format(
-                self.name(''), ', '.join(x), units))
-        elif units:
-            string.append('Data            : {0}'.format(units))
-
-        # Cell methods
-        cell_methods = self.cell_methods()
-        if cell_methods:
-            x = []
-            for cm in cell_methods.values():
-                cm = cm.copy()
-                cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
-                x.append(str(cm))
-                
-            c = ' '.join(x)
-            
-            string.append('Cell methods    : {0}'.format(c))
-        #--- End: if
-        
-        axis_to_name = {}
-        def _print_item(self, key, variable, dimension_coord):
-            '''Private function called by __str__'''
-            
-            if dimension_coord:
-                # Dimension coordinate
-                name = "{0}({1})".format(axis_name(key), self.domain_axes()[key].size)
-                axis_to_name[key] = name
-                
-                variable = self.constructs().get(key, None)
-                
-                if variable is None:
-                    return name
-                          
-                x = [name]
-                
-            else:
-                # Auxiliary coordinate
-                # Cell measure
-                # Field ancillary
-                # Domain ancillary
-                shape = [axis_names[axis] for axis in self.construct_axes(key)]
-                shape = str(tuple(shape)).replace("'", "")
-                shape = shape.replace(',)', ')')
-                x = [variable.name(key)]
-                x.append(shape)
-            #--- End: if
-                    
-            if variable.hasdata:
-#                if variable.isreftime:
-#                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
-#                else:
-                x.append(' = {}'.format(variable.data))
-                
-            return ''.join(x)
-        #--- End: def
-                          
-        # Axes and dimension coordinates
+#    def __str__(self):
+#        '''Called by the :py:obj:`str` built-in function.
+#
+#x.__str__() <==> str(x)
+#
+#        '''
+#        title = "Field: {0}".format(self.name(''))
+#
+#        # Append the netCDF variable name
+#        ncvar = self.ncvar()
+#        if ncvar is not None:
+#            title += " (ncvar%{0})".format(ncvar)
+#        
+#        string = [title]
+#        string.append(''.ljust(len(string[0]), '-'))
+#
+#        # Units
+#        units = getattr(self, 'units', '')
+#        calendar = getattr(self, 'calendar', None)
+#        if calendar is not None:
+#            units += ' {0} {1}'.format(calendar)
+#            
+#        axis_name = self.domain_axis_name
+#
+#        # Axes
 #        data_axes = self.data_axes()
 #        if data_axes is None:
 #            data_axes = ()
 #        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
 #
-#        x = ['{0}({1})'.format(self.domain_axis_name(axis),
-#                               self.domain_axes()[axis].size)
-#            for axis in list(non_spanning_axes) + data_axes]
-#        string.append('Domain axes: {}'.format(', '.join(x)))
-
-        # Field ancillary variables
-        x = [_print_item(self, key, anc, False)
-             for key, anc in sorted(self.field_ancillaries().items())]
-        if x:
-            string.append('Field ancils    : {}'.format(
-                '\n                : '.join(x)))
-
-        x = []
-        for key in list(non_spanning_axes) + data_axes:
-            for k, dim in self.dimension_coordinates().items():
-                if self.construct_axes()[k] == (key,):
-                    name = dim.name(default='id%{0}'.format(k))
-                    y = '{0}({1})'.format(name, dim.size)
-                    if y != axis_names[key]:
-                        y = '{0}({1})'.format(name, axis_names[key])
-                    if dim.hasdata:
-                        y += ' = {0}'.format(dim.data)
-                    x.append(y)   
-        string.append('Dimension coords: {}'.format('\n                : '.join(x)))
-
-        
-#        x1 = [_print_item(self, dim, None, True)
-#              for dim in sorted(non_spanning_axes)]
-#        x2 = [_print_item(self, dim, None, True)
-#              for dim in data_axes]
-#        x = x1 + x2
+#        axis_names = {}
+#        for key, domain_axis in self.domain_axes().iteritems():
+#            axis_names[key] = '{0}({1})'.format(axis_name(key),
+#                                                domain_axis.size)
+#        
+#        # Data
+#        if self.hasdata:
+#            axes = self.domain_axes()
+#            x = ['{0}'.format(axis_names[axis]) for axis in self.data_axes()]
+#            string.append('Data            : {0}({1}) {2}'.format(
+#                self.name(''), ', '.join(x), units))
+#        elif units:
+#            string.append('Data            : {0}'.format(units))
+#
+#        # Cell methods
+#        cell_methods = self.cell_methods()
+#        if cell_methods:
+#            x = []
+#            for cm in cell_methods.values():
+#                cm = cm.copy()
+#                cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
+#                x.append(str(cm))
+#                
+#            c = ' '.join(x)
+#            
+#            string.append('Cell methods    : {0}'.format(c))
+#        #--- End: if
+#        
+#        axis_to_name = {}
+#        def _print_item(self, key, variable, dimension_coord):
+#            '''Private function called by __str__'''
+#            
+#            if dimension_coord:
+#                # Dimension coordinate
+#                name = "{0}({1})".format(axis_name(key), self.domain_axes()[key].size)
+#                axis_to_name[key] = name
+#                
+#                variable = self.constructs().get(key, None)
+#                
+#                if variable is None:
+#                    return name
+#                          
+#                x = [name]
+#                
+#            else:
+#                # Auxiliary coordinate
+#                # Cell measure
+#                # Field ancillary
+#                # Domain ancillary
+#                shape = [axis_names[axis] for axis in self.construct_axes(key)]
+#                shape = str(tuple(shape)).replace("'", "")
+#                shape = shape.replace(',)', ')')
+#                x = [variable.name(key)]
+#                x.append(shape)
+#            #--- End: if
+#                    
+#            if variable.hasdata:
+##                if variable.isreftime:
+##                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
+##                else:
+#                x.append(' = {}'.format(variable.data))
+#                
+#            return ''.join(x)
+#        #--- End: def
+#                          
+#        # Axes and dimension coordinates
+##        data_axes = self.data_axes()
+##        if data_axes is None:
+##            data_axes = ()
+##        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
+##
+##        x = ['{0}({1})'.format(self.domain_axis_name(axis),
+##                               self.domain_axes()[axis].size)
+##            for axis in list(non_spanning_axes) + data_axes]
+##        string.append('Domain axes: {}'.format(', '.join(x)))
+#
+#        # Field ancillary variables
+#        x = [_print_item(self, key, anc, False)
+#             for key, anc in sorted(self.field_ancillaries().items())]
 #        if x:
-#            string.append('Axes           : {}'.format(
-#                '\n               : '.join(x)))
-                          
-        # Auxiliary coordinates
-        x = [_print_item(self, aux, v, False) 
-             for aux, v in sorted(self.auxiliary_coordinates().items())]
-        if x:
-            string.append('Auxiliary coords: {}'.format(
-                '\n                : '.join(x)))
-        
-        # Cell measures
-        x = [_print_item(self, msr, v, False)
-             for msr, v in sorted(self.cell_measures().items())]
-        if x:
-            string.append('Cell measures   : {}'.format(
-                '\n                : '.join(x)))
-            
-        # Coordinate references
-        x = sorted([ref.name(default='')
-                    for ref in self.coordinate_references().values()])
-        if x:
-            string.append('Coord references: {}'.format(
-                '\n                : '.join(x)))
-            
-        # Domain ancillary variables
-        x = [_print_item(self, key, anc, False)
-             for key, anc in sorted(self.domain_ancillaries().items())]
-        if x:
-            string.append('Domain ancils   : {}'.format(
-                '\n                : '.join(x)))
-                                      
-        string.append('')
-        
-        return '\n'.join(string)
-    #--- End def
+#            string.append('Field ancils    : {}'.format(
+#                '\n                : '.join(x)))
+#
+#        x = []
+#        for key in list(non_spanning_axes) + data_axes:
+#            for k, dim in self.dimension_coordinates().items():
+#                if self.construct_axes()[k] == (key,):
+#                    name = dim.name(default='id%{0}'.format(k))
+#                    y = '{0}({1})'.format(name, dim.size)
+#                    if y != axis_names[key]:
+#                        y = '{0}({1})'.format(name, axis_names[key])
+#                    if dim.hasdata:
+#                        y += ' = {0}'.format(dim.data)
+#                    x.append(y)   
+#        string.append('Dimension coords: {}'.format('\n                : '.join(x)))
+#
+#        
+##        x1 = [_print_item(self, dim, None, True)
+##              for dim in sorted(non_spanning_axes)]
+##        x2 = [_print_item(self, dim, None, True)
+##              for dim in data_axes]
+##        x = x1 + x2
+##        if x:
+##            string.append('Axes           : {}'.format(
+##                '\n               : '.join(x)))
+#                          
+#        # Auxiliary coordinates
+#        x = [_print_item(self, aux, v, False) 
+#             for aux, v in sorted(self.auxiliary_coordinates().items())]
+#        if x:
+#            string.append('Auxiliary coords: {}'.format(
+#                '\n                : '.join(x)))
+#        
+#        # Cell measures
+#        x = [_print_item(self, msr, v, False)
+#             for msr, v in sorted(self.cell_measures().items())]
+#        if x:
+#            string.append('Cell measures   : {}'.format(
+#                '\n                : '.join(x)))
+#            
+#        # Coordinate references
+#        x = sorted([ref.name(default='')
+#                    for ref in self.coordinate_references().values()])
+#        if x:
+#            string.append('Coord references: {}'.format(
+#                '\n                : '.join(x)))
+#            
+#        # Domain ancillary variables
+#        x = [_print_item(self, key, anc, False)
+#             for key, anc in sorted(self.domain_ancillaries().items())]
+#        if x:
+#            string.append('Domain ancils   : {}'.format(
+#                '\n                : '.join(x)))
+#                                      
+#        string.append('')
+#        
+#        return '\n'.join(string)
+#    #--- End def
                           
     @property
     def Flags(self):
@@ -980,203 +980,203 @@ True
         return True
     #--- End: def
 
-    def _dump_axes(self, axis_names, display=True, _level=0):
-        '''Return a string containing a description of the domain axes of the
-field.
-    
-:Parameters:
-    
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-    
-    _level: `int`, optional
-
-:Returns:
-    
-    out: `str`
-        A string containing the description.
-    
-:Examples:
-
-        '''
-        indent1 = '    ' * _level
-        indent2 = '    ' * (_level+1)
-
-        data_axes = self.data_axes()
-        if data_axes is None:
-            data_axes = ()
-
-        axes = self.domain_axes()
-
-        w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-                    for axis in axes
-                    if axis not in data_axes])
-
-        x = ["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-             for axis in data_axes]
-
-        string = '\n'.join(w+x)
-
-        if display:
-            print string
-        else:
-            return string
-    #--- End: def
-
-    def dump(self, display=True, _level=0, _title='Field', _q='-'):
-        '''A full description of the field.
-
-The field and its components are described without abbreviation with
-the exception of data arrays, which are abbreviated to their first and
-last values.
-
-:Examples 1:
-        
->>> f.{+name}()
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed.
-
-          *Example:*
-            ``f.dump()`` is equivalent to ``print
-            f.dump(display=False)``.
-
-:Returns:
-
-    out: `None` or `str`
-        If *display* is True then the description is printed and
-        `None` is returned. Otherwise the description is returned as a
-        string.
-
-        '''
-        indent = '    '      
-        indent0 = indent * _level
-        indent1 = indent0 + indent
-
-        title = '{0}{1}: {2}'.format(indent0, _title, self.name(''))
-
-        # Append the netCDF variable name
-        ncvar = self.ncvar()
-        if ncvar is not None:
-            title += " (ncvar%{0})".format(ncvar)
-
-        line  = '{0}{1}'.format(indent0, ''.ljust(len(title)-_level*4, '-'))
-
-        # Title
-        string = [line, title, line]
-
-        # Simple properties
-        if self.properties():
-            string.append(
-                self._dump_properties(_level=_level,
-                                      omit=('Conventions',
-                                            '_FillValue',
-                                            'missing_value',
-                                            'flag_values',
-                                            'flag_meanings',
-                                            'flag_masks')))
-            
-
-        axis_names = {}
-        for key, domain_axis in self.domain_axes().iteritems():
-            axis_names[key] = '{0}({1})'.format(self.domain_axis_name(key),
-                                                domain_axis.size)
-
-        # Flags
-        flags = []
-        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
-            value = getattr(self, attr, None)
-            if value is not None:
-                flags.append('{0}{1} = {2}'.format(indent0, attr, value))
-        #--- End: for
-        if flags:
-            string.append('')
-            string.extend(flags)
-            
-        # Axes
-        axes = self._dump_axes(axis_names, display=False, _level=_level)
-        if axes:
-            string.extend(('', axes))
-           
-        # Data
-        if self.hasdata:
-            axes = self.domain_axes()
-            axis_name = self.domain_axis_name
-            x = ['{0}({1})'.format(axis_name(axis), axes[axis].size)
-                 for axis in self.data_axes()]
-            data = self.data
-            if self.isreftime:
-                print 'lkkkk'
-                data = data.asdata(self.dtarray)
-                
-            string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
-                                                           ', '.join(x),
-                                                           str(data))))
-        # Cell methods
-        cell_methods = self.cell_methods()
-        if cell_methods:
-            string.append('')
-            for cm in cell_methods.values():
-                cm = cm.copy()
-                cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
-                string.append(cm.dump(display=False, _level=_level))
-        #--- End: if
-
+#    def _dump_axes(self, axis_names, display=True, _level=0):
+#        '''Return a string containing a description of the domain axes of the
+#field.
+#    
+#:Parameters:
+#    
+#    display: `bool`, optional
+#        If False then return the description as a string. By default
+#        the description is printed.
+#    
+#    _level: `int`, optional
+#
+#:Returns:
+#    
+#    out: `str`
+#        A string containing the description.
+#    
+#:Examples:
+#
+#        '''
+#        indent1 = '    ' * _level
+#        indent2 = '    ' * (_level+1)
+#
+#        data_axes = self.data_axes()
+#        if data_axes is None:
+#            data_axes = ()
+#
+#        axes = self.domain_axes()
+#
+#        w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
+#                    for axis in axes
+#                    if axis not in data_axes])
+#
+#        x = ["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
+#             for axis in data_axes]
+#
+#        string = '\n'.join(w+x)
+#
+#        if display:
+#            print string
+#        else:
+#            return string
+#    #--- End: def
+#
+#    def dump(self, display=True, _level=0, _title='Field', _q='-'):
+#        '''A full description of the field.
+#
+#The field and its components are described without abbreviation with
+#the exception of data arrays, which are abbreviated to their first and
+#last values.
+#
+#:Examples 1:
+#        
+#>>> f.{+name}()
+#
+#:Parameters:
+#
+#    display: `bool`, optional
+#        If False then return the description as a string. By default
+#        the description is printed.
+#
+#          *Example:*
+#            ``f.dump()`` is equivalent to ``print
+#            f.dump(display=False)``.
+#
+#:Returns:
+#
+#    out: `None` or `str`
+#        If *display* is True then the description is printed and
+#        `None` is returned. Otherwise the description is returned as a
+#        string.
+#
+#        '''
+#        indent = '    '      
+#        indent0 = indent * _level
+#        indent1 = indent0 + indent
+#
+#        title = '{0}{1}: {2}'.format(indent0, _title, self.name(''))
+#
+#        # Append the netCDF variable name
+#        ncvar = self.ncvar()
+#        if ncvar is not None:
+#            title += " (ncvar%{0})".format(ncvar)
+#
+#        line  = '{0}{1}'.format(indent0, ''.ljust(len(title)-_level*4, '-'))
+#
+#        # Title
+#        string = [line, title, line]
+#
+#        # Simple properties
+#        if self.properties():
+#            string.append(
+#                self._dump_properties(_level=_level,
+#                                      omit=('Conventions',
+#                                            '_FillValue',
+#                                            'missing_value',
+#                                            'flag_values',
+#                                            'flag_meanings',
+#                                            'flag_masks')))
+#            
+#
+#        axis_names = {}
+#        for key, domain_axis in self.domain_axes().iteritems():
+#            axis_names[key] = '{0}({1})'.format(self.domain_axis_name(key),
+#                                                domain_axis.size)
+#
+#        # Flags
+#        flags = []
+#        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
+#            value = getattr(self, attr, None)
+#            if value is not None:
+#                flags.append('{0}{1} = {2}'.format(indent0, attr, value))
+#        #--- End: for
+#        if flags:
+#            string.append('')
+#            string.extend(flags)
+#            
+#        # Axes
+#        axes = self._dump_axes(axis_names, display=False, _level=_level)
+#        if axes:
+#            string.extend(('', axes))
+#           
+#        # Data
+#        if self.hasdata:
+#            axes = self.domain_axes()
+#            axis_name = self.domain_axis_name
+#            x = ['{0}({1})'.format(axis_name(axis), axes[axis].size)
+#                 for axis in self.data_axes()]
+#            data = self.data
+#            if self.isreftime:
+#                print 'lkkkk'
+#                data = data.asdata(self.dtarray)
+#                
+#            string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
+#                                                           ', '.join(x),
+#                                                           str(data))))
+#        # Cell methods
 #        cell_methods = self.cell_methods()
 #        if cell_methods:
-#            cell_methods = cell_methods.values()
 #            string.append('')
-#            for cm in cell_methods:
+#            for cm in cell_methods.values():
+#                cm = cm.copy()
+#                cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
 #                string.append(cm.dump(display=False, _level=_level))
-
-        # Field ancillaries
-        for key, value in sorted(self.field_ancillaries().iteritems()):
-            string.append('') 
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
-
-        # Dimension coordinates
-        for key, value in sorted(self.dimension_coordinates().iteritems()):
-            string.append('')
-            string.append(value.dump(display=False, 
-                                     field=self, key=key, _level=_level))
-             
-        # Auxiliary coordinates
-        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
-            string.append('')
-            string.append(value.dump(display=False, field=self, 
-                                     key=key, _level=_level))
-        # Domain ancillaries
-        for key, value in sorted(self.domain_ancillaries().iteritems()):
-            string.append('') 
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
-            
-        # Coordinate references
-        for key, value in sorted(self.coordinate_references().iteritems()):
-            string.append('')
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
-
-        # Cell measures
-        for key, value in sorted(self.cell_measures().iteritems()):
-            string.append('')
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
-
-        string.append('')
-        
-        string = '\n'.join(string)
-       
-        if display:
-            print string
-        else:
-            return string
-    #--- End: def
+#        #--- End: if
+#
+##        cell_methods = self.cell_methods()
+##        if cell_methods:
+##            cell_methods = cell_methods.values()
+##            string.append('')
+##            for cm in cell_methods:
+##                string.append(cm.dump(display=False, _level=_level))
+#
+#        # Field ancillaries
+#        for key, value in sorted(self.field_ancillaries().iteritems()):
+#            string.append('') 
+#            string.append(
+#                value.dump(display=False, field=self, key=key, _level=_level))
+#
+#        # Dimension coordinates
+#        for key, value in sorted(self.dimension_coordinates().iteritems()):
+#            string.append('')
+#            string.append(value.dump(display=False, 
+#                                     field=self, key=key, _level=_level))
+#             
+#        # Auxiliary coordinates
+#        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
+#            string.append('')
+#            string.append(value.dump(display=False, field=self, 
+#                                     key=key, _level=_level))
+#        # Domain ancillaries
+#        for key, value in sorted(self.domain_ancillaries().iteritems()):
+#            string.append('') 
+#            string.append(
+#                value.dump(display=False, field=self, key=key, _level=_level))
+#            
+#        # Coordinate references
+#        for key, value in sorted(self.coordinate_references().iteritems()):
+#            string.append('')
+#            string.append(
+#                value.dump(display=False, field=self, key=key, _level=_level))
+#
+#        # Cell measures
+#        for key, value in sorted(self.cell_measures().iteritems()):
+#            string.append('')
+#            string.append(
+#                value.dump(display=False, field=self, key=key, _level=_level))
+#
+#        string.append('')
+#        
+#        string = '\n'.join(string)
+#       
+#        if display:
+#            print string
+#        else:
+#            return string
+#    #--- End: def
 
     def _insert_construct_check_axes(self, item, axes, allow_scalar=True):
         '''

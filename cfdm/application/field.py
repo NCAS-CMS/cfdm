@@ -8,7 +8,10 @@ from .flags      import Flags
 from .constructs2 import Constructs
 from .domain      import Domain
 
-from ..abstract.field import AbstractField
+#from ..abstract.field import AbstractField
+
+import ..abstract
+
 _debug = False
        
 # ====================================================================
@@ -17,7 +20,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(AbstractField):
+class Field(abstract.AbstractField):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -148,163 +151,6 @@ Field objects are picklable.
     def unlimited(self, *args, **kwargs):
         return {}
     
-    def _no_None_dict(self, d):
-        '''
-        '''
-        return dict((key, value) for key, value in d.iteritems() 
-                    if value is not None)
-    #--- End: def
-
-    def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
-
-x.__repr__() <==> repr(x)
-
-        '''
-        if self.hasdata:
-            axes = self.domain_axes()
-            axis_name = self.domain_axis_name
-            x = ['{0}({1})'.format(axis_name(axis), axes[axis].size)
-                 for axis in self.data_axes()]
-            axis_names = '({0})'.format(', '.join(x))
-        else:
-            axis_names = ''
-            
-        # Field units
-        units = getattr(self, 'units', '')
-        calendar = getattr(self, 'calendar', None)
-        if calendar is not None:
-            units += '{0} {1}'.format(calendar)
-
-        return '<{0}: {1}{2} {3}>'.format(self.__class__.__name__,
-                                          self.name(default=''),
-                                          axis_names, units)
-    #--- End: def
-
-    def __getitem__(self, indices):
-        '''f.__getitem__(indices) <==> f[indices]
-
-Return a subspace of the field defined by index values
-
-Subspacing by axis indices uses an extended Python slicing syntax,
-which is similar to :ref:`numpy array indexing
-<numpy:arrays.indexing>`. There are extensions to the numpy indexing
-functionality:
-
-* Size 1 axes are never removed.
-
-  An integer index *i* takes the *i*-th element but does not reduce
-  the rank of the output array by one:
-
-  >>> f.shape
-  (12, 73, 96)
-  >>> f[0].shape
-  (1, 73, 96)
-  >>> f[3, slice(10, 0, -2), 95:93:-1].shape
-  (1, 5, 2)
-
-* The indices for each axis work independently.
-
-  When more than one axis's slice is a 1-d boolean sequence or 1-d
-  sequence of integers, then these indices work independently along
-  each axis (similar to the way vector subscripts work in Fortran),
-  rather than by their elements:
-
-  >>> f.shape
-  (12, 73, 96)
-  >>> f[:, [0, 72], [5, 4, 3]].shape
-  (12, 2, 3)
-
-  Note that the indices of the last example would raise an error when
-  given to a numpy array.
-
-* Boolean indices may be any object which exposes the numpy array
-  interface, such as the field's coordinate objects:
-
-  >>> f[:, f.coord('latitude')<0].shape
-  (12, 36, 96)
-
->>> f.shape
-(12, 73, 96)
->>> f[...].shape
-(12, 73, 96)
-
-.. versionadded:: 1.6
-
-.. seealso:: `__setitem__`
-
-:Examples 1:
-
->>> g = f[..., 0, :6, 9:1:-2, [1, 3, 4]]
-
-:Returns:
-
-    out: `Field`
-
-:Examples 2:
-
->>> f.shape
-(12, 73, 96)
->>> f[...].shape
-(12, 73, 96)
-
-        ''' 
-        data  = self.data
-        shape = data.shape
-
-        # Parse the index
-#        if not isinstance(indices, tuple):
-#            indices = (indices,)
-
-        indices = data.parse_indices(indices)
-
-        new = self.copy()
-
-        # Open any files that contained the original data (this not
-        # necessary, is an optimsation)
-        
-        # ------------------------------------------------------------
-        # Subspace the field's data
-        # ------------------------------------------------------------
-#        new._Data = self.data[tuple(indices)]
-        new._Data = self.data[indices]
-
-        # ------------------------------------------------------------
-        # Subspace constructs
-        # ------------------------------------------------------------
-        new_Constructs = new.Constructs
-        data_axes = new.data_axes()
-
-        for key, construct in new.array_constructs().iteritems():
-            needs_slicing = False
-            dice = []
-            for axis in new.construct_axes(key):
-                if axis in data_axes:
-                    needs_slicing = True
-                    dice.append(indices[data_axes.index(axis)])
-                else:
-                    dice.append(slice(None))
-            #--- End: for
-
-            if _debug:
-                print '    item:', repr(item)
-                print '    dice = ', dice
-                
-            # Replace existing construct with its subspace
-            if needs_slicing:
-                new_Constructs.replace(key, construct[tuple(dice)])
-        #--- End: for
-
-        # Replace domain axes
-        domain_axes = new.domain_axes()
-        for key, size in zip(data_axes, new.shape):
-            new_domain_axis = domain_axes[key].copy()
-            new_domain_axis.size = size
-            new_Constructs.replace(key, new_domain_axis)
-
-        return new
-    #--- End: def
-
     def __str__(self):
         '''Called by the :py:obj:`str` built-in function.
 
@@ -473,8 +319,131 @@ x.__str__() <==> str(x)
         
         return '\n'.join(string)
     #--- End def
-                          
-    @property
+
+    def __getitem__(self, indices):
+        '''f.__getitem__(indices) <==> f[indices]
+
+Return a subspace of the field defined by index values
+
+Subspacing by axis indices uses an extended Python slicing syntax,
+which is similar to :ref:`numpy array indexing
+<numpy:arrays.indexing>`. There are extensions to the numpy indexing
+functionality:
+
+* Size 1 axes are never removed.
+
+  An integer index *i* takes the *i*-th element but does not reduce
+  the rank of the output array by one:
+
+  >>> f.shape
+  (12, 73, 96)
+  >>> f[0].shape
+  (1, 73, 96)
+  >>> f[3, slice(10, 0, -2), 95:93:-1].shape
+  (1, 5, 2)
+
+* The indices for each axis work independently.
+
+  When more than one axis's slice is a 1-d boolean sequence or 1-d
+  sequence of integers, then these indices work independently along
+  each axis (similar to the way vector subscripts work in Fortran),
+  rather than by their elements:
+
+  >>> f.shape
+  (12, 73, 96)
+  >>> f[:, [0, 72], [5, 4, 3]].shape
+  (12, 2, 3)
+
+  Note that the indices of the last example would raise an error when
+  given to a numpy array.
+
+* Boolean indices may be any object which exposes the numpy array
+  interface, such as the field's coordinate objects:
+
+  >>> f[:, f.coord('latitude')<0].shape
+  (12, 36, 96)
+
+>>> f.shape
+(12, 73, 96)
+>>> f[...].shape
+(12, 73, 96)
+
+.. versionadded:: 1.6
+
+.. seealso:: `__setitem__`
+
+:Examples 1:
+
+>>> g = f[..., 0, :6, 9:1:-2, [1, 3, 4]]
+
+:Returns:
+
+    out: `Field`
+
+:Examples 2:
+
+>>> f.shape
+(12, 73, 96)
+>>> f[...].shape
+(12, 73, 96)
+
+        ''' 
+        data  = self.data
+        shape = data.shape
+
+        # Parse the index
+#        if not isinstance(indices, tuple):
+#            indices = (indices,)
+
+        indices = data.parse_indices(indices)
+
+        new = self.copy()
+
+        # Open any files that contained the original data (this not
+        # necessary, is an optimsation)
+        
+        # ------------------------------------------------------------
+        # Subspace the field's data
+        # ------------------------------------------------------------
+#        new._Data = self.data[tuple(indices)]
+        new._Data = self.data[indices]
+
+        # ------------------------------------------------------------
+        # Subspace constructs
+        # ------------------------------------------------------------
+        new_Constructs = new.Constructs
+        data_axes = new.data_axes()
+
+        for key, construct in new.array_constructs().iteritems():
+            needs_slicing = False
+            dice = []
+            for axis in new.construct_axes(key):
+                if axis in data_axes:
+                    needs_slicing = True
+                    dice.append(indices[data_axes.index(axis)])
+                else:
+                    dice.append(slice(None))
+            #--- End: for
+
+            if _debug:
+                print '    item:', repr(item)
+                print '    dice = ', dice
+                
+            # Replace existing construct with its subspace
+            if needs_slicing:
+                new_Constructs.replace(key, construct[tuple(dice)])
+        #--- End: for
+
+        # Replace domain axes
+        domain_axes = new.domain_axes()
+        for key, size in zip(data_axes, new.shape):
+            new_domain_axis = domain_axes[key].copy()
+            new_domain_axis.size = size
+            new_Constructs.replace(key, new_domain_axis)
+
+        return new
+    #--- End: def
+
     def Flags(self):
         '''A `Flags` object containing self-describing CF flag values.
         
@@ -490,10 +459,6 @@ x.__str__() <==> str(x)
     def Flags(self):
         self._del_special_attr('Flags')
         
-#    @property
-#    def Constructs(self):
-#        return self._private['special_attributes']['constructs']
-    
     # ----------------------------------------------------------------
     # CF property
     # ----------------------------------------------------------------
@@ -643,145 +608,49 @@ for details.
             raise AttributeError("Can't delete non-existent CF property 'flag_meanings'")
     #--- End: def
 
-    def array_constructs(self, axes=None, copy=False):
-        return self.Constructs.array_constructs(axes=axes, copy=copy)
-
-    def auxiliary_coordinates(self, axes=None, copy=False):
-        return self.Constructs.constructs('auxiliarycoordinate', copy=copy)
-    
-    def cell_measures(self, axes=None, copy=False):
-        return self.Constructs.constructs('cellmeasure', copy=copy)
-    
-    def cell_methods(self, copy=False):
-        return self.Constructs.cell_methods(copy=copy)
-#    
-#    def construct_axes(self, key=None):
-#        return self.Constructs.construct_axes(key=key)
-#    
-#    def constructs(self, axes=None,copy=False):
-#        '''Return all of the data model constructs of the field.#
-#
-#.. versionadded:: 1.6
-#
-#.. seealso:: `dump`
-#
-#:Examples 1:
-#
-#>>> f.{+name}()
-#
-#:Returns:
-#
-#    out: `list`
-#        The objects correposnding CF data model constructs.
-#
-#:Examples 2:
-#
-#>>> print f
-#eastward_wind field summary
-#---------------------------
-#Data           : eastward_wind(air_pressure(15), latitude(72), longitude(96)) m s-1
-#Cell methods   : time: mean
-#Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
-#               : air_pressure(15) = [1000.0, ..., 10.0] hPa
-#               : latitude(72) = [88.75, ..., -88.75] degrees_north
-#               : longitude(96) = [1.875, ..., 358.125] degrees_east
-#>>> f.{+name}()
-#[<Field: eastward_wind(air_pressure(15), latitude(72), longitude(96)) m s-1>,
-# <DomainAxis: 96>,
-# <DomainAxis: 1>,
-# <DomainAxis: 15>,
-# <DomainAxis: 72>,
-# <CellMethod: dim3: mean>,
-# <DimensionCoordinate: longitude(96) degrees_east>,
-# <DimensionCoordinate: time(1) 360_day>,
-# <DimensionCoordinate: air_pressure(15) hPa>,
-# <DimensionCoordinate: latitude(72) degrees_north>]
-#
-#        '''
-#        return self.Constructs.constructs(copy=copy)
-#    #--- End: def
-
-    def coordinate_references(self, copy=False):
-        return self.Constructs.coordinate_references(copy=copy)
-
-    def coordinates(self, copy=False):
-        '''
-'''
-        out = self.dimension_coordinates(copy=copy)
-        out.update(self.auxiliary_coordinates(copy=copy))
-        return out
-    #--- End: def
-
-#    def data_axes(self):
-#        '''Return the domain axes for the data array dimensions.
-#
-#.. seealso:: `axes`, `axis`, `item_axes`
-#
-#:Examples 1:
-#
-#>>> d = f.{+name}()
-#
-#:Returns:
-#
-#    out: list or None
-#        The ordered axes of the data array. If there is no data array
-#        then `None` is returned.
-#
-#:Examples 2:
-#
-#>>> f.ndim
-#3
-#>>> f.{+name}()
-#['dim2', 'dim0', 'dim1']
-#>>> f.remove_data()
-#>>> print f.{+name}()
-#None
-#
-#>>> f.ndim
-#0
-#>>> f.{+name}()
-#[]
-#
-#        '''    
-#        if not self.hasdata:
-#            return None
-#        
-#        return self._data_axes[:]
-#    #--- End: def
-
-    def dimension_coordinates(self, axes=None, copy=False):
-        return self.Constructs.constructs('dimensioncoordinate', axes=axes, copy=copy)
-    
 #    def domain(self, copy=False):
 #        return self._Domain(constructs=self.Constructs, copy=copy)
     
-    def domain_ancillaries(self, copy=False):
-        return self.Constructs.constructs('domainancillary', copy=copy)
-    
-    def domain_axes(self, copy=False):
-        return self.Constructs.domain_axes(copy=copy)
-    
-    def domain_axis_name(self, axis):
-        '''
-        '''
-        return self.Constructs.domain_axis_name(axis)
-    #--- End: for
-    
-    def field_ancillaries(self, copy=False):
-        return self.Constructs.constructs('fieldancillary', copy=copy)
+                value.dump(display=False, field=self, key=key, _level=_level))
 
-#    @property
-#    def isfield(self): 
-#        '''True, denoting that the variable is a field object
-#
-#:Examples:
-#
-#>>> f.isfield
-#True
-#
-#        '''
-#        return True
-#    #--- End: def
+        # Dimension coordinates
+        for key, value in sorted(self.dimension_coordinates().iteritems()):
+            string.append('')
+            string.append(value.dump(display=False, 
+                                     field=self, key=key, _level=_level))
+             
+        # Auxiliary coordinates
+        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
+            string.append('')
+            string.append(value.dump(display=False, field=self, 
+                                     key=key, _level=_level))
+        # Domain ancillaries
+        for key, value in sorted(self.domain_ancillaries().iteritems()):
+            string.append('') 
+            string.append(
+                value.dump(display=False, field=self, key=key, _level=_level))
+            
+        # Coordinate references
+        for key, value in sorted(self.coordinate_references().iteritems()):
+            string.append('')
+            string.append(
+                value.dump(display=False, field=self, key=key, _level=_level))
+
+        # Cell measures
+        for key, value in sorted(self.cell_measures().iteritems()):
+            string.append('')
+            string.append(
+                value.dump(display=False, field=self, key=key, _level=_level))
+
+        string.append('')
+        
+        string = '\n'.join(string)
+       
+        if display:
+            print string
+        else:
+            return string
+    #--- End: def
 
     def _dump_axes(self, axis_names, display=True, _level=0):
         '''Return a string containing a description of the domain axes of the
