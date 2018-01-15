@@ -840,6 +840,19 @@ for details.
             raise AttributeError("Can't delete non-existent CF property 'flag_meanings'")
     #--- End: def
 
+    @property
+    def isfield(self): 
+        '''True, denoting that the variable is a field object
+
+:Examples:
+
+>>> f.isfield
+True
+
+        '''
+        return True
+    #--- End: def
+
     def array_constructs(self, axes=None, copy=False):
         return self.Constructs.array_constructs(axes=axes, copy=copy)
 
@@ -949,9 +962,6 @@ None
     def dimension_coordinates(self, axes=None, copy=False):
         return self.Constructs.constructs('dimensioncoordinate', axes=axes, copy=copy)
     
-    def domain(self, copy=False):
-        return self._Domain(constructs=self.Constructs, copy=copy)
-    
     def domain_ancillaries(self, copy=False):
         return self.Constructs.constructs('domainancillary', copy=copy)
     
@@ -964,21 +974,34 @@ None
         return self.Constructs.domain_axis_name(axis)
     #--- End: for
     
-    def field_ancillaries(self, copy=False):
-        return self.Constructs.constructs('fieldancillary', copy=copy)
+    @abc.abstractmethod
+    def expand_dims(self, position=0, axis=None, copy=True):
+        '''Insert a size 1 axis into the data array.
 
-    @property
-    def isfield(self): 
-        '''True, denoting that the variable is a field object
+:Parameters:
 
-:Examples:
+    position: `int`, optional
+        Specify the position that the new axis will have in the data
+        array. By default the new axis has position 0, the slowest
+        varying position.
 
->>> f.isfield
-True
+    {+axis}
+
+    {+copy}
+
+:Returns:
+
+    out: `{+Variable}`
+        The expanded field.
+
+:Examples 2:
 
         '''
-        return True
+        pass
     #--- End: def
+
+    def field_ancillaries(self, copy=False):
+        return self.Constructs.constructs('fieldancillary', copy=copy)
 
 #    def _dump_axes(self, axis_names, display=True, _level=0):
 #        '''Return a string containing a description of the domain axes of the
@@ -1178,155 +1201,6 @@ True
 #            return string
 #    #--- End: def
 
-    def _insert_construct_check_axes(self, item, axes, allow_scalar=True):
-        '''
-        '''
-        ndim = item.ndim
-        if not ndim and not allow_scalar:
-            ndim = 1
-            
-        if len(set(axes)) != len(axes):
-            raise ValueError("Can't insert {!r}: Duplicate axis".format(item))
-
-        if len(axes) != ndim:
-            raise ValueError(
-"Can't insert {!r}: Mismatched axis size (got {}, expected {})".format(
-    item, len(axes), ndim))
-
-        domain_axes = self.domain_axes()
-        for axis, size in izip_longest(axes, item.shape, fillvalue=1):
-            if size != domain_axes[axis].size:
-                raise ValueError(
-"Can't insert {!r}: Mismatched axis size (got {}, expected {})".format(
-    item, size, domain_axes[axis].size))
-        #--- End: for
-
-        return axes
-    #--- End: def
-
-    def equals(self, other, rtol=None, atol=None,
-               ignore_fill_value=False, traceback=False,
-               ignore=('Conventions',), **kwargs):
-        '''True if two {+variable}s are equal, False otherwise.
-
-Two fields are equal if ...
-
-Note that a {+variable} may be equal to a single element field list,
-for example ``f.equals(f[0:1])`` and ``f[0:1].equals(f)`` are always
-True.
-
-.. seealso:: `cf.FieldList.equals`, `cf.FieldList.set_equals`
-
-:Examples 1:
-
->>> b = f.{+name}(g)
-
-:Parameters:
-
-    other: `object`
-        The object to compare for equality.
-
-    {+atol}
-
-    {+rtol}
-
-    ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
-
-    traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        {+variable}s differ.
-
-    ignore: `tuple`, optional
-        The names of CF properties to omit from the comparison. By
-        default, the CF Conventions property is omitted.
-
-:Returns: 
-  
-    out: `bool`
-        Whether or not the two {+variable}s are equal.
-
-:Examples 2:
-
->>> f.Conventions
-'CF-1.0'
->>> g = f.copy()
->>> g.Conventions = 'CF-1.6'
->>> f.equals(g)
-True
-
-In the following example, two fields differ only by the long name of
-their time coordinates. The traceback shows that they differ in their
-domains, that they differ in their time coordinates and that the long
-name could not be matched.
-
->>> g = f.copy()
->>> g.coord('time').long_name += ' different'
->>> f.equals(g, traceback=True)
-Domain: Different coordinate: <CF Coordinate: time(12)>
-Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (128, 1, 12, 64)>
-False
-
-        '''
-
-        kwargs2 = self._parameters(locals())
-        return super(Field, self).equals(**kwargs2)
-    #---End: def
-
-    @abc.abstractmethod
-    def expand_dims(self, position=0, axis=None, copy=True):
-        '''Insert a size 1 axis into the data array.
-
-:Parameters:
-
-    position: `int`, optional
-        Specify the position that the new axis will have in the data
-        array. By default the new axis has position 0, the slowest
-        varying position.
-
-    {+axis}
-
-    {+copy}
-
-:Returns:
-
-    out: `{+Variable}`
-        The expanded field.
-
-:Examples 2:
-
-        '''
-        pass
-    #--- End: def
-
-    @abc.abstractmethod
-    def squeeze(self, axes=None, copy=True):
-        '''Remove size-1 axes from the data array.
-
-By default all size 1 axes are removed, but particular size 1 axes may
-be selected for removal.
-
-The axes are selected with the *axes* parameter.
-
-Squeezed axes are not removed from the other obkjects (such as cell
-measure objects) objects, nor are they removed from the domain
-:Parameters:
-
-    {+axes}
-
-    {+copy}
-
-:Returns:
-
-    out: `{+Variable}`
-        The squeezed field.
-
-:Examples 2:
-
-        '''
-        pass
-    #--- End: def
 
     def insert_auxiliary_coordinate(self, item, key=None, axes=None,
                                     copy=True, replace=True):
@@ -1372,8 +1246,6 @@ measure objects) objects, nor are they removed from the domain
         if not replace and key in self.auxiliary_coordinates():
             raise ValueError(
 "Can't insert auxiliary coordinate object: Identifier {!r} already exists".format(key))
-
-#        axes = self._insert_construct_check_axes(item, axes, allow_scalar=False)
 
         return self.Constructs.insert('auxiliarycoordinate', item,
                                       key=key, axes=axes, copy=copy)
@@ -1464,15 +1336,6 @@ ValueError: Can't initialize data: Data already exists
         super(Field, self).insert_data(data, copy=copy)
     #--- End: def
 
-    def remove_data(self):
-        '''Docstring copied from Variable.remove_data
-
-        '''
-        self._data_axes = None
-        return super(Field, self).remove_data()
-    #--- End: def
-    remove_data.__doc__ = Variable.remove_data.__doc__
-    
 #    def cell_methods(self, copy=False):
 #        '''
 #        '''
@@ -1593,10 +1456,8 @@ ValueError: Can't initialize data: Data already exists
 "Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
     key, domain_axis.size, axes[key].size))
 
-        if copy:
-            domain_axis = domain_axis.copy()
-
-        return self.Constructs.insert('domainaxis', domain_axis, key=key)
+        return self.Constructs.insert('domainaxis', domain_axis,
+                                      key=key, copy=copy)
     #--- End: def
 
     def insert_field_ancillary(self, construct, key=None, axes=None,
@@ -1632,82 +1493,8 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
 
-#        axes = self._insert_construct_check_axes(item, axes, allow_scalar=False)
-
         return self.Constructs.insert('domainancillary', item, key=key, axes=axes,
                                       copy=copy)
-    #--- End: def
-
-    def _parameters(self, d):
-        '''
-.. versionadded:: 1.6
-'''
-        del d['self']
-        if 'kwargs' in d:
-            d.update(d.pop('kwargs'))
-        return d
-    #--- End: def
-
-    def insert_item(self, role, item, key=None, axes=None,
-                    copy=True, replace=True):
-        '''Insert an item into the {+variable}.
-
-.. seealso:: `insert_domain_axis`, `insert_measure`, `insert_data`,
-             `insert_dim`, `insert_ref`
-
-:Parameters:
-
-    role: `str`
-
-    item: `AuxiliaryCoordinate` or `cf.Coordinate` or `cf.DimensionCoordinate`
-        The new auxiliary coordinate object. If it is not already a
-        auxiliary coordinate object then it will be converted to one.
-
-    key: `str`, optional
-        The identifier for the *item*. By default a new, unique
-        identifier will be generated.
-
-    axes: sequence of `str`, optional
-        The ordered list of axes for the *item*. Each axis is given by
-        its identifier. By default the axes are assumed to be
-        ``'dim0'`` up to ``'dimM-1'``, where ``M-1`` is the number of
-        axes spanned by the *item*.
-
-    copy: `bool`, optional
-        If False then the *item* is not copied before insertion. By
-        default it is copied.
-      
-    replace: `bool`, optional
-        If False then do not replace an existing auxiliary coordinate
-        object of domain which has the same identifier. By default an
-        existing auxiliary coordinate object with the same identifier
-        is replaced with *item*.
-    
-:Returns:
-
-    out: `str`
-        The identifier for the inserted *item*.
-
-:Examples:
-
->>>
-
-        '''
-        kwargs2 = self._parameters(locals())
-        del kwargs2['role']
-
-        if role == 'd':
-            return self.insert_dim(**kwargs2)
-        if role == 'a':
-            return self.insert_aux(**kwargs2)
-        if role == 'm':
-            return self.insert_measure(**kwargs2)
-        if role == 'c':
-            return self.insert_domain_anc(**kwargs2)
-        if role == 'f':
-            return self.insert_field_anc(**kwargs2)
-        if role == 'r':
-            return self.insert_ref(**kwargs2)
     #--- End: def
 
     def insert_cell_measure(self, item, key=None, axes=None, copy=True, replace=True):
@@ -1753,97 +1540,8 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert cell measure object: Identifier {0!r} already exists".format(key))
 
-#        axes = self._insert_construct_check_axes(item, axes, allow_scalar=False)
-
         return self.Constructs.insert('cellmeasure', item, key=key,
                                       axes=axes, copy=copy)
-    #--- End: def
-
-    def insert_dimension_coordinate(self, item, key=None, axes=None, copy=True, replace=True):
-        '''Insert a dimension coordinate object into the {+variable}.
-
-.. seealso:: `insert_aux`, `insert_domain_axis`, `insert_item`,
-             `insert_measure`, `insert_data`, `insert_ref`,
-             `remove_item`
-
-:Parameters:
-
-    item: `DimensionCoordinate` or `cf.Coordinate` or `cf.AuxiliaryCoordinate`
-        The new dimension coordinate object. If it is not already a
-        dimension coordinate object then it will be converted to one.
-
-    axes: sequence of `str`, optional
-        The axis for the *item*. The axis is given by its domain
-        identifier. By default the axis will be the same as the given
-        by the *key* parameter.
-
-    key: `str`, optional
-        The identifier for the *item*. By default a new, unique
-        identifier will be generated.
-
-    {+copy_item_in}
-
-    replace: `bool`, optional
-        If False then do not replace an existing dimension coordinate
-        object of domain which has the same identifier. By default an
-        existing dimension coordinate object with the same identifier
-        is replaced with *item*.
-    
-:Returns:
-
-    out: 
-        The identifier for the inserted *item*.
-
-:Examples:
-
->>>
-
-        '''
-        if copy:
-            item = item.copy()
-            
-#        if key is None and axes is None:
-#            # Key is not set and axes is not set
-#            item_size = item.size
-#            c = [axis for axis, domain_axis in self.Axes.iteritems() 
-#                 if domain_axis == item_size]
-#            if len(c) == 1:
-#                key = c[0]
-#                if self.items(role='d', axes_all=key):
-#                    key = self.insert_domain_axis(self._DomainAxis(item_size))
-#                axes = [key]
-#            elif not c:
-#                key = self.insert_domain_axis(self._DomainAxis(item_size))
-#                axes = [key]
-#            else:
-#                raise ValueError(
-#"Ambiguous dimension coordinate object size. Condsider setting the key or axes parameter")
-
-#        if key is not None:
-#            if axes is None:
-#                # Key is set, axes is not set
-#                axes = [key]
-#                if key not in self.Axes:
-#                    key = self.insert_domain_axis(self._DomainAxis(item.size), key=key)
-#            if axes != [key]:
-#                # Key is set, axes is set
-#                raise ValueError(
-#                    "Incompatible key and axes parameters: {0!r}, {1!r}".format(
-#                        key, axes))
-
-#        axes = self._insert_construct_check_axes(item, axes, allow_scalar=False)
-        
-#        else:
-#            # Key is not set, axes is set
-#            key = axes[0]
-#            axes = self._insert_construct_check_axes(item, axes, allow_scalar=False)    
-
-        if not replace and key in self.dimension_coordinates():
-            raise ValueError(
-"Can't insert dimension coordinate object: Identifier {!r} already exists".format(key))
-
-        return self.Constructs.insert('dimensioncoordinate', item, key=key, axes=axes,
-                                      copy=copy)
     #--- End: def
 
     def insert_coordinate_reference(self, item, key=None, axes=None,
@@ -1887,161 +1585,85 @@ ValueError: Can't initialize data: Data already exists
         return self.Constructs.insert('coordinatereference', item, key=key, copy=copy)
     #--- End: def
 
-    def remove_item(self, description=None, role=None, axes=None,
-                    axes_all=None, axes_subset=None,
-                    axes_superset=None, ndim=None, inverse=False,
-                    copy=True, key=False):
-        '''Remove and return an item from the field.
+    def insert_dimension_coordinate(self, item, key=None, axes=None, copy=True, replace=True):
+        '''Insert a dimension coordinate object into the {+variable}.
 
-{+item_definition}
-
-By default all items of the domain are removed, but particular items
-may be selected with the keyword arguments.
-
-{+item_selection}
-
-.. seealso:: `items`, `remove_axes`, `remove_axis`, `remove_item`
+.. seealso:: `insert_aux`, `insert_domain_axis`, `insert_item`,
+             `insert_measure`, `insert_data`, `insert_ref`,
+             `remove_item`
 
 :Parameters:
 
-    {+description}
+    item: `DimensionCoordinate` or `cf.Coordinate` or `cf.AuxiliaryCoordinate`
+        The new dimension coordinate object. If it is not already a
+        dimension coordinate object then it will be converted to one.
 
-    {+role}
+    axes: sequence of `str`, optional
+        The axis for the *item*. The axis is given by its domain
+        identifier. By default the axis will be the same as the given
+        by the *key* parameter.
 
-    {+axes}
+    key: `str`, optional
+        The identifier for the *item*. By default a new, unique
+        identifier will be generated.
 
-    {+axes_all}
+    {+copy_item_in}
 
-    {+axes_subset}
-
-    {+axes_superset}
-
-    {+ndim}
-
-    {+inverse}
-
-    {+copy}
-
+    replace: `bool`, optional
+        If False then do not replace an existing dimension coordinate
+        object of domain which has the same identifier. By default an
+        existing dimension coordinate object with the same identifier
+        is replaced with *item*.
+    
 :Returns:
 
     out: 
-        The removed item.
+        The identifier for the inserted *item*.
 
 :Examples:
 
+>>>
+
         '''
-        kwargs2 = self._parameters(locals())
-
-#        kwargs2['items'] = kwargs2.pop('item')
-
-        del kwargs2['key']
-
-        # Include coordinate references by default
-        if kwargs2['role'] is None:
-            kwargs2['role'] = ('d', 'a', 'm', 'c', 'f', 'r')
-
-        items = self.items(**kwargs2)
-        if len(items) == 1:
-            out = self.remove_items(**kwargs2)
-            if key:
-                return out.popitem()[0]
-
-            return out.popitem()[1]
-        #--- End: if
-
-        if not len(items):
+        if not replace and key in self.dimension_coordinates():
             raise ValueError(
-"Can't remove non-existent item defined by parameters {0}".format(kwargs2))
-        else:
-            raise ValueError(
-"Can't remove non-unique item defined by parameters {0}".format(kwargs2))
+"Can't insert dimension coordinate object: Identifier {!r} already exists".format(key))
+
+        return self.Constructs.insert('dimensioncoordinate', item, key=key, axes=axes,
+                                      copy=copy)
     #--- End: def
 
-    def remove_items(self, description=None, role=None, axes=None,
-                     axes_all=None, axes_subset=None,
-                     axes_superset=None, ndim=None, inverse=False,
-                     copy=True):
-        '''Remove and return items from the field.
+    def remove_data(self):
+        '''Docstring copied from Variable.remove_data
 
-An item is either a dimension coordinate, an auxiliary coordinate, a
-cell measure or a coordinate reference object.
+        '''
+        self._data_axes = None
+        return super(Field, self).remove_data()
+    #--- End: def
+    remove_data.__doc__ = Variable.remove_data.__doc__
 
-By default all items of the domain are removed, but particular items
-may be selected with the keyword arguments.
+    @abc.abstractmethod
+    def squeeze(self, axes=None):
+        '''Remove size-1 axes from the data array.
 
-.. seealso:: `items`, `remove_axes`, `remove_axis`, `remove_item`
+By default all size 1 axes are removed, but particular size 1 axes may
+be selected for removal.
 
+The axes are selected with the *axes* parameter.
+
+Squeezed axes are not removed from the other obkjects (such as cell
+measure objects) objects, nor are they removed from the domain
 :Parameters:
-
-    {+description}
-
-    {+role}
 
     {+axes}
 
-    {+axes_all}
-
-    {+axes_subset}
-
-    {+axes_superset}
-
-    {+ndim}
-
-    {+inverse}
-
 :Returns:
 
-    out: `dict`
-        A dictionary whose keys are domain item identifiers with
-        corresponding values of the removed items. The dictionary may
-        be empty.
+    out: `{+Variable}`
+        The squeezed field.
 
-:Examples:
-
-        ''' 
-        # Remove coordinate reference
-        coordinate_references = self.coordinate_references()
-        if key in coordinate_references:
-            ref = self.Constructs.remove(key)
-            return ref
-                
-        # Remove domain axis
-        domain_axes = self.domain_axes()
-        if key in domain_axes:
-            if key in self.data_axes():
-                raise ValueError(
-"Can't remove domain axis that is spanned by the field's data")
-
-            for k, v in self.variable_axes().items():
-                if key in v:
-                    raise ValueError(
-"Can't remove domain axis that is spanned by {!r}".format(self.construct(k)))
-            #--- End: if
-
-            return self.Constructs.remove(key).copy()
-        #--- End: if
-
-        # Remove other construct
-        if coordinate_references:
-            construct_type = self.Constructs.type(key)
-            if construct_type in ('_dimension_coordinate',
-                                  '_auxiliary_coordinate',
-                                  '_domain_ancillary'):
-                # The removed item is a dimension coordinate,
-                # auxiliary coordinate or domain ancillary, so replace
-                # its identifier in any coordinate references with its
-                # identity.
-                identity_map = {key: self.Constructs.get(key).identity()}
-                for key, ref in coordinate_references.items():
-                   ref = ref.change_identifiers(
-                       identity_map,
-                       coordinate=(construct_type != '_domain ancillary'),
-                       ancillary=(construct_type == '_domain ancillary'),
-                       copy=True)
-                   self.Constructs.replace(ref, key)
-        #--- End: if
-
-        return self.Constructs.remove(key).copy()
+        '''
+        pass
     #--- End: def
-
+    
 #--- End: class
