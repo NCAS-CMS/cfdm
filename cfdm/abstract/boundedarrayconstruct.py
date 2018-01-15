@@ -42,6 +42,8 @@ domain ancillary objects.
         initialization. By default arguments are deep copied.
   
         '''
+        self._bounds = None
+        
         if source is not None:
             if isinstance(self, AbstractArrayConstruct):
                 properties = source.properties(copy=copy)
@@ -57,8 +59,10 @@ domain ancillary objects.
             data=data,
             bounds=bounds,
             copy=copy)
-        #--- End: def
+    #--- End: def
 
+
+        
     def __getitem__(self, indices):
         '''
 
@@ -174,87 +178,63 @@ AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
 <CF Data: 89.0 degrees_north>
 
 '''
-        return self._get_special_attr('bounds')
+        b = self._bounds
+        if b is None:
+            raise ValueError("a sasdkna sjkna, kjn")
+
+        return b
     #--- End: def
     @bounds.setter
     def bounds(self, value):
-        raise AttributeError(
-            "Can't set 'bounds' attribute. Use the insert_bounds method.")
+        self._bounds = value
+        self._ancillaries.add('bounds')
     #--- End: def
     @bounds.deleter
-    def bounds(self):  
-        self._del_special_attr('bounds')
-        self._hasbounds = False
-    #--- End: def
-
-    @abc.abstractmethod
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None): 
-        '''Return a string containing a full description of the variable.
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
-
-    omit: sequence of `str`
-        Omit the given CF properties from the description.
-
-:Returns:
-
-    out : None or str
-        A string containing the description.
-
-:Examples:
-
-        '''
-        string = super(AbstractBoundedArrayConstruct, self).dump(
-            display=False,
-            omit=omit,
-            field=field,
-            key=key,
-            _level=_level,
-            _title=_title)
+    def bounds(self):
+        self._bounds = None
+        self._ancillaries.discard('bounds')
         
-        if self.hasbounds:
-            properties = self.properties()
-            b_properties = self.bounds.properties()
-
-            for prop, value in b_properties.items():
-                if prop in omit or properties.get(prop) == value:
-                    b_properties.pop(prop)
-            #--- End: for
-
-            properties = self._dump_properties(b_properties,
-                                                _property_prefix='Bounds.',
-                                                _level=_level+1)
-            if properties:
-                string.append(properties)
-            
-            if self.bounds.hasdata:
-                if field and key:
-                    x = ['{0}({1})'.format(field.domain_axis_name(axis),
-                                           field.domain_axes()[axis].size)
-                         for axis in field.construct_axes(key)]
-                    
-                    x.append(str(self.bounds.data.shape[self.data.ndim:]))
-                else:
-                    x = [str(s) for s in self.bounds.data.shape]
-                    
-            string.append('{0}Bounds({1}) = {2}'.format(indent1,
-                                                        ', '.join(x),
-                                                        str(self.bounds.data)))
-        #--- End: if
-
-        if display:
-            print string
-        else:
-            return string
-    #--- End: def
+#    @abc.abstractmethod
+#    def dump(self, display=True, omit=(), field=None, key=None,
+#             _level=0, _prefix='', _title=None, _no_title=False): 
+#        '''Return a string containing a full description of the variable.
+#
+#.. versionadded:: 1.6
+#
+#:Parameters:
+#
+#    display: `bool`, optional
+#        If False then return the description as a string. By default
+#        the description is printed, i.e. ``c.dump()`` is equivalent to
+#        ``print c.dump(display=False)``.
+#
+#    omit: sequence of `str`
+#        Omit the given CF properties from the description.
+#
+#:Returns:
+#
+#    out : None or str
+#        A string containing the description.
+#
+#:Examples:
+#
+#        '''
+#        if _title is not None:
+#            indent0 = '    ' * _level                            
+#            _title = '{0}{1}: {2}'.format(indent0,
+#                                          self.__class__.__name__,
+#                                          self.name(default=''))
+#        
+#        return super(AbstractBoundedArrayConstruct, self).dump(
+#            display=display,
+#            omit=omit,
+#            field=field,
+#            key=key,
+#            _prefix=_prefix,
+#            _level=_level,
+#            _title=_title,
+#            _no_title=_no_title)
+#    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,

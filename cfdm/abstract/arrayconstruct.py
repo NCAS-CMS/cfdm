@@ -57,6 +57,8 @@ All components of a variable are optional.
         # _hasdata is True if and only if there is a data array
         self._hasdata = False
 
+        self._ancillaries = set()
+        
         # Initialize the _private dictionary, unless it has already
         # been set.
         if not hasattr(self, '_private'):
@@ -108,7 +110,7 @@ x.__str__() <==> str(x)
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
-    def _dump_properties(self, properties, _property_prefix='', _level=0):
+    def _dump_properties(self, properties, prefix='', indent='')
         '''
 
 .. versionadded:: 1.6
@@ -127,22 +129,20 @@ x.__str__() <==> str(x)
 :Examples:
 
 '''
-        indent0 = '    ' * _level
-
         string = []
 
         # Simple properties
         simple = self.properties()
         attrs  = sorted(set(simple) - set(omit))
         for prop, value in properties:
-            name   = '{0}{1}{2} = '.format(indent0, _property_prefix, prop)
+            name   = '{0}{1}{2} = '.format(indent, prefix, prop)
             value  = repr(value)
-            indent = ' ' * (len(name))
+            subsequent_indent = ' ' * len(name)
             if value.startswith("'") or value.startswith('"'):
-                indent = '{0} '.format(indent)
-
+                subsequent_indent = '{0} '.format(subsequent_indent)
+                
             string.append(textwrap.fill(name+value, 79,
-                                        subsequent_indent=indent))
+                                        subsequent_indent=subsequent_indent))
         #--- End: for
 
         return '\n'.join(string)
@@ -390,9 +390,10 @@ True
         return new
     #--- End: def
 
-    @abc.abstractmethod
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _property_prefix='', _title=None, _level=0):
+#    @abc.abstractmethod
+    def dump(self, display=True, field=None, key=None,
+             _omit_properties=(), _prefix='', _title=None,
+             _create_title=True, _level=0):
         '''
 
 Return a string containing a full description of the instance.
@@ -409,7 +410,7 @@ Return a string containing a full description of the instance.
     omit: sequence of `str`, optional
         Omit the given CF properties from the description.
 
-    prefix: optional
+    _prefix: optional
         Ignored.
 
 :Returns:
@@ -432,76 +433,78 @@ standard_name = 'time'
         indent0 = '    ' * _level
         indent1 = '    ' * (_level+1)
 
-        if _title is None:
-            string = ['{0}{1}: {2}'.format(indent0,
-                                           self.__class__.__name__,
-                                           self.name(default=''))]
-        else:
-            string = [indent0 + _title]
-
+        string = []
+        
+        # ------------------------------------------------------------
+        # Title
+        # ------------------------------------------------------------
+        if _create_title:
+            if _title is None:
+                string.append('{0}{1}: {2}'.format(indent0,
+                                                   self.__class__.__name__,
+                                                   self.name(default='')))
+            else:
+                string.append(indent0 + _title)
+        #--- End: if
+        
         # ------------------------------------------------------------
         # Properties
         # ------------------------------------------------------------
         properties = self.properties()
-        for prop in properties.keys():
-            if prop in omit:
-                properties.pop(prop)
-        #--- End: for
+        if _omit_properties:
+            for prop in properties.keys():
+                if prop in _omit_properties:
+                    del properties[prop]
+        #--- End: if
 
-        properties = self._dump_properties(properties, _level=_level+1)
+        properties = self._dump_properties(properties,
+                                           prefix=_prefix,
+                                           indent=indent1)
         if properties:
             string.append(properties)
 
+        # ------------------------------------------------------------
+        # Data
+        # ------------------------------------------------------------
         if self.hasdata:
             data = self.data
             if field and key:
+                ndim = data.ndim
                 x = ['{0}({1})'.format(field.domain_axis_name(axis),
                                        field.domain_axes()[axis].size)
                      for axis in field.construct_axes(key)]
+
+                x = x[:ndim]
+                    
+                if len(x) < ndim:
+                    x.append(str(data.shape[len(x):]))
             else:
                 x = [str(size) for size in data.shape]
            
-            string.append('{0}Data({1}) = {2}'.format(indent1,
-                                                      ', '.join(x),
-                                                      str(data)))
+            string.append('{0}{1}Data({2}) = {3}'.format(indent1,
+                                                         _prefix,
+                                                         ' '.join(x),
+                                                         str(data)))
         #--- End: if
         
-        for attr in _extra:
-            x = getattr(self, attr, None)
+        # ------------------------------------------------------------
+        # Ancillary objects
+        # ------------------------------------------------------------
+        for ancillary in getattr(self, '_ancillaries', ()):
+            x = getattr(self, ancillary, None)
             if x is None:
                 continue
 
-            if not isinstance(x, AuxiliaryArray):
+            if not isinstance(x, ArrayConstruct):
                 string.append('{0}{1} = {2}'.format(indent1, attr, repr(x)))
                 continue
                               
-            name = attr.title().replace(' ', '')
+#            name = attr.title().replace(' ', '')
 
-            properties = self._dump_properties(x.properties(),
-                                               _property_prefix=name+'.',
-                                               _level=_level+1)
-            if properties:
-                string.append(properties)
-
-            if x.hasdata:
-                data = x.data
-                if field and key:
-                    ndim = data.ndim
-                    x = ['{0}({1})'.format(field.domain_axis_name(axis),
-                                           field.domain_axes()[axis].size)
-                         for axis in field.construct_axes(key)]
-
-                    x = x[:ndim]
-                    
-                    if len(x) < ndim:
-                        x.append(str(data.shape[len(x):]))
-                else:
-                    x = [str(size) for size in x.shape]
-                    
-            string.append('{0}{1}({2}) = {3}'.format(indent1, name,
-                                                     ', '.join(x),
-                                                     str(data)))
-        #--- End: if
+            string.append(x.dump(display=False, field=field, key=key,
+                                 _prefix=_prefix+ancillary+'.',
+                                 _create_title=False, _level=level+1))          
+        #--- End: for
 
         string = '\n'.join(string)
        

@@ -27,22 +27,4 @@ Attribute        Type      Description
 '''
     __metaclass__ = abc.ABCMeta
     
-    @property
-    def iscoordinate(self):
-        '''True, denoting that the variable is a generic coordinate object.
-
-.. seealso::`role`
-
-.. seealso:: `isboundedvariable`, `isvariable`
-
-:Examples:
-
->>> c.iscoordinate
-True
-
-        '''
-        return True
-    #--- End: def
-
-    
 #--- End: class
