@@ -210,11 +210,48 @@ AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
 :Examples:
 
         '''
-        return super(AbstractBoundedArray, self).dump(
-            display=display, field=field, key=key,
+        string = super(AbstractBoundedArray, self).dump(
+            display=False, field=field, key=key,
             _omit_properties=_omit_properties, _prefix=_prefix,
             _title=_title, _create_title=_create_title,
             _extra=('bounds',), _level=_level)
+
+        string = [string]
+        
+        #-------------------------------------------------
+        # Ancillary attributes
+        # ------------------------------------------------------------
+        for ancillary in sorted(getattr(self, '_ancillary_attributes', [])):
+            x = getattr(self, ancillary, None)
+            if x is None:
+                continue
+
+            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+                                                             ancillary, x))
+
+        # ------------------------------------------------------------
+        # Ancillary arrays
+        # ------------------------------------------------------------
+        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
+            x = getattr(self, ancillary, None)
+            if x is None:
+                continue
+
+            if not isinstance(x, AbstractArray):
+                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+                                                                 ancillary, x))
+                continue
+
+            string.append(x.dump(display=False, field=field, key=key,
+                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
+                                 _create_title=False, _level=level+1))          
+
+        string = '\n'.join(string)
+       
+        if display:
+            print string
+        else:
+            return string
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,

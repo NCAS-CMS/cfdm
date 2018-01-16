@@ -432,7 +432,7 @@ standard_name = 'time'
                                                          str(data)))
         
         # ------------------------------------------------------------
-        # Extra and ancillary arrays
+        # Extra arrays
         # ------------------------------------------------------------
         for attribute in _extra:
             x = getattr(self, attribute, None)
@@ -446,7 +446,7 @@ standard_name = 'time'
             #            name = attribute.title().replace(' ', '')
             
             string.append(x.dump(display=False, field=field, key=key,
-                                 _prefix=attribute+'.',
+                                 _prefix=_prefix+attribute+'.',
                                  _create_title=False, _level=level+1))          
 
         #-------------------------------------------------
@@ -457,7 +457,8 @@ standard_name = 'time'
             if x is None:
                 continue
 
-            string.append('{0}ancillary.{1} = {2}'.format(indent1, ancillary, x))
+            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+                                                             ancillary, x))
 
         # ------------------------------------------------------------
         # Ancillary arrays
@@ -468,11 +469,12 @@ standard_name = 'time'
                 continue
 
             if not isinstance(x, AbstractArray):
-                string.append('{0}ancillary.{1} = {2}'.format(indent1, ancillary, x))
+                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+                                                                 ancillary, x))
                 continue
 
             string.append(x.dump(display=False, field=field, key=key,
-                                 _prefix='ancillary.'+ancillary+'.',
+                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
                                  _create_title=False, _level=level+1))          
 
         string = '\n'.join(string)
@@ -495,7 +497,7 @@ True if two {+variable}s are equal, False otherwise.
 
 :Parameters:
 
-    other: 
+    other: n 
         The object to compare for equality.
 
     {+atol}

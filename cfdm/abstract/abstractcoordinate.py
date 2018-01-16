@@ -141,6 +141,7 @@ Attribute          Type       Description
     @part_node_count.setter
     def part_node_count(self, value):
         self._part_node_count = value
+        # Check that value.type == 'geometry' ?
         self._ancillary_arrays.add('part_node_count')
     @part_node_count.deleter
     def part_node_count(self):  
@@ -163,55 +164,6 @@ Attribute          Type       Description
     def interior_ring(self):  
         del self._interior_ring
         self._ancillary_arrays.discard('interior_ring')
-    #--- End: def
-
-    def dump(self, display=True, field=None, key=None,
-             _omit_properties=(), _prefix='', _title=None,
-             _create_title=True, _level=0):
-        '''
-        '''
-        string = super(AbstractCoordinate, self).dump(
-            display=False, field=field, key=key,
-            _omit_properties=_omit_properties, _prefix=_prefix,
-            _title=_title, _create_title=_create_title,
-            _level=_level)
-
-        string = [string]
-        
-        #-------------------------------------------------
-        # Ancillary attributes
-        # ------------------------------------------------------------
-        for ancillary in sorted(getattr(self, '_ancillary_attributes', [])):
-            x = getattr(self, ancillary, None)
-            if x is None:
-                continue
-
-            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
-                                                             ancillary, x))
-
-        # ------------------------------------------------------------
-        # Ancillary arrays
-        # ------------------------------------------------------------
-        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
-            x = getattr(self, ancillary, None)
-            if x is None:
-                continue
-
-            if not isinstance(x, AbstractArray):
-                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
-                                                                 ancillary, x))
-                continue
-
-            string.append(x.dump(display=False, field=field, key=key,
-                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
-                                 _create_title=False, _level=level+1))          
-
-        string = '\n'.join(string)
-       
-        if display:
-            print string
-        else:
-            return string
     #--- End: def
 
 #--- End: class
