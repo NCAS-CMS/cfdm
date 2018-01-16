@@ -794,7 +794,7 @@ last values.
             for cm in cell_methods.values():
                 cm = cm.copy()
                 cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
-                string.append(cm.dump(display=False, _level=_level))
+                string.append(cm.dump(display=False,  _level=_level))
         #--- End: if
 
 #        cell_methods = self.cell_methods()
@@ -849,9 +849,9 @@ last values.
             return string
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None,
-               ignore_fill_value=False, traceback=False,
-               ignore=('Conventions',), **kwargs):
+    def equals(self, other, rtol=None, atol=None, traceback=False,
+               ignore_data_type=False, ignore_fill_value=False,
+               ignore_properties=(), ignore_construct_type=False):
         '''True if two {+variable}s are equal, False otherwise.
 
 Two fields are equal if ...
@@ -914,6 +914,17 @@ Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (
 False
 
         '''
+        return super(Field, self).equals(
+            other,
+            rtol=rtol, atol=atol, traceback=tracback,
+            ignore_data_type=ignore_data_type,
+            ignore_fill_value=ignore_fill_value,
+            ignore_properties=ignore_properties,
+            ignore_construct_type=ignore_construct_type,
+            _extra=('_Constructs',))
+    #--- End: def
+        
+    def expand_dims(se
 
         kwargs2 = self._parameters(locals())
         return super(Field, self).equals(**kwargs2)

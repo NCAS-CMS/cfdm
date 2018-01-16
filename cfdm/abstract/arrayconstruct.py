@@ -1,6 +1,6 @@
 from collections import abc
 
-from .construct import AbtractConstruct
+from .construct import AbstractConstruct
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ from .construct import AbtractConstruct
 #
 # ====================================================================
 
-class AbstractArrayConstruct(AbstractConstruct):
+class AbstractArray(AbstractConstruct):
     '''
 
 Base class for storing a data array with metadata.
@@ -47,37 +47,48 @@ All components of a variable are optional.
         initialization. By default arguments are deep copied.
 
         '''
-        super(AbstractArrayConstruct, self).__init__()
-        
-        self._fill_value = None
-
         # _hasbounds is True if and only if there are cell bounds.
         self._hasbounds = False
 
         # _hasdata is True if and only if there is a data array
         self._hasdata = False
 
-        self._ancillaries = set()
+        self._properties = {}
         
-        # Initialize the _private dictionary, unless it has already
-        # been set.
-        if not hasattr(self, '_private'):
-            self._private = {'special_attributes': {},
-                             'properties'        : {}}
+        self._ancillary_arrays     = set()
+        self._ancillary_attributes = set()
         
         if source is not None:
-            if not getattr(source, 'isarrayconstruct', False):
+            if not isinstance(source, AbstractArray):
                 raise ValueError(
-                    "ERROR: source must be (a subclass of) a ArrayConstruct: {}".format(
-                        source.__class__.__name__))
+"ERROR: source must be a subclass of 'AbstractArray'. Got {!r}".format(
+    source.__class__.__name__))
 
+            # Data
             if data is None and source.hasdata:
-                data = Data.asdata(source)
+                data = source.data
 
+            # Properties
             p = source.properties()
             if properties:
                 p.update(properties)
             properties = p
+
+            # Ancillary arrays
+            for a in source._ancillary_arrays:
+                ancillary = getattr(source, a)
+                if copy:
+                    ancillary = ancillary.copy()
+
+                setattr(self, a, ancillary)
+
+            # Ancillary attributes
+            for a in source._ancillary_attributes:
+                attribute = getattr(source, a)
+                if copy:
+                    attribute = deepcopy(attribute)
+
+                setattr(self, a, attribute)
         #--- End: if
 
         if properties:
@@ -143,7 +154,6 @@ x.__str__() <==> str(x)
                 
             string.append(textwrap.fill(name+value, 79,
                                         subsequent_indent=subsequent_indent))
-        #--- End: for
 
         return '\n'.join(string)
     #--- End: def
@@ -158,31 +168,16 @@ x.__str__() <==> str(x)
 .. versionadded:: 1.6
 
         '''
-        if self.hasdata:
-            return self._private['Data']
-
-        raise AttributeError("{} doesn't have any data".format(
-            self.__class__.__name__))
+        return self._Data
     #--- End: def
     @_Data.setter
     def _Data(self, value):
-        private = self._private
-        private['Data'] = value
-
+        self._Data = value
         self._hasdata = True
-    #--- End: def
     @_Data.deleter
     def _Data(self):
-        private = self._private
-        data = private.pop('Data', None)
-
-        if data is None:
-            raise AttributeError(
-                "Can't delete non-existent data".format(
-                    self.__class__.__name__))
-
+        self._Data = None
         self._hasdata = False
-    #--- End: def
 
     @property
     def data(self):
@@ -305,8 +300,8 @@ None
         return data
     #--- End: def
 
-    def copy(self, _omit_special=None, _omit_properties=False,
-             _omit_attributes=False):
+    @abc.abstractmethod
+    def copy(self, _extra=()):
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
@@ -337,63 +332,13 @@ False
 True
 
         '''
-        new = type(self)()
-
-        self_dict = self.__dict__.copy()
-        
-        self_private = self_dict.pop('_private')
-            
-        new._fill_value = self_dict.pop('_fill_value')
-        new._hasbounds  = self_dict.pop('_hasbounds')
-        new._hasdata    = self_dict.pop('_hasdata')
-            
-        if self_dict and not _omit_attributes:        
-            try:
-                new.__dict__.update(loads(dumps(self_dict, -1)))
-            except PicklingError:
-                new.__dict__.update(deepcopy(self_dict))
-                
-        private = {}
-
-        if self.hasdata:
-            new.insert_data(self.data, copy=True)
- 
-        # ------------------------------------------------------------
-        # Copy special attributes. These attributes are special
-        # because they have a copy() method which return a deep copy.
-        # ------------------------------------------------------------
-        special = self_private['special_attributes'].copy()
-        if _omit_special:            
-            for prop in _omit_special:
-                special.pop(prop, None)
-
-        for prop, value in special.iteritems():
-            special[prop] = value.copy()
-
-        private['special_attributes'] = special
-
-        if not _omit_properties:
-            try:
-                private['properties'] = loads(dumps(self_private['properties'], -1))
-            except PicklingError:
-                private['properties'] = deepcopy(self_private['properties'])
-        else:
-            private['properties'] = {}
-
-        new._private = private
-
-        if self.hasbounds:
-            bounds = self.bounds.copy(_omit_data=_omit_data,
-                                      _only_data=_only_data)
-            new._set_special_attr('bounds', bounds)        
-
-        return new
+        new = type(self)(source=self, copy=True)
     #--- End: def
 
-#    @abc.abstractmethod
+    @abc.abstractmethod
     def dump(self, display=True, field=None, key=None,
              _omit_properties=(), _prefix='', _title=None,
-             _create_title=True, _level=0):
+             _create_title=True, _extra=(), _level=0):
         '''
 
 Return a string containing a full description of the instance.
@@ -485,26 +430,50 @@ standard_name = 'time'
                                                          _prefix,
                                                          ' '.join(x),
                                                          str(data)))
-        #--- End: if
         
         # ------------------------------------------------------------
-        # Ancillary objects
+        # Extra and ancillary arrays
         # ------------------------------------------------------------
-        for ancillary in getattr(self, '_ancillaries', ()):
+        for attribute in _extra:
+            x = getattr(self, attribute, None)
+            if x is None:
+                continue
+            
+            if not isinstance(x, AbstractArray):
+                string.append('{0}{1} = {2}'.format(indent1, attribute, x))
+                continue
+            
+            #            name = attribute.title().replace(' ', '')
+            
+            string.append(x.dump(display=False, field=field, key=key,
+                                 _prefix=attribute+'.',
+                                 _create_title=False, _level=level+1))          
+
+        #-------------------------------------------------
+        # Ancillary attributes
+        # ------------------------------------------------------------
+        for ancillary in sorted(getattr(self, '_ancillary_attributes', [])):
             x = getattr(self, ancillary, None)
             if x is None:
                 continue
 
-            if not isinstance(x, ArrayConstruct):
-                string.append('{0}{1} = {2}'.format(indent1, attr, repr(x)))
+            string.append('{0}ancillary.{1} = {2}'.format(indent1, ancillary, x))
+
+        # ------------------------------------------------------------
+        # Ancillary arrays
+        # ------------------------------------------------------------
+        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
+            x = getattr(self, ancillary, None)
+            if x is None:
                 continue
-                              
-#            name = attr.title().replace(' ', '')
+
+            if not isinstance(x, AbstractArray):
+                string.append('{0}ancillary.{1} = {2}'.format(indent1, ancillary, x))
+                continue
 
             string.append(x.dump(display=False, field=field, key=key,
-                                 _prefix=_prefix+ancillary+'.',
+                                 _prefix='ancillary.'+ancillary+'.',
                                  _create_title=False, _level=level+1))          
-        #--- End: for
 
         string = '\n'.join(string)
        
@@ -517,7 +486,7 @@ standard_name = 'time'
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False,
-               _extra=(), **kwargs):
+               _extra=()):
         '''
 
 True if two {+variable}s are equal, False otherwise.
@@ -578,10 +547,9 @@ True
 			self.__class__.__name__,
 			other.__class__.__name__))
 	    return False
-        #--- End: if
 
         # ------------------------------------------------------------
-        # Check the simple properties
+        # Check the properties
         # ------------------------------------------------------------
         if ignore_fill_value:
             ignore_properties += ('_FillValue', 'missing_value')
@@ -594,7 +562,6 @@ True
                     self.__class__.__name__,
                     self_properties, other_properties))
             return False
-        #--- End: if
 
         if rtol is None:
             rtol = RTOL()
@@ -614,11 +581,13 @@ True
                 return False
         #--- End: for
 
-        _extra += ('data',)
+        # ------------------------------------------------------------
+        # Check the data, any ancillaries and any extra arrays
+        # ------------------------------------------------------------
+        _extra = ('data',) + tuple(sorted(self._ancillary_arrays)) + _extra
 
         for attr in _extra:
             self_hasattr  = hasattr(self, attr)
-            other_hasattr = hasattr(other, attr)
             if self_hasattr != hasattr(other, attr):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
@@ -630,8 +599,7 @@ True
                         traceback=traceback,
                         ignore_data_type=ignore_data_type,
                         ignore_construct_type=ignore_construct_type,
-                        ignore_fill_value=ignore_fill_value,
-                        **kwargs):
+                        ignore_fill_value=ignore_fill_value):
                     if traceback:
                         print("{0}: Different {1}".format(self.__class__.__name__, attr))
                     return False
@@ -773,7 +741,7 @@ dtype('float64')
      `None`
 
         '''
-        self._private['properties'][prop] = value
+        self._properties[prop] = value
     #--- End: def
 
     def squeeze(self, axes=None, copy=True):
@@ -842,21 +810,7 @@ Return True if a CF property exists, otherise False.
          True if the CF property exists, otherwise False.
 
 '''
-        return prop in self._private['properties']
-    #--- End: def
-
-    @property
-    def isarrayconstruct(self):
-        '''True DCH
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.sarrayconstruct
-True
-        '''
-        return True
+        return prop in self._properties
     #--- End: def
 
     def insert_data(self, data, copy=True):
@@ -923,7 +877,7 @@ AttributeError: Field doesn't have CF property 'standard_name'
 'foo'
 
 '''        
-        d = self._private['properties']
+        d = self._properties
 
         if default:
             return d.get(prop, default[0])
@@ -965,7 +919,7 @@ AttributeError: Can't delete non-existent property 'project'
         '''
         # Still here? Then delete a simple attribute
         try:
-            del self._private['properties'][prop]
+            del self._properties[prop]
         except KeyError:
             raise AttributeError(
                 "Can't delete non-existent CF property {!r}".format(prop))
@@ -1133,42 +1087,29 @@ None
 :Examples 2:
 
         '''
-#        if copy:            
-        out = deepcopy(self._private['properties'])
-#        else:
-#            out = self._simple_properties().copy()
-            
-#        # Include properties that are not listed in the simple
-#        # properties dictionary
-#        for prop in ('units', 'calendar'):
-#            _ = getattr(self, prop, None)
-#            if _ is not None:
-#                out[prop] = _
-#        #--- End: for
-
+        out = self._properties
+        if copy:            
+            out = deepcopy(out)
+        else:
+            out = out.copy()
+                    
         if clear:
-            self._private['properties'].clear()
+            self._properties.clear()
             return out
 
         if not props:
             return out
 
-        setprop = self.setprop
-        delprop = self.delprop
         if copy:
-            for prop, value in props.iteritems():
-                if value is None:
-                    # Delete this property
-                    delprop(prop)
-                else:
-                    setprop(prop, deepcopy(value))
+            props = deepcopy(props)
         else:
-            for prop, value in props.iteritems():
-                if value is None:
-                    # Delete this property
-                    delprop(prop)
-                else:
-                    setprop(prop, value)
+            props = props.copy()
+
+        # Delete None-valued properties
+        for key, value in props.items():
+            if value is None:
+                del props[key]
+        #--- End: for
 
         return out
     #--- End: def

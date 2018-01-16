@@ -1,6 +1,6 @@
 from collections import abc
 
-from .arrayconstruct import AbstractArrayConstruct
+from .arrayconstruct import AbstractArray
 
 # ====================================================================
 #
@@ -8,15 +8,16 @@ from .arrayconstruct import AbstractArrayConstruct
 #
 # ====================================================================
 
-class AbstractBoundedArrayConstruct(AbstractArrayConstruct):
-    '''Base class for CF dimension coordinate, auxiliary coordinate and
+class AbstractBoundedArray(AbstractArray):
+    '''Base class for CFDM dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
+
     '''
 
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, properties={}, data=None, bounds=None,
-                 source=None, copy=True):
+    def __init__(self, properties={}, data=None, source=None,
+                 bounds=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -43,26 +44,24 @@ domain ancillary objects.
   
         '''
         self._bounds = None
-        
+
         if source is not None:
-            if isinstance(self, AbstractArrayConstruct):
-                properties = source.properties(copy=copy)
-                data = getattr(source, 'data', None)
-                
-            if isinstance(self, AbstractBoundedArrayConstruct):
-                bounds = getattr(source, 'bounds', None)
+            if isinstance(self, AbstractBoundedArray):
+                if bounds is None and source.hasbounds:
+                    bounds = source.bounds
         #--- End: if
 
         # Set attributes, CF properties and data
-        super(AbstractBoundedArrayConstruct, self).__init__(
+        super(AbstractBoundedArray, self).__init__(
             properties=properties,
             data=data,
-            bounds=bounds,
+            source=source,
             copy=copy)
+
+        if bounds is not None:
+            self.insert_bounds(bounds, copy=copy)
     #--- End: def
 
-
-        
     def __getitem__(self, indices):
         '''
 
@@ -117,44 +116,34 @@ x.__getitem__(indices) <==> x[indices]
                 new.bounds._Data = bounds.data[tuple(indices)]
         #--- End: if
 
-#        new._direction = None
-
         # Return the new bounded variable
         return new
     #--- End: def
 
-    def expand_dims(self, position , copy=True):
-        '''
-        '''
-        c = super(AbstractBoundedArrayConstruct, self).expand_dims(
-            position, copy=copy)
-
-        if c.hasbounds:
-            position = self._parse_axes([position])[0]
-            c.bounds.expand_dims(position, copy=False)
-
-        return c
-    #--- End: def        
-    
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
-    def isboundedvariable(self): 
-        '''True DCH
+    def _Bounds(self):
+        '''The `Data` object containing the data array.
 
->>> c.isboundedvariable
-True
+.. versionadded:: 1.6
 
-'''
-        return True
+        '''
+        return self._Bounds
     #--- End: def
+    @_Bounds.setter
+    def _Bounds(self, value):
+        self._Bounds = value
+        self._hasbounds = True
+    @_Bounds.deleter
+    def _Bounds(self):
+        self._Bounds = None
+        self._hasbounds = False
 
-    # ----------------------------------------------------------------
-    # Attribute (a special attribute)
-    # ----------------------------------------------------------------
     @property
     def bounds(self):
-        '''
-
-The `Bounds` object containing the cell bounds.
+        '''The `Bounds` object containing the cell bounds.
 
 .. versionadded:: 2.0
 
@@ -177,83 +166,85 @@ AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
 >>> c.bounds.max()       
 <CF Data: 89.0 degrees_north>
 
-'''
-        b = self._bounds
-        if b is None:
-            raise ValueError("a sasdkna sjkna, kjn")
-
-        return b
-    #--- End: def
+        '''
+        return self._Bounds
     @bounds.setter
     def bounds(self, value):
-        self._bounds = value
-        self._ancillaries.add('bounds')
-    #--- End: def
+        raise AttributeError("use insert_bounds")
     @bounds.deleter
-    def bounds(self):
-        self._bounds = None
-        self._ancillaries.discard('bounds')
-        
-#    @abc.abstractmethod
-#    def dump(self, display=True, omit=(), field=None, key=None,
-#             _level=0, _prefix='', _title=None, _no_title=False): 
-#        '''Return a string containing a full description of the variable.
-#
-#.. versionadded:: 1.6
-#
-#:Parameters:
-#
-#    display: `bool`, optional
-#        If False then return the description as a string. By default
-#        the description is printed, i.e. ``c.dump()`` is equivalent to
-#        ``print c.dump(display=False)``.
-#
-#    omit: sequence of `str`
-#        Omit the given CF properties from the description.
-#
-#:Returns:
-#
-#    out : None or str
-#        A string containing the description.
-#
-#:Examples:
-#
-#        '''
-#        if _title is not None:
-#            indent0 = '    ' * _level                            
-#            _title = '{0}{1}: {2}'.format(indent0,
-#                                          self.__class__.__name__,
-#                                          self.name(default=''))
-#        
-#        return super(AbstractBoundedArrayConstruct, self).dump(
-#            display=display,
-#            omit=omit,
-#            field=field,
-#            key=key,
-#            _prefix=_prefix,
-#            _level=_level,
-#            _title=_title,
-#            _no_title=_no_title)
-#    #--- End: def
+    def bounds(self):  
+        raise AttributeError("use remove_bounds")
+    #--- End: def
+ 
+    def copy(self):
+        '''
+        '''
+        super(AbstractBoundedArray, self).copy()
+    #--- End: def
+ 
+    def dump(self, display=True, field=None, key=None,
+             _omit_properties=(), _prefix='', _title=None,
+             _create_title=True, _level=0):
+        '''Return a string containing a full description of the instance.
+
+.. versionadded:: 1.6
+
+:Parameters:
+
+    display: `bool`, optional
+        If False then return the description as a string. By default
+        the description is printed, i.e. ``f.dump()`` is equivalent to
+        ``print f.dump(display=False)``.
+
+    omit: sequence of `str`, optional
+        Omit the given CF properties from the description.
+
+    _prefix: optional
+        Ignored.
+
+:Returns:
+
+    out: `None` or `str`
+        A string containing the description.
+
+:Examples:
+
+        '''
+        return super(AbstractBoundedArray, self).dump(
+            display=display, field=field, key=key,
+            _omit_properties=_omit_properties, _prefix=_prefix,
+            _title=_title, _create_title=_create_title,
+            _extra=('bounds',), _level=_level)
+    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False,
-               _extra=(), **kwargs):
+               ignore_properties=(), ignore_construct_type=False):
         '''
         '''
-        _extra += ('bounds',)
-        
-        return super(AbstractBoundedArrayConstruct, self).equals(
+        return super(AbstractBoundedArray, self).equals(
             other,
             rtol=rtol, atol=atol, traceback=tracback,
             ignore_data_type=ignore_data_type,
             ignore_fill_value=ignore_fill_value,
             ignore_properties=ignore_properties,
             ignore_construct_type=ignore_construct_type,
-            _extra=_extra, **kwargs)
+            _extra=('bounds',))
     #--- End: def
         
+    def expand_dims(self, position , copy=True):
+        '''
+        '''
+        c = super(AbstractBoundedArray, self).expand_dims(
+            position, copy=copy)
+
+        if c.hasbounds:
+            position = self._parse_axes([position])[0]
+            c.bounds.expand_dims(position, copy=False)
+
+        return c
+    #--- End: def        
+    
     def insert_bounds(self, bounds, copy=True):
         '''Insert cell bounds.
 
@@ -278,9 +269,41 @@ AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
         if copy:            
             bounds = bounds.copy()
 
-        self._set_special_attr('bounds', bounds)        
-
-        self._hasbounds = True
+        self._Bounds = bounds
     #--- End: def
 
+    def remove_bounds(self):
+        '''Remove cell bounds.
+
+.. versionadded:: 1.6
+
+.. seealso , `insert_bounds`, `insert_data`, `remove_data`
+
+:Returns:
+
+    out: `None` or `Bounds`
+
+        '''
+        if not self.hasbounds:
+            return
+        
+        bounds = self.bounds
+        del self._Bounds
+
+        return bounds
+    #--- End: def
+
+    def squeeze(self, axes=None , copy=True):
+        '''
+        '''
+        c = super(AbstractBoundedArray, self).squeeze(
+            axes, copy=copy)
+
+        if c.hasbounds:
+            axes = self._parse_axes(axes)
+            c.bounds.squeeze(axes, copy=False)
+
+        return c
+    #--- End: def        
+    
 #--- End: class
