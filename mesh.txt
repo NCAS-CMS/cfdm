@@ -47,18 +47,30 @@ axis that indexes a time series at scattered points. In such cases,
 one-dimensional auxiliary coordinate constructs could be used to store
 coordinate values.  These axes are discrete axes in CF-netCDF.
 
-MESH
+Domain topology construct
 
 <preamble>
 
-The mesh construct consists of:
+The domain topology construct consists of:
 
-* properties to describe the mesh (e.g. an integer recording the
+* Properties (e.g. mesh type; mesh name; an integer recording the
   highest dimensionality of the geometric elements)
+
+* Dimensions [1..*] numbers of nodes, edges, faces, volumes in the
+  domain topology)
+
+* Auxiliary coordinate constructs [1..*] ((representative) locations
+  of nodes, edges, faces, volumes)
+
+* Connectivity arrays [1..*] (indices connecting topology elements)
+
+
 
 * a) the auxiliary coordinate constructs which describe the locations
   of the mesh components (nodes, edges and cells). Note the field's
   data will be located by a subset of these.
+
+  If the data field's data is defined on one of these then 
 
 * b) the auxiliary coordinate and mesh 
 
