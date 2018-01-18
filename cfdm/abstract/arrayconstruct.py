@@ -432,7 +432,7 @@ standard_name = 'time'
                                                          str(data)))
         
         # ------------------------------------------------------------
-        # Extra arrays
+        # Extra arrays (e.g. bounds)
         # ------------------------------------------------------------
         for attribute in _extra:
             x = getattr(self, attribute, None)
@@ -450,24 +450,24 @@ standard_name = 'time'
                                  _create_title=False, _level=level+1))          
 
         #-------------------------------------------------
-        # Ancillary attributes
+        # Ancillary properties
         # ------------------------------------------------------------
-        for ancillary in sorted(getattr(self, '_ancillary_attributes', [])):
-            x = getattr(self, ancillary, None)
-            if x is None:
-                continue
-
+        for prop, x in sorted(self.ancillary_properties().items()):
             string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+                                                             ancillary, x))
+
+#        for prop in sorted(getattr(self, '_ancillary_properties', [])):
+#            x = getattr(self, prop, None)
+#            if x is None:
+#                continue
+#
+#            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
                                                              ancillary, x))
 
         # ------------------------------------------------------------
         # Ancillary arrays
         # ------------------------------------------------------------
-        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
-            x = getattr(self, ancillary, None)
-            if x is None:
-                continue
-
+        for ancillary, x in sorted(self.ancillary_arrays().items()):
             if not isinstance(x, AbstractArray):
                 string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
                                                                  ancillary, x))
@@ -476,6 +476,20 @@ standard_name = 'time'
             string.append(x.dump(display=False, field=field, key=key,
                                  _prefix=_prefix+'ancillary.'+ancillary+'.',
                                  _create_title=False, _level=level+1))          
+
+#        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
+#            x = getattr(self, ancillary, None)
+#            if x is None:
+#                continue
+#
+#            if not isinstance(x, AbstractArray):
+#                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+#                                                                 ancillary, x))
+#                continue
+#
+#            string.append(x.dump(display=False, field=field, key=key,
+#                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
+#                                 _create_title=False, _level=level+1))          
 
         string = '\n'.join(string)
        
