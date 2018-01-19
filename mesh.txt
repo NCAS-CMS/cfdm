@@ -22,6 +22,14 @@ not correspond to a domain axis construct). Note that, for
 climatological time axes, the bounds are interpreted in a special way
 indicated by the cell method constructs.
 
+A coordinate construct may also have optional, ancillary properties
+for correctly interpreting <how the cell bounds describe the shape and
+extent of each cell.> These ancillary poperties are identified by
+standardised names and may be boolean-valued (indicating ...), the
+value of the netCDF property, or are the arrays (possibly with units)
+containing extra information
+
+
 The dimension coordinate construct is able to unambiguously describe
 cell locations because a domain axis can be associated with at most
 one dimension coordinate construct, whose data array values must all
