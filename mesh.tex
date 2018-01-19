@@ -69,27 +69,35 @@ Ancillary properties are required in the following cases:
 
 \item Climatological time axis. Each cell is non-contiguous in time
   and the cell bounds record the start and end of the whole
-  period. The "climatology" attribute of a CF-netCDF coordinate
-  variable is usd to create an ancillary property with the boolean
-  true value. In CF-netCDF, the climatolgy attribute points to the
-  coordinate bounds but, as these are already contained in the
-  coordinate construct, it is sufficient to note that a climatalogical
-  time axis is in use which may be interpreted according to the rules
-  specified in the CF conventions.
+  period. The presence of a ``climatology'' attribute of a CF-netCDF
+  coordinate variable is used to create an ancillary property with the
+  boolean true value. In CF-netCDF, the climatolgy attribute actually
+  references the coordinate's bounds variable but, as these are
+  already contained in the coordinate construct, it is sufficient to
+  note that a climatalogical time axis is in use.
   
-\item Geometries. Each cell is a spatial representation of a
-  real-world feature described by points, lines or polygons, each cell
-  having an arbitrary number of vertices. The vertex locations, stored
-  in the cell bounds array, are defined by a CF-netCDF variable
-  referenced by the "node_coordinates" attribute of a CF-netCDF
-  geometry container variable. Ancillary properties are created from
-  the "geometry_type", "part_node_count" and "interior_ring"
+\item Geometry. Each cell is a spatial representation of a real-world
+  feature described by points, lines or polygons; each cell having an
+  arbitrary number of vertices. The vertex locations, stored in the
+  cell bounds array, are defined by a CF-netCDF variable referenced by
+  the ``node\_coordinates'' attribute of a CF-netCDF geometry
+  container variable. Ancillary properties are created from the
+  ``geometry\_type'', ``part\_node\_count'' and ``interior\_ring''
   attributes of the geometry container variable. The latter two
-  attributes are pointers to other CF-netCDF variables and are
-  represented by their data arrays. It is not necessary to create an
-  ancillary variable from the "node_count" attribute, as this is as an
-  aspect of unpacking the data from its space-saving ragged
-  presentation.
+  attributes contain references to other CF-netCDF variables and the
+  corresponding ancillary properties are represented by the variables'
+  data arrays. It is not necessary to create an ancillary variable
+  from the ``node\_count'' attribute, as this is as an aspect of
+  unpacking the data from its space-saving ragged presentation.
+
+\item Domain topology. In general, an auxiliary coordinate construct
+  that corresponds to a topolgy coordinate construct is sufficiently
+  self-describing without any ancillary properties. When a cell is a
+  three-dimensional volume enclosed by a set of faces, however, an
+  ancillary property must be created from the ``volume\_shape\_type''
+  attribute of a CF-netCDF mesh variable. This contains a reference to
+  another CF-netCDF variable and the corresponding ancillary property
+  is represented by the variable's data array.
   
 \end{itemize}
 
