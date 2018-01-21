@@ -45,8 +45,100 @@ axis that indexes a time series at scattered points. In such cases,
 one-dimensional auxiliary coordinate constructs could be used to store
 coordinate values. These axes are discrete axes in CF-netCDF.
 
-A coordinate construct may also have optional ancillary properties for
-providing information required to correctly interpret the nature of
+The extent of each cell is implied by the vertices stored in the cell
+bounds array. By default it is assumed that an edge of a cell is
+defined by two adjacent vertices in the cell bounds array, as well as
+an edge between the last and first vertices, and ignoring any missing
+values. When this interpretation is not applicable, additional
+``connectivity'' properties and arrays may be used in define the exact
+regions of the domain spanned by the cells. These optional properties
+describe the type of relationship between vertices and cell regions;
+and optional arrays may provide ancillary values to be used when
+recreating the cell regions from the given vertices.
+
+Connectivity properties and arrays are created from particular
+attributes of particular CF-netCDF variables; which ones depends on
+the type of relationship between the cell bounds and the cell regions.
+
+\begin{itemize}
+
+\item Climatological time axis. Each cell may be non-contiguous in
+  time and the two vertices for each cell record the start and end of
+  the whole period. The presence of the ``climatology'' attribute of a
+  CF-netCDF coordinate variable indicates that a climatological time
+  axis is in use, and a connectivity property should record this fact.
+  
+\item Geometry. Each cell is a spatial representation of a real-world
+  feature described by points, lines or polygons; each cell having an
+  arbitrary number of vertices. A connectivity property recording that
+  the cells are defined by geometries, and the type of geometry, is
+  created from the ``geometry\_type'' attribute of a CF-netCDF
+  geometry container variable. Connectivity arrays may be required to
+  define the vertices that apply to different sub-regions of the
+  cells. These are derived from ``part\_node\_count'' and
+  ``interior\_ring'' attributes of the geometry container
+  variable. These attributes contain references to other CF-netCDF
+  variables, so connectivity properties take the variable arrays as
+  their values. It is not necessary to create a connectivity variable
+  from the ``node\_count'' attribute, as this is as an aspect of
+  unpacking the data from its space-saving ragged presentation.
+
+\item Domain topology. In general, an auxiliary coordinate construct
+  that corresponds to a topolgy coordinate construct is sufficiently
+  self-describing without any ancillary properties. When a cell is a
+  three-dimensional volume enclosed by a set of faces, however, an
+  ancillary property must be created from the ``volume\_shape\_type''
+  attribute of a CF-netCDF mesh variable. This contains a reference to
+  another CF-netCDF variable and the corresponding ancillary property
+  is represented by the variable's data array.
+  
+\end{itemize}
+
+
+
+By default it is assumed that each celasll descibes a contiguous region
+for which adjacent vertices in the cell bounds arrays are assumed to
+be adjacent vertices in the polygon whose adjacent vertices are also adjacent in the
+cell bounbds array, with the last vertex also being connected to the
+first and ignoring any missing values.
+
+But in some cases a cell vertex may be connected with fewer or more
+than two other vertices---which can occur if the cell describes a
+geometrical point, line, volume, or higher-dimensional region. In
+these cases the coordinate construct may require ancillary properties
+or arrays to provide the connectivity bwetween
+
+a single cell may be a collection of sub-regions,
+each of which is described by an independent subset of the cell bounds
+values; or a cell vertex may be connected with fewer or more than two
+other vertices---which can occur if the cell describes a geometrical
+point, line, volume, or higher-dimensional region. In these cases the
+coordinate construct may require ancillary properties or arrays to
+provide the connectivity bwetween
+
+
+
+to describe a cell that encloses a contiguous
+region. But in some cases a single cell may be a collection of
+sub-cells, each of which is described by a subset of the cell bounds
+values; or a cell vertex may be connected with fewer or more than two
+other vertices---which can occur if the cell describes a
+
+
+By default it is assumed that the vertices described by the cell
+bounds array are coinnected to their adjacent vertices in that array
+(ignoring any that are missing values) to describe a cell that
+encloses a contiguous region. But in some cases a single cell may be a
+collection of sub-cells, each of which is described by a subset of the
+cell bounds values; or a cell vertex may be connected with fewer or
+more than two other vertices---which can occur if the cell describes a
+geometrical point, line, volume, or higher-dimensional region. In
+these cases the coordinate construct may require ancillary properties
+or arrays to provide the connectivity bwetween 
+
+
+
+required to correctly interpret the nature of
 its cells when this is not possible from the other properties,
 coordinate values and cell bounds (if present). For example,
 additional information may be required to reconstruct the exact extent
@@ -62,6 +154,24 @@ units). In the latter case it is assumed that the array contains
 information for describing each cell, and so spans the same domain
 axes as the coordinate array, with the addition of any number
 (including zero) of extra dimensions.
+
+%A coordinate construct may also have optional ancillary properties for
+%providing information required to correctly interpret the nature of
+%its cells when this is not possible from the other properties,
+%coordinate values and cell bounds (if present). For example,
+%additional information may be required to reconstruct the exact extent
+%of a cell that spans a non-contiguous region. Ancillary properties
+%correspond to netCDF attributes of variables that contain the
+%necessary information. In general, an ancillary property will have the
+%same value as its netCDF attribute counterpart. If the value of a
+%netCDF attribute is a pointer to another netCDF variable then,
+%depending on the context, the ancillary property could be set to a
+%boolean (indicating that a framework defined alsewhere should be
+%applied), or the referenced variable's array of values (including its
+%units). In the latter case it is assumed that the array contains
+%information for describing each cell, and so spans the same domain
+%axes as the coordinate array, with the addition of any number
+%(including zero) of extra dimensions.
 
 Ancillary properties are required in the following cases:
 
