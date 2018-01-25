@@ -45,12 +45,146 @@ axis that indexes a time series at scattered points. In such cases,
 one-dimensional auxiliary coordinate constructs could be used to store
 coordinate values. These axes are discrete axes in CF-netCDF.
 
+%%  SHAPE %%%%%%%%%%%%%%%%%
+
+A coordinate construct may optionally contain one or more ``cell
+extent'' properties to describe how the cell bounds relate to cell
+extents, i.e. how the vertices of a cell connect to define the edges
+of a region of the domain. If present, these properties include a
+descriptive string that specifies the type of cell construction in
+use; and may include arrays of ancillary values that contain
+parameters needed to map each cell's vertices to its extent. Such
+arrays span the same domain axes as the coordinate array, with the
+addition of an extra dimension whose size is that of the maximum
+number of ancillary values required for any cell (padding any unused
+elements with missing values). In the absence of these properties,
+cell extent's are derived by the standard ruls described in the CF
+conventions.
+
+Cell extent properties correspond to particular attributes of a
+variety of CF-netCDF variables; which ones depends on the type of
+relationship between the cell bounds and the cell extents:
+
+\begin{itemize}
+
+\item Climatological time axis. Each cell represets a disjoint set of
+  regions of the domain. The existence of the ``climatology''
+  attribute of a CF-netCDF coordinate variable corresponds to a cell
+  extent property describing that climatological time axis rules are
+  in use.
+  
+\item Geometry. Each cell is a spatial representation of a real-world
+  feature described by one or more sets of points, lines or
+  polygons. The ``geometry\_type'' attribute of a CF-netCDF geometry
+  container variable corresponds to a cell extent property describing
+  the type of geometry in use. The ``part\_node\_count'' and
+  ``interior\_ring'' attributes of the geometry container variable
+  correspond to cell extent arrays for reconstructing the cell
+  extents. These attributes contain references to other CF-netCDF
+  variables, so the intra-cell connectivity arrays are constructed
+  from the referenced variables' data.
+
+\item Mesh topology. When a cell represents a three-dimensional volume
+  enclosed by a set of faces, the ``volume\_shape\_type'' attribute of
+  a CF-netCDF mesh topology variable corresponds to a cell extent
+  array for reconstructing the cell extents. This attribute contains a
+  reference to another CF-netCDF variable, so the cell extent array is
+  constructed from the referenced variable's data.
+  
+\end{itemize}
+
+%%  INTRA%%%%%%%%%%%%%%%%%
+
+A coordinate construct may optionally contain one or more properties
+to describe ``intra-cell connectivity'', i.e. how the vertices stored
+in the cell bounds array relate to one another to describe cell
+extents. These properties may be strings describing the relationship
+between vertices and cell regions; or arrays providing ancillary
+values for each cell to be used when recreating cell regions from the
+given vertices. Such an intra-cell connectivity array spans the same
+domain axes as its coordinate array, with the addition of an extra
+dimension whose size is that of the maximum number of ancillary values
+required for any cell (padding any unused elements with missing
+values).
+
+Intra-cell connectivity properties and arrays are created from
+particular attributes of a variety of CF-netCDF variables; which ones
+depends on the type of relationship between the cell bounds and the
+cell regions:
+
+\begin{itemize}
+
+\item Climatological time axis. Each cell may be non-contiguous in
+  time and the two vertices provided for each cell record the start
+  and end of the whole period, wit the bounds for the cell's
+  sub-regions being inferred from rules given in the CF
+  conventions. The existence of the ``climatology'' attribute of a
+  CF-netCDF coordinate variable corresponds to an intra-cell
+  connectivity property specifying that climatological time axis rules
+  are in use.
+  
+\item Geometry. Each cell is a spatial representation of a real-world
+  feature described by one or more sets of points, lines or
+  polygons. The ``geometry\_type'' attribute of a CF-netCDF geometry
+  container variable corresponds to an intra-cell connectivity
+  property specifying the type of geometry in use. The
+  ``part\_node\_count'' and ``interior\_ring'' attributes of the
+  geometry container variable correspond to intra-cell connectivity
+  arrays requireed to reconstruct the cell region. These attributes
+  contain references to other CF-netCDF variables, so the intra-cell
+  connectivity arrays are constructed from the referenced variables'
+  data.
+
+\item Mesh topology. A cell could represent a three-dimensional volume
+  enclosed by a set of faces. The ``volume\_shape\_type'' attribute of
+  a CF-netCDF mesh topology variable corresponds to an intra-cell
+  connectivity array. This attribute contains a reference to another
+  CF-netCDF variable, so the intra-cell connectivity array is
+  constructed from the referenced variable's data.
+  
+\end{itemize}
+
+%%  INTER%%%%%%%%%%%%%%%%%
+
+An auxiliary coordinate construct may optionally contain one or more
+properties to describe ``inter-cell connectivity'', i.e. how cells
+relate to each other (e.g. which nodes are connected in a
+one-dimensionsal mesh topology) and to the cells of other, related
+domains (e.g.\ which edges are connected ). These properties may be
+strings describing the role of the cells being connected
+(e.g. ``node'' in a mesh topology); or arrays providing ancillary
+values that indicate relative position of all cells. Such an
+inter-cell connectivity array need not span the same domain axes as
+its coordinate array, with the addition of an extra dimension whose
+size is that of the maximum number of ancillary values required for
+any cell (padding any unused elements with missing values).
+
+
+
+
+The extent of each cell is implied by the vertices stored in the cell
+bounds array. By default it is assumed that an edge of a cell is
+defined by adjacent vertices in the cell bounds array, as well as an
+edge between the last and first vertices, ignoring any missing
+values. When this interpretation is not applicable, additional
+``intra-cell connectivity'' properties and arrays may be used to
+define the exact regions of the domain spanned by the cells. These
+optional properties describe the type of relationship between vertices
+and cell regions; and optional arrays may provide ancillary values to
+be used when recreating the cell regions from the given vertices.
+
+Connectivity properties and arrays are created from particular
+attributes of particular CF-netCDF variables; which ones depends on
+the type of relationship between the cell bounds and the cell regions:
+
+%%%%%%%%%%%%%%%%%
+
 The extent of each cell is implied by the vertices stored in the cell
 bounds array. By default it is assumed that an edge of a cell is
 defined by two adjacent vertices in the cell bounds array, as well as
 an edge between the last and first vertices, and ignoring any missing
 values. When this interpretation is not applicable, additional
-``connectivity'' properties and arrays may be used in define the exact
+``connectivity'' properties and arrays may be used to define the exact
 regions of the domain spanned by the cells. These optional properties
 describe the type of relationship between vertices and cell regions;
 and optional arrays may provide ancillary values to be used when
@@ -58,7 +192,7 @@ recreating the cell regions from the given vertices.
 
 Connectivity properties and arrays are created from particular
 attributes of particular CF-netCDF variables; which ones depends on
-the type of relationship between the cell bounds and the cell regions.
+the type of relationship between the cell bounds and the cell regions:
 
 \begin{itemize}
 
@@ -78,19 +212,19 @@ the type of relationship between the cell bounds and the cell regions.
   cells. These are derived from ``part\_node\_count'' and
   ``interior\_ring'' attributes of the geometry container
   variable. These attributes contain references to other CF-netCDF
-  variables, so connectivity properties take the variable arrays as
+  variables, so the connectivity arrays take the variable arrays as
   their values. It is not necessary to create a connectivity variable
   from the ``node\_count'' attribute, as this is as an aspect of
   unpacking the data from its space-saving ragged presentation.
 
 \item Domain topology. In general, an auxiliary coordinate construct
-  that corresponds to a topolgy coordinate construct is sufficiently
+  that corresponds to a topology coordinate construct is sufficiently
   self-describing without any ancillary properties. When a cell is a
-  three-dimensional volume enclosed by a set of faces, however, an
-  ancillary property must be created from the ``volume\_shape\_type''
+  three-dimensional volume enclosed by a set of faces, however, a
+  connectivity array must be created from the ``volume\_shape\_type''
   attribute of a CF-netCDF mesh variable. This contains a reference to
-  another CF-netCDF variable and the corresponding ancillary property
-  is represented by the variable's data array.
+  another CF-netCDF variable so the connectivity array is that
+  variable's data array.
   
 \end{itemize}
 

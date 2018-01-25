@@ -54,8 +54,8 @@ domain ancillary objects.
             _use_data=_use_data)
 
         # Set bounds and ancillary parameters and properties
-        self._ancillary_parameters = {}
-        self._ancillary_arrays     = {}
+        self._parameters = {'extent': {}, 'topology': {}}
+        self._arrays     = {'extent': {}, 'topology': {}}
         
         if source is not None and isinstance(source, AbstractBoundedArray):
             if bounds is None and source.has_bounds():
@@ -91,6 +91,13 @@ domain ancillary objects.
                     parameter = deepcopy(parameter)
                     
                 self.set_ancillary_parameter(name, parameter)
+
+        if extent_properties:
+            for name, parameter in extent_properties.iteritems():
+                if copy:
+                    parameter = deepcopy(parameter)
+                    
+                self.set_extent_property(name, parameter, copy=True)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -177,6 +184,19 @@ x.__getitem__(indices) <==> x[indices]
 
         # Return the new bounded variable
         return new
+    #--- End: def
+
+
+    def _get_parameters(self, x):
+        '''
+        '''
+        return self._parameters[x]
+    #--- End: def
+
+    def _get_arrays(self, x):
+        '''
+        '''
+        return self._arrays[x]
     #--- End: def
 
 #    # ----------------------------------------------------------------
@@ -387,183 +407,162 @@ x.__getitem__(indices) <==> x[indices]
 #        self._ancillary_arrays.discard('topology_connectivity')
 #    #--- End: def
 
-    def get_extent_property(self, name, *default):
-        '''
-        '''
-        if default:
-            return self._extent_properties.get(name, default[0])
-
-        try:
-            return self._extent_properties[name]
-        except KeyError:
-            raise AttributeError("acj s;do8h po;iln ")
-    #--- End: def
-
-    def set_extent_property(self, name, value, copy=True):
-        '''
-        '''
-        if isinstance(value, AbstractArray):
-            if copy:
-                value =value .copy()
-
-            self._extent_ancillary_arrays.add(name)
-        else:
-            self._extent_parameters.add(name)
-            
-        self._extent_properties[name] = value
-    #--- End: def
-    
-    def del_extent_property(self, name):
-        '''
-        '''
-        self._extent_parameters.discard(name)
-        self._extent_ancillary_arrays.discard(name)
-        return self._extent_properties.pop(name, None)
-    #--- End: def
-
-    def has_extent_property(self, name):
-        '''
-        '''
-        return name in self._extent_properties
-    #--- End: def
-
-    def extent_properties(self, copy=False):
-        '''
-        '''
-        out = self.extent_parameters(copy=copy)
-        out.update(self.extent_arrays(copy=copy))
-        return out
-    #--- End: def
-
-    def _get_parameters(self, x):
+    def ancillary_parameters(self):
         '''
         '''
         out = {}
-        for name in self._parameters[x]:
-            out[name] = self._properties[x][name]
-        
+        for key, value in self._parameters.iteritems():
+            out.update(value.copy()) 
+
         return out
     #--- End: def
 
-    def _get_arrays(self, x, copy=False):
+    def ancillary_arrays(self):
         '''
         '''
         out = {}
-        for name in self._arrays[x]
-            out[name] = self._arrays[x][name]
-            
-        if copy:
-            for name, value in out.items():
-                out[name] = value.copy()
-        #--- End: if
-        
+        for key, value in self._arrays.iteritems():
+            out.update(value.copy()) 
+
         return out
     #--- End: def
 
     def extent_parameters(self):
         '''
         '''
-        return self._get_parameters('extent')
+        return self._get_parameters('extent').copy()
     #--- End: def
 
-    def extent_arrays(self, copy=False):
+    def extent_arrays(self):
         '''
         '''
-        return self._get_arrays('extent', copy=copy)
+        return self._get_arrays('extent').copy()
     #--- End: def
 
-    def get_ancillary_array(self, name, *default):
+    def get_extent_parameter(self, name, *default):
         '''
         '''
+        d = self._get_parameters('extent')
         if default:
-            return self._ancillary_arrays.get(name. default[0])
+            return d.get(name, default[0])
 
         try:
-            return self._ancillary_arrays[name]
+            return d[name]
         except KeyError:
-            raise AttributeError("acj s;do8h po;iln ")
+            raise AttributeError("acj s;do8h po;iln 1")
     #--- End: def
 
-    def set_ancillary_array(self, name, array, copy=True):
+        self._get_parameters('extent')[name] = value
+    #--- End: def
+    
+    def get_extent_array(self, name, *default):
+        '''
+        '''
+        d = self._get_arrays('extent')
+        if default:
+            return d.get(name, default[0])
+
+        try:
+            return d[name]
+        except KeyError:
+            raise AttributeError("acj s;do8h po;iln 2")
+    #--- End: def
+
+    def set_extent_parameter(self, name, value):
+        '''
+        '''
+        self._get_parameters('extent')[name] = value
+    #--- End: def
+    
+    def set_extent_array(self, name, value, copy=True):
         '''
         '''
         if copy:
-            array = array.copy(data=data)
+            array = array.copy()
             
-        self._ancillary_arrays[name] = array
+        self._get_arrays('extent')[name] = value
     #--- End: def
     
-    def del_ancillary_array(self, name):
+    def del_extent_parameter(self, name):
         '''
         '''
-        return self._ancillary_arrays.pop(name, None)
+        return self._get_parameters('extent').pop(name, None)
     #--- End: def
 
-    def has_ancillary_array(self, name):
+    def del_extent_array(self, name):
         '''
         '''
-        return name in self._ancillary_arrays
+        return self._get_arrays('extent').pop(name, None)
     #--- End: def
 
-    def ancillary_arrays(self, copy=False):
+    def topology_parameters(self):
         '''
         '''
-        if copy:        
-            out = {}
-            for name, array in self._ancillary_arrays.iteritems():
-                out[name] = array.copy()
-        else:
-            out = self._ancillary_arrays.copy()
-
-        return out
+        return self._get_parameters('topology').copy()
     #--- End: def
-    
-    def get_ancillary_parameter(self, name, *default):
+
+    def topology_arrays(self):
         '''
         '''
+        return self._get_arrays('topology').copy()
+    #--- End: def
+
+    def get_topology_parameter(self, name, *default):
+        '''
+        '''
+        d = self._get_parameters('topology')
         if default:
-            return self._ancillary_parameters.get(name. default[0])
+            return d.get(name, default[0])
 
         try:
-            return self._ancillary_parameters[name]
+            return d[name]
         except KeyError:
-            raise AttributeError("acj s;do8h po;iln ")
+            raise AttributeError("acj s;do8h po;iln 3")
     #--- End: def
 
-    def set_ancillary_parameter(self, name, parameter, copy=True):
+        self._parameters('extent')[name] = value
+    #--- End: def
+    
+    def get_topology_array(self, name, *default):
+        '''
+        '''
+        d = self._get_arrays('topology')
+        if default:
+            return d.get(name, default[0])
+
+        try:
+            return d[name]
+        except KeyError:
+            raise AttributeError("acj s;do8h po;iln 4")
+    #--- End: def
+
+    def set_topology_parameter(self, name, value):
+        '''
+        '''
+        self._get_parameters('topology')[name] = value
+    #--- End: def
+    
+    def set_topology_array(self, name, value, copy=True):
         '''
         '''
         if copy:
-            parameter = parameter.copy()
+            array = array.copy()
             
-        self._ancillary_parameters[name] = parameter
+        self._get_arrays('topology')[name] = value
     #--- End: def
     
-    def del_ancillary_parameter(self, name):
+    def del_topology_parameter(self, name):
         '''
         '''
-        return self._ancillary_parameters.pop(name, None)
+        return self._get_parameters('topology').pop(name, None)
     #--- End: def
 
-    def has_ancillary_parameter(self, name):
+    def del_topology_array(self, name):
         '''
         '''
-        return name in self._ancillary_parameters
+        return self._get_arrays('topology').pop(name, None)
     #--- End: def
-
-    def ancillary_parameters(self, copy=False):
-        '''
-        '''
-        if copy:        
-            out = {}
-            for name, parameter in self._ancillary_parameters.iteritems():
-                out[name] = parameter.copy()
-        else:
-            out = self._ancillary_parameters.copy()
-
-        return out
-    #--- End: def
-    
+   
     def dump(self, display=True, field=None, key=None,
              _omit_properties=(), _prefix='', _title=None,
              _create_title=True, _level=0):
@@ -614,42 +613,23 @@ x.__getitem__(indices) <==> x[indices]
             b.dump(display=False, field=field, key=key,
                    _prefix=_prefix+'bounds.',
                    _create_title=False, _level=level+1))
-        
-        #-------------------------------------------------------------
-        # Ancillary parameters (e.g. geometry_type)
-        # ------------------------------------------------------------
-        for name, parameter in sorted(self.extent_parameters().items()):
-            string.append('{0}{1}extent.{2} = {3}'.format(indent1, _prefix,
-                                                          name, parameter))
-            
-        for name, a in sorted(self.extent_arrays().items()):
-            if not isinstance(x, AbstractArray):
-                string.append('{0}{1}{2} = {3}'.format(indent1, _prefix,
-                                                       name, a))
-                continue
-            
-            string.append(
-                a.dump(display=False, field=field, key=key,
-                       _prefix=_prefix+'extent.'+name+'.',
-                       _create_title=False, _level=level+1))
 
+        #-------------------------------------------------------------
+        # Extent and topology properties
         # ------------------------------------------------------------
-        # Ancillary arrays (e.g. topology_connectivity)
-        # ------------------------------------------------------------
-        for name, topology in sorted(self.topology_parameters().items()):
-            string.append('{0}{1}{2} = {3}'.format(indent1, _prefix,
-                                                   name, parameter))
-            
-        for name, a in sorted(self.topology_arrays().items()):
-            if not isinstance(x, AbstractArray):
-                string.append('{0}{1}topology.{2} = {3}'.format(indent1, _prefix,
-                                                                name, a))
-                continue
-            
-            string.append(
-                a.dump(display=False, field=field, key=key,
-                       _prefix=_prefix+'topology.'+name+'.',
-                       _create_title=False, _level=level+1))
+        for x in ['extent', 'topology']:
+            parameters = getattr(self, x+'_parameters')()
+            for name, parameter in sorted(parameters.items()):
+                string.append(
+                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
+
+            arrays = getattr(self, x+'_arrays')()
+            for name, array in sorted(arrays.items()):
+                string.append(
+                    array.dump(display=False, field=field, key=key,
+                               _prefix=_prefix+x+'.'+name+'.',
+                               _create_title=False, _level=level+1))
+        #--- End: for
             
         string = '\n'.join(string)
         
@@ -687,25 +667,26 @@ x.__getitem__(indices) <==> x[indices]
         if ignore_fill_value:
             ignore_properties += ('_FillValue', 'missing_value')
             
-        self_parameters  = self.ancillary_parameters()
-        other_parameters = other.ancillary_parameters()
-        if set(self_parameters) != set(other_parameters):
-            if traceback:
-                print("{0}: Different parameters: {1}, {2}".format( 
-                    self.__class__.__name__,
-                    set(self_parameters), set(other_parameters)))
-            return False
-        
-        for name, x in sorted(self_parameters.iteritems()):
-            y = other_parameters[name]
-            
-            if not cf_equals(x, y, rtol=rtol, atol=atol,
-                             ignore_fill_value=ignore_fill_value,
-                             traceback=traceback):
+        for x in ['extent', 'topology']:
+            self_parameters  = getattr(self, x+'_parameters')()
+            other_parameters = getattr(other, x+'_parameters')()
+            if set(self_parameters) != set(other_parameters):
                 if traceback:
-                    print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
-                        self.__class__.__name__, prop, x, y))
+                    print("{0}: Different parameters: {1}, {2}".format( 
+                        self.__class__.__name__,
+                        set(self_parameters), set(other_parameters)))
                 return False
+            
+            for name, x in sorted(self_parameters.iteritems()):
+                y = other_parameters[name]
+                
+                if not cf_equals(x, y, rtol=rtol, atol=atol,
+                                 ignore_fill_value=ignore_fill_value,
+                                 traceback=traceback):
+                    if traceback:
+                        print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
+                            self.__class__.__name__, prop, x, y))
+                    return False
         #--- End: for
 
         # ------------------------------------------------------------
@@ -732,26 +713,27 @@ x.__getitem__(indices) <==> x[indices]
         # ------------------------------------------------------------
         # Check the ancillary arrays
         # ------------------------------------------------------------
-        self_ancillary_arrays  = self.ancillary_arrays()
-        other_ancillary_arrays = other.ancillary_arrays()
-        if set(self_ancillary_arrays) != set(other_ancillary_arrays):
-            if traceback:
-                print("{0}: Different ancillary arrays: {1}, {2}".format( 
-                    self.__class__.__name__,
-                    set(self_ancillary_arrays), set(other_ancillary_arrays)))
-            return False
-
-        for name, x in sorted(self_ancillary_arrays.iteritems()):
-            y = other_arrays[name]
-            
-            if not x.equals(y rtol=rtol, atol=atol,
-                            traceback=traceback,
-                            ignore_data_type=ignore_data_type,
-                            ignore_construct_type=ignore_construct_type,
-                            ignore_fill_value=ignore_fill_value):
+        for x in ['extent', 'topology']:
+            self_ancillary_arrays  = getattr(self, x+'_arrays')()
+            other_ancillary_arrays = getattr(other, x+'_arrays')()
+            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
                 if traceback:
-                    print("{0}: Different {1}".format(self.__class__.__name__, name))
+                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
+                        self.__class__.__name__,
+                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
                 return False
+    
+            for name, x in sorted(self_ancillary_arrays.items()):
+                y = other_arrays[name]
+                
+                if not x.equals(y rtol=rtol, atol=atol,
+                                traceback=traceback,
+                                ignore_data_type=ignore_data_type,
+                                ignore_construct_type=ignore_construct_type,
+                                ignore_fill_value=ignore_fill_value):
+                    if traceback:
+                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
+                    return False
         #--- End: for
 
         return True
