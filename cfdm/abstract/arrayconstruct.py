@@ -25,7 +25,7 @@ All components of a variable are optional.
                                'missing_value'))
 
     def __init__(self, properties={}, data=None, source=None,
-                 copy=True):
+                 copy=True, _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -47,16 +47,7 @@ All components of a variable are optional.
         initialization. By default arguments are deep copied.
 
         '''
-        # _hasbounds is True if and only if there are cell bounds.
-        self._hasbounds = False
-
-        # _hasdata is True if and only if there is a data array
-        self._hasdata = False
-
         self._properties = {}
-        
-        self._ancillary_arrays     = set()
-        self._ancillary_attributes = set()
         
         if source is not None:
             if not isinstance(source, AbstractArray):
@@ -65,8 +56,8 @@ All components of a variable are optional.
     source.__class__.__name__))
 
             # Data
-            if data is None and source.hasdata:
-                data = source.data
+            if _use_data and data is None:
+                data = source.get_data(None)
 
             # Properties
             p = source.properties()
@@ -74,28 +65,11 @@ All components of a variable are optional.
                 p.update(properties)
             properties = p
 
-            # Ancillary arrays
-            for a in source._ancillary_arrays:
-                ancillary = getattr(source, a)
-                if copy:
-                    ancillary = ancillary.copy()
-
-                setattr(self, a, ancillary)
-
-            # Ancillary attributes
-            for a in source._ancillary_attributes:
-                attribute = getattr(source, a)
-                if copy:
-                    attribute = deepcopy(attribute)
-
-                setattr(self, a, attribute)
-        #--- End: if
-
         if properties:
-            self.properties(properties, copy=copy)
+            self.properties(properties, copy=copy, data=_use_data)
 
-        if data is not None:
-            self.insert_data(data, copy=copy)
+        if _use_data and data is not None:
+            self.set_data(data, copy=copy)
     #--- End: def
 
     def __str__(self):
@@ -105,16 +79,17 @@ x.__str__() <==> str(x)
 
         '''
         name = self.name('')
-        
-        if self.hasdata:
-            dims = ', '.join([str(x) for x in self.data.shape])
+
+        data = self.get_data(None)
+        if data is not None:
+            dims = ', '.join([str(x) for x in data.shape])
             dims = '({0})'.format(dims)
         else:
             dims = ''
 
         # Units
-        units = self.getprop('units', '')
-        calendar = self.getprop('calendar', '')
+        units = self.get_property('units', '')
+        calendar = self.get_property('calendar', '')
         if calendar:
             units += ' '+calendar
             
@@ -158,93 +133,64 @@ x.__str__() <==> str(x)
         return '\n'.join(string)
     #--- End: def
 
-    # ================================================================
-    # Attributes
-    # ================================================================
-    @property
-    def _Data(self):
-        '''The `Data` object containing the data array.
-
-.. versionadded:: 1.6
-
-        '''
-        return self._Data
-    #--- End: def
-    @_Data.setter
-    def _Data(self, value):
-        self._Data = value
-        self._hasdata = True
-    @_Data.deleter
-    def _Data(self):
-        self._Data = None
-        self._hasdata = False
-
-    @property
-    def data(self):
-        '''
-
-The `Data` object containing the data array.
-
-.. versionadded:: 1.6
-
-.. seealso:: `array`, `Data`, `hasdata`, `varray`
-
-:Examples:
-
->>> if f.hasdata:
-...     print f.data
-
-'''       
-        if self.hasdata:
-            data = self._Data
-            data.fill_value = self._fill_value            
-            data.units      = self.getprop('units', None)
-            data.calendar   = self.getprop('calendar', None)
-            return data 
-
-        raise AttributeError("{} object doesn't have attribute 'data'".format(
-            self.__class__.__name__))
-    #--- End: def
-    @data.setter
-    def data(self, value):
-        old = getattr(self, 'data', None)
-
-        if old is None:
-            raise ValueError(
-"Can't set 'data' when data has not previously been set with the 'insert_data' method")
-
-        if old.shape != value.shape: 
-            raise ValueError(
-"Can't set 'data' to new data with different shape. Consider the 'insert_data' method.")
-       
-        self._Data = value
-    #--- End: def
+#    @property
+#    def data(self):
+#        '''
+#
+#The `Data` object containing the data array.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `array`, `Data`, `hasdata`, `varray`
+#
+#:Examples:
+#
+#>>> if f.hasdata:
+#...     print f.data
+#
+#'''       
+#        if self.hasdata:
+#            data = self._Data
+#            data.fill_value = self._fill_value            
+#            data.units      = self.get_property('units', None)
+#            data.calendar   = self.get_property('calendar', None)
+#            return data 
+#
+#        raise AttributeError("{} object doesn't have attribute 'data'".format(
+#            self.__class__.__name__))
+#    #--- End: def
+#    @data.setter
+#    def data(self, value):
+#        old = getattr(self, 'data', None)
+#
+#        if old is None:
+#            raise ValueError(
+#"Can't set 'data' when data has not previously been set with the 'set_data' method")
+#
+#        if old.shape != value.shape: 
+#            raise ValueError(
+#"Can't set 'data' to new data with different shape. Consider the 'set_data' method.")
+#       
+#        self._Data = value
+#    #--- End: def
     
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def hasbounds(self):
-        '''True if there are cell bounds.
+    def get_data(self, *default):
+        '''
+        '''
+        data = getattr(self, '_data', None)
+        if data is not None:
+            data.fill_value = self._fill_value            
+            data.units      = self.get_property('units', None)
+            data.calendar   = self.get_property('calendar', None)
+            return data
 
-If present then cell bounds are stored in the `!bounds` attribute.
+        if default:
+            return default[0]
 
-.. versionadded:: 1.6
-
-:Examples:
-
->>> if c.hasbounds:
-...     print c.bounds
-
-        '''      
-        return self._hasbounds
+        raise AttributeError("sdij ;soij in kl")
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def hasdata(self):
+    def has_data(self):
         '''
 
 True if there is a data array.
@@ -253,23 +199,23 @@ If present, the data array is stored in the `data` attribute.
 
 .. versionadded:: 1.6
 
-.. seealso:: `data`, `hasbounds`
+.. seealso:: `data`
 
 :Examples:
 
->>> if f.hasdata:
+>>> if f.has_data():
 ...     print f.data
 
 '''      
-        return self._hasdata
+        return hasattr(self, '_data')
     #--- End: def
 
-    def remove_data(self):
+    def del_data(self):
         '''Remove and return the data array.
 
 .. versionadded:: 1.6
 
-.. seealso:: `insert_data`
+.. seealso:: `set_data`
 
 :Returns: 
 
@@ -291,17 +237,15 @@ False
 None
 
         '''
-        if not self.hasdata:
+        if not self.has_data():
             return
 
-        data = self.data
-        del self._Data
-
+        data = self._data
+        del self._data
         return data
     #--- End: def
 
-    @abc.abstractmethod
-    def copy(self, _extra=()):
+    def copy(self, data=True):
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
@@ -332,13 +276,14 @@ False
 True
 
         '''
-        new = type(self)(source=self, copy=True)
+        new = type(self)(source=self, copy=True,
+                         _use_source_data=data)
     #--- End: def
 
     @abc.abstractmethod
     def dump(self, display=True, field=None, key=None,
              _omit_properties=(), _prefix='', _title=None,
-             _create_title=True, _extra=(), _level=0):
+             _create_title=True, _level=0):
         '''
 
 Return a string containing a full description of the instance.
@@ -411,8 +356,8 @@ standard_name = 'time'
         # ------------------------------------------------------------
         # Data
         # ------------------------------------------------------------
-        if self.hasdata:
-            data = self.data
+        data = self.get_data(None)
+        if data is not None:
             if field and key:
                 ndim = data.ndim
                 x = ['{0}({1})'.format(field.domain_axis_name(axis),
@@ -431,57 +376,43 @@ standard_name = 'time'
                                                          ' '.join(x),
                                                          str(data)))
         
-        # ------------------------------------------------------------
-        # Extra arrays (e.g. bounds)
-        # ------------------------------------------------------------
-        for attribute in _extra:
-            x = getattr(self, attribute, None)
-            if x is None:
-                continue
-            
-            if not isinstance(x, AbstractArray):
-                string.append('{0}{1} = {2}'.format(indent1, attribute, x))
-                continue
-            
-            #            name = attribute.title().replace(' ', '')
-            
-            string.append(x.dump(display=False, field=field, key=key,
-                                 _prefix=_prefix+attribute+'.',
-                                 _create_title=False, _level=level+1))          
-
-        #-------------------------------------------------
-        # Ancillary properties
-        # ------------------------------------------------------------
-        for prop, x in sorted(self.ancillary_properties().items()):
-            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
-                                                             ancillary, x))
-
-#        for prop in sorted(getattr(self, '_ancillary_properties', [])):
-#            x = getattr(self, prop, None)
+#        # ------------------------------------------------------------
+#        # Extra arrays (e.g. bounds)
+#        # ------------------------------------------------------------
+#        for attribute in _extra:
+#            x = getattr(self, attribute, None)
 #            if x is None:
 #                continue
+#            
+#            if not isinstance(x, AbstractArray):
+#                string.append('{0}{1} = {2}'.format(indent1, attribute, x))
+#                continue
+#            
+#            #            name = attribute.title().replace(' ', '')
+#            
+#            string.append(x.dump(display=False, field=field, key=key,
+#                                 _prefix=_prefix+attribute+'.',
+#                                 _create_title=False, _level=level+1))          
 #
+#        #-------------------------------------------------------------
+#        # Ancillary properties (e.g. geometry_type)
+#        # ------------------------------------------------------------
+#        for prop, x in sorted(self.ancillary_properties().items()):
 #            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
-                                                             ancillary, x))
-
-        # ------------------------------------------------------------
-        # Ancillary arrays
-        # ------------------------------------------------------------
-        for ancillary, x in sorted(self.ancillary_arrays().items()):
-            if not isinstance(x, AbstractArray):
-                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
-                                                                 ancillary, x))
-                continue
-
-            string.append(x.dump(display=False, field=field, key=key,
-                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
-                                 _create_title=False, _level=level+1))          
-
-#        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
-#            x = getattr(self, ancillary, None)
-#            if x is None:
-#                continue
+#                                                             ancillary, x))
 #
+##        for prop in sorted(getattr(self, '_ancillary_properties', [])):
+##            x = getattr(self, prop, None)
+##            if x is None:
+##                continue
+##
+##            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+#                                                             ancillary, x))
+#
+#        # ------------------------------------------------------------
+#        # Ancillary arrays (e.g. topology_connectivity)
+#        # ------------------------------------------------------------
+#        for ancillary, x in sorted(self.ancillary_arrays().items()):
 #            if not isinstance(x, AbstractArray):
 #                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
 #                                                                 ancillary, x))
@@ -490,6 +421,20 @@ standard_name = 'time'
 #            string.append(x.dump(display=False, field=field, key=key,
 #                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
 #                                 _create_title=False, _level=level+1))          
+#
+##        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
+##            x = getattr(self, ancillary, None)
+##            if x is None:
+##                continue
+##
+##            if not isinstance(x, AbstractArray):
+##                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+##                                                                 ancillary, x))
+##                continue
+##
+##            string.append(x.dump(display=False, field=field, key=key,
+##                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
+##                                 _create_title=False, _level=level+1))          
 
         string = '\n'.join(string)
        
@@ -585,8 +530,8 @@ True
             atol = ATOL()
 
         for prop in self_properties:
-            x = self.getprop(prop)
-            y = other.getprop(prop)
+            x = self.get_property(prop)
+            y = other.get_property(prop)
 
             if not cf_equals(x, y, rtol=rtol, atol=atol,
                              ignore_fill_value=ignore_fill_value,
@@ -598,27 +543,25 @@ True
         #--- End: for
 
         # ------------------------------------------------------------
-        # Check the data, any ancillaries and any extra arrays
+        # Check the data
         # ------------------------------------------------------------
-        _extra = ('data',) + tuple(sorted(self._ancillary_arrays)) + _extra
-
-        for attr in _extra:
-            self_hasattr  = hasattr(self, attr)
-            if self_hasattr != hasattr(other, attr):
+#        _extra = ('data',) + tuple(sorted(self._ancillary_arrays)) + _extra
+#
+#        for attr in _extra:
+        if self.has_data() != other.has_data():
+            if traceback:
+                print("{0}: Different {1}".format(self.__class__.__name__, attr))
+            return False
+            
+        if self.has_data():
+            if not self.get_data().equals(other.get_data(), rtol=rtol,
+                                          atol=atol, traceback=traceback,
+                                          ignore_data_type=ignore_data_type,
+                                          ignore_construct_type=ignore_construct_type,
+                                          ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False
-                
-            if self_hasattr:
-                if not getattr(self, attr).equals(getattr(other, attr),
-                        rtol=rtol, atol=atol,
-                        traceback=traceback,
-                        ignore_data_type=ignore_data_type,
-                        ignore_construct_type=ignore_construct_type,
-                        ignore_fill_value=ignore_fill_value):
-                    if traceback:
-                        print("{0}: Different {1}".format(self.__class__.__name__, attr))
-                    return False
         #--- End: for
 
         return True
@@ -659,8 +602,9 @@ True
         else:
             v = self
 
-        if self.hasdata:
-            v.data.expand_dims(position, copy=False)
+        data = v.get_data(None)
+        if data is not None:
+            data.expand_dims(position, copy=False)
         
         return v
     #--- End: def
@@ -723,7 +667,7 @@ dtype('float64')
 
         if fillval is None:
             if default == 'netCDF':
-                d = self.data.dtype
+                d = self.get_data().dtype
                 fillval = netCDF4.default_fillvals[d.kind + str(d.itemsize)]
             else:
                 fillval = default 
@@ -732,7 +676,7 @@ dtype('float64')
         return fillval
     #--- End: def
 
-    def setprop(self, prop, value):
+    def set_property(self, prop, value):
         '''Set a CF or non-CF property.
 
 .. versionadded:: 1.6
@@ -795,13 +739,14 @@ dtype('float64')
         else:
             v = self
 
-        if v.hasdata:
-            v.data.squeeze(axes, copy=False)
+        data = v.get_data(None)
+        if data is not None:
+            data.squeeze(axes, copy=False)
 
         return v
     #--- End: def
 
-    def hasprop(self, prop):
+    def has_property(self, prop):
         '''
 
 Return True if a CF property exists, otherise False.
@@ -829,7 +774,7 @@ Return True if a CF property exists, otherise False.
         return prop in self._properties
     #--- End: def
 
-    def insert_data(self, data, copy=True):
+    def set_data(self, data, copy=True):
         '''Insert a new data array into the variable in place.
 
 .. versionadded:: 1.6
@@ -851,7 +796,7 @@ Return True if a CF property exists, otherise False.
             self._Data = data.copy()
     #--- End: def
 
-    def getprop(self, prop, *default):
+    def get_property(self, prop, *default):
         '''
 
 Get a CF property.
@@ -905,7 +850,7 @@ AttributeError: Field doesn't have CF property 'standard_name'
                 self.__class__.__name__, prop))
     #--- End: def
 
-    def delprop(self, prop):
+    def del_property(self, prop):
         '''Delete a CF or non-CF property.
 
 .. versionadded:: 1.6
@@ -957,8 +902,8 @@ AttributeError: Can't delete non-existent property 'project'
     def open(self):
         '''
 '''
-        if self.hasdata:
-            self.data.open()
+        if self.has_data():
+            self.get_data().open()
     #--- End: def
 
     def HDF_chunks(self, *chunksizes):
@@ -984,8 +929,8 @@ first axis which is to have a chunk size of 12:
         current sizes if no new values are specified.
 
         '''
-        if self.hasdata:
-            old_chunks = self.data.HDF_chunks(*chunksizes)
+        if self.has_data():
+            old_chunks = self.get_data().HDF_chunks(*chunksizes)
         else:
             old_chunks = None
 
@@ -1054,11 +999,11 @@ None
 'air_temperature'
 
         '''
-        n = self.getprop('standard_name', None)
+        n = self.get_property('standard_name', None)
         if n is not None:
             return n
 
-        n = self.getprop('long_name', None)
+        n = self.get_property('long_name', None)
         if n is not None:
             return 'long_name:{0}'.format(n)
 
@@ -1070,7 +1015,7 @@ None
         return default
     #--- End: def
     
-    def properties(self, props=None, clear=False, copy=True):
+    def properties(self, properties=None, clear=False, copy=True):
         '''Inspect or change the CF properties.
 
 .. versionadded:: 1.6
@@ -1111,21 +1056,23 @@ None
                     
         if clear:
             self._properties.clear()
+
+        if not properties:
             return out
 
-        if not props:
-            return out
-
+        # Still here?
         if copy:
-            props = deepcopy(props)
+            properties = deepcopy(properties)
         else:
-            props = props.copy()
+            properties = properties.copy()
 
         # Delete None-valued properties
-        for key, value in props.items():
+        for key, value in properties.items():
             if value is None:
-                del props[key]
+                del properties[key]
         #--- End: for
+
+        self._properties.update(properties)
 
         return out
     #--- End: def

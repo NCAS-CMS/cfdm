@@ -58,13 +58,7 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-        raise NotImplementedError("Must implement the '__str__' method")
-    #--- End: def
-
-    def name(self, default=None, ncvar=True):
-        '''Return a name for the construct.
-        '''
-        raise NotImplementedError("Must implement the 'copy' method")
+        pass
     #--- End: def
 
     @abc.abstractmethod
@@ -85,12 +79,19 @@ x.__str__() <==> str(x)
         The deep copy.
 
         '''        
-        raise NotImplementedError("Must implement the 'copy' method")
+        pass
     #--- End: def
     
     @abc.abstractmethod
     def equals(self, other, *args, **kwargs):
         '''
+        '''
+        pass
+    #--- End: def
+
+    @abc.abstractmethod
+    def name(self, default=None, ncvar=True):
+        '''Return a name for the construct.
         '''
         pass
     #--- End: def

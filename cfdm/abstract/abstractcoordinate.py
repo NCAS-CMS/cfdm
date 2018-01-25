@@ -99,35 +99,35 @@ Attribute          Type       Description
     def climatology(self):
         '''
         '''
-        if 'climatology' not in self._ancillary_attributes:
+        if 'climatology' not in self._ancillary_properties:
             return False
 
         return self._climatology
     @climatology.setter
     def climatology(self, value):
         self._climatology = bool(value)
-        self._ancillary_attributes.add('climatology')
+        self._ancillary_properties.add('climatology')
     @climatology.deleter
     def climatology(self):  
         del self._climatology
-        self._ancillary_attributes.discard('climatology')
+        self._ancillary_properties.discard('climatology')
     #--- End: def
 
     def geometry(self):
         '''
         '''
-        if 'geometry' not in self._ancillary_attributes:
+        if 'geometry' not in self._ancillary_properties:
             return False
 
         return self._geometry
     @geometry.setter
     def geometry(self, value):
         self._geometry = bool(value)
-        self._ancillary_attributes.add('geometry')
+        self._ancillary_properties.add('geometry')
     @geometry.deleter
     def geometry(self):  
         del self._geometry
-        self._ancillary_attributes.discard('geometry')
+        self._ancillary_properties.discard('geometry')
     #--- End: def
 
     @property
@@ -141,7 +141,6 @@ Attribute          Type       Description
     @part_node_count.setter
     def part_node_count(self, value):
         self._part_node_count = value
-        # Check that value.type == 'geometry' ?
         self._ancillary_arrays.add('part_node_count')
     @part_node_count.deleter
     def part_node_count(self):  
@@ -166,4 +165,46 @@ Attribute          Type       Description
         self._ancillary_arrays.discard('interior_ring')
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Domain topology properties: parameters
+    # ----------------------------------------------------------------
+    def location(self):
+        '''
+        '''
+        if 'location' not in self._ancillary_properties:
+            return False
+
+        return self._location
+    @location.setter
+    def location(self, value):
+        self._location = value
+        self._ancillary_properties.add('location')
+    @location.deleter
+    def location(self):  
+        del self._location
+        self._ancillary_properties.discard('location')
+    #--- End: def
+
+    def topology_dimension(self):
+        '''
+        '''
+        if 'topology_dimension' not in self._ancillary_properties:
+            return False
+
+        return self._topology_dimension
+    @topology_dimension.setter
+    def topology_dimension(self, value):
+        self._topology_dimension = value
+        self._ancillary_properties.add('topology_dimension')
+    @topology_dimension.deleter
+    def topology_dimension(self):  
+        del self._topology_dimension
+        self._ancillary_properties.discard('topology_dimension')
+    #--- End: def
+
+    # ----------------------------------------------------------------
+    # Domain topology properties: ancillary arrays
+    # ----------------------------------------------------------------
+
+    
 #--- End: class
