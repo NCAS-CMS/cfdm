@@ -57,6 +57,10 @@ domain ancillary objects.
         self._parameters = {'extent': {}, 'topology': {}}
         self._arrays     = {'extent': {}, 'topology': {}}
         
+        self.invalid_parameters = {'extent': {}, 'topology': {}}
+        self.invalid_arrays     = {'extent': {}, 'topology': {}}
+        self.invalid_           = {'extent': {}, 'topology': {}}
+        
         if source is not None and isinstance(source, AbstractBoundedArray):
             if bounds is None and source.has_bounds():
                 bounds = source.bounds
@@ -70,6 +74,7 @@ domain ancillary objects.
                 ancillary_parameters = source_ancillary_parameters
         #--- End: if
 
+        self.invalid_bounds = False
         if bounds is not None:
             if not _use_data:
                 bounds = bounds.copy(data=False)
@@ -187,16 +192,16 @@ x.__getitem__(indices) <==> x[indices]
     #--- End: def
 
 
-    def _get_parameters(self, x):
+    def _get_parameters(self, parameter_type):
         '''
         '''
-        return self._parameters[x]
+        return self._parameters[parameter_type]
     #--- End: def
 
-    def _get_arrays(self, x):
+    def _get_arrays(self, array_type):
         '''
         '''
-        return self._arrays[x]
+        return self._arrays[array_type]
     #--- End: def
 
 #    # ----------------------------------------------------------------
@@ -802,10 +807,13 @@ x.__getitem__(indices) <==> x[indices]
     `None`
 
         '''
-        if copy:
-            bounds = bounds.copy(data=data)
-        
-        self._bounds = bounds
+        if isinstance(bounds, Bounds):
+            if copy:
+                bounds = bounds.copy(data=data)    
+        else:
+            self.invalid_bounds = True
+
+        self._bounds = bounds        
     #--- End: def
 
     def del_bounds(self):
@@ -825,6 +833,7 @@ x.__getitem__(indices) <==> x[indices]
 
         bounds = self.get_bounds()
         del self._bounds
+        self.invalid_bounds = False
         return bounds
     #--- End: def
 

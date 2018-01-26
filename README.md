@@ -1,83 +1,48 @@
-CF Python
-=========
-
-The cf python package implements the CF data model for the reading,
-writing and processing of data and metadata.
+CFDM
+====
 
 ----------------------------------------------------------------------
 
-Home page
-=========
+Requirements
+============
 
-[**cf-python**](http://cfpython.bitbucket.io)
+* read CF-netCDF datasets into field constructs
+
+* create new field constructs that do not exist in CF-netCDf datasets
+
+* modify field constructs' metadata and data
+
+* create subspaces of field constructs
+
+* write field constructs to CF-netCDF datasets
+
+* allow field constructs and CF-netCDF datasets to be checked for
+  CF-compliance by third party libraries.
 
 ----------------------------------------------------------------------
 
 Documentation
 =============
 
-* [**Online documentation for the latest stable
-  release**](http://cfpython.bitbucket.io/docs/latest/ "cf-python
-  documentation")
-
-* Online documentation for previous releases: [**cf-python documention
-  archive**](http://cfpython.bitbucket.io/docs/archive.html)
-
-* Offline documention for the installed version may be found by
-  pointing a browser to ``docs/build/index.html``.
-
-* [**Change log**](https://bitbucket.org/cfpython/cf-python/src/master/Changelog.md)
 
 ----------------------------------------------------------------------
 
 Dependencies
 ============
 
-* **Required:** A
-  [**GNU/Linux**](http://www.gnu.org/gnu/linux-and-gnu.html) or [**Mac
-  OS**](http://en.wikipedia.org/wiki/Mac_OS) operating system.
-
 * **Required:** A [**python**](http://www.python.org) version 2.7.
  
-* **Required:** The [**python psutil
-  package**](https://pypi.python.org/pypi/psutil) at version 0.6.0 or
-  newer (the latest version is recommended).
-
 * **Required:** The [**python numpy
-  package**](https://pypi.python.org/pypi/numpy) at version 1.7 or
+  package**](https://pypi.python.org/pypi/numpy) at version 1.13 or
   newer.
 
-* **Required:** The [**python matplotlib
-  package**](https://pypi.python.org/pypi/matplotlib) at version 1.4.2
-  or newer.
-
 * **Required:** The [**python netCDF4
-  package**](https://pypi.python.org/pypi/netCDF4) at version 1.2.1 or
+  package**](https://pypi.python.org/pypi/netCDF4) at version 1.3.1 or
   newer. This package requires the
   [**netCDF**](http://www.unidata.ucar.edu/software/netcdf),
   [**HDF5**](http://www.hdfgroup.org/HDF5) and
   [**zlib**](ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4)
   libraries.
-
-* **Required:** The [**UNIDATA Udunits-2
-  library**](http://www.unidata.ucar.edu/software/udunits). This is a
-  C library which provides support for units of physical
-  quantities. If The Udunits-2 shared library file
-  (``libudunits2.so.0`` on GNU/Linux or ``libudunits2.0.dylibfile`` on
-  Mac OS) is in a non-standard location then its path should be added
-  to the ``LD_LIBRARY_PATH`` environment variable.
-
-* **Optional:** For regridding to work, the [**ESMF
-  package**](https://www.earthsystemcog.org/projects/esmf) at version
-  7.0.0 or newer is required. If this package is not installed then
-  regridding will not work, but all other cf-python functionality will
-  be unaffected. ESMF may be installed via
-  [**conda**](http://conda.pydata.org/docs) (see below) or from source
-  (see the file [**ESMF.md**](ESMF.md) for instructions).
-
-* **Optional:** The [**cf-plot
-  package**](https://pypi.python.org/pypi/cf-plot) does not currently
-  work for versions 2.x of cf. This will be resolved soon.
 
 ----------------------------------------------------------------------
 
