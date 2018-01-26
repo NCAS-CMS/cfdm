@@ -1,4 +1,4 @@
-from .variable import Variable
+from .variable import AbstractVariable
 
 # ====================================================================
 #
@@ -6,7 +6,7 @@ from .variable import Variable
 #
 # ====================================================================
 
-class CellMeasure(Variable):
+class CellMeasure(AbstractVariable):
     '''A CF cell measure construct.
 
 A cell measure construct provides information that is needed about the
@@ -37,16 +37,13 @@ Attribute   Type   Description
 
     '''   
     def __init__(self, properties={}, data=None, source=None,
-                 copy=True):
+                 measure=None, copy=True):
         '''**Initialization**
 
 :Parameters:
 
     properties: `dict`, optional
         Initialize properties from the dictionary's key/value pairs.
-
-#    attributes: `dict`, optional
-#        Provide attributes from the dictionary's key/value pairs.
 
     data: `Data`, optional
         Provide a data array.
@@ -63,106 +60,39 @@ Attribute   Type   Description
 
         '''
         super(CellMeasure, self).__init__(properties=properties,
-                                          source=source, data=data, copy=copy)
+                                          source=source, data=data,
+                                          copy=copy)
         
         self._measure = None
+        if measure is not None:
+            self.set_measure(measure)
     #--- End: def
 
-    @property
-    def ismeasure(self): 
+    def get_measure(self, *default):
         '''
-
-Always True.
-
-:Examples: 
-
->>> c.ismeasure
-True
-
-'''
-        return True
-    #--- End: def
-
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
         '''
-
-Return a string containing a full description of the cell measure.
-
-:Parameters:
-
-    display : bool, optional
-        If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
-
-:Returns:
-
-    out : None or str
-        A string containing the description.
-
-:Examples:
-
-''' 
-        if _title is None:  
-            if hasattr(self, 'measure'):
-                _title = 'Cell Measure: ' + str(self.measure)
-            elif hasattr(self.Units, 'units'):
-                _title = 'Cell Measure: ' + str(self.units)
-            else:
-                _title = 'Cell Measure: ' + self.name(default='')
-
-        return super(CellMeasure, self).dump(
-            display=display, omit=omit, field=field, key=key,
-             _level=_level, _title=_title)
-    #--- End: def
-
-    def identity(self, default=None, relaxed_identity=None):
-        '''
-
-Return the cell measure's identity.
-
-The identity is first found of:
-
-* The `!measure` attribute.
-
-* The `standard_name` CF property.
-
-* The `!id` attribute.
-
-* The value of the *default* parameter.
-
-:Parameters:
-
-    default : optional
-        If none of `measure`, `standard_name` and `!id` exist then
-        return *default*. By default, *default* is None.
-
-:Returns:
-
-    out :
-        The identity.
-
-:Examples:
-
-'''
-        n = self.measure()
-        if n is not None:
-            return n
+        measure = self._measure
+        if measure is not None:
+            return measure
         
-        return super(CellMeasure, self).identity(default, relaxed_identity=relaxed_identity)
+        if default:
+            return default[0]
+
+        raise ValueError("djbnc o3iub ,")
     #--- End: def
 
-    def measure(self, *name):
+    def set_measure(self, measure):
         '''
         '''
-        if not name:
-            return self._measure
+        self._measure = measure
+    #--- End: def
 
-        name = name[0]
-        self._measure = name
-
-        return name
+    def del_measure(self):
+        '''
+        '''
+        measure = self._measure
+        self._measure = None
+        return measure
     #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False, relaxed_identity=None):
@@ -227,21 +157,9 @@ None
 >>> f.name('no_name')
 'air_temperature'
 
-        '''      
-#        if ncvar:
-#            if identity:
-#                raise ValueError(
-#"Can't find name: ncvar and identity parameters can't both be True")
-#
-#            n = getattr(self, 'ncvar', None)
-#            if n is not None:
-#                return 'ncvar%%%s' % n
-#            
-#            return default
-#        #--- End: if
-
+        '''
         if not ncvar:
-            n = self.measure()
+            n = self.get_measure(None)
             if n is not None:
                 return n
 

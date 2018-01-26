@@ -1,7 +1,6 @@
-from .functions import parse_indices
-from .variable  import Variable
+from collections import abc
 
-_debug = False
+from .variable import VariableMixin
 
 # ====================================================================
 #
@@ -9,59 +8,13 @@ _debug = False
 #
 # ====================================================================
 
-class BoundedVariable(Variable):
+class BoundedVariable(VariableMixin):
     '''Base class for CF dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
     '''
-    def __init__(self, properties={}, #attributes={},
-                 data=None,
-                 bounds=None, source=None, copy=True):
-        '''**Initialization**
 
-:Parameters:
-
-    properties: `dict`, optional
-        Initialize a new instance with CF properties from a
-        dictionary's key/value pairs.
-  
-#    attributes: `dict`, optional
-#        Provide the new instance with attributes from a dictionary's
-#        key/value pairs.
-  
-    data: `Data`, optional
-        Provide the new instance with an N-dimensional data array.
-  
-    bounds: `Data` or `Bounds`, optional
-        Provide the new instance with cell bounds.
-  
-    source: `Variable`, optional
-        Take the attributes, CF properties and data array from the
-        source object. Any attributes, CF properties or data array
-        specified with other parameters are set after initialisation
-        from the source instance.
-  
-    copy: `bool`, optional
-        If False then do not copy arguments prior to
-        initialization. By default arguments are deep copied.
-  
-        '''
-        if source is not None:
-            if bounds is None:
-                if isinstance(source, BoundedVariable):
-                    bounds = getattr(self, 'bounds', None)
-                
-        # Set attributes, CF properties and data
-        super(BoundedVariable, self).__init__(properties=properties,
-#                                              attributes=attributes,
-                                              data=data,
-                                              source=source,
-                                              copy=copy)
-  
-        # Bounds
-        if bounds is not None:
-            self.insert_bounds(bounds, copy=copy)
-      #--- End: def
-
+    __metaclass__ = abc.ABCMeta
+    
     def __getitem__(self, indices):
         '''
 
@@ -77,51 +30,289 @@ x.__getitem__(indices) <==> x[indices]
 
         indices = parse_indices(self.shape, indices)
 
-        new = self.copy(_omit_data=True)
+        new = self.copy(data=False)
 
-        data = self.data
+        data = self.get_data(None)
 
         if _debug:
             cname = self.__class__.__name__
             print '{}.__getitem__: shape    = {}'.format(cname, self.shape)
             print '{}.__getitem__: indices  = {}'.format(cname, indices)
 
-        new._Data = data[tuple(indices)]
+        if data is not None:
+            new.set_data(data[tuple(indices)], copy=False)
 
         # Subspace the bounds, if there are any
-        if not new.hasbounds:
+        if not new.has_bounds():
             bounds = None
         else:
-            bounds = self.bounds
-            if bounds.hasdata:
-                indices = list(indices)
+            bounds = self.get_bounds(None)
+            if bounds is not None:
+                bounds_indices = list(indices)
                 if data.ndim <= 1:
-                    index = indices[0]
+                    index = bounds_indices[0]
                     if isinstance(index, slice):
                         if index.step < 0:
                             # This scalar or 1-d variable has been
                             # reversed so reverse its bounds (as per
                             # 7.1 of the conventions)
-                            indices.append(slice(None, None, -1))
+                            bounds_indices.append(slice(None, None, -1))
                     elif data.size > 1 and index[-1] < index[0]:
                         # This 1-d variable has been reversed so
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
-                        indices.append(slice(None, None, -1))                    
-                #--- End: if
+                        bounds_indices.append(slice(None, None, -1))
+                    else:
+                        bounds_indices.append(slice(None))
+                else:
+                    bounds_indices.append(slice(None))
 
                 if _debug:
-                    print '{}.__getitem__: indices for bounds ='.format(self.__class__.__name__, indices)
-                
-                new.bounds._Data = bounds.data[tuple(indices)]
+                    print '{}.__getitem__: indices for bounds ='.format(
+                        self.__class__.__name__, bounds_indices)
+
+                data = bounds.get_data()
+                bounds = bounds.copy(data=False)
+                bounds.set_data(data[tuple(bounds_indices)], copy=False)
+                new.set_bounds(bounds, copy=False)
         #--- End: if
 
-#        new._direction = None
+        # Subspace the ancillary arrays
+        ancillary_arrays = self.ancillary_arrays()
+        if ancillary_arrays:
+            for name, array in ancillary_arrays.iteritems():
+                if not array.has_data():
+                    new.set_ancillary_array(name, array, copy=True)
+                    continue
+                
+                ancillary_indices = list(indices)
+                ancillary_indices.append(slice(None))
+                if _debug:
+                    print '{0}.__getitem__: indices for ancillary array {1!r}={2}'.format(
+                        self.__class__.__name__, name, ancillary_indices)
+
+                data = array.get_data()
+                array = array.copy(data=False)
+                array.set_data(data[tuple(ancillary_indices)], copy=False)
+                new.set_ancillary_array(name, array, copy=False)
+        #--- End: if
 
         # Return the new bounded variable
         return new
     #--- End: def
 
+    @abc.abstractmethod
+    def dump(self, display=True, field=None, key=None,
+             _omit_properties=(), _prefix='', _title=None,
+             _create_title=True, _level=0):
+        '''Return a string containing a full description of the instance.
+
+.. versionadded:: 1.6
+
+:Parameters:
+
+    display: `bool`, optional
+        If False then return the description as a string. By default
+        the description is printed, i.e. ``f.dump()`` is equivalent to
+        ``print f.dump(display=False)``.
+
+    omit: sequence of `str`, optional
+        Omit the given CF properties from the description.
+
+    _prefix: optional
+        Ignored.
+
+:Returns:
+
+    out: `None` or `str`
+        A string containing the description.
+
+:Examples:
+
+        '''
+        string = super(BoundedVariable, self).dump(
+            display=False, field=field, key=key,
+            _omit_properties=_omit_properties, _prefix=_prefix,
+            _title=_title, _create_title=_create_title, _level=_level)
+
+        string = [string]
+        
+        # ------------------------------------------------------------
+        # Bounds
+        # ------------------------------------------------------------
+        b = self.get_bounds(None)
+        if b is None:
+            continue
+        
+        if not isinstance(b, AbstractArray):
+            string.append('{0}{1}bounds = {2}'.format(indent1, attribute, b))
+            continue
+        
+        string.append(
+            b.dump(display=False, field=field, key=key,
+                   _prefix=_prefix+'bounds.',
+                   _create_title=False, _level=level+1))
+
+        #-------------------------------------------------------------
+        # Extent and topology properties
+        # ------------------------------------------------------------
+        for x in ['extent', 'topology']:
+            parameters = getattr(self, x+'_parameters')()
+            for name, parameter in sorted(parameters.items()):
+                string.append(
+                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
+
+            arrays = getattr(self, x+'_arrays')()
+            for name, array in sorted(arrays.items()):
+                string.append(
+                    array.dump(display=False, field=field, key=key,
+                               _prefix=_prefix+x+'.'+name+'.',
+                               _create_title=False, _level=level+1))
+        #--- End: for
+            
+        string = '\n'.join(string)
+        
+        if display:
+            print string
+        else:
+            return string
+    #--- End: def
+
+    def equals(self, other, rtol=None, atol=None, traceback=False,
+               ignore_data_type=False, ignore_fill_value=False,
+               ignore_properties=(), ignore_construct_type=False):
+        '''
+        '''
+        if rtol is None:
+            rtol = RTOL()
+        if atol is None:
+            atol = ATOL()
+
+        if not super(BoundedVariable, self).equals(
+                other,
+                rtol=rtol, atol=atol, traceback=tracback,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties,
+                ignore_construct_type=ignore_construct_type):
+            if traceback:
+                print("???????/")
+            return False
+        #--- End: if
+
+        # ------------------------------------------------------------
+        # Check the ancillary parameters
+        # ------------------------------------------------------------
+        if ignore_fill_value:
+            ignore_properties += ('_FillValue', 'missing_value')
+            
+        for x in ['extent', 'topology']:
+            self_parameters  = getattr(self, x+'_parameters')()
+            other_parameters = getattr(other, x+'_parameters')()
+            if set(self_parameters) != set(other_parameters):
+                if traceback:
+                    print("{0}: Different parameters: {1}, {2}".format( 
+                        self.__class__.__name__,
+                        set(self_parameters), set(other_parameters)))
+                return False
+            
+            for name, x in sorted(self_parameters.iteritems()):
+                y = other_parameters[name]
+                
+                if not cf_equals(x, y, rtol=rtol, atol=atol,
+                                 ignore_fill_value=ignore_fill_value,
+                                 traceback=traceback):
+                    if traceback:
+                        print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
+                            self.__class__.__name__, prop, x, y))
+                    return False
+        #--- End: for
+
+        # ------------------------------------------------------------
+        # Check the bounds 
+        # ------------------------------------------------------------
+        self_hasbounds = self.has_bounds()
+        if self_has_bounds != other.has_bounds():
+            if traceback:
+                print("{0}: Different {1}".format(self.__class__.__name__, attr))
+            return False
+                
+        if self_has_bounds:            
+            if not cf_equals(self.get_bounds(), other.get_bounds(),
+                             rtol=rtol, atol=atol,
+                             traceback=traceback,
+                             ignore_data_type=ignore_data_type,
+                             ignore_construct_type=ignore_construct_type,
+                             ignore_fill_value=ignore_fill_value):
+                if traceback:
+                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
+                return False
+        #--- End: if
+
+        # ------------------------------------------------------------
+        # Check the ancillary arrays
+        # ------------------------------------------------------------
+        for x in ['extent', 'topology']:
+            self_ancillary_arrays  = getattr(self, x+'_arrays')()
+            other_ancillary_arrays = getattr(other, x+'_arrays')()
+            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
+                if traceback:
+                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
+                        self.__class__.__name__,
+                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
+                return False
+    
+            for name, x in sorted(self_ancillary_arrays.items()):
+                y = other_arrays[name]
+                
+                if not cf_equals(x, y rtol=rtol, atol=atol,
+                                 traceback=traceback,
+                                 ignore_data_type=ignore_data_type,
+                                 ignore_construct_type=ignore_construct_type,
+                                 ignore_fill_value=ignore_fill_value):
+                    if traceback:
+                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
+                    return False
+        #--- End: for
+
+        return True
+    #--- End: def
+    
+    def expand_dims(self, position , copy=True):
+        '''
+        '''
+        position = self._parse_axes([position])[0]
+        
+        c = super(BoundedVariable, self).expand_dims(position,
+                                                     copy=copy)
+        
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.expand_dims(position, copy=False)
+            
+        for array in c.ancillary_arrays().itervalues():                
+            array.expand_dims(position, copy=False)
+
+        return c
+    #--- End: def        
+    
+    def squeeze(self, axes=None , copy=True):
+        '''
+        '''
+        axes = self._parse_axes(axes)
+
+        c = super(BoundedVariable, self).squeeze(axes, copy=copy)
+        
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.squeeze(axes, copy=False)
+
+        for array in c.ancillary_arrays().itervalues():                
+            array.squeeze(axes, copy=False)
+        
+        return c
+    #--- End: def
+    
     def transpose(self, axes=None, copy=True):
         '''Permute the dimensions of the data.
 
@@ -152,659 +343,35 @@ x.__getitem__(indices) <==> x[indices]
 >>> c.{+name}([1, 2, 0])
 
         '''
-#        c = Variable.transpose.fget(self, axes, copy)
+        if axes is None:
+            axes = range(ndim-1, -1, -1)
+        else:
+            axes = self._parse_axes(axes)
 
         c = super(BoundedVariable, self).transpose(axes, copy=copy)
 
-        ndim = c.ndim
-        if c.hasbounds and ndim > 1 and c.bounds.hasdata:
-            # Transpose the bounds
-            if axes is None:
-                axes = range(ndim-1, -1, -1) + [-1]
-            else:
-                axes = self._parse_axes(axes) + [-1]
-                
-            bounds = c.bounds
+        axes.append(-1)
+        
+        bounds = c.get_bounds(None)
+        if bounds is not None:
             bounds.transpose(axes, copy=False)
-
-            if (ndim == 2 and
-                bounds.shape[-1] == 4 and 
-                axes[0] == 1 and 
-                (c.Units.islongitude or c.Units.islatitude or
-                 c.getprop('standard_name', None) in ('grid_longitude' or
-                                                      'grid_latitude'))):
+            
+            data = bounds.get_data(None)
+            if (data is not None and
+                data.ndim == 3 and
+                data.shape[-1] == 4 and 
+                axes[0:2] == [1, 0]):
                 # Swap columns 1 and 3 so that the values are still
                 # contiguous (if they ever were). See section 7.1 of
                 # the CF conventions.
-                bounds[..., [1, 3]] = bounds[..., [3, 1]]
+                data[..., [1, 3]] = data[..., [3, 1]]
+                bounds.set_data(data, copy=False)
         #--- End: if
 
+        for array in c.ancillary_arrays().itervalues():                
+            array.transpose(axes, copy=False)
+        
         return c
     #--- End: def
-    
-    def _infer_direction(self):
-        '''Return True if a coordinate is increasing, otherwise return False.
-
-A coordinate is considered to be increasing if its *raw* data array
-values are increasing in index space or if it has no data not bounds
-data.
-
-If the direction can not be inferred from the coordinate's data then
-the coordinate's units are used.
-
-The direction is inferred from the coordinate's data array values or
-its from coordinates. It is not taken directly from its `Data` object.
-
-:Returns:
-
-    out : bool
-        Whether or not the coordinate is increasing.
-        
-:Examples:
-
->>> c.array
-array([  0  30  60])
->>> c._infer_direction()
-True
->>> c.array
-array([15])
->>> c.bounds.array
-array([  30  0])
->>> c._infer_direction()
-False
-
-        '''
-        ndim = getattr(self, 'ndim', 2)
-        if ndim > 1:
-            return
-
-        if self.hasdata:
-            # Infer the direction from the dimension coordinate's data
-            # array
-            c = self.data
-            if c.size > 1:
-                c = c[0:2].array
-                return c.item(0,) < c.item(1,)
-        #--- End: if
-
-        # Still here? 
-        if self.hasbounds:
-            # Infer the direction from the dimension coordinate's
-            # bounds
-            b = self.bounds
-            if b.hasdata:
-                b = b.data
-                b = b[(0,)*(b.ndim-1)].array
-                return b.item(0,) < b.item(1,)
-        #--- End: if
-
-        # Still here? Then infer the direction from the units.
-        pressure = self.Units.ispressure
-        if pressure:
-            return True
-
-        return
-    #--- End: def
-
-    @property
-    def decreasing(self): 
-        '''
-
-True if the dimension coordinate is increasing, otherwise
-False.
-
-A dimension coordinate is increasing if its coordinate values are
-increasing in index space.
-
-The direction is inferred from one of, in order of precedence:
-
-* The data array
-* The bounds data array
-* The `units` CF property
-
-:Returns:
-
-    out : bool
-        Whether or not the coordinate is increasing.
-        
-True for dimension coordinate constructs, False otherwise.
-
->>> c.decreasing
-False
->>> c.flip().increasing
-True
-
-'''
-        direction = self._infer_direction()
-        if direction is False:
-            return True
-
-        return
-    #--- End: def
-
-    @property
-    def increasing(self): 
-        '''
-
-True for dimension coordinate constructs, False otherwise.
-
->>> c.increasing
-True
->>> c.flip().increasing
-False
-
-'''
-        direction = self._infer_direction()
-        if direction is True:
-            return True
-
-        return
-    #--- End: def
-
-    @property
-    def isboundedvariable(self): 
-        '''True DCH
-
->>> c.isboundedvariable
-True
-
-'''
-        return True
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (a special attribute)
-    # ----------------------------------------------------------------
-    @property
-    def bounds(self):
-        '''
-
-The `Bounds` object containing the cell bounds.
-
-.. versionadded:: 2.0
-
-.. seealso:: `lower_bounds`, `upper_bounds`
-
-:Examples:
-
->>> c
-<CF {+Variable}: latitude(64) degrees_north>
->>> c.bounds
-<CF Bounds: latitude(64, 2) degrees_north>
->>> c.bounds = b
-AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
->>> c.bounds.max()
-<CF Data: 90.0 degrees_north>
->>> c.bounds -= 1
-AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
->>> b = c.bounds
->>> b -= 1
->>> c.bounds.max()       
-<CF Data: 89.0 degrees_north>
-
-'''
-        return self._get_special_attr('bounds')
-    #--- End: def
-    @bounds.setter
-    def bounds(self, value):
-        raise AttributeError(
-            "Can't set 'bounds' attribute. Use the insert_bounds method.")
-    #--- End: def
-    @bounds.deleter
-    def bounds(self):  
-        self._del_special_attr('bounds')
-        self._hasbounds = False
-    #--- End: def
-
-#    # ----------------------------------------------------------------
-#    # Attribute
-#    # ----------------------------------------------------------------
-#    @property
-#    def dtype(self):
-#        '''Numpy data-type of the data array.
-#
-#.. versionadded:: 1.6
-#
-#:Examples:
-#
-#>>> c.dtype
-#dtype('float64')
-#>>> import numpy
-#>>> c.dtype = numpy.dtype('float32')
-#
-#        '''
-#        if self.hasdata:
-#            return self.data.dtype
-#        
-#        if self.hasbounds and self.bounds.hasdata:
-#            return self.bounds.dtype
-#
-#        raise AttributeError("{} does not have attribute 'dtype'".format(
-#            self.__class__.__name__))
-#    #--- End: def
-#    @dtype.setter
-#    def dtype(self, value):
-#        if self.hasdata:
-#            self.data.dtype = value
-#
-#        if self.hasbounds and self.bounds.hasdata:
-#            self.bounds.dtype = value
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute
-#    # ----------------------------------------------------------------
-#    @property
-#    def Units(self):
-#        '''
-#
-#The Units object containing the units of the data array.
-#
-#.. versionadded:: 1.6
-#
-#'''
-#        return Variable.Units.fget(self)
-#    #--- End: def
-#
-#    @Units.setter
-#    def Units(self, value):
-#        Variable.Units.fset(self, value)
-#
-#        # Set the Units on the bounds # DCH NOOOOOOOOOO
-#        if self.hasbounds:
-#            self.bounds.Units = value
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # CF property: calendar
-#    # ----------------------------------------------------------------
-#    @property
-#    def calendar(self):
-#        '''
-#
-#The calendar CF property.
-#
-#This property is a mirror of the calendar stored in the `Units`
-#attribute.
-#
-#.. versionadded:: 2.0 
-#
-#:Examples:
-#
-#>>> c.calendar = 'noleap'
-#>>> c.calendar
-#'noleap'
-#>>> del c.calendar
-#
-#>>> c.setprop('calendar', 'proleptic_gregorian')
-#>>> c.getprop('calendar')
-#'proleptic_gregorian'
-#>>> c.delprop('calendar')
-#
-#'''
-#        return Variable.calendar.fget(self)
-#    #--- End: def
-#
-#    @calendar.setter
-#    def calendar(self, value):
-#        Variable.calendar.fset(self, value)
-#        # Set the calendar of the bounds
-#        if self.hasbounds:
-#            self.bounds.setprop('calendar', value)
-#    #--- End: def
-#
-#    @calendar.deleter
-#    def calendar(self):
-#        Variable.calendar.fdel(self)
-#        # Delete the calendar of the bounds
-#        if self.hasbounds:
-#            try:
-#                self.bounds.delprop('calendar')
-#            except AttributeError:
-#                pass
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # CF property
-#    # ----------------------------------------------------------------
-#    @property
-#    def standard_name(self):
-#        '''
-#
-#The standard_name CF property.
-#
-#.. versionadded:: 2.0 
-#
-#:Examples:
-#
-#>>> c.standard_name = 'time'
-#>>> c.standard_name
-#'time'
-#>>> del c.standard_name
-#
-#>>> c.setprop('standard_name', 'time')
-#>>> c.getprop('standard_name')
-#'time'
-#>>> c.delprop('standard_name')
-#
-#'''
-#        return self.getprop('standard_name')
-#    #--- End: def
-#    @standard_name.setter
-#    def standard_name(self, value): 
-#        self.setprop('standard_name', value)
-#    @standard_name.deleter
-#    def standard_name(self):       
-#        self.delprop('standard_name')
-#
-#    # ----------------------------------------------------------------
-#    # CF property: units
-#    # ----------------------------------------------------------------
-#    # DCH possible inconsistency when setting self.Units.units ??
-#    @property
-#    def units(self):
-#        '''
-#
-#The units CF property.
-#
-#This property is a mirror of the units stored in the `Units`
-#attribute.
-#
-#.. versionadded:: 2.0 
-#
-#:Examples:
-#
-#>>> c.units = 'degrees_east'
-#>>> c.units
-#'degree_east'
-#>>> del c.units
-#
-#>>> c.setprop('units', 'days since 2004-06-01')
-#>>> c.getprop('units')
-#'days since 2004-06-01'
-#>>> c.delprop('units')
-#
-#'''
-#        return Variable.units.fget(self)
-#    #--- End: def
-#
-#    @units.setter
-#    def units(self, value):
-#        Variable.units.fset(self, value)
-#
-#        if self.hasbounds:
-#            # Set the units on the bounds        
-#            self.bounds.setprop('units', value)
-#
-##        self._direction = None
-#    #--- End: def
-#    
-#    @units.deleter
-#    def units(self):
-#        Variable.units.fdel(self)
-#
-#        if self.hasbounds:
-#            # Delete the units from the bounds
-#            try:                
-#                self.bounds.delprop('units')
-#            except AttributeError:
-#                pass
-#    #--- End: def
-#
-#    def delprop(self, prop):
-#        '''
-#
-#Delete a CF property.
-#
-#.. versionadded:: 2.0 
-#
-#.. seealso:: `getprop`, `hasprop`, `setprop`
-#
-#:Parameters:
-#
-#    prop : str
-#        The name of the CF property.
-#
-#:Returns:
-#
-#     None
-#
-#:Examples:
-#
-#>>> c.delprop('standard_name')
-#>>> c.delprop('foo')
-#AttributeError: {+Variable} doesn't have CF property 'foo'
-#
-#'''
-#        # Delete a special attribute
-#        if prop in self._special_properties:
-#            delattr(self, prop)
-#            return
-#
-#        # Still here? Then delete a simple attribute
-#
-#        # Delete selected simple properties from the bounds
-#        if self.hasbounds and prop in ('standard_name', 'axis', 'positive',
-#                                       'leap_month', 'leap_year',
-#                                       'month_lengths'):
-#            try:
-#                self.bounds.delprop(prop)
-#            except AttributeError:
-#                pass
-#        #--- End: if
-#
-#        d = self._private['simple_properties']
-#        if prop in d:
-#            del d[prop]
-#        else:
-#            raise AttributeError("Can't delete non-existent %s CF property %r" %
-#                                 (self.__class__.__name__, prop))
-#    #--- End: def
-#
-#     def close(self):
-#        '''
-#'''
-#        super(BoundedVariable, self).close()
-#
-#        if self.hasbounds:
-#            self.bounds.close()
-#    #--- End: def
-
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None): 
-        '''
-
-Return a string containing a full description of the variable.
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
-
-    omit: sequence of `str`
-        Omit the given CF properties from the description.
-
-:Returns:
-
-    out : None or str
-        A string containing the description.
-
-:Examples:
-
-'''
-        indent0 = '    ' * _level
-        indent1 = '    ' * (_level+1)
-
-        if _title is None:
-            string = ['{0}Bounded Variable: {1}'.format(indent0, self.name(''))]
-        else:
-            string = [indent0 + _title]
-
-        if self.properties():
-            string.append(self._dump_properties(_level=_level+1))
-
-        if self.hasdata:
-            if field and key:
-                x = ['{0}({1})'.format(field.domain_axis_name(axis),
-                                       field.domain_axes()[axis].size)
-                     for axis in field.construct_axes(key)]
-            else:
-                x = [str(s) for s in self.shape]
-
-            string.append('{0}Data({1}) = {2}'.format(indent1,
-                                                      ', '.join(x),
-                                                      str(self.data)))
-        #--- End: if
-
-        if self.hasbounds:
-            x.append(str(self.bounds.shape[-1]))
-            string.append('{0}Bounds({1}) = {2}'.format(indent1,
-                                                        ', '.join(x),
-                                                        str(self.bounds.data)))
-        string = '\n'.join(string)
-       
-        if display:
-            print string
-        else:
-            return string
-    #--- End: def
-
-    def insert_bounds(self, bounds, copy=True):
-        '''Insert cell bounds.
-
-.. versionadded:: 1.6
-
-.. seealso , `insert_data`, `remove_bounds`, `remove_data`
-
-:Parameters:
-
-    bounds: `Bounds`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    `None`
-
-        '''
-        if not getattr(bounds, 'isbounds', False):
-            raise ValueError("bounds must be a 'Bounds' object")
-
-        if copy:            
-            bounds = bounds.copy()
-
-        self._set_special_attr('bounds', bounds)        
-
-        self._hasbounds = True
-    #--- End: def
-
-    def insert_data(self, data, bounds=None, copy=True):
-        '''Insert a new data array.
-
-A bounds data array may also inserted if given with the *bounds*
-keyword. Bounds may also be inserted independently with the
-`insert_bounds` method.
-
-.. versionadded:: 1.6
-
-.. seealso `insert_bounds`, `remove_data`
-
-:Parameters:
-
-    data: `Data`
-
-    bounds: `Data`, optional
-
-    copy: `bool`, optional
-
-:Returns:
-
-    `None`
-
-        '''
-        if data is not None:
-            super(BoundedVariable, self).insert_data(data, copy=copy)
-
-        if bounds is not None:
-            self.insert_bounds(bounds, copy=copy)
-    #--- End: def
-
-    def direction(self):
-        '''Return True if the dimension coordinate values are increasing,
-otherwise return False.
-
-Dimension coordinates values are increasing if its coordinate values
-are increasing in index space.
-
-The direction is inferred from one of, in order of precedence:
-
-* The data array
-* The bounds data array
-* The `units` CF property
-
-:Returns:
-
-    out : bool
-        Whether or not the coordinate is increasing.
-        
-:Examples:
-
->>> c.array
-array([  0  30  60])
->>> c.direction()
-True
-
->>> c.bounds.array
-array([  30  0])
->>> c.direction()
-False
-
-        '''
-        return self._infer_direction()
-    #--- End: def
-
-#    def setprop(self, prop, value):
-#        '''Set a CF property.
-#
-#.. versionadded:: 1.6
-#
-#.. seealso:: `delprop`, `getprop`, `hasprop`
-#
-#:Parameters:
-#
-#    prop : str
-#        The name of the CF property.
-#
-#    value :
-#        The value for the property.
-#
-#:Returns:
-#
-#     None
-#
-#:Examples:
-#
-#>>> c.setprop('standard_name', 'time')
-#>>> c.setprop('foo', 12.5)
-#
-#        '''
-##        # Set a special attribute
-##        if prop in self._special_properties:
-##            setattr(self, prop, value)
-##            return
-#
-#        # Still here? Then set a simple property
-#        self._private['properties'][prop] = value
-#
-#        # Set selected simple properties on the bounds
-#        if self.hasbounds and prop in ('standard_name', 'axis', 'positive', 
-#                                       'leap_month', 'leap_year',
-#                                       'month_lengths'):
-#            self.bounds.setprop(prop, value)
-#    #--- End: def
 
 #--- End: class

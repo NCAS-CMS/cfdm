@@ -81,9 +81,7 @@ Cell measure          Domain cell size or shape stored in
             if copy:
                 constructs = constructs.copy()
 
-        self._private = {'properties' : {},
-                         'special_attributes': {'constructs': constructs}
-        }
+        self._constructs = constructs
     #--- End: def
     
     def __repr__(self):
@@ -224,7 +222,7 @@ x.__str__() <==> str(x)
                           
     @property
     def Constructs(self):
-        return self._private['special_attributes']['constructs']
+        return self._constructs
     
     def constructs(self, copy=False):
         '''Return all of the data model constructs of the field.
@@ -301,19 +299,6 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
     
     def construct_axes(self, key=None):
         return self.Constructs.construct_axes(key=key)
-    #--- End: def
-
-    @property
-    def isdomain(self): 
-        '''True, denoting that the variable is a Domain object
-
-:Examples:
-
->>> f.isfield
-True
-
-        '''
-        return True
     #--- End: def
 
     def _dump_axes(self, display=True, _level=0):

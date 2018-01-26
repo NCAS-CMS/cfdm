@@ -1,6 +1,8 @@
-from .boundedvariable import BoundedVariable
+from .boundedvariable import BoundedVariableMixin
 
-class DomainAncillary(BoundedVariable):
+from ..structure import DomainAncillary as StructuralDomainAncillary
+
+class DomainAncillary(StructuralDomainAncillary, BoundedVariableMixin):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for
@@ -19,20 +21,6 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
-    @property
-    def isdomainancillary(self):
-        '''True, denoting that the variable is a domain ancillary object.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.isdomainancillary
-True
-        '''
-        return True
-    #--- End: def
-    
     def dump(self, display=True, omit=(), field=None, key=None,
              _level=0, _title=None):
         '''Return a string containing a full description of the domain
@@ -58,14 +46,15 @@ ancillary object.
 :Examples:
 
         '''
-        ncvar = self.ncvar()
-        if ncvar is not None:
-            ncvar = ' (ncvar%{0})'.format(ncvar)
-        else:
-            ncvar = ''
-
         if _title is None:
-            _title = 'Domain Ancillary: ' + self.name(default='')
+            ncvar = self.ncvar()
+            if ncvar is not None:
+                ncvar = ' (ncvar%{0})'.format(ncvar)
+            else:
+                ncvar = ''
+
+            _title = 'Domain Ancillary: ' + self.name(default='') + ncvar
+            
 
         return super(DomainAncillary, self).dump(
             display=display, omit=omit, field=field, key=key, _level=_level,

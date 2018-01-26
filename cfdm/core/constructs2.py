@@ -1,23 +1,13 @@
-from ..abstract import AbstractConstructs
+import ..structure
 
-class Constructs(AbstractConstructs):
+class Constructs(structure.Constructs):
     '''
 Keys are item identifiers, values are item objects.
     '''    
     def constructs(self, construct_type=None, axes=None, copy=False):
         '''
         '''
-        if construct_type is not None:
-            out = self._constructs[construct_type].copy()
-        else:
-            out = {}
-            for v in self._constructs.values():
-                out.update(v)
-        #--- End: if
-
-        if copy:
-            for key, construct in out.items():
-                out[key] = construct.copy()
+        out = super(Constructs).constructs(construct_type=construct_type, copy=copy)
 
         if axes:
             spans_axes = set(axes)
@@ -143,7 +133,6 @@ Keys are item identifiers, values are item objects.
                 print("{0}: Different object types: {0}, {1}".format(
                     self.__class__.__name__, other.__class__.__name__))
             return False
-        #--- End: if
 
         # ------------------------------------------------------------
         # Domain axes
@@ -159,7 +148,6 @@ Keys are item identifiers, values are item objects.
                     sorted(self.values()),
                     sorted(other.values())))
             return False
-        #--- End: if
         
         if rtol is None:
             rtol = RTOL()
@@ -416,45 +404,6 @@ Traceback: Different cell methods: {0!r}, {1!r}".format(
    
     def dimension_coordinates(self, copy=False):
         return self.constructs('dimensioncoordinate', copy=copy)
-    #--- End: def
-
-    def insert(self, construct_type, construct, key=None,
-               axes=None, copy=True):
-        '''
-        '''
-        if key is None:
-            key = self.new_identifier(construct_type)
-        elif key in self._consructs[construct_type]:
-            raise ValueError("Key exists. Use replace")
-        
-        if construct_type in self._array_constructs:
-            if axes is None:
-                raise ValueError("sdf lsbe lhbkhjb iuhj-98qohu n")
-            
-            if len(axes) != construct.ndim:
-                raise ValueError(
-"Can't insert {!r}: Mismatched axis sizes (got {}, expected {})".format(
-    construct, len(axes), construct.ndim))
-
-            domain_axes = self.domain_axes()
-            for axis, size in zip(axes, construct.shape):
-                if size != domain_axes[axis].size:
-                    raise ValueError(
-"Can't insert {!r}: Mismatched axis size (got {}, expected {})".format(
-    construct, size, domain_axes[axis].size))
-            #--- End: for
-
-            self._construct_axes[key] = tuple(axes)
-        #--- End: if
-        
-        self._construct_type[key] = construct_type
-
-        if copy:
-            construct = construct.copy()
-            
-        self._constructs[construct_type][key] = construct
-
-        return key
     #--- End: def
 
 #--- End: class

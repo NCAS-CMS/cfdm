@@ -1,10 +1,12 @@
+import ..structure
+
 # ====================================================================
 #
-# DomainAxis object
+# Domain axis object
 #
 # ====================================================================
 
-class DomainAxis(object):
+class DomainAxis(structure.DomainAxis):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an
@@ -16,19 +18,8 @@ spans the domain axis constructs of the domain, with the optional
 exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
-**Attributes**
-
-=========  =======  ==================================================
-Attribute  Type     Description
-=========  =======  ==================================================
-`!size`    `int`    The size of the domain axis.
-
-`!ncdim`   `str`    The name of this domain axis as a netCDF
-                    dimension.
-=========  =======  ==================================================
-
     '''
-    def __init__(self, size=None):
+    def __init__(self, size=None, source=None):
         '''**Initialization**
 
 :Parameters:
@@ -36,78 +27,22 @@ Attribute  Type     Description
     size: `int`, optional
         The size of the domain axis.
 
-    ncdim: `str`, optional
-        The name of this domain axis as a netCDF dimension.
+    source: `DomainAxis`
 
         '''
-        self.size  = size
+        super(DomainAxis).__init__(size=size, source=source)
+        
+        if source:
+            ncdim = source.get_ncdim(None)
+        else:
+            ncdim = None
+        
         self._ncdim = None
+        if ncdim is not None:
+            self.set_ncdim(size)
     #--- End: def
-
-    def __deepcopy__(self, memo):
-        '''
-
-Called by the `copy.deepcopy` standard library function.
-
-'''
-        return self.copy()
-    #--- End: def
-
-    def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
-
-x.__repr__() <==> repr(x)
-
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
-    def __str__(self):
-        '''
-
-Called by the `str` built-in function.
-
-x.__str__() <==> str(x)
-'''
-        return str(self.size)
-    #--- End: def
-
-    def __eq__(self, other):
-        return self.size == other
-
-    def __ne__(self, other):
-        return not self == other
-
-    def copy(self):
-        '''
-
-Return a deep copy.
-
-``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
-
-:Returns:
-
-    out: 
-        The deep copy.
-
-:Examples:
-
->>> e = d.copy()
-
-'''
-        X = type(self)
-        new = X.__new__(X)
-
-        # This is OK, for now, because values of self.__dict__ are
-        # immutable
-        new.__dict__ = self.__dict__.copy()
-
-        return new
-    #--- End: def
-
-    def equals(self, other, rtol=None, atol=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               traceback=False, ignore=(), _set=False):
+    
+    def equals(self, other, traceback=False, *kwargs):
         '''Return True if two domain axis objects are equal.
 
 :Parameters:
@@ -147,154 +82,44 @@ Return a deep copy.
 			self.__class__.__name__,
 			other.__class__.__name__))
 	    return False
-        #--- End: if
 
         # Check that each axis has the same size
-        if not self.size == other.size:
+        self_size  = self.get_size(None)
+        other_size = other.get_size(None)
+        if not self_size == other_size:
             if traceback:
                 print("{0}: Different axis sizes: {1} != {2}".format(
-			self.__class__.__name__, self.size, other.size))
+			self.__class__.__name__, self_size, other_size))
 	    return False
-        #--- End: if
 
         return True
     #--- End: def
 
-    def ncdim(self, *name):
+    def get_ncdim(self, *default):
         '''
         '''
-        if not name:
-            name = self._ncdim
-            if name is not None:
-                raise ValueError("No ncdim")
+        ncdim = self._ncdim
+        if ncdim is not None:
+            return ncdim
+        
+        if default:
+            return default[0]
 
-            return name
-        #--- End: if
+        raise ValueError("ncdim asdjw39p y j")
+    #--- End: def
 
-        name = name[0]
-        self._ncdim = name
+    def set_ncdim(self, ncdim):
+        '''
+        '''
+        self._ncdim = ncdim
+    #--- End: def
 
-        return name
+    def del_ncdim(self):
+        '''
+        '''
+        ncdim = self._ncdim
+        self._ncdim = None
+        return ncdim
     #--- End: def
 
 #--- End: class
-
-
-## ====================================================================
-##
-## Axes object
-##
-## ====================================================================
-#class Axes(dict):
-#    '''
-#    A dictionary of domain axis objects with extra methods.
-#
-#:Example:
-#
-#>>> a
-#{'dim1': <CF DomainAxis: 73>,
-# 'dim0': <CF DomainAxis: 12>,
-# 'dim2': <CF DomainAxis: 96>}
-#>>> a.equals(a)
-#True
-#
-#    '''
-#    def __deepcopy__(self, memo):
-#        '''
-#Called by the `copy.deepcopy` standard library function.
-#'''
-#        return self.copy()
-#    #--- End: def
-#
-#    def copy(self):
-#        '''Return a deep copy.
-#        
-#``a.copy()`` is equivalent to ``copy.deepcopy(a)``.
-#        
-#:Returns:
-#
-#    out: `Axes`
-#        The deep copy.
-#
-#:Examples:
-#
-#>>> b = a.copy()
-#
-#'''
-#        new = type(self)()
-#        for key, value in self.iteritems():
-#            new[key] = value.copy()
-#    
-#        return new
-#    #--- End: def
-#
-#    def equals(self, other, rtol=None, atol=None,
-#               ignore_data_type=False, ignore_fill_value=False,
-#               traceback=False):
-#        '''
-#
-#:Parameters:
-#
-#    other:
-#        The object to compare for equality.
-#
-#    traceback: `bool`, optional
-#        If True then print a traceback highlighting where the two
-#        instances differ.
-#
-#    atol: optional
-#        Ignored.
-#
-#    rtol: optional
-#        Ignored.
-#
-#    ignore_fill_value: optional
-#        Ignored.
-#
-#:Returns: 
-#
-#    out: `bool`
-#        Whether or not the two instances are equal.
-#
-#:Examples:
-#
-#>>> d.equals(e)
-#True
-#>>> d.equals(f)
-#False
-#>>> d.equals(f, traceback=True)
-#
-#'''
-#        if self is other:
-#            return True
-#
-#        # Check that each instance is the same type
-#
-#        if type(self) != type(other):
-#            if traceback:
-#                print("{0}: Different types: {0}, {1}".format(
-#                    self.__class__.__name__, other.__class__.__name__))
-#            return False
-#        #--- End: if
-#
-#        self_sizes  = [d.size for d in self.values()]
-#        other_sizes = [d.size for d in other.values()]
-#        
-#        if sorted(self_sizes) != sorted(other_sizes):
-#            # There is not a 1-1 correspondence between axis sizes
-#            if traceback:
-#                print("{}: Different domain axis sizes: {} != {}".format(
-#                    self.__class__.__name__,
-#                    sorted(self.values()),
-#                    sorted(other.values())))
-#            return False
-#        #--- End: if
-#
-#        # ------------------------------------------------------------
-#        # Still here? Then the two collections of domain axis objects
-#        # are equal
-#        # ------------------------------------------------------------
-#        return True
-#    #--- End: def
-#
-##--- End: class

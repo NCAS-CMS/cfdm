@@ -5,7 +5,7 @@
 #
 # ====================================================================
 
-class AncillaryArray(AbstractVariable):
+class AncillaryVariable(SrtructuralAncillaryVariable, VariableMixin):
     '''
     '''
     def dump(self, display=True, field=None, key=None,

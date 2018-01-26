@@ -853,13 +853,13 @@ True
         return True
     #--- End: def
 
-    def array_constructs(self, axes=None, copy=False):
-        return self.Constructs.array_constructs(axes=axes, copy=copy)
+    def array_constructs(self, copy=False):
+        return self.Constructs.array_constructs(copy=copy)
 
-    def auxiliary_coordinates(self, axes=None, copy=False):
+    def auxiliary_coordinates(self, copy=False):
         return self.Constructs.constructs('auxiliarycoordinate', copy=copy)
     
-    def cell_measures(self, axes=None, copy=False):
+    def cell_measures(self, copy=False):
         return self.Constructs.constructs('cellmeasure', copy=copy)
     
     def cell_methods(self, copy=False):
@@ -868,7 +868,7 @@ True
     def construct_axes(self, key=None):
         return self.Constructs.construct_axes(key=key)
     
-    def constructs(self, axes=None,copy=False):
+    def constructs(self, copy=False):
         '''Return all of the data model constructs of the field.
 
 .. versionadded:: 1.6
@@ -959,8 +959,8 @@ None
         return self._data_axes[:]
     #--- End: def
 
-    def dimension_coordinates(self, axes=None, copy=False):
-        return self.Constructs.constructs('dimensioncoordinate', axes=axes, copy=copy)
+    def dimension_coordinates(self, copy=False):
+        return self.Constructs.constructs('dimensioncoordinate', copy=copy)
     
     def domain_ancillaries(self, copy=False):
         return self.Constructs.constructs('domainancillary', copy=copy)
@@ -1202,12 +1202,12 @@ None
 #    #--- End: def
 
 
-    def insert_auxiliary_coordinate(self, item, key=None, axes=None,
-                                    copy=True, replace=True):
+    def set_auxiliary_coordinate(self, item, key=None, axes=None,
+                                 copy=True, replace=True):
         '''Insert an auxiliary coordinate object into the {+variable}.
 
-.. seealso:: `insert_domain_axis`, `insert_measure`, `insert_data`,
-             `insert_dim`, `insert_ref`
+.. seealso:: `set_domain_axis`, `set_measure`, `set_data`,
+             `set_dim`, `set_ref`
 
 :Parameters:
 
@@ -1247,17 +1247,17 @@ None
             raise ValueError(
 "Can't insert auxiliary coordinate object: Identifier {!r} already exists".format(key))
 
-        return self.Constructs.insert('auxiliarycoordinate', item,
-                                      key=key, axes=axes, copy=copy)
+        return self.Constructs.set('auxiliarycoordinate', item,
+                                   key=key, axes=axes, copy=copy)
     #--- End: def
 
-    def insert_data(self, data, axes, copy=True, replace=True,
+    def set_data(self, data, axes, copy=True, replace=True,
                     force=False):
         '''Insert a data array into the {+variable}.
 
 :Examples 1:
 
->>> f.insert_data(d)
+>>> f.set_data(d)
 
 :Parameters:
 
@@ -1300,31 +1300,31 @@ None
 
 >>> f.axes()
 {'dim0': 1, 'dim1': 3}
->>> f.insert_data(Data([[0, 1, 2]]))
+>>> f.set_data(Data([[0, 1, 2]]))
 
 >>> f.axes()
 {'dim0': 1, 'dim1': 3}
->>> f.insert_data(Data([[0, 1, 2]]), axes=['dim0', 'dim1'])
+>>> f.set_data(Data([[0, 1, 2]]), axes=['dim0', 'dim1'])
 
 >>> f.axes()
 {}
->>> f.insert_data(Data([[0, 1], [2, 3, 4]]))
+>>> f.set_data(Data([[0, 1], [2, 3, 4]]))
 >>> f.axes()
 {'dim0': 2, 'dim1': 3}
 
->>> f.insert_data(Data(4))
+>>> f.set_data(Data(4))
 
->>> f.insert_data(Data(4), axes=[])
+>>> f.set_data(Data(4), axes=[])
 
 >>> f.axes()
 {'dim0': 3, 'dim1': 2}
 >>> data = Data([[0, 1], [2, 3, 4]])
->>> f.insert_data(data, axes=['dim1', 'dim0'], copy=False)
+>>> f.set_data(data, axes=['dim1', 'dim0'], copy=False)
 
->>> f.insert_data(Data([0, 1, 2]))
->>> f.insert_data(Data([3, 4, 5]), replace=False)
+>>> f.set_data(Data([0, 1, 2]))
+>>> f.set_data(Data([3, 4, 5]), replace=False)
 ValueError: Can't initialize data: Data already exists
->>> f.insert_data(Data([3, 4, 5]))
+>>> f.set_data(Data([3, 4, 5]))
 
         '''
         for axis in axes:
@@ -1333,7 +1333,7 @@ ValueError: Can't initialize data: Data already exists
 
         self._data_axes = list(axes)
 
-        super(Field, self).insert_data(data, copy=copy)
+        super(Field, self).set_data(data, copy=copy)
     #--- End: def
 
 #    def cell_methods(self, copy=False):
@@ -1397,11 +1397,11 @@ ValueError: Can't initialize data: Data already exists
 #        return out
 #    #--- End: def
     
-    def insert_cell_method(self, cell_method, key=None, copy=True):
+    def set_cell_method(self, cell_method, key=None, copy=True):
         '''Insert cell method objects into the {+variable}.
 
-.. seealso:: `insert_aux`, `insert_measure`, `insert_ref`,
-             `insert_data`, `insert_dim`
+.. seealso:: `set_aux`, `set_measure`, `set_ref`,
+             `set_data`, `set_dim`
 
 :Parameters:
 
@@ -1414,14 +1414,14 @@ ValueError: Can't initialize data: Data already exists
 :Examples:
 
         '''
-        self.Constructs.insert('cellmethod', cell_method, key=key, copy=copy)
+        self.Constructs.set_construct('cellmethod', cell_method, key=key, copy=copy)
     #--- End: def
 
-    def insert_domain_axis(self, domain_axis, key=None, replace=True, copy=True):
+    def set_domain_axis(self, domain_axis, key=None, replace=True, copy=True):
         '''Insert a domain axis into the {+variable}.
 
-.. seealso:: `insert_aux`, `insert_measure`, `insert_ref`,
-             `insert_data`, `insert_dim`
+.. seealso:: `set_aux`, `set_measure`, `set_ref`,
+             `set_data`, `set_dim`
 
 :Parameters:
 
@@ -1445,9 +1445,9 @@ ValueError: Can't initialize data: Data already exists
 
 :Examples:
 
->>> f.insert_domain_axis(DomainAxis(1))
->>> f.insert_domain_axis(DomainAxis(90), key='dim4')
->>> f.insert_domain_axis(DomainAxis(23), key='dim0', replace=False)
+>>> f.set_domain_axis(DomainAxis(1))
+>>> f.set_domain_axis(DomainAxis(90), key='dim4')
+>>> f.set_domain_axis(DomainAxis(23), key='dim0', replace=False)
 
         '''
         axes = self.domain_axes()
@@ -1456,11 +1456,11 @@ ValueError: Can't initialize data: Data already exists
 "Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
     key, domain_axis.size, axes[key].size))
 
-        return self.Constructs.insert('domainaxis', domain_axis,
+        return self.Constructs.set_construct('domainaxis', domain_axis,
                                       key=key, copy=copy)
     #--- End: def
 
-    def insert_field_ancillary(self, construct, key=None, axes=None,
+    def set_field_ancillary(self, construct, key=None, axes=None,
                                copy=True, replace=False):
         '''Insert a field ancillary object into the {+variable}.
         
@@ -1479,11 +1479,11 @@ ValueError: Can't initialize data: Data already exists
                                            copy=copy)
         #--- End: if
         
-        return self.Constructs.insert('fieldancillary', construct, key=key,
+        return self.Constructs.set_construct('fieldancillary', construct, key=key,
                                       axes=axes, copy=copy)
     #--- End: def
 
-    def insert_domain_ancillary(self, item, key=None, axes=None,
+    def set_domain_ancillary(self, item, key=None, axes=None,
                                 copy=True, replace=True):
         '''Insert a domain ancillary object into the {+variable}.
       
@@ -1493,15 +1493,15 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
 
-        return self.Constructs.insert('domainancillary', item, key=key, axes=axes,
+        return self.Constructs.set_construct('domainancillary', item, key=key, axes=axes,
                                       copy=copy)
     #--- End: def
 
-    def insert_cell_measure(self, item, key=None, axes=None, copy=True, replace=True):
+    def set_cell_measure(self, item, key=None, axes=None, copy=True, replace=True):
         '''Insert a cell measure object into the {+variable}.
 
-.. seealso:: `insert_domain_axis`, `insert_aux`, `insert_data`,
-             `insert_dim`, `insert_ref`
+.. seealso:: `set_domain_axis`, `set_aux`, `set_data`,
+             `set_dim`, `set_ref`
 
 :Parameters:
 
@@ -1540,16 +1540,16 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert cell measure object: Identifier {0!r} already exists".format(key))
 
-        return self.Constructs.insert('cellmeasure', item, key=key,
+        return self.Constructs.set_construct('cellmeasure', item, key=key,
                                       axes=axes, copy=copy)
     #--- End: def
 
-    def insert_coordinate_reference(self, item, key=None, axes=None,
+    def set_coordinate_reference(self, item, key=None, axes=None,
                                     copy=True, replace=True):
         '''Insert a coordinate reference object into the {+variable}.
 
-.. seealso:: `insert_domain_axis`, `insert_aux`, `insert_measure`,
-             `insert_data`, `insert_dim`
+.. seealso:: `set_domain_axis`, `set_aux`, `set_measure`,
+             `set_data`, `set_dim`
              
 :Parameters:
 
@@ -1582,14 +1582,14 @@ ValueError: Can't initialize data: Data already exists
 >>>
 
         '''
-        return self.Constructs.insert('coordinatereference', item, key=key, copy=copy)
+        return self.Constructs.set_construct('coordinatereference', item, key=key, copy=copy)
     #--- End: def
 
-    def insert_dimension_coordinate(self, item, key=None, axes=None, copy=True, replace=True):
+    def set_dimension_coordinate(self, item, key=None, axes=None, copy=True, replace=True):
         '''Insert a dimension coordinate object into the {+variable}.
 
-.. seealso:: `insert_aux`, `insert_domain_axis`, `insert_item`,
-             `insert_measure`, `insert_data`, `insert_ref`,
+.. seealso:: `set_aux`, `set_domain_axis`, `set_item`,
+             `set_measure`, `set_data`, `set_ref`,
              `remove_item`
 
 :Parameters:
@@ -1629,8 +1629,9 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert dimension coordinate object: Identifier {!r} already exists".format(key))
 
-        return self.Constructs.insert('dimensioncoordinate', item, key=key, axes=axes,
-                                      copy=copy)
+        return self.Constructs.set_construct('dimensioncoordinate',
+                                             item, key=key, axes=axes,
+                                             copy=copy)
     #--- End: def
 
     def remove_data(self):

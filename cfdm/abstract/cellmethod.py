@@ -36,8 +36,8 @@ Attribute    Description
 #        return cls
 
     def __init__(self, cell_method=None, axes=(), method=None,
-                 where=None, within=None, over=None, interval=(),
-                 comment=None):
+                 where=None, within=None, over=None, intervals=(),
+                 comment=None, source=None, copy=True):
         '''
 '''
         if cell_method is not None:
@@ -46,14 +46,33 @@ Attribute    Description
                 raise ValueError(" e5y 6sdf ")
 
             self.__dict__ = cell_method[0].__dict__.copy()
-        else:
-            self.axes     = axes
-            self._method  = method 
-            self._where   = where  
-            self._within  = within 
-            self._over    = over   
-            self.interval = interval
-            self._comment = comment
+        elif source is not None:            
+            if axes is not None:
+                axes = self.get_axes(())
+            if method is not None:
+                method = self.get_method(None)
+            if where is not None:
+               where  = self.get_where(None)
+            if within is not None:
+                within = self.get_within(None)
+            if over is not None:
+                over = self.get_over(None)
+            if comment is not None:
+                comment = self.get_comment(None)
+            if intervals is not None:
+                intervals = self.get_intervals(())
+                if copy and intervals:
+                    intervals = tuple([i.copy() for i in intervals])
+            #--- End: if
+                
+            self.set_axes(axes) 
+            self.set_method(method)
+            self.set_where(where)
+            self.set_within(within)
+            self.set_over(over)
+            self.set_intervals(intervals)
+            self.set_comment(comment)
+        #--- End: if
     #--- End: def
 
     def __deepcopy__(self, memo):
@@ -768,6 +787,23 @@ corresponding dimension or dimensions.
         return c
     #--- End: def
 
+    def copy(self):
+        '''Return a deep copy.
+
+``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
+
+:Returns:
+
+    out: 
+        The deep copy.
+
+:Examples:
+
+>>> e = d.copy()
+
+        '''
+        new = type(self)(source=self, copy=True)
+    #--- End: def
     def copy(self):
         '''Return a deep copy.
 

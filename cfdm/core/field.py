@@ -10,7 +10,7 @@ from .domain      import Domain
 
 #from ..abstract.field import AbstractField
 
-import ..abstract
+import ..structure
 
 _debug = False
        
@@ -20,7 +20,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(abstract.AbstractField):
+class Field(structure.Field, VariableMixin):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -914,22 +914,37 @@ Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (
 False
 
         '''
-        return super(Field, self).equals(
-            other,
-            rtol=rtol, atol=atol, traceback=tracback,
-            ignore_data_type=ignore_data_type,
-            ignore_fill_value=ignore_fill_value,
-            ignore_properties=ignore_properties,
-            ignore_construct_type=ignore_construct_type,
-            _extra=('_Constructs',))
+        if rtol is None:
+            rtol = RTOL()
+        if atol is None:
+            atol = ATOL()
+
+        if not super(Field, self).equals(
+                other,
+                rtol=rtol, atol=atol, traceback=tracback,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties,
+                ignore_construct_type=ignore_construct_type):
+            if traceback:
+                print("?????asdasd ??/")
+            return False
+
+        # ------------------------------------------------------------
+        # Check the constructs
+        # ------------------------------------------------------------              
+        if not cf_equals(self._Constructs, other._Constructs,
+                         rtol=rtol, atol=atol,
+                         traceback=traceback,
+                         ignore_data_type=ignore_data_type,
+                         ignore_construct_type=ignore_construct_type,
+                         ignore_fill_value=ignore_fill_value):
+            if traceback:
+                print(
+                    "{0}: Different {1}".format(self.__class__.__name__, '_Constructs'))
+            return False
     #--- End: def
         
-    def expand_dims(se
-
-        kwargs2 = self._parameters(locals())
-        return super(Field, self).equals(**kwargs2)
-    #---End: def
-
     def expand_dims(self, position=0, axis=None, copy=True):
         '''Insert a size 1 axis into the data array.
 
@@ -1043,15 +1058,6 @@ axes, use the `remove_axes` method.
         return f
     #--- End: def
 
-#    def remove_data(self):
-#        '''Docstring copied from Variable.remove_data
-#
-#        '''
-#        self._data_axes = None
-#        return super(Field, self).remove_data()
-#    #--- End: def
-#    remove_data.__doc__ = Variable.remove_data.__doc__
-    
 #    def cell_methods(self, copy=False):
 #        '''
 #        '''

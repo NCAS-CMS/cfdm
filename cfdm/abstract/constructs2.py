@@ -119,7 +119,7 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
 #        self._construct[construct_type][key] = new_construct
 #    #--- End: def
     
-    def constructs(self, construct_type=None, axes=None, copy=False):
+    def constructs(self, construct_type=None, copy=False):
         '''
         '''
         if construct_type is not None:
@@ -133,17 +133,6 @@ Called by the :py:obj:`copy.deepcopy` standard library function.
         if copy:
             for key, construct in out.items():
                 out[key] = construct.copy()
-
-        if axes:
-            spans_axes = set(axes)
-            construct_axes = self.construct_axes()
-            for key, construct in out.items():
-                x = construct_axes.get(key)
-                if x is None:
-                    del out[key]
-                elif not spans_axes.intersection(x):
-                    del out[key]
-        #--- End: def
 
         return out
     #--- End: def
@@ -312,19 +301,19 @@ Return a deep or shallow copy.
         
         return out
     #--- End: def
-
-    @abc.abstractmethod
-    def equals(self, rtol=None, atol=None, traceback=False, **kwargs):
-        '''
-        '''
-        pass
-    #--- End: def
+#
+#    @abc.abstractmethod
+#    def equals(self, rtol=None, atol=None, traceback=False, **kwargs):
+#        '''
+#        '''
+#        pass
+#    #--- End: def
 
     def domain_axes(self, copy=False):
         return self.constructs('domainaxis', copy=copy)
     #--- End: def
     
-    def get(self, key, default=None):
+    def get_construct(self, key, default=None):
         d = self._constructs.get(self._construct_type.get(key))
         if d is None:
             return default
@@ -332,8 +321,8 @@ Return a deep or shallow copy.
         return d.get(key, default)
     #--- End: def
     
-    def insert(self, construct_type, construct, key=None,
-               axes=None, copy=True):
+    def set_construct(self, construct_type, construct, key=None,
+                      axes=None, copy=True):
         '''
         '''
         if key is None:

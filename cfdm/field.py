@@ -838,10 +838,10 @@ for details.
     def array_constructs(self, axes=None, copy=False):
         return self.Constructs.array_constructs(axes=axes, copy=copy)
 
-    def auxiliary_coordinates(self, axes=None, copy=False):
+    def auxiliary_coordinates(self, copy=False):
         return self.Constructs.constructs('auxiliarycoordinate', copy=copy)
     
-    def cell_measures(self, axes=None, copy=False):
+    def cell_measures(self, copy=False):
         return self.Constructs.constructs('cellmeasure', copy=copy)
     
     def cell_methods(self, copy=False):
@@ -850,7 +850,7 @@ for details.
     def construct_axes(self, key=None):
         return self.Constructs.construct_axes(key=key)
     
-    def constructs(self, axes=None,copy=False):
+    def constructs(self, copy=False):
         '''Return all of the data model constructs of the field.
 
 .. versionadded:: 1.6

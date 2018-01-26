@@ -1,6 +1,6 @@
 from collections import abc
 
-from .arrayconstruct import AbstractArray
+from .arrayconstruct import AbstractVariable
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ from .arrayconstruct import AbstractArray
 #
 # ====================================================================
 
-class AbstractBoundedArray(AbstractArray):
+class AbstractBoundedVariable(AbstractVariable):
     '''Base class for CFDM dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
 
@@ -103,92 +103,6 @@ domain ancillary objects.
                     parameter = deepcopy(parameter)
                     
                 self.set_extent_property(name, parameter, copy=True)
-    #--- End: def
-
-    def __getitem__(self, indices):
-        '''
-
-x.__getitem__(indices) <==> x[indices]
-        
-        '''
-        if indices is Ellipsis:
-            return self.copy()
-
-        # Parse the index
-        if not isinstance(indices, tuple):
-            indices = (indices,)
-
-        indices = parse_indices(self.shape, indices)
-
-        new = self.copy(data=False)
-
-        data = self.get_data(None)
-
-        if _debug:
-            cname = self.__class__.__name__
-            print '{}.__getitem__: shape    = {}'.format(cname, self.shape)
-            print '{}.__getitem__: indices  = {}'.format(cname, indices)
-
-        if data is not None:
-            new.set_data(data[tuple(indices)], copy=False)
-
-        # Subspace the bounds, if there are any
-        if not new.has_bounds():
-            bounds = None
-        else:
-            bounds = self.get_bounds(None)
-            if bounds is not None:
-                bounds_indices = list(indices)
-                if data.ndim <= 1:
-                    index = bounds_indices[0]
-                    if isinstance(index, slice):
-                        if index.step < 0:
-                            # This scalar or 1-d variable has been
-                            # reversed so reverse its bounds (as per
-                            # 7.1 of the conventions)
-                            bounds_indices.append(slice(None, None, -1))
-                    elif data.size > 1 and index[-1] < index[0]:
-                        # This 1-d variable has been reversed so
-                        # reverse its bounds (as per 7.1 of the
-                        # conventions)
-                        bounds_indices.append(slice(None, None, -1))
-                    else:
-                        bounds_indices.append(slice(None))
-                else:
-                    bounds_indices.append(slice(None))
-
-                if _debug:
-                    print '{}.__getitem__: indices for bounds ='.format(
-                        self.__class__.__name__, bounds_indices)
-
-                data = bounds.get_data()
-                bounds = bounds.copy(data=False)
-                bounds.set_data(data[tuple(bounds_indices)], copy=False)
-                new.set_bounds(bounds, copy=False)
-        #--- End: if
-
-        # Subspace the ancillary arrays
-        ancillary_arrays = self.ancillary_arrays()
-        if ancillary_arrays:
-            for name, array in ancillary_arrays.iteritems():
-                if not array.has_data():
-                    new.set_ancillary_array(name, array, copy=True)
-                    continue
-                
-                ancillary_indices = list(indices)
-                ancillary_indices.append(slice(None))
-                if _debug:
-                    print '{0}.__getitem__: indices for ancillary array {1!r}={2}'.format(
-                        self.__class__.__name__, name, ancillary_indices)
-
-                data = array.get_data()
-                array = array.copy(data=False)
-                array.set_data(data[tuple(ancillary_indices)], copy=False)
-                new.set_ancillary_array(name, array, copy=False)
-        #--- End: if
-
-        # Return the new bounded variable
-        return new
     #--- End: def
 
 
@@ -568,199 +482,199 @@ x.__getitem__(indices) <==> x[indices]
         return self._get_arrays('topology').pop(name, None)
     #--- End: def
    
-    def dump(self, display=True, field=None, key=None,
-             _omit_properties=(), _prefix='', _title=None,
-             _create_title=True, _level=0):
-        '''Return a string containing a full description of the instance.
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed, i.e. ``f.dump()`` is equivalent to
-        ``print f.dump(display=False)``.
-
-    omit: sequence of `str`, optional
-        Omit the given CF properties from the description.
-
-    _prefix: optional
-        Ignored.
-
-:Returns:
-
-    out: `None` or `str`
-        A string containing the description.
-
-:Examples:
-
-        '''
-        string = super(AbstractBoundedArray, self).dump(
-            display=False, field=field, key=key,
-            _omit_properties=_omit_properties, _prefix=_prefix,
-            _title=_title, _create_title=_create_title, _level=_level)
-
-        string = [string]
-        
-        # ------------------------------------------------------------
-        # Bounds
-        # ------------------------------------------------------------
-        b = self.get_bounds(None)
-        if b is None:
-            continue
-        
-        if not isinstance(b, AbstractArray):
-            string.append('{0}{1}bounds = {2}'.format(indent1, attribute, b))
-            continue
-        
-        string.append(
-            b.dump(display=False, field=field, key=key,
-                   _prefix=_prefix+'bounds.',
-                   _create_title=False, _level=level+1))
-
-        #-------------------------------------------------------------
-        # Extent and topology properties
-        # ------------------------------------------------------------
-        for x in ['extent', 'topology']:
-            parameters = getattr(self, x+'_parameters')()
-            for name, parameter in sorted(parameters.items()):
-                string.append(
-                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
-
-            arrays = getattr(self, x+'_arrays')()
-            for name, array in sorted(arrays.items()):
-                string.append(
-                    array.dump(display=False, field=field, key=key,
-                               _prefix=_prefix+x+'.'+name+'.',
-                               _create_title=False, _level=level+1))
-        #--- End: for
-            
-        string = '\n'.join(string)
-        
-        if display:
-            print string
-        else:
-            return string
-    #--- End: def
-
-    def equals(self, other, rtol=None, atol=None, traceback=False,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
-        '''
-        '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
-        if not super(AbstractBoundedArray, self).equals(
-                other,
-                rtol=rtol, atol=atol, traceback=tracback,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,
-                ignore_construct_type=ignore_construct_type):
-            if traceback:
-                print("???????/")
-            return False
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Check the ancillary parameters
-        # ------------------------------------------------------------
-        if ignore_fill_value:
-            ignore_properties += ('_FillValue', 'missing_value')
-            
-        for x in ['extent', 'topology']:
-            self_parameters  = getattr(self, x+'_parameters')()
-            other_parameters = getattr(other, x+'_parameters')()
-            if set(self_parameters) != set(other_parameters):
-                if traceback:
-                    print("{0}: Different parameters: {1}, {2}".format( 
-                        self.__class__.__name__,
-                        set(self_parameters), set(other_parameters)))
-                return False
-            
-            for name, x in sorted(self_parameters.iteritems()):
-                y = other_parameters[name]
-                
-                if not cf_equals(x, y, rtol=rtol, atol=atol,
-                                 ignore_fill_value=ignore_fill_value,
-                                 traceback=traceback):
-                    if traceback:
-                        print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
-                            self.__class__.__name__, prop, x, y))
-                    return False
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Check the bounds 
-        # ------------------------------------------------------------
-        self_hasbounds = self.has_bounds()
-        if self_has_bounds != other.has_bounds():
-            if traceback:
-                print("{0}: Different {1}".format(self.__class__.__name__, attr))
-            return False
-                
-        if self_has_bounds:            
-            if not self.get_bounds().equals(other.get_bounds(),
-                                            rtol=rtol, atol=atol,
-                                            traceback=traceback,
-                                            ignore_data_type=ignore_data_type,
-                                            ignore_construct_type=ignore_construct_type,
-                                            ignore_fill_value=ignore_fill_value):
-                if traceback:
-                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
-                return False
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Check the ancillary arrays
-        # ------------------------------------------------------------
-        for x in ['extent', 'topology']:
-            self_ancillary_arrays  = getattr(self, x+'_arrays')()
-            other_ancillary_arrays = getattr(other, x+'_arrays')()
-            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
-                if traceback:
-                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
-                        self.__class__.__name__,
-                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
-                return False
-    
-            for name, x in sorted(self_ancillary_arrays.items()):
-                y = other_arrays[name]
-                
-                if not x.equals(y rtol=rtol, atol=atol,
-                                traceback=traceback,
-                                ignore_data_type=ignore_data_type,
-                                ignore_construct_type=ignore_construct_type,
-                                ignore_fill_value=ignore_fill_value):
-                    if traceback:
-                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
-                    return False
-        #--- End: for
-
-        return True
-    #--- End: def
-        
-    def expand_dims(self, position , copy=True):
-        '''
-        '''
-        position = self._parse_axes([position])[0]
-        
-        c = super(AbstractBoundedArray, self).expand_dims(position,
-                                                          copy=copy)
-        
-        bounds = c.get_bounds(None)
-        if bounds is not None:
-            bounds.expand_dims(position, copy=False)
-            
-        for array in c.ancillary_arrays().itervalues():                
-            array.expand_dims(position, copy=False)
-
-        return c
-    #--- End: def        
+#    def dump(self, display=True, field=None, key=None,
+#             _omit_properties=(), _prefix='', _title=None,
+#             _create_title=True, _level=0):
+#        '''Return a string containing a full description of the instance.
+#
+#.. versionadded:: 1.6
+#
+#:Parameters:
+#
+#    display: `bool`, optional
+#        If False then return the description as a string. By default
+#        the description is printed, i.e. ``f.dump()`` is equivalent to
+#        ``print f.dump(display=False)``.
+#
+#    omit: sequence of `str`, optional
+#        Omit the given CF properties from the description.
+#
+#    _prefix: optional
+#        Ignored.
+#
+#:Returns:
+#
+#    out: `None` or `str`
+#        A string containing the description.
+#
+#:Examples:
+#
+#        '''
+#        string = super(AbstractBoundedArray, self).dump(
+#            display=False, field=field, key=key,
+#            _omit_properties=_omit_properties, _prefix=_prefix,
+#            _title=_title, _create_title=_create_title, _level=_level)
+#
+#        string = [string]
+#        
+#        # ------------------------------------------------------------
+#        # Bounds
+#        # ------------------------------------------------------------
+#        b = self.get_bounds(None)
+#        if b is None:
+#            continue
+#        
+#        if not isinstance(b, AbstractArray):
+#            string.append('{0}{1}bounds = {2}'.format(indent1, attribute, b))
+#            continue
+#        
+#        string.append(
+#            b.dump(display=False, field=field, key=key,
+#                   _prefix=_prefix+'bounds.',
+#                   _create_title=False, _level=level+1))
+#
+#        #-------------------------------------------------------------
+#        # Extent and topology properties
+#        # ------------------------------------------------------------
+#        for x in ['extent', 'topology']:
+#            parameters = getattr(self, x+'_parameters')()
+#            for name, parameter in sorted(parameters.items()):
+#                string.append(
+#                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
+#
+#            arrays = getattr(self, x+'_arrays')()
+#            for name, array in sorted(arrays.items()):
+#                string.append(
+#                    array.dump(display=False, field=field, key=key,
+#                               _prefix=_prefix+x+'.'+name+'.',
+#                               _create_title=False, _level=level+1))
+#        #--- End: for
+#            
+#        string = '\n'.join(string)
+#        
+#        if display:
+#            print string
+#        else:
+#            return string
+#    #--- End: def
+#
+#    def equals(self, other, rtol=None, atol=None, traceback=False,
+#               ignore_data_type=False, ignore_fill_value=False,
+#               ignore_properties=(), ignore_construct_type=False):
+#        '''
+#        '''
+#        if rtol is None:
+#            rtol = RTOL()
+#        if atol is None:
+#            atol = ATOL()
+#
+#        if not super(AbstractBoundedArray, self).equals(
+#                other,
+#                rtol=rtol, atol=atol, traceback=tracback,
+#                ignore_data_type=ignore_data_type,
+#                ignore_fill_value=ignore_fill_value,
+#                ignore_properties=ignore_properties,
+#                ignore_construct_type=ignore_construct_type):
+#            if traceback:
+#                print("???????/")
+#            return False
+#        #--- End: if
+#
+#        # ------------------------------------------------------------
+#        # Check the ancillary parameters
+#        # ------------------------------------------------------------
+#        if ignore_fill_value:
+#            ignore_properties += ('_FillValue', 'missing_value')
+#            
+#        for x in ['extent', 'topology']:
+#            self_parameters  = getattr(self, x+'_parameters')()
+#            other_parameters = getattr(other, x+'_parameters')()
+#            if set(self_parameters) != set(other_parameters):
+#                if traceback:
+#                    print("{0}: Different parameters: {1}, {2}".format( 
+#                        self.__class__.__name__,
+#                        set(self_parameters), set(other_parameters)))
+#                return False
+#            
+#            for name, x in sorted(self_parameters.iteritems()):
+#                y = other_parameters[name]
+#                
+#                if not cf_equals(x, y, rtol=rtol, atol=atol,
+#                                 ignore_fill_value=ignore_fill_value,
+#                                 traceback=traceback):
+#                    if traceback:
+#                        print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
+#                            self.__class__.__name__, prop, x, y))
+#                    return False
+#        #--- End: for
+#
+#        # ------------------------------------------------------------
+#        # Check the bounds 
+#        # ------------------------------------------------------------
+#        self_hasbounds = self.has_bounds()
+#        if self_has_bounds != other.has_bounds():
+#            if traceback:
+#                print("{0}: Different {1}".format(self.__class__.__name__, attr))
+#            return False
+#                
+#        if self_has_bounds:            
+#            if not self.get_bounds().equals(other.get_bounds(),
+#                                            rtol=rtol, atol=atol,
+#                                            traceback=traceback,
+#                                            ignore_data_type=ignore_data_type,
+#                                            ignore_construct_type=ignore_construct_type,
+#                                            ignore_fill_value=ignore_fill_value):
+#                if traceback:
+#                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
+#                return False
+#        #--- End: if
+#
+#        # ------------------------------------------------------------
+#        # Check the ancillary arrays
+#        # ------------------------------------------------------------
+#        for x in ['extent', 'topology']:
+#            self_ancillary_arrays  = getattr(self, x+'_arrays')()
+#            other_ancillary_arrays = getattr(other, x+'_arrays')()
+#            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
+#                if traceback:
+#                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
+#                        self.__class__.__name__,
+#                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
+#                return False
+#    
+#            for name, x in sorted(self_ancillary_arrays.items()):
+#                y = other_arrays[name]
+#                
+#                if not x.equals(y rtol=rtol, atol=atol,
+#                                traceback=traceback,
+#                                ignore_data_type=ignore_data_type,
+#                                ignore_construct_type=ignore_construct_type,
+#                                ignore_fill_value=ignore_fill_value):
+#                    if traceback:
+#                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
+#                    return False
+#        #--- End: for
+#
+#        return True
+#    #--- End: def
+#        
+#    def expand_dims(self, position , copy=True):
+#        '''
+#        '''
+#        position = self._parse_axes([position])[0]
+#        
+#        c = super(AbstractBoundedArray, self).expand_dims(position,
+#                                                          copy=copy)
+#        
+#        bounds = c.get_bounds(None)
+#        if bounds is not None:
+#            bounds.expand_dims(position, copy=False)
+#            
+#        for array in c.ancillary_arrays().itervalues():                
+#            array.expand_dims(position, copy=False)
+#
+#        return c
+#    #--- End: def        
     
     def get_bounds(self, *default):
         '''Insert cell bounds.
@@ -858,21 +772,21 @@ x.__getitem__(indices) <==> x[indices]
         return hasattr(self, '_bounds')
     #--- End: def
 
-    def squeeze(self, axes=None , copy=True):
-        '''
-        '''
-        axes = self._parse_axes(axes)
-
-        c = super(AbstractBoundedArray, self).squeeze(axes, copy=copy)
-        
-        bounds = c.get_bounds(None)
-        if bounds is not None:
-            bounds.squeeze(axes, copy=False)
-
-        for array in c.ancillary_arrays().itervalues():                
-            array.squeeze(axes, copy=False)
-        
-        return c
-    #--- End: def        
+#    def squeeze(self, axes=None , copy=True):
+#        '''
+#        '''
+#        axes = self._parse_axes(axes)
+#
+#        c = super(AbstractBoundedArray, self).squeeze(axes, copy=copy)
+#        
+#        bounds = c.get_bounds(None)
+#        if bounds is not None:
+#            bounds.squeeze(axes, copy=False)
+#
+#        for array in c.ancillary_arrays().itervalues():                
+#            array.squeeze(axes, copy=False)
+#        
+#        return c
+#    #--- End: def        
     
 #--- End: class
