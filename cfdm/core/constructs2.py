@@ -4,6 +4,13 @@ class Constructs(structure.Constructs):
     '''
 Keys are item identifiers, values are item objects.
     '''    
+
+    def auxiliary_coordinates(self, copy=False):
+        '''
+        '''
+        return self.constructs('auxiliarycoordinate', copy=copy)
+    #--- End: def
+
     def constructs(self, construct_type=None, axes=None, copy=False):
         '''
         '''
@@ -29,6 +36,10 @@ Keys are item identifiers, values are item objects.
     
     def coordinate_references(self, copy=False):
         return self.constructs('coordinatereference', copy=copy)
+    #--- End: def
+
+    def dimension_coordinates(self, copy=False):
+        return self.constructs('dimensioncoordinate', copy=copy)
     #--- End: def
 
     def domain_axis_name(self, axis):
@@ -396,14 +407,6 @@ Traceback: Different cell methods: {0!r}, {1!r}".format(
         #--- End: for
 
         return True
-    #--- End: def
-
-    def auxiliary_coordinates(self, copy=False):
-        return self.constructs('auxiliarycoordinate', copy=copy)
-    #--- End: def
-   
-    def dimension_coordinates(self, copy=False):
-        return self.constructs('dimensioncoordinate', copy=copy)
     #--- End: def
 
 #--- End: class

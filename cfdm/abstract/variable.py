@@ -1,30 +1,14 @@
 from collections import abc
-import re
-import textwrap
 
-from copy      import deepcopy
-from cPickle   import dumps, loads, PicklingError
-from itertools import izip
-
-import numpy
-import netCDF4
-
-from .cfdatetime   import dt
-from .functions    import RTOL, ATOL, RELAXED_IDENTITIES
-from .functions    import equals     as cf_equals
-#from .units        import Units
-from .constants    import masked
-
-from .data.data import Data
-
+from .construct import AbstractConstruct
 
 # ====================================================================
 #
-# Variable object
+# ArrayConstruct object
 #
 # ====================================================================
 
-class AbstractArrayConstructCore(object):
+class AbstractVariable(AbstractConstruct):
     '''
 
 Base class for storing a data array with metadata.
@@ -41,7 +25,7 @@ All components of a variable are optional.
                                'missing_value'))
 
     def __init__(self, properties={}, data=None, source=None,
-                 copy=True):
+                 copy=True, _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -63,67 +47,41 @@ All components of a variable are optional.
         initialization. By default arguments are deep copied.
 
         '''
-        self._fill_value = None
-
-        self._ncvar = None
-        
-        # _hasbounds is True if and only if there are cell bounds.
-        self._hasbounds = False
-
-        # _hasdata is True if and only if there is a data array
-        self._hasdata = False
-
-        # Initialize the _private dictionary, unless it has already
-        # been set.
-        if not hasattr(self, '_private'):
-            self._private = {'special_attributes': {},
-                             'properties'        : {}}
+        self._properties = {}
         
         if source is not None:
-            if not getattr(source, 'isvariable', False):
+            if not isinstance(source, AbstractArray):
                 raise ValueError(
-                    "ERROR: source must be (a subclass of) a Variable: {}".format(
-                        source.__class__.__name__))
+"ERROR: source must be a subclass of 'AbstractArray'. Got {!r}".format(
+    source.__class__.__name__))
 
-            if data is None and source.hasdata:
-                data = Data.asdata(source)
+            # Data
+            if _use_data and data is None:
+                data = source.get_data(None)
 
+            # Properties
             p = source.properties()
             if properties:
                 p.update(properties)
             properties = p
-        #--- End: if
 
         if properties:
-            self.properties(properties, copy=copy)
+            self.properties(properties, copy=copy, data=_use_data)
 
-        if data is not None:
-            self.insert_data(data, copy=copy)
+        if _use_data and data is not None:
+            self.set_data(data, copy=copy)
     #--- End: def
 
-    def __deepcopy__(self, memo):
+    def __data__(self):
         '''
-
-Called by the :py:obj:`copy.deepcopy` standard library function.
-
-.. versionadded:: 1.6
-
-'''
-        return self.copy()
-    #--- End: def
-
-    def __repr__(self):
         '''
-Called by the :py:obj:`repr` built-in function.
+        data = self.get_data(None)
+        if data is None:
+            raise ValuError("sdif n;u3jnr42[ 4890yh 8u;jkb")
 
-x.__repr__() <==> repr(x)
-
-.. versionadded:: 1.6
-
-'''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
+        return data
     #--- End: def
-
+    
     def __str__(self):
         '''Called by the :py:obj:`str` built-in function.
 
@@ -131,233 +89,118 @@ x.__str__() <==> str(x)
 
         '''
         name = self.name('')
-        
-        if self.hasdata:
-            dims = ', '.join([str(x) for x in self.data.shape])
+
+        data = self.get_data(None)
+        if data is not None:
+            dims = ', '.join([str(x) for x in data.shape])
             dims = '({0})'.format(dims)
         else:
             dims = ''
 
         # Units
-        units = self.getprop('units', '')
-        if self.isreftime:
-            units += ' '+self.getprop('calendar', '')
+        units = self.get_property('units', '')
+        calendar = self.get_property('calendar', '')
+        if calendar:
+            units += ' '+calendar
             
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
-
-    def _get_special_attr(self, attr):
+    def _dump_properties(self, properties, prefix='', indent='')
         '''
 
 .. versionadded:: 1.6
-        
-        '''
-        d = self._private['special_attributes']
-        if attr in d:
-            return d[attr]
-
-        raise AttributeError("{} doesn't have attribute {!r}".format(
-            self.__class__.__name__, attr))
-    #--- End: def
-  
-    def _set_special_attr(self, attr, value):
-        '''
-
-.. versionadded:: 1.6
-        '''
-        self._private['special_attributes'][attr] = value
-    #--- End: def
-
-    def _del_special_attr(self, attr):
-        '''
-
-.. versionadded:: 1.6
-        '''
-        try:
-            del self._private['special_attributes']
-        except KeyError:
-             raise AttributeError("{} doesn't have attribute {!r}".format(
-                 self.__class__.__name__, attr))
-    #--- End: def
-
-    def name(self, default=None, ncvar=True):
-        '''Return a name for the {+variable}.
-
-By default the name is the first found of the following:
-
-  1. The `standard_name` CF property.
-  
-  2. The `long_name` CF property, preceeded by the string
-     ``'long_name:'``.
-
-  3. If the *ncvar* parameter is True, the netCDF variable name as
-     returned by the `ncvar` method, preceeded by the string
-     ``'ncvar%'``.
-  
-  4. The value of the *default* parameter.
-
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> n = f.{+name}()
->>> n = f.{+name}(default='NO NAME')
 
 :Parameters:
 
-    default: optional
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is `None`.
+    omit: sequence of `str`, optional
+        Omit the given CF properties from the description.
 
-    ncvar: `bool`, optional
+    _level: `int`, optional
 
 :Returns:
 
-    out:
-        The name.
-
-:Examples 2:
-
->>> f.setprop('standard_name', 'air_temperature')
->>> f.setprop('long_name', 'temperature of the air')
->>> f.ncvar('tas')
->>> f.{+name}()
-'air_temperature'
->>> f.delprop('standard_name')
->>> f.{+name}()
-'long_name:temperature of the air'
->>> f.delprop('long_name')
->>> f.{+name}()
-'ncvar%tas'
->>> f.ncvar(None)
->>> f.{+name}()
-None
->>> f.{+name}('no_name')
-'no_name'
->>> f.setprop('standard_name', 'air_temperature')
->>> f.{+name}('no_name')
-'air_temperature'
-
-        '''
-        n = self.getprop('standard_name', None)
-        if n is not None:
-            return n
-
-        n = self.getprop('long_name', None)
-        if n is not None:
-            return 'long_name:{0}'.format(n)
-
-        if ncvar:
-            n = self.ncvar()
-            if n is not None:
-                return 'ncvar%{0}'.format(n)
-            
-        return default
-    #--- End: def
-    
-    # ================================================================
-    # Attributes
-    # ================================================================
-    @property
-    def _Data(self):
-        '''The `Data` object containing the data array.
-
-.. versionadded:: 1.6
-
-        '''
-        if self.hasdata:
-            return self._private['Data']
-
-        raise AttributeError("{} doesn't have any data".format(
-            self.__class__.__name__))
-    #--- End: def
-    @_Data.setter
-    def _Data(self, value):
-        private = self._private
-        private['Data'] = value
-
-        self._hasdata = True
-    #--- End: def
-    @_Data.deleter
-    def _Data(self):
-        private = self._private
-        data = private.pop('Data', None)
-
-        if data is None:
-            raise AttributeError(
-                "Can't delete non-existent data".format(
-                    self.__class__.__name__))
-
-        self._hasdata = False
-    #--- End: def
-
-    @property
-    def data(self):
-        '''
-
-The `Data` object containing the data array.
-
-.. versionadded:: 1.6
-
-.. seealso:: `array`, `Data`, `hasdata`, `varray`
+    out: `str`
 
 :Examples:
 
->>> if f.hasdata:
-...     print f.data
+'''
+        string = []
 
-'''       
-        if self.hasdata:
-            data = self._Data
+        # Simple properties
+        simple = self.properties()
+        attrs  = sorted(set(simple) - set(omit))
+        for prop, value in properties:
+            name   = '{0}{1}{2} = '.format(indent, prefix, prop)
+            value  = repr(value)
+            subsequent_indent = ' ' * len(name)
+            if value.startswith("'") or value.startswith('"'):
+                subsequent_indent = '{0} '.format(subsequent_indent)
+                
+            string.append(textwrap.fill(name+value, 79,
+                                        subsequent_indent=subsequent_indent))
+
+        return '\n'.join(string)
+    #--- End: def
+
+#    @property
+#    def data(self):
+#        '''
+#
+#The `Data` object containing the data array.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `array`, `Data`, `hasdata`, `varray`
+#
+#:Examples:
+#
+#>>> if f.hasdata:
+#...     print f.data
+#
+#'''       
+#        if self.hasdata:
+#            data = self._Data
+#            data.fill_value = self._fill_value            
+#            data.units      = self.get_property('units', None)
+#            data.calendar   = self.get_property('calendar', None)
+#            return data 
+#
+#        raise AttributeError("{} object doesn't have attribute 'data'".format(
+#            self.__class__.__name__))
+#    #--- End: def
+#    @data.setter
+#    def data(self, value):
+#        old = getattr(self, 'data', None)
+#
+#        if old is None:
+#            raise ValueError(
+#"Can't set 'data' when data has not previously been set with the 'set_data' method")
+#
+#        if old.shape != value.shape: 
+#            raise ValueError(
+#"Can't set 'data' to new data with different shape. Consider the 'set_data' method.")
+#       
+#        self._Data = value
+#    #--- End: def
+    
+    def get_data(self, *default):
+        '''
+        '''
+        data = getattr(self, '_data', None)
+        if data is not None:
             data.fill_value = self._fill_value            
-            data.units      = self.getprop('units', None)
-            data.calendar   = self.getprop('calendar', None)
-            return data 
+            data.units      = self.get_property('units', None)
+            data.calendar   = self.get_property('calendar', None)
+            return data
 
-        raise AttributeError("{} object doesn't have attribute 'data'".format(
-            self.__class__.__name__))
-    #--- End: def
-    @data.setter
-    def data(self, value):
-        old = getattr(self, 'data', None)
+        if default:
+            return default[0]
 
-        if old is None:
-            raise ValueError(
-"Can't set 'data' when data has not previously been set with the 'insert_data' method")
-
-        if old.shape != value.shape: 
-            raise ValueError(
-"Can't set 'data' to new data with different shape. Consider the 'insert_data' method.")
-       
-        self._Data = value
-    #--- End: def
-    
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def hasbounds(self):
-        '''True if there are cell bounds.
-
-If present then cell bounds are stored in the `!bounds` attribute.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> if c.hasbounds:
-...     print c.bounds
-
-        '''      
-        return self._hasbounds
+        raise AttributeError("sdij ;soij in kl")
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def hasdata(self):
+    def has_data(self):
         '''
 
 True if there is a data array.
@@ -366,23 +209,23 @@ If present, the data array is stored in the `data` attribute.
 
 .. versionadded:: 1.6
 
-.. seealso:: `data`, `hasbounds`
+.. seealso:: `data`
 
 :Examples:
 
->>> if f.hasdata:
+>>> if f.has_data():
 ...     print f.data
 
 '''      
-        return self._hasdata
+        return hasattr(self, '_data')
     #--- End: def
 
-    def remove_data(self):
+    def del_data(self):
         '''Remove and return the data array.
 
 .. versionadded:: 1.6
 
-.. seealso:: `insert_data`
+.. seealso:: `set_data`
 
 :Returns: 
 
@@ -404,115 +247,15 @@ False
 None
 
         '''
-        if not self.hasdata:
+        if not self.has_data():
             return
 
-        data = self.data
-        del self._Data
-
+        data = self._data
+        del self._data
         return data
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def _FillValue(self):
-        '''The _FillValue CF property.
-
-A value used to represent missing or undefined data.
-
-Note that this property is primarily for writing data to disk and is
-independent of the missing data mask. It may, however, get used when
-unmasking data array elements. See
-http://cfconventions.org/latest.html for details.
-
-The recommended way of retrieving the missing data value is with the
-`fill_value` method.
-
-.. versionadded:: 1.6
-
-.. seealso:: `fill_value`, `missing_value`
-
-:Examples:
-
->>> f._FillValue = -1.0e30
->>> f._FillValue
--1e+30
->>> del f._FillValue
-
-        '''
-        d = self._private['properties']
-        if '_FillValue' in d:
-            return d['_FillValue']
-
-        raise AttributeError("%s doesn't have CF property '_FillValue'" %
-                             self.__class__.__name__)
-    #--- End: def
-
-    @_FillValue.setter
-    def _FillValue(self, value):
-#        self.setprop('_FillValue', value) 
-        self._private['properties']['_FillValue'] = value
-        self._fill_value = self.getprop('missing_value', value)
-    #--- End: def
-
-    @_FillValue.deleter
-    def _FillValue(self):
-        self._private['properties'].pop('_FillValue', None)
-        self._fill_value = getattr(self, 'missing_value', None)
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def missing_value(self):
-        '''The missing_value CF property.
-
-A value used to represent missing or undefined data (deprecated by the
-netCDF user guide). See http://cfconventions.org/latest.html for
-details.
-
-Note that this attribute is used primarily for writing data to disk
-and is independent of the missing data mask. It may, however, be used
-when unmasking data array elements.
-
-The recommended way of retrieving the missing data value is with the
-`fill_value` method.
-
-.. versionadded:: 1.6
-
-.. seealso:: `_FillValue`, `fill_value`
-
-:Examples:
-
->>> f.missing_value = 1.0e30
->>> f.missing_value
-1e+30
->>> del f.missing_value
-        '''        
-        d = self._private['properties']
-        if 'missing_value' in d:
-            return d['missing_value']
-
-        raise AttributeError("%s doesn't have CF property 'missing_value'" %
-                             self.__class__.__name__)
-     #--- End: def
-    @missing_value.setter
-    def missing_value(self, value):
-        self._private['properties']['missing_value'] = value
-        self._fill_value = value
-    #--- End: def
-    @missing_value.deleter
-    def missing_value(self):
-        self._private['properties'].pop('missing_value', None)
-        self._fill_value = getattr(self, '_FillValue', None)
-    #--- End: def
-
-    def copy(self, _omit_data=False, _only_data=False,
-             _omit_special=None, _omit_properties=False,
-             _omit_attributes=False):
+    def copy(self, data=True):
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
@@ -543,257 +286,338 @@ False
 True
 
         '''
-        new = type(self)()
-#        ts = type(self)
-#        new = ts.__new__(ts)
-
-        if _only_data:
-            if self.hasdata:
-                new._Data = self.data.copy()
-
-            return new
-        #--- End: if
-
-        self_dict = self.__dict__.copy()
-        
-        self_private = self_dict.pop('_private')
-            
-        del self_dict['_hasdata']
-        new.__dict__['_fill_value'] = self_dict.pop('_fill_value')
-        new.__dict__['_hasbounds']  = self_dict.pop('_hasbounds')
-            
-        if self_dict and not _omit_attributes:        
-            try:
-                new.__dict__.update(loads(dumps(self_dict, -1)))
-            except PicklingError:
-                new.__dict__.update(deepcopy(self_dict))
-                
-        private = {}
-
-        if not _omit_data and self.hasdata:
-            private['Data'] = self_private['Data'].copy()
-            new._hasdata = True
- 
-        # ------------------------------------------------------------
-        # Copy special attributes. These attributes are special
-        # because they have a copy() method which return a deep copy.
-        # ------------------------------------------------------------
-        special = self_private['special_attributes'].copy()
-        if _omit_special:            
-            for prop in _omit_special:
-                special.pop(prop, None)
-
-        for prop, value in special.iteritems():
-            special[prop] = value.copy()
-
-        private['special_attributes'] = special
-
-        if not _omit_properties:
-            try:
-                private['properties'] = loads(dumps(self_private['properties'], -1))
-            except PicklingError:
-                private['properties'] = deepcopy(self_private['properties'])
-        else:
-            private['properties'] = {}
-
-        new._private = private
-
-        if self.hasbounds:
-            bounds = self.bounds.copy(_omit_data=_omit_data,
-                                      _only_data=_only_data)
-            new._set_special_attr('bounds', bounds)        
-
-        return new
+        new = type(self)(source=self, copy=True,
+                         _use_source_data=data)
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               traceback=False, ignore=(), ignore_type=False, **kwargs):
-        '''
-
-True if two {+variable}s are equal, False otherwise.
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-    other: 
-        The object to compare for equality.
-
-    {+atol}
-
-    {+rtol}
-
-    ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
-
-    traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        {+variable}s differ.
-
-    ignore: `tuple`, optional
-        The names of CF properties to omit from the comparison.
-
-:Returns: 
-
-    out: `bool`
-        Whether or not the two {+variable}s are equal.
-
-:Examples:
-
->>> f.equals(f)
-True
->>> g = f + 1
->>> f.equals(g)
-False
->>> g -= 1
->>> f.equals(g)
-True
->>> f.setprop('name', 'name0')
->>> g.setprop('name', 'name1')
->>> f.equals(g)
-False
->>> f.equals(g, ignore=['name'])
-True
-
-'''
-        # Check for object identity
-        if self is other:
-            return True
-
-        # Check that each instance is of the same type
-        if not ignore_type and not isinstance(other, self.__class__):
-            if traceback:
-                print("{0}: Incompatible types: {0}, {1}".format(
-			self.__class__.__name__,
-			other.__class__.__name__))
-	    return False
-        #--- End: if
-
-        # ------------------------------------------------------------
-        # Check the simple properties
-        # ------------------------------------------------------------
-        if ignore_fill_value:
-            ignore += ('_FillValue', 'missing_value')
-
-        self_properties  = set(self.properties()).difference(ignore)
-        other_properties = set(other.properties()).difference(ignore)
-        if self_properties != other_properties:
-            if traceback:
-                print("{0}: Different properties: {1}, {2}".format( 
-                    self.__class__.__name__,
-                    self_properties, other_properties))
-            return False
-        #--- End: if
-
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
-        for prop in self_properties:
-            x = self.getprop(prop)
-            y = other.getprop(prop)
-
-            if not cf_equals(x, y, rtol=rtol, atol=atol,
-                             ignore_fill_value=ignore_fill_value,
-                             traceback=traceback):
-                if traceback:
-                    print("{0}: Different {1}: {2!r}, {3!r}".format(
-                        self.__class__.__name__, prop, x, y))
-                return False
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Check the special attributes
-        # ------------------------------------------------------------
-        self_special  = self._private['special_attributes']
-        other_special = other._private['special_attributes']
-        if set(self_special) != set(other_special):
-            if traceback:
-                print("{0}: Different attributes: {1}".format(
-                    self.__class__.__name__,
-                    set(self_special).symmetric_difference(other_special)))
-            return False
-        #--- End: if
-
-        for attr, x in self_special.iteritems():
-            y = other_special[attr]
-            result = cf_equals(x, y, rtol=rtol, atol=atol,
-                               ignore_data_type=ignore_data_type,
-                               ignore_fill_value=ignore_fill_value,
-                               traceback=traceback)
-               
-            if not result:
-                if traceback:
-                    print("{0}: Different {1}: {2!r}, {3!r}".format(
-                          self.__class__.__name__, attr, x, y))
-                return False
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Check the data
-        # ------------------------------------------------------------
-        self_hasdata = self.hasdata
-        if self_hasdata != other.hasdata:
-            if traceback:
-                print("{0}: Different data".format(self.__class__.__name__))
-            return False
-
-        if self_hasdata:
-            if not self.data.equals(other.data, rtol=rtol, atol=atol,
-                                    ignore_data_type=ignore_data_type,
-                                    ignore_fill_value=ignore_fill_value,
-                                    traceback=traceback):
-                if traceback:
-                    print("{0}: Different data".format(self.__class__.__name__))
-                return False
-        #--- End: if
-
-        return True
-    #--- End: def
-
-    def expand_dims(self, position=0, copy=True):
-        '''Insert a size 1 axis into the data array.
-
-.. versionadded:: 1.6
-
-.. seealso:: `squeeze`, `transpose`
-
-:Examples 1:
-
->>> g = f.{+name}()
-
-:Parameters:
-
-    position: `int`, optional    
-        Specify the position amongst the data array axes where the new
-        axis is to be inserted. By default the new axis is inserted at
-        position 0, the slowest varying position.
-
-    {+copy}
-
-:Returns:
-
-    `None`
-
-:Examples:
-
->>> v.{+name}(2)
->>> v.{+name}(-1)
-
-        '''       
-        if copy:
-            v = self.copy()
-        else:
-            v = self
-
-        if self.hasdata:
-            v.data.expand_dims(position, copy=False)
-        
-        return v
-    #--- End: def
+#    @abc.abstractmethod
+#    def dump(self, display=True, field=None, key=None,
+#             _omit_properties=(), _prefix='', _title=None,
+#             _create_title=True, _level=0):
+#        '''
+#
+#Return a string containing a full description of the instance.
+#
+#.. versionadded:: 1.6
+#
+#:Parameters:
+#
+#    display: `bool`, optional
+#        If False then return the description as a string. By default
+#        the description is printed, i.e. ``f.dump()`` is equivalent to
+#        ``print f.dump(display=False)``.
+#
+#    omit: sequence of `str`, optional
+#        Omit the given CF properties from the description.
+#
+#    _prefix: optional
+#        Ignored.
+#
+#:Returns:
+#
+#    out: `None` or `str`
+#        A string containing the description.
+#
+#:Examples:
+#
+#>>> f.{+name}()
+#Data(1, 2) = [[2999-12-01 00:00:00, 3000-12-01 00:00:00]] 360_day
+#axis = 'T'
+#standard_name = 'time'
+#
+#>>> f.{+name}(omit=('axis',))
+#Data(1, 2) = [[2999-12-01 00:00:00, 3000-12-01 00:00:00]] 360_day
+#standard_name = 'time'
+#
+#'''
+#        indent0 = '    ' * _level
+#        indent1 = '    ' * (_level+1)
+#
+#        string = []
+#        
+#        # ------------------------------------------------------------
+#        # Title
+#        # ------------------------------------------------------------
+#        if _create_title:
+#            if _title is None:
+#                string.append('{0}{1}: {2}'.format(indent0,
+#                                                   self.__class__.__name__,
+#                                                   self.name(default='')))
+#            else:
+#                string.append(indent0 + _title)
+#        #--- End: if
+#        
+#        # ------------------------------------------------------------
+#        # Properties
+#        # ------------------------------------------------------------
+#        properties = self.properties()
+#        if _omit_properties:
+#            for prop in properties.keys():
+#                if prop in _omit_properties:
+#                    del properties[prop]
+#        #--- End: if
+#
+#        properties = self._dump_properties(properties,
+#                                           prefix=_prefix,
+#                                           indent=indent1)
+#        if properties:
+#            string.append(properties)
+#
+#        # ------------------------------------------------------------
+#        # Data
+#        # ------------------------------------------------------------
+#        data = self.get_data(None)
+#        if data is not None:
+#            if field and key:
+#                ndim = data.ndim
+#                x = ['{0}({1})'.format(field.domain_axis_name(axis),
+#                                       field.domain_axes()[axis].size)
+#                     for axis in field.construct_axes(key)]
+#
+#                x = x[:ndim]
+#                    
+#                if len(x) < ndim:
+#                    x.append(str(data.shape[len(x):]))
+#            else:
+#                x = [str(size) for size in data.shape]
+#           
+#            string.append('{0}{1}Data({2}) = {3}'.format(indent1,
+#                                                         _prefix,
+#                                                         ' '.join(x),
+#                                                         str(data)))
+#        
+##        # ------------------------------------------------------------
+##        # Extra arrays (e.g. bounds)
+##        # ------------------------------------------------------------
+##        for attribute in _extra:
+##            x = getattr(self, attribute, None)
+##            if x is None:
+##                continue
+##            
+##            if not isinstance(x, AbstractArray):
+##                string.append('{0}{1} = {2}'.format(indent1, attribute, x))
+##                continue
+##            
+##            #            name = attribute.title().replace(' ', '')
+##            
+##            string.append(x.dump(display=False, field=field, key=key,
+##                                 _prefix=_prefix+attribute+'.',
+##                                 _create_title=False, _level=level+1))          
+##
+##        #-------------------------------------------------------------
+##        # Ancillary properties (e.g. geometry_type)
+##        # ------------------------------------------------------------
+##        for prop, x in sorted(self.ancillary_properties().items()):
+##            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+##                                                             ancillary, x))
+##
+###        for prop in sorted(getattr(self, '_ancillary_properties', [])):
+###            x = getattr(self, prop, None)
+###            if x is None:
+###                continue
+###
+###            string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+##                                                             ancillary, x))
+##
+##        # ------------------------------------------------------------
+##        # Ancillary arrays (e.g. topology_connectivity)
+##        # ------------------------------------------------------------
+##        for ancillary, x in sorted(self.ancillary_arrays().items()):
+##            if not isinstance(x, AbstractArray):
+##                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+##                                                                 ancillary, x))
+##                continue
+##
+##            string.append(x.dump(display=False, field=field, key=key,
+##                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
+##                                 _create_title=False, _level=level+1))          
+##
+###        for ancillary in sorted(getattr(self, '_ancillary_arrays', [])):
+###            x = getattr(self, ancillary, None)
+###            if x is None:
+###                continue
+###
+###            if not isinstance(x, AbstractArray):
+###                string.append('{0}{1}ancillary.{2} = {3}'.format(indent1, _prefix,
+###                                                                 ancillary, x))
+###                continue
+###
+###            string.append(x.dump(display=False, field=field, key=key,
+###                                 _prefix=_prefix+'ancillary.'+ancillary+'.',
+###                                 _create_title=False, _level=level+1))          
+#
+#        string = '\n'.join(string)
+#       
+#        if display:
+#            print string
+#        else:
+#            return string
+#    #--- End: def
+#
+#    def equals(self, other, rtol=None, atol=None, traceback=False,
+#               ignore_data_type=False, ignore_fill_value=False,
+#               ignore_properties=(), ignore_construct_type=False,
+#               _extra=()):
+#        '''
+#
+#True if two {+variable}s are equal, False otherwise.
+#
+#.. versionadded:: 1.6
+#
+#:Parameters:
+#
+#    other: n 
+#        The object to compare for equality.
+#
+#    {+atol}
+#
+#    {+rtol}
+#
+#    ignore_fill_value: `bool`, optional
+#        If True then data arrays with different fill values are
+#        considered equal. By default they are considered unequal.
+#
+#    traceback: `bool`, optional
+#        If True then print a traceback highlighting where the two
+#        {+variable}s differ.
+#
+#    ignore_properties: `tuple`, optional
+#        The names of CF properties to omit from the comparison.
+#
+#:Returns: 
+#
+#    out: `bool`
+#        Whether or not the two {+variable}s are equal.
+#
+#:Examples:
+#
+#>>> f.equals(f)
+#True
+#>>> g = f + 1
+#>>> f.equals(g)
+#False
+#>>> g -= 1
+#>>> f.equals(g)
+#True
+#>>> f.setprop('name', 'name0')
+#>>> g.setprop('name', 'name1')
+#>>> f.equals(g)
+#False
+#>>> f.equals(g, ignore=['name'])
+#True
+#
+#'''
+#        # Check for object identity
+#        if self is other:
+#            return True
+#
+#        # Check that each instance is of the same type
+#        if not ignore_construct_type and not isinstance(other, self.__class__):
+#            if traceback:
+#                print("{0}: Incompatible types: {0}, {1}".format(
+#			self.__class__.__name__,
+#			other.__class__.__name__))
+#	    return False
+#
+#        # ------------------------------------------------------------
+#        # Check the properties
+#        # ------------------------------------------------------------
+#        if ignore_fill_value:
+#            ignore_properties += ('_FillValue', 'missing_value')
+#
+#        self_properties  = set(self.properties()).difference(ignore_properties)
+#        other_properties = set(other.properties()).difference(ignore_properties)
+#        if self_properties != other_properties:
+#            if traceback:
+#                print("{0}: Different properties: {1}, {2}".format( 
+#                    self.__class__.__name__,
+#                    self_properties, other_properties))
+#            return False
+#
+#        if rtol is None:
+#            rtol = RTOL()
+#        if atol is None:
+#            atol = ATOL()
+#
+#        for prop in self_properties:
+#            x = self.get_property(prop)
+#            y = other.get_property(prop)
+#
+#            if not cf_equals(x, y, rtol=rtol, atol=atol,
+#                             ignore_fill_value=ignore_fill_value,
+#                             traceback=traceback):
+#                if traceback:
+#                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+#                        self.__class__.__name__, prop, x, y))
+#                return False
+#        #--- End: for
+#
+#        # ------------------------------------------------------------
+#        # Check the data
+#        # ------------------------------------------------------------
+##        _extra = ('data',) + tuple(sorted(self._ancillary_arrays)) + _extra
+##
+##        for attr in _extra:
+#        if self.has_data() != other.has_data():
+#            if traceback:
+#                print("{0}: Different {1}".format(self.__class__.__name__, attr))
+#            return False
+#            
+#        if self.has_data():
+#            if not self.get_data().equals(other.get_data(), rtol=rtol,
+#                                          atol=atol, traceback=traceback,
+#                                          ignore_data_type=ignore_data_type,
+#                                          ignore_construct_type=ignore_construct_type,
+#                                          ignore_fill_value=ignore_fill_value):
+#                if traceback:
+#                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
+#                return False
+#        #--- End: for
+#
+#        return True
+#    #--- End: def
+#
+#    def expand_dims(self, position=0, copy=True):
+#        '''Insert a size 1 axis into the data array.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `squeeze`, `transpose`
+#
+#:Examples 1:
+#
+#>>> g = f.{+name}()
+#
+#:Parameters:
+#
+#    position: `int`, optional    
+#        Specify the position amongst the data array axes where the new
+#        axis is to be inserted. By default the new axis is inserted at
+#        position 0, the slowest varying position.
+#
+#    {+copy}
+#
+#:Returns:
+#
+#    `None`
+#
+#:Examples:
+#
+#>>> v.{+name}(2)
+#>>> v.{+name}(-1)
+#
+#        '''       
+#        if copy:
+#            v = self.copy()
+#        else:
+#            v = self
+#
+#        data = v.get_data(None)
+#        if data is not None:
+#            data.expand_dims(position, copy=False)
+#        
+#        return v
+#    #--- End: def
     
     def fill_value(self, default=None):
         '''Return the data array missing data value.
@@ -853,7 +677,7 @@ dtype('float64')
 
         if fillval is None:
             if default == 'netCDF':
-                d = self.data.dtype
+                d = self.get_data().dtype
                 fillval = netCDF4.default_fillvals[d.kind + str(d.itemsize)]
             else:
                 fillval = default 
@@ -862,7 +686,7 @@ dtype('float64')
         return fillval
     #--- End: def
 
-    def setprop(self, prop, value):
+    def set_property(self, prop, value):
         '''Set a CF or non-CF property.
 
 .. versionadded:: 1.6
@@ -887,7 +711,7 @@ dtype('float64')
      `None`
 
         '''
-        self._private['properties'][prop] = value
+        self._properties[prop] = value
     #--- End: def
 
     def squeeze(self, axes=None, copy=True):
@@ -895,7 +719,7 @@ dtype('float64')
 
 .. versionadded:: 1.6
 
-.. seealso:: `expand_dims`, `flip`, `transpose`
+.. seealso:: `expand_dims`
 
 :Examples 1:
 
@@ -925,13 +749,14 @@ dtype('float64')
         else:
             v = self
 
-        if v.hasdata:
-            v.data.squeeze(axes, copy=False)
+        data = v.get_data(None)
+        if data is not None:
+            data.squeeze(axes, copy=False)
 
         return v
     #--- End: def
 
-    def hasprop(self, prop):
+    def has_property(self, prop):
         '''
 
 Return True if a CF property exists, otherise False.
@@ -956,24 +781,10 @@ Return True if a CF property exists, otherise False.
          True if the CF property exists, otherwise False.
 
 '''
-        return prop in self._private['properties']
+        return prop in self._properties
     #--- End: def
 
-    @property
-    def isvariable(self):
-        '''True DCH
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.isvariable
-True
-        '''
-        return True
-    #--- End: def
-
-    def insert_data(self, data, copy=True):
+    def set_data(self, data, copy=True):
         '''Insert a new data array into the variable in place.
 
 .. versionadded:: 1.6
@@ -995,7 +806,7 @@ True
             self._Data = data.copy()
     #--- End: def
 
-    def getprop(self, prop, *default):
+    def get_property(self, prop, *default):
         '''
 
 Get a CF property.
@@ -1037,7 +848,7 @@ AttributeError: Field doesn't have CF property 'standard_name'
 'foo'
 
 '''        
-        d = self._private['properties']
+        d = self._properties
 
         if default:
             return d.get(prop, default[0])
@@ -1049,7 +860,7 @@ AttributeError: Field doesn't have CF property 'standard_name'
                 self.__class__.__name__, prop))
     #--- End: def
 
-    def delprop(self, prop):
+    def del_property(self, prop):
         '''Delete a CF or non-CF property.
 
 .. versionadded:: 1.6
@@ -1077,24 +888,9 @@ AttributeError: Field doesn't have CF property 'standard_name'
 AttributeError: Can't delete non-existent property 'project'
 
         '''
-        
-        
-#        # Delete a special attribute
-#        if prop in self._special_properties:
-#            delattr(self, prop)
-#            return
-#
-#        # Still here? Then delete a simple attribute
-#        try:
-#            delattr(self.property, prop)
-#        except AttributeError:
-#            raise AttributeError("Can't delete non-existent property {!r}".format(prop))
-#
-#        self._property_names.discard(prop)
-#        
         # Still here? Then delete a simple attribute
         try:
-            del self._private['properties'][prop]
+            del self._properties[prop]
         except KeyError:
             raise AttributeError(
                 "Can't delete non-existent CF property {!r}".format(prop))
@@ -1116,45 +912,120 @@ AttributeError: Can't delete non-existent property 'project'
     def open(self):
         '''
 '''
-        if self.hasdata:
-            self.data.open()
+        if self.has_data():
+            self.get_data().open()
     #--- End: def
 
-    def HDF_chunks(self, *chunksizes):
-        '''{+HDF_chunks}
-        
-.. versionadded:: 1.6
-
-:Examples 1:
-        
-To define chunks which are the full size for each axis except for the
-first axis which is to have a chunk size of 12:
-
->>> old_chunks = f.{+name}({0: 12})
-
-:Parameters:
-
-    {+chunksizes}
-
-:Returns:
-
-    out: `dict`
-        The chunk sizes prior to the new setting, or the current
-        current sizes if no new values are specified.
-
-        '''
-        if self.hasdata:
-            old_chunks = self.data.HDF_chunks(*chunksizes)
-        else:
-            old_chunks = None
-
-#        if self.hasbounds:
-#            self.bounds.HDF_chunks(*chunksizes)
-
-        return old_chunks
-    #--- End: def
-
-    def properties(self, props=None, clear=False, copy=True):
+#    def HDF_chunks(self, *chunksizes):
+#        '''{+HDF_chunks}
+#        
+#.. versionadded:: 1.6
+#
+#:Examples 1:
+#        
+#To define chunks which are the full size for each axis except for the
+#first axis which is to have a chunk size of 12:
+#
+#>>> old_chunks = f.{+name}({0: 12})
+#
+#:Parameters:
+#
+#    {+chunksizes}
+#
+#:Returns:
+#
+#    out: `dict`
+#        The chunk sizes prior to the new setting, or the current
+#        current sizes if no new values are specified.
+#
+#        '''
+#        if self.has_data():
+#            old_chunks = self.get_data().HDF_chunks(*chunksizes)
+#        else:
+#            old_chunks = None
+#
+##        if self.hasbounds:
+##            self.bounds.HDF_chunks(*chunksizes)
+#
+#        return old_chunks
+#    #--- End: def
+#
+#    def name(self, default=None, ncvar=True):
+#        '''Return a name for the {+variable}.
+#
+#By default the name is the first found of the following:
+#
+#  1. The `standard_name` CF property.
+#  
+#  2. The `long_name` CF property, preceeded by the string
+#     ``'long_name:'``.
+#
+#  3. If the *ncvar* parameter is True, the netCDF variable name as
+#     returned by the `ncvar` method, preceeded by the string
+#     ``'ncvar%'``.
+#  
+#  4. The value of the *default* parameter.
+#
+#.. versionadded:: 1.6
+#
+#:Examples 1:
+#
+#>>> n = f.{+name}()
+#>>> n = f.{+name}(default='NO NAME')
+#
+#:Parameters:
+#
+#    default: optional
+#        If no name can be found then return the value of the *default*
+#        parameter. By default the default is `None`.
+#
+#    ncvar: `bool`, optional
+#
+#:Returns:
+#
+#    out:
+#        The name.
+#
+#:Examples 2:
+#
+#>>> f.setprop('standard_name', 'air_temperature')
+#>>> f.setprop('long_name', 'temperature of the air')
+#>>> f.ncvar('tas')
+#>>> f.{+name}()
+#'air_temperature'
+#>>> f.delprop('standard_name')
+#>>> f.{+name}()
+#'long_name:temperature of the air'
+#>>> f.delprop('long_name')
+#>>> f.{+name}()
+#'ncvar%tas'
+#>>> f.ncvar(None)
+#>>> f.{+name}()
+#None
+#>>> f.{+name}('no_name')
+#'no_name'
+#>>> f.setprop('standard_name', 'air_temperature')
+#>>> f.{+name}('no_name')
+#'air_temperature'
+#
+#        '''
+#        n = self.get_property('standard_name', None)
+#        if n is not None:
+#            return n
+#
+#        n = self.get_property('long_name', None)
+#        if n is not None:
+#            return 'long_name:{0}'.format(n)
+#
+#        if ncvar:
+#            n = self.ncvar()
+#            if n is not None:
+#                return 'ncvar%{0}'.format(n)
+#            
+#        return default
+#    #--- End: def
+    
+    def properties(self, properties=None, clear=False, copy=True):
         '''Inspect or change the CF properties.
 
 .. versionadded:: 1.6
@@ -1187,42 +1058,31 @@ first axis which is to have a chunk size of 12:
 :Examples 2:
 
         '''
-#        if copy:            
-        out = deepcopy(self._private['properties'])
-#        else:
-#            out = self._simple_properties().copy()
-            
-#        # Include properties that are not listed in the simple
-#        # properties dictionary
-#        for prop in ('units', 'calendar'):
-#            _ = getattr(self, prop, None)
-#            if _ is not None:
-#                out[prop] = _
-#        #--- End: for
-
-        if clear:
-            self._private['properties'].clear()
-            return out
-
-        if not props:
-            return out
-
-        setprop = self.setprop
-        delprop = self.delprop
-        if copy:
-            for prop, value in props.iteritems():
-                if value is None:
-                    # Delete this property
-                    delprop(prop)
-                else:
-                    setprop(prop, deepcopy(value))
+        out = self._properties
+        if copy:            
+            out = deepcopy(out)
         else:
-            for prop, value in props.iteritems():
-                if value is None:
-                    # Delete this property
-                    delprop(prop)
-                else:
-                    setprop(prop, value)
+            out = out.copy()
+                    
+        if clear:
+            self._properties.clear()
+
+        if not properties:
+            return out
+
+        # Still here?
+        if copy:
+            properties = deepcopy(properties)
+        else:
+            properties = properties.copy()
+
+        # Delete None-valued properties
+        for key, value in properties.items():
+            if value is None:
+                del properties[key]
+        #--- End: for
+
+        self._properties.update(properties)
 
         return out
     #--- End: def

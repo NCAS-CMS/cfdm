@@ -184,7 +184,7 @@ None
         self._construct_axes[key] = tuple(new_axes)
     #--- End: def
 
-    def copy(self):
+    def copy(self, data=True):
         '''
 Return a deep or shallow copy.
 
@@ -215,7 +215,7 @@ Return a deep or shallow copy.
             v = self._constructs[construct_type]
             new_v = {}
             for key, construct in v.iteritems():
-                new_v[key] = construct.copy()
+                new_v[key] = construct.copy(data=data)
                 new._construct_type[key] = construct_type
                 
             d[construct_type] = new_v
@@ -225,7 +225,6 @@ Return a deep or shallow copy.
         return new
     #--- End: def
 
-    
     def subset(self, array_constructs=(), non_array_constructs=(), copy=True):
         '''
         '''

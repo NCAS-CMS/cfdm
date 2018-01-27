@@ -95,9 +95,7 @@ Field objects are picklable.
         return obj
     #--- End: def
     
-    def __init__(self, properties={}, #attributes={},
-#                 data=None,
-                 source=None, copy=True):
+    def __init__(self, properties={}, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -106,45 +104,42 @@ Field objects are picklable.
         Provide the new field with CF properties from the dictionary's
         key/value pairs.
 
-    attributes: `dict`, optional
-        Provide the new field with attributes from the dictionary's
-        key/value pairs.
-
     source: 
 
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
 
-        '''
-        # Constructs
-        constructs = self._Constructs(
-            array_constructs=('dimensioncoordinate',
-                              'auxiliarycoordinate',
-                              'cellmeasure',
-                              'domainancillary',
-                              'fieldancillary'),
-            non_array_constructs=('cellmethod',
-                                  'coordinatereference',
-                                  'domainaxis'),
-            ordered_constructs=('cellmethod',)
-        )
-        
-        self._private = {'properties' : {},
-                         'special_attributes': {'constructs': constructs}
-        }
-        
+        '''        
         # Initialize the new field with attributes and CF properties
         super(Field, self).__init__(properties=properties,
-#                                    attributes=attributes,
                                     source=source,
-#                                    data=data,
                                     copy=copy) 
-
-        if getattr(source, 'isfield', False):
-            # Initialise constructs from a source field
-            self._private['special_attributes']['constructs'] = source.Constructs.copy()
-
+        self.del_data()
+        
+        if source is None:
+            constructs = self._Constructs(
+                array_constructs=('dimensioncoordinate',
+                                  'auxiliarycoordinate',
+                                  'cellmeasure',
+                                  'domainancillary',
+                                  'fieldancillary'),
+                non_array_constructs=('cellmethod',
+                                      'coordinatereference',
+                                      'domainaxis'),
+                ordered_constructs=('cellmethod',)
+            )
+            data_axes = []
+        elif isinstance(source, structure.Field):
+            data_axes = source._data_axes[:]
+            constructs = source.get_constructs(None)
+            if copy:
+                constructs = constructs.copy()
+        #--- End: if
+                
+        self.set_constructs(source.get_constructs(None), copy=False)
+        self._data_axes = data_axes
+               
         self._unlimited = None
     #--- End: def
 
@@ -933,7 +928,8 @@ False
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not cf_equals(self._Constructs, other._Constructs,
+        if not cf_equals(self.get_constructs(None),
+                         other.get_constructs(None),
                          rtol=rtol, atol=atol,
                          traceback=traceback,
                          ignore_data_type=ignore_data_type,
@@ -941,7 +937,7 @@ False
                          ignore_fill_value=ignore_fill_value):
             if traceback:
                 print(
-                    "{0}: Different {1}".format(self.__class__.__name__, '_Constructs'))
+                    "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
             return False
     #--- End: def
         

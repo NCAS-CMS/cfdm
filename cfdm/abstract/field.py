@@ -1,7 +1,4 @@
 from collections import abc
-from itertools   import izip_longest
-
-import numpy
 
 #from .domainaxis import DomainAxis
 from .flags      import Flags
@@ -289,19 +286,14 @@ Field objects are picklable.
         return obj
     #--- End: def
     
-    def __init__(self, properties={}, #attributes={},
-#                 data=None,
-                 source=None, copy=True):
+    def __init__(self, properties={}, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
 :Parameters:
 
     properties: `dict`, optional
         Provide the new field with CF properties from the dictionary's
-        key/value pairs.
-
-    attributes: `dict`, optional
-        Provide the new field with attributes from the dictionary's
         key/value pairs.
 
     source: 
@@ -311,36 +303,36 @@ Field objects are picklable.
         initialization. By default arguments are deep copied.
 
         '''
-        # Constructs
-        constructs = self._Constructs(
-            array_constructs=('dimensioncoordinate',
-                              'auxiliarycoordinate',
-                              'cellmeasure',
-                              'domainancillary',
-                              'fieldancillary'),
-            non_array_constructs=('cellmethod',
-                                  'coordinatereference',
-                                  'domainaxis'),
-            ordered_constructs=('cellmethod',)
-        )
-        
-        self._private = {'properties' : {},
-                         'special_attributes': {'constructs': constructs}
-        }
-        
-        # Initialize the new field with attributes and CF properties
+                # Initialize the new field with attributes and CF properties
         super(Field, self).__init__(properties=properties,
-#                                    attributes=attributes,
                                     source=source,
-#                                    data=data,
-                                    copy=copy) 
-
-        if getattr(source, 'isfield', False):
-            # Initialise constructs from a source field
-            self._private['special_attributes']['constructs'] = source.Constructs.copy()
-
-        self._unlimited = None
-    #--- End: def
+                                    copy=copy, _use_data=_use_data) 
+        self.del_data() # Need to not copy data in the first place!
+        
+        if source is None:
+            constructs = self._Constructs(
+                array_constructs=('dimensioncoordinate',
+                                  'auxiliarycoordinate',
+                                  'cellmeasure',
+                                  'domainancillary',
+                                  'fieldancillary'),
+                non_array_constructs=('cellmethod',
+                                      'coordinatereference',
+                                      'domainaxis'),
+                ordered_constructs=('cellmethod',)
+            )
+            data_axes = []
+        elif isinstance(source, structure.Field):
+            data_axes = source._data_axes[:]
+            constructs = source.get_constructs(None)
+            if copy or not _use_data:
+                constructs = constructs.copy(data=_use_data)
+                copy = False
+        #--- End: if
+                
+        self.set_constructs(source.get_constructs(None), copy=False)
+        self._data_axes = data_axes
+#--- End: def
 
     def unlimited(self, *args, **kwargs):
         return {}
@@ -959,6 +951,17 @@ None
         return self._data_axes[:]
     #--- End: def
 
+    def del_constructs(self):
+        '''
+
+.. versionadded:: 1.6
+
+        '''
+        constructs = self._constructs
+        del self._constructs
+        return constructs
+    #--- End: def
+
     def dimension_coordinates(self, copy=False):
         return self.Constructs.constructs('dimensioncoordinate', copy=copy)
     
@@ -1201,6 +1204,34 @@ None
 #            return string
 #    #--- End: def
 
+    def get_constructs(self, *default):
+        '''
+.. versionadded:: 1.6
+
+        '''
+        constructs = self._constructs
+        if constructs is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("constructs aascas 34r34 5iln ")
+
+        return constructs
+    #--- End: def
+
+    def set_constructs(self, constructs, copy=True):
+        '''
+.. versionadded:: 1.6
+        '''
+        if copy:
+            if isinstance(constructs, self._Constructs):
+                constructs = constructs.copy()
+            else:
+                constructs = deepcopy(constructs)
+        #--- End: def
+        
+        self._constructs = constructs
+    #--- End: def
 
     def set_auxiliary_coordinate(self, item, key=None, axes=None,
                                  copy=True, replace=True):
