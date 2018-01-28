@@ -305,9 +305,8 @@ Field objects are picklable.
         '''
                 # Initialize the new field with attributes and CF properties
         super(Field, self).__init__(properties=properties,
-                                    source=source,
-                                    copy=copy, _use_data=_use_data) 
-        self.del_data() # Need to not copy data in the first place!
+                                    source=source, copy=copy,
+                                    _use_data=_use_data)
         
         if source is None:
             constructs = self._Constructs(
@@ -322,6 +321,7 @@ Field objects are picklable.
                 ordered_constructs=('cellmethod',)
             )
             data_axes = []
+            
         elif isinstance(source, structure.Field):
             data_axes = source._data_axes[:]
             constructs = source.get_constructs(None)

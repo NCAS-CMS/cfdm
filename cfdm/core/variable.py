@@ -1,7 +1,7 @@
 from collections import abc
 
-from .functions    import RTOL, ATOL, RELAXED_IDENTITIES
-from .functions    import equals     as cf_equals
+from .functions import RTOL, ATOL
+from .functions import equals as cf_equals
 
 # ====================================================================
 #
@@ -150,8 +150,7 @@ False
 True
 
         '''
-        new = type(self)(source=self, copy=True,
-                         _use_source_data=data)
+        new = type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
     @abc.abstractmethod

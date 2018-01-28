@@ -4,7 +4,7 @@
 
 __Conventions__  = 'CF-1.6'
 __author__       = 'David Hassell'
-__date__         = '2017-09-26'
+__date__         = '2018-02-01'
 __version__      = '0.1'
 
 from .variable            import Variable
