@@ -2,7 +2,7 @@ from collections import abc
 
 from .boundedvariable import BoundedVariableMixin
 
-from ..structure import Coordinate as StructuralCoordinate
+import ..structure
 
 
 # ====================================================================
@@ -11,21 +11,9 @@ from ..structure import Coordinate as StructuralCoordinate
 #
 # ====================================================================
 
-class Coordinate(StructuralCoordinate, BoundedVariableMixin):
+class Coordinate(structural.Coordinate, BoundedVariableMixin):
+    '''Base class for a CF dimension or auxiliary coordinate construct.
+
     '''
-
-Base class for a CF dimension or auxiliary coordinate construct.
-
-
-**Attributes**
-
-===============  ========  ===================================================
-Attribute        Type      Description
-===============  ========  ===================================================
-`!climatology`   ``bool``  Whether or not the bounds are intervals of
-                           climatological time. Presumed to be False if unset.
-===============  ========  ===================================================
-
-'''
     __metaclass__ = abc.ABCMeta
 #--- End: class

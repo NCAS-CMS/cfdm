@@ -1,6 +1,6 @@
 from collections import abc
 
-from .arrayconstruct import AbstractArray
+from .coordinateancillary import CoordinateAncillary
 
 
 # ====================================================================
@@ -9,10 +9,8 @@ from .arrayconstruct import AbstractArray
 #
 # ====================================================================
 
-class Bounds(AbstractArray):
+class Bounds(CoordinateAncillary):
     '''
-
-'''
+    '''
     __metaclass__ = abc.ABCMeta
-        
 #--- End: class

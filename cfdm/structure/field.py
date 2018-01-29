@@ -115,9 +115,10 @@ Field objects are picklable.
         
         if source is not None and isinstance(source, Field):
             data_axes = source._data_axes[:]
-            constructs = source.subsidiary_constructs()
-            if copy or not _use_data:
+            constructs = source.get_constructs(None)
+            if constructs is not None and (copy or not _use_data):
                 constructs = constructs.copy(data=_use_data)
+
         else:
             constructs = self._Constructs(
                 array_constructs=('dimensioncoordinate',
@@ -131,7 +132,7 @@ Field objects are picklable.
                 ordered_constructs=('cellmethod',)
             )
         
-        self.subsidiary_constructs(constructs, copy=False)
+        self.set_constructs(constructs, copy=False)
         self._data_axes = data_axes
 #--- End: def
     
@@ -423,17 +424,6 @@ None
         return self._data_axes[:]
     #--- End: def
 
-    def del_constructs(self):
-        '''
-
-.. versionadded:: 1.6
-
-        '''
-        constructs = self._constructs
-        del self._constructs
-        return constructs
-    #--- End: def
-
     def dimension_coordinates(self, copy=False):
         return self.Constructs.constructs('dimensioncoordinate', copy=copy)
     
@@ -676,72 +666,6 @@ None
 #            return string
 #    #--- End: def
 
-    def get_subsidiary_constructs(self, *default):
-        '''
-.. versionadded:: 1.6
-
-:Returns:
-
-    out: `Constructs`
-
-        '''
-        constructs = getattr(self, '_constructs', None)
-        if constructs is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("constructs aascas 34r34 5iln ")
-
-        return constructs
-    #--- End: def
-
-    def set_subsidiary_constructs(self, constructs, copy=True, data=True)
-        '''
-.. versionadded:: 1.6
-
-:Returns:
-
-    out: `Constructs`
-
-        '''
-        if copy:                
-            constructs = constructs.copy(data=data)
-            
-        self._constructs = constructs
-    #--- End: def
-
-    def del_subsidiary_constructs(self):
-        '''
-.. versionadded:: 1.6
-
-:Returns:
-
-    out: `Constructs`
-
-        '''
-        constructs = getattr(self, '_constructs', None)
-        if constructs is None:
-            return
-
-        del self._constructs
-        return constructs
-    
-        if constructs is None:
-            constructs = self._constructs
-            if clear:
-                constructs = constructs.copy()
-                constructs.clear()
-
-            return constructs
-        else:
-            if clear:
-                raise ValueError("Can't set constructs and clear")
-            if copy:                
-                constructs = constructs.copy()
-                
-            self._constructs = constructs
-    #--- End: def
-
     def get_constructs(self, *default):
         '''
 .. versionadded:: 1.6
@@ -762,13 +686,20 @@ None
 .. versionadded:: 1.6
         '''
         if copy:
-            if isinstance(constructs, self._Constructs):
-                constructs = constructs.copy()
-            else:
-                constructs = deepcopy(constructs)
-        #--- End: def
+            constructs = constructs.copy()
         
         self._constructs = constructs
+    #--- End: def
+    
+    def del_constructs(self):
+        '''
+
+.. versionadded:: 1.6
+
+        '''
+        constructs = self._constructs
+        self._constructs = None
+        return constructs
     #--- End: def
 
     def set_auxiliary_coordinate(self, item, key=None, axes=None,

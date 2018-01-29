@@ -1,3 +1,5 @@
+from collections import abc
+
 import ..structure
 
 # ====================================================================
@@ -19,6 +21,8 @@ exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
     '''
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, size=None, source=None):
         '''**Initialization**
 
@@ -37,9 +41,8 @@ to the order of the elements.
         else:
             ncdim = None
         
-        self._ncdim = None
         if ncdim is not None:
-            self.set_ncdim(size)
+            self.set_ncdim(ncdim)
     #--- End: def
     
     def equals(self, other, traceback=False, *kwargs):

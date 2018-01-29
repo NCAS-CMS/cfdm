@@ -1,10 +1,13 @@
+from collections import abc
+from ast import literal_eval as ast_literal_eval
 from re import sub    as re_sub
 from re import search as re_search
-from ast import literal_eval as ast_literal_eval
 
 from .functions import equals
 
 from .data.data import Data
+
+import ..structure
 
 # ====================================================================
 #
@@ -12,7 +15,7 @@ from .data.data import Data
 #
 # ====================================================================
 
-class CellMethod(object):
+class CellMethod(structure.CellMethod):
     '''**Attributes**
 
 ===========  =========================================================
@@ -29,11 +32,13 @@ Attribute    Description
 ===========  =========================================================
 
     '''
-    _Data = Data
-#    def __new__(cls, **kwargs):
-#        cls = object.__new__(cls)
-#        cls._Data = Data
-#        return cls
+    __metaclass__ = abc.ABCMeta
+    
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        obj._Data = Data
+        return obj
+    #--- End: def
 
     def __init__(self, cell_method=None, axes=(), method=None,
                  where=None, within=None, over=None, interval=(),
@@ -46,166 +51,14 @@ Attribute    Description
                 raise ValueError(" e5y 6sdf ")
 
             self.__dict__ = cell_method[0].__dict__.copy()
+            
         else:
-            self.axes     = axes
-            self._method  = method 
-            self._where   = where  
-            self._within  = within 
-            self._over    = over   
-            self.interval = interval
-            self._comment = comment
+            super(CellMethod, self).__init__(axes=axes, method=method,
+                                             where=where,
+                                             within=within, over=over,
+                                             interval=interval,
+                                             comment=coment)
     #--- End: def
-
-    def __deepcopy__(self, memo):
-        '''
-
-Used if copy.deepcopy is called on the variable.
-
-'''
-        return self.copy()
-    #--- End: def
-
-#    def __getitem__(self, index):
-#        '''Called to implement evaluation of c[index].
-#
-#c.__getitem__(index) <==> c[index]
-#
-#The cell method is treated as if it were a single element cell methods
-#list containing itself, i.e. ``c[index]`` is equivalent to
-#``cf.CellMethods(c)[index]``.
-#
-#:Examples 1:
-#
-#>>> d = c[0]
-#>>> d = c[:1]
-#>>> d = c[1:]
-#
-#:Returns:
-#
-#    out : cf.CellMethod or cf.CellMethods
-#        If *index* is the integer 0 or -1 then the cell method itself
-#        is returned. If *index* is a slice then a cell methods list is
-#        returned which is either empty or else contains a single
-#        element of the cell method itself.
-#          
-#.. seealso:: `cf.CellMethods.__getitem__`
-#
-#:Examples 2:
-#
-#>>> c[0] is c[-1] is c
-#True
-#>>> c[0:1].equals(cf.FieldList(f))   
-#True
-#>>> c[0:1][0] is c
-#True
-#>>> c[1:].equals(cf.CellMethods())
-#True
-#>>> c[1:]       
-#[]
-#>>> c[-1::3][0] is c
-#True
-#
-#        '''
-#        return CellMethods((self,))[index]
-#    #--- End: def
-
-    def __hash__(self):
-        '''
-
-x.__hash__() <==> hash(x)
-
-'''
-        return hash(str(self))
-    #--- End: def
-
-#    def __len__(self):
-#        '''Called by the :py:obj:`len` built-in function.
-#
-#x.__len__() <==> len(x)
-#
-#Always returns 1.
-#
-#:Examples:
-#
-#>>> len(c)
-#1
-#
-#        '''
-#        return 1
-#    #--- End: def
-
-    def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
-
-x.__repr__() <==> repr(x)
-
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
-    def __str__(self):
-        '''
-
-x.__str__() <==> str(x)
-
-Return a CF-netCDF-like string of the cell method.
-
-Note that if the intention use this string in a CF-netCDF cell_methods
-attribute then the cell method's `!name` attribute may need to be
-modified, where appropriate, to reflect netCDF variable names.
-
-'''      
-        string = ['{0}:'.format(axis) for axis in self.axes]
-
-        method = self.method
-        if method is None:
-            method = ''
-
-        string.append(method)
-
-        for portion in ('within', 'where', 'over'):
-            p = getattr(self, portion, None)
-            if p is not None:
-                string.extend((portion, p))
-        #--- End: for
-
-        intervals = self.interval
-        if intervals:
-            x = ['(']
-
-            y = ['interval: {0}'.format(data) for data in intervals]
-            x.append(' '.join(y))
-
-            if self.comment is not None:
-                x.append(' comment: {0}'.format(self.comment))
-
-            x.append(')')
-
-            string.append(''.join(x))
-
-        elif self.comment is not None:
-            string.append('({0})'.format(self.comment))
-
-        return ' '.join(string)
-    #--- End: def
-
-#    def __eq__(self, y):
-#        '''
-#
-#x.__eq__(y) <==> x==y
-#
-#'''
-#        return self.equals(y)
-#    #--- End: def
-#
-#    def __ne__(self, other):
-#        '''
-#
-#x.__ne__(y) <==> x!=y
-#
-#'''
-#        return not self.__eq__(other)
-#    #--- End: def
 
     @classmethod
     def parse(cls, string=None): #, field=None):
@@ -1034,77 +887,77 @@ The `axes` and `interval` attributes are ignored in the comparison.
 #
 #        return ' '.join(string)
 #    #--- End: def
-
-    def match(self, description=None, inverse=False):
-        '''
-        '''
-        if not isinstance(description (list, tuple)):
-            description = (description,)
-
-        found_match = True
-
-        for d in description:
-            found_match = True
-            
-            if isinstance(d , basestring):
-                description = {'cell_method': d}
-                
-            c = type(self)(**d)
-
-            has_axes = False
-            if c.axes:
-                has_axes = True
-                if len(self.axes) != len(c.axes):
-                    return False
-    
-                c.sort(argsort=[c.axes.index(axis) for axis in self.axes])
-                
-                if self.axes != c.axes:
-                    found_match = False
-                    continue
-            #--- End: if
-    
-            for attr in ('method', 'within', 'over', 'where', 'comment'):
-                x = getattr(c, attr)
-                if x and x != getattr(self, attr):
-                    found_match = False
-                    break
-            #--- End: for
-        
-            if not found_match:
-                continue
-    
-            if c.interval:
-                d = self.expand_intervals()
-                c.expand_intervals(copy=False)
-                    
-                intervals0 = list(self.interval)
-                intervals1 = list(c.interval)
-    
-                if len(intervals0) != len(intervals1):
-                    return False
-    
-                if has_axes:                
-                    for i0, i1 in zip(intervals0, intervals1):
-                        if i0 != i1:
-                            found_match = False
-                            break
-                else:            
-                    for i0 in intervals0:
-                        found_match = False
-                        for n, i1 in enumerate(intervals1):
-                            if i0 == i1:
-                                del intervals1[n]
-                                found_match = True
-                                break
-            #--- End: if
-
-            if not found_match:
-                continue
-        #--- End: for
-
-        return not bool(inverse)
-    #--- End: def
+#
+#    def match(self, description=None, inverse=False):
+#        '''
+#        '''
+#        if not isinstance(description (list, tuple)):
+#            description = (description,)
+#
+#        found_match = True
+#
+#        for d in description:
+#            found_match = True
+#            
+#            if isinstance(d , basestring):
+#                description = {'cell_method': d}
+#                
+#            c = type(self)(**d)
+#
+#            has_axes = False
+#            if c.axes:
+#                has_axes = True
+#                if len(self.axes) != len(c.axes):
+#                    return False
+#    
+#                c.sort(argsort=[c.axes.index(axis) for axis in self.axes])
+#                
+#                if self.axes != c.axes:
+#                    found_match = False
+#                    continue
+#            #--- End: if
+#    
+#            for attr in ('method', 'within', 'over', 'where', 'comment'):
+#                x = getattr(c, attr)
+#                if x and x != getattr(self, attr):
+#                    found_match = False
+#                    break
+#            #--- End: for
+#        
+#            if not found_match:
+#                continue
+#    
+#            if c.interval:
+#                d = self.expand_intervals()
+#                c.expand_intervals(copy=False)
+#                    
+#                intervals0 = list(self.interval)
+#                intervals1 = list(c.interval)
+#    
+#                if len(intervals0) != len(intervals1):
+#                    return False
+#    
+#                if has_axes:                
+#                    for i0, i1 in zip(intervals0, intervals1):
+#                        if i0 != i1:
+#                            found_match = False
+#                            break
+#                else:            
+#                    for i0 in intervals0:
+#                        found_match = False
+#                        for n, i1 in enumerate(intervals1):
+#                            if i0 == i1:
+#                                del intervals1[n]
+#                                found_match = True
+#                                break
+#            #--- End: if
+#
+#            if not found_match:
+#                continue
+#        #--- End: for
+#
+#        return not bool(inverse)
+#    #--- End: def
 
 
     def properties(self):

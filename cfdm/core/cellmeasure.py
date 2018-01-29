@@ -1,4 +1,8 @@
+from collections import abc
+
 from .variable import Variable
+
+import ..structure
 
 # ====================================================================
 #
@@ -6,7 +10,7 @@ from .variable import Variable
 #
 # ====================================================================
 
-class CellMeasure(Variable):
+class CellMeasure(structure.CellMeasure, VariableMixin):
     '''A CF cell measure construct.
 
 A cell measure construct provides information that is needed about the
@@ -26,16 +30,9 @@ spanned by the array, along which the values are implicitly
 propagated. CF-netCDF cell measure variables correspond to cell
 measure constructs.
 
-**Attributes**
+    '''
+    __metaclass__ = abc.ABCMeta
 
-==========  =====  ===================================================
-Attribute   Type   Description
-==========  =====  ===================================================
-`!measure`  `str`  The spatial measure being represented, either
-                   ``'area'`` or ``'volume'``.
-==========  =====  ===================================================
-
-    '''   
     def __init__(self, properties={}, data=None, source=None,
                  copy=True):
         '''**Initialization**
@@ -44,9 +41,6 @@ Attribute   Type   Description
 
     properties: `dict`, optional
         Initialize properties from the dictionary's key/value pairs.
-
-#    attributes: `dict`, optional
-#        Provide attributes from the dictionary's key/value pairs.
 
     data: `Data`, optional
         Provide a data array.
@@ -66,21 +60,6 @@ Attribute   Type   Description
                                           source=source, data=data, copy=copy)
         
         self._measure = None
-    #--- End: def
-
-    @property
-    def ismeasure(self): 
-        '''
-
-Always True.
-
-:Examples: 
-
->>> c.ismeasure
-True
-
-'''
-        return True
     #--- End: def
 
     def dump(self, display=True, omit=(), field=None, key=None,

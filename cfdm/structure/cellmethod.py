@@ -1,3 +1,4 @@
+from collections import abc
 from re import sub    as re_sub
 from re import search as re_search
 from ast import literal_eval as ast_literal_eval
@@ -29,24 +30,23 @@ Attribute    Description
 ===========  =========================================================
 
     '''
+    __metaclass__ = abc.ABCMeta
+    
     _Data = Data
 #    def __new__(cls, **kwargs):
 #        cls = object.__new__(cls)
 #        cls._Data = Data
 #        return cls
 
-    def __init__(self, cell_method=None, axes=(), method=None,
-                 where=None, within=None, over=None, intervals=(),
-                 comment=None, source=None, copy=True):
+    def __init__(self, axes=(), method=None, where=None, within=None,
+                 over=None, intervals=(), comment=None, source=None,
+                 copy=True):
         '''
 '''
-        if cell_method is not None:
-            cell_method = self.parse(cell_method)
-            if len(cell_method) > 1:
-                raise ValueError(" e5y 6sdf ")
+        if source:
+            print 'WHAT?'
 
-            self.__dict__ = cell_method[0].__dict__.copy()
-        elif source is not None:            
+        else:
             if axes is not None:
                 axes = self.get_axes(())
             if method is not None:
@@ -63,16 +63,15 @@ Attribute    Description
                 intervals = self.get_intervals(())
                 if copy and intervals:
                     intervals = tuple([i.copy() for i in intervals])
-            #--- End: if
-                
-            self.set_axes(axes) 
-            self.set_method(method)
-            self.set_where(where)
-            self.set_within(within)
-            self.set_over(over)
-            self.set_intervals(intervals)
-            self.set_comment(comment)
         #--- End: if
+        
+        self.set_axes(axes) 
+        self.set_method(method)
+        self.set_where(where)
+        self.set_within(within)
+        self.set_over(over)
+        self.set_intervals(intervals)
+        self.set_comment(comment)
     #--- End: def
 
     def __deepcopy__(self, memo):
@@ -83,75 +82,6 @@ Used if copy.deepcopy is called on the variable.
 '''
         return self.copy()
     #--- End: def
-
-#    def __getitem__(self, index):
-#        '''Called to implement evaluation of c[index].
-#
-#c.__getitem__(index) <==> c[index]
-#
-#The cell method is treated as if it were a single element cell methods
-#list containing itself, i.e. ``c[index]`` is equivalent to
-#``cf.CellMethods(c)[index]``.
-#
-#:Examples 1:
-#
-#>>> d = c[0]
-#>>> d = c[:1]
-#>>> d = c[1:]
-#
-#:Returns:
-#
-#    out : cf.CellMethod or cf.CellMethods
-#        If *index* is the integer 0 or -1 then the cell method itself
-#        is returned. If *index* is a slice then a cell methods list is
-#        returned which is either empty or else contains a single
-#        element of the cell method itself.
-#          
-#.. seealso:: `cf.CellMethods.__getitem__`
-#
-#:Examples 2:
-#
-#>>> c[0] is c[-1] is c
-#True
-#>>> c[0:1].equals(cf.FieldList(f))   
-#True
-#>>> c[0:1][0] is c
-#True
-#>>> c[1:].equals(cf.CellMethods())
-#True
-#>>> c[1:]       
-#[]
-#>>> c[-1::3][0] is c
-#True
-#
-#        '''
-#        return CellMethods((self,))[index]
-#    #--- End: def
-
-    def __hash__(self):
-        '''
-
-x.__hash__() <==> hash(x)
-
-'''
-        return hash(str(self))
-    #--- End: def
-
-#    def __len__(self):
-#        '''Called by the :py:obj:`len` built-in function.
-#
-#x.__len__() <==> len(x)
-#
-#Always returns 1.
-#
-#:Examples:
-#
-#>>> len(c)
-#1
-#
-#        '''
-#        return 1
-#    #--- End: def
 
     def __repr__(self):
         '''Called by the :py:obj:`repr` built-in function.
@@ -207,24 +137,6 @@ modified, where appropriate, to reflect netCDF variable names.
 
         return ' '.join(string)
     #--- End: def
-
-#    def __eq__(self, y):
-#        '''
-#
-#x.__eq__(y) <==> x==y
-#
-#'''
-#        return self.equals(y)
-#    #--- End: def
-#
-#    def __ne__(self, other):
-#        '''
-#
-#x.__ne__(y) <==> x!=y
-#
-#'''
-#        return not self.__eq__(other)
-#    #--- End: def
 
     @classmethod
     def parse(cls, string=None): #, field=None):
@@ -561,6 +473,107 @@ Describes how the cell values have been determined or derived.
 #    @names.deleter
 #    def names(self):
 #        self._.names = ()
+    def get_interval(self, *default):
+        '''
+
+Each cell method's interval keyword(s).
+
+:Examples:
+
+>>> c
+<CF CellMethod: time: minimum>
+>>> c.interval
+()
+>>> c.interval = ['1 hr']
+>>> c
+<CF CellMethod: time: minimum (interval: 1 hr)>
+>>> c.interval
+(<CF Data: 1 hr>,)
+>>> c.interval = [cf.Data(7.5 'minutes')]
+>>> c
+<CF CellMethod: time: minimum (interval: 7.5 minutes)>
+>>> c.interval
+(<CF Data: 7.5 minutes>,)
+>>> del c.interval
+>>> c
+<CF CellMethods: time: minimum>
+
+>>> c
+<CF CellMethod: lat: lon: mean>
+>>> c.interval = ['0.2 degree_N', cf.Data(0.1 'degree_E')]
+>>> c
+<CF CellMethod: lat: lon: mean (interval: 0.1 degree_N interval: 0.2 degree_E)>
+
+        '''
+        interval = self._interval
+        if interval is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("interval aascas 34r34 5iln ")
+
+        return interval
+    #--- End: def
+    
+    def set_interval(self, interval, copy=True):
+        '''
+        '''
+        if not isinstance(value, (tuple, list)):
+            raise ValueError(
+"interval attribute must be a tuple or list, not {0!r}".format(
+    value.__class__.__name__))
+        
+        # Parse the intervals
+        values = []
+        for interval in value:
+#            if isinstance(interval, basestring):
+#                i = interval.split()
+#
+#                try:
+#                    x = ast_literal_eval(i.pop(0))
+#                except:
+#                    raise ValueError(
+#                        "Unparseable interval: {0!r}".format(interval))
+#
+#                if interval:
+#                    units = ' '.join(i)
+#                else:
+#                    units = None
+#                    
+#                try:
+#                    d = self._Data(x, units)
+#                except:
+#                    raise ValueError(
+#                        "Unparseable interval: {0!r}".format(interval))
+#            else:
+            try:
+                d = self._Data.asdata(interval, copy=True)
+            except:
+                raise ValueError(
+                    "Unparseable interval: {0!r}".format(interval))
+#            #--- End: if
+            
+            if d.size != 1:
+                raise ValueError(
+                    "Unparseable interval: {0!r}".format(interval))
+                
+            if d.ndim > 1:
+                d.squeeze(copy=False)
+
+            values.append(d)
+        #--- End: for
+
+        self._interval = tuple(values)
+    #--- End: def
+
+    def del_interval(self):
+        '''
+        '''
+        interval = self._interval
+        self._interval = None
+        return interval
+    #--- End: def
+    
     @property
     def interval(self):
         '''
@@ -598,56 +611,10 @@ Each cell method's interval keyword(s).
 
     @interval.setter
     def interval(self, value):
-        if not isinstance(value, (tuple, list)):
-            raise ValueError(
-"interval attribute must be a tuple or list, not {0!r}".format(
-    value.__class__.__name__))
-        
-        # Parse the intervals
-        values = []
-        for interval in value:
-            if isinstance(interval, basestring):
-                i = interval.split()
-
-                try:
-                    x = ast_literal_eval(i.pop(0))
-                except:
-                    raise ValueError(
-                        "Unparseable interval: {0!r}".format(interval))
-
-                if interval:
-                    units = ' '.join(i)
-                else:
-                    units = None
-                    
-                try:
-                    d = self._Data(x, units)
-                except:
-                    raise ValueError(
-                        "Unparseable interval: {0!r}".format(interval))
-            else:
-                try:
-                    d = self._Data.asdata(interval, copy=True)
-                except:
-                    raise ValueError(
-                        "Unparseable interval: {0!r}".format(interval))
-            #--- End: if
-            
-            if d.size != 1:
-                raise ValueError(
-                    "Unparseable interval: {0!r}".format(interval))
-                
-            if d.ndim > 1:
-                d.squeeze(copy=False)
-
-            values.append(d)
-        #--- End: for
-
-        self._interval = tuple(values)
     #--- End: def
     @interval.deleter
     def interval(self):
-        self._interval = ()
+
 
     @property
     def axes(self):
@@ -666,79 +633,6 @@ Each cell method's interval keyword(s).
     @axes.deleter
     def axes(self):
         self._axes = ()
-
-    def dump(self, display=True, _title=None, _level=0):
-        '''
-        
-Return a string containing a full description of the instance.
-
-If a cell methods 'name' is followed by a '*' then that cell method is
-relevant to the data in a way which may not be precisely defined its
-corresponding dimension or dimensions.
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
-
-#    field: `cf.Field`, optional
-
-:Returns:
-
-    out: `str` or `None`
-        A string containing the description.
-
-:Examples:
-         
-        '''
-        indent0 = '    ' * _level
-
-        if _title is None:
-            _title = 'Cell Method: '
-
-        return indent0 + _title + str(self)
-    #--- End: def
-
-    def expand_intervals(self, copy=True):
-        if copy:
-            c = self.copy()
-        else:
-            c = self
-
-        n_axes = len(c._axes)
-        intervals = c._interval
-        if n_axes > 1 and len(intervals) == 1:
-            c._interval *= n_axes
-
-        return c
-    #--- End: def
-
-    def sort(self, argsort=None):
-        axes = self._axes
-        if len(axes) == 1:
-            return
-
-        if argsort is None:
-            argsort = numpy_argsort(axes)
-        elif len(argsort) != len(axes):
-            raise ValueError(".sjdn ;siljdf vlkjndf jk")
-
-        axes2 = []
-        for i in argsort:
-            axes2.append(axes[i])
-        self._axes = tuple(axes2)
-
-        intervals = self._interval
-        if len(intervals) <= 1:
-            return
-
-        intervals2 = []
-        for i in argsort:
-            intervals2.append(intervals[i])
-        self._interval = tuple(intervals2)
-    #--- End: def
 
     def remove_axes(self, axes):
         '''
@@ -804,344 +698,6 @@ corresponding dimension or dimensions.
         '''
         new = type(self)(source=self, copy=True)
     #--- End: def
-    def copy(self):
-        '''Return a deep copy.
-
-``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
-
-:Returns:
-
-    out: `CellMethod`
-        The deep copy.
-
-:Examples:
-
->>> d = c.copy()
-
-        '''   
-        X = type(self)
-        new = X.__new__(X)
-
-        new._axes    = self._axes     
-        new._method  = self._method   
-        new._comment = self._comment  
-        new._where   = self._where    
-        new._within  = self._within   
-        new._over    = self._over     
-
-        intervals = self.interval
-        if intervals:
-            new.interval = tuple([i.copy() for i in intervals])
-        else:
-            new.interval = ()
-
-        return new
-    #--- End: def
-
-    def equals(self, other, rtol=None, atol=None,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore=(), traceback=False):
-        '''
-
-True if two cell methods are equal, False otherwise.
-
-The `!axes` attribute is ignored in the comparison.
-
-:Parameters:
-
-    other : 
-        The object to compare for equality.
-
-    atol : float, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
-
-    rtol : float, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
-
-    ignore_fill_value : bool, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
-
-    traceback : bool, optional
-        If True then print a traceback highlighting where the two
-        instances differ.
-
-:Returns: 
-
-    out : bool
-        Whether or not the two instances are equal.
-
-:Examples:
-
-'''
-        if self is other:
-            return True
-
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
-            if traceback:
-                print("{0}: Different types: {0} != {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-        #--- End: if
-        
-        for attr in ('method', 'within', 'over', 'where', 'comment', 'axes'):
-            if attr in ignore:
-                continue
-
-            x = getattr(self, attr)
-            y = getattr(other, attr)
-            if x != y:
-                if traceback:
-                    print("{0}: Different {1}: {2!r} != {3!r}".format(
-                        self.__class__.__name__, attr, x, y))
-                return False
-        #--- End: for
-        
-        if 'intervals' in ignore:
-            return True
-
-        intervals0 = self.interval
-        intervals1 = other.interval
-        if intervals0:
-            if not intervals1:
-                if traceback:
-                    print(
-"{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.interval, other.interval))
-                return False
-            #--- End: if
-            
-            if len(intervals0) != len(intervals1):
-                if traceback:
-                    print(
-"{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.interval, other.interval))
-                return False
-            #--- End: if
-            
-            for data0, data1 in zip(intervals0, intervals1):
-                if not data0.equals(data1, rtol=rtol, atol=atol,
-                                    ignore_data_type=ignore_data_type,
-                                    ignore_fill_value=ignore_fill_value,
-                                    traceback=traceback):
-                    if traceback:
-                        print(
-"{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.interval, other.interval))
-                    return False
-            #--- End: for
-
-        elif intervals1:
-            if traceback:
-                print("{}: Different intervals: {!r} != {!r}".format(
-                    self.__class__.__name__, self.interval, other.interval))
-            return False
-        #--- End: if
-
-        return True
-    #--- End: def
-
-    def equivalent(self, other, rtol=None, atol=None, traceback=False):
-        '''True if two cell methods are equivalent, False otherwise.
-
-The `axes` and `interval` attributes are ignored in the comparison.
-
-:Parameters:
-
-    other : 
-        The object to compare for equality.
-
-    atol : float, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
-
-    rtol : float, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
-
-:Returns: 
-
-    out : bool
-        Whether or not the two instances are equivalent.
-
-:Examples:
-
-        '''
-        if self is other:
-            return True
-
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
-            if traceback:
-                print("{0}: Different types: {0} != {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-        #--- End: if
-
-        axes0 = self.axes
-        axes1 = other.axes
-            
-        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-            if traceback:
-                print("{}: Nonequivalent axes: {!r}, {!r}".format(
-                    self.__class__.__name__, axes0, axes1))
-            return False
-        #--- End: if
-
-        other1 = other.copy()
-        argsort = [axes1.index(axis0) for axis0 in axes0]
-        other1.sort(argsort=argsort)
-        self1 = self
-
-        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('interval',)):
-            if traceback:
-                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
-                    self.__class__.__name__, self, other))
-            return False
-        #--- End: if
-
-        if len(self1.interval) != len(other1.interval):
-            self1 = self1.expand_intervals(copy=False)
-            other1.expand_intervals(copy=False)
-            if len(self1.interval) != len(other1.interval):
-                if traceback:
-                    print(
-"{0}: Different numbers of intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self1.interval, other1.interval))
-                return False
-        #--- End: if
-
-        intervals0 = self1.interval
-        if intervals0:
-            for data0, data1 in zip(intervals0, other1.interval):
-                if not data0.allclose(data1, rtol=rtol, atol=atol):
-                    if traceback:
-                        print(
-"{0}: Different interval data: {1!r} != {2!r}".format(
-    self.__class__.__name__, self.interval, other.interval))
-                    return False
-        #--- End: if
-
-        # Still here? Then they are equivalent
-        return True
-    #--- End: def
-
-#    def write(self, axis_map={}):
-#        '''
-#
-#Return a string of the cell method.
-#
-#
-#'''
-#        string = ['{0}:'.format(axis)
-#                  for axis in self.change_axes(axis_map).axes]
-#
-#        method = self._method
-#        if method is None:
-#            return ''
-#
-#        string.append(method)
-#
-#        for portion in ('within', 'where', 'over'):
-#            p = getattr(self, portion, None)
-#            if p is not None:
-#                string.extend((portion, p))
-#        #--- End: for
-#
-#        intervals = self.interval
-#        if intervals:
-#            x = ['(']
-#
-#            y = ['interval: {0}'.format(data) for data in intervals]
-#            x.append(' '.join(y))
-#
-#            if self.comment is not None:
-#                x.append(' comment: {0}'.format(self.comment))
-#
-#            x.append(')')
-#
-#            string.append(''.join(x))
-#
-#        elif self.comment is not None:
-#            string.append('({0})'.format(self.comment))
-#
-#        return ' '.join(string)
-#    #--- End: def
-
-    def match(self, description=None, inverse=False):
-        '''
-        '''
-        if not isinstance(description (list, tuple)):
-            description = (description,)
-
-        found_match = True
-
-        for d in description:
-            found_match = True
-            
-            if isinstance(d , basestring):
-                description = {'cell_method': d}
-                
-            c = type(self)(**d)
-
-            has_axes = False
-            if c.axes:
-                has_axes = True
-                if len(self.axes) != len(c.axes):
-                    return False
-    
-                c.sort(argsort=[c.axes.index(axis) for axis in self.axes])
-                
-                if self.axes != c.axes:
-                    found_match = False
-                    continue
-            #--- End: if
-    
-            for attr in ('method', 'within', 'over', 'where', 'comment'):
-                x = getattr(c, attr)
-                if x and x != getattr(self, attr):
-                    found_match = False
-                    break
-            #--- End: for
-        
-            if not found_match:
-                continue
-    
-            if c.interval:
-                d = self.expand_intervals()
-                c.expand_intervals(copy=False)
-                    
-                intervals0 = list(self.interval)
-                intervals1 = list(c.interval)
-    
-                if len(intervals0) != len(intervals1):
-                    return False
-    
-                if has_axes:                
-                    for i0, i1 in zip(intervals0, intervals1):
-                        if i0 != i1:
-                            found_match = False
-                            break
-                else:            
-                    for i0 in intervals0:
-                        found_match = False
-                        for n, i1 in enumerate(intervals1):
-                            if i0 == i1:
-                                del intervals1[n]
-                                found_match = True
-                                break
-            #--- End: if
-
-            if not found_match:
-                continue
-        #--- End: for
-
-        return not bool(inverse)
-    #--- End: def
-
 
     def properties(self):
         '''

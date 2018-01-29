@@ -1,3 +1,5 @@
+from collections import abc
+
 from .coordinate import Coordinate
 
 # ====================================================================
@@ -20,6 +22,8 @@ Attribute       Type      Description
 ==============  ========  ============================================
 
     '''
+    __metaclass__ = abc.ABCMeta
+
     def dump(self, display=True, omit=(), field=None, key=None,
              _level=0, _title=None):
         '''Return a string containing a full description of the auxiliary

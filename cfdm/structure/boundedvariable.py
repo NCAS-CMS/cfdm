@@ -81,7 +81,9 @@ domain ancillary objects.
                 copy = False
                 
             self.set_bounds(bounds, copy=copy)
-
+        else:
+            self._bounds = None
+            
         if ancillary_arrays:
             for name, array in ancillary_arrays.iteritems():
                 if not _use_data:
@@ -117,214 +119,6 @@ domain ancillary objects.
         '''
         return self._arrays[array_type]
     #--- End: def
-
-#    # ----------------------------------------------------------------
-#    # Attributes
-#    # ----------------------------------------------------------------
-#    @property
-#    def _Bounds(self):
-#        '''The `Data` object containing the data array.
-#
-#.. versionadded:: 1.6
-#
-#        '''
-#        return self._Bounds
-#    #--- End: def
-#    @_Bounds.setter
-#    def _Bounds(self, value):
-#        self._Bounds = value
-#        self._hasbounds = True
-#    @_Bounds.deleter
-#    def _Bounds(self):
-#        self._Bounds = None
-#        self._hasbounds = False
-#
-#    @property
-#    def bounds(self):
-#        '''The `Bounds` object containing the cell bounds.
-#
-#.. versionadded:: 2.0
-#
-#.. seealso:: `lower_bounds`, `upper_bounds`
-#
-#:Examples:
-#
-#>>> c
-#<CF {+Variable}: latitude(64) degrees_north>
-#>>> c.bounds
-#<CF Bounds: latitude(64, 2) degrees_north>
-#>>> c.bounds = b
-#AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
-#>>> c.bounds.max()
-#<CF Data: 90.0 degrees_north>
-#>>> c.bounds -= 1
-#AttributeError: Can't set 'bounds' attribute. Consider the insert_bounds method.
-#>>> b = c.bounds
-#>>> b -= 1
-#>>> c.bounds.max()       
-#<CF Data: 89.0 degrees_north>
-#
-#        '''
-#        return self._Bounds
-#    @bounds.setter
-#    def bounds(self, value):
-#        raise AttributeError("use insert_bounds")
-#    @bounds.deleter
-#    def bounds(self):  
-#        raise AttributeError("use remove_bounds")
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Cell extent properties: parameters
-#    # ----------------------------------------------------------------
-#    @property
-#    def climatology(self):
-#        '''
-#        '''
-#        if 'climatology' not in self._ancillary_properties:
-#            return False
-#
-#        return self._climatology
-#    @climatology.setter
-#    def climatology(self, value):
-#        self._climatology = value
-#        self._ancillary_properties.add('climatology')
-#    @climatology.deleter
-#    def climatology(self):  
-#        del self._climatology
-#        self._ancillary_properties.discard('climatology')
-#    #--- End: def
-#
-#    def geometry(self):
-#        '''
-#        '''
-#        if 'geometry' not in self._ancillary_properties:
-#            return False
-#
-#        return self._geometry
-#    @geometry.setter
-#    def geometry(self, value):
-#        self._geometry = value
-#        self._ancillary_properties.add('geometry')
-#    @geometry.deleter
-#    def geometry(self):  
-#        del self._geometry
-#        self._ancillary_properties.discard('geometry')
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Cell extent properties: ancillary arrays
-#    # ----------------------------------------------------------------
-#    @property
-#    def part_node_count(self):
-#        '''
-#        '''
-#        if 'part_node_count' not in self._ancillary_arrays:
-#            raise ValueError("asd asd a[114444444444440283uy8 ")
-#            
-#        return self._part_node_count
-#    @part_node_count.setter
-#    def part_node_count(self, value):
-#        self._part_node_count = value
-#        self._ancillary_arrays.add('part_node_count')
-#    @part_node_count.deleter
-#    def part_node_count(self):  
-#        del self._part_node_count
-#        self._ancillary_arrays.discard('part_node_count')
-#    #--- End: def
-#
-#    @property
-#    def interior_ring(self):
-#        '''
-#        '''
-#        if 'interior_ring' not in self._ancillary_arrays:
-#            raise ValueError("asd asd a[88888888800___99990283uy8 ")
-#            
-#        return self._interior_ring
-#    @interior_ring.setter
-#    def interior_ring(self, value):
-#        self._interior_ring = value
-#        self._ancillary_arrays.add('interior_ring')
-#    @interior_ring.deleter
-#    def interior_ring(self):  
-#        del self._interior_ring
-#        self._ancillary_arrays.discard('interior_ring')
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Domain topology properties: parameters
-#    # ----------------------------------------------------------------
-#    def topology(self):
-#        '''
-#        '''
-#        if 'topology' not in self._ancillary_properties:
-#            return False
-#
-#        return self._topology
-#    @topology.setter
-#    def topology(self, value):
-#        self._topology = value
-#        self._ancillary_properties.add('topology')
-#    @topology.deleter
-#    def topology(self):  
-#        del self._topology
-#        self._ancillary_properties.discard('topology')
-#    #--- End: def
-#
-#    def topology_location(self):
-#        '''
-#        '''
-#        if 'topology_location' not in self._ancillary_properties:
-#            return False
-#
-#        return self._topology_location
-#    @topology_location.setter
-#    def topology_location(self, value):
-#        self._topology_location = value
-#        self._ancillary_properties.add('topology_location')
-#    @topology_location.deleter
-#    def topology_location(self):  
-#        del self._topology_location
-#        self._ancillary_properties.discard('topology_location')
-#    #--- End: def
-#
-#    def topology_dimension(self):
-#        '''
-#        '''
-#        if 'topology_dimension' not in self._ancillary_properties:
-#            return False
-#
-#        return self._topology_dimension
-#    @topology_dimension.setter
-#    def topology_dimension(self, value):
-#        self._topology_dimension = value
-#        self._ancillary_properties.add('topology_dimension')
-#    @topology_dimension.deleter
-#    def topology_dimension(self):  
-#        del self._topology_dimension
-#        self._ancillary_properties.discard('topology_dimension')
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Domain topology properties: ancillary arrays
-#    # ----------------------------------------------------------------
-#    @property
-#    def topology_connectivity(self):
-#        '''
-#        '''
-#        if 'topology_connectivity' not in self._ancillary_arrays:
-#            raise ValueError("xxxxxxxxxxxx hjko.jonl bo,n uy8 ")
-#            
-#        return self._topology_connectivity
-#    @topology_connectivity.setter
-#    def topology_connectivity(self, value):
-#        self._topology_connectivity = value
-#        self._ancillary_arrays.add('topology_connectivity')
-#    @topology_connectivity.deleter
-#    def topology_connectivity(self):  
-#        del self._topology_connectivity
-#        self._ancillary_arrays.discard('topology_connectivity')
-#    #--- End: def
 
     def ancillary_parameters(self):
         '''
@@ -482,200 +276,6 @@ domain ancillary objects.
         return self._get_arrays('topology').pop(name, None)
     #--- End: def
    
-#    def dump(self, display=True, field=None, key=None,
-#             _omit_properties=(), _prefix='', _title=None,
-#             _create_title=True, _level=0):
-#        '''Return a string containing a full description of the instance.
-#
-#.. versionadded:: 1.6
-#
-#:Parameters:
-#
-#    display: `bool`, optional
-#        If False then return the description as a string. By default
-#        the description is printed, i.e. ``f.dump()`` is equivalent to
-#        ``print f.dump(display=False)``.
-#
-#    omit: sequence of `str`, optional
-#        Omit the given CF properties from the description.
-#
-#    _prefix: optional
-#        Ignored.
-#
-#:Returns:
-#
-#    out: `None` or `str`
-#        A string containing the description.
-#
-#:Examples:
-#
-#        '''
-#        string = super(AbstractBoundedArray, self).dump(
-#            display=False, field=field, key=key,
-#            _omit_properties=_omit_properties, _prefix=_prefix,
-#            _title=_title, _create_title=_create_title, _level=_level)
-#
-#        string = [string]
-#        
-#        # ------------------------------------------------------------
-#        # Bounds
-#        # ------------------------------------------------------------
-#        b = self.get_bounds(None)
-#        if b is None:
-#            continue
-#        
-#        if not isinstance(b, AbstractArray):
-#            string.append('{0}{1}bounds = {2}'.format(indent1, attribute, b))
-#            continue
-#        
-#        string.append(
-#            b.dump(display=False, field=field, key=key,
-#                   _prefix=_prefix+'bounds.',
-#                   _create_title=False, _level=level+1))
-#
-#        #-------------------------------------------------------------
-#        # Extent and topology properties
-#        # ------------------------------------------------------------
-#        for x in ['extent', 'topology']:
-#            parameters = getattr(self, x+'_parameters')()
-#            for name, parameter in sorted(parameters.items()):
-#                string.append(
-#                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
-#
-#            arrays = getattr(self, x+'_arrays')()
-#            for name, array in sorted(arrays.items()):
-#                string.append(
-#                    array.dump(display=False, field=field, key=key,
-#                               _prefix=_prefix+x+'.'+name+'.',
-#                               _create_title=False, _level=level+1))
-#        #--- End: for
-#            
-#        string = '\n'.join(string)
-#        
-#        if display:
-#            print string
-#        else:
-#            return string
-#    #--- End: def
-#
-#    def equals(self, other, rtol=None, atol=None, traceback=False,
-#               ignore_data_type=False, ignore_fill_value=False,
-#               ignore_properties=(), ignore_construct_type=False):
-#        '''
-#        '''
-#        if rtol is None:
-#            rtol = RTOL()
-#        if atol is None:
-#            atol = ATOL()
-#
-#        if not super(AbstractBoundedArray, self).equals(
-#                other,
-#                rtol=rtol, atol=atol, traceback=tracback,
-#                ignore_data_type=ignore_data_type,
-#                ignore_fill_value=ignore_fill_value,
-#                ignore_properties=ignore_properties,
-#                ignore_construct_type=ignore_construct_type):
-#            if traceback:
-#                print("???????/")
-#            return False
-#        #--- End: if
-#
-#        # ------------------------------------------------------------
-#        # Check the ancillary parameters
-#        # ------------------------------------------------------------
-#        if ignore_fill_value:
-#            ignore_properties += ('_FillValue', 'missing_value')
-#            
-#        for x in ['extent', 'topology']:
-#            self_parameters  = getattr(self, x+'_parameters')()
-#            other_parameters = getattr(other, x+'_parameters')()
-#            if set(self_parameters) != set(other_parameters):
-#                if traceback:
-#                    print("{0}: Different parameters: {1}, {2}".format( 
-#                        self.__class__.__name__,
-#                        set(self_parameters), set(other_parameters)))
-#                return False
-#            
-#            for name, x in sorted(self_parameters.iteritems()):
-#                y = other_parameters[name]
-#                
-#                if not cf_equals(x, y, rtol=rtol, atol=atol,
-#                                 ignore_fill_value=ignore_fill_value,
-#                                 traceback=traceback):
-#                    if traceback:
-#                        print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
-#                            self.__class__.__name__, prop, x, y))
-#                    return False
-#        #--- End: for
-#
-#        # ------------------------------------------------------------
-#        # Check the bounds 
-#        # ------------------------------------------------------------
-#        self_hasbounds = self.has_bounds()
-#        if self_has_bounds != other.has_bounds():
-#            if traceback:
-#                print("{0}: Different {1}".format(self.__class__.__name__, attr))
-#            return False
-#                
-#        if self_has_bounds:            
-#            if not self.get_bounds().equals(other.get_bounds(),
-#                                            rtol=rtol, atol=atol,
-#                                            traceback=traceback,
-#                                            ignore_data_type=ignore_data_type,
-#                                            ignore_construct_type=ignore_construct_type,
-#                                            ignore_fill_value=ignore_fill_value):
-#                if traceback:
-#                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
-#                return False
-#        #--- End: if
-#
-#        # ------------------------------------------------------------
-#        # Check the ancillary arrays
-#        # ------------------------------------------------------------
-#        for x in ['extent', 'topology']:
-#            self_ancillary_arrays  = getattr(self, x+'_arrays')()
-#            other_ancillary_arrays = getattr(other, x+'_arrays')()
-#            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
-#                if traceback:
-#                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
-#                        self.__class__.__name__,
-#                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
-#                return False
-#    
-#            for name, x in sorted(self_ancillary_arrays.items()):
-#                y = other_arrays[name]
-#                
-#                if not x.equals(y rtol=rtol, atol=atol,
-#                                traceback=traceback,
-#                                ignore_data_type=ignore_data_type,
-#                                ignore_construct_type=ignore_construct_type,
-#                                ignore_fill_value=ignore_fill_value):
-#                    if traceback:
-#                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
-#                    return False
-#        #--- End: for
-#
-#        return True
-#    #--- End: def
-#        
-#    def expand_dims(self, position , copy=True):
-#        '''
-#        '''
-#        position = self._parse_axes([position])[0]
-#        
-#        c = super(AbstractBoundedArray, self).expand_dims(position,
-#                                                          copy=copy)
-#        
-#        bounds = c.get_bounds(None)
-#        if bounds is not None:
-#            bounds.expand_dims(position, copy=False)
-#            
-#        for array in c.ancillary_arrays().itervalues():                
-#            array.expand_dims(position, copy=False)
-#
-#        return c
-#    #--- End: def        
-    
     def get_bounds(self, *default):
         '''Insert cell bounds.
 
@@ -694,7 +294,7 @@ domain ancillary objects.
     `None`
 
         '''
-        bounds = getattr(self, '_bounds', None)
+        bounds = self._bounds
         if bounds is None:
             if default:
                 return default[0]
@@ -743,12 +343,11 @@ domain ancillary objects.
     out: `None` or `Bounds`
 
         '''
-        if not self.has_bounds():
+        bounds = self._bounds
+        if bounds is None:
             return
 
-        bounds = self.get_bounds()
-        del self._bounds
-        self.invalid_bounds = False
+        self._bounds = None
         return bounds
     #--- End: def
 
@@ -770,24 +369,7 @@ domain ancillary objects.
     `None`
 
         '''
-        return hasattr(self, '_bounds')
+        return self._bounds is not None
     #--- End: def
-
-#    def squeeze(self, axes=None , copy=True):
-#        '''
-#        '''
-#        axes = self._parse_axes(axes)
-#
-#        c = super(AbstractBoundedArray, self).squeeze(axes, copy=copy)
-#        
-#        bounds = c.get_bounds(None)
-#        if bounds is not None:
-#            bounds.squeeze(axes, copy=False)
-#
-#        for array in c.ancillary_arrays().itervalues():                
-#            array.squeeze(axes, copy=False)
-#        
-#        return c
-#    #--- End: def        
     
 #--- End: class

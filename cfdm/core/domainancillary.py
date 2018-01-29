@@ -1,8 +1,10 @@
+from collections import abc
+
 from .boundedvariable import BoundedVariableMixin
 
-from ..structure import DomainAncillary as StructuralDomainAncillary
+import ..structure
 
-class DomainAncillary(StructuralDomainAncillary, BoundedVariableMixin):
+class DomainAncillary(structure.DomainAncillary, BoundedVariableMixin):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for
@@ -21,6 +23,8 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
+    __metaclass__ = abc.ABCMeta
+    
     def dump(self, display=True, omit=(), field=None, key=None,
              _level=0, _title=None):
         '''Return a string containing a full description of the domain

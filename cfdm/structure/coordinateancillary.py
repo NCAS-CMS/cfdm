@@ -10,7 +10,6 @@ from .variable import AbstractVariable
 
 class CoordinateAncillary(AbstractVariable):
     '''
-
-'''
+    '''
     __metaclass__ = abc.ABCMeta    
 #--- End: class

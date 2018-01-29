@@ -2,15 +2,17 @@ from collections import abc
 
 from .variable import VariableMixin
 
+
 # ====================================================================
 #
-# CFDM Bounded variable object
+# CFDM Bounded variable mixin 
 #
 # ====================================================================
 
-class BoundedVariable(VariableMixin):
+class BoundedVariableMixin(VariableMixin):
     '''Base class for CF dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
+
     '''
 
     __metaclass__ = abc.ABCMeta
@@ -30,8 +32,8 @@ x.__getitem__(indices) <==> x[indices]
 
         indices = parse_indices(self.shape, indices)
 
-        new = self.copy(data=False)
-
+        new = super(BoundedVariableMixin, self).__getitem__(indices)
+        
         data = self.get_data(None)
 
         if _debug:
@@ -43,11 +45,10 @@ x.__getitem__(indices) <==> x[indices]
             new.set_data(data[tuple(indices)], copy=False)
 
         # Subspace the bounds, if there are any
-        if not new.has_bounds():
-            bounds = None
-        else:
-            bounds = self.get_bounds(None)
-            if bounds is not None:
+        self_bounds = self.get_bounds(None)
+        if self_bounds is not None:
+            data = self_bounds.get_data(None)
+            if data is not None:
                 bounds_indices = list(indices)
                 if data.ndim <= 1:
                     index = bounds_indices[0]
@@ -66,15 +67,13 @@ x.__getitem__(indices) <==> x[indices]
                         bounds_indices.append(slice(None))
                 else:
                     bounds_indices.append(slice(None))
-
+    
                 if _debug:
                     print '{}.__getitem__: indices for bounds ='.format(
                         self.__class__.__name__, bounds_indices)
 
-                data = bounds.get_data()
-                bounds = bounds.copy(data=False)
+                bounds = new.get_bounds()
                 bounds.set_data(data[tuple(bounds_indices)], copy=False)
-                new.set_bounds(bounds, copy=False)
         #--- End: if
 
         # Subspace the ancillary arrays
@@ -101,7 +100,6 @@ x.__getitem__(indices) <==> x[indices]
         return new
     #--- End: def
 
-    @abc.abstractmethod
     def dump(self, display=True, field=None, key=None,
              _omit_properties=(), _prefix='', _title=None,
              _create_title=True, _level=0):
@@ -130,7 +128,7 @@ x.__getitem__(indices) <==> x[indices]
 :Examples:
 
         '''
-        string = super(BoundedVariable, self).dump(
+        string = super(BoundedVariableMixin, self).dump(
             display=False, field=field, key=key,
             _omit_properties=_omit_properties, _prefix=_prefix,
             _title=_title, _create_title=_create_title, _level=_level)
@@ -140,19 +138,12 @@ x.__getitem__(indices) <==> x[indices]
         # ------------------------------------------------------------
         # Bounds
         # ------------------------------------------------------------
-        b = self.get_bounds(None)
-        if b is None:
-            continue
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            string.append(bounds.dump(display=False, field=field, key=key,
+                                      _prefix=_prefix+'bounds.',
+                                      _create_title=False, _level=level+1))
         
-        if not isinstance(b, AbstractArray):
-            string.append('{0}{1}bounds = {2}'.format(indent1, attribute, b))
-            continue
-        
-        string.append(
-            b.dump(display=False, field=field, key=key,
-                   _prefix=_prefix+'bounds.',
-                   _create_title=False, _level=level+1))
-
         #-------------------------------------------------------------
         # Extent and topology properties
         # ------------------------------------------------------------
@@ -188,7 +179,7 @@ x.__getitem__(indices) <==> x[indices]
         if atol is None:
             atol = ATOL()
 
-        if not super(BoundedVariable, self).equals(
+        if not super(BoundedVariableMixin, self).equals(
                 other,
                 rtol=rtol, atol=atol, traceback=tracback,
                 ignore_data_type=ignore_data_type,
@@ -283,7 +274,7 @@ x.__getitem__(indices) <==> x[indices]
         '''
         position = self._parse_axes([position])[0]
         
-        c = super(BoundedVariable, self).expand_dims(position,
+        c = super(BoundedVariableMixin, self).expand_dims(position,
                                                      copy=copy)
         
         bounds = c.get_bounds(None)
@@ -301,7 +292,7 @@ x.__getitem__(indices) <==> x[indices]
         '''
         axes = self._parse_axes(axes)
 
-        c = super(BoundedVariable, self).squeeze(axes, copy=copy)
+        c = super(BoundedVariableMixin, self).squeeze(axes, copy=copy)
         
         bounds = c.get_bounds(None)
         if bounds is not None:
@@ -348,7 +339,7 @@ x.__getitem__(indices) <==> x[indices]
         else:
             axes = self._parse_axes(axes)
 
-        c = super(BoundedVariable, self).transpose(axes, copy=copy)
+        c = super(BoundedVariableMixin, self).transpose(axes, copy=copy)
 
         axes.append(-1)
         
