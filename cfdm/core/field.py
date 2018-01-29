@@ -1,19 +1,14 @@
-from itertools   import izip_longest
-
-import numpy
-
-#from .domainaxis import DomainAxis
 from .flags      import Flags
-
 from .constructs2 import Constructs
-from .domain      import Domain
+#from .domain      import Domain
 
-#from ..abstract.field import AbstractField
+from .variable import VariableMixin
 
 import ..structure
 
 _debug = False
        
+
 # ====================================================================
 #
 # Field object
@@ -75,10 +70,6 @@ and institution).
 Field objects are picklable.
 
     '''
-#    _DomainAxis = DomainAxis
-#    _Flags      = Flags
-#    _Constructs = Constructs
-
     _special_properties = Variable._special_properties.union(
         ('flag_values',
          'flag_masks',
@@ -90,12 +81,13 @@ Field objects are picklable.
         
         obj._Flags      = Flags
         obj._Constructs = Constructs
-        obj._Domain     = Domain
+#        obj._Domain     = Domain
 
         return obj
     #--- End: def
     
-    def __init__(self, properties={}, source=None, copy=True):
+    def __init__(self, properties={}, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -113,32 +105,8 @@ Field objects are picklable.
         '''        
         # Initialize the new field with attributes and CF properties
         super(Field, self).__init__(properties=properties,
-                                    source=source,
-                                    copy=copy) 
-        self.del_data()
-        
-        if source is None:
-            constructs = self._Constructs(
-                array_constructs=('dimensioncoordinate',
-                                  'auxiliarycoordinate',
-                                  'cellmeasure',
-                                  'domainancillary',
-                                  'fieldancillary'),
-                non_array_constructs=('cellmethod',
-                                      'coordinatereference',
-                                      'domainaxis'),
-                ordered_constructs=('cellmethod',)
-            )
-            data_axes = []
-        elif isinstance(source, structure.Field):
-            data_axes = source._data_axes[:]
-            constructs = source.get_constructs(None)
-            if copy:
-                constructs = constructs.copy()
-        #--- End: if
-                
-        self.set_constructs(source.get_constructs(None), copy=False)
-        self._data_axes = data_axes
+                                    source=source, copy=copy,
+                                    _use_data=_use_data) 
                
         self._unlimited = None
     #--- End: def
@@ -392,22 +360,22 @@ functionality:
 
         indices = data.parse_indices(indices)
 
-        new = self.copy()
-
+        new = self.copy(data=False)
+        data_axes = new.data_axes()
+        
         # Open any files that contained the original data (this not
         # necessary, is an optimsation)
         
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-#        new._Data = self.data[tuple(indices)]
-        new._Data = self.data[indices]
+        new.set_data(self.data[indices], axes=data_axes)
 
         # ------------------------------------------------------------
         # Subspace constructs
         # ------------------------------------------------------------
-        new_Constructs = new.Constructs
-        data_axes = new.data_axes()
+        self_constructs = self.subsidiary_constructs()
+        new_constructs  = new.subsidiary_constructs()
 
         for key, construct in new.array_constructs().iteritems():
             needs_slicing = False
@@ -423,10 +391,15 @@ functionality:
             if _debug:
                 print '    item:', repr(item)
                 print '    dice = ', dice
+
+            # Set construct data
+            self_construct_data = self_constructs[key].get_data(None)
+            if needs_slicing and self_construct_data is not None:
+                new_construct_data = self_construct_data[tuple(dice)]
+            else:
+                new_construct_data = self_construct_data.copy()
                 
-            # Replace existing construct with its subspace
-            if needs_slicing:
-                new_Constructs.replace(key, construct[tuple(dice)])
+            construct.set_data(new_construct_data, copy=False)
         #--- End: for
 
         # Replace domain axes
@@ -434,7 +407,7 @@ functionality:
         for key, size in zip(data_axes, new.data.shape):
             new_domain_axis = domain_axes[key].copy()
             new_domain_axis.size = size
-            new_Constructs.replace(key, new_domain_axis)
+            new_constructs.replace(key, new_domain_axis)
 
         return new
     #--- End: def
@@ -928,8 +901,8 @@ False
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not cf_equals(self.get_constructs(None),
-                         other.get_constructs(None),
+        if not cf_equals(self.subsidiary_constructs(),
+                         other.subsidiary_constructs(),
                          rtol=rtol, atol=atol,
                          traceback=traceback,
                          ignore_data_type=ignore_data_type,
