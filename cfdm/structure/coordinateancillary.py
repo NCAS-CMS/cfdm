@@ -1,6 +1,6 @@
 from collections import abc
 
-from .variable import AbstractVariable
+import .abstract
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ from .variable import AbstractVariable
 #
 # ====================================================================
 
-class CoordinateAncillary(AbstractVariable):
+class CoordinateAncillary(abstract.PropertiesData):
     '''
     '''
     __metaclass__ = abc.ABCMeta    

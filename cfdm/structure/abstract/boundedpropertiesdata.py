@@ -1,6 +1,6 @@
 from collections import abc
 
-from .propertiesdata import AbstractPropertiesData
+from .propertiesdata import PropertiesData
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ from .propertiesdata import AbstractPropertiesData
 #
 # ====================================================================
 
-class AbstractBoundedVariable(AbstractPropertiesData):
+class BoundedPropertiesData(PropertiesData):
     '''Base class for CFDM dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
 

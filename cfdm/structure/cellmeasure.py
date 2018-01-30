@@ -1,6 +1,6 @@
 from collections import abc
 
-from .propertiesdata import AbstractPropertiesData
+import .abstract
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ from .propertiesdata import AbstractPropertiesData
 #
 # ====================================================================
 
-class CellMeasure(AbstractPropertiesData):
+class CellMeasure(abstract.PropertiesData):
     '''A cell measure construct of the CF data model.
 
 A cell measure construct provides information that is needed about the

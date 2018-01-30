@@ -1,6 +1,6 @@
 from collections import abc
 
-from .properties import AbstractProperties
+import .abstract
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ from .properties import AbstractProperties
 #
 # ====================================================================
 
-class DomainAxis(AbstractProperties):
+class DomainAxis(abstract.Properties):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an

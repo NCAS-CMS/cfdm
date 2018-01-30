@@ -1,6 +1,8 @@
-from .boundedvariable import AbstractBoundedVariable
+from collections import abc
 
-class DomainAncillary(AbstractBoundedVariable):
+import .abstract
+
+class DomainAncillary(abstract.PropertiesDataBounds):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for
@@ -19,5 +21,5 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
-    pass
+    __metaclass__ = abc.ABCMeta
 #--- End: class

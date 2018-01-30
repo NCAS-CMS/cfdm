@@ -1,8 +1,8 @@
 from collections import abc
 
-from .propertiesdata import AbstractPropertiesData
+import .abstract
 
-class FieldAncillary(AbstractPropertiesData):
+class FieldAncillary(abstract.PropertiesData):
     '''A CF field ancillary constructs
 
     '''

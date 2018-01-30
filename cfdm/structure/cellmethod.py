@@ -1,6 +1,6 @@
 from collections import abc
 
-from .properties import AbstractProperties
+import .abstract
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ from .properties import AbstractProperties
 #
 # ====================================================================
 
-class CellMethod(AbstractProperties):
+class CellMethod(abstract.Properties):
     '''A cell method construct od the CF data model.
 
 Cell method constructs describe how the field construct's cell values

@@ -1,10 +1,14 @@
+from collections import abc
+
 from .mixin
 
 import ..structure
 
 class FieldAncillary(structure.FieldAncillary, mixin.PropertiesData):
     '''A CF field ancillary construct.
-'''
+    '''
+    __metaclass__ abc.ABCMeta
+
     def dump(self, display=True, omit=(), field=None, key=None,
              _level=0, _title=None):
         '''Return a string containing a full description of the field ancillary

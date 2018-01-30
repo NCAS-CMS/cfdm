@@ -2,7 +2,6 @@ from collections import abc
 
 from .coordinateancillary import CoordinateAncillary
 
-
 # ====================================================================
 #
 # Coordinate object

@@ -1,11 +1,9 @@
 from collections import abc
 
 from .flags      import Flags
+from .constructs import Constructs
 
-from .constructs2 import Constructs
-
-from .properties  import AbstractPropertiesData
-
+import .abstract
 
 # ====================================================================
 #
@@ -13,7 +11,7 @@ from .properties  import AbstractPropertiesData
 #
 # ====================================================================
 
-class Field(AbstractPropertiesData):
+class Field(abstract.PropertiesData):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all

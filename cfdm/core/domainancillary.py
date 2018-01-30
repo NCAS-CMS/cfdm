@@ -1,10 +1,10 @@
 from collections import abc
 
-from .boundedvariable import BoundedVariableMixin
+import .mixin
 
 import ..structure
 
-class DomainAncillary(structure.DomainAncillary, BoundedVariableMixin):
+class DomainAncillary(structure.DomainAncillary, mixin.PropertiesDataBounds):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for

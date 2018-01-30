@@ -1,7 +1,6 @@
 from collections import abc
 
-from .variable import VariableMixin
-
+from .propertiesdata import PropertiesData
 
 # ====================================================================
 #
@@ -9,7 +8,7 @@ from .variable import VariableMixin
 #
 # ====================================================================
 
-class BoundedVariableMixin(VariableMixin):
+class PropertiesDataBounds(PropertiesData):
     '''Base class for CF dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
 
