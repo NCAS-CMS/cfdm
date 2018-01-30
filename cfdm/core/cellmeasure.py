@@ -1,6 +1,6 @@
 from collections import abc
 
-from .variable import Variable
+import .mixin
 
 import ..structure
 
@@ -10,7 +10,7 @@ import ..structure
 #
 # ====================================================================
 
-class CellMeasure(structure.CellMeasure, VariableMixin):
+class CellMeasure(structure.CellMeasure, mixin.PropertiesData):
     '''A CF cell measure construct.
 
 A cell measure construct provides information that is needed about the
@@ -32,35 +32,6 @@ measure constructs.
 
     '''
     __metaclass__ = abc.ABCMeta
-
-    def __init__(self, properties={}, data=None, source=None,
-                 copy=True):
-        '''**Initialization**
-
-:Parameters:
-
-    properties: `dict`, optional
-        Initialize properties from the dictionary's key/value pairs.
-
-    data: `Data`, optional
-        Provide a data array.
-        
-    source: `{+Variable}`, optional
-        Take the attributes, CF properties and data array from the
-        source {+variable}. Any attributes, CF properties or data
-        array specified with other parameters are set after
-        initialisation from the source {+variable}.
-
-    copy: `bool`, optional
-        If False then do not deep copy arguments prior to
-        initialization. By default arguments are deep copied.
-
-        '''
-        super(CellMeasure, self).__init__(properties=properties,
-                                          source=source, data=data, copy=copy)
-        
-        self._measure = None
-    #--- End: def
 
     def dump(self, display=True, omit=(), field=None, key=None,
              _level=0, _title=None):
@@ -132,17 +103,6 @@ The identity is first found of:
         return super(CellMeasure, self).identity(default, relaxed_identity=relaxed_identity)
     #--- End: def
 
-    def measure(self, *name):
-        '''
-        '''
-        if not name:
-            return self._measure
-
-        name = name[0]
-        self._measure = name
-
-        return name
-    #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False, relaxed_identity=None):
         '''Return a name for the cell measure.

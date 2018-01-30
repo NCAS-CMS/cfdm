@@ -80,7 +80,7 @@ for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
 
 #_units = {}
 
-class CoordinateReference(object):
+class CoordinateReference(AbstractProperties):
     '''A CF coordinate reference construct.
 
 A coordinate reference construct relates the field's coordinate values

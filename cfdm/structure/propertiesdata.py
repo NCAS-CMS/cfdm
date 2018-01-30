@@ -190,7 +190,7 @@ x.__str__() <==> str(x)
     def get_data(self, *default):
         '''
         '''
-        data = getattr(self, '_data', None)
+        data = self._get_attribute('data', None)
         if data is not None:
             data.fill_value = self._fill_value            
             data.units      = self.get_property('units', None)
@@ -219,8 +219,8 @@ If present, the data array is stored in the `data` attribute.
 >>> if f.has_data():
 ...     print f.data
 
-'''      
-        return hasattr(self, '_data')
+'''     
+         return self._has_attribute('data')
     #--- End: def
 
     def del_data(self):
@@ -250,12 +250,7 @@ False
 None
 
         '''
-        if not self.has_data():
-            return
-
-        data = self._data
-        del self._data
-        return data
+        return self._del_attribute('data')
     #--- End: def
 
     def copy(self, data=True):

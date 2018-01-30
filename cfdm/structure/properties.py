@@ -87,7 +87,8 @@ x.__str__() <==> str(x)
 
         setattr(self, attr, None)
         return x
-
+    #--- End: def
+    
     def _get_attribute(self, attr, *default):
         '''
         '''
@@ -99,17 +100,20 @@ x.__str__() <==> str(x)
             raise AttributeError("{!r} aascas 34r34 5iln ".format(attr))
 
         return x
-
+    #--- End: def
+    
     def _has_attribute(self, attr):
         '''
         '''
         return getattr(self, '_'+attr, None) is not None
-
+    #--- End: def
+    
     def _set_attribute(self, attr, value):
         '''
         '''        
         setattr(self, '_'+attr, value)
-
+    #--- End: def
+    
     def copy(self):
         '''Return a deep copy.
 

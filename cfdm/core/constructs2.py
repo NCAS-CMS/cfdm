@@ -349,9 +349,9 @@ Traceback: Different cell methods: {0!r}, {1!r}".format(
         for cm0, cm1 in zip(cell_methods0.values(),
                             cell_methods1.values()):
             # Check that there are the same number of axes
-            axes0 = cm0.axes
-            axes1 = list(cm1.axes)
-            if len(cm0.axes) != len(axes1):
+            axes0 = cm0.get_axes(())
+            axes1 = list(cm1.get_axes(()))
+            if len(axes0) != len(axes1):
                 if traceback:
                     print (
 "Traceback: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
@@ -366,7 +366,7 @@ Traceback: Different cell methods: {0!r}, {1!r}".format(
                     if axis0 in axis0_to_axis1 and axis1 in axis1_to_axis0:
                         if axis1 == axis0_to_axis1[axis0]:
                             axes1.remove(axis1)
-                            argsort.append(cm1.axes.index(axis1))
+                            argsort.append(cm1.get_axes(()).index(axis1))
                             break
                     elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
                         if traceback:
@@ -378,7 +378,7 @@ Traceback: Different cell methods: {0!r}, {1!r}".format(
                     elif axis0 == axis1:
                         # Assume that the axes are standard names
                         axes1.remove(axis1)
-                        argsort.append(cm1.axes.index(axis1))
+                        argsort.append(cm1.get_axes(()).index(axis1))
                     elif axis1 is None:
                         if traceback:
                             print (
@@ -387,7 +387,7 @@ Traceback: Different cell methods: {0!r}, {1!r}".format(
                         return False
             #--- End: for
 
-            if len(cm1.axes) != len(argsort):
+            if len(cm1.get_axes(())) != len(argsort):
                 if traceback:
                     print ("Field: Different cell methods: {0!r}, {1!r}".format(
                         cell_methods0, cell_methods1))
@@ -395,7 +395,7 @@ Traceback: Different cell methods: {0!r}, {1!r}".format(
 
             cm1 = cm1.copy()
             cm1.sort(argsort=argsort)
-            cm1.axes = axes0
+            cm1.set_axes(axes0)
 
             if not cm0.equals(cm1, atol=atol, rtol=rtol,
                               traceback=traceback, **kwargs):

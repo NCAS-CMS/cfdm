@@ -4,12 +4,12 @@ from .coordinate import Coordinate
 
 # ====================================================================
 #
-# DimensionCoordinate object
+
 #
 # ====================================================================
 
-class DimensionCoordinate(Coordinate):
-    '''A CF dimension coordinate construct.
+class AuxiliaryCoordinate(Coordinate):
+    '''
 
     '''
     __metaclass__ = abc.ABCMeta

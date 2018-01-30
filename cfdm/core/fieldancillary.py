@@ -1,8 +1,8 @@
-from .variable import Variablemixin
+from .mixin
 
-from ..structure import FieldAncillary as StructuralFieldAncillary
+import ..structure
 
-class FieldAncillary(StructuralFieldAncillaryVariable, VariableMixin):
+class FieldAncillary(structure.FieldAncillary, mixin.PropertiesData):
     '''A CF field ancillary construct.
 '''
     def dump(self, display=True, omit=(), field=None, key=None,

@@ -1,10 +1,14 @@
+from collections import abc
+
+from .properties import AbstractProperties
+
 # ====================================================================
 #
 # DomainAxis object
 #
 # ====================================================================
 
-class DomainAxis(object):
+class DomainAxis(AbstractProperties):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an
@@ -16,19 +20,10 @@ spans the domain axis constructs of the domain, with the optional
 exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
-**Attributes**
-
-=========  =======  ==================================================
-Attribute  Type     Description
-=========  =======  ==================================================
-`!size`    `int`    The size of the domain axis.
-
-`!ncdim`   `str`    The name of this domain axis as a netCDF
-                    dimension.
-=========  =======  ==================================================
-
     '''
-    def __init__(self, size=None, source=None):
+    __metaclass__ = abc.ABCMeta
+    
+    def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -42,37 +37,15 @@ Attribute  Type     Description
                 size = source.get_size(None)
         #--- End: if
         
-        self._size  = None
         if size is not None:
             self.set_size(size)        
     #--- End: def
 
-    def __deepcopy__(self, memo):
-        '''
-
-Called by the `copy.deepcopy` standard library function.
-
-'''
-        return self.copy()
-    #--- End: def
-
-    def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
-
-x.__repr__() <==> repr(x)
-
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
     def __str__(self):
+        '''x.__str__() <==> str(x)
+
         '''
-
-Called by the `str` built-in function.
-
-x.__str__() <==> str(x)
-'''
-        return str(self.get_size(None))
+        return str(self.get_size(''))
     #--- End: def
 
     def copy(self):
@@ -96,28 +69,19 @@ x.__str__() <==> str(x)
     def get_size(self, *default):
         '''
         '''
-        size = self._size
-        if size is not None:
-            return size
-        
-        if default:
-            return default[0]
-
-        raise ValueError("size asdjw39p y j")
+        return self._get_attribute('size', *default)
     #--- End: def
 
     def set_size(self, size):
         '''
         '''
-        self._size = size
+        self._set_attribute('size', size)
     #--- End: def
 
     def del_size(self):
         '''
         '''
-        size = self._size
-        self._size = None
-        return size
+        return self._del_attribute('size')
     #--- End: def
 
 #--- End: class

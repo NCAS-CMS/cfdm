@@ -1,6 +1,6 @@
 from collections import abc
 
-from .arrayconstruct import AbstractVariable
+from .propertiesdata import AbstractPropertiesData
 
 # ====================================================================
 #
@@ -8,18 +8,16 @@ from .arrayconstruct import AbstractVariable
 #
 # ====================================================================
 
-class AbstractBoundedVariable(AbstractVariable):
+class AbstractBoundedVariable(AbstractPropertiesData):
     '''Base class for CFDM dimension coordinate, auxiliary coordinate and
 domain ancillary objects.
 
     '''
-
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, properties={}, data=None, source=None,
                  bounds=None, ancillary_parameters=None,
-                 ancillary_arrays=None, copy=True,
-                 _use_data=True):
+                 ancillary_arrays=None, copy=True, _use_data=True):
         '''**Initialization**
 
 :Parameters:

@@ -1,4 +1,6 @@
-from .variable import AbstractVariable
+from collections import abc
+
+from .propertiesdata import AbstractPropertiesData
 
 # ====================================================================
 #
@@ -6,8 +8,8 @@ from .variable import AbstractVariable
 #
 # ====================================================================
 
-class CellMeasure(AbstractVariable):
-    '''A CF cell measure construct.
+class CellMeasure(AbstractPropertiesData):
+    '''A cell measure construct of the CF data model.
 
 A cell measure construct provides information that is needed about the
 size or shape of the cells and that depends on a subset of the domain
@@ -26,18 +28,11 @@ spanned by the array, along which the values are implicitly
 propagated. CF-netCDF cell measure variables correspond to cell
 measure constructs.
 
-**Attributes**
-
-==========  =====  ===================================================
-Attribute   Type   Description
-==========  =====  ===================================================
-`!measure`  `str`  The spatial measure being represented, either
-                   ``'area'`` or ``'volume'``.
-==========  =====  ===================================================
-
     '''   
-    def __init__(self, properties={}, data=None, source=None,
-                 measure=None, copy=True):
+    __metaclass__ = abc.ABCMeta
+    
+    def __init__(self, measure=None, properties={}, data=None,
+                 source=None, copy=True, _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -61,38 +56,34 @@ Attribute   Type   Description
         '''
         super(CellMeasure, self).__init__(properties=properties,
                                           source=source, data=data,
-                                          copy=copy)
+                                          copy=copy, _use_data=_use_data)
         
-        self._measure = None
         if measure is not None:
             self.set_measure(measure)
-    #--- End: def
-
-    def get_measure(self, *default):
-        '''
-        '''
-        measure = self._measure
-        if measure is not None:
-            return measure
-        
-        if default:
-            return default[0]
-
-        raise ValueError("djbnc o3iub ,")
-    #--- End: def
-
-    def set_measure(self, measure):
-        '''
-        '''
-        self._measure = measure
     #--- End: def
 
     def del_measure(self):
         '''
         '''
-        measure = self._measure
-        self._measure = None
-        return measure
+        return self._del_attribute('measure')
+    #--- End: def
+
+    def has_measure(self)
+        '''
+        '''
+        return self._has_attribute('measure')
+    #--- End: def
+
+    def get_measure(self, *default):
+        '''
+        '''
+        return self._get_attribute('measure', *default)
+    #--- End: def
+
+    def set_measure(self, measure):
+        '''
+        '''
+        return self._set_attribute('measure', measure)
     #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False, relaxed_identity=None):

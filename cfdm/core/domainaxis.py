@@ -23,7 +23,7 @@ to the order of the elements.
     '''
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, size=None, source=None):
+    def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -34,15 +34,12 @@ to the order of the elements.
     source: `DomainAxis`
 
         '''
-        super(DomainAxis).__init__(size=size, source=source)
+        super(DomainAxis).__init__(size=size, source=source, copy=copy)
         
         if source:
             ncdim = source.get_ncdim(None)
-        else:
-            ncdim = None
-        
-        if ncdim is not None:
-            self.set_ncdim(ncdim)
+            if ncdim is not None:
+                self.set_ncdim(ncdim)
     #--- End: def
     
     def equals(self, other, traceback=False, *kwargs):
@@ -101,28 +98,19 @@ to the order of the elements.
     def get_ncdim(self, *default):
         '''
         '''
-        ncdim = self._ncdim
-        if ncdim is not None:
-            return ncdim
-        
-        if default:
-            return default[0]
-
-        raise ValueError("ncdim asdjw39p y j")
+        return self._get_attribute('ncdim', *default)
     #--- End: def
 
     def set_ncdim(self, ncdim):
         '''
         '''
-        self._ncdim = ncdim
+        self._set_attribute('ncdim', ncdim)
     #--- End: def
 
     def del_ncdim(self):
         '''
         '''
-        ncdim = self._ncdim
-        self._ncdim = None
-        return ncdim
+        return self._del_attribute('ncdim')
     #--- End: def
 
 #--- End: class

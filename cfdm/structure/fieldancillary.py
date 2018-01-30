@@ -1,8 +1,10 @@
-from .variable import AbstractVariable
+from collections import abc
 
-class FieldAncillary(AbstractVariable):
+from .propertiesdata import AbstractPropertiesData
+
+class FieldAncillary(AbstractPropertiesData):
     '''A CF field ancillary constructs
 
     '''
-    pass
+    __metaclass__ = abc.ABCMeta
 #--- End: class

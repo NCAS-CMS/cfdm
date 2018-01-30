@@ -4,6 +4,8 @@ from .constructs2 import Constructs
 
 from .variable import VariableMixin
 
+import .mixin
+
 import ..structure
 
 _debug = False
@@ -15,7 +17,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(structure.Field, VariableMixin):
+class Field(structure.Field, mixin.PropertiesDataMixin):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -761,7 +763,8 @@ last values.
             string.append('')
             for cm in cell_methods.values():
                 cm = cm.copy()
-                cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
+                cm.set_axes(tuple([axis_names.get(axis, axis)
+                                   for axis in cm.get_axes(())]))
                 string.append(cm.dump(display=False,  _level=_level))
         #--- End: if
 
