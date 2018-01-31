@@ -1,8 +1,9 @@
-from .flags      import Flags
-from .constructs2 import Constructs
-#from .domain      import Domain
+from collections import abc
 
-from .variable import VariableMixin
+from .flags      import Flags
+
+from .constructs import Constructs
+#from .domain      import Domain
 
 import .mixin
 
@@ -17,7 +18,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(structure.Field, mixin.PropertiesDataMixin):
+class Field(structure.Field, mixin.PropertiesData):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -72,21 +73,13 @@ and institution).
 Field objects are picklable.
 
     '''
+    __metaclass__ = abc.ABCMeta
+ 
     _special_properties = Variable._special_properties.union(
         ('flag_values',
          'flag_masks',
          'flag_meanings',)
     )
-    
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-        obj._Flags      = Flags
-        obj._Constructs = Constructs
-#        obj._Domain     = Domain
-
-        return obj
-    #--- End: def
     
     def __init__(self, properties={}, source=None, copy=True,
                  _use_data=True):
@@ -111,6 +104,7 @@ Field objects are picklable.
                                     _use_data=_use_data) 
                
         self._unlimited = None
+        self._HDFgubbins = None
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
@@ -356,13 +350,10 @@ functionality:
         data  = self.data
         shape = data.shape
 
-        # Parse the index
-#        if not isinstance(indices, tuple):
-#            indices = (indices,)
-
         indices = data.parse_indices(indices)
 
         new = self.copy(data=False)
+
         data_axes = new.data_axes()
         
         # Open any files that contained the original data (this not
@@ -376,10 +367,15 @@ functionality:
         # ------------------------------------------------------------
         # Subspace constructs
         # ------------------------------------------------------------
-        self_constructs = self.subsidiary_constructs()
-        new_constructs  = new.subsidiary_constructs()
+        self_constructs = self.get_constructs()
 
         for key, construct in new.array_constructs().iteritems():
+            data = self.construct(key).get_data(None)
+            if data is None:
+                # This construct has no data array
+                continue
+
+            # Still here?
             needs_slicing = False
             dice = []
             for axis in new.construct_axes(key):
@@ -395,21 +391,21 @@ functionality:
                 print '    dice = ', dice
 
             # Set construct data
-            self_construct_data = self_constructs[key].get_data(None)
-            if needs_slicing and self_construct_data is not None:
-                new_construct_data = self_construct_data[tuple(dice)]
+            if needs_slicing:
+                new_data = data[tuple(dice)]
             else:
-                new_construct_data = self_construct_data.copy()
-                
-            construct.set_data(new_construct_data, copy=False)
+                new_data = data.copy()
+
+            construct.set_data(new_data, copy=False)
         #--- End: for
 
         # Replace domain axes
         domain_axes = new.domain_axes()
+        new_constructs = new.get_constructs()
         for key, size in zip(data_axes, new.data.shape):
-            new_domain_axis = domain_axes[key].copy()
-            new_domain_axis.size = size
-            new_constructs.replace(key, new_domain_axis)
+            domain_axis = domain_axes[key].copy()
+            domain_axis.set_size(size)
+            new_constructs.replace(key, domain_axis)
 
         return new
     #--- End: def
@@ -579,6 +575,7 @@ for details.
     #--- End: def
 
 #    def domain(self, copy=False):
+#
 #        return self._Domain(constructs=self.Constructs, copy=copy)
     
                 value.dump(display=False, field=self, key=key, _level=_level))
@@ -1091,171 +1088,4 @@ axes, use the `remove_axes` method.
 #        return out
 #    #--- End: def
     
-    def _parameters(self, d):
-        '''
-.. versionadded:: 1.6
-'''
-        del d['self']
-        if 'kwargs' in d:
-            d.update(d.pop('kwargs'))
-        return d
-    #--- End: def
-
-    def remove_item(self, description=None, role=None, axes=None,
-                    axes_all=None, axes_subset=None,
-                    axes_superset=None, ndim=None, inverse=False,
-                    copy=True, key=False):
-        '''Remove and return an item from the field.
-
-{+item_definition}
-
-By default all items of the domain are removed, but particular items
-may be selected with the keyword arguments.
-
-{+item_selection}
-
-.. seealso:: `items`, `remove_axes`, `remove_axis`, `remove_item`
-
-:Parameters:
-
-    {+description}
-
-    {+role}
-
-    {+axes}
-
-    {+axes_all}
-
-    {+axes_subset}
-
-    {+axes_superset}
-
-    {+ndim}
-
-    {+inverse}
-
-    {+copy}
-
-:Returns:
-
-    out: 
-        The removed item.
-
-:Examples:
-
-        '''
-        kwargs2 = self._parameters(locals())
-
-#        kwargs2['items'] = kwargs2.pop('item')
-
-        del kwargs2['key']
-
-        # Include coordinate references by default
-        if kwargs2['role'] is None:
-            kwargs2['role'] = ('d', 'a', 'm', 'c', 'f', 'r')
-
-        items = self.items(**kwargs2)
-        if len(items) == 1:
-            out = self.remove_items(**kwargs2)
-            if key:
-                return out.popitem()[0]
-
-            return out.popitem()[1]
-        #--- End: if
-
-        if not len(items):
-            raise ValueError(
-"Can't remove non-existent item defined by parameters {0}".format(kwargs2))
-        else:
-            raise ValueError(
-"Can't remove non-unique item defined by parameters {0}".format(kwargs2))
-    #--- End: def
-
-    def remove_items(self, description=None, role=None, axes=None,
-                     axes_all=None, axes_subset=None,
-                     axes_superset=None, ndim=None, inverse=False,
-                     copy=True):
-        '''Remove and return items from the field.
-
-An item is either a dimension coordinate, an auxiliary coordinate, a
-cell measure or a coordinate reference object.
-
-By default all items of the domain are removed, but particular items
-may be selected with the keyword arguments.
-
-.. seealso:: `items`, `remove_axes`, `remove_axis`, `remove_item`
-
-:Parameters:
-
-    {+description}
-
-    {+role}
-
-    {+axes}
-
-    {+axes_all}
-
-    {+axes_subset}
-
-    {+axes_superset}
-
-    {+ndim}
-
-    {+inverse}
-
-:Returns:
-
-    out: `dict`
-        A dictionary whose keys are domain item identifiers with
-        corresponding values of the removed items. The dictionary may
-        be empty.
-
-:Examples:
-
-        ''' 
-        # Remove coordinate reference
-        coordinate_references = self.coordinate_references()
-        if key in coordinate_references:
-            ref = self.Constructs.remove(key)
-            return ref
-                
-        # Remove domain axis
-        domain_axes = self.domain_axes()
-        if key in domain_axes:
-            if key in self.data_axes():
-                raise ValueError(
-"Can't remove domain axis that is spanned by the field's data")
-
-            for k, v in self.variable_axes().items():
-                if key in v:
-                    raise ValueError(
-"Can't remove domain axis that is spanned by {!r}".format(self.construct(k)))
-            #--- End: if
-
-            return self.Constructs.remove(key).copy()
-        #--- End: if
-
-        # Remove other construct
-        if coordinate_references:
-            construct_type = self.Constructs.type(key)
-            if construct_type in ('_dimension_coordinate',
-                                  '_auxiliary_coordinate',
-                                  '_domain_ancillary'):
-                # The removed item is a dimension coordinate,
-                # auxiliary coordinate or domain ancillary, so replace
-                # its identifier in any coordinate references with its
-                # identity.
-                identity_map = {key: self.Constructs.get(key).identity()}
-                for key, ref in coordinate_references.items():
-                   ref = ref.change_identifiers(
-                       identity_map,
-                       coordinate=(construct_type != '_domain ancillary'),
-                       ancillary=(construct_type == '_domain ancillary'),
-                       copy=True)
-                   self.Constructs.replace(key, ref)
-        #--- End: if
-
-        return self.Constructs.remove(key).copy()
-    #--- End: def
-
 #--- End: class

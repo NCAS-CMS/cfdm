@@ -80,62 +80,8 @@ for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
 
 #_units = {}
 
-class CoordinateReference(object):
+class CoordinateReference(structure.Coordinatereference, mixin.Properties):
     '''A CF coordinate reference construct.
-
-A coordinate reference construct relates the field's coordinate values
-to locations in a planetary reference frame.
-
-The coordinate reference object is associated with a coordinate system
-and contains links to the dimension or auxiliary coordinate constructs
-to which it applies; and any additional terms, such as scalar values
-and field objects which define a datum and coordinate conversion,
-i.e. a formula for converting coordinate values taken from the
-dimension or auxiliary coordinate objects to a different coordinate
-system.
-
-**Accessing terms**
-
-The coordinate reference object behaves like a dictionary when it
-comes to accessing its terms and their values: For example:
-
->>> c = cf.CoordinateReference('azimuthal_equidistant', 
-...                             longitude_of_projection_origin=80.5,
-...                             latitude_of_projection_origin=5, 
-...                             false_easting=cf.Data(-200, 'km'),
-...                             false_northing=cf.Data(-100, 'km'))
->>> c.keys()
-['false_easting',
- 'latitude_of_projection_origin',
- 'false_northing',
- 'longitude_of_projection_origin']
->>> c.items()
-[('false_easting', <CF Data: -200 km>),
- ('latitude_of_projection_origin', 5),
- ('false_northing', <CF Data: -100 km>),
- ('longitude_of_projection_origin', 80.5)]
->>> c['latitude_of_projection_origin']
-5
->>> c['latitude_of_projection_origin'] = -75.25
->>> c['latitude_of_projection_origin']
--75.25
-
-
-**Attributes**
-
-==============  ======================================================
-
-Attribute       Description
-==============  ======================================================
-`!name`         The identity of the coordinate reference.
-
-`!type`         The CF type of the coordinate reference. 
-
-`!coordinates`  The identities of the dimension and auxiliary
-                coordinate objects of the which apply to this
-                coordinate reference. 
-
-==============  ======================================================
 
     '''
     _Data = Data
@@ -158,7 +104,8 @@ Attribute       Description
     _non_constant_terms = _non_constant_terms
     
     def __init__(self, name=None, crtype=None, coordinates=None,
-                 domain_ancillaries=None, parameters=None, datum=None):
+                 domain_ancillaries=None, parameters=None, datum=None,
+                 source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -210,93 +157,18 @@ Attribute       Description
         >>> c.coordinates
         {'ncvar%lat', 'latitude', 'longitude', 'projection_x_coordinate', 'projection_y_coordinate'}
 
-    kwargs: *optional*
-        The terms of the coordinate conversion and their values. A
-        term's value may be one of the following:
-
-          * A number or size one numeric array.
-
-          * A string containing a coordinate object's identity.
-
-          * A Field.
- 
-          * `None`, indicating that the term exists but is unset.
-
-        For example:
-
-        >>> c = CoordinateReference('orthographic', 
-        ...                         grid_north_pole_latitude=70,
-        ...                         grid_north_pole_longitude=cf.Data(120, 'degreesE'))
-        >>> c['grid_north_pole_longitude']
-        <CF Data: 120 degreesE>
-
-        >>> orog_field
-        <Field: surface_altitude(latitude(73), longitude(96)) m>
-        >>> c = CoordinateReference('atmosphere_hybrid_height_coordinate',
-        ...                          a='long_name:ak',
-        ...                          b='long_name:bk',
-        ...                          orog=orog_field)
-
         '''
-        self._terms = {}
-        
-        t = self._type.get(name, None)
-        if t is None:
-            pass
-        elif crtype is None:
-            crtype = t
-        elif t != crtype:
-            raise ValueError(" 888 askjdalsjkdnlaksjd lasdna")
+        super(CoordinateReference, self).__init__(
+            name=name,
+            coordinates=coordinates,
+            domain_ancillaries=domain_ancillaries,
+            parameters=parameters,
+            datum=datum, source=source, copy=copy)
 
-        self._crtype = crtype
-        self._ncvar  = None
-        
-        self.datum = datum
-
-        self._coordinates = set() #self._name_to_coordinates.get(name, ()))
-        if coordinates:
-            self._coordinates.update(coordinates)
-
-        self._parameters  = set()
-        self._domain_ancillaries = set()
-
-        if crtype == 'formula_terms':
-            self.set_term('parameter', 'standard_name', name)
-        elif crtype == 'grid_mapping':
-            self.set_term('parameter', 'grid_mapping_name', name)
-
-        if parameters:
-            for term, value in parameters.iteritems():
-                self.set_term('parameter', term, value)
-                
-        if domain_ancillaries: 
-            for term, value in domain_ancillaries.iteritems():
-                self.set_term('domainancillary', term, value)
+        if crtype is not None:
+            self.set_type(crtype)
     #--- End: def
    
-    def __delitem__(self, key):
-        '''
-
-x.__delitem__(key) <==> del x[key]
-
-'''
-        self._parameters.discard(key)
-        self._domain_ancillaries.discard(key)
-
-        super(CoordinateReference, self).__delitem__(key)
-    #--- End: def
-
-    def __repr__(self):
-        '''
-
-The built-in function `repr`
-
-x.__repr__() <==> repr(x)
-
-''' 
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
     def __str__(self):
         '''
 
@@ -789,27 +661,6 @@ True if two instances are equal, False otherwise.
         return True
     #--- End: def
 
-    @property
-    def domain_ancillaries(self):
-        out = {}
-        for term in self._domain_ancillaries:
-            out[term] = self.get_term(term)
-        return out
-    #--- End: def
-
-    @property
-    def parameters(self):
-        out = {}
-        for term in self._parameters:
-            out[term] = self.get_term(term)
-        return out
-    #--- End: def
-
-    @property
-    def coordinates(self):
-        return self._coordinates.copy()
-    #--- End: def
-
     def identity(self, default=None):
         '''Return the identity of the coordinate reference.
 
@@ -839,18 +690,6 @@ reference.
         return self.name(default=default, identity=True)
     #--- End: def
 
-    def ncvar(self, *name):
-        '''
-        '''
-        if not name:
-            return self._ncvar
-
-        name = name[0]
-        self._ncvar = name
-
-        return name
-    #--- End: def
-    
     def name(self, default=None, identity=False, ncvar=False):
         '''Return a name.
 
@@ -900,8 +739,9 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
         return default
     #--- End: def
 
+    # Not included?
     def change_identifiers(self, identity_map, coordinate=True,
-                           domainancillary=True, strict=False, copy=True):
+                           domain_ancillary=True, strict=False, copy=True):
         '''Change the
 
 ntifier is not in the provided mapping then it is
@@ -948,24 +788,23 @@ reference.
         if strict:
             default = None
 
-        if domainancillary:
-            for term in r._domain_ancillaries:
-                identifier = self.get_term(term)
+        if domain_ancillary:
+            for term, identifier in r.domain_ancillaries().iteritems():
                 if not strict:
                     default = identifier
-                self.set_term('domainancillary',
-                              term, identity_map.get(identifier, default))
 
+                self.set_domain_ancillary(term,
+                                          identity_map.get(identifier, default))
+        #--- End: if
+        
         if coordinate:
-            coordinates = []
-            for identifier in r._coordinates:
+            for identifier in r._get_attribute('coordinates'):
                 if not strict:
                     default = identifier
-                coordinates.append(identity_map.get(identifier, default))
-            
-            coordinates = set(coordinates)
-            coordinates.discard(None)
-            r._coordinates = coordinates
+
+                self.remove_coordinate(identifier)
+                self.insert_coordinate(identity_map.get(identifier, default))
+        #--- End: def
 
         return r
     #---End: def
@@ -1113,6 +952,24 @@ reference.
 #        return not bool(inverse)
 #    #--- End: def
 
+
+    def del_type(self):
+        '''
+'''
+        self._del_attribute('type')
+    #--- End: def
+
+    def get_type(self, *default):
+        '''
+'''
+        self._get_attribute('type', *default)
+    #--- End: def
+
+    def set_type(self, value):
+        '''
+'''
+        self._set_attribute('type', value)
+    #--- End: def
 
     def properties(self):
         '''

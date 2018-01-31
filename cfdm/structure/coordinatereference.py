@@ -1,77 +1,76 @@
-import os
+from collections import abc
 
-from copy import deepcopy
-from csv  import reader as csv_reader
-from re   import match as re_match
+#import os
+#
+#from csv  import reader as csv_reader
+#from re   import match as re_match
 
-from .          import __file__
-from .functions import RTOL, ATOL, equals, allclose
+#from .          import __file__
+#from .functions import RTOL, ATOL, equals, allclose
 #from .units     import Units
 
 import .abstract
 
-from .data.data import Data
-
-# --------------------------------------------------------------------
-# Map coordinate conversion names to their CF-netCDF types
-# --------------------------------------------------------------------
-_cf_types = {}
-_file = os.path.join(os.path.dirname(__file__),
-                     'etc/coordinate_reference/type.txt')
-for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
-    if not x or x[0] == '#':
-        continue
-    _cf_types[x[0]] = x[1]
-
-# --------------------------------------------------------------------
-# Map coordinate conversion names to the set of coordinates to which
-# they apply
-# --------------------------------------------------------------------
-_name_to_coordinates = {}
-_file = os.path.join(os.path.dirname(__file__),
-                     'etc/coordinate_reference/coordinates.txt')
-for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
-    if not x or x[0] == '#':
-        continue
-    _name_to_coordinates[x[0]] = set(x[1:])
-
-# --------------------------------------------------------------------
-# Map coordinate conversion terms to their terms default values
-# --------------------------------------------------------------------
-_default_values = {}
-_file = os.path.join(os.path.dirname(__file__),
-                     'etc/coordinate_reference/default_values.txt')
-for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
-    if not x or x[0] == '#':
-        continue
-    _default_values[x[0]] = float(x[1])
-
 ## --------------------------------------------------------------------
-## Map coordinate conversion terms to their canonical units
+## Map coordinate conversion names to their CF-netCDF types
 ## --------------------------------------------------------------------
-#_canonical_units = {}
+#_cf_types = {}
 #_file = os.path.join(os.path.dirname(__file__),
-#                     'etc/coordinate_reference/canonical_units.txt')
+#                     'etc/coordinate_reference/type.txt')
 #for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
 #    if not x or x[0] == '#':
 #        continue
-#    try:
-#        _canonical_units[x[0]] = Units(x[1]) # DCH 
-#    except:
-#        _canonical_units[x[0]] = x[1]
-
-# --------------------------------------------------------------------
-# Map coordinate reference names to their terms which may take
-# non-constant values (i.e. pointers to coordinate objects or
-# non-scalar field objects).
-# --------------------------------------------------------------------
-_non_constant_terms = {}
-_file = os.path.join(os.path.dirname(__file__),
-                     'etc/coordinate_reference/non_constant_terms.txt')
-for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
-    if not x or x[0] == '#' or len(x) == 1:
-        continue
-    _non_constant_terms[x[0]] = set(x[1:])
+#    _cf_types[x[0]] = x[1]
+#
+## --------------------------------------------------------------------
+## Map coordinate conversion names to the set of coordinates to which
+## they apply
+## --------------------------------------------------------------------
+#_name_to_coordinates = {}
+#_file = os.path.join(os.path.dirname(__file__),
+#                     'etc/coordinate_reference/coordinates.txt')
+#for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+#    if not x or x[0] == '#':
+#        continue
+#    _name_to_coordinates[x[0]] = set(x[1:])
+#
+## --------------------------------------------------------------------
+## Map coordinate conversion terms to their terms default values
+## --------------------------------------------------------------------
+#_default_values = {}
+#_file = os.path.join(os.path.dirname(__file__),
+#                     'etc/coordinate_reference/default_values.txt')
+#for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+#    if not x or x[0] == '#':
+#        continue
+#    _default_values[x[0]] = float(x[1])
+#
+### --------------------------------------------------------------------
+### Map coordinate conversion terms to their canonical units
+### --------------------------------------------------------------------
+##_canonical_units = {}
+##_file = os.path.join(os.path.dirname(__file__),
+##                     'etc/coordinate_reference/canonical_units.txt')
+##for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+##    if not x or x[0] == '#':
+##        continue
+##    try:
+##        _canonical_units[x[0]] = Units(x[1]) # DCH 
+##    except:
+##        _canonical_units[x[0]] = x[1]
+#
+## --------------------------------------------------------------------
+## Map coordinate reference names to their terms which may take
+## non-constant values (i.e. pointers to coordinate objects or
+## non-scalar field objects).
+## --------------------------------------------------------------------
+#_non_constant_terms = {}
+#_file = os.path.join(os.path.dirname(__file__),
+#                     'etc/coordinate_reference/non_constant_terms.txt')
+#for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+#    if not x or x[0] == '#' or len(x) == 1:
+#        continue
+#    _non_constant_terms[x[0]] = set(x[1:])
 
 
 # ====================================================================
@@ -83,83 +82,74 @@ for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
 #_units = {}
 
 class CoordinateReference(abstract.Properties):
-    '''A coordinate reference construct of the CF data model.
+    '''A coordinate reference construct of the CF data model. 
 
-A coordinate reference construct relates the field's coordinate values
-to locations in a planetary reference frame.
+The domain of a field construct may contain various coordinate
+systems, each of which is constructed from a subset of the dimension
+and auxiliary coordinate constructs. For example, the domain of a
+four-dimensional field construct may contain horizontal (y–x),
+vertical (z), and temporal (t) coordinate systems. There may be more
+than one of each of these, if there is more than one coordinate
+construct applying to a particular spatiotemporal dimension (for
+example, there could be both latitude–longitude and y–x projection
+coordinate systems). In general, a coordinate system may be
+constructed implicitly from any subset of the coordinate constructs,
+yet a coordinate construct does not need to be explicitly or
+exclusively associated with any coordinate system.
 
-The coordinate reference object is associated with a coordinate system
-and contains links to the dimension or auxiliary coordinate constructs
-to which it applies; and any additional terms, such as scalar values
-and field objects which define a datum and coordinate conversion,
-i.e. a formula for converting coordinate values taken from the
-dimension or auxiliary coordinate objects to a different coordinate
-system.
+A coordinate system of the field construct can be explicitly defined
+by a coordinate reference construct which relates the coordinate
+values of the coordinate system to locations in a planetary reference
+frame and consists of the following:
 
-**Accessing terms**
+  * The dimension coordinate and auxiliary coordinate constructs that
+    define the coordinate system to which the coordinate reference
+    construct applies. Note that the coordinate values are not
+    relevant to the coordinate reference construct, only their
+    properties.
 
-The coordinate reference object behaves like a dictionary when it
-comes to accessing its terms and their values: For example:
+  * A definition of a datum specifying the zeroes of the dimension and
+    auxiliary coordinate constructs which define the coordinate
+    system. The datum may be explicitly indicated via properties, or
+    it may be implied by the metadata of the contained dimension and
+    auxiliary coordinate constructs. Note that the datum may contain
+    the definition of a geophysical surface which corresponds to the
+    zero of a vertical coordinate construct, and this may be required
+    for both horizontal and vertical coordinate systems.
 
->>> c = cf.CoordinateReference('azimuthal_equidistant', 
-...                             longitude_of_projection_origin=80.5,
-...                             latitude_of_projection_origin=5, 
-...                             false_easting=cf.Data(-200, 'km'),
-...                             false_northing=cf.Data(-100, 'km'))
->>> c.keys()
-['false_easting',
- 'latitude_of_projection_origin',
- 'false_northing',
- 'longitude_of_projection_origin']
->>> c.items()
-[('false_easting', <CF Data: -200 km>),
- ('latitude_of_projection_origin', 5),
- ('false_northing', <CF Data: -100 km>),
- ('longitude_of_projection_origin', 80.5)]
->>> c['latitude_of_projection_origin']
-5
->>> c['latitude_of_projection_origin'] = -75.25
->>> c['latitude_of_projection_origin']
--75.25
-
-
-**Attributes**
-
-==============  ======================================================
-
-Attribute       Description
-==============  ======================================================
-`!name`         The identity of the coordinate reference.
-
-`!type`         The CF type of the coordinate reference. 
-
-`!coordinates`  The identities of the dimension and auxiliary
-                coordinate objects of the which apply to this
-                coordinate reference. 
-
-==============  ======================================================
+  * A coordinate conversion, which defines a formula for converting
+    coordinate values taken from the dimension or auxiliary coordinate
+    constructs to a different coordinate system. A term of the
+    conversion formula can be a scalar or vector parameter which does
+    not depend on any domain axis constructs, may have units (such as
+    a reference pressure value), or may be a descriptive string (such
+    as the projection name "mercator"), or it can be a domain
+    ancillary construct (such as one containing spatially varying
+    orography data) A coordinate reference construct relates the
+    field's coordinate values to locations in a planetary reference
+    frame.
 
     '''
-    _Data = Data
+    __metaclass__ = abc.ABCMeta
     
-    # Map coordinate conversion names to their CF-netCDF types
-    _cf_types = _cf_types
-    
-    # Map coordinate conversion names to their
-    _name_to_coordinates = _name_to_coordinates
-    
-    # Map coordinate conversion terms to their terms default values
-    _default_values = _default_values
-    
+#    # Map coordinate conversion names to their CF-netCDF types
+#    _cf_types = _cf_types
+#    
+#    # Map coordinate conversion names to their
+#    _name_to_coordinates = _name_to_coordinates
+#    
+#    # Map coordinate conversion terms to their terms default values
+#    _default_values = _default_values
+#    
 #    # Map coordinate conversion terms to their canonical units
 #    _canonical_units = _canonical_units
+#    
+#    # Map coordinate reference names to their terms which may take
+#    # non-constant values (i.e. pointers to coordinate objects or
+#    # non-scalar field objects).
+#    _non_constant_terms = _non_constant_terms
     
-    # Map coordinate reference names to their terms which may take
-    # non-constant values (i.e. pointers to coordinate objects or
-    # non-scalar field objects).
-    _non_constant_terms = _non_constant_terms
-    
-    def __init__(self, name=None, crtype=None, coordinates=None,
+    def __init__(self, name=None, coordinates=None,
                  domain_ancillaries=None, parameters=None, datum=None,
                  source=None, copy=True):
         '''**Initialization**
@@ -213,39 +203,11 @@ Attribute       Description
         >>> c.coordinates
         {'ncvar%lat', 'latitude', 'longitude', 'projection_x_coordinate', 'projection_y_coordinate'}
 
-    kwargs: *optional*
-        The terms of the coordinate conversion and their values. A
-        term's value may be one of the following:
-
-          * A number or size one numeric array.
-
-          * A string containing a coordinate object's identity.
-
-          * A Field.
- 
-          * `None`, indicating that the term exists but is unset.
-
-        For example:
-
-        >>> c = CoordinateReference('orthographic', 
-        ...                         grid_north_pole_latitude=70,
-        ...                         grid_north_pole_longitude=cf.Data(120, 'degreesE'))
-        >>> c['grid_north_pole_longitude']
-        <CF Data: 120 degreesE>
-
-        >>> orog_field
-        <Field: surface_altitude(latitude(73), longitude(96)) m>
-        >>> c = CoordinateReference('atmosphere_hybrid_height_coordinate',
-        ...                          a='long_name:ak',
-        ...                          b='long_name:bk',
-        ...                          orog=orog_field)
-
         '''
 
         self._coordinates        = set()
-        self._parameters         = set()
-        self._domain_ancillaries = set()
-#        self._terms              = {}
+        self._parameters         = {}
+        self._domain_ancillaries = {}
         
         if source:
             if not isinstance(source, CoordinateReference):
@@ -253,42 +215,49 @@ Attribute       Description
 "ERROR: source must be a subclass of 'CoordinateReference'. Got {!r}".format(
     source.__class__.__name__))
 
-            if name is None:
-                name = source.get_formula(None)
-            
-            # not structure
-            if crtype is None:
-                crtype = source.get_type(None)
-#            source_type = source.get_type(None)
-#            if source_type is not None:
-#                self.set_type(source_type)            
-            
-            for coordinate in source.coordinates():
-                self.insert_coordinate(coordinate)
+#            # not structure
+#            if crtype is None:
+#                crtype = source.get_type(None)
 
+            if coordinates is None:
+                coordinates = source.coordinates()
+            else:
+                coordinates = set(coordinates)
+                coordinates.update(source.coordinates())
+                
             if datum is None:
                 datum = source.get_datum(None)
 
-            for term, value in source.parameters().iteritems():
-                self.set_parameter(term, value)
+            if name is None:
+                name = source.get_name(None)
+            
+            if parameters is None:
+                parameters = source.parameters()
+            else:
+                parameters = parameters.copy()
+                parameters.update(source.parameters())
 
-            for term, value in source.domain_ancillaries().iteritems():
-                self.set_domain_ancillary(term, value)
+            if domain_ancillaries is None:
+                domain_ancillaries = source.domain_ancillaries()
+            else:
+                domain_ancillaries = domain_ancillaries.copy()
+                domain_ancillaries.update(source.domain_ancillaries())
         #--- End: if
 
-        # structure
-        cf_type = self._cf_types.get(name, None)
-        if cf_type is not None:
-            if crtype is None:
-                crtype = cf_type
-            elif cf_type != crtype:
-                raise ValueError(" 888 askjdalsjkdnlaksjd lasdna")
-        #--- End: if
-        self._crtype = crtype      
-        if crtype == 'formula_terms':
-            self.set_term('parameter', 'standard_name', name)
-        elif crtype == 'grid_mapping':
-            self.set_term('parameter', 'grid_mapping_name', name)
+#        # not structure
+#        cf_type = self._cf_types.get(name, None)
+#        if cf_type is not None:
+#            if crtype is None:
+#                crtype = cf_type
+#            elif cf_type != crtype:
+#                raise ValueError(" 888 askjdalsjkdnlaksjd lasdna")
+#        #--- End: if
+#        self._crtype = crtype
+#        
+#        if crtype == 'formula_terms':
+#            self.set_term('parameter', 'standard_name', name)
+#        elif crtype == 'grid_mapping':
+#            self.set_term('parameter', 'grid_mapping_name', name)
 
         if coordinates is not None:
             for value in coordinates:
@@ -298,7 +267,7 @@ Attribute       Description
             self.set_datum(datum)
 
         if name is not None:
-            self.set_formula(name)
+            self.set_name(name)
                          
         if parameters is not None:
             for term, value in parameters.iteritems():
@@ -309,58 +278,13 @@ Attribute       Description
                 self.set_domain_ancillary(term, value)
     #--- End: def
    
-    def __delitem__(self, key):
-        '''
-
-x.__delitem__(key) <==> del x[key]
-
-'''
-        self._parameters.discard(key)
-        self._domain_ancillaries.discard(key)
-
-        super(CoordinateReference, self).__delitem__(key)
-    #--- End: def
-
-    def __repr__(self):
-        '''
-
-The built-in function `repr`
-
-x.__repr__() <==> repr(x)
-
-''' 
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
     def __str__(self):
-        '''
+        '''x.__str__() <==> str(x)
 
-The built-in function `str`
-
-x.__str__() <==> str(x)
-
-'''    
+        '''    
         return self.identity('')
     #--- End: def
 
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def hasbounds(self):
-#        '''
-#
-#False. Coordinate reference objects do not have cell bounds.
-#
-#:Examples:
-#
-#>>> c.hasbounds
-#False
-#
-#'''
-#        return False
-#    #--- End: def
-#
 #    def canonical(self, field=None):
 #        '''
 #'''
@@ -418,122 +342,90 @@ x.__str__() <==> str(x)
 #        '''
 #        return cls._canonical_units.get(term, None)
 #    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def T(self):
-#        '''
-#
-#False. Coordinate reference objects are not T coordinates.
-#
-#.. seealso:: `cf.Coordinate.T`, `X`, `~cf.CoordinateReference.Y`, `Z`
-#
-#:Examples:
-#
-#>>> c.T
-#False
-#
-#'''              
-#        return False
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def X(self):
-#        '''
-#
-#False. Coordinate reference objects are not X coordinates.
-#
-#Provides compatibility with the `cf.Coordinate` API.
-#
-#.. seealso:: `cf.Coordinate.X`, `T`, `~cf.CoordinateReference.Y`, `Z`
-#
-#:Examples:
-#
-#>>> c.X
-#False
-#
-#'''              
-#        return False
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def Y(self):
-#        '''
-#
-#False. Coordinate reference objects are not Y coordinates.
-#
-#.. seealso:: `cf.Coordinate.Y`, `T`, `X`, `Z`
-#
-#:Examples:
-#
-#>>> c.Y
-#False
-#
-#'''              
-#        return False
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def Z(self):
-#        '''
-#
-#False. Coordinate reference objects are not Z coordinates.
-#
-#.. seealso:: `cf.Coordinate.Z`, `T`, `X`, `~cf.CoordinateReference.Y`
-#
-#:Examples:
-#
-#>>> c.Z
-#False
-#
-#'''              
-#        return False
-#    #--- End: def
-#
-#    def close(self):
-#        '''
-#
-#Close all files referenced by coordinate conversion term values.
-#
-#:Returns:
-#
-#    None
-#
-#:Examples:
-#
-#>>> c.close()
-#
-#'''
-#        pass
-#    #--- End: def
+
+    def coordinates(self):
+        '''
+        '''
+        return self._get_attribute('coordinates').copy()
+    #--- End: def
 
     def del_datum(self):
         '''
-'''
+        '''
         return self._del_attribute('datum')
     #--- End: def
     
+    def del_name(self):
+        '''
+        '''
+        return self._del_attribute('name')
+    #--- End: def
+    
+    def del_term(self, term)
+        '''
+        '''        
+        d = self._get_attribute('domain_ancillaries')
+        if term in d:
+            return d.pop(term, None)
+        
+        d = self._get_attribute('parameters')
+        if term in d:
+            return d.pop(term, None)
+    #--- End: def
+
+    def domain_ancillaries(self):
+        '''
+        '''
+        return self._get_attribute('domain_ancillaries').copy()
+    #--- End: def
+
     def get_datum(self, *default):
         '''
-'''
+        '''
         return self._get_attribute('datum', *default)
     #--- End: def
 
-    def set_datum(self, value):
+    def get_name(self, value, *default):
         '''
-'''
-        self._set_attribute('datum', value))
+        '''
+        self._get_attribute('name', *default)
+    #--- End: def
+
+    def get_term(self, term, *default):
+        '''
+        '''
+        d = self._get_attribute('domain_ancillaries')
+        if term not in d:
+            d = self._get_attribute('parameters')
+
+        if default:
+            return d.get(term, default[0])
+
+        try:
+            return d[term]
+        except KeyError:
+            raise AttributeError("{} doesn't have formula term {}".format(
+                self.__class__.__name__, term))
+    #--- End: def
+    
+    def has_term(self, term):
+        '''
+        '''
+        return (term in self._get_attribute('domain_ancillaries') or
+                term in self._get_attribute('parameters'))
+    #--- End: def
+
+    def insert_coordinate(self, coordinate):
+        '''
+        '''
+        c = self._get_attribute('coordinates')
+        c.add(coordinate)
+    #--- End: def
+
+    def parameters(self):
+        '''
+        '''
+        return self._get_attribute('parameters').copy()
     #--- End: def
 
     def remove_coordinate(self, coordinate):
@@ -543,58 +435,38 @@ x.__str__() <==> str(x)
         c.discard(coordinate)
     #--- End: def
     
-    def insert_coordinate(self, coordinate):
+    def set_datum(self, value):
         '''
-        '''
-        c = self._get_attribute('coordinates')
-        c.add(coordinate)
-        self._set_attribute('coordinates', c)
+'''
+        self._set_attribute('datum', value)
     #--- End: def
 
-    def copy(self):
+    def set_domain_ancillary(self, term, value):
         '''
+        '''
+        self._get_attribute('domain_ancillaries')[term] = value
+    #--- End: def
+    
+    def set_name(self, value):
+        '''
+'''
+        self._set_attribute('name', value)
+    #--- End: def
 
-Return a deep copy.
-
-``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
-
-:Examples 1:
-
->>> d = c.copy()
-
-:Returns:
-
-    out:
-        The deep copy.
-
-'''       
-        X = type(self)
-        new = X.__new__(X)
-
-        new.type = self.type
-
-        new.datum = deepcopy(self.datum)
-
-        new._crtype = self._crtype
-        new._ncvar  = self._ncvar
-        
-        new._coordinates        = self._coordinates.copy()
-        new._parameters         = self._parameters.copy()
-        new._domain_ancillaries = self._domain_ancillaries.copy()
-
-        terms = {}        
-        for term, value in self._terms.iteritems():
-            c = getattr(value, 'copy', None)
-            if c is None:
-                terms[term] = value
-            else:
-                terms[term] = value.copy()
-        #--- End: for
-        new._terms = terms
-                
-        return new
-    #---End: def
-
+    def set_parameter(self, term, value):
+        '''
+'''
+        self._get_attribute('parameters')[term] = value
+    #--- End: def
+    
+    def terms(self):
+        '''
+        '''
+        out = self.parameters()
+        out.update(self._get_attribute('domain_ancillaries'))
+        return out
+    #--- End: def
+    
 #    @classmethod
 #    def default_value(cls, term):
 #        '''
@@ -626,79 +498,6 @@ Return a deep copy.
 #        return cls._default_values.get(term, 0.0)
 #    #--- End: def
 
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
-        '''Return a string containing a full description of the coordinate
-reference object.
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
-
-    field: `cf.Field`, optional
-
-    key: `str`, optional
-        Ignored.
-
-:Returns:
-
-    out: `None` or `str`
-
-:Examples:
-
-        '''          
-        indent0 = '    ' * _level
-        indent1 = '    ' * (_level+1)
-        indent2 = '    ' * (_level+2)
-
-        if _title is None:
-            string = ['{0}Coordinate Reference: {1}'.format(indent0, self.name(''))]
-        else:
-            string = [indent0 + _title]
-
-        # Parameter-valued terms
-        for term in sorted(self._parameters):
-            string.append("{0}{1} = {2}".format(indent1, term, self.get_term(term)))
-
-        # Domain ancillary-valued terms
-        if field:
-            for term in sorted(self._domain_ancillaries):
-                value = field.domain_ancillaries().get(self.get_term(term))
-                if value is not None:
-                    value = 'Domain Ancillary: '+value.name('')
-                else:
-                    value = ''
-                string.append('{0}{1} = {2}'.format(indent1, term, str(value)))
-        else:
-            for term, value in self.domain_ancillaries.iteritems():
-                string.append("{0}{1} = {2}".format(indent1, term, str(value)))
-
-        # Coordinates 
-        if field:
-            for identifier in sorted(self._coordinates):
-                coord = field.coordinates().get(identifier)
-                if coord is not None:
-                    if getattr(coord, 'isdimension', False):
-                        coord = 'Dimension Coordinate: '+coord.name('')
-                    else:
-                        coord = 'Auxiliary Coordinate: '+coord.name('')
-
-                    string.append('{0}Coordinate = {1}'.format(indent1, coord))
-        else:
-            for identifier in sorted(self._coordinates):
-                string.append('{0}Coordinate = {1}'.format(indent1, identifier))
-            
-        string = '\n'.join(string)
-       
-        if display:
-            print string
-        else:
-            return string
-    #--- End: def
-
     def type(self, *name):
         '''
         '''
@@ -711,175 +510,6 @@ reference object.
         self._crtype = name
 
         return name
-    #--- End: def
-
-            
-    def equals(self, other, rtol=None, atol=None, traceback=False, **kwargs):
-        '''
-
-True if two instances are equal, False otherwise.
-
-:Parameters:
-
-    other:
-        The object to compare for equality.
-
-    atol: `float`, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
-
-    rtol: `float`, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
-
-    ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
-
-    traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        instances differ.
-
-:Returns: 
-
-    out: `bool`
-        Whether or not the two instances are equal.
-
-:Examples:
-
-'''
-        if self is other:
-            return True
-        
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
-            if traceback:
-                print("{0}: Different types: {0}, {1}".format(
-                    self.__class__.__name__,
-                    other.__class__.__name__))
-            return False
-        #--- End: if
-   
-        # ------------------------------------------------------------
-        # Check the name
-        # ------------------------------------------------------------
-        if self.name() != other.name():
-            if traceback:
-                print("{}: Different names ({} != {})".format(
-                    self.__class__.__name__, self.name, other.name))
-            return False
-        #--- End: if
-                
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
-        # ------------------------------------------------------------
-        # Check that the same terms are present
-        # ------------------------------------------------------------
-        if set(self.terms()) != set(other.terms()):
-            if traceback:
-                print(
-                    "{}: Different collections of terms ({} != {})".format(
-                        self.__class__.__name__, set(self), set(other)))
-            return False
-        #--- End: if
-
-        # Check that the parameter terms match
-        parameter_terms0 = self.parameters
-        parameter_terms1 = other.parameters
-        if set(parameter_terms0) != set(parameter_terms1):
-            if traceback:
-                print(
-                    "{}: Different parameter-valued terms ({} != {})".format(
-                        self.__class__.__name__,
-                        set(parameter_terms0), set(parameter_terms1)))
-            return False
-        #--- End: if
-
-        # Check that the domain ancillary terms match
-        ancillary_terms0 = self.domain_ancillaries
-        ancillary_terms1 = other.domain_ancillaries
-        if set(ancillary_terms0) != set(ancillary_terms1):
-            if traceback:
-                print(
-                    "{}: Different ancillary-valued terms ({} != {})".format(
-                        self.__class__.__name__,
-                        set(ancillary_terms0), set(ancillary_terms1)))
-            return False
-        #--- End: if
-
-        for term, value0 in ancillary_terms0.iteritems():            
-            value1 = ancillary_terms1[term]  
-            if value0 is None or value1 is None and value1 != value0:
-                if traceback:
-                    print(
-                        "{}: Unequal {!r} domain ancillary terms ({!r} != {!r})".format( 
-                            self.__class__.__name__, term, value0, value1))
-                return False
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Check that the parameter term values are equal.
-        # ------------------------------------------------------------
-        coords0 = self._coordinates
-        coords1 = other._coordinates
-        if len(coords0) != len(coords1):
-            if traceback:
-                print(
-"{}: Different sized collections of coordinates ({} != {})".format(
-    self.__class__.__name__, len(coords0), len(coords1)))
-            return False
-        #--- End: if
-
-        for term, value0 in parameter_terms0.iteritems():            
-            value1 = parameter_terms1[term]  
-
-            if value0 is None and value1 is None:
-                # Term values are None in both coordinate
-                # references
-                continue
-                
-            if not equals(value0, value1, rtol=rtol, atol=atol,
-                          traceback=traceback, **kwargs):
-                if traceback:
-                    print(
-                        "{}: Unequal {!r} terms ({!r} != {!r})".format( 
-                            self.__class__.__name__, term, value0, value1))
-                return False
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Still here? Then the two coordinate references are as equal
-        # as can be ascertained in the absence of domains.
-        # ------------------------------------------------------------
-        return True
-    #--- End: def
-
-    @property
-    def domain_ancillaries(self):
-        '''
-        '''
-        out = {}
-        for term in self._get_attribute('domainancillaries'):
-            out[term] = self.get_term(term, None)
-            
-        return out
-    #--- End: def
-
-    def parameters(self):
-        out = {}
-        for term in self._get_attribute('parameters'):
-            out[term] = self.get_term(term, None)
-            
-        return out
-    #--- End: def
-
-    def coordinates(self):
-        '''
-        '''
-        return self._get_attribute('coordinates').copy()
     #--- End: def
 
     def identity(self, default=None):
@@ -973,7 +603,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
     #--- End: def
 
     def change_identifiers(self, identity_map, coordinate=True,
-                           domainancillary=True, strict=False, copy=True):
+                           domain_ancillary=True, strict=False, copy=True):
         '''Change the
 
 ntifier is not in the provided mapping then it is
@@ -1020,32 +650,34 @@ reference.
         if strict:
             default = None
 
-        if domainancillary:
-            for term in r._domain_ancillaries:
-                identifier = self.get_term(term)
+        if domain_ancillary:
+            for term, identifier in r._get_attribute('domain_ancillaries'):
                 if not strict:
                     default = identifier
-                self.set_term('domainancillary',
-                              term, identity_map.get(identifier, default))
 
+                self.set_domain_ancillary(term,
+                                          identity_map.get(identifier, default))
+        #--- End: if
+        
         if coordinate:
             coordinates = []
-            for identifier in r._coordinates:
+            for identifier in r._get_attribute('coordinates'):
                 if not strict:
                     default = identifier
+
                 coordinates.append(identity_map.get(identifier, default))
             
             coordinates = set(coordinates)
             coordinates.discard(None)
-            r._coordinates = coordinates
+            r._set_attribute('coordinates', coordinates)
 
         return r
     #---End: def
 
     def all_identifiers(self):
         '''
-'''
-        return self._coordinates.union(self._domain_ancillaries)
+        '''
+        return self.coordinates().union(self.domain_ancillaries())
     #--- End: def
 
     def clear(self, coordinates=True, parameters=True, domain_ancillaries=True):
@@ -1186,83 +818,5 @@ reference.
 #    #--- End: def
 
 
-    def del_term(self, term)
-        '''
-        '''        
-        d = self._get_attribute('domainancillaries')
-        if term in d:
-            return d.pop(term, None)
-        
-        d = self._get_attribute('parameters')
-        if term in d:
-            return d.pop(term, None)
-    #--- End: def
 
-    def get_term(self, term, *default):
-        '''
-        '''
-        d = self._get_attribute('domainancillaries')
-        if term not in d:
-            d = self._get_attribute('parameters')
-
-        if default:
-            return d.get(term, default[0])
-
-        try:
-            return d[term]
-        except KeyError:
-            raise AttributeError("{} doesn't have formula term {}".format(
-                self.__class__.__name__, term))
-    #--- End: def
-
-    def formula(self):
-        '''
-        '''
-        out = self.parameters()
-        out.update(self.domain_ancillaries())
-        return out
-#        return self._get_attribute('terms').copy()
-    #--- End: def
-
-    def has_term(self, term):
-        '''
-        '''
-        return term in self._get_attribute('terms')
-    #--- End: def
-
-#    def set_term(self, term_type, term, value):
-#        '''
-#'''
-#        parameters        = self._get_attribute('parameters')
-#        domainancillaries = self._get_attribute('domainancillaries')
-#
-#        if (term_type == 'domainancillary' and term in parameters or
-#            term_type == 'parameter' and term in domainancillaries):
-#            raise ValueError("Can't set key - already set with different type")
-#        
-#        if term_type == 'domainancillary':
-#            domainancillaries.add(term)
-#            self._get_attribute('domainancillaries')[term] = value
-#        elif term_type == 'parameter':
-#            parameters.add(term)
-#            self._get_attribute('parameters')[term] = value
-#        else:
-#            raise ValueError("Unknown term type: {}".format(term_type))
-#            
-##        self._get_attribute('terms')[term] = value
-#    #--- End: def
- 
-    def set_parameter(self, term, value):
-        '''
-'''
-        self._get_attribute('parameters')[term] = value
-    #--- End: def
-    
-    def set_domain_ancillary(self, term, value):
-        '''
-        '''
-        self._get_attribute('domainancillaries')[term] = value
-    #--- End: def
-    
 #--- End: class
-

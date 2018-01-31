@@ -127,8 +127,8 @@ Field objects are picklable.
                 ordered_constructs=('cellmethod',)
             )
         
-        self.set_constructs(constructs, copy=False)
-        self._data_axes = data_axes
+        self._set_constructs(constructs)
+        self.set_data_axes(data_axes)
 #--- End: def
     
     @property
@@ -381,8 +381,16 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
         out.update(self.auxiliary_coordinates(copy=copy))
         return out
     #--- End: def
-    
-    def data_axes(self):
+
+    def set_data_axes(self):
+        '''
+        '''
+        pass
+
+    def del_data_axes(self):
+        pass
+  
+    def get_data_axes(self):
         '''Return the domain axes for the data array dimensions.
         
 .. seealso:: `axes`, `axis`, `item_axes`
@@ -413,14 +421,14 @@ None
 []
 
         '''    
-        if not self.hasdata:
+        if not self.has_data():
             return None
         
-        return self._data_axes[:]
+        return self._get_attribute('data_axes')[:]
     #--- End: def
     
     def dimension_coordinates(self, copy=False):
-        return self.get_constructs().constructs('dimensioncoordinate', copy=copy)
+        return self._get_constructs().constructs('dimensioncoordinate', copy=copy)
     
     def domain_ancillaries(self, copy=False):
         return self.get_constructs().constructs('domainancillary', copy=copy)
@@ -635,7 +643,7 @@ None
 #            return string
 #    #--- End: def
 
-    def get_constructs(self, *default):
+    def _get_constructs(self, *default):
         '''
 .. versionadded:: 1.6
         
@@ -643,7 +651,7 @@ None
         return self._get_attribute('constructs', *default)
     #--- End: def
     
-    def set_constructs(self, constructs, copy=True):
+    def _set_constructs(self, constructs, copy=True):
         '''
 .. versionadded:: 1.6
         '''
@@ -653,7 +661,56 @@ None
         self._set_attribute('constructs', constructs)
     #--- End: def
     
-    def del_constructs(self):
+    def del_construct(self, key, *default):
+        '''
+        '''
+        constructs = self._get_constructs()
+        
+        # Remove domain axis
+        if key in self.domain_axes():
+            domain_axis = True
+            
+            if key in self.get_data_axes():
+                raise ValueError(
+"Can't remove domain axis that is spanned by the field's data")
+
+            for k, value in self.variable_axes().items():
+                if key in value:
+                    raise ValueError(
+"Can't remove domain axis that is spanned by {!r}".format(self.construct(k)))
+
+        else:
+            domain_axis = False
+
+        out = constructs.remove(key, None)
+        if out is not None:
+            out = out.copy()
+                      
+        # Remove reference to removed construct in coordiante
+        # reference constructs
+        for ref in self.coordinate_references.itervalues():
+            for term, value in ref.terms().iteritems():
+                if value == key:
+                    ref.set_term(term, None)
+        #--- End: for
+        
+        # Remove reference to removed construct in cell method
+        # constructs
+        if domain_axis:
+            for cm_key, cm in self.cell_methods.items():
+                axes = cm.get_axes()
+                if key not in axes:
+                    continue
+            
+                axes = list(axes)
+                axes.remove(key)
+                cm.set_axes(axes)
+        #--- End: if
+        
+        return out
+    #--- End: def
+        
+    def _del_constructs(self):
         '''
 
 .. versionadded:: 1.6
@@ -707,8 +764,9 @@ None
             raise ValueError(
 "Can't insert auxiliary coordinate object: Identifier {!r} already exists".format(key))
 
-        return self.get_constructs().set_construct('auxiliarycoordinate', item,
-                                                   key=key, axes=axes, copy=copy)
+        return self.set_construct('auxiliarycoordinate', item,
+                                  key=key, axes=axes,
+                                  copy=copy)
     #--- End: def
 
     def set_data(self, data, axes, copy=True, replace=True,
@@ -874,8 +932,8 @@ ValueError: Can't initialize data: Data already exists
 :Examples:
 
         '''
-        self.get_constructs().set_construct('cellmethod', cell_method,
-                                            key=key, copy=copy)
+        self.set_construct('cellmethod', cell_method, key=key,
+                           copy=copy)
     #--- End: def
 
     def set_domain_axis(self, domain_axis, key=None, replace=True, copy=True):
@@ -917,8 +975,8 @@ ValueError: Can't initialize data: Data already exists
 "Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
     key, domain_axis.size, axes[key].size))
 
-        return self.get_constructs().set_construct('domainaxis', domain_axis,
-                                                   key=key, copy=copy)
+        return self.set_construct('domainaxis', domain_axis, key=key,
+                                  copy=copy)
     #--- End: def
 
     def set_field_ancillary(self, construct, key=None, axes=None,
@@ -936,12 +994,13 @@ ValueError: Can't initialize data: Data already exists
             if key is None:
                 raise ValueError("Must specify which construct to replace")
 
-            return self.get_constructs().replace(construct, key, axes=axes,
+            return self._get_constructs().replace(construct, key, axes=axes,
                                                  copy=copy)
         #--- End: if
         
-        return self.get_constructs().set_construct('fieldancillary', construct, key=key,
-                                                   axes=axes, copy=copy)
+        return self.set_construct('fieldancillary', construct,
+                                  key=key, axes=axes,
+                                  copy=copy)
     #--- End: def
 
     def set_domain_ancillary(self, item, key=None, axes=None,
@@ -954,10 +1013,18 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
 
-        return self.get_constructs().set_construct('domainancillary',
-                                                   item, key=key,
-                                                   axes=axes,
-                                                   copy=copy)
+        return self.set_construct('domainancillary', item, key=key,
+                                  axes=axes,
+                                  copy=copy)
+    #--- End: def
+
+    def set_construct(self, type, item, key=None, axes=None,
+                      copy=True):
+        '''
+        '''
+        self._get_constructs().set_construct(type, item, key=key,
+                                             axes=axes,
+                                             copy=copy)
     #--- End: def
 
     def set_cell_measure(self, item, key=None, axes=None, copy=True, replace=True):
@@ -1003,8 +1070,8 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert cell measure object: Identifier {0!r} already exists".format(key))
 
-        return self.get_constructs().set_construct('cellmeasure', item, key=key,
-                                                   axes=axes, copy=copy)
+        return self.set_construct('cellmeasure', item, key=key,
+                                  axes=axes, copy=copy)
     #--- End: def
 
     def set_coordinate_reference(self, item, key=None, axes=None,
@@ -1045,8 +1112,8 @@ ValueError: Can't initialize data: Data already exists
 >>>
 
         '''
-        return self.get_constructs().set_construct('coordinatereference',
-                                                   item, key=key, copy=copy)
+        return self.set_construct('coordinatereference', item,
+                                  key=key, copy=copy)
     #--- End: def
 
     def set_dimension_coordinate(self, item, key=None, axes=None, copy=True, replace=True):
@@ -1093,9 +1160,9 @@ ValueError: Can't initialize data: Data already exists
             raise ValueError(
 "Can't insert dimension coordinate object: Identifier {!r} already exists".format(key))
 
-        return self.get_constructs().set_construct('dimensioncoordinate',
-                                                   item, key=key, axes=axes,
-                                                   copy=copy)
+        return self.set_construct('dimensioncoordinate', item,
+                                  key=key, axes=axes,
+                                  copy=copy)
     #--- End: def
 
     def remove_data(self):
