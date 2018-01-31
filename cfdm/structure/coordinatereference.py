@@ -8,18 +8,20 @@ from .          import __file__
 from .functions import RTOL, ATOL, equals, allclose
 #from .units     import Units
 
+import .abstract
+
 from .data.data import Data
 
 # --------------------------------------------------------------------
 # Map coordinate conversion names to their CF-netCDF types
 # --------------------------------------------------------------------
-_type = {}
+_cf_types = {}
 _file = os.path.join(os.path.dirname(__file__),
                      'etc/coordinate_reference/type.txt')
 for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
     if not x or x[0] == '#':
         continue
-    _type[x[0]] = x[1]
+    _cf_types[x[0]] = x[1]
 
 # --------------------------------------------------------------------
 # Map coordinate conversion names to the set of coordinates to which
@@ -80,8 +82,8 @@ for x in csv_reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
 
 #_units = {}
 
-class CoordinateReference(AbstractProperties):
-    '''A CF coordinate reference construct.
+class CoordinateReference(abstract.Properties):
+    '''A coordinate reference construct of the CF data model.
 
 A coordinate reference construct relates the field's coordinate values
 to locations in a planetary reference frame.
@@ -141,7 +143,7 @@ Attribute       Description
     _Data = Data
     
     # Map coordinate conversion names to their CF-netCDF types
-    _type = _type
+    _cf_types = _cf_types
     
     # Map coordinate conversion names to their
     _name_to_coordinates = _name_to_coordinates
@@ -158,7 +160,8 @@ Attribute       Description
     _non_constant_terms = _non_constant_terms
     
     def __init__(self, name=None, crtype=None, coordinates=None,
-                 domain_ancillaries=None, parameters=None, datum=None):
+                 domain_ancillaries=None, parameters=None, datum=None,
+                 source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -238,40 +241,72 @@ Attribute       Description
         ...                          orog=orog_field)
 
         '''
-        self._terms = {}
-        
-        t = self._type.get(name, None)
-        if t is None:
-            pass
-        elif crtype is None:
-            crtype = t
-        elif t != crtype:
-            raise ValueError(" 888 askjdalsjkdnlaksjd lasdna")
 
-        self._crtype = crtype
-        self._ncvar  = None
-        
-        self.datum = datum
-
-        self._coordinates = set() #self._name_to_coordinates.get(name, ()))
-        if coordinates:
-            self._coordinates.update(coordinates)
-
-        self._parameters  = set()
+        self._coordinates        = set()
+        self._parameters         = set()
         self._domain_ancillaries = set()
+#        self._terms              = {}
+        
+        if source:
+            if not isinstance(source, CoordinateReference):
+                raise ValueError(
+"ERROR: source must be a subclass of 'CoordinateReference'. Got {!r}".format(
+    source.__class__.__name__))
 
+            if name is None:
+                name = source.get_formula(None)
+            
+            # not structure
+            if crtype is None:
+                crtype = source.get_type(None)
+#            source_type = source.get_type(None)
+#            if source_type is not None:
+#                self.set_type(source_type)            
+            
+            for coordinate in source.coordinates():
+                self.insert_coordinate(coordinate)
+
+            if datum is None:
+                datum = source.get_datum(None)
+
+            for term, value in source.parameters().iteritems():
+                self.set_parameter(term, value)
+
+            for term, value in source.domain_ancillaries().iteritems():
+                self.set_domain_ancillary(term, value)
+        #--- End: if
+
+        # structure
+        cf_type = self._cf_types.get(name, None)
+        if cf_type is not None:
+            if crtype is None:
+                crtype = cf_type
+            elif cf_type != crtype:
+                raise ValueError(" 888 askjdalsjkdnlaksjd lasdna")
+        #--- End: if
+        self._crtype = crtype      
         if crtype == 'formula_terms':
             self.set_term('parameter', 'standard_name', name)
         elif crtype == 'grid_mapping':
             self.set_term('parameter', 'grid_mapping_name', name)
 
-        if parameters:
+        if coordinates is not None:
+            for value in coordinates:
+                self.insert_coordinate(value)
+        
+        if datum is not None:
+            self.set_datum(datum)
+
+        if name is not None:
+            self.set_formula(name)
+                         
+        if parameters is not None:
             for term, value in parameters.iteritems():
-                self.set_term('parameter', term, value)
+                self.set_parameter(term, value)
                 
-        if domain_ancillaries: 
+        if domain_ancillaries is not None: 
             for term, value in domain_ancillaries.iteritems():
-                self.set_term('domainancillary', term, value)
+                self.set_domain_ancillary(term, value)
     #--- End: def
    
     def __delitem__(self, key):
@@ -482,6 +517,39 @@ x.__str__() <==> str(x)
 #'''
 #        pass
 #    #--- End: def
+
+    def del_datum(self):
+        '''
+'''
+        return self._del_attribute('datum')
+    #--- End: def
+    
+    def get_datum(self, *default):
+        '''
+'''
+        return self._get_attribute('datum', *default)
+    #--- End: def
+
+    def set_datum(self, value):
+        '''
+'''
+        self._set_attribute('datum', value))
+    #--- End: def
+
+    def remove_coordinate(self, coordinate):
+        '''
+        '''
+        c = self._get_attribute('coordinates')
+        c.discard(coordinate)
+    #--- End: def
+    
+    def insert_coordinate(self, coordinate):
+        '''
+        '''
+        c = self._get_attribute('coordinates')
+        c.add(coordinate)
+        self._set_attribute('coordinates', c)
+    #--- End: def
 
     def copy(self):
         '''
@@ -791,23 +859,27 @@ True if two instances are equal, False otherwise.
 
     @property
     def domain_ancillaries(self):
+        '''
+        '''
         out = {}
-        for term in self._domain_ancillaries:
-            out[term] = self.get_term(term)
+        for term in self._get_attribute('domainancillaries'):
+            out[term] = self.get_term(term, None)
+            
         return out
     #--- End: def
 
-    @property
     def parameters(self):
         out = {}
-        for term in self._parameters:
-            out[term] = self.get_term(term)
+        for term in self._get_attribute('parameters'):
+            out[term] = self.get_term(term, None)
+            
         return out
     #--- End: def
 
-    @property
     def coordinates(self):
-        return self._coordinates.copy()
+        '''
+        '''
+        return self._get_attribute('coordinates').copy()
     #--- End: def
 
     def identity(self, default=None):
@@ -989,13 +1061,13 @@ reference.
 
         elif parameters:      
             for term in self._parameters:
-                self.pop_term(term)
+                self.del_term(term)
 
             self._parameters.clear()
 
         elif domain_ancillaries:            
             for term in self._domain_ancillaries:
-                self.pop_term(term)
+                self.del_term(term)
 
             self._domain_ancillaries.clear()
     #---End: def
@@ -1114,75 +1186,83 @@ reference.
 #    #--- End: def
 
 
-    def properties(self):
+    def del_term(self, term)
         '''
-    '''
-        return dict(self)
-    #--- End: def
-
-    def set_coordinate(self, coord):
-        self._coordinates.add(coord)
-    
-    def del_coordinate(self, coord):
-        self._coordinates.discard(coord)
-    
-    def set_term(self, term_type, term, value):
-        '''
-'''
-        if (term_type == 'domainancillary' and term in self._parameters or
-            term_type == 'parameter' and term in self._domain_ancillaries):
-            raise KeyError("Can't set key - already set with different type")
-
-        self._terms[term] = value
-
-        if term_type == 'domainancillary':
-            self._domain_ancillaries.add(term)
-        elif term_type == 'parameter':
-            self._parameters.add(term)
-    #--- End: def
-
-    def get_term(self, term):
-        '''
-'''
-        return self._terms[term]
-    #--- End: def
-
-    def pop_term(self, term, *default):
-        '''
-'''
-        self._domain_ancillaries.discard(term)
-        self._parameters.discard(term)
-
-        return self._terms.pop(term, *default)
-    #--- End: def
-
-    def del_term(self, term):
-        '''
-'''
-        del self._terms[term]
+        '''        
+        d = self._get_attribute('domainancillaries')
+        if term in d:
+            return d.pop(term, None)
         
-        self._domain_ancillaries.discard(term)
-        self._parameters.discard(term)
+        d = self._get_attribute('parameters')
+        if term in d:
+            return d.pop(term, None)
     #--- End: def
 
+    def get_term(self, term, *default):
+        '''
+        '''
+        d = self._get_attribute('domainancillaries')
+        if term not in d:
+            d = self._get_attribute('parameters')
+
+        if default:
+            return d.get(term, default[0])
+
+        try:
+            return d[term]
+        except KeyError:
+            raise AttributeError("{} doesn't have formula term {}".format(
+                self.__class__.__name__, term))
+    #--- End: def
+
+    def formula(self):
+        '''
+        '''
+        out = self.parameters()
+        out.update(self.domain_ancillaries())
+        return out
+#        return self._get_attribute('terms').copy()
+    #--- End: def
 
     def has_term(self, term):
         '''
-'''
-        return term in self._terms        
-    #--- End: def
-
-    @property
-    def conversion(self):
         '''
-'''        
-        return dict(self)
+        return term in self._get_attribute('terms')
     #--- End: def
 
-    def terms(self):
-        out = self.domain_ancillaries
-        out.update(self.parameters)
-        return set(out)
+#    def set_term(self, term_type, term, value):
+#        '''
+#'''
+#        parameters        = self._get_attribute('parameters')
+#        domainancillaries = self._get_attribute('domainancillaries')
+#
+#        if (term_type == 'domainancillary' and term in parameters or
+#            term_type == 'parameter' and term in domainancillaries):
+#            raise ValueError("Can't set key - already set with different type")
+#        
+#        if term_type == 'domainancillary':
+#            domainancillaries.add(term)
+#            self._get_attribute('domainancillaries')[term] = value
+#        elif term_type == 'parameter':
+#            parameters.add(term)
+#            self._get_attribute('parameters')[term] = value
+#        else:
+#            raise ValueError("Unknown term type: {}".format(term_type))
+#            
+##        self._get_attribute('terms')[term] = value
+#    #--- End: def
+ 
+    def set_parameter(self, term, value):
+        '''
+'''
+        self._get_attribute('parameters')[term] = value
+    #--- End: def
+    
+    def set_domain_ancillary(self, term, value):
+        '''
+        '''
+        self._get_attribute('domainancillaries')[term] = value
+    #--- End: def
     
 #--- End: class
 

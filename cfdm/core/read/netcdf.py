@@ -245,8 +245,9 @@ ancillaries, field ancillaries).
             compressed_ncdims = attributes[ncvar].get('compress', None)
             if compressed_ncdims is not None:
                 # This variable is a list variable for gathering arrays
-                self._read_parse_compression_gathered( ncvar,
-                                                       attributes, compressed_ncdims)
+                self._read_parse_compression_gathered(ncvar,
+                                                      attributes,
+                                                      compressed_ncdims)
                 variables.discard(ncvar)
             
             if g['global_attributes'].get('featureType'):
@@ -874,17 +875,11 @@ ancillaries, field ancillaries).
         # will need special processing once the domain has been defined
         cell_methods = properties.pop('cell_methods', None)
         if cell_methods is not None:
-            try:
-                cell_methods = self._CellMethod.parse(cell_methods)
-            except:
-                # Something went wrong whilst trying to parse the cell
-                # methods string
-                properties['nonCF_cell_methods'] = cell_methods
-                cell_methods = None
-                if verbose:
-                    print(
-"WARNING: Moving unsupported cell methods to 'nonCF_cell_methods': {0!r}".format(
-    cell_methods))
+            cell_methods = self._CellMethod.parse(cell_methods, allow_error=True)
+            error = cell_methods[0].get_error(False):
+            if verbose and error:
+                print ("WARNING: {0}: {1!r}".format(error, cell_methods[0].get_string('')))
+        #--- End: if
     
         # Take add_offset and scale_factor out of the data variable's
         # properties since they will be dealt with by the variable's Data

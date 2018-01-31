@@ -165,6 +165,36 @@ corresponding dimension or dimensions.
         return c
     #--- End: def
 
+    def del_error(self)
+        '''
+        '''
+        return self._del_attribute('error')
+    
+    def get_error(self, *default):
+        '''
+        '''
+        return self._get_attribute('error', *default)
+    
+    def set_error(self, value):
+        '''
+        '''
+        self._set_attribute('error', value)
+    
+    def del_string(self)
+        '''
+        '''
+        return self._del_attribute('string')
+    
+    def get_string(self, *default):
+        '''
+        '''
+        return self._get_attribute('string', *default)
+    
+    def set_string(self, value):
+        '''
+        '''
+        self._set_attribute('string', value)
+    
     def sorted(self, argsort=None):
         '''
         '''
@@ -199,7 +229,7 @@ corresponding dimension or dimensions.
     #--- End: def
 
     @classmethod
-    def parse(cls, string=None): #, field=None):
+    def parse(cls, string=None, allow_error=False): #, field=None):
         '''Parse a CF cell_methods string into this `cf.CellMethods` instance
 in place.
 
@@ -300,20 +330,32 @@ Cell methods    : time: minimum within years
                             units = None
 
                         try:
-#                            parsed_interval = float(ast_literal_eval(interval))
                             parsed_interval = ast_literal_eval(interval)
                         except:
-                            raise ValueError(
-"Unparseable cell methods interval: {!r}".format(
-    interval+' '+units if units is not None else interval))
-
+                            message = "Unparseable cell method interval"
+#                            interval+' '+units if units is not None else interval)
+                            if allow_error:
+                                cm = cls()
+                                cm.set_string(string)
+                                cm.set_error(message)
+                                return [out]
+                            else:
+                                raise ValueError("{}: {}".format(message, string))
+                        #---End: try
+                        
                         try:
                             intervals.append(cls._Data(parsed_interval, units))
                         except:
-                            raise ValueError(
-"Unparseable cell methods interval: {!r}".format(
-    interval+' '+units if units is not None else interval))
-                            
+                            message = "Unparseable cell method interval"
+                            if allow_error:
+                                cm = cls()
+                                cm.set_string(string)
+                                cm.set_error(message)
+                                return [out]
+                            else:
+                                raise ValueError("{}: {}".format(message, string))
+                        #---End: try
+
                         continue
                     #--- End: if
 
@@ -337,7 +379,15 @@ Cell methods    : time: minimum within years
 
             n_intervals = len(intervals)          
             if n_intervals > 1 and n_intervals != len(axes):
-                raise ValueError("0798798  ")
+                message = "Unparseable cell method intervals"
+                if allow_error:
+                    cm = cls()
+                    cm.set_string(string)
+                    cm.set_error(message)
+                    return [out]
+                else:
+                    raise ValueError("{}: {}".format(message, string))
+            #---End: if
 
             if intervals:
                 cm.set_property('interval', tuple(intervals))

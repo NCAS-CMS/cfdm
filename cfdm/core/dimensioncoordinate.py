@@ -9,17 +9,7 @@ from .coordinate import Coordinate
 # ====================================================================
 
 class DimensionCoordinate(Coordinate):
-    '''A CF dimension coordinate construct.
-
-**Attributes**
-
-==============  ========  ============================================
-Attribute       Type      Description
-==============  ========  ============================================
-`!climatology`  ``bool``  Whether or not the bounds are intervals of
-                          climatological time. Presumed to be False if
-                          unset.
-==============  ========  ============================================
+    '''A dimension coordinate construct of the CF data model.
 
     '''
     __metaclass__ = abc.ABCMeta
