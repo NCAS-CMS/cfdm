@@ -1,6 +1,5 @@
 from collections import abc
 
-from .flags      import Flags
 from .constructs import Constructs
 
 import .abstract
@@ -68,16 +67,9 @@ Field objects are picklable.
     '''
     __metaclass__ = abc.ABCMeta
     
-    _special_properties = Variable._special_properties.union(
-        ('flag_values',
-         'flag_masks',
-         'flag_meanings',)
-    )
-    
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
         
-        obj._Flags      = Flags
         obj._Constructs = Constructs
 #        obj._Domain     = Domain
 
@@ -127,192 +119,36 @@ Field objects are picklable.
                 ordered_constructs=('cellmethod',)
             )
         
-        self._set_constructs(constructs)
+        self._set_constructs(constructs, copy=False)
         self.set_data_axes(data_axes)
-#--- End: def
+    #--- End: def
     
-    @property
-    def Flags(self):
-        '''A `Flags` object containing self-describing CF flag values.
-        
-        A `Flags` object stores the `flag_values`, `flag_meanings` and
-        `flag_masks` CF properties in an internally consistent manner.
+    def _del_constructs(self):
+        '''
+.. versionadded:: 1.6
         
         '''
-        return self._get_special_attr('Flags')
-    @Flags.setter
-    def Flags(self, value):
-        self._set_special_attr('Flags', value)
-    @Flags.deleter
-    def Flags(self):
-        self._del_special_attr('Flags')
+        return self._del_attribute('constructs')
+    #--- End: def
+    
+    def _get_constructs(self, *default):
+        '''
+.. versionadded:: 1.6
         
-    @property
-    def Constructs(self):
-        return self._private['special_attributes']['constructs']
-    
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def flag_values(self):
-        '''The flag_values CF property.
-        
-Provides a list of the flag values. Use in conjunction with
-`flag_meanings`. See http://cfconventions.org/latest.html for details.
-
-Stored as a 1-d `Data` array but may be set as any array-like object.
-
-:Examples:
-
->>> f.flag_values = ['a', 'b', 'c']
->>> f.flag_values
-array(['a', 'b', 'c'], dtype='|S1')
->>> f.flag_values = numpy.arange(4)
->>> f.flag_values
-array([1, 2, 3, 4])
->>> del f.flag_values
-
->>> f.setprop('flag_values', 1)
->>> f.getprop('flag_values')
-array([1])
->>> f.delprop('flag_values')
-
         '''
-        try:
-            return self.Flags.flag_values.array
-        except AttributeError:
-            raise AttributeError("{} doesn't have CF property 'flag_values'".format(self.__class__.__name__))
+        return self._get_attribute('constructs', *default)
     #--- End: def
-    @flag_values.setter
-    def flag_values(self, value):
-        flags = getattr(self, 'Flags', None)
-        if flags is None:
-            self.Flags = self._Flags(flag_values=value)
-        else:
-            flags.flag_values = value
-            #--- End: def
-    @flag_values.deleter
-    def flag_values(self):
-        try:
-            del self.Flags.flag_values
-        except AttributeError:
-            raise AttributeError("Can't delete non-existent CF property 'flag_values'")
-        #--- End: def
     
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def flag_masks(self):
-        '''The flag_masks CF property.
-    
-Provides a list of bit fields expressing Boolean or enumerated
-flags. See http://cfconventions.org/latest.html for details.
-
-Stored as a 1-d numpy array but may be set as array-like object.
-
-:Examples:
-
->>> f.flag_masks = numpy.array([1, 2, 4], dtype='int8')
->>> f.flag_masks
-array([1, 2, 4], dtype=int8)
->>> f.flag_masks = (1, 2, 4, 8)
->>> f.flag_masks
-array([1, 2, 4, 8], dtype=int8)
->>> del f.flag_masks
-
->>> f.setprop('flag_masks', 1)
->>> f.getprop('flag_masks')
-array([1])
->>> f.delprop('flag_masks')
-
-'''
-        try:
-            return self.Flags.flag_masks.array
-        except AttributeError:
-            raise AttributeError("{} doesn't have CF property 'flag_masks'".format(self.__class__.__name__))
-    #--- End: def
-    @flag_masks.setter
-    def flag_masks(self, value):
-        flags = getattr(self, 'Flags', None)
-        if flags is None:
-            self.Flags = self._Flags(flag_masks=value)
-        else:
-            flags.flag_masks = value
-    #--- End: def
-    @flag_masks.deleter
-    def flag_masks(self):
-        try:
-            del self.Flags.flag_masks
-        except AttributeError:
-            raise AttributeError("Can't delete non-existent CF property 'flag_masks'")
-    #--- End: def
-                          
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def flag_meanings(self):
-        '''The flag_meanings CF property.
-    
-Use in conjunction with `flag_values` to provide descriptive words or
-phrases for each flag value. See
-http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#flags
-for details.
-
-:Examples:
-
->>> f.flag_meanings = 'low medium high'
->>> f.flag_meanings
-'low medium high'
->>> del flag_meanings
-
->>> f.setprop('flag_meanings', 'a b')
->>> f.getprop('flag_meanings')
-'a b'
->>> f.delprop('flag_meanings')
-    
+    def _set_constructs(self, constructs, copy=True):
         '''
-        try:
-            meanings = self.Flags.flag_meanings
-        except AttributeError:
-            raise AttributeError("{} doesn't have CF property 'flag_meanings'".format(self.__class__.__name__))
-    
-        return ' '.join(meanings)
-    #--- End: def
-    @flag_meanings.setter
-    def flag_meanings(self, value):
-        if isinstance(value , basestring):
-            value = value.split()
-    
-        flags = getattr(self, 'Flags', None)
-        if flags is None:
-            self.Flags = self._Flags(flag_meanings=value)
-        else:
-            flags.flag_meanings = value
-    #--- End: def
-    @flag_meanings.deleter
-    def flag_meanings(self):
-        try:
-            del self.Flags.flag_meanings
-        except AttributeError:
-            raise AttributeError("Can't delete non-existent CF property 'flag_meanings'")
-    #--- End: def
-
-    @property
-    def isfield(self): 
-        '''True, denoting that the variable is a field object
-
-:Examples:
-
->>> f.isfield
-True
-
+.. versionadded:: 1.6
         '''
-        return True
+        if copy:
+            constructs = constructs.copy()
+            
+        self._set_attribute('constructs', constructs)
     #--- End: def
-
+    
     def array_constructs(self, copy=False):
         return self.get_constructs().array_constructs(copy=copy)
     
@@ -385,8 +221,9 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
     def set_data_axes(self):
         '''
         '''
-        pass
-
+        self._get_parameters('data_axes') = value
+    #--- End: def
+    
     def del_data_axes(self):
         pass
   
@@ -445,222 +282,6 @@ None
     def field_ancillaries(self, copy=False):
         return self.get_constructs().constructs('fieldancillary', copy=copy)
 
-#    def _dump_axes(self, axis_names, display=True, _level=0):
-#        '''Return a string containing a description of the domain axes of the
-#field.
-#    
-#:Parameters:
-#    
-#    display: `bool`, optional
-#        If False then return the description as a string. By default
-#        the description is printed.
-#    
-#    _level: `int`, optional
-#
-#:Returns:
-#    
-#    out: `str`
-#        A string containing the description.
-#    
-#:Examples:
-#
-#        '''
-#        indent1 = '    ' * _level
-#        indent2 = '    ' * (_level+1)
-#
-#        data_axes = self.data_axes()
-#        if data_axes is None:
-#            data_axes = ()
-#
-#        axes = self.domain_axes()
-#
-#        w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-#                    for axis in axes
-#                    if axis not in data_axes])
-#
-#        x = ["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-#             for axis in data_axes]
-#
-#        string = '\n'.join(w+x)
-#
-#        if display:
-#            print string
-#        else:
-#            return string
-#    #--- End: def
-#
-#    def dump(self, display=True, _level=0, _title='Field', _q='-'):
-#        '''A full description of the field.
-#
-#The field and its components are described without abbreviation with
-#the exception of data arrays, which are abbreviated to their first and
-#last values.
-#
-#:Examples 1:
-#        
-#>>> f.{+name}()
-#
-#:Parameters:
-#
-#    display: `bool`, optional
-#        If False then return the description as a string. By default
-#        the description is printed.
-#
-#          *Example:*
-#            ``f.dump()`` is equivalent to ``print
-#            f.dump(display=False)``.
-#
-#:Returns:
-#
-#    out: `None` or `str`
-#        If *display* is True then the description is printed and
-#        `None` is returned. Otherwise the description is returned as a
-#        string.
-#
-#        '''
-#        indent = '    '      
-#        indent0 = indent * _level
-#        indent1 = indent0 + indent
-#
-#        title = '{0}{1}: {2}'.format(indent0, _title, self.name(''))
-#
-#        # Append the netCDF variable name
-#        ncvar = self.ncvar()
-#        if ncvar is not None:
-#            title += " (ncvar%{0})".format(ncvar)
-#
-#        line  = '{0}{1}'.format(indent0, ''.ljust(len(title)-_level*4, '-'))
-#
-#        # Title
-#        string = [line, title, line]
-#
-#        # Simple properties
-#        if self.properties():
-#            string.append(
-#                self._dump_properties(_level=_level,
-#                                      omit=('Conventions',
-#                                            '_FillValue',
-#                                            'missing_value',
-#                                            'flag_values',
-#                                            'flag_meanings',
-#                                            'flag_masks')))
-#            
-#
-#        axis_names = {}
-#        for key, domain_axis in self.domain_axes().iteritems():
-#            axis_names[key] = '{0}({1})'.format(self.domain_axis_name(key),
-#                                                domain_axis.size)
-#
-#        # Flags
-#        flags = []
-#        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
-#            value = getattr(self, attr, None)
-#            if value is not None:
-#                flags.append('{0}{1} = {2}'.format(indent0, attr, value))
-#        #--- End: for
-#        if flags:
-#            string.append('')
-#            string.extend(flags)
-#            
-#        # Axes
-#        axes = self._dump_axes(axis_names, display=False, _level=_level)
-#        if axes:
-#            string.extend(('', axes))
-#           
-#        # Data
-#        if self.hasdata:
-#            axes = self.domain_axes()
-#            axis_name = self.domain_axis_name
-#            x = ['{0}({1})'.format(axis_name(axis), axes[axis].size)
-#                 for axis in self.data_axes()]
-#            data = self.data
-#            if self.isreftime:
-#                print 'lkkkk'
-#                data = data.asdata(self.dtarray)
-#                
-#            string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
-#                                                           ', '.join(x),
-#                                                           str(data))))
-#        # Cell methods
-#        cell_methods = self.cell_methods()
-#        if cell_methods:
-#            string.append('')
-#            for cm in cell_methods.values():
-#                cm = cm.copy()
-#                cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
-#                string.append(cm.dump(display=False, _level=_level))
-#        #--- End: if
-#
-##        cell_methods = self.cell_methods()
-##        if cell_methods:
-##            cell_methods = cell_methods.values()
-##            string.append('')
-##            for cm in cell_methods:
-##                string.append(cm.dump(display=False, _level=_level))
-#
-#        # Field ancillaries
-#        for key, value in sorted(self.field_ancillaries().iteritems()):
-#            string.append('') 
-#            string.append(
-#                value.dump(display=False, field=self, key=key, _level=_level))
-#
-#        # Dimension coordinates
-#        for key, value in sorted(self.dimension_coordinates().iteritems()):
-#            string.append('')
-#            string.append(value.dump(display=False, 
-#                                     field=self, key=key, _level=_level))
-#             
-#        # Auxiliary coordinates
-#        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
-#            string.append('')
-#            string.append(value.dump(display=False, field=self, 
-#                                     key=key, _level=_level))
-#        # Domain ancillaries
-#        for key, value in sorted(self.domain_ancillaries().iteritems()):
-#            string.append('') 
-#            string.append(
-#                value.dump(display=False, field=self, key=key, _level=_level))
-#            
-#        # Coordinate references
-#        for key, value in sorted(self.coordinate_references().iteritems()):
-#            string.append('')
-#            string.append(
-#                value.dump(display=False, field=self, key=key, _level=_level))
-#
-#        # Cell measures
-#        for key, value in sorted(self.cell_measures().iteritems()):
-#            string.append('')
-#            string.append(
-#                value.dump(display=False, field=self, key=key, _level=_level))
-#
-#        string.append('')
-#        
-#        string = '\n'.join(string)
-#       
-#        if display:
-#            print string
-#        else:
-#            return string
-#    #--- End: def
-
-    def _get_constructs(self, *default):
-        '''
-.. versionadded:: 1.6
-        
-        '''
-        return self._get_attribute('constructs', *default)
-    #--- End: def
-    
-    def _set_constructs(self, constructs, copy=True):
-        '''
-.. versionadded:: 1.6
-        '''
-        if copy:
-            constructs = constructs.copy()
-            
-        self._set_attribute('constructs', constructs)
-    #--- End: def
-    
     def del_construct(self, key, *default):
         '''
         '''

@@ -103,6 +103,16 @@ modified, where appropriate, to reflect netCDF variable names.
 
     def change_axes(self, axis_map, copy=True):
         '''
+:Parameters:
+
+    axis_map: `dict`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `CellMethod`
+
         '''
         if copy:
             c = self.copy()
@@ -117,6 +127,7 @@ modified, where appropriate, to reflect netCDF variable names.
 
         return c
     #--- End: def
+
     def dump(self, display=True, _title=None, _level=0):
         '''
         

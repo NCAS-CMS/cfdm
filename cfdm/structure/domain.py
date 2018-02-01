@@ -4,6 +4,7 @@ from .constructs import Constructs
 
 import .abstract
 
+
 # ====================================================================
 #
 # Domain object

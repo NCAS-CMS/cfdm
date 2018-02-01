@@ -2,6 +2,7 @@ from collections import abc
 
 import .abstract
 
+
 # ====================================================================
 #
 # CellMeasure object
@@ -20,8 +21,8 @@ generic application cannot be expected to have. The cell measure
 construct consists of a numeric array of the metric data which spans a
 subset of the domain axis constructs, and properties to describe the
 data (in the same sense as for the field construct). The properties
-must contain a `!measure` property, which indicates which metric of
-the space it supplies e.g. cell horizontal areas, and a units property
+must contain a "measure" property, which indicates which metric of the
+space it supplies e.g. cell horizontal areas, and a units property
 consistent with the measure property e.g. square metres. It is assumed
 that the metric does not depend on axes of the domain which are not
 spanned by the array, along which the values are implicitly
@@ -84,80 +85,6 @@ measure constructs.
         '''
         '''
         return self._set_attribute('measure', measure)
-    #--- End: def
-
-    def name(self, default=None, identity=False, ncvar=False, relaxed_identity=None):
-        '''Return a name for the cell measure.
-
-By default the name is the first found of the following:
-
-  1. The `!measure` attribute.
-  
-  2. The `standard_name` CF property.
-  
-  3. The `!id` attribute.
-
-  4. The `long_name` CF property, preceeded by the string
-     ``'long_name:'``.
-
-  5. The `!ncvar` attribute, preceeded by the string ``'ncvar:'``.
-
-  6. The value of the *default* parameter.
-
-Note that ``c.name(identity=True)`` is equivalent to ``c.identity()``.
-
-.. seealso:: `identity`
-
-:Parameters:
-
-    default : *optional*
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is None.
-
-    identity : bool, optional
-        If True then 3. and 4. are not considered as possible names.
-
-    ncvar : bool, optional
-        If True then 1., 2., 3. and 4. are not considered as possible
-        names.
-
-:Returns:
-
-    out : str
-        A  name for the cell measure.
-
-:Examples:
-
->>> f.standard_name = 'air_temperature'
->>> f.long_name = 'temperature of the air'
->>> f.ncvar = 'tas'
->>> f.name()
-'air_temperature'
->>> del f.standard_name
->>> f.name()
-'long_name:temperature of the air'
->>> del f.long_name
->>> f.name()
-'ncvar:tas'
->>> del f.ncvar
->>> f.name()
-None
->>> f.name('no_name')
-'no_name'
->>> f.standard_name = 'air_temperature'
->>> f.name('no_name')
-'air_temperature'
-
-        '''
-        if not ncvar:
-            n = self.get_measure(None)
-            if n is not None:
-                return n
-
-        return super(CellMeasure, self).name(default,
-                                             identity=identity,
-                                             ncvar=ncvar,
-                                             relaxed_identity=relaxed_identity)
     #--- End: def
 
 #--- End: class

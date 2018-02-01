@@ -918,7 +918,7 @@ ancillaries, field ancillaries).
             
         f = self._Field(properties=properties, copy=False)
 
-        f.ncvar(data_ncvar)
+        f.set_ncvar(data_ncvar)
 #        f.files = set((g['filename'],))
 #        f.Units = f_Units
     
@@ -1011,7 +1011,7 @@ ancillaries, field ancillaries).
         # Add scalar dimension coordinates and auxiliary coordinates to
         # the field
         # ----------------------------------------------------------------
-        coordinates = f.getprop('coordinates', None)
+        coordinates = f.get_property('coordinates', None)
         if coordinates is not None:
             
             # Split the list (allowing for incorrect comma separated
@@ -1096,7 +1096,7 @@ ancillaries, field ancillaries).
                     ncscalar_to_axis[ncvar] = dimensions[0]
             #--- End: for
     
-            f.delprop('coordinates')
+            f.del_property('coordinates')
         #--- End: if
     
         # ----------------------------------------------------------------
@@ -1106,12 +1106,12 @@ ancillaries, field ancillaries).
             # Only add coordinate references to metadata variables
 
             for key, coord in f.coordinates().iteritems():
-                formula_terms = attributes[coord.ncvar()].get('formula_terms', None)
+                formula_terms = attributes[coord.get_ncvar()].get('formula_terms', None)
                 if formula_terms is None:
                     # This coordinate doesn't have a formula_terms attribute
                     continue
         
-                for term, ncvar in g['formula_terms'][coord.ncvar()]['coord'].iteritems():
+                for term, ncvar in g['formula_terms'][coord.get_ncvar()]['coord'].iteritems():
                     # Set dimensions 
                     axes = [ncdim_to_axis[ncdim]
                             for ncdim in self._ncdimensions(ncvar)
@@ -1130,7 +1130,7 @@ ancillaries, field ancillaries).
                     if ncvar in domain_ancillaries:
                         domain_anc = domain_ancillaries[ncvar][1].copy()
                     else:
-                        bounds = g['formula_terms'][coord.ncvar()]['bounds'].get(term)
+                        bounds = g['formula_terms'][coord.get_ncvar()]['bounds'].get(term)
                         if bounds == ncvar:
                             bounds = None
         
@@ -1151,7 +1151,7 @@ ancillaries, field ancillaries).
                 #--- End: for
         
                 self._read_create_formula_terms_ref(f, key, coord,
-                                                    g['formula_terms'][coord.ncvar()]['coord'],
+                                                    g['formula_terms'][coord.get_ncvar()]['coord'],
                                                     domain_ancillaries)
             #--- End: for
         #--- End: if
@@ -1159,7 +1159,7 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Add grid mapping coordinate references
         # ----------------------------------------------------------------
-        grid_mapping = f.getprop('grid_mapping', None)
+        grid_mapping = f.get_property('grid_mapping', None)
         if grid_mapping is not None:
             self._read_create_grid_mapping_ref(f, grid_mapping,
                                                attributes, ncvar_to_key)
@@ -1167,7 +1167,7 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Add cell measures to the field
         # ----------------------------------------------------------------
-        measures = f.getprop('cell_measures', None)
+        measures = f.get_property('cell_measures', None)
         if measures is not None:
     
             # Parse the cell measures attribute
@@ -1199,7 +1199,7 @@ ancillaries, field ancillaries).
                 ncvar_to_key[ncvar] = clm
             #--- End: for
     
-            f.delprop('cell_measures')
+            f.del_property('cell_measures')
         #--- End: if
     
         # ----------------------------------------------------------------
@@ -1216,9 +1216,9 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Add field ancillaries to the field
         # ----------------------------------------------------------------
-        ancillary_variables = f.getprop('ancillary_variables', None)
+        ancillary_variables = f.get_property('ancillary_variables', None)
         if ancillary_variables is not None:
-            f.delprop('ancillary_variables')
+            f.del_property('ancillary_variables')
             # Allow for incorrect comma separated lists
             for ncvar in re.split('\s+|\s*,\s*', ancillary_variables):
                 # Skip variables which are in the list but not in the file
@@ -1320,7 +1320,7 @@ ancillaries, field ancillaries).
             raise ValueError(
 "Must set one of the dimension, auxiliary or domainancillary parmaeters to True")
     
-        c.ncvar(ncvar)
+        c.set_ncvar(ncvar)
 #        c.Units = c_Units
     
         if climatology:
@@ -1350,17 +1350,17 @@ ancillaries, field ancillaries).
             bounds = self._Bounds(properties=properties, copy=False)
 
 #            if getattr(bounds, 'units', None) is None:
-#                bounds.setprop('units', getattr(c, 'units', None))
+#                bounds.set_property('units', getattr(c, 'units', None))
 #
 #            if getattr(bounds, 'calendar', None) is None:
-#                bounds.setprop('calendar', getattr(c, 'calendar', None))
+#                bounds.set_property('calendar', getattr(c, 'calendar', None))
 #
 #            if not b_Units:
 #                b_Units = c_Units
 #    
 #            bounds.Units = b_Units
             
-            bounds.ncvar(ncbounds)
+            bounds.set_ncvar(ncbounds)
     
             bounds_data = self._set_Data(ncbounds, bounds)
     
@@ -1376,7 +1376,8 @@ ancillaries, field ancillaries).
                             if ncdim in c_ncdims]
                     if len(axes) == c.data.ndim:
                         axes.extend(range(bounds.data.ndim - c.data.ndim, 0))
-                        bounds.transpose(axes, copy=False)
+#                        bounds.transpose(axes, copy=False)
+                        self._transpose(bounds, axes=axes, copy=False)
             #--- End: if
 
             c.insert_bounds(bounds, copy=False)
@@ -1387,6 +1388,12 @@ ancillaries, field ancillaries).
         # ---------------------------------------------------------
         return c
     #--- End: def
+
+    def _transpose(self, construct, axes=axes, copy=True):
+        '''
+        '''
+        return construct.tranpose(axes=axes, copy=copy)
+    #-- End: def
     
     def _read_create_array(self, ncvar, attributes):
         '''Create
@@ -1450,7 +1457,7 @@ ancillaries, field ancillaries).
     
         item.insert_data(data, copy=False)
     
-        item.ncvar(ncvar)
+        item.set_ncvar(ncvar)
     
         return item
     #--- End: def
@@ -1566,31 +1573,32 @@ ancillaries, field ancillaries).
                     coordinates = []      
                     continue
                     
-                    
-                parameter_terms = attributes[grid_mapping].copy()
-                
-                name = parameter_terms.pop('grid_mapping_name', None)                 
+                parameters = attributes[grid_mapping].copy()
 
+                props = {}
+                name = parameters.pop('grid_mapping_name', None)                 
+                if name is not None:
+                    props['grid_mapping_name'] = name
+                
                 if not qwerty:
                     coordinates = []
                     for x in self._CoordinateReference._name_to_coordinates.get(name, ()):
                         for key, coord in f.coordinates().iteritems():
-                            if x == coord.getprop('standard_name', None):
+                            if x == coord.get_property('standard_name', None):
                                 coordinates.append(key)
                 #--- End: if
                 
-                coordref = self._CoordinateReference(name,
-                                                     crtype='grid_mapping',
+                coordref = self._CoordinateReference(properties=props,
                                                      coordinates=coordinates,
-                                                     parameters=parameter_terms)
-                coordref.ncvar(grid_mapping)
+                                                     parameters=parameters)
+                coordref.set_ncvar(grid_mapping)
 
                 f.insert_coordinate_reference(coordref, copy=False)
     
                 coordinates = []      
         #--- End: for
     
-        f.delprop('grid_mapping')
+        f.del_property('grid_mapping')
     #--- End: def
     
     def _read_create_formula_terms_ref(self, f, key, coord,
@@ -1617,7 +1625,7 @@ ancillaries, field ancillaries).
     '''
         g = self.read_vars
 
-        parameters  = {}
+#        parameters  = {}
         ancillaries = {}
     
         for term, ncvar in formula_terms.iteritems():
@@ -1631,9 +1639,13 @@ ancillaries, field ancillaries).
 #                # The term's value is a parameter
 #                parameters[term] = coordref_parameters[ncvar].copy()
 #        #--- End: for 
-    
-        coordref = self._CoordinateReference(name=coord.getprop('standard_name', None),
-                                             crtype='formula_terms',
+
+        props = {}
+        name = coord.get_property('standard_name', None)
+        if name is not None:
+            props['standard_name'] = name
+
+        coordref = self._CoordinateReference(properties=props,
                                              coordinates=(key,),
                                              domain_ancillaries=ancillaries)
     

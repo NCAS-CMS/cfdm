@@ -2,6 +2,7 @@ from collections import abc
 
 import .abstract
 
+
 # ====================================================================
 #
 # DomainAxis object

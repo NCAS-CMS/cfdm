@@ -15,41 +15,6 @@ from .          import __version__, __file__
 from .constants import CONSTANTS
 
 
-def RELAXED_IDENTITIES(*arg):
-    '''
-
-:Parameters:
-
-    arg: `bool`, optional
-      
-:Returns:
-
-    out: `bool`
-        The value prior to the change, or the current value if no new
-        value was specified.
-
-:Examples:
-
->>> org = RELAXED_IDENTITIES()
->>> print org
-False
->>> RELAXED_IDENTITIES(True)
-False
->>> RELAXED_IDENTITIES()
-True
->>> RELAXED_IDENTITIES(org)
-True
->>> RELAXED_IDENTITIES()
-False
-
-    '''
-    old = CONSTANTS['RELAXED_IDENTITIES']
-    if arg:
-        CONSTANTS['RELAXED_IDENTITIES'] = bool(arg[0])
-    
-    return old
-#--- End:def
-
 def open_files_threshold_exceeded():
     '''Return True if the total number of open files is greater than the
 current threshold.

@@ -1,6 +1,6 @@
 from collections import abc
 
-from .boundedvariable import BoundedVariableMixin
+import .mixin
 
 import ..structure
 
@@ -11,7 +11,7 @@ import ..structure
 #
 # ====================================================================
 
-class Coordinate(structural.Coordinate, BoundedVariableMixin):
+class Coordinate(structural.Coordinate, mixin.PropertiesDataBounds)
     '''Base class for a CF dimension or auxiliary coordinate construct.
 
     '''

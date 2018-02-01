@@ -1,5 +1,8 @@
-from .constructs2 import Constructs
+from collections import abc
 
+from .constructs import Constructs
+
+import ..structure
 
 # ====================================================================
 #
@@ -7,7 +10,7 @@ from .constructs2 import Constructs
 #
 # ====================================================================
 
-class Domain(object):
+class Domain(structure.Domain):
     '''A CF Domain construct.
 
 The domain is defined collectively by teh following constructs, all of
@@ -36,6 +39,8 @@ Cell measure          Domain cell size or shape stored in
 ====================  ================================================
 
     '''
+    __metaclass__ = abc.ABCMeta
+    
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
        

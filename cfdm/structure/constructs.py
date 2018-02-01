@@ -1,5 +1,6 @@
 from collections import abc, OrderedDict
 
+
 class Constructs(object):
     '''
 Keys are item identifiers, values are item objects.

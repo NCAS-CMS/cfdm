@@ -1,14 +1,15 @@
 from collections import abc
 
-from .coordinateancillary import CoordinateAncillary
+import .abstract
+
 
 # ====================================================================
 #
-# Coordinate object
+# Coordinate bounds object
 #
 # ====================================================================
 
-class Bounds(CoordinateAncillary):
+class Bounds(abstract.PropertiesData):
     '''
     '''
     __metaclass__ = abc.ABCMeta

@@ -1,10 +1,9 @@
 from collections import abc
 
-from .flags      import Flags
 
 from .constructs import Constructs
 #from .domain      import Domain
-
+from .functions import equals as cfdm_equals
 import .mixin
 
 import ..structure
@@ -261,8 +260,7 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
             
         # Coordinate references
-        x = sorted([ref.name(default='')
-                    for ref in self.coordinate_references().values()])
+        x = sorted([str(ref) for ref in self.coordinate_references().values()])
         if x:
             string.append('Coord references: {}'.format(
                 '\n                : '.join(x)))
@@ -367,7 +365,7 @@ functionality:
         # ------------------------------------------------------------
         # Subspace constructs
         # ------------------------------------------------------------
-        self_constructs = self.get_constructs()
+        self_constructs = self._get_constructs()
 
         for key, construct in new.array_constructs().iteritems():
             data = self.construct(key).get_data(None)
@@ -401,222 +399,13 @@ functionality:
 
         # Replace domain axes
         domain_axes = new.domain_axes()
-        new_constructs = new.get_constructs()
+        new_constructs = new._get_constructs()
         for key, size in zip(data_axes, new.data.shape):
             domain_axis = domain_axes[key].copy()
             domain_axis.set_size(size)
             new_constructs.replace(key, domain_axis)
 
         return new
-    #--- End: def
-
-    def Flags(self):
-        '''A `Flags` object containing self-describing CF flag values.
-        
-        A `Flags` object stores the `flag_values`, `flag_meanings` and
-        `flag_masks` CF properties in an internally consistent manner.
-        
-        '''
-        return self._get_special_attr('Flags')
-    @Flags.setter
-    def Flags(self, value):
-        self._set_special_attr('Flags', value)
-    @Flags.deleter
-    def Flags(self):
-        self._del_special_attr('Flags')
-        
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def flag_values(self):
-        '''The flag_values CF property.
-        
-Provides a list of the flag values. Use in conjunction with
-`flag_meanings`. See http://cfconventions.org/latest.html for details.
-
-Stored as a 1-d `Data` array but may be set as any array-like object.
-
-:Examples:
-
->>> f.flag_values = ['a', 'b', 'c']
->>> f.flag_values
-array(['a', 'b', 'c'], dtype='|S1')
->>> f.flag_values = numpy.arange(4)
->>> f.flag_values
-array([1, 2, 3, 4])
->>> del f.flag_values
-
->>> f.setprop('flag_values', 1)
->>> f.getprop('flag_values')
-array([1])
->>> f.delprop('flag_values')
-
-        '''
-        try:
-            return self.Flags.flag_values.data.array
-        except AttributeError:
-            raise AttributeError("{} doesn't have CF property 'flag_values'".format(self.__class__.__name__))
-    #--- End: def
-    @flag_values.setter
-    def flag_values(self, value):
-        flags = getattr(self, 'Flags', None)
-        if flags is None:
-            self.Flags = self._Flags(flag_values=value)
-        else:
-            flags.flag_values = value
-            #--- End: def
-    @flag_values.deleter
-    def flag_values(self):
-        try:
-            del self.Flags.flag_values
-        except AttributeError:
-            raise AttributeError("Can't delete non-existent CF property 'flag_values'")
-        #--- End: def
-    
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def flag_masks(self):
-        '''The flag_masks CF property.
-    
-Provides a list of bit fields expressing Boolean or enumerated
-flags. See http://cfconventions.org/latest.html for details.
-
-Stored as a 1-d numpy array but may be set as array-like object.
-
-:Examples:
-
->>> f.flag_masks = numpy.array([1, 2, 4], dtype='int8')
->>> f.flag_masks
-array([1, 2, 4], dtype=int8)
->>> f.flag_masks = (1, 2, 4, 8)
->>> f.flag_masks
-array([1, 2, 4, 8], dtype=int8)
->>> del f.flag_masks
-
->>> f.setprop('flag_masks', 1)
->>> f.getprop('flag_masks')
-array([1])
->>> f.delprop('flag_masks')
-
-'''
-        try:
-            return self.Flags.flag_masks.data.array
-        except AttributeError:
-            raise AttributeError("{} doesn't have CF property 'flag_masks'".format(self.__class__.__name__))
-    #--- End: def
-    @flag_masks.setter
-    def flag_masks(self, value):
-        flags = getattr(self, 'Flags', None)
-        if flags is None:
-            self.Flags = self._Flags(flag_masks=value)
-        else:
-            flags.flag_masks = value
-    #--- End: def
-    @flag_masks.deleter
-    def flag_masks(self):
-        try:
-            del self.Flags.flag_masks
-        except AttributeError:
-            raise AttributeError("Can't delete non-existent CF property 'flag_masks'")
-    #--- End: def
-                          
-    # ----------------------------------------------------------------
-    # CF property
-    # ----------------------------------------------------------------
-    @property
-    def flag_meanings(self):
-        '''The flag_meanings CF property.
-    
-Use in conjunction with `flag_values` to provide descriptive words or
-phrases for each flag value. See
-http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#flags
-for details.
-
-:Examples:
-
->>> f.flag_meanings = 'low medium high'
->>> f.flag_meanings
-'low medium high'
->>> del flag_meanings
-
->>> f.setprop('flag_meanings', 'a b')
->>> f.getprop('flag_meanings')
-'a b'
->>> f.delprop('flag_meanings')
-    
-        '''
-        try:
-            meanings = self.Flags.flag_meanings
-        except AttributeError:
-            raise AttributeError("{} doesn't have CF property 'flag_meanings'".format(self.__class__.__name__))
-    
-        return ' '.join(meanings)
-    #--- End: def
-    @flag_meanings.setter
-    def flag_meanings(self, value):
-        if isinstance(value , basestring):
-            value = value.split()
-    
-        flags = getattr(self, 'Flags', None)
-        if flags is None:
-            self.Flags = self._Flags(flag_meanings=value)
-        else:
-            flags.flag_meanings = value
-    #--- End: def
-    @flag_meanings.deleter
-    def flag_meanings(self):
-        try:
-            del self.Flags.flag_meanings
-        except AttributeError:
-            raise AttributeError("Can't delete non-existent CF property 'flag_meanings'")
-    #--- End: def
-
-#    def domain(self, copy=False):
-#
-#        return self._Domain(constructs=self.Constructs, copy=copy)
-    
-                value.dump(display=False, field=self, key=key, _level=_level))
-
-        # Dimension coordinates
-        for key, value in sorted(self.dimension_coordinates().iteritems()):
-            string.append('')
-            string.append(value.dump(display=False, 
-                                     field=self, key=key, _level=_level))
-             
-        # Auxiliary coordinates
-        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
-            string.append('')
-            string.append(value.dump(display=False, field=self, 
-                                     key=key, _level=_level))
-        # Domain ancillaries
-        for key, value in sorted(self.domain_ancillaries().iteritems()):
-            string.append('') 
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
-            
-        # Coordinate references
-        for key, value in sorted(self.coordinate_references().iteritems()):
-            string.append('')
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
-
-        # Cell measures
-        for key, value in sorted(self.cell_measures().iteritems()):
-            string.append('')
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
-
-        string.append('')
-        
-        string = '\n'.join(string)
-       
-        if display:
-            print string
-        else:
-            return string
     #--- End: def
 
     def _dump_axes(self, axis_names, display=True, _level=0):
@@ -714,28 +503,13 @@ last values.
                 self._dump_properties(_level=_level,
                                       omit=('Conventions',
                                             '_FillValue',
-                                            'missing_value',
-                                            'flag_values',
-                                            'flag_meanings',
-                                            'flag_masks')))
-            
+                                            'missing_value')))
 
         axis_names = {}
         for key, domain_axis in self.domain_axes().iteritems():
             axis_names[key] = '{0}({1})'.format(self.domain_axis_name(key),
                                                 domain_axis.size)
-
-        # Flags
-        flags = []
-        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
-            value = getattr(self, attr, None)
-            if value is not None:
-                flags.append('{0}{1} = {2}'.format(indent0, attr, value))
-        #--- End: for
-        if flags:
-            string.append('')
-            string.extend(flags)
-            
+           
         # Axes
         axes = self._dump_axes(axis_names, display=False, _level=_level)
         if axes:
@@ -764,13 +538,6 @@ last values.
                                    for axis in cm.get_axes(())]))
                 string.append(cm.dump(display=False,  _level=_level))
         #--- End: if
-
-#        cell_methods = self.cell_methods()
-#        if cell_methods:
-#            cell_methods = cell_methods.values()
-#            string.append('')
-#            for cm in cell_methods:
-#                string.append(cm.dump(display=False, _level=_level))
 
         # Field ancillaries
         for key, value in sorted(self.field_ancillaries().iteritems()):
@@ -901,13 +668,13 @@ False
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not cf_equals(self.subsidiary_constructs(),
-                         other.subsidiary_constructs(),
-                         rtol=rtol, atol=atol,
-                         traceback=traceback,
-                         ignore_data_type=ignore_data_type,
-                         ignore_construct_type=ignore_construct_type,
-                         ignore_fill_value=ignore_fill_value):
+        if not cfdm_equals(self._get_constructs(),
+                           other._get_constructs(),
+                           rtol=rtol, atol=atol,
+                           traceback=traceback,
+                           ignore_data_type=ignore_data_type,
+                           ignore_construct_type=ignore_construct_type,
+                           ignore_fill_value=ignore_fill_value):
             if traceback:
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
@@ -960,7 +727,7 @@ by the data array may be selected.
             raise ValueError(
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
        
-        # Expandn the dims in the field's data array
+        # Expand the dims in the field's data array
         f = super(Field, self).expand_dims(position, copy=copy)
 
         f._data_axes.insert(position, axis)

@@ -11,16 +11,6 @@ from .coordinate import Coordinate
 class AuxiliaryCoordinate(Coordinate):
     '''A CF auxiliary coordinate construct.
 
-
-**Attributes**
-
-===============  ========  ===================================================
-Attribute        Type      Description
-===============  ========  ===================================================
-`!climatology`   ``bool``  Whether or not the bounds are intervals of
-                           climatological time. Presumed to be False if unset.
-===============  ========  ===================================================
-
     '''
     __metaclass__ = abc.ABCMeta
       

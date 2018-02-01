@@ -6,14 +6,12 @@ import netCDF4
 
 from ..constants  import masked
 from ..cfdatetime import rt2dt, st2rt, st2dt
-#from ..units      import Units
+
 from ..functions  import RTOL, ATOL, parse_indices, _numpy_allclose
 
 from .array import Array, NumpyArray
 
-#_units_None = Units()
-#_units_1    = Units('1')
-
+import ...structure
 
 # ====================================================================
 #
@@ -21,7 +19,7 @@ from .array import Array, NumpyArray
 #
 # ====================================================================
 
-class Data(object):
+class Data(structure.Data):
     '''
 
 An N-dimensional data array with units and masked values.
@@ -104,88 +102,28 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''
-#        units = Units(units)
-#        self.Units = units
-        self.units    = units
-        self.calendar = calendar
-        
-        self._fill_value  = fill_value
-        self._array       = None
+        if data is not None and  not isinstance(data, Array):
+            if not isinstance(data, numpy.ndarray):
+                data = numpy.asanyarray(data)
+                
+            data = NumpyArray(data)
+        #-- End: if
 
+        super(Data, self).__init__(data=data, units=units,
+                                   calendar=calendar, fill_value=fill_value)
+                                   
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
         self._HDF_chunks = {}
-
-        if data is None:
-            return
-
-        if isinstance(data, self.__class__):
-            data = data._array
-            
-        if not isinstance(data, Array):
-            if not isinstance(data, numpy.ndarray):
-                data = numpy.asanyarray(data)
-
-            if (data.dtype.kind == 'O' and not dt and 
-                hasattr(data.item((0,)*data.ndim), 'timetuple')):
-                # We've been given one or more date-time objects
-                dt = True
-        #--- End: if
-        
-        if isinstance(data, Array):
-            self._array = data
-        else:
-            self._array = NumpyArray(data)
     #--- End: def
-
-    def __array__(self, *dtype):
-        '''
-
-Returns a numpy array copy the data array.
-
-If the data array is stored as date-time objects then a numpy array of
-numeric reference times will be returned.
-
-:Returns:
-
-    out: `numpy.ndarray`
-        The numpy array copy the data array.
-
-:Examples:
-
->>> (d.array == numpy.array(d)).all()
-True
- 
-'''
-        if not dtype:
-            return self.array
-        else:
-            return self.array.astype(dtype[0])
-    #--- End: def
-
+                                   
     def __data__(self):
         '''Return self
 
         '''
         return self
     #--- End: def
-
-    def __deepcopy__(self, memo):
-        '''Used if `copy.deepcopy` is called.
-
-        ''' 
-        return self.copy()
-    #--- End: def
-
-    def __repr__(self):
-        '''The built-in function `repr`
-
-x.__repr__() <==> repr(x)
-
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
+ 
     def __str__(self):
         '''The built-in function `str`
 
@@ -380,14 +318,6 @@ TypeError: iteration over a 0-d Data
                 yield self[n, ...].squeeze(0, copy=False)
     #--- End: def
 
-    def __eq__(self, y):
-        array = numpy.isclose(self.varray, y, atol=ATOL(), rtol=RTOL())
-        return type(self)(array)
-
-    def __ne__(self, y):
-        array = (self == y).varray
-        return type(self)(~array)
-    
     @property
     def isscalar(self):
         '''
@@ -508,86 +438,6 @@ None
     # Attribute (read only)
     # ----------------------------------------------------------------
     @property
-    def ndim(self):
-        '''
-
-Number of dimensions in the data array.
-
-:Examples:
-
->>> d.shape
-(73, 96)
->>> d.ndim
-2
-
->>> d.shape
-()
->>> d.ndim
-0
-
-'''
-        return self._array.ndim
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def shape(self):
-        '''
-
-Tuple of the data array's dimension sizes.
-
-:Examples:
-
->>> d.shape
-(73, 96)
-
->>> d.ndim
-0
->>> d.shape
-()
-
-'''
-        return self._array.shape
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def size(self):
-        '''
-
-Number of elements in the data array.
-
-:Examples:
-
->>> d.shape
-(73, 96)
->>> d.size
-7008
-
->>> d.shape
-(1, 1, 1)
->>> d.size
-1
-
->>> d.ndim
-0
->>> d.shape
-()
->>> d.size
-1
-
-'''
-        return self._array.size
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
     def array(self):
         '''A numpy array copy the data.
 
@@ -662,7 +512,7 @@ True
     def dtarray(self):
         '''
         '''
-        array = self.array
+        array = self.get_array()
 
         mask = None
         if numpy.ma.isMA(array):
@@ -1038,7 +888,8 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'max')
 
-        array = numpy.amax(self.varray, axis=axes, keepdims=True)
+        array = self.get_array()
+        array = numpy.amax(array, axis=axes, keepdims=True)
 
         d = self.copy()
         d._array = NumpyArray(array)
@@ -1077,7 +928,8 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'min')
 
-        array = numpy.amin(self.varray, axis=axes, keepdims=True)
+        array = self.get_array()
+        array = numpy.amin(array, axis=axes, keepdims=True)
             
         d = self.copy()
         d._array = NumpyArray(array)
@@ -1129,7 +981,6 @@ dimension is iterated over first.
         return itertools.product(*[xrange(0, r) for r in self.shape])  
     #--- End: def
 
-
     def sum(self, axes=None):
         '''Return the sum of an array or the sum along axes.
 
@@ -1153,7 +1004,8 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'sum')
 
-        array = numpy.sum(self.varray, axis=axes, keepdims=True)
+        array = self.get_array()
+        array = numpy.sum(array, axis=axes, keepdims=True)
             
         d = self.copy()
         d._array = NumpyArray(array)
@@ -1424,7 +1276,8 @@ selected with the keyword arguments.
         if not axes:
             return d
         
-        array = numpy.squeeze(self.varray, axes)
+        array = self.get_array()
+        array = numpy.squeeze(array, axes)
 
         d._array = NumpyArray(array)
 
@@ -1473,7 +1326,8 @@ data array shape.
         else:
             d = self
 
-        array = numpy.expand_dims(self.varray, position)
+        array = self.get_array()
+        array = numpy.expand_dims(array, position)
 
         d._array = NumpyArray(array)
 
@@ -1550,7 +1404,8 @@ data array shape.
                     "Can't transpose: Axes don't match array: {}".format(axes))
         #--- End: if
 
-        array = numpy.transpose(self.varray, axes=axes)
+        array = self.get_array()
+        array = numpy.transpose(array, axes=axes)
         
         d._array = NumpyArray(array)
 
@@ -1580,7 +1435,8 @@ missing values.
 <Data: [1, 2, 4] metre>
 
         '''
-        array = numpy.unique(self.array)
+        array = self.get_array()
+        array = numpy.unique(array)
 
         if numpy.ma.is_masked(array):
             array = array.compressed()
@@ -1748,7 +1604,8 @@ False
         if atol is None:
             atol = ATOL()        
 
-        if not _numpy_allclose(self.array, other.array, rtol=rtol, atol=atol):
+        if not _numpy_allclose(self.get_array(), other.get_array(),
+                               rtol=rtol, atol=atol):
             if traceback:
                 print("{0}: Different data array values".format(
                     self.__class__.__name__))

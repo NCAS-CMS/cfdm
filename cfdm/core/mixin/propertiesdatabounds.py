@@ -13,7 +13,6 @@ class PropertiesDataBounds(PropertiesData):
 domain ancillary objects.
 
     '''
-
     __metaclass__ = abc.ABCMeta
     
     def __getitem__(self, indices):
