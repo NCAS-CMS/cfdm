@@ -97,7 +97,7 @@ Field objects are picklable.
                                     source=source, copy=copy,
                                     _use_data=_use_data)
         
-        data_axes  = []
+        data_axes  = ()
         constructs = None
         
         if source is not None and isinstance(source, Field):
@@ -218,16 +218,13 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
         return out
     #--- End: def
 
-    def set_data_axes(self):
-        '''
-        '''
-        self._get_parameters('data_axes') = value
-    #--- End: def
-    
     def del_data_axes(self):
-        pass
-  
-    def get_data_axes(self):
+        '''
+        '''
+        return self._del_attribute('data_axes')
+    #--- End: def
+      
+    def get_data_axes(self, *default):
         '''Return the domain axes for the data array dimensions.
         
 .. seealso:: `axes`, `axis`, `item_axes`
@@ -258,10 +255,7 @@ None
 []
 
         '''    
-        if not self.has_data():
-            return None
-        
-        return self._get_attribute('data_axes')[:]
+        return self._get_attribute('data_axes', *default)
     #--- End: def
     
     def dimension_coordinates(self, copy=False):
@@ -291,7 +285,7 @@ None
         if key in self.domain_axes():
             domain_axis = True
             
-            if key in self.get_data_axes():
+            if key in self.get_data_axes(()):
                 raise ValueError(
 "Can't remove domain axis that is spanned by the field's data")
 
@@ -470,11 +464,17 @@ ValueError: Can't initialize data: Data already exists
             if axis not in self.domain_axes():
                 raise ValueError("asdajns dpunpuewnd p9wun lun 0[9io3jed pjn j nn jk")
 
-        self._data_axes = list(axes)
+        self.set_data_axes(list(axes))
 
         super(Field, self).set_data(data, copy=copy)
     #--- End: def
 
+    def set_data_axes(self, value):
+        '''
+        '''
+        self._set_attribute('data_axes') = tuple(value)
+    #--- End: def
+    
 #    def cell_methods(self, copy=False):
 #        '''
 #        '''
@@ -790,7 +790,7 @@ ValueError: Can't initialize data: Data already exists
         '''
 
         '''
-        self._data_axes = None
+        self.del_data_axes()
         return super(Field, self).remove_data()
     #--- End: def
 

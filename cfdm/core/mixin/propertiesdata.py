@@ -686,7 +686,7 @@ masked
 6
 
 '''
-        if not self.hasdata:
+        if not self.has_data():
             raise ValueError(
                 "ERROR: Can't return an element when there is no data array")
         
@@ -697,7 +697,7 @@ masked
         if axes is None:
             return axes
 
-        ndim = self.data.ndim
+        ndim = self.get_data().ndim
         return [(i + ndim if i < 0 else i) for i in axes]
     #--- End: def
     
@@ -708,9 +708,9 @@ masked
 .. versionadded:: 1.6
 
         '''
-        units = self.getprop('units', None)
+        units = self.get_property('units', None)
         if units is None:
-            return bool(self.getprop('calendar', False))
+            return bool(self.get_property('calendar', False))
 
         return 'since' in units
     #--- End: def
@@ -718,8 +718,8 @@ masked
     def open(self):
         '''
 '''
-        if self.hasdata:
-            self.data.open()
+        if self.has_data():
+            self.get_data().open()
     #--- End: def
 
 #--- End: class

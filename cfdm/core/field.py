@@ -134,9 +134,7 @@ x.__str__() <==> str(x)
         axis_name = self.domain_axis_name
 
         # Axes
-        data_axes = self.data_axes()
-        if data_axes is None:
-            data_axes = ()
+        data_axes = self.get_data_axes(())
         non_spanning_axes = set(self.domain_axes()).difference(data_axes)
 
         axis_names = {}
@@ -145,9 +143,9 @@ x.__str__() <==> str(x)
                                                 domain_axis.size)
         
         # Data
-        if self.hasdata:
+        if self.has_data():
             axes = self.domain_axes()
-            x = ['{0}'.format(axis_names[axis]) for axis in self.data_axes()]
+            x = ['{0}'.format(axis_names[axis]) for axis in data_axes]
             string.append('Data            : {0}({1}) {2}'.format(
                 self.name(''), ', '.join(x), units))
         elif units:
@@ -195,17 +193,17 @@ x.__str__() <==> str(x)
                 x.append(shape)
             #--- End: if
                     
-            if variable.hasdata:
+            if variable.has_data():
 #                if variable.isreftime:
 #                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
 #                else:
-                x.append(' = {}'.format(variable.data))
+                x.append(' = {}'.format(variable.get_data()))
                 
             return ''.join(x)
         #--- End: def
                           
         # Axes and dimension coordinates
-#        data_axes = self.data_axes()
+#        data_axes = self.get_data_axes()
 #        if data_axes is None:
 #            data_axes = ()
 #        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
@@ -227,11 +225,11 @@ x.__str__() <==> str(x)
             for k, dim in self.dimension_coordinates().items():
                 if self.construct_axes()[k] == (key,):
                     name = dim.name(default='id%{0}'.format(k))
-                    y = '{0}({1})'.format(name, dim.data.size)
+                    y = '{0}({1})'.format(name, dim.get_data().size)
                     if y != axis_names[key]:
                         y = '{0}({1})'.format(name, axis_names[key])
-                    if dim.hasdata:
-                        y += ' = {0}'.format(dim.data)
+                    if dim.has_data():
+                        y += ' = {0}'.format(dim.get_data())
                     x.append(y)   
         string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
@@ -345,14 +343,14 @@ functionality:
 (12, 73, 96)
 
         ''' 
-        data  = self.data
+        data  = self.get_data()
         shape = data.shape
 
         indices = data.parse_indices(indices)
 
         new = self.copy(data=False)
 
-        data_axes = new.data_axes()
+        data_axes = new.get_data_axes()
         
         # Open any files that contained the original data (this not
         # necessary, is an optimsation)
@@ -360,7 +358,7 @@ functionality:
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-        new.set_data(self.data[indices], axes=data_axes)
+        new.set_data(data[indices], axes=data_axes)
 
         # ------------------------------------------------------------
         # Subspace constructs
@@ -400,7 +398,7 @@ functionality:
         # Replace domain axes
         domain_axes = new.domain_axes()
         new_constructs = new._get_constructs()
-        for key, size in zip(data_axes, new.data.shape):
+        for key, size in zip(data_axes, new.get_data().shape):
             domain_axis = domain_axes[key].copy()
             domain_axis.set_size(size)
             new_constructs.replace(key, domain_axis)
@@ -431,9 +429,7 @@ field.
         indent1 = '    ' * _level
         indent2 = '    ' * (_level+1)
 
-        data_axes = self.data_axes()
-        if data_axes is None:
-            data_axes = ()
+        data_axes = self.get_data_axes(())
 
         axes = self.domain_axes()
 
@@ -516,12 +512,12 @@ last values.
             string.extend(('', axes))
            
         # Data
-        if self.hasdata:
+        data = self.get_data(None)
+        if data is not None:
             axes = self.domain_axes()
             axis_name = self.domain_axis_name
             x = ['{0}({1})'.format(axis_name(axis), axes[axis].size)
-                 for axis in self.data_axes()]
-            data = self.data
+                 for axis in self.get_data_axes(())]
             if self.isreftime:
                 data = data.asdata(data.dtarray)
                 
@@ -715,7 +711,8 @@ by the data array may be selected.
 
         '''
         domain_axis = self.domain_axes().get(axis)
-
+        data_axes = list(self.get_data_axes(()))
+        
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         
@@ -723,14 +720,15 @@ by the data array may be selected.
             raise ValueError(
 "Can't insert an axis of size {}: {!r}".format(domain_axis.size, axis))
 
-        if axis in self.data_axes():
+        if axis in data_axes:
             raise ValueError(
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
        
         # Expand the dims in the field's data array
         f = super(Field, self).expand_dims(position, copy=copy)
 
-        f._data_axes.insert(position, axis)
+        data_axes.insert(position, axis)
+        f.set_data_axes(data_axes)
 
         return f
     #--- End: def
@@ -769,7 +767,7 @@ axes, use the `remove_axes` method.
 :Examples 2:
 
         '''     
-        data_axes = self.data_axes()
+        data_axes = self.get_data_axes(())
         domain_axes = self.domain_axes()
             
         if axes is None:
@@ -789,7 +787,8 @@ axes, use the `remove_axes` method.
         # Squeeze the field's data array
         f = super(Field, self).squeeze(iaxes, copy=copy)
 
-        f._data_axes = [axis for axis in data_axes if axis not in axes]
+        new_data_axes = [axis for axis in data_axes if axis not in axes]
+        f.set_data_axes(new_data_axes)
 
         return f
     #--- End: def

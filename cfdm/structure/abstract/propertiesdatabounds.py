@@ -235,7 +235,7 @@ domain ancillary objects.
     `None`
 
         '''
-        return self._get_attribute('bounds', None) is not None
+        return self._has_attribute('bounds')
     #--- End: def
 
     def set_bounds(self, bounds, copy=True):
