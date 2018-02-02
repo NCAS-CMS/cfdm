@@ -1,4 +1,4 @@
-import abc
+from collections import abc
 
 import operator
 import sys
@@ -11,7 +11,6 @@ from ..functions import abspath, open_files_threshold_exceeded
 
 _file_to_fh_read  = {}
 _file_to_fh_write = {}
-_file_count = {}
 
 _debug = False
 
@@ -104,46 +103,6 @@ x.__str__() <==> str(x)
         new.__dict__ = self.__dict__.copy()
         return new
     #--- End: def
-
-#    def _add_to_file_counter(self, i):
-#        '''Add i to the count of subarrays referencing the file of this
-#partition's subarray.
-#
-#Only do this if self._subarray is an instance of FileArray, but not a
-#temporary FileArray.
-#
-#:Parameters:
-#
-#    i: `int`
-#
-#:Returns:
-#
-#    `None`
-#
-#        '''
-#        subarray = getattr(self, '_subarray', None)
-#        if subarray is None:
-#            return
-#        
-#        try:
-#            if (isinstance(subarray, FileArray) and
-#                not isinstance(subarray, _TempFileArray)):
-#                filename = getattr(subarray, 'file', None)
-#                if filename is None:
-#                    return
-#
-#                file_counter = self.file_counter
-#                count = file_counter.get(filename, 0)
-#                file_counter[filename] = count + i
-#                if file_counter[filename] <= 0:
-#                    # Remove the file from the dictionary if its count has
-#                    # dropped to zero
-#                    del file_counter[filename]
-#        except:
-#            # If we're here then it is likely that FileArray has been
-#            # torn down, so just do nothing.
-#            pass
-#    #--- End: def
 
     @abc.abstractmethod
     def close(self):

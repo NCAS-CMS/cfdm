@@ -124,91 +124,70 @@ There are three extensions to the numpy indexing functionality:
         return self
     #--- End: def
  
-    def __str__(self):
-        '''The built-in function `str`
-
-x.__str__() <==> str(x)
-
-        '''
-        units    = self.units
-        calendar = self.calendar
-
-        if units is not None:
-            isreftime = ('since' in units)
-        else:
-            isreftime = False
-            
-        try:
-            first = self.datum(0)
-        except:            
-            out = ''
-            if units:
-                out += ' {0}'.format(units)
-            if calendar:
-                out += ' {0}'.format(calendar)
-               
-            return out
-        #--- End: try
-        
-        size = self.size
-        ndim = self.ndim
-        open_brackets  = '[' * ndim
-        close_brackets = ']' * ndim
-
-        if size == 1:
-            if isreftime:
-                # Convert reference time to date-time
-#                first = netCDF4.num2date(first, units, calendar)
-                first = type(self)(first, units, calendar).dtarray
-
-            out = '{0}{1}{2}'.format(open_brackets,
-                                     first,
-                                     close_brackets)
-        else:
-            last = self.datum(-1)
-            if isreftime:
-                # Convert reference times to date-times
-                first, last = type(self)([first, last], units, calendar).dtarray
-#                first, last = netCDF4.num2date(numpy.ma.array((first, last)),
-#                                               units, calendar)
-
-            if size > 3:
-                out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
-                                                   first,last,
-                                                   close_brackets)
-            elif size == 3:                
-                middle = self.datum(1)
-                if isreftime:
-                    # Convert reference times to date-times
-#                    middle = netCDF4.num2date(middle, units, calendar)
-                    middle = type(self)(middle, units, calendar).dtarray
-
-                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
-                                                   first, middle, last,
-                                                   close_brackets)
-            else:
-                out = '{0}{1}, {2}{3}'.format(open_brackets,
-                                              first, last,
-                                              close_brackets)
-        #--- End: if
-        
-        if isreftime:
-            out += ' {0}'.format(calendar)
-        elif units:
-            out += ' {0}'.format(units)
-            
-        return out
-    #--- End: def
-
     def __getitem__(self, indices):
-        '''Implement indexing
-
-x.__getitem__(indices) <==> x[indices]
+        '''x.__getitem__(indices) <==> x[indices]
 
         '''
-        return type(self)(self._array[indices], units=self.units,
+        array = self._get_master_array()
+        return type(self)(array()[indices], units=self.units,
                           calendar=self.calendar,
                           fill_value=self.fill_value)
+    #--- End: def
+
+    def __int__(self):
+        '''x.__int__() <==> int(x)
+
+        '''
+        if self.size != 1:
+            raise TypeError(
+"only length-1 arrays can be converted to Python scalars. Got {}".format(self))
+
+        array = self.get_array()
+        return int(array)
+    #--- End: def
+
+    def __iter__(self):
+        '''x.__iter__() <==> iter(x)
+
+:Examples:
+
+>>> d = Data([1, 2, 3], 'metres')
+>>> for i in d:
+...    print repr(i), type(i)
+...
+1 <type 'int'>
+2 <type 'int'>
+3 <type 'int'>
+
+>>> d = Data([[1, 2], [4, 5]], 'metres')
+>>> for e in d:
+...    print repr(e)
+...
+<Data: [1, 2] metres>
+<Data: [4, 5] metres>
+
+>>> d = Data(34, 'metres')
+>>> for e in d:
+...     print repr(e)
+...
+TypeError: iteration over a 0-d Data
+
+        '''
+        ndim = self.ndim
+
+        if not ndim:
+            raise TypeError(
+                "Iteration over 0-d {}".format(self.__class__.__name__))
+            
+        if ndim == 1:
+            array = self.get_array()
+            i = iter(array)
+            while 1:
+                yield i.next()
+        else:
+            # ndim > 1
+            for n in range(self.shape[0]):
+                yield self[n, ...].squeeze(0, copy=False)
     #--- End: def
 
     def __setitem__(self, indices, value):
@@ -240,16 +219,8 @@ elements.
 
 :Examples:
 
-        '''            
-#        # If value has Units then make sure that they're the same
-#        # as self.Units
-#        if (isinstance(value, self.__class__) and
-#            self.Units and value.Units and
-#            value.Units != self.Units):
-#            raise ValueError(
-#"Can't set to values with different units: {!r}".format(value.Units))
-
-        array = self._array[...]
+        '''
+        array = self.get_array()
 
         if value is masked or numpy.ma.isMA(value):
             # The data is not masked and the assignment is masking
@@ -261,103 +232,111 @@ elements.
 
         self._set_subspace(array, indices, numpy.asanyarray(value))
 
-        self._array = NumpyArray(array)
+        self._set_master_array(NumpyArray(array))
     #--- End: def
 
-    def __int__(self):
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to Python scalars. Got {}".format(self))
-        return int(self.datum())
-    #--- End: def
+    def __str__(self):
+        '''x.__str__() <==> str(x)
 
-    def __iter__(self):
         '''
+        units    = self.units
+        calendar = self.calendar
 
-Efficient iteration.
-
-x.__iter__() <==> iter(x)
-
-:Examples:
-
->>> d = Data([1, 2, 3], 'metres')
->>> for i in d:
-...    print repr(i), type(i)
-...
-1 <type 'int'>
-2 <type 'int'>
-3 <type 'int'>
-
->>> d = Data([[1, 2], [4, 5]], 'metres')
->>> for e in d:
-...    print repr(e)
-...
-<Data: [1, 2] metres>
-<Data: [4, 5] metres>
-
->>> d = Data(34, 'metres')
->>> for e in d:
-...     print repr(e)
-...
-TypeError: iteration over a 0-d Data
-
-'''
-        ndim = self.ndim
-
-        if not ndim:
-            raise TypeError(
-                "Iteration over 0-d {}".format(self.__class__.__name__))
-            
-        if ndim == 1:
-            i = iter(self.array)
-            while 1:
-                yield i.next()
+        if units is not None:
+            isreftime = ('since' in units)
         else:
-            # ndim > 1
-            for n in xrange(self.shape[0]):
-                yield self[n, ...].squeeze(0, copy=False)
+            isreftime = False
+            
+        try:
+            first = self.first_element()
+        except:            
+            out = ''
+            if units:
+                out += ' {0}'.format(units)
+            if calendar:
+                out += ' {0}'.format(calendar)
+               
+            return out
+        #--- End: try
+        
+        size = self.size
+        ndim = self.ndim
+        open_brackets  = '[' * ndim
+        close_brackets = ']' * ndim
+
+        if size == 1:
+            if isreftime:
+                # Convert reference time to date-time
+                first = type(self)(first, units, calendar).get_dtarray()
+
+            out = '{0}{1}{2}'.format(open_brackets,
+                                     first,
+                                     close_brackets)
+        else:
+            last = self.last_element()
+            if isreftime:
+                # Convert reference times to date-times
+                first, last = type(self)([first, last], units, calendar).get_dtarray()
+
+            if size > 3:
+                out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
+                                                   first,last,
+                                                   close_brackets)
+            elif size == 3:                
+                middle = self.second_element()
+                if isreftime:
+                    # Convert reference times to date-times
+                    middle = type(self)(middle, units, calendar).get_dtarray()
+
+                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
+                                                   first, middle, last,
+                                                   close_brackets)
+            else:
+                out = '{0}{1}, {2}{3}'.format(open_brackets,
+                                              first, last,
+                                              close_brackets)
+        #--- End: if
+        
+        if isreftime:
+            out += ' {0}'.format(calendar)
+        elif units:
+            out += ' {0}'.format(units)
+            
+        return out
     #--- End: def
 
-    @property
-    def isscalar(self):
+    # MOVE TO STRUCTURE
+    def _del_master_array(self):
         '''
-
-True if the data array is a 0-d scalar array.
-
-:Examples:
-
->>> d.ndim
-0
->>> d.isscalar
-True
-
->>> d.ndim >= 1
-True
->>> d.isscalar
-False
-
-'''
-        return not self.ndim
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def data(self):
         '''
-
-The data array object as an object identity.
-
-:Examples:
-
->>> d.data is d
-True
-
-'''
-        return self
+        self._master_array = None
     #--- End: def
+    
+    # MOVE TO STRUCTURE
+    def _get_master_array(self, *default)
+        '''
+        '''
+        array = self._master_array
+        if array is None and default:
+            return default[0]     
 
+        return array   
+    #--- End: def
+    
+    # MOVE TO STRUCTURE
+    def _set_master_array(self, value):
+        '''
+:Parameters:
+
+    value: (subclass of) `Array`
+
+:Returns:
+
+    `None`
+        '''
+        self._master_array = value
+    #--- End: def
+    
     # ----------------------------------------------------------------
     # Attribute
     # ----------------------------------------------------------------
@@ -394,13 +373,8 @@ dtype('float64')
 [ 0.  1.  1.]
 
         '''
-        return self._array.dtype
+        return self._get_master_array().dtype
     #--- End: def
-    @dtype.setter
-    def dtype(self, value):
-        value = numpy.dtype(value)
-        if value != self.dtype:
-            self._array = NumpyArray(numpy.asanyarray(self.array, dtype=value))
 
     # ----------------------------------------------------------------
     # Attribute
@@ -478,96 +452,32 @@ True
         return array
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def varray(self):
-        '''A numpy array view the data.
-
-.. note:: If the data array is stored as date-time objects then a
-          numpy array of numeric reference times will be returned. A
-          numpy array of date-time objects may be returned by the
-          `dtarray` attribute.
-
-.. seealso:: `array`, `dtarray`
-
-:Examples:
-
-        '''
-        array = self._array[...]
-
-        if self.fill_value is not None and numpy.ma.isMA(array):
-            array.set_fill_value(self.fill_value)
-
-        self._array = NumpyArray(array)
-
-        return array
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def dtarray(self):
-        '''
-        '''
-        array = self.get_array()
-
-        mask = None
-        if numpy.ma.isMA(array):
-            # num2date has issues if the mask is nomask
-            mask = array.mask
-            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
-                array = array.view(numpy.ndarray)
-        #--- End: if
-
-        calendar = self.calendar
-        if calendar is None:
-            calendar = 'standard'
-            
-        array = netCDF4.num2date(array, self.units, calendar)    
-        if mask is None:
-            # There is no missing data
-            array = numpy.array(array, dtype=object)
-        else:
-            # There is missing data
-            array = numpy.ma.masked_where(mask, array)
-            if not numpy.ndim(array):
-                array = numpy.ma.masked_all((), dtype=object)
-
-        return array
-    #--- End: def
-
-    @property
-    def mask(self):
-        '''The boolean missing data mask of the data.
-
-The boolean mask has True where the data has missing values and False
-otherwise.
-
-:Examples:
-
->>> d.shape
-(12, 73, 96)
->>> m = d.mask
->>> m
-<Data: [[[False, ..., True]]]>
->>> m.dtype
-dtype('bool')
->>> m.shape
-(12, 73, 96)
-
-        '''
-        array = self.array
-        
-        if not numpy.ma.is_masked(array):
-            mask = numpy.zeros(self.shape, dtype=bool)
-        else:
-            mask = array.mask
-            
-        return type(self)(mask)
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Attribute (read only)
+#    # ----------------------------------------------------------------
+#    @property
+#    def varray(self):
+#        '''A numpy array view the data.
+#
+#.. note:: If the data array is stored as date-time objects then a
+#          numpy array of numeric reference times will be returned. A
+#          numpy array of date-time objects may be returned by the
+#          `dtarray` attribute.
+#
+#.. seealso:: `array`, `dtarray`
+#
+#:Examples:
+#
+#        '''
+#        array = self._get_master_array()[...]
+#
+#        if self.fill_value is not None and numpy.ma.isMA(array):
+#            array.set_fill_value(self.fill_value)
+#
+#        self._set_master_array(NumpyArray(array))
+#
+#        return array
+#    #--- End: def
 
     @classmethod
     def asdata(cls, d, copy=False):
@@ -610,6 +520,36 @@ True
             return data.copy()
         else:
             return data
+    #--- End: def
+
+    def get_dtarray(self):
+        '''
+        '''
+        array = self.get_array()
+
+        mask = None
+        if numpy.ma.isMA(array):
+            # num2date has issues if the mask is nomask
+            mask = array.mask
+            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+                array = array.view(numpy.ndarray)
+        #--- End: if
+
+        calendar = self.calendar
+        if calendar is None:
+            calendar = 'standard'
+            
+        array = netCDF4.num2date(array, self.units, calendar)    
+        if mask is None:
+            # There is no missing data
+            array = numpy.array(array, dtype=object)
+        else:
+            # There is missing data
+            array = numpy.ma.masked_where(mask, array)
+            if not numpy.ndim(array):
+                array = numpy.ma.masked_all((), dtype=object)
+
+        return array
     #--- End: def
 
     def parse_indices(self, indices):
@@ -831,14 +771,14 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 #    def close(self):
 #        '''
 #'''
-#        self._array.close()
+#        self._get_Array().close()
 #    #--- End: def
 #    
 #    def open(self):
 #        '''
 #'''
-#        self._array.open()
-#        self._array.keep_open(True)
+#        self._get_Array().open()
+#        self._get_Array().keep_open(True)
 #    #--- End: def
 
     def copy(self):
@@ -855,8 +795,9 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 
 >>> e = d.copy()
 
-        '''        
-        new = type(self)(self._array, units=self.units,
+        '''
+        array = self._get_master_array()
+        new = type(self)(array, units=self.units,
                          calendar=self.calendar,
                          fill_value=self.fill_value)
 
@@ -892,7 +833,7 @@ Missing data array elements are omitted from the calculation.
         array = numpy.amax(array, axis=axes, keepdims=True)
 
         d = self.copy()
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
         
         if d._HDF_chunks:            
             HDF = {}
@@ -932,7 +873,7 @@ Missing data array elements are omitted from the calculation.
         array = numpy.amin(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
         if d._HDF_chunks:            
             HDF = {}
@@ -978,7 +919,7 @@ dimension is iterated over first.
 ()
 
         '''
-        return itertools.product(*[xrange(0, r) for r in self.shape])  
+        return itertools.product(*[range(0, r) for r in self.shape])  
     #--- End: def
 
     def sum(self, axes=None):
@@ -1008,7 +949,7 @@ Missing data array elements are omitted from the calculation.
         array = numpy.sum(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
         if d._HDF_chunks:            
             HDF = {}
@@ -1279,7 +1220,7 @@ selected with the keyword arguments.
         array = self.get_array()
         array = numpy.squeeze(array, axes)
 
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
         return d
     #--- End: def
@@ -1329,7 +1270,7 @@ data array shape.
         array = self.get_array()
         array = numpy.expand_dims(array, position)
 
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
         if d._HDF_chunks:            
             HDF = {}
@@ -1407,7 +1348,7 @@ data array shape.
         array = self.get_array()
         array = numpy.transpose(array, axes=axes)
         
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
         return d
     #--- End: def
@@ -1617,147 +1558,35 @@ False
         return True            
     #--- End: def
 
-    def datum(self, *index):
-        '''Return an element of the data array as a standard Python scalar.
-
-The first and last elements are always returned with ``d.datum(0)``
-and ``d.datum(-1)`` respectively, even if the data array is a scalar
-array or has two or more dimensions.
-
-The returned object is of the same type as is stored internally.
-
-.. seealso:: `array`, `dtarray`, `varray`
-
-:Parameters:
-
-    index: *optional*
-        Specify which element to return. When no positional arguments
-        are provided, the method only works for data arrays with one
-        element (but any number of dimensions), and the single element
-        is returned. If positional arguments are given then they must
-        be one of the following:
-
-          * An integer. This argument is interpreted as a flat index
-            into the array, specifying which element to copy and
-            return.
-         
-              Example: If the data aray shape is ``(2, 3, 6)`` then:
-                * ``d.datum(0)`` is equivalent to ``d.datum(0, 0, 0)``.
-                * ``d.datum(-1)`` is equivalent to ``d.datum(1, 2, 5)``.
-                * ``d.datum(16)`` is equivalent to ``d.datum(0, 2, 4)``.
-
-            If *index* is ``0`` or ``-1`` then the first or last data
-            array element respecitively will be returned, even if the
-            data array is a scalar array.
-        ..
-         
-          * Two or more integers. These arguments are interpreted as a
-            multidimensionsal index to the array. There must be the
-            same number of integers as data array dimensions.
-        ..
-         
-          * A tuple of integers. This argument is interpreted as a
-            multidimensionsal index to the array. There must be the
-            same number of integers as data array dimensions.
-         
-              Example:
-                ``d.datum((0, 2, 4))`` is equivalent to ``d.datum(0,
-                2, 4)``; and ``d.datum(())`` is equivalent to
-                ``d.datum()``.
-
-:Returns:
-
-    out: scalar
-        A copy of the specified element of the array as a suitable
-        Python scalar.
-
-:Examples:
-
->>> d = Data(2)
->>> d.datum()
-2
->>> 2 == d.datum(0) == d.datum(-1) == d.datum(())
-True
-
->>> d = Data([[2]])
->>> 2 == d.datum() == d.datum(0) == d.datum(-1)
-True
->>> 2 == d.datum(0, 0) == d.datum((-1, -1)) == d.datum(-1, 0)
-True
-
->>> d = Data([[4, 5, 6], [1, 2, 3]], 'metre')
->>> d[0, 1] = masked
->>> print d
-[[4 -- 6]
- [1 2 3]]
->>> d.datum(0)
-4
->>> d.datum(-1)
-3
->>> d.datum(1)
-masked
->>> d.datum(4)
-2
->>> d.datum(-2)
-2
->>> d.datum(0, 0)
-4
->>> d.datum(-2, -1)
-6
->>> d.datum(1, 2)
-3
->>> d.datum((0, 2))
-6
-
+    def first_element(self):
         '''
-        if index:
-            n_index = len(index)
-            if n_index == 1:
-                index = index[0]
-                if index == 0:
-                    # This also works for scalar arrays
-                    index = (slice(0, 1),) * self.ndim
-                elif index == -1:
-                    # This also works for scalar arrays
-                    index = (slice(-1, None),) * self.ndim
-                elif isinstance(index, (int, long)):
-                    # e.g. index=345
-                    if index < 0:
-                        index += self.size
+        '''
+        d = self[(slice(0, 1),)*self.ndim]
+        return d.get_array().item()
+    #--- End: def
+    
+    def last_element(self):
+        '''
+        '''
+        d = self[(slice(-1, None),)*self.ndim]
+        return d.get_array().item()
+    #--- End: def
+    
+    def second_element(self):
+        '''
+        '''
+        index = numpy.unravel_index(1, self.shape)
+        d = self[index]
+        return d.get_array().item()
+    #--- End: def
 
-                    index = numpy.unravel_index(index, self.shape)
-                elif len(index) == self.ndim:
-                    # e.g. index=[0, 3]
-                    index = tuple(index)
-                else:
-                    raise ValueError(
-                        "Incorrect number of indices for {} array".format(
-                            self.__class__.__name__))
-                #--- End: if
-            elif n_index == self.ndim:
-                index = tuple(index)
-            else:
-                raise ValueError(
-                    "Incorrect number of indices for {} array".format(
-                        self.__class__.__name__))
-
-            array = self[index].array
-
-        elif self.size == 1:
-            array = self.array
-        else:
-            raise ValueError(
-                "Can't convert {} with size {} to a Python scalar".format(
-                    self.__class__.__name__, self.size))
-
-        if not numpy.ma.isMA(array):
-            return array.item()
-        
-        mask = array.mask
-        if mask is numpy.ma.nomask or not mask.item():
-            return array.item()
-
-        return numpy.ma.masked
+    def set_dtype(self, value):
+        '''
+        '''
+        value = numpy.dtype(value)
+        if value != self.dtype:
+            array = numpy.asanyarray(self.get_array(), dtype=value)
+            self._set_master_array(NumpyArray(array))
     #--- End: def
 
     # ----------------------------------------------------------------

@@ -560,11 +560,12 @@ The data type of the data array is unchanged.
 :Examples:
 
         '''
-        if not self.hasdata:
+        data = self.get_data(None)
+        if data is None:
             raise AttributeError("{} has no data".format(self.__class__.__name__))
 
-        return self.data.dtarray
-#
+        return data.get_dtarray()
+
 #        array = self.data.array
 #
 #        mask = None
@@ -590,108 +591,6 @@ The data type of the data array is unchanged.
 #
 #        return array
 #    #--- End: def
-
-    def datum(self, *index):
-        '''
-
-Return an element of the data array as a standard Python scalar.
-
-The first and last elements are always returned with ``f.datum(0)``
-and ``f.datum(-1)`` respectively, even if the data array is a scalar
-array or has two or more dimensions.
-
-.. versionadded:: 1.6
-
-.. seealso:: `array`
-
-:Parameters:
-
-    index: optional
-        Specify which element to return. When no positional arguments
-        are provided, the method only works for data arrays with one
-        element (but any number of dimensions), and the single element
-        is returned. If positional arguments are given then they must
-        be one of the following:
-
-          * An integer. This argument is interpreted as a flat index
-            into the array, specifying which element to copy and
-            return.
-         
-              Example: If the data aray shape is ``(2, 3, 6)`` then:
-                * ``f.{+name}(0)`` is equivalent to ``f.{+name}(0, 0, 0)``.
-                * ``f.{+name}(-1)`` is equivalent to ``f.{+name}(1, 2, 5)``.
-                * ``f.{+name}(16)`` is equivalent to ``f.{+name}(0, 2, 4)``.
-
-            If *index* is ``0`` or ``-1`` then the first or last data
-            array element respecitively will be returned, even if the
-            data array is a scalar array or has two or more
-            dimensions.
-        ..
-         
-          * Two or more integers. These arguments are interpreted as a
-            multidimensionsal index to the array. There must be the
-            same number of integers as data array dimensions.
-        ..
-         
-          * A tuple of integers. This argument is interpreted as a
-            multidimensionsal index to the array. There must be the
-            same number of integers as data array dimensions.
-         
-              Example: ``f.datum((0, 2, 4))`` is equivalent to
-              ``f.datum(0, 2, 4)``; and ``f.datum(())`` is equivalent
-              to ``f.datum()``.
-
-:Returns:
-
-    out:
-        A copy of the specified element of the array as a suitable
-        Python scalar.
-
-:Examples:
-
->>> print f.array
-2
->>> f.{+name}()
-2
->>> 2 == f.{+name}(0) == f.{+name}(-1) == f.{+name}(())
-True
-
->>> print f.array
-[[2]]
->>> 2 == f.{+name}() == f.{+name}(0) == f.{+name}(-1)
-True
->>> 2 == f.{+name}(0, 0) == f.{+name}((-1, -1)) == f.{+name}(-1, 0)
-True
-
->>> print f.array
-[[4 -- 6]
- [1 2 3]]
->>> f.{+name}(0)
-4     
->>> f.{+name}(-1)
-3     
->>> f.{+name}(1)
-masked
->>> f.{+name}(4)
-2     
->>> f.{+name}(-2)
-2     
->>> f.{+name}(0, 0)
-4     
->>> f.{+name}(-2, -1)
-6     
->>> f.{+name}(1, 2)
-3     
->>> f.{+name}((0, 2))
-6
-
-'''
-        if not self.has_data():
-            raise ValueError(
-                "ERROR: Can't return an element when there is no data array")
-        
-        return self.data.datum(*index)
-    #--- End: def
 
     def _parse_axes(self, axes):
         if axes is None:
