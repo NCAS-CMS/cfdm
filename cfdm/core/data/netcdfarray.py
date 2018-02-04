@@ -56,7 +56,10 @@ class NetCDFArray(Array):
 
     '''
     __metaclass__ = abc.ABCMeta
-    
+
+    # Always close the netCDF file after access
+    self._close = True
+
     def __init__(self, **kwargs):
         '''
         
@@ -141,6 +144,10 @@ Returns a numpy array.
 
             array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
+
+        # Close the netCDF file
+        if self._close:
+            self.close()
         
         return array
     #--- End: def
@@ -154,15 +161,6 @@ x.__repr__() <==> repr(x)
         return "<{0}>".format(self.__class__.__name__, str(self))
     #--- End: def
      
-    def __str__(self):
-        '''
-
-x.__str__() <==> str(x)
-
-'''
-        return "{0} in {1}".format(self.shape, self.file)
-    #--- End: def
-    
     def __str__(self):
         '''
 
@@ -194,30 +192,33 @@ x.__str__() <==> str(x)
 >>> f.close()
 
         '''
-        self.file_close(self.file)
+        nc = self._nc        
+        del self._nc
+        nc.close()
+#        self.file_close(self.file)
     #--- End: def
 
-    @classmethod
-    def file_close(cls, filename):
-        '''Close the `netCDF4.Dataset` for a netCDF file.
-
-:Returns:
-
-    `None`
-
-:Examples:
-
->>> f.file_close(filename)
-
-        '''
-        nc = _file_to_fh_read.pop(filename, None)
-        if nc is not None and nc.isopen():
-            nc.close()
-
-        nc = _file_to_fh_write.pop(filename, None)
-        if nc is not None and nc.isopen():
-            nc.close()
-    #--- End: def
+#    @classmethod
+#    def file_close(cls, filename):
+#        '''Close the `netCDF4.Dataset` for a netCDF file.
+#
+#:Returns:
+#
+#    `None`
+#
+#:Examples:
+#
+#>>> f.file_close(filename)
+#
+#        '''
+#        nc = _file_to_fh_read.pop(filename, None)
+#        if nc is not None and nc.isopen():
+#            nc.close()
+#
+#        nc = _file_to_fh_write.pop(filename, None)
+#        if nc is not None and nc.isopen():
+#            nc.close()
+#    #--- End: def
 
     @classmethod
     def file_open(cls, filename, mode, fmt=None):
@@ -279,7 +280,9 @@ x.__str__() <==> str(x)
 <netCDF4.Dataset at 0x115a4d0>
 
         '''
-        return self.file_open(self.file, 'r')
+        nc = self.file_open(self.file, 'r')
+        self._nc = nc
+        return nc
     #--- End: def
 
 #--- End: class
