@@ -218,6 +218,14 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
         return out
     #--- End: def
 
+#    def copy(self, data=True):
+#        '''
+#        '''
+#        new = super(Field, self)(source=self, copy=True, _use_data=data)#
+#
+#        if self.
+#    #--- End: def
+    
     def del_data_axes(self):
         '''
         '''

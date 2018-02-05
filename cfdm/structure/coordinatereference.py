@@ -1,5 +1,7 @@
 import abc
 
+from copy import deepcopy
+
 import abstract
 
 # ====================================================================
@@ -103,25 +105,30 @@ frame and consists of the following:
                 domain_ancillaries.update(source.domain_ancillaries())
         #--- End: if
 
+        self._coordinates = set()
+        self._domain_ancillaries = {}
+        self._parameters = {}
+
         if datum is not None:
             if copy:
                 datum = deepcopy(datum)
                 
             self.set_datum(datum, copy=False)
-        
-        parameters = parameters.copy()
-        if parameters and copy:
-            for key, value in parameters.items():
-                parameters[key] =  deepcopy(value)
         #--- End: if                
 
-        self._coordinates = set()
-        self._domain_ancillaries = {}
-        self._parameters = {}
-        
-        self._set_attribute('coordinates', coordinates.copy())
-        self._set_attribute('domain_ancillaries', domain_ancillaries.copy())
-        self._set_attribute('parameters', parameters)
+        if coordinates:
+            self._set_attribute('coordinates', set(coordinates))
+
+        if domain_ancillaries:
+            self._set_attribute('domain_ancillaries', domain_ancillaries.copy())
+
+        if parameters:
+            if copy:
+                for key, value in parameters.items():
+                    parameters[key] =  deepcopy(value)
+            #--- End: if
+            
+            self._set_attribute('parameters', deepcopy(parameters))
     #--- End: def
    
     def __str__(self):

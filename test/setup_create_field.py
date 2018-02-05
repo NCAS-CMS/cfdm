@@ -87,29 +87,34 @@ class create_fieldTest(unittest.TestCase):
         lon   = f.set_auxiliary_coordinate(aux3, axes=[axisX, axisY])
         greek = f.set_auxiliary_coordinate(aux4, axes=[axisY])
 
-        ak = f.insert_domain_ancillary(ak, axes=[axisZ])
-        bk = f.insert_domain_ancillary(bk, axes=[axisZ])
+        ak = f.set_domain_ancillary(ak, axes=[axisZ])
+        bk = f.set_domain_ancillary(bk, axes=[axisZ])
 
         # Coordinate references
         ref0 = cfdm.CoordinateReference(
-            name='rotated_latitude_longitude',
+            properties={'grid_mapping_name': 'rotated_latitude_longitude'},
             parameters={'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0},
-            coordinates=[x, y, lat, lon])
+            coordinates=[x, y, lat, lon]
+        )
 
-        f.insert_cell_measure(msr0, axes=[axisX, axisY])
+        f.set_cell_measure(msr0, axes=[axisX, axisY])
 
-        f.insert_coordinate_reference(ref0)
+        f.set_coordinate_reference(ref0)
 
         orog = cfdm.DomainAncillary(data=f.get_data())
         orog.set_property('standard_name', 'surface_altitude')
-        orog = f.insert_domain_ancillary(orog, axes=[axisY, axisX])
+        orog = f.set_domain_ancillary(orog, axes=[axisY, axisX])
 
-        ref1 = cfdm.CoordinateReference(name='atmosphere_hybrid_height_coordinate',
-                                        domain_ancillaries={'orog': orog, 'a': ak, 'b': bk},
-                                        coordinates=[z])
-
-        ref1 = f.insert_coordinate_reference(ref1)
+        ref1 = cfdm.CoordinateReference(
+            properties={'standard_name': 'atmosphere_hybrid_height_coordinate'},
+            domain_ancillaries={'orog': orog,
+                                'a'   : ak,
+                                'b'   : bk},
+            coordinates=[z]
+        )
+        
+        ref1 = f.set_coordinate_reference(ref1)
 
         # Field ancillary variables
 #        g = f.transpose([1, 0])
