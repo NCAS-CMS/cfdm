@@ -19,6 +19,8 @@ All components of a variable are optional.
 '''
     __metaclass__ = abc.ABCMeta
 
+    
+    
     def del_ncvar(self):
         '''
         '''        

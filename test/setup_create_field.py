@@ -5,7 +5,7 @@ import unittest
 
 import numpy
 
-import cfdm
+import cfdm.core as cfdm
 
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -15,52 +15,55 @@ class create_fieldTest(unittest.TestCase):
 
         # Dimension coordinates
         dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.)))
-        dim1.setprop('standard_name', 'grid_latitude')
-        dim1.setprop('units', 'degrees')
-
-        dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(9.) + 20))
-        dim0.setprop('standard_name', 'grid_longitude')
-        dim0.setprop('units', 'degrees')
-        dim0.data[-1] = 34
-        bounds = cfdm.Data(numpy.array([dim0.data.array-0.5, dim0.data.array+0.5]).transpose((1,0)))
-        bounds[-2,1] = 30
-        bounds[-1,:] = [30, 36]
-        dim0.insert_bounds(cfdm.Bounds(data=bounds))
+        dim1.set_property('standard_name', 'grid_latitude')
+        dim1.set_property('units', 'degrees')
+        print 'XX', dim1
+        data = numpy.arange(9.) + 20
+        data[-1] = 34
+        dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(data))
+        dim0.set_property('standard_name', 'grid_longitude')
+        dim0.set_property('units', 'degrees')
+        print dim0
+        array = dim0.get_array()
+        data = numpy.array([array-0.5, array+0.5]).transpose((1,0))
+        data[-2,1] = 30
+        data[-1,:] = [30, 36]
+        dim0.set_bounds(cfdm.Bounds(data=data))
         
         dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]), bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
-        dim2.setprop('standard_name', 'atmosphere_hybrid_height_coordinate')
+        dim2.set_property('standard_name', 'atmosphere_hybrid_height_coordinate')
         
         # Auxiliary coordinates
         ak = cfdm.DomainAncillary(data=cfdm.Data([10.])) #, 'm'))
-        ak.setprop('units', 'm')
+        ak.set_property('units', 'm')
         ak.id = 'atmosphere_hybrid_height_coordinate_ak'
-        ak.insert_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]]))) # , ak.Units)
+        ak.set_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]]))) # , ak.Units)
         
         bk = cfdm.DomainAncillary(data=cfdm.Data([20.]))
         bk.id = 'atmosphere_hybrid_height_coordinate_bk'
-        bk.insert_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
+        bk.set_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
         
         aux2 = cfdm.AuxiliaryCoordinate(
             data=cfdm.Data(numpy.arange(-45, 45, dtype='int32').reshape(10, 9)))
-        aux2.setprop('units', 'degree_N')
-        aux2.setprop('standard_name', 'latitude')
+        aux2.set_property('units', 'degree_N')
+        aux2.set_property('standard_name', 'latitude')
         
         aux3 = cfdm.AuxiliaryCoordinate(
             data=cfdm.Data(numpy.arange(60, 150, dtype='int32').reshape(9, 10)))
-        aux3.setprop('standard_name', 'longitude')
-        aux3.setprop('units', 'degreeE')
-                
-        aux4 = cfdm.AuxiliaryCoordinate(
-            data=cfdm.Data(['alpha','beta','gamma','delta','epsilon',
-                          'zeta','eta','theta','iota','kappa']))
-        aux4.setprop('standard_name', 'greek_letters')
-        aux4[0] = cfdm.masked
+        aux3.set_property('standard_name', 'longitude')
+        aux3.set_property('units', 'degreeE')
+
+        data = numpy.ma.array(['alpha','beta','gamma','delta','epsilon',
+                               'zeta','eta','theta','iota','kappa'])
+        data[0] = numpy.ma.masked
+        aux4 = cfdm.AuxiliaryCoordinate(data=data)
+        aux4.set_property('standard_name', 'greek_letters')
     
         # Cell measures
         msr0 = cfdm.CellMeasure(
             data=cfdm.Data(1+numpy.arange(90.).reshape(9, 10)*1234))
-        msr0.measure('area')
-        msr0.setprop('units', 'km2')
+        msr0.set_measure('area')
+        msr0.set_property('units', 'km2')
         
         # Data          
         data = cfdm.Data(numpy.arange(90.).reshape(10, 9))
@@ -68,17 +71,17 @@ class create_fieldTest(unittest.TestCase):
         properties = {'units': 'm s-1'}
         
         f = cfdm.Field(properties=properties)
-        f.setprop('standard_name', 'eastward_wind')
+        f.set_property('standard_name', 'eastward_wind')
         
-        axisX = f.insert_domain_axis(cfdm.DomainAxis(9))
-        axisY = f.insert_domain_axis(cfdm.DomainAxis(10))
-        axisZ = f.insert_domain_axis(cfdm.DomainAxis(1))
+        axisX = f.set_domain_axis(cfdm.DomainAxis(9))
+        axisY = f.set_domain_axis(cfdm.DomainAxis(10))
+        axisZ = f.set_domain_axis(cfdm.DomainAxis(1))
 
-        f.insert_data(data, axes=[axisY, axisX])
+        f.set_data(data, axes=[axisY, axisX])
         
-        x = f.insert_dimension_coordinate(dim0, axes=[axisX])
-        y = f.insert_dimension_coordinate(dim1, axes=[axisY])
-        z = f.insert_dimension_coordinate(dim2, axes=[axisZ])
+        x = f.set_dimension_coordinate(dim0, axes=[axisX])
+        y = f.set_dimension_coordinate(dim1, axes=[axisY])
+        z = f.set_dimension_coordinate(dim2, axes=[axisZ])
 
         lat = f.insert_auxiliary_coordinate(aux2, axes=[axisY, axisX])
         lon = f.insert_auxiliary_coordinate(aux3, axes=[axisX, axisY])
@@ -98,8 +101,8 @@ class create_fieldTest(unittest.TestCase):
 
         f.insert_coordinate_reference(ref0)
 
-        orog = cfdm.DomainAncillary(data=f.data)
-        orog.setprop('standard_name', 'surface_altitude')
+        orog = cfdm.DomainAncillary(data=f.get_data())
+        orog.set_property('standard_name', 'surface_altitude')
         orog = f.insert_domain_ancillary(orog, axes=[axisY, axisX])
 
         ref1 = cfdm.CoordinateReference(name='atmosphere_hybrid_height_coordinate',
@@ -113,7 +116,7 @@ class create_fieldTest(unittest.TestCase):
         g = f.copy()
 #        g.standard_name = 'ancillary0'
 #        g *= 0.01
-        anc = cfdm.FieldAncillary(data=g.data)
+        anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryA'
         f.insert_field_ancillary(anc, axes=[axisY, axisX])
         
@@ -121,7 +124,7 @@ class create_fieldTest(unittest.TestCase):
         g.squeeze(copy=False)
 #        g.standard_name = 'ancillary2'
 #        g *= 0.001
-        anc = cfdm.FieldAncillary(data=g.data)
+        anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryB'
         f.insert_field_ancillary(anc, axes=[axisX])
 
@@ -129,14 +132,14 @@ class create_fieldTest(unittest.TestCase):
         g = g.squeeze()
 #        g.standard_name = 'ancillary3'
 #        g *= 0.001
-        anc = cfdm.FieldAncillary(data=g.data)
+        anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryC'
         f.insert_field_ancillary(anc, axes=[axisY])
 
         
-        f.setprop('flag_values', numpy.array([1, 2, 4], 'int32'))
-        f.setprop('flag_meanings', 'a bb ccc')
-        f.setprop('flag_masks', [2, 1, 0])
+        f.set_property('flag_values', numpy.array([1, 2, 4], 'int32'))
+        f.set_property('flag_meanings', 'a bb ccc')
+        f.set_property('flag_masks', [2, 1, 0])
 
         print repr(f.getprop('flag_meanings'))
         print 'F masks', repr(f.getprop('flag_masks'))

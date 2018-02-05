@@ -348,17 +348,17 @@ Return a deep or shallow copy.
         if construct_type in self._array_constructs:
             if axes is None:
                 raise ValueError("sdf lsbe lhbkhjb iuhj-98qohu n")
-            if len(axes) != construct.ndim:
+            if len(axes) != construct.get_data().ndim:
                 raise ValueError(
 "Can't insert {}: Mismatched axis sizes (got {}, expected {})".format(
-    construct_type, len(axes), construct.ndim))
+    construct_type, len(axes), construct.get_data().ndim))
 
             domain_axes = self.domain_axes()
-            for axis, size in zip(axes, construct.shape):
-                if size != domain_axes[axis].size:
+            for axis, size in zip(axes, construct.get_data().shape):
+                if size != domain_axes[axis].get_size():
                     raise ValueError(
 "Can't insert {}: Mismatched axis size (got {}, expected {})".format(
-    construct_type, size, domain_axes[axis].size))
+    construct_type, size, domain_axes[axis].get_size()))
             #--- End: for
 
             self._construct_axes[key] = tuple(axes)

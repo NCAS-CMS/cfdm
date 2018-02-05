@@ -46,7 +46,7 @@ domain ancillary objects.
   
         '''
         # Set properties and data
-        super(AbstractBoundedArray, self).__init__(
+        super(PropertiesDataBounds, self).__init__(
             properties=properties,
             data=data,
             source=source,
@@ -257,7 +257,7 @@ domain ancillary objects.
 
         '''
         if copy:
-            bounds = bound.copy()
+            bounds = bounds.copy()
 
         self._set_attribute('bounds', bounds)
     #--- End: def

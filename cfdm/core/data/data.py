@@ -8,7 +8,8 @@ from ..constants  import masked
 
 from ..functions  import RTOL, ATOL, _numpy_allclose
 
-from .array import Array, NumpyArray
+from .array      import Array
+from .numpyarray import NumpyArray
 
 from ...structure import Data as structure_Data
 
@@ -101,7 +102,7 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''
-        if data is not None and  not isinstance(data, Array):
+        if data is not None and not isinstance(data, Array):
             if not isinstance(data, numpy.ndarray):
                 data = numpy.asanyarray(data)
                 
@@ -113,7 +114,7 @@ There are three extensions to the numpy indexing functionality:
                                    
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
-        self._HDF_chunks = {}
+#        self._HDF_chunks = {}
     #--- End: def
                                    
     def __data__(self):
@@ -128,7 +129,7 @@ There are three extensions to the numpy indexing functionality:
 
         '''
         array = self._get_master_array()
-        return type(self)(array()[indices], units=self.units,
+        return type(self)(array[indices], units=self.units,
                           calendar=self.calendar,
                           fill_value=self.fill_value)
     #--- End: def
@@ -304,38 +305,6 @@ elements.
         return out
     #--- End: def
 
-    # MOVE TO STRUCTURE
-    def _del_master_array(self):
-        '''
-        '''
-        self._master_array = None
-    #--- End: def
-    
-    # MOVE TO STRUCTURE
-    def _get_master_array(self, *default):
-        '''
-        '''
-        array = self._master_array
-        if array is None and default:
-            return default[0]     
-
-        return array   
-    #--- End: def
-    
-    # MOVE TO STRUCTURE
-    def _set_master_array(self, value):
-        '''
-:Parameters:
-
-    value: (subclass of) `Array`
-
-:Returns:
-
-    `None`
-        '''
-        self._master_array = value
-    #--- End: def
-    
     # ----------------------------------------------------------------
     # Attribute
     # ----------------------------------------------------------------
@@ -795,13 +764,8 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 >>> e = d.copy()
 
         '''
-        array = self._get_master_array()
-        new = type(self)(array, units=self.units,
-                         calendar=self.calendar,
-                         fill_value=self.fill_value)
-
-        new.HDF_chunks(self.HDF_chunks())
-
+        new = super(Data, self).copy()
+#        new.HDF_chunks(self.HDF_chunks())
         return new
     #--- End: def
 
@@ -834,13 +798,13 @@ Missing data array elements are omitted from the calculation.
         d = self.copy()
         d._set_master_array(NumpyArray(array))
         
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
 
         return d
     #--- End: def
@@ -874,13 +838,13 @@ Missing data array elements are omitted from the calculation.
         d = self.copy()
         d._set_master_array(NumpyArray(array))
 
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
 
         return d
     #--- End: def
@@ -950,64 +914,64 @@ Missing data array elements are omitted from the calculation.
         d = self.copy()
         d._set_master_array(NumpyArray(array))
 
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
         
         return d
     #--- End: def
 
-    def HDF_chunks(self, *chunks):
-        '''
-        '''
-        _HDF_chunks = self._HDF_chunks
-
-        org_HDF_chunks = dict([(i, _HDF_chunks.get(i))
-                               for i in range(self.ndim)])
-
-        org_HDF_chunks = _HDF_chunks.copy()
-        
-        if not chunks:
-            return org_HDF_chunks
-
-#        if _HDF_chunks is None:
-#            _HDF_chunks = {}
-#        else:
-#        _HDF_chunks = _HDF_chunks.copy()
-
+#    def HDF_chunks(self, *chunks):
+#        '''
+#        '''
+#        _HDF_chunks = self._HDF_chunks
+#
+#        org_HDF_chunks = dict([(i, _HDF_chunks.get(i))
+#                               for i in range(self.ndim)])
+#
 #        org_HDF_chunks = _HDF_chunks.copy()
-            
- 
-        if not chunks:
-            return org_HDF_chunks
-
-        chunks = chunks[0]
-        
-        if chunks is None:
-            # Clear all chunking
-            self._HDF_chunks = {}
-            return org_HDF_chunks
-
-#        for i in range(self.ndim):
-            
-
-        for axis, size in chunks.iteritems():
-            if size is not None:
-                _HDF_chunks[axis] = size
-            else:
-                _HDF_chunks.pop(axis, None)
-                
-#        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
-#            _HDF_chunks = None
-
-#        self._HDF_chunks = _HDF_chunks
-            
-        return org_HDF_chunks
-    #--- End: def
+#        
+#        if not chunks:
+#            return org_HDF_chunks
+#
+##        if _HDF_chunks is None:
+##            _HDF_chunks = {}
+##        else:
+##        _HDF_chunks = _HDF_chunks.copy()
+#
+##        org_HDF_chunks = _HDF_chunks.copy()
+#            
+# 
+#        if not chunks:
+#            return org_HDF_chunks
+#
+#        chunks = chunks[0]
+#        
+#        if chunks is None:
+#            # Clear all chunking
+#            self._HDF_chunks = {}
+#            return org_HDF_chunks
+#
+##        for i in range(self.ndim):
+#            
+#
+#        for axis, size in chunks.iteritems():
+#            if size is not None:
+#                _HDF_chunks[axis] = size
+#            else:
+#                _HDF_chunks.pop(axis, None)
+#                
+##        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
+##            _HDF_chunks = None
+#
+##        self._HDF_chunks = _HDF_chunks
+#            
+#        return org_HDF_chunks
+#    #--- End: def
 
     def _parse_axes(self, axes, method):
         '''
@@ -1271,13 +1235,13 @@ data array shape.
 
         d._set_master_array(NumpyArray(array))
 
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
 
         return d
     #--- End: def

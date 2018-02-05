@@ -10,20 +10,15 @@ from .properties import Properties
 # ====================================================================
 
 class PropertiesData(Properties):
-    '''
-
-Base class for storing a data array with metadata.
+    '''Base class for storing a data array with metadata.
 
 A variable contains a data array and metadata comprising properties to
 describe the physical nature of the data.
 
 All components of a variable are optional.
 
-'''
+    '''
     __metaclass__ = abc.ABCMeta
-
-    _special_properties = set(('_FillValue',
-                               'missing_value'))
 
     def __init__(self, properties={}, data=None, source=None,
                  copy=True, _use_data=True):
@@ -48,8 +43,6 @@ All components of a variable are optional.
         initialization. By default arguments are deep copied.
 
         '''
-#        self._properties = {}
-
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
         
@@ -86,15 +79,6 @@ All components of a variable are optional.
         return data
     #--- End: def
     
-    def __str__(self):
-        '''Called by the :py:obj:`str` built-in function.
-
-x.__str__() <==> str(x)
-
-        '''
-        return ''
-    #--- End: def
-
     def copy(self, data=True):
         '''Return a deep copy.
 
@@ -226,14 +210,33 @@ dtype('float64')
         return fillval
     #--- End: def
 
+    def get_array(self):
+        '''A numpy array copy the data.
+
+:Examples:
+
+>>> d = Data([1, 2, 3.0], 'km')
+>>> a = d.array
+>>> isinstance(a, numpy.ndarray)
+True
+>>> print a
+[ 1.  2.  3.]
+>>> d[0] = -99 
+>>> print a[0] 
+1.0
+>>> a[0] = 88
+>>> print d[0]
+-99.0 km
+
+        '''
+        return self.get_data().get_array()
+    #--- End: def
+
     def get_data(self, *default):
         '''
         '''
         data = self._get_attribute('data', None)
         if data is not None:
-            data.fill_value = self._fill_value            
-            data.units      = self.get_property('units', None)
-            data.calendar   = self.get_property('calendar', None)
             return data
 
         if default:

@@ -15,4 +15,6 @@ class Coordinate(structure_Coordinate, mixin.PropertiesDataBounds):
 
     '''
     __metaclass__ = abc.ABCMeta
+
+    
 #--- End: class

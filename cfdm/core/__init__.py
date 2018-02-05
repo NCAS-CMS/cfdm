@@ -39,7 +39,7 @@ from .fieldancillary      import FieldAncillary
 from .read.read           import read
 from .write.write         import write
 from .data.data           import Data
-from .data.array          import NetCDFArray
+from .data.netcdfarray    import NetCDF
 from .constants           import *
 from .functions           import *
 

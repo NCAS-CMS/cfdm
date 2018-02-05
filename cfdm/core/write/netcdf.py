@@ -11,11 +11,11 @@ from ..functions import abspath, flat
 class WriteNetCDF(object):
     '''
     '''
-    def __init__(self, Conventions=None, NetCDFArray=None):
+    def __init__(self, Conventions=None, NetCDF=None):
         '''
         '''
         self._Conventions = Conventions
-        self._NetCDFArray = NetCDFArray
+        self._NetCDFArray = NetCDF
         
         # ------------------------------------------------------------
         # Initialise netCDF write parameters

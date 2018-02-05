@@ -2,8 +2,6 @@ import abc
 
 import numpy
 
-#from .array import Array, NumpyArray
-
 # ====================================================================
 #
 # Data object
@@ -47,11 +45,13 @@ An N-dimensional data array with units and masked values.
 >>> d = Data(tuple('fly'))
 
         '''
-        self._array   = data
+#        self._array   = data
         self._units    = units
         self._calendar = calendar
         
         self._fill_value  = fill_value
+
+        self._set_master_array(data)
 #        self._array       = None
 #
 #        if data is None:
@@ -90,6 +90,35 @@ An N-dimensional data array with units and masked values.
         return repr(self._array)
     #--- End: def
 
+    def _del_master_array(self):
+        '''
+        '''
+        self._master_array = None
+    #--- End: def
+    
+    def _get_master_array(self, *default):
+        '''
+        '''
+        array = self._master_array
+        if array is None and default:
+            return default[0]     
+
+        return array   
+    #--- End: def
+    
+    def _set_master_array(self, value):
+        '''
+:Parameters:
+
+    value: (subclass of) `Array`
+
+:Returns:
+
+    `None`
+        '''
+        self._master_array = value
+    #--- End: def
+    
     # ----------------------------------------------------------------
     # Attribute (read only)
     # ----------------------------------------------------------------
@@ -146,12 +175,6 @@ dtype('float64')
         '''
         return self._array.dtype
     #--- End: def
-#    @dtype.setter
-#    def dtype(self, value):
-#        value = numpy.dtype(value)
-#        if value != self.dtype:
-#            self._array = NumpyArray(numpy.asanyarray(self.array, dtype=value))
-
     # ----------------------------------------------------------------
     # Attribute
     # ----------------------------------------------------------------
@@ -204,7 +227,7 @@ None
 0
 
         '''
-        return self._array.ndim
+        return self._get_master_array().ndim
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -225,7 +248,7 @@ None
 ()
 
         '''
-        return self._array.shape
+        return self._get_master_array().shape
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -255,7 +278,7 @@ None
 1
 
         '''
-        return self._array.size
+        return self._get_master_array().size
     #--- End: def
 
     def copy(self):
@@ -272,13 +295,14 @@ None
 
 >>> e = d.copy()
 
-        '''        
-        return type(self)(data=self.get_array(copy=True),
-                          units=self.units, calendar=self.calendar,
-                          fill_value=self.fill_value)
+        '''
+        return type(self)(data=self._get_master_array().copy(),
+                          units=self.get_units(None),
+                          calendar=self.get_calendar(None),
+                          fill_value=self.get_fill_value(None))
     #--- End: def
 
-    def get_array(self, copy=True):
+    def get_array(self):
         '''A numpy array copy the data.
 
 :Examples:
@@ -297,19 +321,51 @@ True
 -99.0 km
 
         '''
-        array = self._array
+        data = self._get_master_array()
+        print 'pppppppppppp', type(data.array)
+        return data.array.copy()
+    #--- End: def
 
-        if copy:
-            if numpy.ma.isMA(array) and not array.ndim:
-                # This is because numpy.ma.copy doesn't work for
-                # scalar arrays (at the moment, at least)
-                array = numpy.ma.masked_all((), dtype=array.dtype)
-                array[...] = array
-            else:
-                array = array.copy()
-        #--- End: if
+    def get_calendar(self, *default):
+        '''
+
+        '''
+        value = getattr(self, '_calendar', None)
+        if value is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("Can't get non-existent property {!r}".format('calendar'))
         
-        return array
+        return value
+    #--- End: def
+
+    def get_fill_value(self, *default):
+        '''
+
+        '''
+        value = getattr(self, '_fill_value', None)
+        if value is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("Can't get non-existent property {!r}".format('fill_value'))
+        
+        return value
+    #--- End: def
+
+    def get_units(self, *default):
+        '''
+
+        '''
+        value = getattr(self, '_units', None)
+        if value is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("Can't get non-existent property {!r}".format('units'))
+        
+        return value
     #--- End: def
 
 #--- End: class

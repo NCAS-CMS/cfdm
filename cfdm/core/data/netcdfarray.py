@@ -1,6 +1,6 @@
 import abc
 
-from .array import Array, _file_to_fh_read, _file_to_fh_write
+from .array import Array
 
 # ====================================================================
 #

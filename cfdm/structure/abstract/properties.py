@@ -58,16 +58,6 @@ All components of a variable are optional.
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
-    @abc.abstractmethod
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-.. versionadded:: 1.6
-
-        '''
-        pass
-    #--- End: def
-
     def _del_attribute(self, attr):
         '''
         '''

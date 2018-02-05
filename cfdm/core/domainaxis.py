@@ -34,7 +34,8 @@ to the order of the elements.
     source: `DomainAxis`
 
         '''
-        super(DomainAxis).__init__(size=size, source=source, copy=copy)
+        super(DomainAxis, self).__init__(size=size, source=source,
+                                         copy=copy)
         
         if source:
             ncdim = source.get_ncdim(None)

@@ -4,16 +4,7 @@ import operator
 import sys
 
 import numpy
-import netCDF4
 
-#from ..functions import abspath, open_files_threshold_exceeded
-
-
-_file_to_fh_read  = {}
-_file_to_fh_write = {}
-_file_count = {}
-
-_debug = False
 
 # ====================================================================
 #
@@ -26,7 +17,7 @@ class Array(object):
     
     '''
     __metaclass__ = abc.ABCMeta
-
+           
     def __init__(self, **kwargs):
         '''
         
@@ -52,7 +43,7 @@ class Array(object):
 '''
         self.__dict__ = kwargs
     #--- End: def
-            
+               
     def __deepcopy__(self, memo):
         '''
 
@@ -60,6 +51,15 @@ Used if copy.deepcopy is called on the variable.
 
 '''
         return self.copy()
+    #--- End: def
+
+    @abc.abstractmethod
+    def __getitem__(self, indices):
+        '''x.__getitem__(indices) <==> x[indices]
+
+Returns a numpy array.
+        '''
+        pass
     #--- End: def
 
     def __repr__(self):
@@ -70,7 +70,7 @@ x.__repr__() <==> repr(x)
 '''      
         return "<{0}: {1}>".format(self.__class__.__name__, str(self))
     #--- End: def
-     
+        
     def __str__(self):
         '''
 
@@ -81,9 +81,32 @@ x.__str__() <==> str(x)
     #--- End: def
 
     @abc.abstractproperty
+    def ndim(self):
+        pass
+
+    @abc.abstractproperty
+    def shape(self):
+        pass
+
+    @abc.abstractproperty
+    def size(self):
+        pass
+
+    @abc.abstractproperty
+    def dtype(self):
+        pass
+    
+    @abc.abstractproperty
     def isunique(self):
         pass
     
+    @abc.abstractmethod
+    def close(self):
+        '''
+        '''
+        pass
+    #--- End: def
+
     def copy(self):
         '''Return a deep copy.
 
@@ -104,152 +127,6 @@ x.__str__() <==> str(x)
         new.__dict__ = self.__dict__.copy()
         return new
     #--- End: def
-
-#    def _add_to_file_counter(self, i):
-#        '''Add i to the count of subarrays referencing the file of this
-#partition's subarray.
-#
-#Only do this if self._subarray is an instance of FileArray, but not a
-#temporary FileArray.
-#
-#:Parameters:
-#
-#    i: `int`
-#
-#:Returns:
-#
-#    `None`
-#
-#        '''
-#        subarray = getattr(self, '_subarray', None)
-#        if subarray is None:
-#            return
-#        
-#        try:
-#            if (isinstance(subarray, FileArray) and
-#                not isinstance(subarray, _TempFileArray)):
-#                filename = getattr(subarray, 'file', None)
-#                if filename is None:
-#                    return
-#
-#                file_counter = self.file_counter
-#                count = file_counter.get(filename, 0)
-#                file_counter[filename] = count + i
-#                if file_counter[filename] <= 0:
-#                    # Remove the file from the dictionary if its count has
-#                    # dropped to zero
-#                    del file_counter[filename]
-#        except:
-#            # If we're here then it is likely that FileArray has been
-#            # torn down, so just do nothing.
-#            pass
-#    #--- End: def
-
-    @abc.abstractmethod
-    def close(self):
-        '''
-        '''
-        pass
-    #--- End: def
-
-#    def parse_indices(self, indices):
-#        '''
-#    
-#:Parameters:
-#    
-#    indices: `tuple` (not a `list`!)
-#    
-#:Returns:
-#    
-#    out: `list`
-#    
-#:Examples:
-#    
-#    '''
-#        shape = self.shape
-#        
-#        parsed_indices = []
-#        roll           = {}
-#        flip           = []
-#        compressed_indices = []
-#    
-#        if not isinstance(indices, tuple):
-#            indices = (indices,)
-#    
-#        # Initialize the list of parsed indices as the input indices with any
-#        # Ellipsis objects expanded
-#        length = len(indices)
-#        n = len(shape)
-#        ndim = n
-#        for index in indices:
-#            if index is Ellipsis:
-#                m = n - length + 1
-#                parsed_indices.extend([slice(None)] * m)
-#                n -= m            
-#            else:
-#                parsed_indices.append(index)
-#                n -= 1
-#    
-#            length -= 1
-#        #--- End: for
-#        len_parsed_indices = len(parsed_indices)
-#    
-#        if ndim and len_parsed_indices > ndim:
-#            raise IndexError("Invalid indices %s for array with shape %s" %
-#                             (parsed_indices, shape))
-#    
-#        if len_parsed_indices < ndim:
-#            parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
-#    
-#        if not ndim and parsed_indices:
-#            raise IndexError("Scalar array can only be indexed with () or Ellipsis")
-#    
-#        for i, (index, size) in enumerate(zip(parsed_indices, shape)):
-#            if isinstance(index, slice):            
-#                continue
-#    
-#            if isinstance(index, (int, long)):
-#                if index < 0: 
-#                    index += size
-#    
-#                index = slice(index, index+1, 1)
-#            else:
-#                if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
-#                    # Convert booleans to non-negative integers. We're
-#                    # assuming that anything with a dtype attribute also
-#                    # has a size attribute.
-#                    if index.size != size:
-#                        raise IndexError(
-#    "Invalid indices {} for array with shape {}".format(parsed_indices, shape))
-#                    
-#                    index = numpy.where(index)[0]
-#                #--- End: if
-#    
-#                if not numpy.ndim(index):
-#                    if index < 0:
-#                        index += size
-#    
-#                    index = slice(index, index+1, 1)
-#                else:
-#                    len_index = len(index)
-#                    if len_index == 1:                
-#                        index = index[0]
-#                        if index < 0:
-#                            index += size
-#                        
-#                        index = slice(index, index+1, 1)
-#                    else:
-#                        raise IndexError(
-#                            "Invalid indices {} for array with shape {}".format(
-#                                parsed_indices, shape))                
-#                #--- End: if
-#            #--- End: if
-#            
-#            parsed_indices[i] = index    
-#        #--- End: for
-#    
-#        return parsed_indices
-#    #--- End: def
 
     @classmethod
     def get_subspace(cls, array, indices):
@@ -316,357 +193,6 @@ indices must contain an index for each dimension of the input array.
         pass
     #---End: def
     
-#--- End: class
-
-# ====================================================================
-#
-# Numpy Array wrapper
-# 
-# ====================================================================
-
-class NumpyArray(Array):
-    '''A numpy  array.
-
-    '''
-    def __init__(self, array=None):
-        '''
-        
-**Initialization**
-
-:Parameters:
-
-    array: `numpy.ndarray`
-
-        '''
-        super(NumpyArray, self).__init__(array=array)
-    #--- End: def
-
-    def __getitem__(self, indices):
-        '''
-
-x.__getitem__(indices) <==> x[indices]
-
-Returns an independent numpy array.
-
-        '''
-        isunique = self.isunique
-        
-        array = self.array
-
-        if not isunique:
-            if numpy.ma.isMA(array) and not self.ndim:
-                # This is because numpy.ma.copy doesn't work for
-                # scalar arrays (at the moment, at least)
-                ma_array = numpy.ma.empty((), dtype=array.dtype)
-                ma_array[...] = array
-                array = ma_array
-            else:
-                array = array.copy()
-        #--- End: if
-
-        return self.get_subspace(array, indices)
-    #--- End: def
-
-    @property
-    def ndim(self):
-        return self.array.ndim
-
-    @property
-    def shape(self):
-        return self.array.shape
-
-    @property
-    def size(self):
-        return self.array.size
-
-    @property
-    def dtype(self):
-        return self.array.dtype
-
-    @property
-    def isunique(self):
-        '''
-        '''
-        return sys.getrefcount(self.array) <= 2
-    
-    def open(self):
-        pass
-
-    def close(self):
-        pass
-#--- End: class
-
-# ====================================================================
-#
-# NetCDFArray object
-#
-# ====================================================================
-
-class NetCDFArray(Array):
-    '''A sub-array stored in a netCDF file.
-    
-**Initialization**
-
-:Parameters:
-
-    file: `str`
-        The netCDF file name in normalized, absolute form.
-
-    dtype: `numpy.dtype`
-        The numpy data type of the data array.
-
-    ndim: `int`
-        Number of dimensions in the data array.
-
-    shape: `tuple`
-        The data array's dimension sizes.
-
-    size: `int`
-        Number of elements in the data array.
-
-    ncvar: `str`, optional
-        The netCDF variable name containing the data array. Must be
-        set if *varid* is not set.
-
-    varid: `int`, optional
-        The netCDF ID of the variable containing the data array. Must
-        be set if *ncvar* is not set. Ignored if *ncvar* is set.
-
-#    ragged: `int`, optional
-#        Reduction in logical rank due to ragged array representation.
-#
-#    gathered: `int`, optional
-#        Reduction in logical rank due to compression by gathering.
-
-:Examples:
-
->>> import netCDF4
->>> import os
->>> nc = netCDF4.Dataset('file.nc', 'r')
->>> v = nc.variable['tas']
->>> a = NetCDFFileArray(file=os.path.abspath('file.nc'), ncvar='tas',
-                        dtype=v.dtype, ndim=v.ndim, shape=v.shape,
-                        size=v.size)
-
-    '''    
-    def __init__(self, **kwargs):
-        '''
-        
-**Initialization**
-
-:Parameters:
-
-    file: `str`
-        The netCDF file name in normalized, absolute form.
-
-    dtype: `numpy.dtype`
-        The numpy data type of the data array.
-
-    ndim: `int`
-        Number of dimensions in the data array.
-
-    shape: `tuple`
-        The data array's dimension sizes.
-
-    size: `int`
-        Number of elements in the data array.
-
-'''
-        super(NetCDFArray, self).__init__(**kwargs)
-
-        f = getattr(self, 'file', None)
-        if f is not None:
-            self.file = abspath(f)
-    #--- End: def
-            
-    def __getitem__(self, indices):
-        '''
-
-x.__getitem__(indices) <==> x[indices]
-
-Returns a numpy array.
-
-'''
-        nc = self.open()
-        
-#        indices = tuple(self.parse_indices(indices))
-        
-        ncvar = getattr(self, 'ncvar', None)
-
-        if ncvar is not None:
-            # Get the variable by name
-            array = nc.variables[ncvar][indices]
-        else:
-            # Get the variable by netCDF ID
-            varid = self.varid
-            for value in nc.variables.itervalues():
-                if value._varid == varid:
-                    array = value[indices]
-                    break
-        #--- End: if
-
-        if not self.ndim:
-            # Hmm netCDF4 has a thing for making scalar size 1 , 1d
-            array = array.squeeze()
-
-        # ------------------------------------------------------------
-        # If approriate, collapse (by concatenation) the outermost
-        # (fastest varying) dimension of string valued array into
-        # memory. E.g. [['a','b','c']] becomes ['abc']
-        # ------------------------------------------------------------
-        if array.dtype.kind == 'S' and array.ndim > (self.ndim -
-                                                     getattr(self, 'gathered', 0) -
-                                                     getattr(self, 'ragged', 0)):
-            strlen = array.shape[-1]
-            
-            new_shape = array.shape[0:-1]
-            new_size  = long(reduce(operator.mul, new_shape, 1))
-            
-            array = numpy.ma.resize(array, (new_size, strlen))
-            
-            array = array.filled(fill_value='')
-
-            array = numpy.array([''.join(x).rstrip() for x in array],
-                                dtype='S%d' % strlen)
-            
-            array = array.reshape(new_shape)
-
-            array = numpy.ma.where(array=='', numpy.ma.masked, array)
-        #--- End: if
-        
-        return array
-    #--- End: def
-
-    def __repr__(self):
-        '''
-
-x.__repr__() <==> repr(x)
-
-'''      
-        return "<{0}>".format(self.__class__.__name__, str(self))
-    #--- End: def
-     
-    def __str__(self):
-        '''
-
-x.__str__() <==> str(x)
-
-'''
-        return "{0} in {1}".format(self.shape, self.file)
-    #--- End: def
-    
-    def __str__(self):
-        '''
-
-x.__str__() <==> str(x)
-
-'''      
-        name = getattr(self, 'ncvar', None)
-        if name is None:
-            name = self.varid
-
-        return "%s%s in %s" % (name, self.shape, self.file)
-    #--- End: def
-
-    @property
-    def isunique(self):
-        '''
-        '''
-        return True
-
-    def close(self):
-        '''Close the `netCDF4.Dataset` for the file containing the data.
-
-:Returns:
-
-    out: `netCDF4.Dataset`
-
-:Examples:
-
->>> f.close()
-
-        '''
-        self.file_close(self.file)
-    #--- End: def
-
-    @classmethod
-    def file_close(cls, filename):
-        '''Close the `netCDF4.Dataset` for a netCDF file.
-
-:Returns:
-
-    `None`
-
-:Examples:
-
->>> f.file_close(filename)
-
-        '''
-        nc = _file_to_fh_read.pop(filename, None)
-        if nc is not None and nc.isopen():
-            nc.close()
-
-        nc = _file_to_fh_write.pop(filename, None)
-        if nc is not None and nc.isopen():
-            nc.close()
-    #--- End: def
-
-    @classmethod
-    def file_open(cls, filename, mode, fmt=None):
-        '''Return an open `netCDF4.Dataset` for a netCDF file.
-
-:Returns:
-
-    out: `netCDF4.Dataset`
-
-:Examples:
-
->>> f.file_open(filename, 'r')
-<netCDF4.Dataset at 0x115a4d0>
-
-        '''
-        if mode == 'r':
-            files = _file_to_fh_read
-        else:
-            files = _file_to_fh_write
-
-        nc = files.get(filename)
-
-        if nc is None or not nc.isopen():
-            if open_files_threshold_exceeded():
-                # Close an arbitrary file that has been opened for reading
-                for f in _file_to_fh_read:                    
-                    cls.file_close(f)
-                    break
-            #--- End: if
-
-            try:        
-                nc = netCDF4.Dataset(filename, mode, format=fmt)
-            except RuntimeError as runtime_error:
-                raise RuntimeError("{}: {}".format(runtime_error, filename))        
-
-            files[filename] = nc                
-        #--- End: if
-        
-        return nc
-    #--- End: def
-
-    def open(self):
-        '''Return an open `netCDF4.Dataset` for the file containing the array.
-
-:Returns:
-
-    out: `netCDF4.Dataset`
-
-:Examples:
-
->>> f.open()
-<netCDF4.Dataset at 0x115a4d0>
-
-        '''
-        return self.file_open(self.file, 'r')
-    #--- End: def
-
 #--- End: class
 
 class GatheredArray(Array):

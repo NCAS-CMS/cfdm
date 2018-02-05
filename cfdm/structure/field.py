@@ -643,9 +643,9 @@ ValueError: Can't initialize data: Data already exists
                       copy=True):
         '''
         '''
-        self._get_constructs().set_construct(type, item, key=key,
-                                             axes=axes,
-                                             copy=copy)
+        return self._get_constructs().set_construct(type, item, key=key,
+                                                    axes=axes,
+                                                    copy=copy)
     #--- End: def
 
     def set_cell_measure(self, item, key=None, axes=None, copy=True, replace=True):
