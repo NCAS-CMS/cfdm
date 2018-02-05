@@ -72,7 +72,7 @@ class create_fieldTest(unittest.TestCase):
         
         f = cfdm.Field(properties=properties)
         f.set_property('standard_name', 'eastward_wind')
-        
+        print '{{{{{{{{{{{{{', repr(        cfdm.DomainAxis(9))
         axisX = f.set_domain_axis(cfdm.DomainAxis(9))
         axisY = f.set_domain_axis(cfdm.DomainAxis(10))
         axisZ = f.set_domain_axis(cfdm.DomainAxis(1))
@@ -83,9 +83,9 @@ class create_fieldTest(unittest.TestCase):
         y = f.set_dimension_coordinate(dim1, axes=[axisY])
         z = f.set_dimension_coordinate(dim2, axes=[axisZ])
 
-        lat = f.insert_auxiliary_coordinate(aux2, axes=[axisY, axisX])
-        lon = f.insert_auxiliary_coordinate(aux3, axes=[axisX, axisY])
-        greek = f.insert_auxiliary_coordinate(aux4, axes=[axisY])
+        lat   = f.set_auxiliary_coordinate(aux2, axes=[axisY, axisX])
+        lon   = f.set_auxiliary_coordinate(aux3, axes=[axisX, axisY])
+        greek = f.set_auxiliary_coordinate(aux4, axes=[axisY])
 
         ak = f.insert_domain_ancillary(ak, axes=[axisZ])
         bk = f.insert_domain_ancillary(bk, axes=[axisZ])

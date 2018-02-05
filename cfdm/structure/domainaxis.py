@@ -49,24 +49,6 @@ to the order of the elements.
         return str(self.get_size(''))
     #--- End: def
 
-    def copy(self):
-        '''Return a deep copy.
-
-``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
-
-:Returns:
-
-    out: 
-        The deep copy.
-
-:Examples:
-
->>> e = d.copy()
-
-        '''
-        new = type(self)(source=self, copy=True)
-    #--- End: def
-
     def get_size(self, *default):
         '''
         '''

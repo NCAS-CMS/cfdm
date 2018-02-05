@@ -53,7 +53,7 @@ domain ancillary objects.
             copy=copy,
             _use_data=_use_data)
 
-        if source is not None and isinstance(source, AbstractBoundedArray):
+        if source is not None and isinstance(source, PropertiesDataBounds):
             if bounds is None:
                 bounds = source.get_bounds(None)
                     

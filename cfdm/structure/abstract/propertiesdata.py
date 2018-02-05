@@ -110,7 +110,7 @@ False
 True
 
         '''
-        new = type(self)(source=self, copy=True, _use_data=data)
+        return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
     def del_data(self):

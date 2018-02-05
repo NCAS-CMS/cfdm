@@ -639,11 +639,13 @@ ValueError: Can't initialize data: Data already exists
                                   copy=copy)
     #--- End: def
 
-    def set_construct(self, type, item, key=None, axes=None,
+    def set_construct(self, construct_type, construct, key=None, axes=None,
                       copy=True):
         '''
         '''
-        return self._get_constructs().set_construct(type, item, key=key,
+        return self._get_constructs().set_construct(construct_type,
+                                                    construct,
+                                                    key=key,
                                                     axes=axes,
                                                     copy=copy)
     #--- End: def

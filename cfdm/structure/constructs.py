@@ -368,7 +368,7 @@ Return a deep or shallow copy.
 
         if copy:
             construct = construct.copy()
-            
+
         self._constructs[construct_type][key] = construct
 
         return key
