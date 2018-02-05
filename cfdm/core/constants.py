@@ -27,7 +27,6 @@ import numpy
 # --------------------------------------------------------------------
 CONSTANTS = {'RTOL'              : sys.float_info.epsilon,
              'ATOL'              : sys.float_info.epsilon,
-             'RELAXED_IDENTITIES': False,
              }
 
 masked = numpy.ma.masked

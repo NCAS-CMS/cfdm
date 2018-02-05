@@ -1,8 +1,8 @@
-from collections import abc
+import abc
+
+import abstract
 
 from .constructs import Constructs
-
-import .abstract
 
 # ====================================================================
 #
@@ -75,7 +75,7 @@ Field objects are picklable.
 
         return obj
     #--- End: def
-    
+
     def __init__(self, properties={}, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
@@ -102,7 +102,7 @@ Field objects are picklable.
         
         if source is not None and isinstance(source, Field):
             data_axes = source._data_axes[:]
-            constructs = source.get_constructs(None)
+            constructs = source._get_constructs(None)
             if constructs is not None and (copy or not _use_data):
                 constructs = constructs.copy(data=_use_data)
 
@@ -150,19 +150,19 @@ Field objects are picklable.
     #--- End: def
     
     def array_constructs(self, copy=False):
-        return self.get_constructs().array_constructs(copy=copy)
+        return self._get_constructs().array_constructs(copy=copy)
     
     def auxiliary_coordinates(self, copy=False):
-        return self.get_constructs().constructs('auxiliarycoordinate', copy=copy)
+        return self._get_constructs().constructs('auxiliarycoordinate', copy=copy)
     
     def cell_measures(self, copy=False):
-        return self.get_constructs().constructs('cellmeasure', copy=copy)
+        return self._get_constructs().constructs('cellmeasure', copy=copy)
     
     def cell_methods(self, copy=False):
-        return self.get_constructs().cell_methods(copy=copy)
+        return self._get_constructs().constructs('cellmethod', copy=copy)
     
     def construct_axes(self, key=None):
-        return self.get_constructs().construct_axes(key=key)
+        return self._get_constructs().construct_axes(key=key)
     
     def constructs(self, copy=False):
         '''Return all of the data model constructs of the field.
@@ -204,11 +204,11 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
  <DimensionCoordinate: latitude(72) degrees_north>]
 
         '''
-        return self.get_constructs().constructs(copy=copy)
+        return self._get_constructs().constructs(copy=copy)
     #--- End: def
     
     def coordinate_references(self, copy=False):
-        return self.get_constructs().coordinate_references(copy=copy)
+        return self._get_constructs().constructs('coordinatereference', copy=copy)
     
     def coordinates(self, copy=False):
         '''
@@ -262,19 +262,19 @@ None
         return self._get_constructs().constructs('dimensioncoordinate', copy=copy)
     
     def domain_ancillaries(self, copy=False):
-        return self.get_constructs().constructs('domainancillary', copy=copy)
+        return self._get_constructs().constructs('domainancillary', copy=copy)
     
     def domain_axes(self, copy=False):
-        return self.get_constructs().domain_axes(copy=copy)
+        return self._get_constructs().domain_axes(copy=copy)
     
     def domain_axis_name(self, axis):
         '''
         '''
-        return self.get_constructs().domain_axis_name(axis)
+        return self._get_constructs().domain_axis_name(axis)
     #--- End: for
     
     def field_ancillaries(self, copy=False):
-        return self.get_constructs().constructs('fieldancillary', copy=copy)
+        return self._get_constructs().constructs('fieldancillary', copy=copy)
 
     def del_construct(self, key, *default):
         '''
@@ -472,7 +472,7 @@ ValueError: Can't initialize data: Data already exists
     def set_data_axes(self, value):
         '''
         '''
-        self._set_attribute('data_axes') = tuple(value)
+        self._set_attribute('data_axes', tuple(value))
     #--- End: def
     
 #    def cell_methods(self, copy=False):

@@ -1,10 +1,10 @@
-from collections import abc
+import abc
 
-import .mixin
+import mixin
 
-import ..structure
+from ..structure import Bounds as structure_Bounds
 
-class Bounds(structure.Bounds, mixin.PropertiesData):
+class Bounds(structure_Bounds, mixin.PropertiesData):
     '''
     '''
     __metaclass__ = abc.ABCMeta

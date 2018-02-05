@@ -48,6 +48,8 @@ if not (StrictVersion('2.7.0')
         "Bad python version: cfdm requires 2.7 <= python < 3.0. Got {}".format(
         platform.python_version()))
 
+import structure
+
 from .variable            import Variable
 from .boundedvariable     import BoundedVariable
 from .bounds              import Bounds

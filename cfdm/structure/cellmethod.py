@@ -1,6 +1,6 @@
-from collections import abc
+import abc
 
-import .abstract
+import abstract
 
 
 # ====================================================================
@@ -133,18 +133,18 @@ modified, where appropriate, to reflect netCDF variable names.
         return self._has_attribute('method')
     #--- End: def
 
-    def set_axes(self, value)
+    def set_axes(self, value):
         '''
         '''
         if isinstance(value, basestring):
             value = (value,)
-        elif:
+        else:
             value = tuple(value)
-        
+            
         return self._set_attribute('axes', value)
     #--- End: def
 
-    def set_method(self, value)
+    def set_method(self, value):
         '''
 '''
         return self._set_attribute('method', value)

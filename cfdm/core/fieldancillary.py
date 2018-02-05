@@ -1,13 +1,13 @@
-from collections import abc
+import abc
 
-from .mixin
+import mixin
 
-import ..structure
+from ..structure import FieldAncillary as structure_FieldAncillary
 
-class FieldAncillary(structure.FieldAncillary, mixin.PropertiesData):
+class FieldAncillary(structure_FieldAncillary, mixin.PropertiesData):
     '''A CF field ancillary construct.
     '''
-    __metaclass__ abc.ABCMeta
+    __metaclass__ = abc.ABCMeta
 
     def dump(self, display=True, omit=(), field=None, key=None,
              _level=0, _title=None):

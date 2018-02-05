@@ -5,13 +5,12 @@ import numpy
 import netCDF4
 
 from ..constants  import masked
-from ..cfdatetime import rt2dt, st2rt, st2dt
 
-from ..functions  import RTOL, ATOL, parse_indices, _numpy_allclose
+from ..functions  import RTOL, ATOL, _numpy_allclose
 
 from .array import Array, NumpyArray
 
-import ...structure
+from ...structure import Data as structure_Data
 
 # ====================================================================
 #
@@ -19,7 +18,7 @@ import ...structure
 #
 # ====================================================================
 
-class Data(structure.Data):
+class Data(structure_Data):
     '''
 
 An N-dimensional data array with units and masked values.
@@ -313,7 +312,7 @@ elements.
     #--- End: def
     
     # MOVE TO STRUCTURE
-    def _get_master_array(self, *default)
+    def _get_master_array(self, *default):
         '''
         '''
         array = self._master_array

@@ -1,4 +1,4 @@
-from collections import abc
+import abc
 
 from ast import literal_eval as ast_literal_eval
 from re  import sub          as re_sub
@@ -8,7 +8,7 @@ from .functions import equals
 
 from .data.data import Data
 
-import ..structure
+from ..structure import CellMethod as structure_CellMethod
 
 # ====================================================================
 #
@@ -16,7 +16,7 @@ import ..structure
 #
 # ====================================================================
 
-class CellMethod(structure.CellMethod):
+class CellMethod(structure_CellMethod):
     '''A cell method construct od the CF data model.
 
 Cell method constructs describe how the field construct's cell values
@@ -176,7 +176,7 @@ corresponding dimension or dimensions.
         return c
     #--- End: def
 
-    def del_error(self)
+    def del_error(self):
         '''
         '''
         return self._del_attribute('error')
@@ -191,7 +191,7 @@ corresponding dimension or dimensions.
         '''
         self._set_attribute('error', value)
     
-    def del_string(self)
+    def del_string(self):
         '''
         '''
         return self._del_attribute('string')

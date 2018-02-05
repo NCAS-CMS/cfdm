@@ -1,4 +1,4 @@
-from collections import abc
+import abc
 
 from .propertiesdata import PropertiesData
 
@@ -290,7 +290,7 @@ domain ancillary objects.
     #--- End: def
 
 
-    def set_topology_parameter(self, name, value, copy=True)
+    def set_topology_parameter(self, name, value, copy=True):
         '''
         '''
         if copy:

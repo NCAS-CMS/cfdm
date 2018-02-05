@@ -1,6 +1,10 @@
-from collections import abc
+import abc
 
 from .propertiesdata import PropertiesData
+
+from ..functions import RTOL, ATOL
+from ..functions import equals as cfdm_equals
+
 
 # ====================================================================
 #
@@ -208,7 +212,7 @@ x.__getitem__(indices) <==> x[indices]
             for name, x in sorted(self_parameters.iteritems()):
                 y = other_parameters[name]
                 
-                if not cf_equals(x, y, rtol=rtol, atol=atol,
+                if not cfdm_equals(x, y, rtol=rtol, atol=atol,
                                  ignore_fill_value=ignore_fill_value,
                                  traceback=traceback):
                     if traceback:
@@ -227,7 +231,7 @@ x.__getitem__(indices) <==> x[indices]
             return False
                 
         if self_has_bounds:            
-            if not cf_equals(self.get_bounds(), other.get_bounds(),
+            if not cfdm_equals(self.get_bounds(), other.get_bounds(),
                              rtol=rtol, atol=atol,
                              traceback=traceback,
                              ignore_data_type=ignore_data_type,
@@ -254,7 +258,7 @@ x.__getitem__(indices) <==> x[indices]
             for name, x in sorted(self_ancillary_arrays.items()):
                 y = other_arrays[name]
                 
-                if not cf_equals(x, y rtol=rtol, atol=atol,
+                if not cfdm_equals(x, y, rtol=rtol, atol=atol,
                                  traceback=traceback,
                                  ignore_data_type=ignore_data_type,
                                  ignore_construct_type=ignore_construct_type,

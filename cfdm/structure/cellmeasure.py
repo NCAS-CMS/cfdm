@@ -1,6 +1,6 @@
-from collections import abc
+import abc
 
-import .abstract
+import abstract
 
 
 # ====================================================================
@@ -69,7 +69,7 @@ measure constructs.
         return self._del_attribute('measure')
     #--- End: def
 
-    def has_measure(self)
+    def has_measure(self):
         '''
         '''
         return self._has_attribute('measure')

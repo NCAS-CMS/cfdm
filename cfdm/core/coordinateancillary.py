@@ -1,8 +1,8 @@
-from collections import abc
+import abc
 
-import .mixin
+import mixin
 
-import ..structure
+from ..structure import CoordinateAncillary as structure_CoordinateAncillary
 
 # ====================================================================
 #
@@ -10,7 +10,7 @@ import ..structure
 #
 # ====================================================================
 
-class CoordinateAncillary(structure.CoordinateAncillary, mixin.PropertiesData):
+class CoordinateAncillary(structure_CoordinateAncillary, mixin.PropertiesData):
     '''
     '''
     def dump(self, display=True, field=None, key=None, _title=None,

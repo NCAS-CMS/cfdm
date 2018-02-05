@@ -1,4 +1,4 @@
-from collections import abc
+import abc
 
 import operator
 import sys
@@ -6,7 +6,7 @@ import sys
 import numpy
 import netCDF4
 
-from ..functions import abspath, open_files_threshold_exceeded
+from ..functions import abspath
 
 
 _file_to_fh_read  = {}

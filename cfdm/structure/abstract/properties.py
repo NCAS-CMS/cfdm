@@ -1,4 +1,6 @@
-from collections import abc
+import abc
+
+from copy import deepcopy
 
 # ====================================================================
 #
@@ -160,11 +162,11 @@ All components of a variable are optional.
         return type(self)(source=self, copy=True)
     #--- End: def
     
-    def del_ncvar(self)
-        '''
-        '''        
-        return self._del_attribute('ncvar')
-    #--- End: def
+#    def del_ncvar(self):
+#        '''
+#        '''        
+#        return self._del_attribute('ncvar')
+#    #--- End: def
 
     def del_property(self, prop):
         '''Delete a CF or non-CF property.
@@ -197,11 +199,11 @@ AttributeError: Can't delete non-existent property 'project'
         return self._del_attribute_term('properties', prop)
     #--- End: def
 
-    def get_ncvar(self, *default):
-        '''
-        '''        
-        return self._get_attribute('ncvar', *default)
-    #--- End: def
+#    def get_ncvar(self, *default):
+#        '''
+#        '''        
+#        return self._get_attribute('ncvar', *default)
+#    #--- End: def
 
     def get_property(self, prop, *default):
         '''
@@ -276,7 +278,7 @@ Return True if a CF property exists, otherise False.
         return self._has_attribute_term('properties', prop)
     #--- End: def
 
-    @abc.abstractmethod
+#    @abc.abstractmethod
     def name(self, default=None, ncvar=True):
         '''Return a name for the construct.
         '''
@@ -345,11 +347,11 @@ Return True if a CF property exists, otherise False.
         return out
     #--- End: def
 
-    def set_ncvar(self, value))
-        '''
-        '''        
-        return self._set_attribute('ncvar', value)
-    #--- End: def
+#    def set_ncvar(self, value))
+#        '''
+#        '''        
+#        return self._set_attribute('ncvar', value)
+#    #--- End: def
 
     def set_property(self, prop, value):
         '''Set a CF or non-CF property.

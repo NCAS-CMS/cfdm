@@ -1,4 +1,6 @@
-from collections import abc, OrderedDict
+import abc
+
+from collections import OrderedDict
 
 
 class Constructs(object):

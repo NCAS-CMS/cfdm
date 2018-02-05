@@ -1,12 +1,13 @@
-from collections import abc
+import abc
 
+import mixin
 
 from .constructs import Constructs
 #from .domain      import Domain
 from .functions import equals as cfdm_equals
-import .mixin
 
-import ..structure
+from ..structure import Field as structure_Field
+
 
 _debug = False
        
@@ -17,7 +18,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(structure.Field, mixin.PropertiesData):
+class Field(structure_Field, mixin.PropertiesData):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -74,12 +75,6 @@ Field objects are picklable.
     '''
     __metaclass__ = abc.ABCMeta
  
-    _special_properties = Variable._special_properties.union(
-        ('flag_values',
-         'flag_masks',
-         'flag_meanings',)
-    )
-    
     def __init__(self, properties={}, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
@@ -118,7 +113,7 @@ x.__str__() <==> str(x)
         title = "Field: {0}".format(self.name(''))
 
         # Append the netCDF variable name
-        ncvar = self.ncvar()
+        ncvar = self.get_ncvar(None)
         if ncvar is not None:
             title += " (ncvar%{0})".format(ncvar)
         
@@ -221,7 +216,7 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
 
         x = []
-        for key in list(non_spanning_axes) + data_axes:
+        for key in tuple(non_spanning_axes) + data_axes:
             for k, dim in self.dimension_coordinates().items():
                 if self.construct_axes()[k] == (key,):
                     name = dim.name(default='id%{0}'.format(k))

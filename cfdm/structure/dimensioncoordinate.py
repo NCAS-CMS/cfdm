@@ -1,4 +1,4 @@
-from collections import abc
+import abc
 
 from .coordinate import Coordinate
 

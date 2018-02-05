@@ -1,7 +1,9 @@
-from collections import abc
+import abc
 
-from .functions import RTOL, ATOL
-from .functions import equals as cf_equals
+from ..functions import RTOL, ATOL
+from ..functions import equals as cfdm_equals
+
+from .properties import Properties
 
 # ====================================================================
 #
@@ -9,7 +11,7 @@ from .functions import equals as cf_equals
 #
 # ====================================================================
 
-class PropertiesDataMixin(object):
+class PropertiesData(Properties):
     '''
 
 Base class for storing a data array with metadata.
@@ -84,7 +86,7 @@ x.__str__() <==> str(x)
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
-    def _dump_properties(self, properties, prefix='', indent='')
+    def _dump_properties(self, properties, prefix='', indent=''):
         '''
 
 .. versionadded:: 1.6
@@ -314,9 +316,9 @@ True
             x = self.get_property(prop)
             y = other.get_property(prop)
 
-            if not cf_equals(x, y, rtol=rtol, atol=atol,
-                             ignore_fill_value=ignore_fill_value,
-                             traceback=traceback):
+            if not cfdm_equals(x, y, rtol=rtol, atol=atol,
+                               ignore_fill_value=ignore_fill_value,
+                               traceback=traceback):
                 if traceback:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
@@ -332,12 +334,12 @@ True
             return False
             
         if self.has_data():
-            if not cf_equals(self.get_data(), other.get_data(),
-                             rtol=rtol, atol=atol,
-                             traceback=traceback,
-                             ignore_data_type=ignore_data_type,
-                             ignore_construct_type=ignore_construct_type,
-                             ignore_fill_value=ignore_fill_value):
+            if not cfdm_equals(self.get_data(), other.get_data(),
+                               rtol=rtol, atol=atol,
+                               traceback=traceback,
+                               ignore_data_type=ignore_data_type,
+                               ignore_construct_type=ignore_construct_type,
+                               ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False

@@ -1,14 +1,18 @@
-import ..structure
+import abc
+
+from ..structure import Constructs as structure_Constructs
+
 
 # ====================================================================
 #
 # ====================================================================
 
-class Constructs(structure.Constructs):
+class Constructs(structure_Constructs):
     '''
 Keys are item identifiers, values are item objects.
     '''    
-
+    __metaclass__ = abc.ABCMeta
+    
     def auxiliary_coordinates(self, copy=False):
         '''
         '''
@@ -341,8 +345,8 @@ Keys are item identifiers, values are item objects.
 
         if len(cell_methods0) != len(cell_methods1):
             if traceback:
-                print("
-Traceback: Different cell methods: {0!r}, {1!r}".format(
+                print(
+"Traceback: Different cell methods: {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
             return False
         

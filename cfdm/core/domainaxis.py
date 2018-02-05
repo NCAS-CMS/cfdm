@@ -1,6 +1,6 @@
-from collections import abc
+import abc
 
-import ..structure
+from ..structure import DomainAxis as structure_DomainAxis
 
 # ====================================================================
 #
@@ -8,7 +8,7 @@ import ..structure
 #
 # ====================================================================
 
-class DomainAxis(structure.DomainAxis):
+class DomainAxis(structure_DomainAxis):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an

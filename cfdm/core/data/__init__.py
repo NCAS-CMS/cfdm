@@ -1,3 +1,3 @@
 from .data        import Data
-from .netcdfarray import NetCDFArray
+from .netcdfarray import NetCDF
 from .numpyarray  import NumpyArray

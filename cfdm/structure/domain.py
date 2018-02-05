@@ -1,8 +1,10 @@
-from collections import abc
+import abc
+
+import abstract
 
 from .constructs import Constructs
 
-import .abstract
+
 
 
 # ====================================================================

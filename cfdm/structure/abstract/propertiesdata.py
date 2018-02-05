@@ -1,4 +1,4 @@
-from collections import abc
+import abc
 
 from .properties import Properties
 
@@ -243,10 +243,8 @@ dtype('float64')
     #--- End: def
 
     def has_data(self):
-        '''
-
-True if there is a data array.
-
+        '''True if there is a data array.
+        
 If present, the data array is stored in the `data` attribute.
 
 .. versionadded:: 1.6
@@ -258,8 +256,8 @@ If present, the data array is stored in the `data` attribute.
 >>> if f.has_data():
 ...     print f.data
 
-'''     
-         return self._has_attribute('data')
+        '''     
+        return self._has_attribute('data')
     #--- End: def
 
     def open(self):

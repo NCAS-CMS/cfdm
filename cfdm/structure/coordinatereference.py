@@ -1,6 +1,6 @@
-from collections import abc
+import abc
 
-import .abstract
+import abstract
 
 # ====================================================================
 #
@@ -14,11 +14,11 @@ class CoordinateReference(abstract.Properties):
 The domain of a field construct may contain various coordinate
 systems, each of which is constructed from a subset of the dimension
 and auxiliary coordinate constructs. For example, the domain of a
-four-dimensional field construct may contain horizontal (y–x),
+four-dimensional field construct may contain horizontal (y-x),
 vertical (z), and temporal (t) coordinate systems. There may be more
 than one of each of these, if there is more than one coordinate
 construct applying to a particular spatiotemporal dimension (for
-example, there could be both latitude–longitude and y–x projection
+example, there could be both latitude-longitude and y-x projection
 coordinate systems). In general, a coordinate system may be
 constructed implicitly from any subset of the coordinate constructs,
 yet a coordinate construct does not need to be explicitly or
@@ -143,7 +143,7 @@ frame and consists of the following:
         return self._del_attribute('datum')
     #--- End: def
     
-    def del_term(self, term)
+    def del_term(self, term):
         '''
         '''        
         d = self._get_attribute('domain_ancillaries')

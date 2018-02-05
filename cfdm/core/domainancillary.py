@@ -1,10 +1,10 @@
-from collections import abc
+import abc
 
-import .mixin
+import mixin
 
-import ..structure
+from ..structure import DomainAncillary as structure_DomainAncillary
 
-class DomainAncillary(structure.DomainAncillary, mixin.PropertiesDataBounds):
+class DomainAncillary(structure_DomainAncillary, mixin.PropertiesDataBounds):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for

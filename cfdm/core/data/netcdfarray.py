@@ -1,4 +1,4 @@
-from collections import abc
+import abc
 
 from .array import Array, _file_to_fh_read, _file_to_fh_write
 
@@ -8,7 +8,7 @@ from .array import Array, _file_to_fh_read, _file_to_fh_write
 #
 # ====================================================================
 
-class NetCDFArray(Array):
+class NetCDF(Array):
     '''A sub-array stored in a netCDF file.
     
 **Initialization**
@@ -58,7 +58,7 @@ class NetCDFArray(Array):
     __metaclass__ = abc.ABCMeta
 
     # Always close the netCDF file after access
-    self._close = True
+    _close = True
 
     def __init__(self, **kwargs):
         '''
@@ -83,7 +83,7 @@ class NetCDFArray(Array):
         Number of elements in the data array.
 
 '''
-        super(NetCDFArray, self).__init__(**kwargs)
+        super(NetCDF, self).__init__(**kwargs)
 
         f = getattr(self, 'file', None)
         if f is not None:
@@ -138,7 +138,7 @@ Returns a numpy array.
             array = array.filled(fill_value='')
 
             array = numpy.array([''.join(x).rstrip() for x in array],
-                                dtype='S%d' % strlen)
+                                dtype='S{0}'.format(strlen))
             
             array = array.reshape(new_shape)
 
@@ -195,30 +195,7 @@ x.__str__() <==> str(x)
         nc = self._nc        
         del self._nc
         nc.close()
-#        self.file_close(self.file)
     #--- End: def
-
-#    @classmethod
-#    def file_close(cls, filename):
-#        '''Close the `netCDF4.Dataset` for a netCDF file.
-#
-#:Returns:
-#
-#    `None`
-#
-#:Examples:
-#
-#>>> f.file_close(filename)
-#
-#        '''
-#        nc = _file_to_fh_read.pop(filename, None)
-#        if nc is not None and nc.isopen():
-#            nc.close()
-#
-#        nc = _file_to_fh_write.pop(filename, None)
-#        if nc is not None and nc.isopen():
-#            nc.close()
-#    #--- End: def
 
     @classmethod
     def file_open(cls, filename, mode, fmt=None):
@@ -230,41 +207,19 @@ x.__str__() <==> str(x)
 
 :Examples:
 
->>> f.file_open(filename, 'r')
+>>> nc = f.file_open(filename, 'r')
+>>> nc
 <netCDF4.Dataset at 0x115a4d0>
 
+>>> nc = f.file_open(filename, 'w')
+>>> nc
+<netCDF4.Dataset at 0x345c9e7>
+
         '''
-#        if mode == 'r':
-#            files = _file_to_fh_read
-#        else:
-#            files = _file_to_fh_write
-#
-#        nc, count = files.get(filename, (None, 0))
-#THREADSAFE? Just open files each time, i think ...
-#        if nc is None or not nc.isopen():
-#            #if open_files_threshold_exceeded():
-#            #    # Close an arbitrary file that has been opened for reading
-#            #    for f in _file_to_fh_read:                    
-#            #        cls.file_close(f)
-#            #        break
-#            ##--- End: if
-#
-#            if count == 0:
-#                try:        
-#                    nc = netCDF4.Dataset(filename, mode, format=fmt)
-#                except RuntimeError as runtime_error:
-#                    raise RuntimeError("{}: {}".format(runtime_error, filename))        
-#                else:
-#                    files[filename] = (nc, count+1)
-#            #--- End: if
-#
-#        return nc
-#        #--- End: if
-        
         try:        
             return netCDF4.Dataset(filename, mode, format=fmt)
-        except RuntimeError as runtime_error:
-            raise RuntimeError("{}: {}".format(runtime_error, filename))        
+        except RuntimeError as error:
+            raise RuntimeError("{}: {}".format(error, filename))        
     #--- End: def
 
     def open(self):

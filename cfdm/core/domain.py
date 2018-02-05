@@ -1,8 +1,8 @@
-from collections import abc
+import abc
 
 from .constructs import Constructs
 
-import ..structure
+from ..structure import Domain as structure_Domain
 
 # ====================================================================
 #
@@ -10,7 +10,7 @@ import ..structure
 #
 # ====================================================================
 
-class Domain(structure.Domain):
+class Domain(structure_Domain):
     '''A CF Domain construct.
 
 The domain is defined collectively by teh following constructs, all of

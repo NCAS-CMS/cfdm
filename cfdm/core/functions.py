@@ -14,29 +14,6 @@ import numpy
 from .          import __version__, __file__
 from .constants import CONSTANTS
 
-
-def open_files_threshold_exceeded():
-    '''Return True if the total number of open files is greater than the
-current threshold.
-    
-The threshold is defined as a fraction of the maximum possible number
-of concurrently open files (an operating system dependent amount). The
-fraction is retrieved and set with the `OF_FRACTION` function.
-
-:Returns:
-
-    out: `bool`
-        Whether or not the number of open files exceeds the threshold.
-
-:Examples:
-
->>> print open_files_threshold_exceeded()
-True
-
-    '''
-    return True
-#---End: def
-
 def _numpy_allclose(a, b, rtol=None, atol=None):
     '''
 

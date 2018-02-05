@@ -1,6 +1,6 @@
-from collections import abc
+import abc
 
-import .abstract
+import abstract
 
 
 class DomainAncillary(abstract.PropertiesDataBounds):
