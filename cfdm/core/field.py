@@ -75,6 +75,15 @@ Field objects are picklable.
     '''
     __metaclass__ = abc.ABCMeta
  
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        
+        obj._Constructs = Constructs
+#        obj._Domain     = Domain
+
+        return obj
+    #--- End: def
+
     def __init__(self, properties={}, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
@@ -97,13 +106,28 @@ Field objects are picklable.
                                     source=source, copy=copy,
                                     _use_data=_use_data) 
                
-        self._unlimited = None
-        self._HDFgubbins = None
+        self._set_attribute('unlimited', None)
+        self._set_attribute('HDFgubbins', None)
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
         return {}
     
+    def __repr__(self):
+        '''Called by the :py:obj:`repr` built-in function.
+
+x.__repr__() <==> repr(x)
+
+:Examples:
+
+>>> f
+<CF Field: air_temperature(latitude(73), longitude(96) K>
+
+        '''
+        return '<{0}: {1}>'.format(self.__class__.__name__,
+                                   self._one_line_description())
+    #--- End: def
+
     def __str__(self):
         '''Called by the :py:obj:`str` built-in function.
 
@@ -132,19 +156,11 @@ x.__str__() <==> str(x)
         data_axes = self.get_data_axes(())
         non_spanning_axes = set(self.domain_axes()).difference(data_axes)
 
-        axis_names = {}
-        for key, domain_axis in self.domain_axes().iteritems():
-            axis_names[key] = '{0}({1})'.format(axis_name(key),
-                                                domain_axis.size)
+        axis_names = self._axis_names_sizes()
         
         # Data
-        if self.has_data():
-            axes = self.domain_axes()
-            x = ['{0}'.format(axis_names[axis]) for axis in data_axes]
-            string.append('Data            : {0}({1}) {2}'.format(
-                self.name(''), ', '.join(x), units))
-        elif units:
-            string.append('Data            : {0}'.format(units))
+        string.append(
+            'Data            : {0}'.format(self._one_line_description(axis_names)))
 
         # Cell methods
         cell_methods = self.cell_methods()
@@ -152,7 +168,8 @@ x.__str__() <==> str(x)
             x = []
             for cm in cell_methods.values():
                 cm = cm.copy()
-                cm.axes = tuple([axis_names.get(axis, axis) for axis in cm.axes])
+                cm.axes = tuple([axis_names.get(axis, axis)
+                                 for axis in cm.get_axes(())])
                 x.append(str(cm))
                 
             c = ' '.join(x)
@@ -160,16 +177,19 @@ x.__str__() <==> str(x)
             string.append('Cell methods    : {0}'.format(c))
         #--- End: if
         
-        axis_to_name = {}
+#        axis_to_name = {}
         def _print_item(self, key, variable, dimension_coord):
             '''Private function called by __str__'''
             
             if dimension_coord:
                 # Dimension coordinate
-                name = "{0}({1})".format(axis_name(key), self.domain_axes()[key].size)
-                axis_to_name[key] = name
+                axis = self.construct_axes(key)[0]
+                name = variable.name(ncvar=True, default=key)
+                name += '({0})'.format(variable.get_data().size)
+
+#                axis_to_name[key] = name
                 
-                variable = self.constructs().get(key, None)
+                #variable = self.constructs().get(key, None)
                 
                 if variable is None:
                     return name
@@ -184,7 +204,7 @@ x.__str__() <==> str(x)
                 shape = [axis_names[axis] for axis in self.construct_axes(key)]
                 shape = str(tuple(shape)).replace("'", "")
                 shape = shape.replace(',)', ')')
-                x = [variable.name(key)]
+                x = [variable.name(ncvar=True, default=key)]
                 x.append(shape)
             #--- End: if
                     
@@ -192,7 +212,7 @@ x.__str__() <==> str(x)
 #                if variable.isreftime:
 #                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
 #                else:
-                x.append(' = {}'.format(variable.get_data()))
+                x.append(' = {0}'.format(variable.get_data()))
                 
             return ''.join(x)
         #--- End: def
@@ -204,7 +224,7 @@ x.__str__() <==> str(x)
 #        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
 #
 #        x = ['{0}({1})'.format(self.domain_axis_name(axis),
-#                               self.domain_axes()[axis].size)
+#                               self.domain_axes()[axis].get_size(''))
 #            for axis in list(non_spanning_axes) + data_axes]
 #        string.append('Domain axes: {}'.format(', '.join(x)))
 
@@ -353,7 +373,7 @@ functionality:
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-        new.set_data(data[indices], axes=data_axes)
+        new.set_data(data[indices], data_axes)
 
         # ------------------------------------------------------------
         # Subspace constructs
@@ -361,7 +381,7 @@ functionality:
         self_constructs = self._get_constructs()
 
         for key, construct in new.array_constructs().iteritems():
-            data = self.construct(key).get_data(None)
+            data = self.get_construct(key).get_data(None)
             if data is None:
                 # This construct has no data array
                 continue
@@ -399,6 +419,42 @@ functionality:
             new_constructs.replace(key, domain_axis)
 
         return new
+    #--- End: def
+
+    def _axis_names_sizes(self):
+        '''
+        '''    
+        axis_names = {}
+        for key, domain_axis in self.domain_axes().iteritems():
+            axis_names[key] = '{0}({1})'.format(self.domain_axis_name(key),
+                                                domain_axis.get_size(''))
+           
+        return axis_names
+    #--- End: def
+    
+    def _one_line_description(self, axis_names_sizes=None):
+        '''
+        '''
+        if axis_names_sizes is None:
+            axis_names_sizes = self._axis_names_sizes()
+            
+        x = [axis_names_sizes[axis] for axis in self.get_data_axes(())]
+        axis_names = ', '.join(x)
+        if axis_names:
+            axis_names = '({0})'.format(axis_names)
+            
+        # Field units        
+        units    = self.get_property('units', None)
+        calendar = self.get_property('calendar', None)
+        if units is not None:
+            units = ' {0}'.format(units)
+        else:
+            units = ''
+            
+        if calendar is not None:
+            units += ' {0}'.format(calendar)
+            
+        return "{0}{1}{2}".format(self.name(''), axis_names, units)
     #--- End: def
 
     def _dump_axes(self, axis_names, display=True, _level=0):
@@ -443,7 +499,14 @@ field.
             return string
     #--- End: def
 
-    def dump(self, display=True, _level=0, _title='Field', _q='-'):
+    def domain_axis_name(self, key):
+        '''
+'''
+        constructs = self._get_constructs()
+        return constructs.domain_axis_name(key)
+    #--- End: def
+    
+    def dump(self, display=True, _level=0, _title='Field'):
         '''A full description of the field.
 
 The field and its components are described without abbreviation with
@@ -476,42 +539,40 @@ last values.
         indent0 = indent * _level
         indent1 = indent0 + indent
 
-        title = '{0}{1}: {2}'.format(indent0, _title, self.name(''))
+        if _title is None:
+            ncvar = self.get_ncvar(None)
+            _title = self.name(default=None)
+            if ncvar is not None:
+                if _title is None:
+                    _title = "ncvar%{0}".format(ncvar)
+                else:
+                    _title += " (ncvar%{0})".format(ncvar)
+            #--- End: if
+            if _title is None:
+                _title = ''
+                
+            _title = 'Field: {0}'.format(_title)
+        #--- End: if
 
-        # Append the netCDF variable name
-        ncvar = self.ncvar()
-        if ncvar is not None:
-            title += " (ncvar%{0})".format(ncvar)
-
-        line  = '{0}{1}'.format(indent0, ''.ljust(len(title)-_level*4, '-'))
+        line  = '{0}{1}'.format(indent0, ''.ljust(len(_title), '-'))
 
         # Title
-        string = [line, title, line]
+        string = [line, indent0+_title, line]
 
         # Simple properties
-        if self.properties():
+        properties = self.properties()
+        if properties:
             string.append(
-                self._dump_properties(_level=_level,
-                                      omit=('Conventions',
-                                            '_FillValue',
-                                            'missing_value')))
+                self._dump_properties(_level=_level))
 
-        axis_names = {}
-        for key, domain_axis in self.domain_axes().iteritems():
-            axis_names[key] = '{0}({1})'.format(self.domain_axis_name(key),
-                                                domain_axis.size)
-           
-        # Axes
-        axes = self._dump_axes(axis_names, display=False, _level=_level)
-        if axes:
-            string.extend(('', axes))
+        axis_names = self._axis_names_sizes()
            
         # Data
         data = self.get_data(None)
         if data is not None:
             axes = self.domain_axes()
             axis_name = self.domain_axis_name
-            x = ['{0}({1})'.format(axis_name(axis), axes[axis].size)
+            x = ['{0}({1})'.format(axis_name(axis), axes[axis].get_size(''))
                  for axis in self.get_data_axes(())]
             if self.isreftime:
                 data = data.asdata(data.dtarray)
@@ -519,7 +580,13 @@ last values.
             string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
                                                            ', '.join(x),
                                                            str(data))))
+            
         # Cell methods
+        # Axes
+        axes = self._dump_axes(axis_names, display=False, _level=_level)
+        if axes:
+            string.extend(('', axes))
+           
         cell_methods = self.cell_methods()
         if cell_methods:
             string.append('')
@@ -711,9 +778,9 @@ by the data array may be selected.
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         
-        if domain_axis.size != 1:
+        if domain_axis.get_size() != 1:
             raise ValueError(
-"Can't insert an axis of size {}: {!r}".format(domain_axis.size, axis))
+"Can't insert an axis of size {}: {!r}".format(domain_axis.get_size(), axis))
 
         if axis in data_axes:
             raise ValueError(
@@ -766,12 +833,12 @@ axes, use the `remove_axes` method.
         domain_axes = self.domain_axes()
             
         if axes is None:
-            axes = [axis for axis in data_axes if domain_axes[axis].size == 1]
+            axes = [axis for axis in data_axes if domain_axes[axis].get_size(None) == 1]
         else:
             for axis in axes:
-                if domain_axes[axis].size != 1:
+                if domain_axes[axis].get_size() != 1:
                     raise ValueError(
-"Can't squeeze domain axis with size {}".format(domain_axes[axis].size))
+"Can't squeeze domain axis with size {}".format(domain_axes[axis].get_size(None)))
             #--- End: for
             
             axes = [axis for axis in axes if axis in data_axes]

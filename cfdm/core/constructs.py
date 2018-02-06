@@ -22,7 +22,8 @@ Keys are item identifiers, values are item objects.
     def constructs(self, construct_type=None, axes=None, copy=False):
         '''
         '''
-        out = super(Constructs).constructs(construct_type=construct_type, copy=copy)
+        out = super(Constructs, self).constructs(construct_type=construct_type,
+                                                 copy=copy)
 
         if axes:
             spans_axes = set(axes)
@@ -59,9 +60,7 @@ Keys are item identifiers, values are item objects.
         The identifier of the axis.
 
           *Example:*
-            ``axis='axis2'``
-
-    default: optional
+            ``axis='domainaxis2'``
 
 :Returns:
 
@@ -83,7 +82,7 @@ Keys are item identifiers, values are item objects.
         for key, dim in self.dimension_coordinates().iteritems():
             if construct_axes[key] == (axis,):
                 # Get the name from a dimension coordinate
-                name = dim.name(ncvar=False, id=False, default=None)
+                name = dim.name(ncvar=False, default=None)
                 break
         #--- End: for
         if name is not None:
@@ -97,13 +96,13 @@ Keys are item identifiers, values are item objects.
                     break
                 
                 # Get the name from an auxiliary coordinate
-                name = aux.name(ncvar=False, id=False, default=None)
+                name = aux.name(ncvar=False, default=None)
                 found = True
         #--- End: for
         if name is not None:
             return name
 
-        ncdim = domain_axes[axis].ncdim()
+        ncdim = domain_axes[axis].get_ncdim(None)
         if ncdim is not None:
             # Get the name from netCDF dimension name            
             return 'ncdim%{0}'.format(ncdim)

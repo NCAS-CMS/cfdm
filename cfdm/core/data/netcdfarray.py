@@ -1,5 +1,7 @@
 import abc
 
+import netCDF4
+
 from .array import Array
 
 # ====================================================================

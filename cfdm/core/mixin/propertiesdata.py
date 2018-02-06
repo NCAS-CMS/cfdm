@@ -86,43 +86,6 @@ x.__str__() <==> str(x)
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
-    def _dump_properties(self, properties, prefix='', indent=''):
-        '''
-
-.. versionadded:: 1.6
-
-:Parameters:
-
-    omit: sequence of `str`, optional
-        Omit the given CF properties from the description.
-
-    _level: `int`, optional
-
-:Returns:
-
-    out: `str`
-
-:Examples:
-
-'''
-        string = []
-
-        # Simple properties
-        simple = self.properties()
-        attrs  = sorted(set(simple) - set(omit))
-        for prop, value in properties:
-            name   = '{0}{1}{2} = '.format(indent, prefix, prop)
-            value  = repr(value)
-            subsequent_indent = ' ' * len(name)
-            if value.startswith("'") or value.startswith('"'):
-                subsequent_indent = '{0} '.format(subsequent_indent)
-                
-            string.append(textwrap.fill(name+value, 79,
-                                        subsequent_indent=subsequent_indent))
-
-        return '\n'.join(string)
-    #--- End: def
-
     @abc.abstractmethod
     def dump(self, display=True, field=None, key=None,
              _omit_properties=(), _prefix='', _title=None,
@@ -173,9 +136,14 @@ standard_name = 'time'
         # ------------------------------------------------------------
         if _create_title:
             if _title is None:
+                if field and key:
+                    default = key
+                else:
+                    default = ''
+                    
                 string.append('{0}{1}: {2}'.format(indent0,
                                                    self.__class__.__name__,
-                                                   self.name(default='')))
+                                                   self.name(default=default)))
             else:
                 string.append(indent0 + _title)
         #--- End: if
@@ -183,16 +151,9 @@ standard_name = 'time'
         # ------------------------------------------------------------
         # Properties
         # ------------------------------------------------------------
-        properties = self.properties()
-        if _omit_properties:
-            for prop in properties.keys():
-                if prop in _omit_properties:
-                    del properties[prop]
-        #--- End: if
-
-        properties = self._dump_properties(properties,
-                                           prefix=_prefix,
-                                           indent=indent1)
+        properties = self._dump_properties(_prefix=_prefix,
+                                           _level=_level+1,
+                                           _omit_properties=_omit_properties)
         if properties:
             string.append(properties)
 
@@ -202,21 +163,20 @@ standard_name = 'time'
         data = self.get_data(None)
         if data is not None:
             if field and key:
+                axis_names_sizes = field._axis_names_sizes()
+                x = [axis_names_sizes[axis] for axis in field.construct_axes(key)]
                 ndim = data.ndim
-                x = ['{0}({1})'.format(field.domain_axis_name(axis),
-                                       field.domain_axes()[axis].size)
-                     for axis in field.construct_axes(key)]
-
-                x = x[:ndim]
-                    
+                x = x[:ndim]                    
                 if len(x) < ndim:
-                    x.append(str(data.shape[len(x):]))
+                    x.extend([str(size) for size in data.shape[len(x):]])
             else:
                 x = [str(size) for size in data.shape]
-           
+
+            shape = ', '.join(x)
+            
             string.append('{0}{1}Data({2}) = {3}'.format(indent1,
                                                          _prefix,
-                                                         ' '.join(x),
+                                                         shape,
                                                          str(data)))
 
         string = '\n'.join(string)
@@ -492,7 +452,7 @@ None
             return 'long_name:{0}'.format(n)
 
         if ncvar:
-            n = self.ncvar()
+            n = self.get_ncvar(None)
             if n is not None:
                 return 'ncvar%{0}'.format(n)
             

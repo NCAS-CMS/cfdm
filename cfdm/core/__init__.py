@@ -26,22 +26,24 @@ if not (StrictVersion('2.7.0')
         platform.python_version()))
 
 from .bounds              import Bounds
+from .coordinateancillary import CoordinateAncillary
+from .constants           import *
+from .functions           import *
+from .read.read           import read
+from .write.write         import write
+from .data.data           import Data
+from .data.netcdfarray    import NetCDF
+
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .dimensioncoordinate import DimensionCoordinate
-from .cellmethod          import CellMethod
 from .cellmeasure         import CellMeasure
+from .cellmethod          import CellMethod
 from .coordinatereference import CoordinateReference
+from .dimensioncoordinate import DimensionCoordinate
 from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
 from .domain              import Domain
 from .field               import Field
 from .fieldancillary      import FieldAncillary
-from .read.read           import read
-from .write.write         import write
-from .data.data           import Data
-from .data.netcdfarray    import NetCDF
-from .constants           import *
-from .functions           import *
 
 
 

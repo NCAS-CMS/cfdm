@@ -95,17 +95,19 @@ Field objects are picklable.
         '''
         super(Field, self).__init__(properties=properties,
                                     source=source, copy=copy,
-                                    _use_data=_use_data)
+                                    _use_data=False)
         
-        data_axes  = ()
+        data_axes  = None
+        data       = None
         constructs = None
-        
+  
         if source is not None and isinstance(source, Field):
-            data_axes = source._data_axes[:]
             constructs = source._get_constructs(None)
             if constructs is not None and (copy or not _use_data):
                 constructs = constructs.copy(data=_use_data)
 
+            data_axes = source.get_data_axes(None)
+            data      = source.get_data(None)
         else:
             constructs = self._Constructs(
                 array_constructs=('dimensioncoordinate',
@@ -118,9 +120,13 @@ Field objects are picklable.
                                       'domainaxis'),
                 ordered_constructs=('cellmethod',)
             )
-        
+
         self._set_constructs(constructs, copy=False)
-        self.set_data_axes(data_axes)
+
+        if data is not None:
+            self.set_data(data, data_axes, copy=copy)
+        elif data_axes is not None:
+            self.set_data_axes(data_axes)
     #--- End: def
     
     def _del_constructs(self):
@@ -232,6 +238,12 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
         return self._del_attribute('data_axes')
     #--- End: def
       
+    def get_construct(self, key, *default):
+        '''
+        '''
+        return self._get_constructs().get_construct(key, *default)
+    #--- End: def
+
     def get_data_axes(self, *default):
         '''Return the domain axes for the data array dimensions.
         
@@ -392,8 +404,7 @@ None
                                   copy=copy)
     #--- End: def
 
-    def set_data(self, data, axes, copy=True, replace=True,
-                    force=False):
+    def set_data(self, data, axes, copy=True):
         '''Insert a data array into the {+variable}.
 
 :Examples 1:
@@ -468,11 +479,8 @@ ValueError: Can't initialize data: Data already exists
 >>> f.set_data(Data([3, 4, 5]))
 
         '''
-        for axis in axes:
-            if axis not in self.domain_axes():
-                raise ValueError("asdajns dpunpuewnd p9wun lun 0[9io3jed pjn j nn jk")
-
-        self.set_data_axes(list(axes))
+        if axes is not None:
+            self.set_data_axes(axes)
 
         super(Field, self).set_data(data, copy=copy)
     #--- End: def
@@ -480,6 +488,11 @@ ValueError: Can't initialize data: Data already exists
     def set_data_axes(self, value):
         '''
         '''
+        domain_axes = self.domain_axes()
+        for axis in value:
+            if axis not in domain_axes:
+                raise ValueError("asdajns dpunpuewnd p9wun lun 0[9io3jed pjn j nn jk")
+            
         self._set_attribute('data_axes', tuple(value))
     #--- End: def
     

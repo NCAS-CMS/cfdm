@@ -5,6 +5,8 @@ import os
 
 from .          import __file__
 from .functions import equals as cfdm_equals
+from .dimensioncoordinate import DimensionCoordinate
+from .auxiliarycoordinate import AuxiliaryCoordinate
 
 import mixin
 
@@ -74,7 +76,7 @@ The built-in function `str`
 x.__str__() <==> str(x)
 
 '''    
-        return self.identity('')
+        return self.name(default=self.get_ncvar(''))
     #--- End: def
 
     def close(self):
@@ -94,8 +96,8 @@ Close all files referenced by coordinate conversion term values.
         pass
     #--- End: def
 
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key='', _level=0, _title=None):
         '''Return a string containing a full description of the coordinate
 reference object.
 
@@ -123,20 +125,25 @@ reference object.
         indent2 = '    ' * (_level+2)
 
         if _title is None:
-            string = ['{0}Coordinate Reference: {1}'.format(indent0, self.name(''))]
+            string = ['{0}Coordinate Reference: {1}'.format(indent0,
+                                                            self.name(default=key))]
         else:
             string = [indent0 + _title]
 
-        # Parameter-valued terms
+        string.append(
+            super(CoordinateReference, self)._dump_properties(
+                _level=_level+1))
+            
+        # Parameter-valued term
         for term in sorted(self._parameters):
             string.append("{0}{1} = {2}".format(indent1, term, self.get_term(term)))
 
         # Domain ancillary-valued terms
         if field:
-            for term in sorted(self._domain_ancillaries):
+            for term, key in sorted(self._domain_ancillaries.iteritems()):
                 value = field.domain_ancillaries().get(self.get_term(term))
                 if value is not None:
-                    value = 'Domain Ancillary: '+value.name('')
+                    value = 'Domain Ancillary: '+value.name(default=key)
                 else:
                     value = ''
                 string.append('{0}{1} = {2}'.format(indent1, term, str(value)))
@@ -146,18 +153,22 @@ reference object.
 
         # Coordinates 
         if field:
-            for identifier in sorted(self._coordinates):
-                coord = field.coordinates().get(identifier)
+            for key in sorted(self._coordinates):
+                coord = field.coordinates().get(key)
                 if coord is not None:
-                    if getattr(coord, 'isdimension', False):
-                        coord = 'Dimension Coordinate: '+coord.name('')
+                    if isinstance(coord, DimensionCoordinate):
+                        coord = 'Dimension Coordinate: '+coord.name(default=key)
+                    elif isinstance(coord, AuxiliaryCoordinate):
+                        coord = 'Auxiliary Coordinate: '+coord.name(default=key)
                     else:
-                        coord = 'Auxiliary Coordinate: '+coord.name('')
+                        coord = coord.name(default=key)
 
-                    string.append('{0}Coordinate = {1}'.format(indent1, coord))
+#                    string.append('{0}Coordinate = {1}'.format(indent1, coord))
+                    string.append('{0}{1}'.format(indent1, coord))
         else:
             for identifier in sorted(self._coordinates):
-                string.append('{0}Coordinate = {1}'.format(indent1, identifier))
+#                string.append('{0}Coordinate = {1}'.format(indent1, identifier))
+                string.append('{0}{1}'.format(indent1, identifier))
             
         string = '\n'.join(string)
        
@@ -312,7 +323,7 @@ True if two instances are equal, False otherwise.
         return True
     #--- End: def
 
-    def name(self, default=None, identity=False, ncvar=False):
+    def name(self, default=None):
         '''Return a name.
 
 By default the name is the first found of the following:
@@ -337,27 +348,14 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 >>> n = r.name()
 >>> n = r.name(default='NO NAME'))
 '''
-        if not ncvar:
-            parameter_terms = self.parameters
-
-            n = parameter_terms.get('standard_name', None)
-            if n is not None:
-                return n
-                
-            n = parameter_terms.get('grid_mapping_name', None)
-            if n is not None:
-                return n
-                
-            if identity:
-                return default
-
-        elif identity:
-            raise ValueError("Can't set identity=True and ncvar=True")
-
-        n = self.ncvar()
+        n = self.get_property('standard_name', None)
         if n is not None:
-            return 'ncvar%{0}'.format(n)
-            
+            return n
+        
+        n = self.get_property('grid_mapping_name', None)
+        if n is not None:
+            return n
+        
         return default
     #--- End: def
 

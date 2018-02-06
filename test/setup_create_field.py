@@ -63,6 +63,7 @@ class create_fieldTest(unittest.TestCase):
         msr0 = cfdm.CellMeasure(
             data=cfdm.Data(1+numpy.arange(90.).reshape(9, 10)*1234))
         msr0.set_measure('area')
+        print 'POOOOOOOOOOOOOOOOO', msr0.get_measure(None)
         msr0.set_property('units', 'km2')
         
         # Data          
@@ -123,7 +124,7 @@ class create_fieldTest(unittest.TestCase):
 #        g *= 0.01
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryA'
-        f.insert_field_ancillary(anc, axes=[axisY, axisX])
+        f.set_field_ancillary(anc, axes=[axisY, axisX])
         
         g = f[0]
         g.squeeze(copy=False)
@@ -131,7 +132,7 @@ class create_fieldTest(unittest.TestCase):
 #        g *= 0.001
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryB'
-        f.insert_field_ancillary(anc, axes=[axisX])
+        f.set_field_ancillary(anc, axes=[axisX])
 
         g = f[..., 0]
         g = g.squeeze()
@@ -139,21 +140,21 @@ class create_fieldTest(unittest.TestCase):
 #        g *= 0.001
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryC'
-        f.insert_field_ancillary(anc, axes=[axisY])
+        f.set_field_ancillary(anc, axes=[axisY])
 
         
         f.set_property('flag_values', numpy.array([1, 2, 4], 'int32'))
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        print repr(f.getprop('flag_meanings'))
-        print 'F masks', repr(f.getprop('flag_masks'))
-        print repr(f.getprop('flag_values'))
+        print repr(f.get_property('flag_meanings'))
+        print 'F masks', repr(f.get_property('flag_masks'))
+        print repr(f.get_property('flag_values'))
 
         for cm in cfdm.CellMethod.parse(axisX+': mean '+axisY+': max'):
-            f.insert_cell_method(cm)
+            f.set_cell_method(cm)
 
-
+        print repr(f)
         print f
         print f.constructs()
         print f.construct_axes()

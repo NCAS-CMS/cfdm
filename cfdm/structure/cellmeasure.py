@@ -58,6 +58,10 @@ measure constructs.
         super(CellMeasure, self).__init__(properties=properties,
                                           source=source, data=data,
                                           copy=copy, _use_data=_use_data)
+
+        if source is not None:
+            if measure is None:
+                measure = source.get_measure(None)
         
         if measure is not None:
             self.set_measure(measure)

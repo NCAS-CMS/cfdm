@@ -14,8 +14,8 @@ class AuxiliaryCoordinate(Coordinate):
     '''
     __metaclass__ = abc.ABCMeta
       
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key=None, _level=0, _title=None):
         '''Return a string containing a full description of the auxiliary
 coordinate object.
 
@@ -38,8 +38,10 @@ coordinate object.
             _title = 'Auxiliary coordinate: ' + self.name(default='')
 
         return super(AuxiliaryCoordinate, self).dump(
-            display=display, omit=omit, field=field, key=key,
-             _level=_level, _title=_title)
+            display=display,
+            field=field, key=key,
+             _level=_level, _title=_title,
+            _omit_properties=_omit_properties)
     #--- End: def
 
     

@@ -34,7 +34,7 @@ x.__getitem__(indices) <==> x[indices]
 
         indices = parse_indices(self.shape, indices)
 
-        new = super(BoundedVariableMixin, self).__getitem__(indices)
+        new = super(PropertiesDataBounds, self).__getitem__(indices)
         
         data = self.get_data(None)
 
@@ -103,7 +103,7 @@ x.__getitem__(indices) <==> x[indices]
     #--- End: def
 
     def dump(self, display=True, field=None, key=None,
-             _omit_properties=(), _prefix='', _title=None,
+             _omit_properties=None, _prefix='', _title=None,
              _create_title=True, _level=0):
         '''Return a string containing a full description of the instance.
 
@@ -130,7 +130,7 @@ x.__getitem__(indices) <==> x[indices]
 :Examples:
 
         '''
-        string = super(BoundedVariableMixin, self).dump(
+        string = super(PropertiesDataBounds, self).dump(
             display=False, field=field, key=key,
             _omit_properties=_omit_properties, _prefix=_prefix,
             _title=_title, _create_title=_create_title, _level=_level)
@@ -144,7 +144,7 @@ x.__getitem__(indices) <==> x[indices]
         if bounds is not None:
             string.append(bounds.dump(display=False, field=field, key=key,
                                       _prefix=_prefix+'bounds.',
-                                      _create_title=False, _level=level+1))
+                                      _create_title=False, _level=_level))
         
         #-------------------------------------------------------------
         # Extent and topology properties
@@ -160,7 +160,7 @@ x.__getitem__(indices) <==> x[indices]
                 string.append(
                     array.dump(display=False, field=field, key=key,
                                _prefix=_prefix+x+'.'+name+'.',
-                               _create_title=False, _level=level+1))
+                               _create_title=False, _level=_level))
         #--- End: for
             
         string = '\n'.join(string)
@@ -170,6 +170,18 @@ x.__getitem__(indices) <==> x[indices]
         else:
             return string
     #--- End: def
+
+#Domain Ancillary: 
+#    Data = 'asdasdasdas'
+#    units = 'm'
+#    Data(catchement(10)) = [10.0, ..., 78.9]
+#    bounds.long_name = 'Why on earth do I have  long name?'
+#    bounds.Data(catchement(10), 2) = [[5.0, ..., 15.0]]
+#    extent.climatology = True
+#    extent.geometry_type = 'polygon'
+#    extent.part_node_count.long_name = 'this is a part node count'
+#    extent.part_node_count.Data(catchement(10), 4) = [[2, ..., 4]]
+#    extent.interior_ring.Data(catchement(10), 4) = [[1, ..., 0]]
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -181,7 +193,7 @@ x.__getitem__(indices) <==> x[indices]
         if atol is None:
             atol = ATOL()
 
-        if not super(BoundedVariableMixin, self).equals(
+        if not super(PropertiesDataBounds, self).equals(
                 other,
                 rtol=rtol, atol=atol, traceback=tracback,
                 ignore_data_type=ignore_data_type,
@@ -276,8 +288,8 @@ x.__getitem__(indices) <==> x[indices]
         '''
         position = self._parse_axes([position])[0]
         
-        c = super(BoundedVariableMixin, self).expand_dims(position,
-                                                     copy=copy)
+        c = super(PropertiesDataBounds, self).expand_dims(position,
+                                                          copy=copy)
         
         bounds = c.get_bounds(None)
         if bounds is not None:
@@ -294,7 +306,7 @@ x.__getitem__(indices) <==> x[indices]
         '''
         axes = self._parse_axes(axes)
 
-        c = super(BoundedVariableMixin, self).squeeze(axes, copy=copy)
+        c = super(PropertiesDataBounds, self).squeeze(axes, copy=copy)
         
         bounds = c.get_bounds(None)
         if bounds is not None:
@@ -341,7 +353,8 @@ x.__getitem__(indices) <==> x[indices]
         else:
             axes = self._parse_axes(axes)
 
-        c = super(BoundedVariableMixin, self).transpose(axes, copy=copy)
+        c = super(PropertiesDataBounds, self).transpose(axes,
+                                                        copy=copy)
 
         axes.append(-1)
         

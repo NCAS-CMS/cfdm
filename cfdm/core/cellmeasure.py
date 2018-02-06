@@ -32,9 +32,18 @@ measure constructs.
 
     '''
     __metaclass__ = abc.ABCMeta
+#Coordinate Reference: atmosphere_hybrid_height_coordinate
+#    standard_name = 'atmosphere_hybrid_height_coordinate'
+#    term.a = Domain Ancillary: 
+#    term.b = Domain Ancillary: 
+#    term.orog = Domain Ancillary: surface_altitude
+#    coordinate = Dimension Coordinate: longitude
+#    coordinate = Dimension Coordinate: latitude
+#    Coordinate = Dimension Coordinate: atmosphere_hybrid_height_coordinate
 
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
+
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key=None, _level=0, _title=None):
         '''
 
 Return a string containing a full description of the cell measure.
@@ -54,57 +63,18 @@ Return a string containing a full description of the cell measure.
 :Examples:
 
 ''' 
-        if _title is None:  
-            if hasattr(self, 'measure'):
-                _title = 'Cell Measure: ' + str(self.measure)
-            elif hasattr(self.Units, 'units'):
-                _title = 'Cell Measure: ' + str(self.units)
-            else:
-                _title = 'Cell Measure: ' + self.name(default='')
-
+        if _title is None:
+            name = self.name(default=self.get_property('units', ''))
+            _title = 'Cell Measure: ' + name
+            
         return super(CellMeasure, self).dump(
-            display=display, omit=omit, field=field, key=key,
+            display=display,
+            field=field, key=key,
+            _omit_properties=_omit_properties,
              _level=_level, _title=_title)
     #--- End: def
 
-    def identity(self, default=None, relaxed_identity=None):
-        '''
-
-Return the cell measure's identity.
-
-The identity is first found of:
-
-* The `!measure` attribute.
-
-* The `standard_name` CF property.
-
-* The `!id` attribute.
-
-* The value of the *default* parameter.
-
-:Parameters:
-
-    default : optional
-        If none of `measure`, `standard_name` and `!id` exist then
-        return *default*. By default, *default* is None.
-
-:Returns:
-
-    out :
-        The identity.
-
-:Examples:
-
-'''
-        n = self.measure()
-        if n is not None:
-            return n
-        
-        return super(CellMeasure, self).identity(default, relaxed_identity=relaxed_identity)
-    #--- End: def
-
-
-    def name(self, default=None, identity=False, ncvar=False, relaxed_identity=None):
+    def name(self, default=None, ncvar=False):
         '''Return a name for the cell measure.
 
 By default the name is the first found of the following:
@@ -166,28 +136,14 @@ None
 >>> f.name('no_name')
 'air_temperature'
 
-        '''      
-#        if ncvar:
-#            if identity:
-#                raise ValueError(
-#"Can't find name: ncvar and identity parameters can't both be True")
-#
-#            n = getattr(self, 'ncvar', None)
-#            if n is not None:
-#                return 'ncvar%%%s' % n
-#            
-#            return default
-#        #--- End: if
+        '''
+        n = self.get_measure(None)
+        print 'measure=', n
+        if n is not None:
+            return n
 
-        if not ncvar:
-            n = self.measure()
-            if n is not None:
-                return n
-
-        return super(CellMeasure, self).name(default,
-                                             identity=identity,
-                                             ncvar=ncvar,
-                                             relaxed_identity=relaxed_identity)
+        return super(CellMeasure, self).name(default=default,
+                                             ncvar=ncvar)
     #--- End: def
 
 #--- End: class

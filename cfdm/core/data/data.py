@@ -110,7 +110,8 @@ There are three extensions to the numpy indexing functionality:
         #-- End: if
 
         super(Data, self).__init__(data=data, units=units,
-                                   calendar=calendar, fill_value=fill_value)
+                                   calendar=calendar,
+                                   fill_value=fill_value)
                                    
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
@@ -129,9 +130,9 @@ There are three extensions to the numpy indexing functionality:
 
         '''
         array = self._get_master_array()
-        return type(self)(array[indices], units=self.units,
-                          calendar=self.calendar,
-                          fill_value=self.fill_value)
+        return type(self)(array[indices], units=self.get_units(None),
+                          calendar=self.get_calendar(None),
+                          fill_value=self.get_fill_value(None))
     #--- End: def
 
     def __int__(self):
@@ -239,8 +240,8 @@ elements.
         '''x.__str__() <==> str(x)
 
         '''
-        units    = self.units
-        calendar = self.calendar
+        units    = self.get_units(None)
+        calendar = self.get_calendar(None)
 
         if units is not None:
             isreftime = ('since' in units)
@@ -503,11 +504,11 @@ True
                 array = array.view(numpy.ndarray)
         #--- End: if
 
-        calendar = self.calendar
+        calendar = self.get_calendar(None)
         if calendar is None:
             calendar = 'standard'
             
-        array = netCDF4.num2date(array, self.units, calendar)    
+        array = netCDF4.num2date(array, self.get_units(None), calendar)    
         if mask is None:
             # There is no missing data
             array = numpy.array(array, dtype=object)
@@ -1345,9 +1346,9 @@ missing values.
         if numpy.ma.is_masked(array):
             array = array.compressed()
 
-        return type(self)(array, units=self.units,
-                          calendar=self.calendar,
-                          fill_value=self.fill_value)
+        return type(self)(array, units=self.get_units(None),
+                          calendar=self.get_calendar(None),
+                          fill_value=self.get_fill_value(None))
     #--- End: def
 
     def dump(self, display=True, prefix=None):
@@ -1478,11 +1479,12 @@ False
         #--- End: for
            
         # Check that each instance has the same fill value
-        if not ignore_fill_value and self.fill_value != other.fill_value:
+        if (not ignore_fill_value and
+            self.get_fill_value(None) != other.get_fill_value(None)):
             if traceback:
                 print("{0}: Different fill value: {1}, {2}".format(
                     self.__class__.__name__, 
-                    self.fill_value, other.fill_value))
+                    self.get_fill_value(None), other.get_fill_value(None)))
             return False
         #--- End: if
 

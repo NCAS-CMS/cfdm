@@ -22,20 +22,26 @@ All components of a variable are optional.
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, properties={}, source=None, copy=True):
-        '''
-        **Initialization**
-        '''
-        self._properties = {}
+        '''**Initialization**
 
-        if source is not None and  isinstance(source, Properties):
-            # Properties
+:Parameters:
+
+    properties: `dict`, optional
+
+    source: optional
+
+    copy: `bool`, optional
+
+        '''
+        if source is not None and isinstance(source, Properties):
             p = source.properties()
             if properties:
                 p.update(properties)
 
             properties = p
+        #--- End: if
 
-        self._properties = {}            
+        self._set_attribute('properties', {})
         if properties:
             self.properties(properties, copy=copy)
     #--- End: def
@@ -132,16 +138,21 @@ All components of a variable are optional.
         d[term] = value
     #--- End: def
 
-    def copy(self):
+    def copy(self, data=True):
         '''Return a deep copy.
 
-``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
+``x.copy()`` is equivalent to ``copy.deepcopy(x)``.
 
 .. versionadded:: 1.6
 
 :Examples 1:
 
 >>> d = c.copy()
+
+:Parameters:
+
+    data: `bool`, optional
+        This parameter has no effect and is ignored.
 
 :Returns:
 
@@ -152,12 +163,6 @@ All components of a variable are optional.
         return type(self)(source=self, copy=True)
     #--- End: def
     
-#    def del_ncvar(self):
-#        '''
-#        '''        
-#        return self._del_attribute('ncvar')
-#    #--- End: def
-
     def del_property(self, prop):
         '''Delete a CF or non-CF property.
 
@@ -188,12 +193,6 @@ AttributeError: Can't delete non-existent property 'project'
         '''
         return self._del_attribute_term('properties', prop)
     #--- End: def
-
-#    def get_ncvar(self, *default):
-#        '''
-#        '''        
-#        return self._get_attribute('ncvar', *default)
-#    #--- End: def
 
     def get_property(self, prop, *default):
         '''
@@ -268,13 +267,6 @@ Return True if a CF property exists, otherise False.
         return self._has_attribute_term('properties', prop)
     #--- End: def
 
-#    @abc.abstractmethod
-    def name(self, default=None, ncvar=True):
-        '''Return a name for the construct.
-        '''
-        pass
-    #--- End: def
-
     def properties(self, props=None, clear=False, copy=True):
         '''Inspect or change the CF properties.
 
@@ -336,12 +328,6 @@ Return True if a CF property exists, otherise False.
 
         return out
     #--- End: def
-
-#    def set_ncvar(self, value))
-#        '''
-#        '''        
-#        return self._set_attribute('ncvar', value)
-#    #--- End: def
 
     def set_property(self, prop, value):
         '''Set a CF or non-CF property.

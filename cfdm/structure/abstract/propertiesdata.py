@@ -55,15 +55,7 @@ All components of a variable are optional.
             # Data
             if _use_data and data is None:
                 data = source.get_data(None)
-
-#            # Properties
-#            p = source.properties()
-#            if properties:
-#                p.update(properties)
-#            properties = p
-
-#        if properties:
-#            self.properties(properties, copy=copy, data=_use_data)
+        #--- End: def
 
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
@@ -74,7 +66,7 @@ All components of a variable are optional.
         '''
         data = self.get_data(None)
         if data is None:
-            raise ValuError("sdif n;u3jnr42[ 4890yh 8u;jkb")
+            raise ValueError("sdif n;u3jnr42[ 4890yh 8u;jkb")
 
         return data
     #--- End: def
@@ -229,7 +221,11 @@ True
 -99.0 km
 
         '''
-        return self.get_data().get_array()
+        data = self.get_data(None)
+        if data is None:
+            raise ValueError("No array to get")
+        
+        return data.get_array()
     #--- End: def
 
     def get_data(self, *default):
@@ -261,14 +257,6 @@ If present, the data array is stored in the `data` attribute.
 
         '''     
         return self._has_attribute('data')
-    #--- End: def
-
-    def open(self):
-        '''
-'''
-        data = self.get_data(None)
-        if data is not None:
-            data.open()
     #--- End: def
 
     def set_data(self, data, copy=True):

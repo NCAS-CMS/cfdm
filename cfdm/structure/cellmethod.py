@@ -2,7 +2,6 @@ import abc
 
 import abstract
 
-
 # ====================================================================
 #
 # Cell method object
@@ -79,24 +78,6 @@ modified, where appropriate, to reflect netCDF variable names.
         return ' '.join(string)
     #--- End: def
 
-    def copy(self):
-        '''Return a deep copy.
-
-``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
-
-:Returns:
-
-    out: 
-        The deep copy.
-
-:Examples:
-
->>> e = d.copy()
-
-        '''
-        new = type(self)(source=self, copy=True)
-    #--- End: def
-    
     def del_axes(self):
         '''
 '''

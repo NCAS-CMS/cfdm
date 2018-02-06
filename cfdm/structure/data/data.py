@@ -322,7 +322,6 @@ True
 
         '''
         data = self._get_master_array()
-        print 'pppppppppppp', type(data.array)
         return data.array.copy()
     #--- End: def
 

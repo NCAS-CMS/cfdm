@@ -43,7 +43,7 @@ over El Nino years).
     
     def __init__(self, axes=None, method=None, where=None,
                  within=None, over=None, interval=None, comment=None,
-                 copy=True):
+                 source=None, copy=True):
         '''
         '''
         properties = {'where'   : where,

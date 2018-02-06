@@ -328,18 +328,27 @@ Return a deep or shallow copy.
         return self.constructs('domainaxis', copy=copy)
     #--- End: def
     
-    def get_construct(self, key, default=None):
+    def get_construct(self, key, *default):
+        '''
+        '''
         d = self._constructs.get(self._construct_type.get(key))
         if d is None:
-            return default
+            d = {}
+            
+        try:            
+            return d[key]
+        except KeyError:
+            if default:
+                return default[0]
 
-        return d.get(key, default)
+            raise ValueError("Can't get construct!!!!!!")
     #--- End: def
     
     def set_construct(self, construct_type, construct, key=None,
                       axes=None, copy=True):
         '''
         '''
+        print 'QQQQQQQQQQQQQ arse', type(construct)
         if key is None:
             key = self.new_identifier(construct_type)
         elif key in self._consructs[construct_type]:
@@ -370,6 +379,7 @@ Return a deep or shallow copy.
             construct = construct.copy()
 
         self._constructs[construct_type][key] = construct
+        print 'QQQQQQQQQQQQQ wee', type(construct)
 
         return key
     #--- End: def

@@ -315,8 +315,8 @@ and auxiliary coordinate roles for different data variables.
     #        f.HDF_chunks(chunks)
     
             if g['_debug']:            
-                print '  Field shape:', f.data.shape
-                print '  HDF chunks :', f.HDF_chunks()
+                print '  Field shape:', f.get_data().shape
+                print '  HDF chunks :', 'PASS FOR NOW' #f.HDF_chunks()
             
             # Write the field
             self._write_a_field(f)
@@ -762,7 +762,7 @@ a new netCDF bounds dimension.
                                                             default='coordinate')
     
             # Create a new dimension, if it is not a scalar coordinate
-            if coord.data.ndim > 0:
+            if coord.get_data().ndim > 0:
                 unlimited = self._unlimited(f, axis)
                 self._write_dimension(ncdim, f, axis, axis_to_ncdim,
                                       unlimited=unlimited)
@@ -924,7 +924,7 @@ dictionary.
         # which contains data.
         bounds = coord.bounds
     
-        size = bounds.data.shape[-1]
+        size = bounds.get_data().shape[-1]
     
         ncdim = self._write_check_name('bounds{0}'.format(size), dimsize=size)
     
@@ -1448,21 +1448,18 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         datatype = self._write_datatype(cfvar)
     
-        if not cfvar.hasdata:
-            data = None
-        else:
-            data = cfvar.data            
-            if datatype == 'S1':
-                # ----------------------------------------------------
-                # Convert a string data type numpy array into a
-                # character data type ('S1') numpy array with an extra
-                # trailing dimension.
-                # ----------------------------------------------------
-                strlen = cfvar.dtype.itemsize
-                if strlen > 1:
-                    data = self._write_convert_to_char(data)
-                    ncdim = self._write_string_length_dimension(strlen)            
-                    ncdimensions = ncdimensions + (ncdim,)
+        data = cfvar.get_data(None)
+        if data is not None and datatype == 'S1':
+            # --------------------------------------------------------
+            # Convert a string data type numpy array into a
+            # character data type ('S1') numpy array with an extra
+            # trailing dimension.
+            # --------------------------------------------------------
+            strlen = cfvar.dtype.itemsize
+            if strlen > 1:
+                data = self._write_convert_to_char(data)
+                ncdim = self._write_string_length_dimension(strlen)            
+                ncdimensions = ncdimensions + (ncdim,)
         #--- End: if
     
         # ------------------------------------------------------------
@@ -1643,7 +1640,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
             
         f = f.copy()
     
-        data_axes = f.data_axes()
+        data_axes = f.get_data_axes()
     
         # Mapping of domain axis identifiers to netCDF dimension names
         axis_to_ncdim = {}
@@ -1891,7 +1888,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         # ----------------------------------------------------------------
         ncvar = self._write_create_netcdf_variable_name(f, 'data')
     
-        ncdimensions = tuple([axis_to_ncdim[axis] for axis in f.data_axes()])
+        ncdimensions = tuple([axis_to_ncdim[axis] for axis in f.get_data_axes()])
     
         extra = {}
     
