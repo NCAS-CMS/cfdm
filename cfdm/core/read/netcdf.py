@@ -1725,7 +1725,7 @@ Set the Data attribute of a variable.
             dtype = numpy.dtype('S{0}'.format(strlen))
         #--- End: if
     
-        filearray = self._NetCDF(file=g['filename'], ncvar=ncvar,
+        filearray = self._NetCDF(filename=g['filename'], ncvar=ncvar,
                                  dtype=dtype, ndim=ndim, shape=shape,
                                  size=size)
     

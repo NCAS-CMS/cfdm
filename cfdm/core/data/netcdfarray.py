@@ -1,4 +1,6 @@
 import abc
+import os
+import urlparse
 
 import netCDF4
 
@@ -62,7 +64,8 @@ class NetCDF(Array):
     # Always close the netCDF file after access
     _close = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, filename=None, ncvar=None, dtype=None,
+                 ndim=None, shape=None, size=None, varid=None):
         '''
         
 **Initialization**
@@ -85,11 +88,31 @@ class NetCDF(Array):
         Number of elements in the data array.
 
 '''
-        super(NetCDF, self).__init__(**kwargs)
+        if filename is not None:
+            u = urlparse.urlparse(filename)
+            if u.scheme == '':
+                filename = os.path.abspath(filename)
 
-        f = getattr(self, 'file', None)
-        if f is not None:
-            self.file = abspath(f)
+            self.filename = filename
+        #--- End: def
+        
+        if ncvar is not None:
+            self._ncvar = ncvar
+
+        if ndim is not None:
+            self._ndim = ndim
+
+        if size is not None:
+            self._size = size
+
+        if shape is not None:
+            self._shape = shape
+
+        if dtype is not None:
+            self._dtype = dtype
+
+        if varid is not None:
+            self._varid = varid
     #--- End: def
             
     def __getitem__(self, indices):
@@ -173,9 +196,29 @@ x.__str__() <==> str(x)
         if name is None:
             name = self.varid
 
-        return "%s%s in %s" % (name, self.shape, self.file)
+        return "%s%s in %s" % (name, self.shape, self.filename)
     #--- End: def
 
+    @property
+    def ndim(self):
+         return self._ndim
+    
+    @property
+    def dtype(self):
+         return self._dtype
+    
+    @property
+    def size(self):
+         return self._size
+
+    @property
+    def shape(self):
+         return self._shape
+
+    @property
+    def varid(self):
+         return self._varid
+    
     @property
     def isunique(self):
         '''
@@ -255,7 +298,7 @@ x.__str__() <==> str(x)
 <netCDF4.Dataset at 0x115a4d0>
 
         '''
-        nc = self.file_open(self.file, 'r')
+        nc = self.file_open(self.filename, 'r')
         self._nc = nc
         return nc
     #--- End: def

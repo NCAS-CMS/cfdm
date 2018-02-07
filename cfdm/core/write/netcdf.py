@@ -12,7 +12,7 @@ from ..functions import abspath, flat
 class WriteNetCDF(object):
     '''
     '''
-    def __init__(self, Conventions=None, NetCDF=None):
+    def __init__(self, Conventions=None): #, NetCDF=None):
         '''
         '''
         self._Conventions = Conventions
@@ -348,7 +348,6 @@ and auxiliary coordinate roles for different data variables.
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))        
         else:
-            self.write_vars['netcdf'] = nc
             return nc
     #--- End: def
     
@@ -365,18 +364,18 @@ and auxiliary coordinate roles for different data variables.
     def _check_name(self, base, dimsize=None):
         '''
     
-    :Parameters:
-    
-        base: `str`
-    
-        g: `dict`
-    
-        dimsize: `int`, optional
-    
-    :Returns:
-    
-        ncvar: `str`
-            NetCDF dimension name or netCDF variable name.
+:Parameters:
+
+    base: `str`
+
+    g: `dict`
+
+    dimsize: `int`, optional
+
+:Returns:
+
+    ncvar: `str`
+        NetCDF dimension name or netCDF variable name.
     
         '''
         g = self.write_vars

@@ -2,10 +2,7 @@ from .. import __Conventions__
 
 from .netcdf import WriteNetCDF
 
-from ..data.netcdfarray import NetCDF
-
-netcdf = WriteNetCDF(Conventions=__Conventions__,
-                     NetCDF=NetCDF)
+netcdf = WriteNetCDF(Conventions=__Conventions__)
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           verbose=False, mode='w', least_significant_digit=None,
