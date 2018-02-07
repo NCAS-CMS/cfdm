@@ -81,7 +81,7 @@ There are three extensions to the numpy indexing functionality:
     '''
 
     def __init__(self, data=None, units=None, calendar=None,
-                 fill_value=None):
+                 fill_value=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -111,7 +111,8 @@ There are three extensions to the numpy indexing functionality:
 
         super(Data, self).__init__(data=data, units=units,
                                    calendar=calendar,
-                                   fill_value=fill_value)
+                                   fill_value=fill_value,
+                                   source=source, copy=copy)
                                    
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
@@ -259,7 +260,7 @@ elements.
                
             return out
         #--- End: try
-        
+
         size = self.size
         ndim = self.ndim
         open_brackets  = '[' * ndim
@@ -1523,18 +1524,84 @@ False
         return True            
     #--- End: def
 
+    def element(self, *index):
+        '''
+        '''
+        if index:
+            n_index = len(index)
+            if n_index == 1:
+                index = index[0]
+                if index == 0:
+                    # This also works for scalar arrays
+                    index = (slice(0, 1),) * self.ndim
+                elif index == -1:
+                    # This also works for scalar arrays
+                    index = (slice(-1, None),) * self.ndim
+                elif isinstance(index, (int, long)):
+                    if index < 0:
+                        index += self.size
+
+                    index = numpy.unravel_index(index, self.shape)
+                elif len(index) != self.ndim:
+                    raise ValueError(
+                        "Incorrect number of indices for %s array" %
+                        self.__class__.__name__)
+                #--- End: if
+            elif n_index != self.ndim:
+                raise ValueError(
+                    "Incorrect number of indices for %s array" %
+                    self.__class__.__name__)
+
+            array = self[index].get_array()
+
+        elif self.size == 1:
+            array = self.get_array()
+
+        else:
+            raise ValueError(
+"Can only convert a {} array of size 1 to a Python scalar".format(
+    self.__class__.__name__))
+
+        if not numpy.ma.isMA(array):
+            return array.item()
+        
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked
+    #--- End: def
+    
     def first_element(self):
         '''
         '''
         d = self[(slice(0, 1),)*self.ndim]
-        return d.get_array().item()
+        array = d.get_array()
+        
+        if not numpy.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked        
     #--- End: def
     
     def last_element(self):
         '''
         '''
         d = self[(slice(-1, None),)*self.ndim]
-        return d.get_array().item()
+        array = d.get_array()
+        
+        if not numpy.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked
     #--- End: def
     
     def second_element(self):
@@ -1542,7 +1609,16 @@ False
         '''
         index = numpy.unravel_index(1, self.shape)
         d = self[index]
-        return d.get_array().item()
+        array = d.get_array()
+        
+        if not numpy.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked
     #--- End: def
 
     def set_dtype(self, value):

@@ -24,7 +24,7 @@ An N-dimensional data array with units and masked values.
     ___metaclass__ = abc.ABCMeta
     
     def __init__(self, data=None, units=None, calendar=None,
-                 fill_value=None):
+                 fill_value=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -45,6 +45,20 @@ An N-dimensional data array with units and masked values.
 >>> d = Data(tuple('fly'))
 
         '''
+        if source is not None:
+            if data is None:
+                data = source._get_master_array()
+        
+            if units is None:
+                units = source.get_units(None)
+        
+            if calendar is None:
+                calendar = source.get_calendar(None)
+        
+            if fill_value is None:
+                fill_value = source.get_fill_value(None)
+        #--- End: if
+        
 #        self._array   = data
         self._units    = units
         self._calendar = calendar

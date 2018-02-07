@@ -348,7 +348,6 @@ Return a deep or shallow copy.
                       axes=None, copy=True):
         '''
         '''
-        print 'QQQQQQQQQQQQQ arse', type(construct)
         if key is None:
             key = self.new_identifier(construct_type)
         elif key in self._consructs[construct_type]:
@@ -379,8 +378,7 @@ Return a deep or shallow copy.
             construct = construct.copy()
 
         self._constructs[construct_type][key] = construct
-        print 'QQQQQQQQQQQQQ wee', type(construct)
-
+        
         return key
     #--- End: def
 

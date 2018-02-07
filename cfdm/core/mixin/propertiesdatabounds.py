@@ -195,7 +195,7 @@ x.__getitem__(indices) <==> x[indices]
 
         if not super(PropertiesDataBounds, self).equals(
                 other,
-                rtol=rtol, atol=atol, traceback=tracback,
+                rtol=rtol, atol=atol, traceback=traceback,
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,

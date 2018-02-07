@@ -499,9 +499,43 @@ field.
             return string
     #--- End: def
 
+    def auxiliary_coordinates(self, axes=None, copy=False):
+        '''
+        '''    
+        return self._get_constructs().constructs('auxiliarycoordinate',
+                                                 axes=axes, copy=copy)
+    #--- End: def
+
+    def cell_measures(self, axes=None, copy=False):
+        '''
+        '''    
+        return self._get_constructs().constructs('cellmeasure',
+                                                 axes=axes, copy=copy)
+    #--- End: def
+
+    def constructs(self, axes=None, copy=False):
+        '''
+        '''
+        return self._get_constructs().constructs(axes=axes, copy=copy)
+    #--- End: def
+    
+    def dimension_coordinates(self, axes=None, copy=False):
+        '''
+        '''    
+        return self._get_constructs().constructs('dimensioncoordinate',
+                                                 axes=axes, copy=copy)
+    #--- End: def
+
+    def domain_ancillaries(self, axes=None, copy=False):
+        '''
+        '''    
+        return self._get_constructs().constructs('domainancillary',
+                                                 axes=axes, copy=copy)
+    #--- End: def
+
     def domain_axis_name(self, key):
         '''
-'''
+        '''
         constructs = self._get_constructs()
         return constructs.domain_axis_name(key)
     #--- End: def
@@ -794,6 +828,12 @@ by the data array may be selected.
 
         return f
     #--- End: def
+
+    def field_ancillaries(self, axes=None, copy=False):
+        '''
+        '''
+        return self._get_constructs().constructs('fieldancillary',
+                                                 axes=axes, copy=copy)
 
     def squeeze(self, axes=None, copy=True):
         '''Remove size-1 axes from the data array.

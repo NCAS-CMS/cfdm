@@ -173,7 +173,7 @@ indices must contain an index for each dimension of the input array.
             else:
                 take = numpy.take
     
-            indices = indices[:]
+            indices = list(indices)
             for axis in gg:
                 array = take(array, indices[axis], axis=axis)
                 indices[axis] = slice(None)

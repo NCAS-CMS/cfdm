@@ -13,10 +13,10 @@ Keys are item identifiers, values are item objects.
     '''    
     __metaclass__ = abc.ABCMeta
     
-    def auxiliary_coordinates(self, copy=False):
+    def auxiliary_coordinates(self, axes=None, copy=False):
         '''
         '''
-        return self.constructs('auxiliarycoordinate', copy=copy)
+        return self.constructs('auxiliarycoordinate', axes=axes, copy=copy)
     #--- End: def
 
     def constructs(self, construct_type=None, axes=None, copy=False):
@@ -30,11 +30,9 @@ Keys are item identifiers, values are item objects.
             construct_axes = self.construct_axes()
             for key, construct in out.items():
                 x = construct_axes.get(key)
-                if x is None:
+                if x is None or not spans_axes.intersection(x):
                     del out[key]
-                elif not spans_axes.intersection(x):
-                    del out[key]
-        #--- End: def
+        #--- End: if
 
         return out
     #--- End: def
@@ -47,8 +45,8 @@ Keys are item identifiers, values are item objects.
         return self.constructs('coordinatereference', copy=copy)
     #--- End: def
 
-    def dimension_coordinates(self, copy=False):
-        return self.constructs('dimensioncoordinate', copy=copy)
+    def dimension_coordinates(self, axes=None, copy=False):
+        return self.constructs('dimensioncoordinate', axes=axes, copy=copy)
     #--- End: def
 
     def domain_axis_name(self, axis):

@@ -293,6 +293,7 @@ and auxiliary coordinate roles for different data variables.
         self._write_global_properties(fields)
     
         # ---------------------------------------------------------------
+        #
         # ---------------------------------------------------------------
         for f in fields:
     
@@ -341,7 +342,7 @@ and auxiliary coordinate roles for different data variables.
         return d
     #--- End: def
     
-    def _write_check_name(self, base, dimsize=None):
+    def _check_name(self, base, dimsize=None):
         '''
     
     :Parameters:
@@ -424,7 +425,7 @@ and auxiliary coordinate roles for different data variables.
         netcdf_var.setncatts(netcdf_attrs)
     #--- End: def
     
-    def _write_character_array(self, array):
+    def _character_array(self, array):
         '''Convert a numpy string array to a numpy character array wih an
 extra trailing dimension.
     
@@ -469,7 +470,7 @@ extra trailing dimension.
         return new
     #--- End: def
     
-    def _write_datatype(self, variable):
+    def _datatype(self, variable):
         '''Return the netCDF4.createVariable datatype corresponding to the
 datatype of the array of the input variable
     
@@ -500,12 +501,18 @@ If the input variable has no `!dtype` attribute (or it is None) then
         '''
         g = self.write_vars
 
-        if not hasattr(variable, 'dtype'):
-            dtype = numpy.asanyarray(variable).dtype
-        elif (variable.dtype.char == 'S' or variable.dtype is None):
+        data = variable.get_data(None)
+        if data is None:
+            return 'S1'
+
+        dtype = getattr(data, 'dtype', None)
+        
+#        if not hasattr(variable, 'dtype'):
+#            dtype = numpy.asanyarray(variable).dtype
+        if dtype is None or dtype.char == 'S':
             return 'S1'            
     
-        dtype = variable.dtype
+#        dtype = variable.dtype
     
         convert_dtype = g['datatype']
     
@@ -516,7 +523,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
         return '{0}{1}'.format(dtype.kind, dtype.itemsize)
     #--- End: def
     
-    def _write_string_length_dimension(self, size):
+    def _string_length_dimension(self, size):
         '''Create, if necessary, a netCDF dimension for string variables.
     
 :Parameters:
@@ -534,7 +541,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
         # ----------------------------------------------------------------
         # Create a new dimension for the maximum string length
         # ----------------------------------------------------------------
-        ncdim = self._write_check_name('strlen{0}'.format(size), dimsize=size)
+        ncdim = self._check_name('strlen{0}'.format(size), dimsize=size)
         
         if ncdim not in g['ncdim_to_size']:
             # This string length dimension needs creating
@@ -576,26 +583,21 @@ coordinate or cell measures objects.
         return tuple([axis_to_ncdim[axis] for axis in f.construct_axes(key)])
     #--- End: def
         
-    def _write_create_netcdf_variable_name(self, variable, default):
-        '''
+    def _create_netcdf_variable_name(self, variable, default):
+        '''asdasdasd
         
-    :Returns:
-    
-        variable : `Variable` or `CoordinateReference`
+:Parameter:
+        
+    variable: `Variable` or `CoordinateReference`
            
-        default : str
+    default: `str`
     
-        g : dict
-    
-    '''
-        g = self.write_vars
-
+        '''
         ncvar = variable.get_ncvar(None)
         if ncvar is None:
-            ncvar = variable.identity(default=default)
+            ncvar = variable.get_property('standard_name', default)
                 
-#        ncvar = getattr(variable, 'ncvar', variable.identity(default=default))    
-        return self._write_check_name(ncvar)
+        return self._check_name(ncvar)
     #--- End: def
     
     def _data_ncvar(self, ncvar):
@@ -612,7 +614,7 @@ coordinate or cell measures objects.
         '''
         g = self.write_vars
 
-        return self._write_check_name(ncvar, None)
+        return self._check_name(ncvar, None)
     #--- End: def
     
     def _write_dimension(self, ncdim, f, axis, axis_to_ncdim, unlimited=False):
@@ -646,7 +648,7 @@ coordinate or cell measures objects.
         '''
         g = self.write_vars
                 
-        size = f.domain_axes()[axis].size
+        size = f.domain_axes()[axis].get_size()
     
         g['ncdim_to_size'][ncdim] = size
         axis_to_ncdim[axis] = ncdim
@@ -758,8 +760,8 @@ a new netCDF bounds dimension.
         #--- End: if
     
         if create:
-            ncdim = self._write_create_netcdf_variable_name(coord,
-                                                            default='coordinate')
+            ncdim = self._create_netcdf_variable_name(coord,
+                                                      default='coordinate')
     
             # Create a new dimension, if it is not a scalar coordinate
             if coord.get_data().ndim > 0:
@@ -819,7 +821,7 @@ a new netCDF bounds dimension.
         create = not self._seen(value, ncdims=())
     
         if create:
-            ncvar = self._write_check_name(ncvar) # DCH ?
+            ncvar = self._check_name(ncvar) # DCH ?
             
             # Create a new dimension coordinate variable
             self._write_netcdf_variable(ncvar, (), value)
@@ -829,7 +831,7 @@ a new netCDF bounds dimension.
         return ncvar
     #--- End: def
     
-    def _seen(self, variable, ncdims=None):
+    def _seen(self, variable, ncdims=None, ignore_type=False):
         '''Return True if a variable is logically equal any variable in the
 g['seen'] dictionary.
     
@@ -864,7 +866,7 @@ dictionary.
 
         seen = g['seen']
     
-        ignore_type = getattr(variable, 'isdomainancillary', False) # other types, too?
+#        ignore_type = getattr(variable, 'isdomainancillary', False) # other types, too?
         
         for value in seen.itervalues():
             if ncdims is not None and ncdims != value['ncdims']:
@@ -874,7 +876,7 @@ dictionary.
                 continue
     
             # Still here?
-            if variable.equals(value['variable'], ignore_type=ignore_type):
+            if variable.equals(value['variable'], ignore_construct_type=ignore_type):
                 seen[id(variable)] = {'variable': variable,
                                       'ncvar'   : value['ncvar'],
                                       'ncdims'  : value['ncdims']}
@@ -914,19 +916,22 @@ dictionary.
     
         '''
         g = self.write_vars
-    
-        if not (coord.hasbounds and coord.bounds.hasdata):
+
+        bounds = coord.get_bounds(None)
+        if bounds is None:
             return {}
-    
-        extra = {}
-    
+
+        data = bounds.get_data(None) 
+        if data is None:
+            return {}
+
         # Still here? Then this coordinate has a bounds attribute
         # which contains data.
-        bounds = coord.bounds
+        extra = {}
+        
+        size = data.shape[-1]
     
-        size = bounds.get_data().shape[-1]
-    
-        ncdim = self._write_check_name('bounds{0}'.format(size), dimsize=size)
+        ncdim = self._check_name('bounds{0}'.format(size), dimsize=size)
     
         # Check if this bounds variable has not been previously
         # created.
@@ -951,7 +956,7 @@ dictionary.
             if ncvar is None:
                 ncvar = coord_ncvar+'_bounds'
                 
-            ncvar = self._write_check_name(ncvar)
+            ncvar = self._check_name(ncvar)
             
             # Note that, in a field, bounds always have equal units to
             # their parent coordinate
@@ -1077,7 +1082,7 @@ then the input coordinate is not written.
 #        return coord
     #--- End: def
     
-    def _expand_dims(self, construct, positition=0, axis=None, copy=True):
+    def _expand_dims(self, construct, position=0, axis=None, copy=True):
         '''
         '''
         return construct.expand_dims(position=position, axis=axis, copy=copy)
@@ -1142,8 +1147,8 @@ then the input coordinate is not written.
             ncvar = g['seen'][id(coord)]['ncvar']
         
         else:
-            ncvar = self._write_create_netcdf_variable_name(coord,
-                                                            default='auxiliary')
+            ncvar = self._create_netcdf_variable_name(coord,
+                                                      default='auxiliary')
             
             # If this auxiliary coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
@@ -1199,14 +1204,14 @@ then the input coordinate is not written.
 
         ncdimensions = tuple([axis_to_ncdim[axis] for axis in f.construct_axes(key)])
     
-        create = not self._seen(anc, ncdimensions)
+        create = not self._seen(anc, ncdimensions, ignore_type=True)
     
         if not create:
             ncvar = g['seen'][id(anc)]['ncvar']
         
         else:
-            ncvar = self._write_create_netcdf_variable_name(anc,
-                                                            default='domain_ancillary')
+            ncvar = self._create_netcdf_variable_name(anc,
+                                                      default='domain_ancillary')
     
             # If this domain ancillary has bounds then create the bounds
             # netCDF variable
@@ -1261,7 +1266,7 @@ then the input coordinate is not written.
         if not create:
             ncvar = g['seen'][id(anc)]['ncvar']    
         else:
-            ncvar = self._write_create_netcdf_variable_name(anc, 'ancillary_data')
+            ncvar = self._create_netcdf_variable_name(anc, 'ancillary_data')
             self._write_netcdf_variable(ncvar, ncdimensions, anc)
     
         key_to_ncvar[key] = ncvar
@@ -1315,7 +1320,7 @@ input coordinate is not written.
                 raise ValueError(
 "Can't create a cell measure variable without a 'measure'")
     
-            ncvar = self._write_create_netcdf_variable_name(msr, 'cell_measure')
+            ncvar = self._create_netcdf_variable_name(msr, 'cell_measure')
     
             self._write_netcdf_variable(ncvar, ncdimensions, msr)
         #--- End: if
@@ -1363,7 +1368,7 @@ input coordinate is not written.
     
         else:
             # Create a new grid mapping
-            ncvar = self._write_create_netcdf_variable_name(ref, 'grid_mapping')
+            ncvar = self._create_netcdf_variable_name(ref, 'grid_mapping')
     
             g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
                                                         endian=g['endian'],
@@ -1446,22 +1451,23 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
         # ------------------------------------------------------------
-        datatype = self._write_datatype(cfvar)
+        datatype = self._datatype(cfvar)
     
         data = cfvar.get_data(None)
+
         if data is not None and datatype == 'S1':
             # --------------------------------------------------------
             # Convert a string data type numpy array into a
             # character data type ('S1') numpy array with an extra
             # trailing dimension.
             # --------------------------------------------------------
-            strlen = cfvar.dtype.itemsize
+            strlen = data.dtype.itemsize
             if strlen > 1:
-                data = self._write_convert_to_char(data)
-                ncdim = self._write_string_length_dimension(strlen)            
+                data = self._convert_to_char(data)
+                ncdim = self._string_length_dimension(strlen)            
                 ncdimensions = ncdimensions + (ncdim,)
         #--- End: if
-    
+
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
         # filled before any data is written. if the fill value is
@@ -1533,8 +1539,8 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         # ------------------------------------------------------------
         if data is not None:  
             # Find the missing data values, if any.
-            _FillValue    = getattr(cfvar, '_FillValue', None) 
-            missing_value = getattr(cfvar, 'missing_value', None)
+            _FillValue    = cfvar.get_property('_FillValue', None) 
+            missing_value = cfvar.get_property('missing_value', None)
             unset_values = [value for value in (_FillValue, missing_value)
                             if value is not None]
             self._write_data(data, ncvar, unset_values)
@@ -1585,25 +1591,25 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         g['nc'][ncvar][...] = array
     #--- End: def
     
-    def _write_convert_to_char(self, data):
-        '''Convert a string array into a character array (data type 'S1') with
-     an extra trailing dimension.
+    def _convert_to_char(self, data):
+        '''Convert a string array into a character array.
+
+The return `Data` object will have data type 'S1' and will have an
+extra trailing dimension.
     
-    :Parameters:
+:Parameters:
     
-        data: `Data`
-    
+    data: `Data`
+
+:Returns:
+
+    out: `Data`
+
         '''
         strlen = data.dtype.itemsize
         if strlen > 1:
-            data = data.copy()
-            
-            array = self._write_character_array(data.get_array())
-            
-            data._shape = array.shape
-            data._ndim  = array.ndim
-            data._dtype = array.dtype
-            data._array = array
+            array = self._character_array(data.get_array())
+            data = type(data)(array, source=data, copy=False)
     
         return data
     #--- End: def
@@ -1708,7 +1714,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
                     # or field ancillary does, so expand the data array to
                     # include it.
 #                    f.expand_dims(position=0, axes=axis, copy=False)
-                    self._expand_dims(f, position=0, axes=axis, copy=False)
+                    self._expand_dims(f, position=0, axis=axis, copy=False)
                     data_axes.append(axis)
                 #--- End: if
     
@@ -1716,7 +1722,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
                 # netCDF dimension for it
                 if axis in data_axes:
                     ncdim = getattr(f, 'ncdimensions', {}).get(axis, 'dim')
-                    ncdim = self._write_check_name(ncdim)
+                    ncdim = self._check_name(ncdim)
     
                     unlimited = self._unlimited(f, axis)
                     self._write_dimension(ncdim, f, axis, axis_to_ncdim,
@@ -1886,7 +1892,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         # ----------------------------------------------------------------
         # Create the CF-netCDF data variable
         # ----------------------------------------------------------------
-        ncvar = self._write_create_netcdf_variable_name(f, 'data')
+        ncvar = self._create_netcdf_variable_name(f, 'data')
     
         ncdimensions = tuple([axis_to_ncdim[axis] for axis in f.get_data_axes()])
     

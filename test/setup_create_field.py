@@ -17,18 +17,18 @@ class create_fieldTest(unittest.TestCase):
         dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.)))
         dim1.set_property('standard_name', 'grid_latitude')
         dim1.set_property('units', 'degrees')
-        print 'XX', dim1
+
         data = numpy.arange(9.) + 20
         data[-1] = 34
         dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(data))
         dim0.set_property('standard_name', 'grid_longitude')
         dim0.set_property('units', 'degrees')
-        print dim0
+
         array = dim0.get_array()
-        data = numpy.array([array-0.5, array+0.5]).transpose((1,0))
-        data[-2,1] = 30
-        data[-1,:] = [30, 36]
-        dim0.set_bounds(cfdm.Bounds(data=data))
+        array = numpy.array([array-0.5, array+0.5]).transpose((1,0))
+        array[-2, 1] = 30
+        array[-1, :] = [30, 36]
+        dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
         
         dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]), bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
         dim2.set_property('standard_name', 'atmosphere_hybrid_height_coordinate')
@@ -53,12 +53,15 @@ class create_fieldTest(unittest.TestCase):
         aux3.set_property('standard_name', 'longitude')
         aux3.set_property('units', 'degreeE')
 
-        data = numpy.ma.array(['alpha','beta','gamma','delta','epsilon',
+        array = numpy.ma.array(['alpha','beta','gamma','delta','epsilon',
                                'zeta','eta','theta','iota','kappa'])
-        data[0] = numpy.ma.masked
-        aux4 = cfdm.AuxiliaryCoordinate(data=data)
+        array[0] = numpy.ma.masked
+        aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
         aux4.set_property('standard_name', 'greek_letters')
-    
+
+        print 'aux4 array=', aux4.get_array()
+        print '999999999', str(aux4.get_data()), '44444444444'
+        
         # Cell measures
         msr0 = cfdm.CellMeasure(
             data=cfdm.Data(1+numpy.arange(90.).reshape(9, 10)*1234))
