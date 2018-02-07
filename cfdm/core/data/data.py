@@ -1470,8 +1470,8 @@ False
 
         # Check that each instance has the same units
         for attr in ('units', 'calendar'):
-            x = getattr(self, attr)
-            y = getattr(other, attr)
+            x = getattr(self, 'get_'+attr)(None)
+            y = getattr(other, 'get_'+attr)(None)
             if x != y:
                 if traceback:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(

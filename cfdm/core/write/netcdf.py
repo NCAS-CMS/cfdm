@@ -5,6 +5,7 @@ import struct
 import sys
 
 import numpy
+import netCDF4
 
 from ..functions import abspath, flat
 
@@ -15,7 +16,7 @@ class WriteNetCDF(object):
         '''
         '''
         self._Conventions = Conventions
-        self._NetCDFArray = NetCDF
+#        self._NetCDFArray = NetCDF
         
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
@@ -188,7 +189,7 @@ and auxiliary coordinate roles for different data variables.
         # ------------------------------------------------------------
         # Initialize dictionary of useful global variables
         # ------------------------------------------------------------
-        self.write_vars = self._write_reset_write_vars(extra_write_vars)
+        self.write_vars = self._reset_write_vars(extra_write_vars)
         g = self.write_vars
 
         compress = int(compress)
@@ -257,7 +258,7 @@ and auxiliary coordinate roles for different data variables.
     #        raise ValueError("Can only set mode='w' at the moment")
     
         filename = os.path.expanduser(os.path.expandvars(filename))
-    
+        
         if mode == 'w' and os.path.isfile(filename):
             if not overwrite:
                 raise IOError(
@@ -275,7 +276,8 @@ and auxiliary coordinate roles for different data variables.
         # ------------------------------------------------------------
         # Open the netCDF file to be written
         # ------------------------------------------------------------
-        g['netcdf'] = self._NetCDFArray.file_open(filename, mode, fmt)
+        g['filename'] = filename
+        g['netcdf'] = self._file_open(filename, mode, fmt)
     
         # ---------------------------------------------------------------
         # Set the fill mode for a Dataset open for writing to off. This
@@ -329,10 +331,28 @@ and auxiliary coordinate roles for different data variables.
         # ---------------------------------------------------------------
         # Write all of the buffered data to disk
         # ---------------------------------------------------------------
-        self._NetCDFArray.file_close(filename)
+        self._file_close(filename)
     #--- End: def
 
-    def _write_reset_write_vars(self, extra_write_vars):
+    def _file_close(self, filename):
+        '''
+        '''
+        self.write_vars['netcdf'].close()
+    #--- End: def
+    
+    def _file_open(self, filename, mode, fmt):
+        '''
+        '''
+        try:        
+            nc = netCDF4.Dataset(filename, mode, format=fmt)
+        except RuntimeError as error:
+            raise RuntimeError("{}: {}".format(error, filename))        
+        else:
+            self.write_vars['netcdf'] = nc
+            return nc
+    #--- End: def
+    
+    def _reset_write_vars(self, extra_write_vars):
         '''
         '''
         d = copy.deepcopy(self._write_vars)
@@ -1188,8 +1208,6 @@ then the input coordinate is not written.
         axis_to_ncdim: `dict`
             Mapping of field axis identifiers to netCDF dimensions.
     
-        g: `dict`
-    
     :Returns:
     
         out: `str`
@@ -1210,8 +1228,23 @@ then the input coordinate is not written.
             ncvar = g['seen'][id(anc)]['ncvar']
         
         else:
+            # See if we can set the default netCDF variable name to
+            # its formula_terms term
+            default = None
+            for ref in f.coordinate_references().itervalues():
+                for term, da_key in ref.domain_ancillaries().iteritems():
+                    if da_key == key:
+                        default = term
+                        break
+                #--- End: for
+                if default is not None:
+                    break
+            #--- End: for
+            if default is None:
+                default='domain_ancillary'
+                
             ncvar = self._create_netcdf_variable_name(anc,
-                                                      default='domain_ancillary')
+                                                      default=default)
     
             # If this domain ancillary has bounds then create the bounds
             # netCDF variable
@@ -1225,38 +1258,39 @@ then the input coordinate is not written.
         return ncvar
     #--- End: def
       
-    def _write_field_ancillary(self, f, key, anc, key_to_ncvar, axis_to_ncdim):
+    def _write_field_ancillary(self, f, key, anc, key_to_ncvar,
+                               axis_to_ncdim):
         '''Write a field ancillary to the netCDF file.
     
-    If an equal field ancillary has already been written to the file then
-    it is not re-written.
+If an equal field ancillary has already been written to the file then
+it is not re-written.
     
-    :Parameters:
-    
-        f : `Field`
-       
-        key : str
-    
-        anc : `FieldAncillary`
-    
-        key_to_ncvar : dict
-            Mapping of field item identifiers to netCDF variables
-    
-        axis_to_ncdim : dict
-            Mapping of field axis identifiers to netCDF dimensions.
-    
-        g : dict
-    
-    :Returns:
-    
-        out : str
-            The ncvar.
-    
-    :Examples:
-    
-    >>> ncvar = _write_field_ancillary(f, 'fav2', anc, key_to_ncvar, axis_to_ncdim)
-    
-        '''
+:Parameters:
+
+    f : `Field`
+   
+    key : str
+
+    anc : `FieldAncillary`
+
+    key_to_ncvar : dict
+        Mapping of field item identifiers to netCDF variables
+
+    axis_to_ncdim : dict
+        Mapping of field axis identifiers to netCDF dimensions.
+
+    g : dict
+
+:Returns:
+
+    out : str
+        The ncvar.
+
+:Examples:
+
+>>> ncvar = _write_field_ancillary(f, 'fav2', anc, key_to_ncvar, axis_to_ncdim)
+
+    '''
         g = self.write_vars
 
         ncdimensions = tuple([axis_to_ncdim[axis] for axis in f.construct_axes(key)])
@@ -1274,49 +1308,48 @@ then the input coordinate is not written.
         return ncvar
     #--- End: def
       
-    def _write_cell_measure(self, f, key, msr, key_to_ncvar, axis_to_ncdim):
-        '''
-    
-Write an auxiliary coordinate and bounds to the netCDF file.
+    def _write_cell_measure(self, f, key, msr, key_to_ncvar,
+                            axis_to_ncdim):
+        '''Write an auxiliary coordinate and bounds to the netCDF file.
 
 If an equal cell measure has already been written to the file then the
 input coordinate is not written.
 
 :Parameters:
 
-    f : `Field`
+    f: `Field`
         The field containing the cell measure.
 
-    key : str
+    key: str
         The identifier of the cell measure (e.g. 'msr0').
 
-    key_to_ncvar : dict
+    key_to_ncvar: dict
         Mapping of field item identifiers to netCDF dimension names.
 
-    axis_to_ncdim : dict
+    axis_to_ncdim: dict
         Mapping of field axis identifiers to netCDF dimension names.
-
-    g : dict
 
 :Returns:
 
-    out : str
+    out: `str`
         The 'measure: ncvar'.
 
 :Examples:
 
-'''
+        '''
         g = self.write_vars
 
         ncdimensions = self._write_grid_ncdimensions(f, key,
                                                      axis_to_ncdim)
     
         create = not self._seen(msr, ncdimensions)
-    
+
+        measure = msr.get_measure(None)
+        
         if not create:
             ncvar = g['seen'][id(msr)]['ncvar']
         else:
-            if msr.measure() is None:
+            if measure is None:
                 raise ValueError(
 "Can't create a cell measure variable without a 'measure'")
     
@@ -1328,38 +1361,34 @@ input coordinate is not written.
         key_to_ncvar[key] = ncvar
     
         # Update the cell_measures list
-        return '{0}: {1}'.format(msr.measure(), ncvar)
+        return '{0}: {1}'.format(measure, ncvar)
     #--- End: def
       
+    def _write_grid_mapping(self, f, ref, multiple_grid_mappings,
+                            key_to_ncvar):
+        '''Write a grid mapping georeference to the netCDF file.
     
-    def _write_grid_mapping(self, f, ref, multiple_grid_mappings, key_to_ncvar):
+.. note:: This function updates ``grid_mapping``, ``g['seen']``.
+
+:Parameters:
+
+    f: `Field`
+
+    ref: `CoordinateReference`
+        The grid mapping coordinate reference to write to the file.
+
+    multiple_grid_mappings: `bool`
+
+    key_to_ncvar: dict
+        Mapping of field item identifiers to netCDF variable names.
+
+:Returns:
+
+    out : str
+
+:Examples:
+
         '''
-    
-    Write a grid mapping georeference to the netCDF file.
-    
-    .. note:: This function updates ``grid_mapping``, ``g['seen']``.
-    
-    :Parameters:
-    
-        f : `Field`
-    
-        ref : `CoordinateReference`
-            The grid mapping coordinate reference to write to the file.
-    
-        multiple_grid_mappings : bool
-    
-        key_to_ncvar : dict
-            Mapping of field item identifiers to netCDF variable names.
-    
-        g : dict
-    
-    :Returns:
-    
-        out : str
-    
-    :Examples:
-    
-    '''
         g = self.write_vars
 
         if self._seen(ref):
@@ -1374,29 +1403,30 @@ input coordinate is not written.
                                                         endian=g['endian'],
                                                         **g['compression'])
     
-            cref = ref.copy()
+#            cref = ref.copy()
 #            cref = ref.canonical(f) # NOTE: NOT converting units
     
-            # Add properties from key/value pairs
-            if hasattr(g['nc'][ncvar], 'setncatts'):
-                # Use the faster setncatts
-                for term, value in cref.parameters().iteritems():
-                    if value is None:
-                        cref.del_term(term)
-                        continue
-                    
-                    if numpy.size(value) == 1:
-                        value = numpy.array(value, copy=False).item()
-                    else:
-                        value = numpy.array(value, copy=False).tolist()
-
-                    cref.set_parameter(term, value, copy=False)
-                #--- End: for
+            # Add named parameters
+            parameters = ref.parameters()
+            for term, value in parameters.items():
+                if value is None:
+                    del parameters[term]
+                    continue
                 
-                g['nc'][ncvar].setncatts(cref.parameters())
-            else:
-                # Otherwise use the slower setncattr
-                pass #  I don't want to support this any more.
+                if numpy.size(value) == 1:
+                    value = numpy.array(value, copy=False).item()
+                else:
+                    value = numpy.array(value, copy=False).tolist()
+
+                parameters[term] = value
+            #--- End: for
+
+            # Add the grid mapping name property
+            grid_mapping_name = ref.get_property('grid_mapping_name', None)
+            if grid_mapping_name is not None:
+                parameters['grid_mapping_name'] = grid_mapping_name
+                
+            g['nc'][ncvar].setncatts(parameters)
             
             # Update the 'seen' dictionary
             g['seen'][id(ref)] = {'variable': ref, 
@@ -1407,7 +1437,8 @@ input coordinate is not written.
     
         # Update the grid_mapping list in place
         if multiple_grid_mappings:
-            return ncvar+':'+' '.join(sorted([key_to_ncvar[key] for key in ref.coordinates]))
+            return ncvar+':'+' '.join(sorted([key_to_ncvar[key]
+                                              for key in ref.coordinates]))
         else:
             return ncvar
     #--- End: def
@@ -1768,7 +1799,7 @@ extra trailing dimension.
                              if ref.get_property('grid_mapping_name', False)]
 #                                     if ref.type() == 'grid_mapping']
             
-        multiple_grid_mappings = len(grid_mapping_refs) > 1
+        multiple_grid_mappings = (len(grid_mapping_refs) > 1)
     
         grid_mapping = [self._write_grid_mapping(f, ref, multiple_grid_mappings,
                                                  key_to_ncvar)

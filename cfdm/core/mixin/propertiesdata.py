@@ -298,7 +298,6 @@ True
                                rtol=rtol, atol=atol,
                                traceback=traceback,
                                ignore_data_type=ignore_data_type,
-                               ignore_construct_type=ignore_construct_type,
                                ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
@@ -458,7 +457,14 @@ None
             
         return default
     #--- End: def
-    
+
+    def open(self):
+        '''
+'''
+        if self.has_data():
+            self.get_data().open()
+    #--- End: def
+
     def squeeze(self, axes=None, copy=True):
         '''Remove size 1 dimensions from the data array
 
@@ -574,13 +580,6 @@ The data type of the data array is unchanged.
             return bool(self.get_property('calendar', False))
 
         return 'since' in units
-    #--- End: def
-
-    def open(self):
-        '''
-'''
-        if self.has_data():
-            self.get_data().open()
     #--- End: def
 
 #--- End: class

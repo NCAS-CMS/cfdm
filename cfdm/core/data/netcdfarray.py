@@ -200,6 +200,24 @@ x.__str__() <==> str(x)
     #--- End: def
 
     @classmethod
+    def file_close(self, file):
+        '''Close the `netCDF4.Dataset` for the file containing the data.
+
+:Returns:
+
+    out: `netCDF4.Dataset`
+
+:Examples:
+
+>>> f.close()
+
+        '''
+        nc = self._nc        
+        del self._nc
+        nc.close()
+    #--- End: def
+
+    @classmethod
     def file_open(cls, filename, mode, fmt=None):
         '''Return an open `netCDF4.Dataset` for a netCDF file.
 
