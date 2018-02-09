@@ -960,7 +960,8 @@ ancillaries, field ancillaries).
     
         ncvar_to_key = {}
             
-        f._data_axes = []
+#        f._data_axes = []
+        data_axes = []
     
         # ----------------------------------------------------------------
         # Add axes and non-scalar dimension coordinates to the field
@@ -1024,12 +1025,19 @@ ancillaries, field ancillaries).
             #--- End: if
     
             # Update data dimension name and set dimension size
-            f._data_axes.append(axis)
+            
+#            f._data_axes.append(axis)
+            data_axes.append(axis)
     
             ncdim_to_axis[ncdim] = axis
         #--- End: for
-    
-        f._Data = self._set_Data(data_ncvar, f, unpacked_dtype=unpacked_dtype)
+        print '_data_ncvar ', data_ncvar
+        data = self._set_Data(data_ncvar, f, unpacked_dtype=unpacked_dtype)
+        if _debug:
+            print '    Inserting', repr(data)
+        f.set_data(data, data_axes, copy=False)
+          
+#        f._Data = self._set_Data(data_ncvar, f, unpacked_dtype=unpacked_dtype)
         
         # ----------------------------------------------------------------
         # Add scalar dimension coordinates and auxiliary coordinates to

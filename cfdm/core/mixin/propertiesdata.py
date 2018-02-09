@@ -290,7 +290,8 @@ True
         # ------------------------------------------------------------
         if self.has_data() != other.has_data():
             if traceback:
-                print("{0}: Different {1}".format(self.__class__.__name__, attr))
+                print(
+"{0}: Different data: Only one field has data".format(self.__class__.__name__))
             return False
             
         if self.has_data():
@@ -300,7 +301,7 @@ True
                                ignore_data_type=ignore_data_type,
                                ignore_fill_value=ignore_fill_value):
                 if traceback:
-                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
+                    print("{0}: Different data".format(self.__class__.__name__))
                 return False
         #--- End: for
 

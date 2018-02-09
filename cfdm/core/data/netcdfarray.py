@@ -128,13 +128,12 @@ Returns a numpy array.
 #        indices = tuple(self.parse_indices(indices))
         
         ncvar = getattr(self, 'ncvar', None)
-
         if ncvar is not None:
             # Get the variable by name
             array = nc.variables[ncvar][indices]
         else:
             # Get the variable by netCDF ID
-            varid = self.varid
+            varid = getattr(self, 'varid', None)
             for value in nc.variables.itervalues():
                 if value._varid == varid:
                     array = value[indices]
@@ -215,6 +214,10 @@ x.__str__() <==> str(x)
     def shape(self):
          return self._shape
 
+    @property
+    def ncvar(self):
+         return self._ncvar
+    
     @property
     def varid(self):
          return self._varid

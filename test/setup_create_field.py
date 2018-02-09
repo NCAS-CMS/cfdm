@@ -150,10 +150,6 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        print repr(f.get_property('flag_meanings'))
-        print 'F masks', repr(f.get_property('flag_masks'))
-        print repr(f.get_property('flag_values'))
-
         for cm in cfdm.CellMethod.parse(axisX+': mean '+axisY+': max'):
             f.set_cell_method(cm)
 
@@ -197,15 +193,10 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
         g.dump()
 
+        print 'g.properties() =',g.properties()
 
-
-
-        print repr(g.getprop('flag_meanings'))
-        print 'G MASKS', repr(g.getprop('flag_masks'))
-        print repr(g.getprop('flag_values'))
-        print g.properties()
         
-        self.assertTrue(sorted(f.constructs().keys()) ==  sorted(g.constructs().keys()))
+        self.assertTrue(set(f.constructs()) == set(g.constructs()))
 
 #        for key in sorted(f.items().keys()):
 #            print key, repr(f.item(key))

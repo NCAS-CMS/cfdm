@@ -4,6 +4,7 @@ import mixin
 
 from .constructs import Constructs
 #from .domain      import Domain
+from .functions import RTOL, ATOL
 from .functions import equals as cfdm_equals
 
 from ..structure import Field as structure_Field
@@ -746,15 +747,15 @@ False
         if atol is None:
             atol = ATOL()
 
+        ignore_properties = tuple(ignore_properties) + ('Conventions',)
+            
         if not super(Field, self).equals(
                 other,
-                rtol=rtol, atol=atol, traceback=tracback,
+                rtol=rtol, atol=atol, traceback=traceback,
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
                 ignore_construct_type=ignore_construct_type):
-            if traceback:
-                print("?????asdasd ??/")
             return False
 
         # ------------------------------------------------------------

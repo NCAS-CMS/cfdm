@@ -336,7 +336,7 @@ True
 
         '''
         data = self._get_master_array()
-        return data.array.copy()
+        return data[...].copy()
     #--- End: def
 
     def get_calendar(self, *default):

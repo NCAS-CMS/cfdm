@@ -18,7 +18,7 @@ from ..structure import CoordinateReference as structure_CoordinateReference
 # --------------------------------------------------------------------
 _name_to_coordinates = {}
 _file = os.path.join(os.path.dirname(__file__),
-                     'etc/coordinatereference/name_to_coordinates.txt')
+                     'etc/coordinate_reference/coordinates.txt')
 for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
     if not x or x[0] == '#':
         continue
@@ -472,5 +472,10 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 #        return not bool(inverse)
 #    #--- End: def
 
+#    @classmethod
+#    def _name_to_coordinates
+#    # Map coordinate conversion names to their
+#    _name_to_coordinates = _name_to_coordinates
+    
 #--- End: class
 
