@@ -157,7 +157,7 @@ ancillaries, field ancillaries).
         
         filename = abspath(filename)
         g['filename'] = filename
-        
+
         # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------
@@ -165,7 +165,7 @@ ancillaries, field ancillaries).
         g['nc'] = nc
         
         if _debug:
-            print 'Reading file', filename
+            print 'Reading netCDF file:', filename
             print '    Input netCDF dataset =',nc
     
         # Set of all of the netCDF variable names in the file.
@@ -983,15 +983,15 @@ ancillaries, field ancillaries).
                                                       verbose=verbose)
                     dimension_coordinates[ncdim] = coord
                 
-                domain_axis = self._DomainAxis(coord.data.size)
-                domain_axis.ncdim(ncdim)
+                domain_axis = self._DomainAxis(coord.get_data().size)
+                domain_axis.set_ncdim(ncdim)
                 if _debug:
                     print '    Inserting', repr(domain_axis)                    
-                axis = f.insert_domain_axis(domain_axis, copy=False)
+                axis = f.set_domain_axis(domain_axis, copy=False)
 
                 if _debug:
                     print '    Inserting', repr(coord)
-                dim = f.insert_dimension_coordinate(coord, axes=[axis], copy=False)
+                dim = f.set_dimension_coordinate(coord, axes=[axis], copy=False)
                 
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
@@ -1007,10 +1007,10 @@ ancillaries, field ancillaries).
                     size = len(nc.dimensions[ncdim])
     
                 domain_axis = self._DomainAxis(size)
-                domain_axis.ncdim(ncdim)
+                domain_axis.set_ncdim(ncdim)
                 if _debug:
                     print '    Inserting', repr(domain_axis)
-                axis = f.insert_domain_axis(domain_axis, copy=False)
+                axis = f.set_domain_axis(domain_axis, copy=False)
                 
                 # Set unlimited status of axis
                 try:
@@ -1078,12 +1078,12 @@ ancillaries, field ancillaries).
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
                         domain_axis = self._DomainAxis(1)
-                        dim = f.insert_domain_axis(domain_axis)
+                        dim = f.set_domain_axis(domain_axis)
                         if _debug:
                             print '    Inserting', repr(domain_axis)
 
                         # Record the netCDF dimension name for this axis
-                        f.axes()[dim].ncdim(ncdim)
+                        f.axes()[dim].set_ncdim(ncdim)
                         dimensions = [dim]
                     else:  
                         # Numeric valued scalar coordinate
@@ -1097,13 +1097,13 @@ ancillaries, field ancillaries).
                     if _debug:
                         print '    Inserting', repr(coord)
     
-                    domain_axis = self._DomainAxis(coord.data.size)
-                    axis = f.insert_domain_axis(domain_axis, copy=False)
+                    domain_axis = self._DomainAxis(coord.get_data().size)
+                    axis = f.set_domain_axis(domain_axis, copy=False)
                     
-                    dim = f.insert_dimension_coordinate(coord, axes=[axis], copy=False)
+                    dim = f.set_dimension_coordinate(coord, axes=[axis], copy=False)
                     
                     # Record the netCDF dimension name for this axis
-                    f.axes()[dim].ncdim(ncvar)
+                    f.axes()[dim].set_ncdim(ncvar)  # ????
                     dimensions = [axis]
                     ncvar_to_key[ncvar] = dim
                     dimension_coordinates[ncvar] = coord
@@ -1112,7 +1112,7 @@ ancillaries, field ancillaries).
                     # Insert auxiliary coordinate
                     if _debug:
                         print '    Inserting', repr(coord)
-                    aux = f.insert_auxiliary_coordinate(coord, axes=dimensions, copy=False)
+                    aux = f.set_auxiliary_coordinate(coord, axes=dimensions, copy=False)
                     ncvar_to_key[ncvar] = aux
                 
                 if scalar:
@@ -1166,7 +1166,7 @@ ancillaries, field ancillaries).
                     #--- End: if
                     
                     # Insert domain ancillary
-                    da_key = f.insert_domain_ancillary(domain_anc, axes=axes, copy=False)
+                    da_key = f.set_domain_ancillary(domain_anc, axes=axes, copy=False)
                     if ncvar not in ncvar_to_key:
                         ncvar_to_key[ncvar] = da_key
         
@@ -1217,7 +1217,7 @@ ancillaries, field ancillaries).
                     cell_measures[ncvar] = cell
                 #--- End: if
     
-                clm = f.insert_cell_measure(cell, axes=axes, copy=False)
+                clm = f.set_cell_measure(cell, axes=axes, copy=False)
     
                 ncvar_to_key[ncvar] = clm
             #--- End: for
@@ -1233,7 +1233,7 @@ ancillaries, field ancillaries).
             name_to_axis.update(ncscalar_to_axis)
             for cm in cell_methods:
                 cm = cm.change_axes(name_to_axis)
-                f.insert_cell_method(cm, copy=False)
+                f.set_cell_method(cm, copy=False)
         #--- End: if
 
         # ----------------------------------------------------------------
@@ -1262,7 +1262,7 @@ ancillaries, field ancillaries).
                     field_ancillaries[ncvar] = field_anc
                     
                 # Insert the field ancillary
-                key = f.insert_field_ancillary(field_anc, axes=axes, copy=False)
+                key = f.set_field_ancillary(field_anc, axes=axes, copy=False)
                 ncvar_to_key[ncvar] = key
         #--- End: if
     
@@ -1351,7 +1351,7 @@ ancillaries, field ancillaries).
     
         data = self._set_Data(ncvar, c)
 
-        c.insert_data(data, copy=False)
+        c.set_data(data, copy=False)
         
         # ------------------------------------------------------------
         # Add any bounds
@@ -1387,23 +1387,25 @@ ancillaries, field ancillaries).
     
             bounds_data = self._set_Data(ncbounds, bounds)
     
-            bounds.insert_data(bounds_data, copy=False)
+            bounds.set_data(bounds_data, copy=False)
     
             # Make sure that the bounds dimensions are in the same order
             # as its parent's dimensions
-            if bounds.data.ndim > c.data.ndim:
+            c_ndim = c.get_data().ndim
+            b_ndim = bounds.get_data().ndim
+            if b_ndim > c_ndim:
                 c_ncdims = nc.variables[ncvar].dimensions
                 b_ncdims = nc.variables[ncbounds].dimensions
-                if c_ncdims != b_ncdims[:c.data.ndim]:
-                    axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c.data.ndim]
+                if c_ncdims != b_ncdims[:c_ndim]:
+                    axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c_ndim]
                             if ncdim in c_ncdims]
-                    if len(axes) == c.data.ndim:
-                        axes.extend(range(bounds.data.ndim - c.data.ndim, 0))
+                    if len(axes) == c_ndim:
+                        axes.extend(range(b_ndim - c_ndim, 0))
 #                        bounds.transpose(axes, copy=False)
                         self._transpose(bounds, axes=axes, copy=False)
             #--- End: if
 
-            c.insert_bounds(bounds, copy=False)
+            c.set_bounds(bounds, copy=False)
         #--- End: if
     
         # ---------------------------------------------------------
@@ -1478,7 +1480,7 @@ ancillaries, field ancillaries).
     
         data = self._set_Data(ncvar, item)
     
-        item.insert_data(data, copy=False)
+        item.set_data(data, copy=False)
     
         item.set_ncvar(ncvar)
     
@@ -1616,7 +1618,7 @@ ancillaries, field ancillaries).
                                                      parameters=parameters)
                 coordref.set_ncvar(grid_mapping)
 
-                f.insert_coordinate_reference(coordref, copy=False)
+                f.set_coordinate_reference(coordref, copy=False)
     
                 coordinates = []      
         #--- End: for
@@ -1672,7 +1674,7 @@ ancillaries, field ancillaries).
                                              coordinates=(key,),
                                              domain_ancillaries=ancillaries)
     
-        f.insert_coordinate_reference(coordref, copy=False)
+        f.set_coordinate_reference(coordref, copy=False)
     
         return coordref
     #--- End: def

@@ -189,7 +189,7 @@ dtype('float64')
 -999
 
         '''
-        fillval = self._fill_value
+        fillval = self.get_property('_FillValue', None)
 
         if fillval is None:
             if default == 'netCDF':

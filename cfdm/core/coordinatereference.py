@@ -16,13 +16,13 @@ from ..structure import CoordinateReference as structure_CoordinateReference
 # Map coordinate conversion names to the set of coordinates to which
 # they apply
 # --------------------------------------------------------------------
-#_name_to_coordinates = {}
-#_file = os.path.join(os.path.dirname(__file__),
-#                     'etc/coordinatereference/name_to_coordinates.txt')
-#for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
-#    if not x or x[0] == '#':
-#        continue
-#    _name_to_coordinates[x[0]] = set(x[1:])
+_name_to_coordinates = {}
+_file = os.path.join(os.path.dirname(__file__),
+                     'etc/coordinatereference/name_to_coordinates.txt')
+for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+    if not x or x[0] == '#':
+        continue
+    _name_to_coordinates[x[0]] = set(x[1:])
 
 # ====================================================================
 #
@@ -35,8 +35,8 @@ class CoordinateReference(structure_CoordinateReference, mixin.Properties):
 
     '''
    
-#    # Map coordinate conversion names to their
-#    _name_to_coordinates = _name_to_coordinates
+    # Map coordinate conversion names to their
+    _name_to_coordinates = _name_to_coordinates
     
     def __init__(self, properties={}, coordinates=None,
                  domain_ancillaries=None, parameters=None, datum=None,
