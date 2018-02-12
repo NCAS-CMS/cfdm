@@ -1,7 +1,9 @@
 import abc
 import os
+import operator
 import urlparse
 
+import numpy
 import netCDF4
 
 from .array import Array

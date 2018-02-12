@@ -381,5 +381,26 @@ True
         return value
     #--- End: def
 
+    def set_calendar(self, calendar):
+        '''
+
+        '''
+        self._calendar = calendar
+    #--- End: def
+
+    def set_fill_value(self, value):
+        '''
+
+        '''
+        self._fill_value = value
+    #--- End: def
+
+    def set_units(self, value):
+        '''
+
+        '''
+        self._units = value
+    #--- End: def
+
 #--- End: class
 

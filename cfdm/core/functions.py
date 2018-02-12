@@ -478,22 +478,13 @@ False
     if callable(eq):
         # x has a callable equals method
         return eq(y, rtol=rtol, atol=atol, **kwargs)
-#                  ignore_data_type=ignore_data_type,
-#                  ignore_fill_value=ignore_fill_value,
-#                  ignore_type=ignore_type,
-#                  traceback=traceback)
 
     eq = getattr(y, 'equals', None)
     if callable(eq):
         # y has a callable equals method
         return eq(x, rtol=rtol, atol=atol, **kwargs)
-#                  ignore_data_type=ignore_data_type,
- #                 ignore_fill_value=ignore_fill_value,
- #                 ignore_type=ignore_type,
- #                 traceback=traceback)
  
     if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
-#        if isinstance(y, numpy.ndarray):
         if numpy.shape(x) != numpy.shape(y):
             return False
 
@@ -503,11 +494,6 @@ False
             atol = ATOL()
                 
         return _numpy_allclose(x, y, rtol=rtol, atol=atol)
-#        else:
-#            return False
-#    elif isinstance(y, numpy.ndarray):
-#        print 'rrrr2'
-#        return False
 
     else:
         return x == y

@@ -108,7 +108,8 @@ Keys are item identifiers, values are item objects.
         return 'id%{0}'.format(axis)
     #--- End: def
 
-    def equals(self, rtol=None, atol=None, traceback=False, **kwargs):
+    def equals(self, other, rtol=None, atol=None, traceback=False,
+               **kwargs):
         '''
         '''
         
@@ -153,8 +154,8 @@ Keys are item identifiers, values are item objects.
         # ------------------------------------------------------------
         # Domain axes
         # ------------------------------------------------------------
-        self_sizes  = [d.size for d in self.domain_axes().values()]
-        other_sizes = [d.size for d in other.domain_axes().values()]
+        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
+        other_sizes = [d.get_size() for d in other.domain_axes().values()]
         
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes

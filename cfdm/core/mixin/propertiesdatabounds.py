@@ -236,7 +236,7 @@ x.__getitem__(indices) <==> x[indices]
         # ------------------------------------------------------------
         # Check the bounds 
         # ------------------------------------------------------------
-        self_hasbounds = self.has_bounds()
+        self_has_bounds = self.has_bounds()
         if self_has_bounds != other.has_bounds():
             if traceback:
                 print("{0}: Different {1}".format(self.__class__.__name__, attr))

@@ -238,15 +238,17 @@ x.__str__() <==> str(x)
 
         x = []
         for key in tuple(non_spanning_axes) + data_axes:
-            for k, dim in self.dimension_coordinates().items():
-                if self.construct_axes()[k] == (key,):
-                    name = dim.name(default='id%{0}'.format(k))
+            for dc_key, dim in self.dimension_coordinates().items():
+                if self.construct_axes()[dc_key] == (key,):
+                    name = dim.name(default='id%{0}'.format(dc_key), ncvar=True)
                     y = '{0}({1})'.format(name, dim.get_data().size)
                     if y != axis_names[key]:
                         y = '{0}({1})'.format(name, axis_names[key])
                     if dim.has_data():
                         y += ' = {0}'.format(dim.get_data())
-                    x.append(y)   
+                        
+                    x.append(y)
+        #--- End: for
         string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
         
