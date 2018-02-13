@@ -50,6 +50,55 @@ class ReadNetCDF(object):
             '_debug': False,
         }
             
+    @classmethod    
+    def is_netcdf_file(cls, filename):
+        '''Return True if the file is a netCDF file.
+    
+Note that the file type is determined by inspecting the file's
+contents and any file suffix is not not considered.
+
+:Parameters:
+
+    filename: `str`
+
+:Returns:
+
+    out: `bool`
+
+:Examples:
+
+>>> is_netcdf_file('myfile.nc')
+True
+>>> is_netcdf_file('myfile.pp')
+False
+>>> is_netcdf_file('myfile.pdf')
+False
+>>> is_netcdf_file('myfile.txt')
+False
+
+        '''
+        # Assume that URLs are in netCDF format
+        if filename.startswith('http://'):
+            return True
+
+        # Read the magic number 
+        try:
+            fh = open(filename, 'rb')
+            magic_number = struct.unpack('=L', fh.read(4))[0]
+        except:
+            magic_number = None
+    
+        try:
+            fh.close()
+        except:
+            pass
+    
+        if magic_number in (21382211, 1128547841, 1178880137, 38159427):
+            return True
+        else:
+            return False
+    #--- End: def
+
     def read(self, filename, field=(), verbose=False, uncompress=True,
              extra_read_vars=None, _debug=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
@@ -439,7 +488,6 @@ ancillaries, field ancillaries).
         dimension_coordinates = {}
         auxiliary_coordinates = {}
         cell_measures         = {}
-#        coordref_parameters   = {}
         list_variables        = {}
     
         fields_in_file = []
@@ -930,23 +978,13 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Initialize the field with the data variable and its attributes
         # ----------------------------------------------------------------
-#        f_Units = self._Units(properties.pop('units', None),
-#                              properties.pop('calendar', None))
-#
-#        if g['verbose'] and not f_Units.isvalid:
-#            print(
-#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-#    g['filename'], data_ncvar, f_Units))
-
         if _debug:
             print '    Field properties:', properties
             
         f = self._Field(properties=properties, copy=False)
 
         f.set_ncvar(data_ncvar)
-#        f.files = set((g['filename'],))
-#        f.Units = f_Units
-    
+   
         f._global_attributes = tuple(g['global_attributes'])
     
         # Map netCDF dimension dimension names to domain axis names.
@@ -960,7 +998,6 @@ ancillaries, field ancillaries).
     
         ncvar_to_key = {}
             
-#        f._data_axes = []
         data_axes = []
     
         # ----------------------------------------------------------------
@@ -1025,20 +1062,17 @@ ancillaries, field ancillaries).
             #--- End: if
     
             # Update data dimension name and set dimension size
-            
-#            f._data_axes.append(axis)
             data_axes.append(axis)
     
             ncdim_to_axis[ncdim] = axis
         #--- End: for
-        print '_data_ncvar ', data_ncvar
+
         data = self._set_Data(data_ncvar, f, unpacked_dtype=unpacked_dtype)
         if _debug:
             print '    Inserting', repr(data)
-        f.set_data(data, data_axes, copy=False)
+
+        f = self._set_data(f, data, axes=data_axes, copy=False)
           
-#        f._Data = self._set_Data(data_ncvar, f, unpacked_dtype=unpacked_dtype)
-        
         # ----------------------------------------------------------------
         # Add scalar dimension coordinates and auxiliary coordinates to
         # the field
@@ -1219,8 +1253,8 @@ ancillaries, field ancillaries).
                     # Copy the cell measure as it already exists
                     cell = cell_measures[ncvar].copy()
                 else:
-                    cell = self._create_item(ncvar, attributes, f,
-                                             cell_measure=True)
+                    cell = self._create_cell_measure(measure, ncvar,
+                                                     attributes)
                     cell.measure = measure
                     cell_measures[ncvar] = cell
                 #--- End: if
@@ -1264,9 +1298,7 @@ ancillaries, field ancillaries).
                 if ncvar in field_ancillaries:
                     field_anc = field_ancillaries[ncvar].copy()
                 else:
-                    field_anc = self._create_item(ncvar, attributes,
-                                                  f,
-                                                  field_ancillary=True)
+                    field_anc = self._create_field_ancillary(ncvar, attributes)
                     field_ancillaries[ncvar] = field_anc
                     
                 # Insert the field ancillary
@@ -1279,34 +1311,34 @@ ancillaries, field ancillaries).
     #--- End: def
     
     def _create_bounded_item(self, ncvar, attributes, f,
-                                  dimension=False, auxiliary=False,
-                                  domainancillary=False, bounds=None,
-                                  verbose=False):
+                             dimension=False, auxiliary=False,
+                             domainancillary=False, bounds=None,
+                             verbose=False):
         '''Create a variable which might have bounds.
     
-    :Parameters:
-    
-        ncvar: `str`
-            The netCDF name of the variable.
-    
-        attributes: `dict`
-            Dictionary of the variable's netCDF attributes.
-    
-        f: `Field`
-    
-        dimension: `bool`, optional
-            If True then a dimension coordinate is created.
-    
-        auxiliary: `bool`, optional
-            If True then an auxiliary coordinate is created.
-    
-        domainancillary: `bool`, optional
-            If True then a domain ancillary is created.
-    
-    :Returns:
-    
-        out : `DimensionCoordinate` or `AuxiliaryCoordinate` or `DomainAncillary`
-            The new item.
+:Parameters:
+
+    ncvar: `str`
+        The netCDF name of the variable.
+
+    attributes: `dict`
+        Dictionary of the variable's netCDF attributes.
+
+    f: `Field`
+
+    dimension: `bool`, optional
+        If True then a dimension coordinate is created.
+
+    auxiliary: `bool`, optional
+        If True then an auxiliary coordinate is created.
+
+    domainancillary: `bool`, optional
+        If True then a domain ancillary is created.
+
+:Returns:
+
+    out : `DimensionCoordinate` or `AuxiliaryCoordinate` or `DomainAncillary`
+        The new item.
     
         '''
         g = self.read_vars
@@ -1314,14 +1346,6 @@ ancillaries, field ancillaries).
         
         properties = attributes[ncvar].copy()
       
-#        c_Units = self._Units(properties.pop('units', None),
-#                              properties.pop('calendar', None))
-#    
-#        if g['verbose'] and not c_Units.isvalid:
-#            print(
-#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-#    g['filename'], ncvar, c_Units))
-
         properties.pop('formula_terms', None)
     
         if bounds is not None:
@@ -1342,7 +1366,6 @@ ancillaries, field ancillaries).
             properties.pop('coordinates', None)
             properties.pop('grid_mapping', None)
             properties.pop('cell_measures', None)
-    
             properties.pop('formula_terms', None)
             properties.pop('positive', None)
     
@@ -1352,14 +1375,12 @@ ancillaries, field ancillaries).
 "Must set one of the dimension, auxiliary or domainancillary parmaeters to True")
     
         c.set_ncvar(ncvar)
-#        c.Units = c_Units
     
         if climatology:
             c.climatology = climatology
     
         data = self._set_Data(ncvar, c)
-
-        c.set_data(data, copy=False)
+        c = self._set_data(c, data, copy=False)
         
         # ------------------------------------------------------------
         # Add any bounds
@@ -1370,32 +1391,12 @@ ancillaries, field ancillaries).
             properties = attributes[ncbounds].copy()
             properties.pop('formula_terms', None)
     
-#            b_Units = self._Units(properties.pop('units', None),
-#                                  properties.pop('calendar', None))
-#    
-#            if g['verbose'] and not b_Units.isvalid:
-#                print(
-#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-#    g['filename'], ncbounds, b_Units))
-
             bounds = self._Bounds(properties=properties, copy=False)
 
-#            if getattr(bounds, 'units', None) is None:
-#                bounds.set_property('units', getattr(c, 'units', None))
-#
-#            if getattr(bounds, 'calendar', None) is None:
-#                bounds.set_property('calendar', getattr(c, 'calendar', None))
-#
-#            if not b_Units:
-#                b_Units = c_Units
-#    
-#            bounds.Units = b_Units
-            
             bounds.set_ncvar(ncbounds)
     
             bounds_data = self._set_Data(ncbounds, bounds)
-    
-            bounds.set_data(bounds_data, copy=False)
+            bounds = self._set_data(bounds, bounds_data, copy=False)
     
             # Make sure that the bounds dimensions are in the same order
             # as its parent's dimensions
@@ -1409,11 +1410,10 @@ ancillaries, field ancillaries).
                             if ncdim in c_ncdims]
                     if len(axes) == c_ndim:
                         axes.extend(range(b_ndim - c_ndim, 0))
-#                        bounds.transpose(axes, copy=False)
-                        self._transpose(bounds, axes=axes, copy=False)
+                        bounds = self._transpose(bounds, axes=axes, copy=False)
             #--- End: if
 
-            c.set_bounds(bounds, copy=False)
+            c = self._set_bounds(c, bounds, copy=False)
         #--- End: if
     
         # ---------------------------------------------------------
@@ -1421,11 +1421,30 @@ ancillaries, field ancillaries).
         # ---------------------------------------------------------
         return c
     #--- End: def
+    
+    def _set_bounds(self, construct, bounds, copy=True):
+        '''
+        '''
+        construct.set_bounds(bounds, copy=copy)
+        return construct
+    #-- End: def
 
+    def _set_data(self, construct, data, axes=None, copy=True):
+        '''
+        '''
+        if axes is None:
+            construct.set_data(data, copy=copy)
+        else:
+            construct.set_data(data, axes, copy=copy)
+
+        return construct
+    #--- End: def
+    
     def _transpose(self, construct, axes=None, copy=True):
         '''
         '''
-        return construct.tranpose(axes=axes, copy=copy)
+        construct = construct.tranpose(axes=axes, copy=copy)
+        return construct
     #-- End: def
     
     def _create_array(self, ncvar, attributes):
@@ -1446,22 +1465,40 @@ ancillaries, field ancillaries).
         '''
         properties = attributes[ncvar]
     
-#        units = self._Units(properties.get('units'),
-#                            properties.get('calendar'))
-#    
-#        if self.read_vars['verbose'] and not units.isvalid:
-#            print(
-#"WARNING: Unsupported units in file {0} on variable {1}: {2}".format(
-#    self.read_vars['filename'], ncvar, units))
-
-        data = self._set_Data(ncvar) #, units=units)
+        data = self._set_Data(ncvar)
     
         return data
     #--- End: def
     
-    def _create_item(self, ncvar, attributes, f,
-                          cell_measure=False, field_ancillary=False):
-        '''Create a cell measure or field ancillary object.
+    def _create_field_ancillary(self, ncvar, attributes):
+        '''Create a field ancillary object.
+    
+:Parameters:
+    
+    ncvar: `str`
+        The netCDF name of the field ancillary variable.
+
+    attributes: `dict`
+        Dictionary of the cell measure variable's netCDF attributes.
+
+:Returns:
+
+    out: `FieldAncillary`
+        The new item.
+
+        '''
+        field_ancillary = self._FieldAncillary(properties=attributes[ncvar])
+    
+        data = self._set_Data(ncvar, field_ancillary)
+    
+        field_ancillary = self._set_data(field_ancillary, data, copy=False)
+        field_ancillary.set_ncvar(ncvar)
+    
+        return field_ancillary
+    #--- End: def
+    
+    def _create_cell_measure(self, measure, ncvar, attributes):
+        '''Create a cell measure object.
     
 :Parameters:
     
@@ -1471,28 +1508,21 @@ ancillaries, field ancillaries).
     attributes: `dict`
         Dictionary of the cell measure variable's netCDF attributes.
 
-    f: `Field`
-
 :Returns:
 
-    out: `CellMeasure` or `FieldAncillary`
+    out: `CellMeasure`
         The new item.
 
         '''
-        g = self.read_vars
-                
-        if cell_measure:
-            item = self._CellMeasure(properties=attributes[ncvar])
-        elif field_ancillary:
-            item = self._FieldAncillary(properties=attributes[ncvar])
+        cell_measure = self._CellMeasure(measure=measure,
+                                         properties=attributes[ncvar])
     
-        data = self._set_Data(ncvar, item)
+        data = self._set_Data(ncvar, cell_measure)
     
-        item.set_data(data, copy=False)
+        cell_measure = self._set_data(cell_measure, data, copy=False)
+        cell_measure.set_ncvar(ncvar)
     
-        item.set_ncvar(ncvar)
-    
-        return item
+        return cell_measure
     #--- End: def
     
     def _ncdimensions(self, ncvar):
@@ -1658,20 +1688,12 @@ ancillaries, field ancillaries).
     '''
         g = self.read_vars
 
-#        parameters  = {}
         ancillaries = {}
     
         for term, ncvar in formula_terms.iteritems():
-#            if ncvar in domain_ancillaries:
-
             # The term's value is a domain ancillary of the field, so
             # we put its identifier into the coordinate reference.
             ancillaries[term] = domain_ancillaries[ncvar][0]
-
-#            elif ncvar in coordref_parameters:
-#                # The term's value is a parameter
-#                parameters[term] = coordref_parameters[ncvar].copy()
-#        #--- End: for 
 
         props = {}
         name = coord.get_property('standard_name', None)
@@ -1687,7 +1709,7 @@ ancillaries, field ancillaries).
         return coordref
     #--- End: def
     
-    def _set_Data(self, ncvar, variable=None, unpacked_dtype=False,
+    def _set_Data(self, ncvar, construct=None, unpacked_dtype=False,
                   uncompress_override=None, units=None, calendar=None,
                   fill_value=None):
         '''
@@ -1698,11 +1720,9 @@ Set the Data attribute of a variable.
 
     ncvar: `str`
 
-    variable: `Variable`, optional
+    construct: `Variable`, optional
 
     unpacked_dtype: `False` or `numpy.dtype`, optional
-
-    g: `dict`
 
 :Returns:
 
@@ -1754,7 +1774,7 @@ Set the Data attribute of a variable.
             
         # Find the fill_value for the data
         if fill_value is None:
-            fill_value = variable.fill_value()
+            fill_value = construct.fill_value()
             
         compression = g['compression']
     
@@ -1869,53 +1889,5 @@ Set the Data attribute of a variable.
                           fill_value=fill_value)
     #--- End: def
     
-    @classmethod    
-    def is_netcdf_file(cls, filename):
-        '''Return True if the file is a netCDF file.
-    
-    Note that the file type is determined by inspecting the file's
-    contents and any file suffix is not not considered.
-    
-    :Parameters:
-    
-        filename : str
-    
-    :Returns:
-    
-        out : bool
-    
-    :Examples:
-    
-    >>> is_netcdf_file('myfile.nc')
-    True
-    >>> is_netcdf_file('myfile.pp')
-    False
-    >>> is_netcdf_file('myfile.pdf')
-    False
-    >>> is_netcdf_file('myfile.txt')
-    False
-    
-        '''
-        # Assume that URLs are in netCDF format
-        if filename.startswith('http://'):
-            return True
-
-        # Read the magic number 
-        try:
-            fh = open(filename, 'rb')
-            magic_number = struct.unpack('=L', fh.read(4))[0]
-        except:
-            magic_number = None
-    
-        try:
-            fh.close()
-        except:
-            pass
-    
-        if magic_number in (21382211, 1128547841, 1178880137, 38159427):
-            return True
-        else:
-            return False
-    #--- End: def
     
 #--- End: class

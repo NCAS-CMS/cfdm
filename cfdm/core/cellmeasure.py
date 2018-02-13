@@ -2,6 +2,8 @@ import abc
 
 import mixin
 
+from ..functions import RTOL, ATOL
+
 from ..structure import CellMeasure as structure_CellMeasure
 
 # ====================================================================
@@ -72,6 +74,39 @@ Return a string containing a full description of the cell measure.
             field=field, key=key,
             _omit_properties=_omit_properties,
              _level=_level, _title=_title)
+    #--- End: def
+
+    def equals(self, other, rtol=None, atol=None, traceback=False,
+               ignore_data_type=False, ignore_fill_value=False,
+               ignore_properties=(), ignore_construct_type=False):
+        '''
+        '''
+        if rtol is None:
+            rtol = RTOL()
+        if atol is None:
+            atol = ATOL()
+
+        if not super(CellMeasure, self).equals(
+                other, rtol=rtol, atol=atol,
+                traceback=traceback,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties,
+                ignore_construct_type=ignore_construct_type):
+	    return False
+
+        self_measure = self.get_measure(None)
+        other_measure = self.get_measure(None)
+
+        if self_measure != other_measure:
+            if traceback:
+                print("{0}: Different measure ({1} != {2})".format(
+                    self.__class__.__name__, self_measure,
+                    other_measure))
+            return False
+        #--- End: if
+
+        return True
     #--- End: def
 
     def name(self, default=None, ncvar=False):

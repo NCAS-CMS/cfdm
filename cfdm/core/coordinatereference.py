@@ -8,6 +8,8 @@ from .functions import equals as cfdm_equals
 from .dimensioncoordinate import DimensionCoordinate
 from .auxiliarycoordinate import AuxiliaryCoordinate
 
+from ..functions import RTOL, ATOL
+
 import mixin
 
 from ..structure import CoordinateReference as structure_CoordinateReference
@@ -178,7 +180,9 @@ reference object.
             return string
     #--- End: def
             
-    def equals(self, other, rtol=None, atol=None, traceback=False, **kwargs):
+    def equals(self, other, rtol=None, atol=None, traceback=False,
+               ignore_data_type=False, ignore_fill_value=False,
+               ignore_properties=(), ignore_construct_type=False):
         '''
 
 True if two instances are equal, False otherwise.
@@ -212,34 +216,20 @@ True if two instances are equal, False otherwise.
 :Examples:
 
 '''
-        if self is other:
-            return True
-        
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
-            if traceback:
-                print("{0}: Different types: {0}, {1}".format(
-                    self.__class__.__name__,
-                    other.__class__.__name__))
-            return False
-        #--- End: if
-   
-        # ------------------------------------------------------------
-        # Check the name
-        # ------------------------------------------------------------
-        if self.get_name(None) != other.get_name(None):
-            if traceback:
-                print("{}: Different names ({} != {})".format(
-                    self.__class__.__name__,
-                    self.get_name(None), other.get_name(None)))
-            return False
-        #--- End: if
-                
         if rtol is None:
             rtol = RTOL()
         if atol is None:
             atol = ATOL()
 
+        if not super(CoordinateReference, self).equals(
+                other, rtol=rtol, atol=atol,
+                traceback=traceback,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties,
+                ignore_construct_type=ignore_construct_type):
+	    return False
+        
         # ------------------------------------------------------------
         # Check that the same terms are present
         # ------------------------------------------------------------
@@ -308,7 +298,11 @@ True if two instances are equal, False otherwise.
                 continue
                 
             if not cfdm_equals(value0, value1, rtol=rtol, atol=atol,
-                               traceback=traceback, **kwargs):
+                               traceback=traceback,
+                               ignore_data_type=ignore_data_type,
+                               ignore_fill_value=ignore_fill_value,
+                               ignore_properties=ignore_properties,
+                               ignore_construct_type=ignore_construct_type):
                 if traceback:
                     print(
                         "{}: Unequal {!r} terms ({!r} != {!r})".format( 

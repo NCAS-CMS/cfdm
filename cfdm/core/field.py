@@ -774,6 +774,8 @@ False
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
             return False
+
+        return True
     #--- End: def
         
     def expand_dims(self, position=0, axis=None, copy=True):

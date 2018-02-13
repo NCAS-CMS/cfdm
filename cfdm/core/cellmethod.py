@@ -4,6 +4,8 @@ from ast import literal_eval as ast_literal_eval
 from re  import sub          as re_sub
 from re  import search       as re_search
 
+import mixin
+
 from .functions import equals
 
 from .data.data import Data
@@ -16,7 +18,7 @@ from ..structure import CellMethod as structure_CellMethod
 #
 # ====================================================================
 
-class CellMethod(structure_CellMethod):
+class CellMethod(structure_CellMethod, mixin.Properties):
     '''A cell method construct od the CF data model.
 
 Cell method constructs describe how the field construct's cell values
@@ -213,7 +215,7 @@ corresponding dimension or dimensions.
         
         axes = new.get_axes(())
         if len(axes) == 1:
-            return
+            return new
 
         if argsort is None:
             argsort = numpy_argsort(axes)
@@ -228,7 +230,7 @@ corresponding dimension or dimensions.
 
         intervals = new.get_property('interval', ())
         if len(intervals) <= 1:
-            return
+            return new
 
         intervals2 = []
         for i in argsort:
@@ -409,9 +411,9 @@ Cell methods    : time: minimum within years
         return out
     #--- End: def
 
-    def equals(self, other, rtol=None, atol=None,
+    def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore=(), traceback=False):
+               ignore_properties=(), ignore_construct_type=False):
         '''
 
 True if two cell methods are equal, False otherwise.
@@ -447,31 +449,21 @@ The `!axes` attribute is ignored in the comparison.
 :Examples:
 
 '''
-        if self is other:
-            return True
+        if rtol is None:
+            rtol = RTOL()
+        if atol is None:
+            atol = ATOL()
 
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
-            if traceback:
-                print("{0}: Different types: {0} != {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-        #--- End: if
+        if not super(CellMethod, self).equals(
+                other, rtol=rtol, atol=atol,
+                traceback=traceback,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties + ('interval',),
+                ignore_construct_type=ignore_construct_type):
+	    return False
         
-        for attr in ('method', 'within', 'over', 'where', 'comment', 'axes'):
-            if attr in ignore:
-                continue
-
-            x = self.get_property(attr, None)
-            y = other.get_property(attr, None)
-            if x != y:
-                if traceback:
-                    print("{0}: Different {1}: {2!r} != {3!r}".format(
-                        self.__class__.__name__, attr, x, y))
-                return False
-        #--- End: for
-        
-        if 'interval' in ignore:
+        if 'interval' in ignore_properties:
             return True
 
         self_interval  = self.get_property('interval', ())

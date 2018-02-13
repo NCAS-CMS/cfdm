@@ -194,7 +194,8 @@ class create_fieldTest(unittest.TestCase):
         g.dump()
 
         print 'g.properties() =',g.properties()
-
+        print
+        print
         
         self.assertTrue(set(f.constructs()) == set(g.constructs()))
 
@@ -203,6 +204,8 @@ class create_fieldTest(unittest.TestCase):
 #            print '    ', repr(g.item(key))
         
         self.assertTrue(g.equals(f, traceback=True), "Field not equal to itself read back in")
+#        x = g.equals(f, traceback=True)
+#        print 'DONE', repr(x)
         
         x = g.dump(display=False)
         x = f.dump(display=False)

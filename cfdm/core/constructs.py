@@ -108,36 +108,38 @@ Keys are item identifiers, values are item objects.
         return 'id%{0}'.format(axis)
     #--- End: def
 
+#    def equals(self, other, rtol=None, atol=None, traceback=False,
+#               **kwargs):
+#        '''
+#        '''
+#        
+#        axis1_to_axis0 = {}
+#        key1_to_key0   = {}
+#
+#        if not self._equals_array_constructs(
+#                other, rtol=rtol, atol=atol,
+#                traceback=traceback,
+#                axis1_to_axis0=axis1_to_axis0,
+#                key1_to_key0=key1_to_key0, **kwargs):
+#            return False
+#
+#        for construct_type in self._non_array_constructs:
+#            if not getattr(self, '_equals_'+construct_type)(
+#                    other,
+#                    rtol=rtol, atol=atol,
+#                    traceback=traceback,
+#                    axis1_to_axis0=axis1_to_axis0,
+#                    key1_to_key0=key1_to_key0, **kwargs):
+#                return False
+#
+#        return True
+#    #--- End: def
+        
+#    def _equals_array_constructs(self, other, rtol=None, atol=None,
+#                                traceback=False, axis1_to_axis0=None,
+#                                key1_to_key0=None, **kwargs):
     def equals(self, other, rtol=None, atol=None, traceback=False,
                **kwargs):
-        '''
-        '''
-        
-        axis1_to_axis0 = {}
-        key1_to_key0   = {}
-        
-        if not self._equals_array_constructs(
-                other, rtol=rtol, atol=atol,
-                traceback=traceback,
-                axis1_to_axis0=axis1_to_axis0,
-                key1_to_key0=key1_to_key0, **kwargs):
-            return False
-
-        for construct_type in self._non_array_constructs:
-            if not getattr(self, '_equals_'+construct_type)(
-                    other,
-                    rtol=rtol, atol=atol,
-                    traceback=traceback,
-                    axis1_to_axis0=axis1_to_axis0,
-                    key1_to_key0=key1_to_key0, **kwargs):
-                return False
-
-        return True
-    #--- End: def
-        
-    def _equals_array_constructs(self, other, rtol=None, atol=None,
-                                traceback=False, axis1_to_axis0=None,
-                                key1_to_key0=None, **kwargs):
         '''
         
         '''
@@ -150,34 +152,41 @@ Keys are item identifiers, values are item objects.
                 print("{0}: Different object types: {0}, {1}".format(
                     self.__class__.__name__, other.__class__.__name__))
             return False
-
-        # ------------------------------------------------------------
-        # Domain axes
-        # ------------------------------------------------------------
-        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
-        other_sizes = [d.get_size() for d in other.domain_axes().values()]
-        
-        if sorted(self_sizes) != sorted(other_sizes):
-            # There is not a 1-1 correspondence between axis sizes
-            if traceback:
-                print("{0}: Different domain axes: {1} != {2}".format(
-                    self.__class__.__name__,
-                    sorted(self.values()),
-                    sorted(other.values())))
-            return False
         
         if rtol is None:
             rtol = RTOL()
         if atol is None:
             atol = ATOL()
 
-        # ------------------------------------------------------------
-        # 
-        # ------------------------------------------------------------
         axes0_to_axes1 = {}
+        axis0_to_axis1 = {}
+        axis1_to_axis0 = {}
+        key1_to_key0   = {}
+        
+        # ------------------------------------------------------------
+        # Domain axes
+        # ------------------------------------------------------------
+        if not self._equals_domainaxis(other, rtol=rtol, atol=atol,
+                                       traceback=traceback,
+                                       axis1_to_axis0=axis1_to_axis0,
+                                       key1_to_key0=key1_to_key0, **kwargs):
+            return False
+        
+#        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
+#        other_sizes = [d.get_size() for d in other.domain_axes().values()]
+#        
+#        if sorted(self_sizes) != sorted(other_sizes):
+#            # There is not a 1-1 correspondence between axis sizes
+#            if traceback:
+#                print("{0}: Different domain axes: {1} != {2}".format(
+#                    self.__class__.__name__,
+#                    sorted(self.values()),
+#                    sorted(other.values())))
+#            return False
 
-        key1_to_key0 = {}
-
+        # ------------------------------------------------------------
+        # Check the array constructs
+        # ------------------------------------------------------------
         axes_to_items0 = self.axes_to_constructs()
         axes_to_items1 = other.axes_to_constructs()
         
@@ -211,7 +220,8 @@ Keys are item identifiers, values are item objects.
                         matched_item = False
                         for key1, item1 in role_items1.items():
                             if item0.equals(item1, rtol=rtol,
-                                            atol=atol, traceback=False, **kwargs):
+                                            atol=atol,
+                                            traceback=False, **kwargs):
                                 del role_items1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_item = True
@@ -245,8 +255,6 @@ Keys are item identifiers, values are item objects.
                 return False
         #--- End: for
 
-        axis0_to_axis1 = {}
-        axis1_to_axis0 = {}
         for axes0, axes1 in axes0_to_axes1.iteritems():
             for axis0, axis1 in zip(axes0, axes1):
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
@@ -267,6 +275,18 @@ Keys are item identifiers, values are item objects.
                 axis0_to_axis1[axis0] = axis1
                 axis1_to_axis0[axis1] = axis0
         #--- End: for
+
+        # ------------------------------------------------------------
+        # Check non-array constructs
+        # ------------------------------------------------------------
+        for construct_type in self._non_array_constructs:
+            if not getattr(self, '_equals_'+construct_type)(
+                    other,
+                    rtol=rtol, atol=atol,
+                    traceback=traceback,
+                    axis1_to_axis0=axis1_to_axis0,
+                    key1_to_key0=key1_to_key0, **kwargs):
+                return False
 
         # ------------------------------------------------------------
         # Still here? Then the two Constructs are equal
@@ -295,22 +315,22 @@ Keys are item identifiers, values are item objects.
                 found_match = False
                 for key1, ref1 in refs1.items():
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       traceback=True, **kwargs): ####
+                                       traceback=False, **kwargs): ####
                         continue
-    
+
                     # Coordinates
-                    coordinates0 = ref0.coordinates
+                    coordinates0 = ref0.coordinates()
                     coordinates1 = set()
-                    for value in ref1.coordinates:
+                    for value in ref1.coordinates():
                         coordinates1.add(key1_to_key0.get(value, value))
                         
                     if coordinates0 != coordinates1:
                         continue
     
                     # Domain ancillary terms
-                    terms0 = ref0.domain_ancillaries
+                    terms0 = ref0.domain_ancillaries()
                     terms1 = {}
-                    for term, key in ref1.domain_ancillaries.items():
+                    for term, key in ref1.domain_ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:
@@ -344,7 +364,7 @@ Keys are item identifiers, values are item objects.
         if len(cell_methods0) != len(cell_methods1):
             if traceback:
                 print(
-"Traceback: Different cell methods: {0!r}, {1!r}".format(
+"Traceback: Different numbers of cell methods: {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
             return False
         
@@ -360,8 +380,8 @@ Keys are item identifiers, values are item objects.
             if len(axes0) != len(axes1):
                 if traceback:
                     print (
-"Traceback: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
-    cell_methods0, cell_methods1))
+"{0}: Different cell methods (mismatched axes): {1!r}, {2!r}".format(
+    cm0.__class__.__name__, cell_methods0, cell_methods1))
                 return False
     
             argsort = []
@@ -399,8 +419,7 @@ Keys are item identifiers, values are item objects.
                         cell_methods0, cell_methods1))
                 return False
 
-            cm1 = cm1.copy()
-            cm1.sort(argsort=argsort)
+            cm1 = cm1.sorted(argsort=argsort)
             cm1.set_axes(axes0)
 
             if not cm0.equals(cm1, atol=atol, rtol=rtol,
@@ -415,4 +434,27 @@ Keys are item identifiers, values are item objects.
         return True
     #--- End: def
 
+    def _equals_domainaxis(self, other, rtol=None, atol=None,
+                           traceback=False, axis1_to_axis0=None,
+                           key1_to_key0=None, **kwargs):
+        '''
+        '''
+        # ------------------------------------------------------------
+        # Domain axes
+        # ------------------------------------------------------------
+        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
+        other_sizes = [d.get_size() for d in other.domain_axes().values()]
+        
+        if sorted(self_sizes) != sorted(other_sizes):
+            # There is not a 1-1 correspondence between axis sizes
+            if traceback:
+                print("{0}: Different domain axes: {1} != {2}".format(
+                    self.__class__.__name__,
+                    sorted(self.values()),
+                    sorted(other.values())))
+            return False
+
+        return True
+    #--- End: def
+    
 #--- End: class

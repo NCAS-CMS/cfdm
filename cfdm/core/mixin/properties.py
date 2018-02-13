@@ -1,6 +1,9 @@
 import abc
 import textwrap
 
+from ..functions import RTOL, ATOL
+from ..functions import equals as cfdm_equals
+
 # ====================================================================
 #
 
@@ -94,13 +97,20 @@ All components of a variable are optional.
         if ignore_fill_value:
             ignore_properties += ('_FillValue', 'missing_value')
 
-        self_properties  = set(self.properties()).difference(ignore_properties)
-        other_properties = set(other.properties()).difference(ignore_properties)
-        if self_properties != other_properties:
+        self_properties  = self.properties()
+        other_properties = other.properties()
+
+        if ignore_properties:
+            for prop in ignore_properties:
+                self_properties.pop(prop, None)
+                other_properties.pop(prop, None)
+        #--- End: if
+                
+        if set(self_properties) != set(other_properties):
             if traceback:
                 print("{0}: Different properties: {1}, {2}".format( 
                     self.__class__.__name__,
-                    self_properties, other_properties))
+                    sorted(self_properties), sorted(other_properties)))
             return False
 
         if rtol is None:
@@ -108,18 +118,21 @@ All components of a variable are optional.
         if atol is None:
             atol = ATOL()
 
-        for prop in self_properties:
-            x = self.get_property(prop)
-            y = other.get_property(prop)
+        for prop, x in self_properties.iteritems():
+            y = other_properties[prop]
 
             if not cfdm_equals(x, y, rtol=rtol, atol=atol,
                                ignore_fill_value=ignore_fill_value,
+                               ignore_data_type=ignore_data_type,
                                traceback=traceback):
                 if traceback:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
                 return False
         #--- End: for
+
+        return True
+    #--- End: def
         
     def get_ncvar(self, *default):
         '''
