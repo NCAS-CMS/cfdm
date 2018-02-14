@@ -70,7 +70,7 @@ All components of a variable are optional.
     def del_ncvar(self):
         '''
         '''        
-        return self._del_attribute('ncvar')
+        return self.del_attribute('ncvar')
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
@@ -137,7 +137,7 @@ All components of a variable are optional.
     def get_ncvar(self, *default):
         '''
         '''        
-        return self._get_attribute('ncvar', *default)
+        return self.get_attribute('ncvar', *default)
     #--- End: def
 
 #    def name(self, default=None, ncvar=True):
@@ -162,7 +162,7 @@ All components of a variable are optional.
     def set_ncvar(self, value):
         '''
         '''        
-        return self._set_attribute('ncvar', value)
+        return self.set_attribute('ncvar', value)
     #--- End: def
 
 #--- End: class

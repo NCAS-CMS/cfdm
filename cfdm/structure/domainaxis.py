@@ -33,6 +33,8 @@ to the order of the elements.
         The size of the domain axis.
 
         '''
+        super(DomainAxis, self).__init__(source=source, copy=copy)
+        
         if source:
             if size is None:
                 size = source.get_size(None)

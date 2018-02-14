@@ -45,17 +45,13 @@ All components of a variable are optional.
         '''
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
+
+        self._data = {}
         
         if source is not None:
-            if not isinstance(source, PropertiesData):
-                raise ValueError(
-"ERROR: source must be a subclass of 'PropertiesData'. Got {!r}".format(
-    source.__class__.__name__))
-
-            # Data
             if _use_data and data is None:
                 data = source.get_data(None)
-        #--- End: def
+        #--- End: if
 
         if _use_data and data is not None:
             self.set_data(data, copy=copy)
@@ -231,33 +227,18 @@ True
     def get_data(self, *default):
         '''
         '''
-        try:
-            data = super(PropertiesData, self).get_data()
-        except AttributeError as error:
-            if default:
-                return default[0]
-            raise AttributeError(error)
-
-        data.set_units(self.get_property('unit', None))
-        data.set_calendar(self.get_property('calendar', None))
-
-        return data
-    #--- End: def
-
-    def get_data(self, *default):
-        '''
-        '''
         data = self._get_attribute('data', None)
         if data is not None:
-            data.set_units(self.get_property('units', None))
-            data.set_calendar(self.get_property('calendar', None))
+#            data.set_units(self.get_property('units', None))
+#            data.set_calendar(self.get_property('calendar', None))
             data.set_fill_value(self.get_property('fill_value', None))
+            # missing_value, too
             return data
 
         if default:
             return default[0]
 
-        raise AttributeError("sdij ;soij in kl")
+        raise AttributeError("There is no data")
     #--- End: def
 
     def has_data(self):

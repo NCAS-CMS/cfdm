@@ -53,6 +53,7 @@ domain ancillary objects.
             copy=copy,
             _use_data=_use_data)
 
+
         if source is not None and isinstance(source, PropertiesDataBounds):
             if bounds is None:
                 bounds = source.get_bounds(None)
@@ -88,30 +89,32 @@ domain ancillary objects.
                 
             self.set_bounds(bounds, copy=False)
 
-        extent_parameters = extent_parameters.copy()
-        if extent_parameters and copy:
-            for key, value in extent_parameters.items():
-                extent_arrays[key] = deepcopy(value)
-        #--- End: if                
+        if extent_parameters:
+            if copy:
+                extent_parameters = deepcopy(extent_parameters)
+            else:
+                extent_parameters = extent_parameters.copy()
 
-        topology_parameters = topology_parameters.copy()
-        if topology_parameters and copy:
-            for key, value in topology_parameters.items():
-                topology_arrays[key] = deepcopy(value)
-        #--- End: if                
+        if topology_parameters:
+            if copy:
+                topology_parameters = deepcopy(topology_parameters)
+            else:
+                topology_parameters = topology_parameters.copy()
 
-        extent_arrays = extent_arrays.copy()
-        if extent_arrays  and(copy or not _use_data):
-            for key, value in extent_arrays.items():
-                extent_arrays[key] = value.copy(data=_use_data)
-        #--- End: if                
+        if extent_arrays:
+            if copy or not _use_data:
+                for key, value in extent_arrays.items():
+                    extent_arrays[key] = value.copy(data=_use_data)
+            else:
+                extent_arrays = extent_arrays.copy()
 
-        topology_arrays = topology_arrays.copy()
-        if topology_arrays and (copy or not _use_data):
-            for key, value in topology_arrays.items():
-                topology_arrays[key] = value.copy(data=_use_data)
-        #--- End: if                
-
+        if topology_arrays:
+            if copy or not _use_data:
+                for key, value in topology_arrays.items():
+                    topology_arrays[key] = value.copy(data=_use_data)
+            else:
+                topology_arrays = topology_arrays.copy()
+        
         self._set_attribute('extent_arrays', extent_arrays)
         self._set_attribute('extent_parameters', extent_parameters)
         self._set_attribute('topology_arrays', topology_arrays)

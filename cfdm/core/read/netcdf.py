@@ -1171,6 +1171,7 @@ ancillaries, field ancillaries).
             # Only add coordinate references to metadata variables
 
             for key, coord in f.coordinates().iteritems():
+                print coord.dump()
                 formula_terms = attributes[coord.get_ncvar()].get('formula_terms', None)
                 if formula_terms is None:
                     # This coordinate doesn't have a formula_terms attribute
@@ -1373,9 +1374,11 @@ ancillaries, field ancillaries).
         else:
             raise ValueError(
 "Must set one of the dimension, auxiliary or domainancillary parmaeters to True")
-    
+
+        print 'NCVAR', ncvar
         c.set_ncvar(ncvar)
-    
+        print 'PPPPPPPPPPPPP',        c.get_ncvar()
+   
         if climatology:
             c.climatology = climatology
     

@@ -99,19 +99,19 @@ to the order of the elements.
     def get_ncdim(self, *default):
         '''
         '''
-        return self._get_attribute('ncdim', *default)
+        return self.get_attribute('ncdim', *default)
     #--- End: def
 
     def set_ncdim(self, ncdim):
         '''
         '''
-        self._set_attribute('ncdim', ncdim)
+        self._set_attribute_key('attributes', 'ncdim', ncdim)
     #--- End: def
 
     def del_ncdim(self):
         '''
         '''
-        return self._del_attribute('ncdim')
+        return self._del_attribute_key('attributes', 'ncdim')
     #--- End: def
 
 #--- End: class
