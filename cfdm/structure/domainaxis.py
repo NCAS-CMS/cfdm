@@ -54,19 +54,19 @@ to the order of the elements.
     def get_size(self, *default):
         '''
         '''
-        return self._get_attribute('size', *default)
+        return self._get_component('size', None, *default)
     #--- End: def
 
     def set_size(self, size):
         '''
         '''
-        self._set_attribute('size', size)
+        self._set_component('size', None, size)
     #--- End: def
 
     def del_size(self):
         '''
         '''
-        return self._del_attribute('size')
+        return self._del_component('size', None)
     #--- End: def
 
 #--- End: class

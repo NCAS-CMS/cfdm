@@ -158,7 +158,6 @@ class create_fieldTest(unittest.TestCase):
         print f.constructs()
         print f.construct_axes()
         
-        print 'f.constructs()[ref1]._coordinates =', f.constructs()[ref1]._coordinates
         
         f.dump()
 #        print f

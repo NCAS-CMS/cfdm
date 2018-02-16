@@ -107,8 +107,8 @@ Field objects are picklable.
                                     source=source, copy=copy,
                                     _use_data=_use_data) 
                
-        self._set_attribute('unlimited', None)
-        self._set_attribute('HDFgubbins', None)
+        self._set_extra('unlimited', None)
+        self._set_extra('HDFgubbins', None)
     #--- End: def
 
     def unlimited(self, *args, **kwargs):

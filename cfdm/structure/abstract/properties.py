@@ -33,12 +33,11 @@ All components of a variable are optional.
     copy: `bool`, optional
 
         '''
-        self._private = {'properties': {},
-                         'attributes': {}}
+        self._components = {'properties': {}}
+        self._extra      = {}
       
         if source is not None:
-            self._set_attribute('attributes',
-                                deepcopy(source._get_attribute('attributes', {})))
+            self._extra = source._extra.copy()
                 
             p = source.properties(copy=False)
             if properties:
@@ -69,71 +68,78 @@ All components of a variable are optional.
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
-    def _del_attribute(self, attr):
+    def _del_component(self, attr, key):
         '''
         '''
-        return self._private.pop(attr, None)
+        if key is None:            
+            return self._components.pop(attr, None)
+        else:
+            return self._components[attr].pop(attr, None)
     #--- End: def
 
-    def _get_attribute(self, attr, *default):
+    def _del_extra(self, attr):
         '''
         '''
-        value = self._private.get(attr)
-        if value is None:
-            if default:
-                return default[0]
+        return self._extra.pop(attr, None)
+    #--- End: def
 
-            raise AttributeError("Can't get non-existent {!r}".format(attr))
+    def _get_component(self, attr, key, *default):
+        '''
+        '''
+        if key is None:
+            value = self._components.get(attr)
+        else:
+            value = self._components[attr].get(key)
         
-        return value
-    #--- End: def
-
-    def _has_attribute(self, attr):
-        '''
-        '''
-        return attr in self._private
-    #--- End: def
-    
-    def _set_attribute(self, attr, value):
-        '''
-        '''        
-        self._private[attr] = value
-    #--- End: def
-    
-    def _del_attribute_key(self, attr, term):
-        '''
-        '''
-        return self._private.get(attr, {}).pop(term, None)
-    #--- End: def
-
-    def _get_attribute_key(self, attr, term, *default):
-        '''
-        '''
-        value = self._private.get(attr, {}).get(term)
-
         if value is None:
             if default:
                 return default[0]
-            raise AttributeError("Can't get non-existent {!r}".format(term))
+            raise AttributeError("Can't get non-existent {!r}".format(key))
 
         return value
     #--- End: def
 
-    def _has_attribute_key(self, attr, term):
+    def _get_extra(self, attr, *default):
         '''
         '''
-        return term in self._private.get(attr, {})
+        value = self._extra.get(attr)
+        
+        if value is None:
+            if default:
+                return default[0]
+            raise AttributeError("Can't get non-existent attribute {!r}".format(attr))
+
+        return value
     #--- End: def
 
-    def _set_attribute_key(self, attr, term, value):
+    def _has_component(self, attr, key):
         '''
         '''
-        d = self._private.get(attr)
-        if d is None:
-            d = {}
-            self._private[attr] = d
+        if key is None:
+            return attr in self._components
+        else:
+            return key in self._components[attr]
+    #--- End: def
 
-        d[term] = value
+    def _has_extra(self, attr, key):
+        '''
+        '''
+        return attr in self._extra
+    #--- End: def
+
+    def _set_component(self, attr, key, value):
+        '''
+        '''
+        if key is None:
+            self._components[attr] = value
+        else:
+            self._components[attr][key] = value
+    #--- End: def
+
+    def _set_extra(self, attr, value):
+        '''
+        '''
+        self._extra[attr] = value
     #--- End: def
 
     def copy(self, data=True):
@@ -189,35 +195,7 @@ All components of a variable are optional.
 AttributeError: Can't delete non-existent property 'project'
 
         '''
-        return self._del_attribute_key('properties', prop)
-    #--- End: def
-
-    def del_attribute(self, attr):
-        '''Get an attribute (as
-
-'''        
-        return self._del_attribute_key('attributes', attr)
-    #--- End: def
-
-    def get_attribute(self, attr, *default):
-        '''Get an attribute (as
-
-'''        
-        return self._get_attribute_key('attributes', attr, *default)
-    #--- End: def
-
-    def has_attribute(self, attr, *default):
-        '''Get an attribute (as
-
-'''        
-        return self._has_attribute_key('attributes', attr)
-    #--- End: def
-
-    def set_attribute(self, attr, value):
-        '''Get an attribute (as
-
-'''        
-        self._set_attribute_key('attributes', attr, value)
+        return self._del_component('properties', prop)
     #--- End: def
 
     def get_property(self, prop, *default):
@@ -261,8 +239,8 @@ AttributeError: Field doesn't have CF property 'standard_name'
 >>> f.{+name}('standard_name', 'foo')
 'foo'
 
-'''        
-        return self._get_attribute_key('properties', prop, *default)
+'''
+        return self._get_component('properties', prop, *default)
     #--- End: def
 
     def has_property(self, prop):
@@ -290,7 +268,7 @@ Return True if a CF property exists, otherise False.
          True if the CF property exists, otherwise False.
 
 '''
-        return self._has_attribute_key('properties', prop)
+        return self._has_component('properties', prop)
     #--- End: def
 
     def properties(self, props=None, clear=False, copy=True):
@@ -326,19 +304,16 @@ Return True if a CF property exists, otherise False.
 :Examples 2:
 
         '''
-        self_properties = self._get_attribute('properties', None)
+        existing_properties = self._get_component('properties', None, None)
 
-        if self_properties is None:
-           self_properties = {}
-           self._set_attribute('properties', self_properties)
+        if existing_properties is None:
+           existing_properties = {}
+           self._set_component('properties', None, existing_properties)
         
-        if copy:            
-            out = deepcopy(self_properties)
-        else:
-            out = self_properties.copy()
+        out = existing_properties.copy()
                     
         if clear:
-            self_properties.clear()
+            existing_properties.clear()
 
         if not props:
             return out
@@ -347,7 +322,7 @@ Return True if a CF property exists, otherise False.
         if copy:
             props = deepcopy(props)
 
-        self_properties.update(props)
+        existing_properties.update(props)
 
         return out
     #--- End: def
@@ -377,8 +352,8 @@ Return True if a CF property exists, otherise False.
      `None`
 
         '''
-#        self._private['properties'][prop] = value
-        self._set_attribute_key('properties', prop, value)
+        #        self._private['properties'][prop] = value
+        self._set_component('properties', prop, value)
     #--- End: def
 
 #--- End: class

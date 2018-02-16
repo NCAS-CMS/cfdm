@@ -137,12 +137,12 @@ reference object.
                 _level=_level+1))
             
         # Parameter-valued term
-        for term in sorted(self._parameters):
+        for term in sorted(self.parameters()):
             string.append("{0}{1} = {2}".format(indent1, term, self.get_term(term)))
 
         # Domain ancillary-valued terms
         if field:
-            for term, key in sorted(self._domain_ancillaries.iteritems()):
+            for term, key in sorted(self.domain_ancillaries().iteritems()):
                 value = field.domain_ancillaries().get(self.get_term(term))
                 if value is not None:
                     value = 'Domain Ancillary: '+value.name(default=key)
@@ -155,7 +155,7 @@ reference object.
 
         # Coordinates 
         if field:
-            for key in sorted(self._coordinates):
+            for key in sorted(self.coordinates()):
                 coord = field.coordinates().get(key)
                 if coord is not None:
                     if isinstance(coord, DimensionCoordinate):
@@ -168,7 +168,7 @@ reference object.
 #                    string.append('{0}Coordinate = {1}'.format(indent1, coord))
                     string.append('{0}{1}'.format(indent1, coord))
         else:
-            for identifier in sorted(self._coordinates):
+            for identifier in sorted(self.coordinates()):
 #                string.append('{0}Coordinate = {1}'.format(indent1, identifier))
                 string.append('{0}{1}'.format(indent1, identifier))
             

@@ -81,37 +81,37 @@ modified, where appropriate, to reflect netCDF variable names.
     def del_axes(self):
         '''
 '''
-        return self._del_attribute('axes')
+        return self._del_component('axes', None)
     #--- End: def
     
     def del_method(self):
         '''
 '''
-        return self._del_attribute('method')
+        return self._del_component('method', None)
     #--- End: def
     
     def get_axes(self, *default):
         '''
 '''
-        return self._get_attribute('axes', *default)
+        return self._get_component('axes', None, *default)
     #--- End: def
 
     def get_method(self, *default):
         '''
         '''
-        return self._get_attribute('method', *default)
+        return self._get_component('method', None, *default)
     #--- End: def
     
     def has_axes(self):
         '''
 '''
-        return self._has_attribute('axes')
+        return self._has_component('axes', None)
     #--- End: def
 
     def has_method(self):
         '''
 '''
-        return self._has_attribute('method')
+        return self._has_component('method', None)
     #--- End: def
 
     def set_axes(self, value):
@@ -122,13 +122,13 @@ modified, where appropriate, to reflect netCDF variable names.
         else:
             value = tuple(value)
             
-        return self._set_attribute('axes', value)
+        return self._set_component('axes', None, value)
     #--- End: def
 
     def set_method(self, value):
         '''
 '''
-        return self._set_attribute('method', value)
+        return self._set_component('method', None, value)
     #--- End: def
 
 #--- End: class
