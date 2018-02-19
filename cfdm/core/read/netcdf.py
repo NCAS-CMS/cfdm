@@ -359,21 +359,28 @@ ancillaries, field ancillaries).
                         # coordinate bounds. If it is not right, then
                         # it can't be a bounds variable and so promote
                         # to an independent data variable
-                        bounds = attributes[ncvar][attr]
-                        if bounds in nc.variables:
-                            if nc.variables[bounds].ndim == nc.variables[ncvar].ndim + 1:
-                                variables.discard(bounds)
-                            else:
-                                del attributes[ncvar][attr]
-                                if verbose:
-                                    print(
-'WARNING: {0} has wrong number of dimensions'.format(attr))                                   
+                        bounds_ncvar = attributes[ncvar][attr]
+
+                        cf_compliant = self._check_bounds(nc, ncvar, bounds_ncvar)
+                        if cf_compliant:
+                            variables.discard(bounds_ncvar)
                         else:
-                            del attributes[ncvar][attr]
-                            
-                            if verbose:
-                                print(
-"WARNING: Missing bounds variable {!r} in {}".format(bounds, filename))
+                            del attributes[aux][attr]
+
+#                        if bounds in nc.variables:
+#                            if nc.variables[bounds].ndim == nc.variables[ncvar].ndim + 1:
+#                                variables.discard(bounds)
+#                            else:
+#                                del attributes[ncvar][attr]
+#                                if verbose:
+#                                    print(
+#'WARNING: {0} has wrong number of dimensions'.format(attr))                                   
+#                        else:
+#                            del attributes[ncvar][attr]
+#                            
+#                            if verbose:
+#                                print(
+#"WARNING: Missing bounds variable {!r} in {}".format(bounds, filename))
                     #--- End: for
     
                     # Remove domain ancillaries (unless they have been
@@ -430,20 +437,27 @@ ancillaries, field ancillaries).
                             # Check the dimensionality of the coordinate's
                             # bounds. If it is not right, then it can't be
                             # a bounds variable and so promote to an
-                            # independent data variable.
-                            bounds = attributes[aux][attr]
-                            if bounds in nc.variables:
-                                if nc.variables[bounds].ndim == nc.variables[aux].ndim+1:
-                                    variables.discard(bounds)
-                                else:
-                                    del attributes[aux][attr]
-                                            
-                                break
+                            # independent data variable.                            
+                            bounds_ncvar = attributes[aux][attr]
+
+                            cf_compliant = self._check_bounds(nc, ncvar, bounds_ncvar)
+                            if cf_compliant:
+                                variables.discard(bounds_ncvar)
                             else:
                                 del attributes[aux][attr]
-                                if verbose:
-                                    print(
-"WARNING: Missing bounds variable {0!r} in {1}".format(bounds, filename))
+                                
+#                            if bounds in nc.variables:
+#                                if nc.variables[bounds].ndim == nc.variables[aux].ndim+1:
+#                                    variables.discard(bounds)
+#                                else:
+#                                    del attributes[aux][attr]
+#                                            
+#                                break
+#                            else:
+#                                del attributes[aux][attr]
+#                                if verbose:
+#                                    print(
+#"WARNING: Missing bounds variable {0!r} in {1}".format(bounds, filename))
                 #--- End: for
             #--- End: if
             
@@ -517,6 +531,32 @@ ancillaries, field ancillaries).
         return fields_in_file
     #--- End: def
 
+    def _check_bounds(self, nc, coord_ncvar, bounds_ncvar):
+        '''
+        '''
+        messages = []
+        if bounds_ncvar not in nc.variables:            
+            messages.append('0')
+            return False
+        
+        c_ncdims = nc.variables[coord_ncvar].dimensions
+        b_ncdims = nc.variables[bounds_ncvar].dimensions
+
+        if len(b_ncdims) != len(c_ncdims) + 1:
+            messages.append('1')
+            return False
+
+        if set(c_ncdims) != set(b_ncdims[:len(b_ncdims)-len(c_ncdims)]):
+            messages.append('2')
+            return False
+
+        if messages:
+            dozzard.setdefault(bounds_ncvar, []).extend(messages)
+            return False
+
+        return True
+    #--- End: def
+    
     def close_file(self):
         '''Close the netCDF that has been read.
 
@@ -1387,7 +1427,6 @@ ancillaries, field ancillaries).
    
         if climatology:
             c.set_extent_parameter('climatology', True, copy=False)
-#            c.climatology = climatology
     
         data = self._set_Data(ncvar, c)
         c = self._set_data(c, data, copy=False)
@@ -1398,38 +1437,46 @@ ancillaries, field ancillaries).
         if ncbounds is None:
             bounds = None
         else:
-#            properties = attributes.get('ncbounds', None)
-#            if properties is None:
-#                bounds = self._Bounds()
-#            else:
-#                properties = properties.copy()
-            
-            properties = attributes[ncbounds].copy()
-            properties.pop('formula_terms', None)
-    
+            properties = attributes.get('ncbounds', {}).copy()
+            properties.pop('formula_terms', None)                
             bounds = self._Bounds(properties=properties, copy=False)
-
+                
             # Store the netCDF variable name
             bounds.set_ncvar(ncbounds)
-    
-            bounds_data = self._set_Data(ncbounds, bounds)
-            bounds = self._set_data(bounds, bounds_data, copy=False)
-    
-            # Make sure that the bounds dimensions are in the same order
-            # as its parent's dimensions
-            c_ndim = c.get_data().ndim
-            b_ndim = bounds.get_data().ndim
-            if b_ndim > c_ndim:
-                c_ncdims = nc.variables[ncvar].dimensions
-                b_ncdims = nc.variables[ncbounds].dimensions
-                if c_ncdims != b_ncdims[:c_ndim]:
-                    axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c_ndim]
-                            if ncdim in c_ncdims]
-                    if len(axes) == c_ndim:
-                        axes.extend(range(b_ndim - c_ndim, 0))
-                        bounds = self._transpose(bounds, axes=axes, copy=False)
-            #--- End: if
 
+            bounds_data = self._set_Data(ncbounds, bounds)
+            if bounds_data is None:
+                f.dozzard.setdefault(ncbounds, []).append(
+                    'Bounds variable is missing')
+            else:       
+                # Make sure that the bounds dimensions are in the same order
+                # as its parent's dimensions
+                c_ndim = data.ndim
+                b_ndim = bounds_data.ndim
+                cf_compliant = True
+                if b_ndim == c_ndim + 1:
+                    c_ncdims = nc.variables[ncvar].dimensions
+                    b_ncdims = nc.variables[ncbounds].dimensions
+                    if c_ncdims != b_ncdims[:c_ndim]:
+                        axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c_ndim]
+                                if ncdim in c_ncdims]
+                        if len(axes) == c_ndim:
+                            axes.extend(range(b_ndim - c_ndim, 0))
+                            bounds_data = self._transpose_data(bounds_data, axes=axes, copy=False)
+                        else:
+                            cf_compliant = False
+                    #--- End: if
+                else:
+                    cf_compliant = False    
+
+                if bounds_data is not None:
+                    bounds = self._set_data(bounds, bounds_data, copy=False)
+                    
+                if not cf_compliant:
+                    f.dozzard.setdefault(ncbounds, []).append(
+                        'Bounds variable has incompatible dimensions: {}'.format(tuple(b_ncdims)))
+            #--- End: if
+            
             c = self._set_bounds(c, bounds, copy=False)
         #--- End: if
     
@@ -1457,11 +1504,11 @@ ancillaries, field ancillaries).
         return construct
     #--- End: def
     
-    def _transpose(self, construct, axes=None, copy=True):
+    def _transpose_data(self, data, axes=None, copy=True):
         '''
         '''
-        construct = construct.tranpose(axes=axes, copy=copy)
-        return construct
+        data = data.tranpose(axes=axes, copy=copy)
+        return data
     #-- End: def
     
     def _create_array(self, ncvar, attributes):
@@ -1757,7 +1804,10 @@ Set the Data attribute of a variable.
         g = self.read_vars
         nc = g['nc']
         
-        ncvariable = nc.variables[ncvar]
+#        ncvariable = nc.variables[ncvar]
+        ncvariable = nc.variables.get(ncvar)
+        if ncvariable is None:
+            return None
         
         dtype = ncvariable.dtype
         if unpacked_dtype is not False:
