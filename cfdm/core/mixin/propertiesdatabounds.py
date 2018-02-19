@@ -149,6 +149,7 @@ x.__getitem__(indices) <==> x[indices]
         #-------------------------------------------------------------
         # Extent and topology properties
         # ------------------------------------------------------------
+        indent1 = '    ' * (_level + 1)
         for x in ['extent', 'topology']:
             parameters = getattr(self, x+'_parameters')()
             for name, parameter in sorted(parameters.items()):

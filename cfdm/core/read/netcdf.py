@@ -326,7 +326,9 @@ ancillaries, field ancillaries).
                     instance_ncdimension = None
             #--- End: if
             
-            # Remove dimension coordinates and their bounds
+            # ----------------------------------------------------
+            # Dimension coordinates and their bounds
+            # ----------------------------------------------------
             if ncvar in nc_dimensions:
     
                 if ncvar in variables:
@@ -348,25 +350,27 @@ ancillaries, field ancillaries).
     
                     for attr in ('bounds', 'climatology'):
                         if attr not in attributes[ncvar]:
-                            continue
+                           continue
     
                         if _debug:
-                            print '        Has bounds'
+                            print '        Has bounds/climatology'
                         
-                        # Check the dimensionality of the coordinate's
-                        # bounds. If it is not right, then it can't be a
-                        # bounds variable and so promote to an independent
-                        # data variable
+                        # Check the dimensionality of the dimension
+                        # coordinate bounds. If it is not right, then
+                        # it can't be a bounds variable and so promote
+                        # to an independent data variable
                         bounds = attributes[ncvar][attr]
                         if bounds in nc.variables:
                             if nc.variables[bounds].ndim == nc.variables[ncvar].ndim + 1:
                                 variables.discard(bounds)
                             else:
                                 del attributes[ncvar][attr]
-    
-                            break
+                                if verbose:
+                                    print(
+'WARNING: {0} has wrong number of dimensions'.format(attr))                                   
                         else:
                             del attributes[ncvar][attr]
+                            
                             if verbose:
                                 print(
 "WARNING: Missing bounds variable {!r} in {}".format(bounds, filename))
@@ -983,6 +987,7 @@ ancillaries, field ancillaries).
             
         f = self._Field(properties=properties, copy=False)
 
+        # Store the netCDF variable name
         f.set_ncvar(data_ncvar)
    
         f._global_attributes = tuple(g['global_attributes'])
@@ -1015,10 +1020,10 @@ ancillaries, field ancillaries).
                 if ncdim in dimension_coordinates:
                     coord = dimension_coordinates[ncdim].copy()
                 else:
-                    coord = self._create_bounded_item(ncdim,
-                                                      attributes, f,
-                                                      dimension=True,
-                                                      verbose=verbose)
+                    coord = self._create_bounded_construct(ncdim,
+                                                           attributes, f,
+                                                           dimension=True,
+                                                           verbose=verbose)
                     dimension_coordinates[ncdim] = coord
                 
                 domain_axis = self._DomainAxis(coord.get_data().size)
@@ -1100,10 +1105,10 @@ ancillaries, field ancillaries).
                 if ncvar in auxiliary_coordinates:
                     coord = auxiliary_coordinates[ncvar].copy()
                 else:
-                    coord = self._create_bounded_item(ncvar,
-                                                      attributes, f,
-                                                      auxiliary=True,
-                                                      verbose=verbose)
+                    coord = self._create_bounded_construct(ncvar,
+                                                           attributes, f,
+                                                           auxiliary=True,
+                                                           verbose=verbose)
                     auxiliary_coordinates[ncvar] = coord
                 #--- End: if
     
@@ -1200,12 +1205,12 @@ ancillaries, field ancillaries).
                         if bounds == ncvar:
                             bounds = None
         
-                        domain_anc = self._create_bounded_item(ncvar,
-                                                               attributes,
-                                                               f,
-                                                               domainancillary=True,
-                                                               bounds=bounds,
-                                                               verbose=verbose)
+                        domain_anc = self._create_bounded_construct(ncvar,
+                                                                    attributes,
+                                                                    f,
+                                                                    domainancillary=True,
+                                                                    bounds=bounds,
+                                                                    verbose=verbose)
                     #--- End: if
                     
                     # Insert domain ancillary
@@ -1311,10 +1316,10 @@ ancillaries, field ancillaries).
         return f
     #--- End: def
     
-    def _create_bounded_item(self, ncvar, attributes, f,
-                             dimension=False, auxiliary=False,
-                             domainancillary=False, bounds=None,
-                             verbose=False):
+    def _create_bounded_construct(self, ncvar, attributes, f,
+                                  dimension=False, auxiliary=False,
+                                  domainancillary=False, bounds=None,
+                                  verbose=False):
         '''Create a variable which might have bounds.
     
 :Parameters:
@@ -1326,6 +1331,7 @@ ancillaries, field ancillaries).
         Dictionary of the variable's netCDF attributes.
 
     f: `Field`
+        The parent field.
 
     dimension: `bool`, optional
         If True then a dimension coordinate is created.
@@ -1351,13 +1357,14 @@ ancillaries, field ancillaries).
     
         if bounds is not None:
             properties['bounds'] = bounds
-    
+
+        climatology = False
         ncbounds = properties.pop('bounds', None)
         if ncbounds is None:
             ncbounds = properties.pop('climatology', None)
-            climatology = True
-        else:
-            climatology = False
+            if ncbounds is not None:
+                climatology = True
+        #--- End: if
     
         if dimension:
             c = self._DimensionCoordinate(properties=properties)
@@ -1373,14 +1380,14 @@ ancillaries, field ancillaries).
             c = self._DomainAncillary(properties=properties)
         else:
             raise ValueError(
-"Must set one of the dimension, auxiliary or domainancillary parmaeters to True")
+"Must set one of the dimension, auxiliary or domainancillary parameters to True")
 
-        print 'NCVAR', ncvar
+        # Store the netCDF variable name
         c.set_ncvar(ncvar)
-        print 'PPPPPPPPPPPPP',        c.get_ncvar()
    
         if climatology:
-            c.climatology = climatology
+            c.set_extent_parameter('climatology', True, copy=False)
+#            c.climatology = climatology
     
         data = self._set_Data(ncvar, c)
         c = self._set_data(c, data, copy=False)
@@ -1391,11 +1398,18 @@ ancillaries, field ancillaries).
         if ncbounds is None:
             bounds = None
         else:
+#            properties = attributes.get('ncbounds', None)
+#            if properties is None:
+#                bounds = self._Bounds()
+#            else:
+#                properties = properties.copy()
+            
             properties = attributes[ncbounds].copy()
             properties.pop('formula_terms', None)
     
             bounds = self._Bounds(properties=properties, copy=False)
 
+            # Store the netCDF variable name
             bounds.set_ncvar(ncbounds)
     
             bounds_data = self._set_Data(ncbounds, bounds)
@@ -1495,6 +1509,8 @@ ancillaries, field ancillaries).
         data = self._set_Data(ncvar, field_ancillary)
     
         field_ancillary = self._set_data(field_ancillary, data, copy=False)
+
+        # Store the netCDF variable name
         field_ancillary.set_ncvar(ncvar)
     
         return field_ancillary
@@ -1523,6 +1539,8 @@ ancillaries, field ancillaries).
         data = self._set_Data(ncvar, cell_measure)
     
         cell_measure = self._set_data(cell_measure, data, copy=False)
+
+        # Store the netCDF variable name
         cell_measure.set_ncvar(ncvar)
     
         return cell_measure
@@ -1657,6 +1675,8 @@ ancillaries, field ancillaries).
                 coordref = self._CoordinateReference(properties=props,
                                                      coordinates=coordinates,
                                                      parameters=parameters)
+
+                # Store the netCDF variable name
                 coordref.set_ncvar(grid_mapping)
 
                 f.set_coordinate_reference(coordref, copy=False)

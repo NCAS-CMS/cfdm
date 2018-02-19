@@ -68,28 +68,28 @@ All components of a variable are optional.
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
-    def _del_component(self, attr, key):
+    def _del_component(self, component, key):
         '''
         '''
         if key is None:            
-            return self._components.pop(attr, None)
+            return self._components.pop(component, None)
         else:
-            return self._components[attr].pop(attr, None)
+            return self._components[component].pop(key, None)
     #--- End: def
 
-    def _del_extra(self, attr):
+    def _del_extra(self, extra):
         '''
         '''
-        return self._extra.pop(attr, None)
+        return self._extra.pop(extra, None)
     #--- End: def
 
-    def _get_component(self, attr, key, *default):
+    def _get_component(self, component, key, *default):
         '''
         '''
         if key is None:
-            value = self._components.get(attr)
+            value = self._components.get(component)
         else:
-            value = self._components[attr].get(key)
+            value = self._components[component].get(key)
         
         if value is None:
             if default:
@@ -99,47 +99,47 @@ All components of a variable are optional.
         return value
     #--- End: def
 
-    def _get_extra(self, attr, *default):
+    def _get_extra(self, extra, *default):
         '''
         '''
-        value = self._extra.get(attr)
+        value = self._extra.get(extra)
         
         if value is None:
             if default:
                 return default[0]
-            raise AttributeError("Can't get non-existent attribute {!r}".format(attr))
+            raise AttributeError("Can't get non-existent attribute {!r}".format(extra))
 
         return value
     #--- End: def
 
-    def _has_component(self, attr, key):
+    def _has_component(self, component, key):
         '''
         '''
         if key is None:
-            return attr in self._components
+            return component in self._components
         else:
-            return key in self._components[attr]
+            return key in self._components[component]
     #--- End: def
 
-    def _has_extra(self, attr, key):
+    def _has_extra(self, extra):
         '''
         '''
-        return attr in self._extra
+        return extra in self._extra
     #--- End: def
 
-    def _set_component(self, attr, key, value):
+    def _set_component(self, component, key, value):
         '''
         '''
         if key is None:
-            self._components[attr] = value
+            self._components[component] = value
         else:
-            self._components[attr][key] = value
+            self._components[component][key] = value
     #--- End: def
 
-    def _set_extra(self, attr, value):
+    def _set_extra(self, extra, value):
         '''
         '''
-        self._extra[attr] = value
+        self._extra[extra] = value
     #--- End: def
 
     def copy(self, data=True):

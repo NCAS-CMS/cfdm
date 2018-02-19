@@ -224,9 +224,15 @@ True
 
     def get_data(self, *default):
         '''
+:Parameters:
+
+    default: optional
+
         '''
         data = self._get_component('data', None, None)
         if data is not None:
+            data.set_units(self.get_property('units', None))
+            data.set_calendar(self.get_property('calendar', None))
             return data
 
         if default:
@@ -271,7 +277,7 @@ If present, the data array is stored in the `data` attribute.
         '''
         if copy:
             data = data.copy()
-
+       
         self._set_component('data', None, data)
     #--- End: def
 
