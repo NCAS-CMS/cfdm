@@ -2017,11 +2017,24 @@ Set the Data attribute of a variable.
     #--- End: def
 
     def _create_Data(self, array=None, units=None, calendar=None,
-                          fill_value=None):
+                          fill_value=None, netcdf_variable=None):
         '''
         '''
-        return self._Data(array, units=units, calendar=calendar,
-                          fill_value=fill_value)
+#        try:
+#            units = ncvariable.getncattr('units')
+#        except AttributeError:
+#            units = None
+#            
+#        try:
+#            calendar = ncvariable.getncattr('calendar')
+#        except AttributeError:
+#            calendar = None
+#            
+#        # Find the fill_value for the data
+#        if fill_value is None:
+#            fill_value = construct.fill_value()
+            
+        return self._Data(array)
     #--- End: def
     
     
