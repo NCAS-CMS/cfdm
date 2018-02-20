@@ -245,6 +245,9 @@ True
         if atol is None:
             atol = ATOL()
 
+        # ------------------------------------------------------------
+        # Check the properties
+        # ------------------------------------------------------------
         if not super(PropertiesData, self).equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,

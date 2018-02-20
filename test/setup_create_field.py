@@ -192,7 +192,7 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
         g.dump()
 
-        print 'g.properties() =',g.properties()
+#        print 'g.properties() =',g.properties()
         print
         print
         
