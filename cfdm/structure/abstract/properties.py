@@ -2,6 +2,8 @@ import abc
 
 from copy import deepcopy
 
+#from ..collection import Collection
+
 # ====================================================================
 #
 
@@ -21,6 +23,10 @@ All components of a variable are optional.
 '''
     __metaclass__ = abc.ABCMeta
 
+    _special_properties = ()
+
+#    _Collection = Collection
+    
     def __init__(self, properties={}, source=None, copy=True):
         '''**Initialization**
 
@@ -33,17 +39,27 @@ All components of a variable are optional.
     copy: `bool`, optional
 
         '''
-        self._components = {'properties': {}}
-        self._extra      = {}
+#        self._components = {'properties': Collection()}
+        self._components1 = {'properties': {}}
+        self._components2 = {}
+        self._components3 = {}
+#        self._extra       = {}
       
         if source is not None:
-            self._extra = source._extra.copy()
+#            self._extra = source._extra.copy()
                 
             p = source.properties(copy=False)
             if properties:
                 p.update(properties)
 
             properties = p
+
+            self._components2 = source._components2.copy()
+            if copy:
+                for key, value in self._components2:
+                    self._components2[key] = value.copy()
+
+            self._components3 = source._components3.copy()
         #--- End: if
 
         if properties:
@@ -72,24 +88,24 @@ All components of a variable are optional.
         '''
         '''
         if key is None:            
-            return self._components.pop(component, None)
+            return self._components1.pop(component, None)
         else:
-            return self._components[component].pop(key, None)
+            return self._components1[component].pop(key, None)
     #--- End: def
 
-    def _del_extra(self, extra):
+    def _del_component3(self, component3):
         '''
         '''
-        return self._extra.pop(extra, None)
+        return self._components3.pop(component3, None)
     #--- End: def
 
     def _get_component(self, component, key, *default):
         '''
         '''
         if key is None:
-            value = self._components.get(component)
+            value = self._components1.get(component)
         else:
-            value = self._components[component].get(key)
+            value = self._components1[component].get(key)
         
         if value is None:
             if default:
@@ -99,15 +115,15 @@ All components of a variable are optional.
         return value
     #--- End: def
 
-    def _get_extra(self, extra, *default):
+    def _get_component3(self, component3, *default):
         '''
         '''
-        value = self._extra.get(extra)
+        value = self._components3.get(component3)
         
         if value is None:
             if default:
                 return default[0]
-            raise AttributeError("Can't get non-existent attribute {!r}".format(extra))
+            raise AttributeError("Can't get non-existent attribute {!r}".format(component3))
 
         return value
     #--- End: def
@@ -116,30 +132,30 @@ All components of a variable are optional.
         '''
         '''
         if key is None:
-            return component in self._components
+            return component in self._components1
         else:
-            return key in self._components[component]
+            return key in self._components1[component]
     #--- End: def
 
-    def _has_extra(self, extra):
+    def _has_component3(self, component3):
         '''
         '''
-        return extra in self._extra
+        return component3 in self._components3
     #--- End: def
 
     def _set_component(self, component, key, value):
         '''
         '''
         if key is None:
-            self._components[component] = value
+            self._components1[component] = value
         else:
-            self._components[component][key] = value
+            self._components1[component][key] = value
     #--- End: def
 
-    def _set_extra(self, extra, value):
+    def _set_component3(self, component3, value):
         '''
         '''
-        self._extra[extra] = value
+        self._components3[component3] = value
     #--- End: def
 
     def copy(self, data=True):
@@ -311,9 +327,16 @@ Return True if a CF property exists, otherise False.
            self._set_component('properties', None, existing_properties)
         
         out = existing_properties.copy()
-                    
+
+        for prop in self._special_properties:
+            value = getattr(self, 'get_'+prop)(None)
+            if value is not None:
+                out[prop] = value
+        
         if clear:
             existing_properties.clear()
+            for prop in self._special_properties:
+                getattr(self, 'del_'+prop)
 
         if not props:
             return out
@@ -352,7 +375,6 @@ Return True if a CF property exists, otherise False.
      `None`
 
         '''
-        #        self._private['properties'][prop] = value
         self._set_component('properties', prop, value)
     #--- End: def
 

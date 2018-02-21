@@ -2,6 +2,8 @@ import abc
 
 from ..structure import DomainAxis as structure_DomainAxis
 
+from .functions import equals
+
 # ====================================================================
 #
 # Domain axis object
@@ -22,6 +24,12 @@ to the order of the elements.
 
     '''
     __metaclass__ = abc.ABCMeta
+
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        obj._equals = equals
+        return obj
+    #--- End: def
 
     def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**
@@ -99,19 +107,19 @@ to the order of the elements.
     def get_ncdim(self, *default):
         '''
         '''
-        return self._get_extra('ncdim', *default)
+        return self._get_component3('ncdim', *default)
     #--- End: def
 
     def set_ncdim(self, ncdim):
         '''
         '''
-        self._set_extra('ncdim', ncdim)
+        self._set_component3('ncdim', ncdim)
     #--- End: def
 
     def del_ncdim(self):
         '''
         '''
-        return self._del_extra('ncdim')
+        return self._del_component3('ncdim')
     #--- End: def
 
 #--- End: class

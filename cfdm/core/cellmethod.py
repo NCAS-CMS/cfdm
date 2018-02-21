@@ -181,32 +181,32 @@ corresponding dimension or dimensions.
     def del_error(self):
         '''
         '''
-        return self._del_extra('error')
+        return self._del_component3('error')
     
     def get_error(self, *default):
         '''
         '''
-        return self._get_extra('error', *default)
+        return self._get_component3('error', *default)
     
     def set_error(self, value):
         '''
         '''
-        self._set_extra('error', value)
+        self._set_component3('error', value)
     
     def del_string(self):
         '''
         '''
-        return self._del_extra('string')
+        return self._del_component3('string')
     
     def get_string(self, *default):
         '''
         '''
-        return self._get_extra('string', *default)
+        return self._get_component3('string', *default)
     
     def set_string(self, value):
         '''
         '''
-        self._set_extra('string', value)
+        self._set_component3('string', value)
     
     def sorted(self, argsort=None):
         '''

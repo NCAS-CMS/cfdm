@@ -5,7 +5,7 @@ import mixin
 from .constructs import Constructs
 #from .domain      import Domain
 from .functions import RTOL, ATOL
-from .functions import equals as cfdm_equals
+#from .functions import equals as _equals
 
 from ..structure import Field as structure_Field
 
@@ -107,8 +107,8 @@ Field objects are picklable.
                                     source=source, copy=copy,
                                     _use_data=_use_data) 
                
-        self._set_extra('unlimited', None)
-        self._set_extra('HDFgubbins', None)
+        self._set_component3('unlimited', None)
+        self._set_component3('HDFgubbins', None)
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
@@ -596,14 +596,20 @@ last values.
         # Title
         string = [line, indent0+_title, line]
 
+        axis_names = self._axis_names_sizes()
+
+        # Domain axes
+        axes = self._dump_axes(axis_names, display=False, _level=_level)
+        if axes:
+            string.append(axes)
+             
         # Simple properties
         properties = self.properties()
         if properties:
+            string.append('')
             string.append(
                 self._dump_properties(_level=_level))
 
-        axis_names = self._axis_names_sizes()
-           
         # Data
         data = self.get_data(None)
         if data is not None:
@@ -614,16 +620,14 @@ last values.
             if self.isreftime:
                 data = data.asdata(data.dtarray)
                 
-            string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
-                                                           ', '.join(x),
-                                                           str(data))))
+#            string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
+#                                                           ', '.join(x),
+#                                                           str(data))))
+            string.append('{0}Data({1}) = {2}'.format(indent0,
+                                                      ', '.join(x),
+                                                      str(data)))
             
         # Cell methods
-        # Axes
-        axes = self._dump_axes(axis_names, display=False, _level=_level)
-        if axes:
-            string.extend(('', axes))
-           
         cell_methods = self.cell_methods()
         if cell_methods:
             string.append('')
@@ -763,13 +767,13 @@ False
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not cfdm_equals(self._get_constructs(),
-                           other._get_constructs(),
-                           rtol=rtol, atol=atol,
-                           traceback=traceback,
-                           ignore_data_type=ignore_data_type,
-                           ignore_construct_type=ignore_construct_type,
-                           ignore_fill_value=ignore_fill_value):
+        if not self._get_constructs().equals(
+                other._get_constructs(),
+                rtol=rtol, atol=atol,
+                traceback=traceback,
+                ignore_data_type=ignore_data_type,
+                ignore_construct_type=ignore_construct_type,
+                ignore_fill_value=ignore_fill_value):
             if traceback:
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))

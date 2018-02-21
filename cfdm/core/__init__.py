@@ -32,7 +32,6 @@ from .functions           import *
 from .read.read           import read
 from .write.write         import write
 from .data.data           import Data
-from .data.dataunits      import DataUnits
 from .data.netcdfarray    import NetCDF
 
 from .auxiliarycoordinate import AuxiliaryCoordinate

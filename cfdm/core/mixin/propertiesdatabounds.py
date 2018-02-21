@@ -3,7 +3,7 @@ import abc
 from .propertiesdata import PropertiesData
 
 from ..functions import RTOL, ATOL
-from ..functions import equals as cfdm_equals
+#from ..functions import equals as cfdm_equals
 
 
 # ====================================================================
@@ -225,9 +225,9 @@ x.__getitem__(indices) <==> x[indices]
             for name, x in sorted(self_parameters.iteritems()):
                 y = other_parameters[name]
                 
-                if not cfdm_equals(x, y, rtol=rtol, atol=atol,
-                                 ignore_fill_value=ignore_fill_value,
-                                 traceback=traceback):
+                if not self._equals(x, y, rtol=rtol, atol=atol,
+                                    ignore_fill_value=ignore_fill_value,
+                                    traceback=traceback):
                     if traceback:
                         print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
                             self.__class__.__name__, prop, x, y))
@@ -244,12 +244,12 @@ x.__getitem__(indices) <==> x[indices]
             return False
                 
         if self_has_bounds:            
-            if not cfdm_equals(self.get_bounds(), other.get_bounds(),
-                             rtol=rtol, atol=atol,
-                             traceback=traceback,
-                             ignore_data_type=ignore_data_type,
-                             ignore_construct_type=ignore_construct_type,
-                             ignore_fill_value=ignore_fill_value):
+            if not self.get_bounds().equals(other.get_bounds(),
+                                            rtol=rtol, atol=atol,
+                                            traceback=traceback,
+                                            ignore_data_type=ignore_data_type,
+                                            ignore_construct_type=ignore_construct_type,
+                                            ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False
@@ -271,11 +271,11 @@ x.__getitem__(indices) <==> x[indices]
             for name, x in sorted(self_ancillary_arrays.items()):
                 y = other_arrays[name]
                 
-                if not cfdm_equals(x, y, rtol=rtol, atol=atol,
-                                 traceback=traceback,
-                                 ignore_data_type=ignore_data_type,
-                                 ignore_construct_type=ignore_construct_type,
-                                 ignore_fill_value=ignore_fill_value):
+                if not x.equals(y, rtol=rtol, atol=atol,
+                                traceback=traceback,
+                                ignore_data_type=ignore_data_type,
+                                ignore_construct_type=ignore_construct_type,
+                                ignore_fill_value=ignore_fill_value):
                     if traceback:
                         print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
                     return False

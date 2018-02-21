@@ -46,6 +46,8 @@ All components of a variable are optional.
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
 
+#        self._components['data'] = Component()
+        
         if source is not None:
             if _use_data and data is None:
                 data = source.get_data(None)
@@ -231,8 +233,6 @@ True
         '''
         data = self._get_component('data', None, None)
         if data is not None:
-#            data.set_units(self.get_property('units', None))
-#            data.set_calendar(self.get_property('calendar', None))
             return data
 
         if default:
@@ -277,7 +277,10 @@ If present, the data array is stored in the `data` attribute.
         '''
         if copy:
             data = data.copy()
-       
+
+        data.set_units(None)
+        data.set_calendar(None)
+        
         self._set_component('data', None, data)
     #--- End: def
 

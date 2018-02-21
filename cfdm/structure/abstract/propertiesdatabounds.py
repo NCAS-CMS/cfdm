@@ -114,10 +114,10 @@ domain ancillary objects.
                 for key, value in topology_arrays.items():
                     topology_arrays[key] = value.copy(data=_use_data)
         
-        self._set_component('extent_arrays',      None, extent_arrays)
-        self._set_component('extent_parameters',  None, extent_parameters)
-        self._set_component('topology_arrays',    None, topology_arrays)
-        self._set_component('topology_parameters',None, topology_parameters)
+        self._set_component('extent_arrays',       None, extent_arrays)
+        self._set_component('extent_parameters',   None, extent_parameters)
+        self._set_component('topology_arrays',     None, topology_arrays)
+        self._set_component('topology_parameters', None, topology_parameters)
     #--- End: def
 
     def del_bounds(self):

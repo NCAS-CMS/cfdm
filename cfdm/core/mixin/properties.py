@@ -1,8 +1,8 @@
 import abc
 import textwrap
 
-from ..functions import RTOL, ATOL
-from ..functions import equals as cfdm_equals
+import numpy
+import sys
 
 # ====================================================================
 #
@@ -23,6 +23,60 @@ All components of a variable are optional.
 '''
     __metaclass__ = abc.ABCMeta
 
+    @classmethod
+    def _equals(self, x, y, rtol=None, atol=None, **kwargs):
+        '''
+        '''
+        if rtol is None:
+            rtol = sys.float_info.epsilon
+        if atol is None:
+            atol = sys.float_info.epsilon
+
+        eq = getattr(x, 'equals', None)
+        if callable(eq):
+            # x has a callable equals method
+            return eq(y, rtol=rtol, atol=atol, **kwargs)
+        
+        eq = getattr(y, 'equals', None)
+        if callable(eq):
+            # y has a callable equals method
+            return eq(x, rtol=rtol, atol=atol, **kwargs)
+        
+        if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
+            if numpy.shape(x) != numpy.shape(y):
+                return False
+            
+            # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
+   
+            x_is_masked = numpy.ma.isMA(x)
+            y_is_masked = numpy.ma.isMA(y)
+            if not (x_is_masked or y_is_masked):
+                try:            
+                    return numpy.allclose(x, y, rtol=rtol, atol=atol)
+                except (IndexError, NotImplementedError, TypeError):
+                    return numpy.all(x == y)
+            else:
+                if x_is_masked and y_is_masked:
+                    if (x.mask != y.mask).any():
+                        return False
+                else:
+                    return False
+
+                try:
+                    return numpy.ma.allclose(x, y, rtol=rtol, atol=atol)
+                except (IndexError, NotImplementedError, TypeError):
+                    out = numpy.ma.all(x == y)
+                    if out is numpy.ma.masked:
+                        return True
+                    else:
+                        return out
+                
+#            return _numpy_allclose(x, y, rtol=rtol, atol=atol)
+
+        else:
+            return x == y
+    #--- End: def
+    
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
         '''
@@ -70,13 +124,12 @@ All components of a variable are optional.
     def del_ncvar(self):
         '''
         '''        
-        return self._del_extra('ncvar')
+        return self._del_component3('ncvar')
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False,
-               _extra=()):
+               ignore_properties=(), ignore_construct_type=False):
         '''
         '''
         # Check for object identity
@@ -97,6 +150,9 @@ All components of a variable are optional.
         if ignore_fill_value:
             ignore_properties += ('_FillValue', 'missing_value')
 
+
+        
+            
         self_properties  = self.properties()
         other_properties = other.properties()
 
@@ -121,10 +177,33 @@ All components of a variable are optional.
         for prop, x in self_properties.iteritems():
             y = other_properties[prop]
 
-            if not cfdm_equals(x, y, rtol=rtol, atol=atol,
-                               ignore_fill_value=ignore_fill_value,
-                               ignore_data_type=ignore_data_type,
-                               traceback=traceback):
+#            if not cfdm_equals(x, y, rtol=rtol, atol=atol,
+            if not self._equals(x, y,
+                                rtol=rtol, atol=atol,
+                                ignore_fill_value=ignore_fill_value,
+                                ignore_data_type=ignore_data_type,
+                                traceback=traceback):
+                if traceback:
+                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+                        self.__class__.__name__, prop, x, y))
+                return False
+        #--- End: for
+
+        if set(self._components2) != set(other._components2):
+            if traceback:
+                print("{0}: Different properties 2: {1}, {2}".format( 
+                    self.__class__.__name__,
+                    sorted(self._components2), sorted(other._components2)))
+            return False
+
+        
+        for key, x in self._components2.iteritems():
+            y = other._components2[key]
+            if not self._equals(x, y,
+                                rtol=rtol, atol=atol,
+                                ignore_fill_value=ignore_fill_value,
+                                ignore_data_type=ignore_data_type,
+                                traceback=traceback):
                 if traceback:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(
                         self.__class__.__name__, prop, x, y))
@@ -137,13 +216,13 @@ All components of a variable are optional.
     def get_ncvar(self, *default):
         '''
         '''        
-        return self._get_extra('ncvar', *default)
+        return self._get_component3('ncvar', *default)
     #--- End: def
 
     def set_ncvar(self, value):
         '''
         '''        
-        return self._set_extra('ncvar', value)
+        return self._set_component3('ncvar', value)
     #--- End: def
 
 #--- End: class

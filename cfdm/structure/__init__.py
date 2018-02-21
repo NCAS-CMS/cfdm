@@ -25,6 +25,7 @@ from .coordinateancillary import CoordinateAncillary
 from .data.data           import Data
 from .data.dataunits      import DataUnits
 from .domain              import Domain
+from .container import Collection
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure
