@@ -23,6 +23,7 @@ from .constructs          import Constructs
 from .coordinate          import Coordinate
 from .coordinateancillary import CoordinateAncillary
 from .data.data           import Data
+from .data.dataunits      import DataUnits
 from .domain              import Domain
 
 from .auxiliarycoordinate import AuxiliaryCoordinate

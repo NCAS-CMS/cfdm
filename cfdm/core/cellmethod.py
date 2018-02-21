@@ -355,16 +355,16 @@ Cell methods    : time: minimum within years
                             else:
                                 raise ValueError("{}: {}".format(message, string))
                         #---End: try
-                        
+
                         try:
-                            intervals.append(cls._Data(parsed_interval, units))
+                            intervals.append(cm._Data(parsed_interval, units=units))
                         except:
                             message = "Unparseable cell method interval"
                             if allow_error:
                                 cm = cls()
                                 cm.set_string(string)
                                 cm.set_error(message)
-                                return [out]
+                                return [cm]
                             else:
                                 raise ValueError("{}: {}".format(message, string))
                         #---End: try

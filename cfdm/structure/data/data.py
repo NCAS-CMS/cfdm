@@ -310,11 +310,11 @@ None
 >>> e = d.copy()
 
         '''
-        return type(self)(data=self._get_master_array().copy(),
-                          units=self.get_units(None),
-                          calendar=self.get_calendar(None),
-                          fill_value=self.get_fill_value(None))
-    #--- End: def
+        return type(self)(source=self, copy=True) #data=self._get_master_array().copy(),
+#                          units=self.get_units(None),
+#                          calendar=self.get_calendar(None),
+#                          fill_value=self.get_fill_value(None))
+#    #--- End: def
 
     def get_array(self):
         '''A numpy array copy the data.

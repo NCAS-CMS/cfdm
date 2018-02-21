@@ -59,14 +59,10 @@ class create_fieldTest(unittest.TestCase):
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
         aux4.set_property('standard_name', 'greek_letters')
 
-        print 'aux4 array=', aux4.get_array()
-        print '999999999', str(aux4.get_data()), '44444444444'
-        
         # Cell measures
         msr0 = cfdm.CellMeasure(
             data=cfdm.Data(1+numpy.arange(90.).reshape(9, 10)*1234))
         msr0.set_measure('area')
-        print 'POOOOOOOOOOOOOOOOO', msr0.get_measure(None)
         msr0.set_property('units', 'km2')
         
         # Data          
@@ -76,7 +72,7 @@ class create_fieldTest(unittest.TestCase):
         
         f = cfdm.Field(properties=properties)
         f.set_property('standard_name', 'eastward_wind')
-        print '{{{{{{{{{{{{{', repr(        cfdm.DomainAxis(9))
+
         axisX = f.set_domain_axis(cfdm.DomainAxis(9))
         axisY = f.set_domain_axis(cfdm.DomainAxis(10))
         axisZ = f.set_domain_axis(cfdm.DomainAxis(1))
@@ -150,7 +146,7 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        for cm in cfdm.CellMethod.parse(axisX+': mean '+axisY+': max'):
+        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment: ok) '+axisY+': max where sea'):
             f.set_cell_method(cm)
 
         print repr(f)
@@ -160,51 +156,23 @@ class create_fieldTest(unittest.TestCase):
         
         
         f.dump()
-#        print f
-        # Write the file, and read it in
-#        print f.shape
- 
-#        print 'MADE:'
-#        print f.Items._axes
-#        print '============================'
+
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
-#        g[0].dump()
-#        print '\n GGGG =============================================='
-#        print f
-#        print g
-#        r =    g[0].item('atmos', role='r')
-#        print  r.items()
-#        print g.dump()
-#        print 'GGGG =============================================='
-
-
 
         self.assertTrue(len(g) == 1)
 
         g = g[0].squeeze(copy=False)
         
-        
-        #        print f
-##        print g
-#        print f.items()
-#        f.dump()
         g.dump()
 
-#        print 'g.properties() =',g.properties()
-        print
-        print
         
         self.assertTrue(set(f.constructs()) == set(g.constructs()))
-
-#        for key in sorted(f.items().keys()):
-#            print key, repr(f.item(key))
-#            print '    ', repr(g.item(key))
         
+        self.assertTrue(g.equals(g.copy(), traceback=True), "Field not equal to a copy of itself")
         self.assertTrue(g.equals(f, traceback=True), "Field not equal to itself read back in")
-#        x = g.equals(f, traceback=True)
-#        print 'DONE', repr(x)
+
         
         x = g.dump(display=False)
         x = f.dump(display=False)

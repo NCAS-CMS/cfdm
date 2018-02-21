@@ -231,8 +231,8 @@ True
         '''
         data = self._get_component('data', None, None)
         if data is not None:
-            data.set_units(self.get_property('units', None))
-            data.set_calendar(self.get_property('calendar', None))
+#            data.set_units(self.get_property('units', None))
+#            data.set_calendar(self.get_property('calendar', None))
             return data
 
         if default:
