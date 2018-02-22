@@ -4,7 +4,7 @@ import mixin
 
 from ..structure import FieldAncillary as structure_FieldAncillary
 
-class FieldAncillary(structure_FieldAncillary, mixin.PropertiesData):
+class FieldAncillary(mixin.PropertiesData, structure_FieldAncillary):
     '''A CF field ancillary construct.
     '''
     __metaclass__ = abc.ABCMeta

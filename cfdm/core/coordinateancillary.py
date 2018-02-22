@@ -10,7 +10,7 @@ from ..structure import CoordinateAncillary as structure_CoordinateAncillary
 #
 # ====================================================================
 
-class CoordinateAncillary(structure_CoordinateAncillary, mixin.PropertiesData):
+class CoordinateAncillary(mixin.PropertiesData, structure_CoordinateAncillary):
     '''
     '''
     __metaclass__ = abc.ABCMeta

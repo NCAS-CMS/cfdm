@@ -1,8 +1,5 @@
 import abc
 
-from ..functions import RTOL, ATOL
-#from ..functions import equals as cfdm_equals
-
 from .properties import Properties
 
 # ====================================================================
@@ -240,11 +237,6 @@ False
 True
 
 '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
         # ------------------------------------------------------------
         # Check the properties
         # ------------------------------------------------------------
@@ -269,11 +261,11 @@ True
             return False
             
         if self.has_data():
-            if not self.get_data().equals(other.get_data(),
-                                          rtol=rtol, atol=atol,
-                                          traceback=traceback,
-                                          ignore_data_type=ignore_data_type,
-                                          ignore_fill_value=ignore_fill_value):
+            if not self._equals(self.get_data(), other.get_data(),
+                                rtol=rtol, atol=atol,
+                                traceback=traceback,
+                                ignore_data_type=ignore_data_type,
+                                ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print("{0}: Different data".format(self.__class__.__name__))
                 return False

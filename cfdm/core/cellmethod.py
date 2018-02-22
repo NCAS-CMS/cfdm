@@ -6,8 +6,6 @@ from re  import search       as re_search
 
 import mixin
 
-from .functions import equals
-
 from .data.data import Data
 
 from ..structure import CellMethod as structure_CellMethod
@@ -18,7 +16,7 @@ from ..structure import CellMethod as structure_CellMethod
 #
 # ====================================================================
 
-class CellMethod(structure_CellMethod, mixin.Properties):
+class CellMethod(mixin.Properties, structure_CellMethod):
     '''A cell method construct od the CF data model.
 
 Cell method constructs describe how the field construct's cell values
@@ -181,32 +179,32 @@ corresponding dimension or dimensions.
     def del_error(self):
         '''
         '''
-        return self._del_component3('error')
+        return self._del_component(4, 'error')
     
     def get_error(self, *default):
         '''
         '''
-        return self._get_component3('error', *default)
+        return self._get_component(4, 'error', None, *default)
     
     def set_error(self, value):
         '''
         '''
-        self._set_component3('error', value)
+        self._set_component(4, 'error', None, value)
     
     def del_string(self):
         '''
         '''
-        return self._del_component3('string')
+        return self._del_component(4, 'string')
     
     def get_string(self, *default):
         '''
         '''
-        return self._get_component3('string', *default)
+        return self._get_component(4, 'string', None, *default)
     
     def set_string(self, value):
         '''
         '''
-        self._set_component3('string', value)
+        self._set_component(4, 'string', None, value)
     
     def sorted(self, argsort=None):
         '''
@@ -449,11 +447,6 @@ The `!axes` attribute is ignored in the comparison.
 :Examples:
 
 '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
         if not super(CellMethod, self).equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
@@ -486,7 +479,8 @@ The `!axes` attribute is ignored in the comparison.
             #--- End: if
             
             for data0, data1 in zip(self_interval, other_interval):
-                if not data0.equals(data1, rtol=rtol, atol=atol,
+                if not self._equals(data0, data1,
+                                    rtol=rtol, atol=atol,
                                     ignore_data_type=ignore_data_type,
                                     ignore_fill_value=ignore_fill_value,
                                     traceback=traceback):

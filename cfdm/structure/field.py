@@ -121,7 +121,7 @@ Field objects are picklable.
                 ordered_constructs=('cellmethod',)
             )
 
-        self._set_component('constructs', None, constructs)
+        self._set_component(1, 'constructs', None, constructs)
 
         if data is not None:
             self.set_data(data, data_axes, copy=copy)
@@ -142,7 +142,7 @@ Field objects are picklable.
 .. versionadded:: 1.6
         
         '''
-        return self._get_component('constructs', None, *default)
+        return self._get_component(1, 'constructs', None, *default)
     #--- End: def
     
 #    def _set_constructs(self, constructs, copy=True):
@@ -235,7 +235,7 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
     def del_data_axes(self):
         '''
         '''
-        return self._del_component('data_axes', None)
+        return self._del_component(1, 'data_axes')
     #--- End: def
       
     def get_construct(self, key, *default):
@@ -275,7 +275,7 @@ None
 []
 
         '''    
-        return self._get_component('data_axes', None, *default)
+        return self._get_component(1, 'data_axes', None, *default)
     #--- End: def
     
     def dimension_coordinates(self, copy=False):
@@ -493,7 +493,7 @@ ValueError: Can't initialize data: Data already exists
             if axis not in domain_axes:
                 raise ValueError("asdajns dpunpuewnd p9wun lun 0[9io3jed pjn j nn jk")
             
-        self._set_component('data_axes', None, tuple(value))
+        self._set_component(1, 'data_axes', None, tuple(value))
     #--- End: def
     
 #    def cell_methods(self, copy=False):

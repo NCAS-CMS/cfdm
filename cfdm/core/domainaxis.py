@@ -1,5 +1,7 @@
 import abc
 
+import mixin
+
 from ..structure import DomainAxis as structure_DomainAxis
 
 from .functions import equals
@@ -10,7 +12,7 @@ from .functions import equals
 #
 # ====================================================================
 
-class DomainAxis(structure_DomainAxis):
+class DomainAxis(mixin.Properties, structure_DomainAxis):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an
@@ -107,19 +109,19 @@ to the order of the elements.
     def get_ncdim(self, *default):
         '''
         '''
-        return self._get_component3('ncdim', *default)
+        return self._get_component(4, 'ncdim', None, *default)
     #--- End: def
 
     def set_ncdim(self, ncdim):
         '''
         '''
-        self._set_component3('ncdim', ncdim)
+        self._set_component(4, 'ncdim', None, ncdim)
     #--- End: def
 
     def del_ncdim(self):
         '''
         '''
-        return self._del_component3('ncdim')
+        return self._del_component(4, 'ncdim')
     #--- End: def
 
 #--- End: class

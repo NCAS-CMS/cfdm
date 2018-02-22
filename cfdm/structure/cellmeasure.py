@@ -70,25 +70,25 @@ measure constructs.
     def del_measure(self):
         '''
         '''
-        return self._del_component('measure', None)
+        return self._del_component(1, 'measure')
     #--- End: def
 
     def has_measure(self):
         '''
         '''
-        return self._has_component('measure', None)
+        return self._has_component(1, 'measure')
     #--- End: def
 
     def get_measure(self, *default):
         '''
         '''
-        return self._get_component('measure', None, *default)
+        return self._get_component(1, 'measure', None, *default)
     #--- End: def
 
     def set_measure(self, measure):
         '''
         '''
-        return self._set_component('measure', None, measure)
+        return self._set_component(1, 'measure', None, measure)
     #--- End: def
 
 #--- End: class

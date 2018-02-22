@@ -153,10 +153,10 @@ Keys are item identifiers, values are item objects.
                     self.__class__.__name__, other.__class__.__name__))
             return False
         
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
+#        if rtol is None:
+#            rtol = RTOL()
+#        if atol is None:
+#            atol = ATOL()
 
         axes0_to_axes1 = {}
         axis0_to_axis1 = {}

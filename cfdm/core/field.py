@@ -4,8 +4,6 @@ import mixin
 
 from .constructs import Constructs
 #from .domain      import Domain
-from .functions import RTOL, ATOL
-#from .functions import equals as _equals
 
 from ..structure import Field as structure_Field
 
@@ -19,7 +17,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(structure_Field, mixin.PropertiesData):
+class Field(mixin.PropertiesData, structure_Field):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -107,8 +105,8 @@ Field objects are picklable.
                                     source=source, copy=copy,
                                     _use_data=_use_data) 
                
-        self._set_component3('unlimited', None)
-        self._set_component3('HDFgubbins', None)
+        self._set_component(3, 'unlimited', None, None)
+        self._set_component(3, 'HDFgubbins', None, None)
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
@@ -748,11 +746,6 @@ Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (
 False
 
         '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             
         if not super(Field, self).equals(
@@ -767,13 +760,12 @@ False
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not self._get_constructs().equals(
-                other._get_constructs(),
-                rtol=rtol, atol=atol,
-                traceback=traceback,
-                ignore_data_type=ignore_data_type,
-                ignore_construct_type=ignore_construct_type,
-                ignore_fill_value=ignore_fill_value):
+        if not self._equals(self._get_constructs(), other._get_constructs(),
+                            rtol=rtol, atol=atol,
+                            traceback=traceback,
+                            ignore_data_type=ignore_data_type,
+                            ignore_construct_type=ignore_construct_type,
+                            ignore_fill_value=ignore_fill_value):
             if traceback:
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))

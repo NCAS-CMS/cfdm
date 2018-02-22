@@ -2,8 +2,6 @@ import abc
 
 import mixin
 
-from ..functions import RTOL, ATOL
-
 from ..structure import CellMeasure as structure_CellMeasure
 
 # ====================================================================
@@ -12,7 +10,7 @@ from ..structure import CellMeasure as structure_CellMeasure
 #
 # ====================================================================
 
-class CellMeasure(structure_CellMeasure, mixin.PropertiesData):
+class CellMeasure(mixin.PropertiesData, structure_CellMeasure):
     '''A CF cell measure construct.
 
 A cell measure construct provides information that is needed about the
@@ -81,11 +79,6 @@ Return a string containing a full description of the cell measure.
                ignore_properties=(), ignore_construct_type=False):
         '''
         '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
         if not super(CellMeasure, self).equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
@@ -173,7 +166,6 @@ None
 
         '''
         n = self.get_measure(None)
-        print 'measure=', n
         if n is not None:
             return n
 

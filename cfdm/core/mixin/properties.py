@@ -124,7 +124,7 @@ All components of a variable are optional.
     def del_ncvar(self):
         '''
         '''        
-        return self._del_component3('ncvar')
+        return self._del_component(4, 'ncvar')
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
@@ -169,15 +169,9 @@ All components of a variable are optional.
                     sorted(self_properties), sorted(other_properties)))
             return False
 
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
         for prop, x in self_properties.iteritems():
             y = other_properties[prop]
 
-#            if not cfdm_equals(x, y, rtol=rtol, atol=atol,
             if not self._equals(x, y,
                                 rtol=rtol, atol=atol,
                                 ignore_fill_value=ignore_fill_value,
@@ -189,16 +183,16 @@ All components of a variable are optional.
                 return False
         #--- End: for
 
-        if set(self._components2) != set(other._components2):
+        if set(self._components[2]) != set(other._components[2]):
             if traceback:
                 print("{0}: Different properties 2: {1}, {2}".format( 
                     self.__class__.__name__,
-                    sorted(self._components2), sorted(other._components2)))
+                    sorted(self._components[2]), sorted(other._components[2])))
             return False
 
         
-        for key, x in self._components2.iteritems():
-            y = other._components2[key]
+        for key, x in self._components[2].iteritems():
+            y = other._components[2][key]
             if not self._equals(x, y,
                                 rtol=rtol, atol=atol,
                                 ignore_fill_value=ignore_fill_value,
@@ -216,13 +210,13 @@ All components of a variable are optional.
     def get_ncvar(self, *default):
         '''
         '''        
-        return self._get_component3('ncvar', *default)
+        return self._get_component(4, 'ncvar', None, *default)
     #--- End: def
 
     def set_ncvar(self, value):
         '''
         '''        
-        return self._set_component3('ncvar', value)
+        return self._set_component(4, 'ncvar', None, value)
     #--- End: def
 
 #--- End: class

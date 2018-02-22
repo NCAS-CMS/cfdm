@@ -3,12 +3,9 @@ import abc
 import csv
 import os
 
-from .          import __file__
-from .functions import equals as cfdm_equals
+from .                    import __file__
 from .dimensioncoordinate import DimensionCoordinate
 from .auxiliarycoordinate import AuxiliaryCoordinate
-
-from ..functions import RTOL, ATOL
 
 import mixin
 
@@ -32,7 +29,7 @@ for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
 #
 # ====================================================================
 
-class CoordinateReference(structure_CoordinateReference, mixin.Properties):
+class CoordinateReference(mixin.Properties, structure_CoordinateReference):
     '''A CF coordinate reference construct.
 
     '''
@@ -216,11 +213,6 @@ True if two instances are equal, False otherwise.
 :Examples:
 
 '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-
         if not super(CoordinateReference, self).equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
@@ -297,12 +289,12 @@ True if two instances are equal, False otherwise.
                 # references
                 continue
                 
-            if not cfdm_equals(value0, value1, rtol=rtol, atol=atol,
-                               traceback=traceback,
-                               ignore_data_type=ignore_data_type,
-                               ignore_fill_value=ignore_fill_value,
-                               ignore_properties=ignore_properties,
-                               ignore_construct_type=ignore_construct_type):
+            if not self._equals(value0, value1, rtol=rtol, atol=atol,
+                                traceback=traceback,
+                                ignore_data_type=ignore_data_type,
+                                ignore_fill_value=ignore_fill_value,
+                                ignore_properties=ignore_properties,
+                                ignore_construct_type=ignore_construct_type):
                 if traceback:
                     print(
                         "{}: Unequal {!r} terms ({!r} != {!r})".format( 

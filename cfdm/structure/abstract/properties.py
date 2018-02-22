@@ -25,9 +25,7 @@ All components of a variable are optional.
 
     _special_properties = ()
 
-#    _Collection = Collection
-    
-    def __init__(self, properties={}, source=None, copy=True):
+    def __init__(self, properties=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -39,31 +37,62 @@ All components of a variable are optional.
     copy: `bool`, optional
 
         '''
-#        self._components = {'properties': Collection()}
-        self._components1 = {'properties': {}}
-        self._components2 = {}
-        self._components3 = {}
-#        self._extra       = {}
-      
+        self._components = {
+            # Components that are considered for equality and are deep
+            # copied with, both with bespoke algorithms. DO NOT ADD
+            # COMPONENTS TO THIS PARTITION.
+            1: {'properties': {}},
+            # Components that are considered for equality via their
+            # `equals` method and are deep copied with via their
+            # `copy` method
+            2: {},
+            # Components that are *not* considered for equality but are
+            # deep copied
+            3: {},
+            # Components that are *not* considered for equality and are
+            # *not* deep copied
+            4: {},
+        }
+ 
         if source is not None:
-#            self._extra = source._extra.copy()
-                
             p = source.properties(copy=False)
             if properties:
                 p.update(properties)
 
             properties = p
 
-            self._components2 = source._components2.copy()
-            if copy:
-                for key, value in self._components2:
-                    self._components2[key] = value.copy()
+            components = source._components[2]
+            if components:            
+                components = components2.copy()
+                if copy:
+                    for key, value in components.items():
+                        self._components[key] = value.copy()
 
-            self._components3 = source._components3.copy()
+                self._components[2] = components
+            #--- End: if
+            
+            components = source._components[3]
+            if components:
+                components = components.copy()
+                if copy:
+                    for key, value in components.items():
+                        components[key] = deepcopy(value)
+                        
+                self._components[3] = components
+            #--- End: if
+
+            components = source._components[4]
+            if components:
+                self._components[4] = components.copy()
         #--- End: if
 
         if properties:
-            self.properties(properties, copy=copy)
+            properties = properties.copy()
+            if copy:
+                for key, value in properties.items():
+                    properties[key] = deepcopy(value)
+                    
+            self._components[1]['properties'] = properties
     #--- End: def
         
     def __deepcopy__(self, memo):
@@ -84,78 +113,51 @@ All components of a variable are optional.
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
-    def _del_component(self, component, key):
+    def _del_component(self, component_type, component, key=None):
         '''
         '''
+        components = self._components[component_type]
         if key is None:            
-            return self._components1.pop(component, None)
+            return components.pop(component, None)
         else:
-            return self._components1[component].pop(key, None)
+            return components[component].pop(key, None)
     #--- End: def
 
-    def _del_component3(self, component3):
+    def _get_component(self, component_type, component, key, *default):
         '''
         '''
-        return self._components3.pop(component3, None)
-    #--- End: def
-
-    def _get_component(self, component, key, *default):
-        '''
-        '''
+        components = self._components[component_type]
         if key is None:
-            value = self._components1.get(component)
+            value = components.get(component)
         else:
-            value = self._components1[component].get(key)
+            value = components[component].get(key)
         
         if value is None:
             if default:
-                return default[0]
-            raise AttributeError("Can't get non-existent {!r}".format(key))
+                return default[0]           
+            raise AttributeError("Can't get non-existent {0} {1!r} ".format(component, key))
 
         return value
     #--- End: def
 
-    def _get_component3(self, component3, *default):
+    def _has_component(self, component_type, component, key=None):
         '''
         '''
-        value = self._components3.get(component3)
-        
-        if value is None:
-            if default:
-                return default[0]
-            raise AttributeError("Can't get non-existent attribute {!r}".format(component3))
-
-        return value
-    #--- End: def
-
-    def _has_component(self, component, key):
-        '''
-        '''
+        components = self._components[component_type]
         if key is None:
-            return component in self._components1
+            return component in components
         else:
-            return key in self._components1[component]
+            return key in components[component]
     #--- End: def
 
-    def _has_component3(self, component3):
+    def _set_component(self, component_type, component, key, value):
         '''
         '''
-        return component3 in self._components3
-    #--- End: def
-
-    def _set_component(self, component, key, value):
-        '''
-        '''
+        components = self._components[component_type]
         if key is None:
-            self._components1[component] = value
+            components[component] = value
         else:
-            self._components1[component][key] = value
-    #--- End: def
-
-    def _set_component3(self, component3, value):
-        '''
-        '''
-        self._components3[component3] = value
+            components[component][key] = value
     #--- End: def
 
     def copy(self, data=True):
@@ -211,7 +213,7 @@ All components of a variable are optional.
 AttributeError: Can't delete non-existent property 'project'
 
         '''
-        return self._del_component('properties', prop)
+        return self._del_component(1, 'properties', prop)
     #--- End: def
 
     def get_property(self, prop, *default):
@@ -256,7 +258,10 @@ AttributeError: Field doesn't have CF property 'standard_name'
 'foo'
 
 '''
-        return self._get_component('properties', prop, *default)
+        try:
+            return self._get_component(1, 'properties', prop, *default)
+        except AttributeError:
+            raise AttributeError("Can't get non-existent property {!r}".format(prop))
     #--- End: def
 
     def has_property(self, prop):
@@ -284,7 +289,7 @@ Return True if a CF property exists, otherise False.
          True if the CF property exists, otherwise False.
 
 '''
-        return self._has_component('properties', prop)
+        return self._has_component(1, 'properties', prop)
     #--- End: def
 
     def properties(self, props=None, clear=False, copy=True):
@@ -320,11 +325,11 @@ Return True if a CF property exists, otherise False.
 :Examples 2:
 
         '''
-        existing_properties = self._get_component('properties', None, None)
+        existing_properties = self._get_component(1, 'properties', None, None)
 
         if existing_properties is None:
            existing_properties = {}
-           self._set_component('properties', None, existing_properties)
+           self._set_component(1, 'properties', None, existing_properties)
         
         out = existing_properties.copy()
 
@@ -375,7 +380,7 @@ Return True if a CF property exists, otherise False.
      `None`
 
         '''
-        self._set_component('properties', prop, value)
+        self._set_component(1, 'properties', prop, value)
     #--- End: def
 
 #--- End: class

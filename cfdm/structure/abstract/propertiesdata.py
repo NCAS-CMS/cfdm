@@ -45,8 +45,6 @@ All components of a variable are optional.
         '''
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
-
-#        self._components['data'] = Component()
         
         if source is not None:
             if _use_data and data is None:
@@ -128,7 +126,7 @@ False
 None
 
         '''
-        return self._del_component('data', None)
+        return self._del_component(1, 'data')
     #--- End: def
 
     def fill_value(self, default=None):
@@ -231,14 +229,10 @@ True
     default: optional
 
         '''
-        data = self._get_component('data', None, None)
-        if data is not None:
-            return data
-
-        if default:
-            return default[0]
-
-        raise AttributeError("There is no data")
+        try:
+            return self._get_component(1, 'data', None, *default)
+        except AttributeError:
+            raise AttributeError("There is no data")
     #--- End: def
 
     def has_data(self):
@@ -256,7 +250,7 @@ If present, the data array is stored in the `data` attribute.
 ...     print f.data
 
         '''     
-        return self._has_component('data', None)
+        return self._has_component(1, 'data')
     #--- End: def
 
     def set_data(self, data, copy=True):
@@ -281,7 +275,7 @@ If present, the data array is stored in the `data` attribute.
         data.set_units(None)
         data.set_calendar(None)
         
-        self._set_component('data', None, data)
+        self._set_component(1, 'data', None, data)
     #--- End: def
 
 #--- End: class

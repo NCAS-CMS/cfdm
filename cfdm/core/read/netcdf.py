@@ -17,20 +17,22 @@ class ReadNetCDF(object):
                  Bounds=None, Data=None):
         '''
         '''
+        self._Bounds              = Bounds
+        self._CoordinateAncillary = CoordinateAncillary
+        self._Data                = Data
         self._NetCDF              = NetCDF
+
+        # CF data model constructs
         self._AuxiliaryCoordinate = AuxiliaryCoordinate
         self._CellMeasure         = CellMeasure
         self._CellMethod          = CellMethod
-        self._CoordinateAncillary = CoordinateAncillary
         self._CoordinateReference = CoordinateReference
         self._DimensionCoordinate = DimensionCoordinate
         self._DomainAncillary     = DomainAncillary
         self._DomainAxis          = DomainAxis
         self._Field               = Field         
         self._FieldAncillary      = FieldAncillary
-        self._Bounds              = Bounds               
-        self._Data                = Data                 
-
+ 
         # ------------------------------------------------------------
         # Initialise netCDF read parameters
         # ------------------------------------------------------------
@@ -174,9 +176,15 @@ ancillaries, field ancillaries).
 
         '''
         self._messages = {}
-        
+
         self.read_vars = self._reset_read_vars(extra_read_vars)
         g = self.read_vars
+
+        g['cell_measures']      = set()
+        g['field_ancillaries']  = set()
+        g['domain_ancillaries'] = set()
+
+        g['referenced'] = {}
         
         if isinstance(filename, file):
             name = filename.name
@@ -337,18 +345,21 @@ ancillaries, field ancillaries).
                     # ----------------------------------------------------
                     # ncvar is a CF coordinate variable
                     # ----------------------------------------------------
-                    if 'dimension_coordinate' in g['field']:
-                        # Add the dimension coordinate to the set of
-                        # top-level fields, so that it doesn't get demoted
-                        # if the auxiliary coordinate is also in a
-                        # coordinate reference.
-                        g['promoted'].append(ncvar)
-                    else:
-                        # Do not promote a dimension coordinate to also
-                        # appear as a top-level field
-                        if _debug:
-                            print '        Is a netCDF coordinate variable'
-                        variables.discard(ncvar)
+                    g['referenced'][ncvar] = ('dimension_coordinate' not in g['field'])
+                    if _debug:
+                        print '        Is a netCDF coordinate variable'
+#                    if 'dimension_coordinate' in g['field']:
+#                        # Add the dimension coordinate to the set of
+#                        # top-level fields, so that it doesn't get demoted
+#                        # if the auxiliary coordinate is also in a
+#                        # coordinate reference.
+#                        g['promoted'].append(ncvar)
+#                    else:
+#                        # Do not promote a dimension coordinate to also
+#                        # appear as a top-level field
+#                        if _debug:
+#                            print '        Is a netCDF coordinate variable'
+#                        variables.discard(ncvar)
     
                     for attr in ('bounds', 'climatology'):
                         if attr not in attributes[ncvar]:
@@ -363,13 +374,16 @@ ancillaries, field ancillaries).
                         # to an independent data variable
                         bounds_ncvar = attributes[ncvar][attr]
 
-                        cf_compliant = self._check_bounds(nc, ncvar, bounds_ncvar)
-                        if cf_compliant:
-                            # The dimension coordinate bounds are OK,
-                            # so remove the bounds variable from the
-                            # list of data variables                            
-                            variables.discard(bounds_ncvar)
-                        else:
+                        cf_compliant = self._check_bounds(nc, ncvar,
+                                                          bounds_ncvar)
+                        g['referenced'][bounds_ncvar] = True
+                        if not cf_compliant:
+#                            # The dimension coordinate bounds are OK,
+#                            # so remove the bounds variable from the
+#                            # list of data variables                            
+##                            variables.discard(bounds_ncvar)
+#                            pass
+#                        else:
                             # There is something wrong with the
                             # dimension coordinate bounds, so remove
                             # the bounds/climatology attribute
@@ -382,7 +396,22 @@ ancillaries, field ancillaries).
                         formula_terms = attributes[ncvar]['formula_terms']
                         if _debug:
                             print '        Has formula_terms'
-                            
+
+                        parsed_formula_terms = self._parse_x(ncvar, formula_terms)
+                        cf_compliant = self._check_formula_terms(nc,
+                                                                 ncvar,
+                                                                 formula_terms,
+                                                                 parsed_formula_terms)
+                        if cf_compliant:
+                            referenced = ('formula_terms' not in g['field'])
+                            for x in parsed_formula_terms:
+                                term, value = x.items()[0]
+                                g['referenced'][value[0]] = referenced
+                        else:
+                            # There is something wrong with the
+                            # formular terms attribute, so remove it
+                            del attributes[ncvar]['formula_terms']
+                        
                         self._formula_terms_variables(ncvar, formula_terms,
                                                       variables, coord=True)
                         
@@ -410,18 +439,23 @@ ancillaries, field ancillaries).
                         # ------------------------------------------------
                         # aux is a CF auxiliary coordinate variable
                         # ------------------------------------------------
-                        if 'auxiliary_coordinate' in g['field']:
-                            # Add the auxiliary coordinate to the set of
-                            # top-level fields, so that it doesn't get
-                            # demoted if the auxiliary coordinate is also
-                            # in a coordinate reference.
-                            g['promoted'].append(ncvar)
-                        else:
-                            # Do not promote an auxiliary coordinate to
-                            # also appear as a top-level field
-                            if _debug:
-                                print '        Has auxiliary coordinate:', aux
-                            variables.discard(aux)
+                        g['referenced'][aux] = ('auxiliary_coordinate' not in g['field'])
+                        if _debug:
+                            print '        Has auxiliary coordinate:', aux
+ #                       if 'auxiliary_coordinate' in g['field']:
+ #                           # Add the auxiliary coordinate to the set of
+ #                           # top-level fields, so that it doesn't get
+ #                           # demoted if the auxiliary coordinate is also
+ #                           # in a coordinate reference.
+ #                           g['promoted'].append(ncvar)
+ #                       else:
+ #                           # Do not promote an auxiliary coordinate to
+ #                           # also appear as a top-level field
+ #                           if _debug:
+ #                               print '        Has auxiliary coordinate:', aux
+ #                           g['referenced'][aux] = ('cell_measure' not in g['field'])
+ #
+ #                           variables.discard(aux)
                                         
                         for attr in ('bounds', 'climatology'):
                             if attr not in attributes[aux]:
@@ -433,13 +467,15 @@ ancillaries, field ancillaries).
                             # independent data variable.                            
                             bounds_ncvar = attributes[aux][attr]
 
-                            cf_compliant = self._check_bounds(nc, ncvar, bounds_ncvar)
-                            if cf_compliant:
-                                # The auciliary coordinate bounds are
-                                # OK, so remove the bounds variable
-                                # from the list of data variables
-                                variables.discard(bounds_ncvar)
-                            else:
+                            cf_compliant = self._check_bounds(nc,
+                                                              ncvar, bounds_ncvar)
+                            g['referenced'][bounds_ncvar] = True
+                            if not cf_compliant:
+#                                # The auxiliary coordinate bounds are
+#                                # OK, so remove the bounds variable
+#                                # from the list of data variables
+#                                variables.discard(bounds_ncvar)
+#                            else:
                                 # There is something wrong with the
                                 # auxiliary coordinate bounds, so
                                 # remove the bounds/climatology
@@ -468,26 +504,33 @@ ancillaries, field ancillaries).
                 variables.discard(attributes[ncvar]['grid_mapping'])
     
             # Remove cell measure variables (unless they have been promoted).
-            if 'cell_measure' not in g['field'] and 'cell_measures' in attributes[ncvar]:
+#           if 'cell_measure' not in g['field'] and 'cell_measures' in attributes[ncvar]:
+            if 'cell_measures' in attributes[ncvar]:
                 cell_measures = attributes[ncvar]['cell_measures']
-                parsed_cell_measures = self._parse_cell_measures(cell_measures)
-                cf_compliant = self._check_cell_measures(nc, ncvar,
-                                                         cell_measures,
-                                                         parsed_cell_measures)
+                parsed_cell_measures = self._parse_x(ncvar, cell_measures)
+                cf_compliant = self._check_x('cell_measure', nc, ncvar,
+                                             cell_measures,
+                                             parsed_cell_measures)
                 if cf_compliant:
-                    for msr, msr_var in parsed_cell_measures:
+                    for x in parsed_cell_measures:
+                        msr, msr_var = x.items()[0]
+                        msr_var = msr_var[0]
+                        g['cell_measures'].add(msr_var)
+                        g['referenced'][msr_var] = ('cell_measure' not in g['field'])
                         if _debug:
                             print '        Has cell measure:', msr
-                        variables.discard(msr_var)
+#                        variables.discard(msr_var)
                 else:
                     # There is something wrong with the
                     # cell_measures attribute, so remove it
-                    if _debug:
-                        print '        Has BAD cell measures', cell_measures
-                    del attributes[ncvar][attr]
+                    del attributes[ncvar]['cell_measures']
             #--- End: if
         #--- End: for
-    
+
+        for ncvar, value in g['referenced'].iteritems():
+            if value:
+                variables.discard(ncvar)
+        
         g['featureType'] = global_attributes.get('featureType')
                 
         # ----------------------------------------------------------------
@@ -586,55 +629,6 @@ ancillaries, field ancillaries).
         return self._NetCDF.file_open(filename, 'r')
     #--- End: def        
 
-    def _check_bounds(self, nc, coord_ncvar, bounds_ncvar):
-        '''
-
-:Parameters:
-
-    nc: `netCDF4.Dataset`
-        
-    coord_ncvar: `str`
-        The netCDF variable name of the coordinates.
-
-    bounds_ncvar: `str`
-        The netCDF variable name of the bounds.
-
-:Returns:
-
-    out: `bool`
-
-        '''
-        debug = self.read_vars['_debug']
-        
-        messages = []
-        if bounds_ncvar not in nc.variables:            
-            messages.append('0')
-            if debug:
-                print 'Bad bounds 0'
-            return False
-        
-        c_ncdims = nc.variables[coord_ncvar].dimensions
-        b_ncdims = nc.variables[bounds_ncvar].dimensions
-        
-        if len(b_ncdims) != len(c_ncdims) + 1:
-            messages.append('1')
-            if debug:
-                print 'Bad bounds 1'
-            return False
-
-        if set(c_ncdims) != set(b_ncdims[:len(b_ncdims)-len(c_ncdims)]):
-            messages.append('2')
-            if debug:
-                print 'Bad bounds 2'
-            return False
-
-        if messages:
-            self._add_messages(bounds_ncvar, messages)
-            return False
-
-        return True
-    #--- End: def
-    
     def _reset_read_vars(self, extra_read_vars):
         '''
         '''
@@ -979,23 +973,6 @@ ancillaries, field ancillaries).
         return out                            
     #--- End: def
     
-    def _check_cell_measures(self, nc, field_ncvar, cell_measures, parsed_cell_measures):
-        '''
-        '''
-        messages = []
-
-        b = re.split('\s+', cell_measures)
-        
-        if len(b) != len(parsed_cell_measures) * 2:
-            messages.append(['Badly formed cell_meausres attribute', cell_measure])
-
-        if messages:
-            self._add_messages(field_ncvar, messages)
-            return False
-
-        return True
-    #--- End: def
-    
     def _create_Field(self, data_ncvar, attributes,
                       dimension_coordinates,
                       auxiliary_coordinates, cell_measures,
@@ -1115,15 +1092,17 @@ ancillaries, field ancillaries).
                                                            verbose=verbose)
                     dimension_coordinates[ncdim] = coord
                 
-                domain_axis = self._DomainAxis(coord.get_data().size)
-                self._set_ncdim(domain_axis, ncdim)
+                domain_axis = self._create_domain_axis(coord.get_data().size, ncdim)
+#                domain_axis = self._DomainAxis(coord.get_data().size)
+#                self._set_ncdim(domain_axis, ncdim)
                 if _debug:
                     print '    Inserting', repr(domain_axis)                    
-                axis = f.set_domain_axis(domain_axis, copy=False)
+                axis = self._set_domain_axis(f, domain_axis, copy=False)
 
                 if _debug:
                     print '    Inserting', repr(coord)
-                dim = f.set_dimension_coordinate(coord, axes=[axis], copy=False)
+                dim = self._set_dimension_coordinate(f, coord,
+                                                     axes=[axis], copy=False)
                 
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
@@ -1138,11 +1117,12 @@ ancillaries, field ancillaries).
                 else:
                     size = len(nc.dimensions[ncdim])
     
-                domain_axis = self._DomainAxis(size)
-                self._set_ncdim(domain_axis, ncdim)
+                domain_axis = self._create_domain_axis(coord.get_data().size, ncdim)
+#                domain_axis = self._DomainAxis(size)
+#                self._set_ncdim(domain_axis, ncdim)
                 if _debug:
                     print '    Inserting', repr(domain_axis)
-                axis = f.set_domain_axis(domain_axis, copy=False)
+                axis = self._set_domain_axis(f, domain_axis, copy=False)
                 
                 # Set unlimited status of axis
                 try:
@@ -1161,11 +1141,11 @@ ancillaries, field ancillaries).
             ncdim_to_axis[ncdim] = axis
         #--- End: for
 
-        data = self._set_Data(data_ncvar, f, unpacked_dtype=unpacked_dtype)
+        data = self._create_data(data_ncvar, f, unpacked_dtype=unpacked_dtype)
         if _debug:
             print '    Inserting', repr(data)
 
-        f = self._set_data(f, data, axes=data_axes, copy=False)
+        self._set_data(f, data, axes=data_axes, copy=False)
           
         # ----------------------------------------------------------------
         # Add scalar dimension coordinates and auxiliary coordinates to
@@ -1213,14 +1193,15 @@ ancillaries, field ancillaries).
                         # compliant? Don't worry about it - we'll just
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
-                        domain_axis = self._DomainAxis(1)
-                        dim = f.set_domain_axis(domain_axis)
+                        domain_axis = self._create_domain_axis(1)
+#                        domain_axis = self._DomainAxis(1)
+                        dim = self._set_domain_axis(f, domain_axis)
                         if _debug:
                             print '    Inserting', repr(domain_axis)
 
-                        # Record the netCDF dimension name for this axis
-                        domain_axis = f.axes()[dim]
-                        self._set_ncdim(domain_axis, ncdim)
+#                        # Record the netCDF dimension name for this axis
+#                        domain_axis = f.axes()[dim]
+#                        self._set_ncdim(domain_axis, ncdim)
                                         
                         dimensions = [dim]
                     else:  
@@ -1235,13 +1216,14 @@ ancillaries, field ancillaries).
                     if _debug:
                         print '    Inserting', repr(coord)
     
-                    domain_axis = self._DomainAxis(coord.get_data().size)
-                    axis = f.set_domain_axis(domain_axis, copy=False)
+#                    domain_axis = self._DomainAxis(coord.get_data().size)
+                    domain_axis = self._create_domain_axis(coord.get_data().size)
+
+                    axis = self._set_domain_axis(f, domain_axis, copy=False)
                     
-                    dim = f.set_dimension_coordinate(coord, axes=[axis], copy=False)
+                    dim = self._set_dimension_coordinate(f, coord,
+                                                         axes=[axis], copy=False)
                     
-                    # Record the netCDF dimension name for this axis
-                    f.axes()[dim].set_ncdim(ncvar)  # ????
                     dimensions = [axis]
                     ncvar_to_key[ncvar] = dim
                     dimension_coordinates[ncvar] = coord
@@ -1250,7 +1232,9 @@ ancillaries, field ancillaries).
                     # Insert auxiliary coordinate
                     if _debug:
                         print '    Inserting', repr(coord)
-                    aux = f.set_auxiliary_coordinate(coord, axes=dimensions, copy=False)
+                    aux = self._set_auxiliary_coordinate(f, coord,
+                                                         axes=dimensions,
+                                                         copy=False)
                     ncvar_to_key[ncvar] = aux
                 
                 if scalar:
@@ -1305,7 +1289,8 @@ ancillaries, field ancillaries).
                     #--- End: if
                     
                     # Insert domain ancillary
-                    da_key = f.set_domain_ancillary(domain_anc, axes=axes, copy=False)
+                    da_key = self._set_domain_ancillary(f, domain_anc,
+                                                        axes=axes, copy=False)
                     if ncvar not in ncvar_to_key:
                         ncvar_to_key[ncvar] = da_key
         
@@ -1350,7 +1335,7 @@ ancillaries, field ancillaries).
                     cell_measures[ncvar] = cell
                 #--- End: if
     
-                clm = f.set_cell_measure(cell, axes=axes, copy=False)
+                clm = self._set_cell_measure(f, cell, axes=axes, copy=False)
     
                 ncvar_to_key[ncvar] = clm
             #--- End: for
@@ -1366,7 +1351,7 @@ ancillaries, field ancillaries).
             name_to_axis.update(ncscalar_to_axis)
             for cm in cell_methods:
                 cm = cm.change_axes(name_to_axis)
-                f.set_cell_method(cm, copy=False)
+                self._set_cell_method(f, cm, copy=False)
         #--- End: if
 
         # ----------------------------------------------------------------
@@ -1393,7 +1378,7 @@ ancillaries, field ancillaries).
                     field_ancillaries[ncvar] = field_anc
                     
                 # Insert the field ancillary
-                key = f.set_field_ancillary(field_anc, axes=axes, copy=False)
+                key = self._set_field_ancillary(f, field_anc, axes=axes, copy=False)
                 ncvar_to_key[ncvar] = key
         #--- End: if
     
@@ -1401,6 +1386,12 @@ ancillaries, field ancillaries).
         return f
     #--- End: def
 
+    def _add_message(self, ncvar, code, message):
+        '''
+        '''
+        self._messages.setdefault(ncvar, []).append((code, message))
+    #--- End: def
+    
     def _add_messages(self, ncvar, messages):
         '''
         '''
@@ -1473,14 +1464,11 @@ ancillaries, field ancillaries).
             raise ValueError(
 "Must set one of the dimension, auxiliary or domainancillary parameters to True")
 
-        # Store the netCDF variable name
-        self._set_ncvar(c, ncvar)
-   
         if climatology:
             c.set_extent_parameter('climatology', True, copy=False)
     
-        data = self._set_Data(ncvar, c)
-        c = self._set_data(c, data, copy=False)
+        data = self._create_data(ncvar, c)
+        self._set_data(c, data, copy=False)
         
         # ------------------------------------------------------------
         # Add any bounds
@@ -1490,10 +1478,12 @@ ancillaries, field ancillaries).
             properties.pop('formula_terms', None)                
             bounds = self._Bounds(properties=properties, copy=False)
                 
-            bounds_data = self._set_Data(ncbounds, bounds)
+            bounds_data = self._create_data(ncbounds, bounds)
 
-            # Make sure that the bounds dimensions are in the same order
-            # as its parent's dimensions
+            # Make sure that the bounds dimensions are in the same
+            # order as its parent's dimensions. It is assumed that we
+            # have already checked that the bounds netCDF variable has
+            # appropriate dimensions.
             c_ncdims = nc.variables[ncvar].dimensions
             b_ncdims = nc.variables[ncbounds].dimensions
             c_ndim = len(c_ncdims)
@@ -1502,39 +1492,240 @@ ancillaries, field ancillaries).
                 axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c_ndim]
                         if ncdim in c_ncdims]
                 axes.extend(range(c_ndim, b_ndim))
-                bounds_data = self._transpose_data(bounds_data, axes=axes, copy=False)
+                bounds_data = self._transpose_data(bounds_data,
+                                                   axes=axes, copy=False)
             #--- End: if
 
-            bounds = self._set_data(bounds, bounds_data, copy=False)
+            self._set_data(bounds, bounds_data, copy=False)
             
             # Store the netCDF variable name
             self._set_ncvar(bounds, ncbounds)
 
-            c = self._set_bounds(c, bounds, copy=False)
+            self._set_bounds(c, bounds, copy=False)
         #--- End: if
     
+        # Store the netCDF variable name
+        self._set_ncvar(c, ncvar)
+   
         # ---------------------------------------------------------
         # Return the bounded variable
         # ---------------------------------------------------------
         return c
+    #--- End: def
+
+    def _create_domain_axis(self, size, ncdim=None):
+        '''
+        '''
+        domain_axis = self._DomainAxis(size)
+        if ncdim is not None:
+            self._set_ncdim(domain_axis, ncdim)
+
+        return domain_axis
+    #-- End: def
+
+    
+    def _set_auxiliary_coordinate(self, field, construct, axes, copy=True):
+        '''Insert a auxiliary coordinate object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `AuxiliaryCoordinate`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_auxiliary_coordinate(construct, axes=axes, copy=copy)
     #--- End: def
     
     def _set_bounds(self, construct, bounds, copy=True):
         '''
         '''
         construct.set_bounds(bounds, copy=copy)
-        return construct
-    #-- End: def
+    #--- End: def
+    
+    def _set_coordinate_reference(self, field, construct, copy=True):
+        '''Insert a coordinate reference object into a field.
 
-    def _set_data(self, construct, data, axes=None, copy=True):
+:Parameters:
+
+    field: `Field`
+
+    construct: `CoordinateReference`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
         '''
+        return field.set_coordinate_reference(construct, copy=copy)
+    #--- End: def
+    
+    def _set_cell_measure(self, field, construct, axes, copy=True):
+        '''Insert a cell_measure object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `cell_measure`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_cell_measure(construct, axes=axes, copy=copy)
+    #--- End: def
+    
+    def _set_cell_method(self, field, construct, copy=True):
+        '''Insert a cell_method object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `cell_method`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_cell_method(construct, copy=copy)
+    #--- End: def
+    
+    def _set_coordinate_reference(self, field, construct, copy=True):
+        '''Insert a coordinate reference object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `CoordinateReference`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_coordinate_reference(construct, copy=copy)
+    #--- End: def
+    
+    def _set_dimension_coordinate(self, field, construct, axes, copy=True):
+        '''Insert a dimension coordinate object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `DimensionCoordinate`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
+    #--- End: def
+    
+    def _set_domain_ancillary(self, field, construct, axes, copy=True):
+        '''Insert a domain ancillary object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `DomainAncillary`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_domain_ancillary(construct, axes=axes, copy=copy)
+    #--- End: def
+    
+    def _set_domain_axis(self, field, construct, copy=True):
+        '''Insert a domain_axis object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `domain_axis`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_domain_axis(construct, copy=copy)
+    #--- End: def
+    
+    def _set_field_ancillary(self, field, construct, axes, copy=True):
+        '''Insert a field ancillary object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `FieldAncillary`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_field_ancillary(construct, axes=axes, copy=copy)
+    #--- End: def
+    
+    def _set_data(self, construct, data, axes=None, copy=True):
+        '''Insert a data object into construct. 
+
+If the construct is a Field then the corresponding domain axes must
+also be provided.
+
+:Parameters:
+
+    construct:
+
+    data: `Data`
+
+    axes: `tuple`, optional
+
+    copy: `bool`, optional
+
+:Returns:
+
+    `None`
         '''
         if axes is None:
             construct.set_data(data, copy=copy)
         else:
             construct.set_data(data, axes, copy=copy)
-
-        return construct
     #--- End: def
     
     def _set_ncvar(self, construct, ncvar):
@@ -1574,7 +1765,7 @@ ancillaries, field ancillaries).
         '''
         properties = attributes[ncvar]
     
-        data = self._set_Data(ncvar)
+        data = self._create_data(ncvar)
     
         return data
     #--- End: def
@@ -1598,9 +1789,9 @@ ancillaries, field ancillaries).
         '''
         field_ancillary = self._FieldAncillary(properties=attributes[ncvar])
     
-        data = self._set_Data(ncvar, field_ancillary)
+        data = self._create_data(ncvar, field_ancillary)
     
-        field_ancillary = self._set_data(field_ancillary, data, copy=False)
+        self._set_data(field_ancillary, data, copy=False)
 
         # Store the netCDF variable name
         self._set_ncvar(field_ancillary, ncvar)
@@ -1637,9 +1828,9 @@ ancillaries, field ancillaries).
         cell_measure = self._CellMeasure(measure=measure,
                                          properties=attributes[ncvar])
     
-        data = self._set_Data(ncvar, cell_measure)
+        data = self._create_data(ncvar, cell_measure)
     
-        cell_measure = self._set_data(cell_measure, data, copy=False)
+        self._set_data(cell_measure, data, copy=False)
 
         # Store the netCDF variable name
         self._set_ncvar(cell_measure, ncvar)
@@ -1796,8 +1987,8 @@ ancillaries, field ancillaries).
         f.del_property('grid_mapping')
     #--- End: def
     
-    def _create_formula_terms_ref(self, f, key, coord,
-                                       formula_terms, domain_ancillaries):
+    def _create_formula_terms_ref(self, f, key, coord, formula_terms,
+                                  domain_ancillaries):
         '''
     
 :Parameters:
@@ -1841,9 +2032,9 @@ ancillaries, field ancillaries).
         return coordref
     #--- End: def
     
-    def _set_Data(self, ncvar, construct=None, unpacked_dtype=False,
-                  uncompress_override=None, units=None, calendar=None,
-                  fill_value=None):
+    def _create_data(self, ncvar, construct=None,
+                     unpacked_dtype=False, uncompress_override=None,
+                     units=None, calendar=None, fill_value=None):
         '''
     
 Set the Data attribute of a variable.
@@ -2036,6 +2227,231 @@ Set the Data attribute of a variable.
             
         return self._Data(array)
     #--- End: def
+
+    # ================================================================
+    #
+    # Methods for checking CF compliance
+    #
+    # These methods (whose names all start with "_check") check the
+    # minimum required for mapping te file to CFDM structural
+    # elements. General CF compliance is not checked (e.g. whether or
+    # not grid mapping variable has a grid_mapping_name attribute).
+    # ================================================================
+    def _check_bounds(self, nc, parent_ncvar, bounds_ncvar):
+        '''
+
+:Parameters:
+
+    nc: `netCDF4.Dataset`
+        The netCDF dataset object.
+
+    parent_ncvar: `str`
+        The netCDF variable name of the parent variable.
+
+    bounds_ncvar: `str`
+        The netCDF variable name of the bounds.
+
+:Returns:
+
+    out: `bool`
+
+        '''
+        if bounds_ncvar not in nc.variables:            
+            self._add_message(parent_ncvar, 0, 'missing bounds variable')
+            return False
+        
+        c_ncdims = nc.variables[parent_ncvar].dimensions
+        b_ncdims = nc.variables[bounds_ncvar].dimensions
+        
+        if len(b_ncdims) == len(c_ncdims) + 1:
+            if set(c_ncdims) != set(b_ncdims[:len(b_ncdims)-1]):
+                self._add_message(bounds_ncvar, 0, 'bad bounds')
+                return False
+
+        elif len(b_ncdims) <= len(c_ncdims) + 1:
+            self._add_message(bounds_ncvar, 0, 'too few bounds dimensions')
+            return False
+
+        elif len(b_ncdims) > len(c_ncdims) + 1:
+            self._add_message(bounds_ncvar, 0, 'too many bounds dimensions')
+            return False
+
+        return True
+    #--- End: def
     
-    
+    def _check_cell_measures(self, nc, field_ncvar, cell_measures,
+                             parsed_cell_measures):
+        '''
+:Parameters:
+
+    nc: `netCDF4.Dataset`
+        The netCDF dataset object.
+
+    field_ncvar: `str`
+        
+    cell_measures: `str`
+        The value of the netCDF cell_measures attribute.
+
+    parsed_cell_measures: `list`
+
+:Returns:
+
+    out: `bool`
+
+        '''
+        b = re.split('\s+', cell_measures)
+        
+        if len(b) != len(parsed_cell_measures) * 2:
+            self._add_message(field_ncvar, 0, 'Badly formed cell_meausres attribute')
+            return False
+
+        return True
+    #--- End: def
+
+    def _check_x(self, attribute_type, nc, parent_ncvar, string, parsed_string):
+        '''
+        '''
+        if not parsed_string:
+            self._add_message(parent_ncvar, 0,
+                              'Badly formed {0} attribute'.format(attribute_type),
+                              string)
+            return False
+
+        ok = True
+        if attribute_type == 'grid_mapping':
+            for x in parsed_string:
+                term, values = x.items()[0]
+                if term not in nc.variables:
+                    ok = False
+                    self._add_message(parent_ncvar, 0,
+                                      'missing grid mapping variable',
+                                      term)
+                    
+                if not values:
+                    continue
+                
+                for ncvar in values:
+                    if ncvar not in nc.variables:
+                        ok = False
+                        self._add_message(parent_ncvar, 0,
+                                          'missing grid mapping coordinate variable',
+                                          ncvar)
+                                
+        elif attribute_type == 'cell_measure':
+            for x in parsed_string:
+                term, values = x.items()[0]
+                if len(values) != 1:
+                    ok = False
+                    self._add_message(parent_ncvar, 0,
+                                      'Badly formed cell_measure attribute',
+                                      string)
+                    continue
+
+                for ncvar in values:
+                    if ncvar not in nc.variables:
+                        ok = False
+                        self._add_message(parent_ncvar, 0,
+                                          'missing cell measure variable',
+                                          ncvar)
+
+        elif attribute_type == 'formula_terms':
+            for x in parsed_string:
+                term, values = x.items()[0]
+                if values is None:
+                    ok = False
+                    self._add_message(parent_ncvar, 0,
+                                      'Badly formed formula_terms attribute',
+                                      string)
+                    continue
+                
+                if len(values) != 1:
+                    ok = False
+                    self._add_message(parent_ncvar, 0,
+                                      'Badly formed formula_terms attribute',
+                                      string)
+                    continue
+                
+                for ncvar in values:
+                    if ncvar not in nc.variables:
+                        ok = False
+                        self._add_message(parent_ncvar, 0,
+                                          'missing formula terms variable',
+                                          ncvar)
+        #--- End: if
+        
+        if not ok:
+            return False
+        
+        return True
+    #--- End: def
+
+    def _check_formula_terms(self, nc, parent_ncvar, string, parsed_string):
+        '''
+        '''
+        if not parsed_string:
+            self._add_message(parent_ncvar, 0,
+                              'Badly formed formula_terms attribute',
+                              string)
+            return False
+
+        ok = True
+        for x in parsed_string:
+            term, values = x.items()[0]
+            if len(values) != 1:
+                ok = False
+                self._add_message(parent_ncvar, 0,
+                                  'Badly formed formula_terms attribute',
+                                  string)
+                continue
+            
+            for ncvar in values:
+                if ncvar not in nc.variables:
+                    ok = False
+                    self._add_message(parent_ncvar, 0,
+                                      'missing formula terms variable',
+                                      ncvar)
+        #--- End: for
+        
+        if not ok:
+            return False
+        
+        return True
+    #--- End: def
+
+    def _parse_x(self, parent_ncvar, string):
+        def subst(s):
+            "substitute tokens for WORD and SEP (space or end of string)"
+            return s.replace('WORD', r'[A-Za-z0-9_]+').replace('SEP', r'(\s+|$)')
+
+        out = []
+        
+        pat_value = subst('(?P<value>WORD)SEP')
+        pat_values = '({})+'.format(pat_value)
+        
+        pat_mapping = subst('(?P<mapping_name>WORD):SEP(?P<values>{})'.format(pat_values))
+        pat_mapping_list = '({})+'.format(pat_mapping)
+        
+        pat_all = subst('((?P<sole_mapping>WORD)|(?P<mapping_list>{}))$'.format(pat_mapping_list))
+        
+        m = re.match(pat_all, string)
+
+        if m is None:
+            return []
+            
+        sole_mapping = m.group('sole_mapping')
+        if sole_mapping:
+            out.append({sole_mapping: []})
+        else:
+            mapping_list = m.group('mapping_list')
+            for mapping in re.finditer(pat_mapping, mapping_list):
+                term = mapping.group('mapping_name')
+                values = [value.group('value')
+                          for value in re.finditer(pat_value, mapping.group('values'))]
+
+                out.append({term: values})
+
+        return out
+    #--- End: def
+
 #--- End: class
+

@@ -10,7 +10,7 @@ from ..structure import Coordinate as structure_Coordinate
 #
 # ====================================================================
 
-class Coordinate(structure_Coordinate, mixin.PropertiesDataBounds):
+class Coordinate(mixin.PropertiesDataBounds, structure_Coordinate):
     '''Base class for a CF dimension or auxiliary coordinate construct.
 
     '''
