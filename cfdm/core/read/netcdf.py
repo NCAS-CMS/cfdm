@@ -186,6 +186,9 @@ ancillaries, field ancillaries).
 
         g['referenced'] = {}
         
+        g['references'] = {}
+        g['reference_map'] = {}
+        
         if isinstance(filename, file):
             name = filename.name
             filename.close()
@@ -345,22 +348,9 @@ ancillaries, field ancillaries).
                     # ----------------------------------------------------
                     # ncvar is a CF coordinate variable
                     # ----------------------------------------------------
-#                    g['referenced'][ncvar] = ('dimension_coordinate' not in g['field'])
-                    self._ppp(ncvar, ('dimension_coordinate' in g['field']))
+                    self._referenced(ncvar, ('dimension_coordinate' in g['field']))
                     if _debug:
                         print '        Is a netCDF coordinate variable'
-#                    if 'dimension_coordinate' in g['field']:
-#                        # Add the dimension coordinate to the set of
-#                        # top-level fields, so that it doesn't get demoted
-#                        # if the auxiliary coordinate is also in a
-#                        # coordinate reference.
-#                        g['promoted'].append(ncvar)
-#                    else:
-#                        # Do not promote a dimension coordinate to also
-#                        # appear as a top-level field
-#                        if _debug:
-#                            print '        Is a netCDF coordinate variable'
-#                        variables.discard(ncvar)
     
                     for attr in ('bounds', 'climatology'):
                         if attr not in attributes[ncvar]:
@@ -377,18 +367,11 @@ ancillaries, field ancillaries).
 
                         cf_compliant = self._check_bounds(nc, ncvar,
                                                           bounds_ncvar)
-                        self._ppp(bounds_ncvar, False)
-#                        g['referenced'][bounds_ncvar] = True
+                        self._referenced(bounds_ncvar, False)
                         if not cf_compliant:
-#                            # The dimension coordinate bounds are OK,
-#                            # so remove the bounds variable from the
-#                            # list of data variables                            
-##                            variables.discard(bounds_ncvar)
-#                            pass
-#                        else:
                             # There is something wrong with the
-                            # dimension coordinate bounds, so remove
-                            # the bounds/climatology attribute
+                            # dimension coordinate bounds/climatology
+                            # attribute, so remove it
                             del attributes[aux][attr]
                     #--- End: for
     
@@ -399,7 +382,6 @@ ancillaries, field ancillaries).
                         self._parse_compression_gathered(ncvar,
                                                          attributes,
                                                          compressed_ncdims)
-#                        variables.discard(ncvar)
             
                     # Remove domain ancillaries (unless they have been
                     # promoted) and their bounds.
@@ -416,7 +398,7 @@ ancillaries, field ancillaries).
                         if cf_compliant:
                             for x in parsed_formula_terms:
                                 term, value = x.items()[0]
-                                self._ppp(value[0], ('formula_terms' in g['field']))
+                                self._referenced(value[0], ('formula_terms' in g['field']))
                         else:
                             # There is something wrong with the
                             # formular terms attribute, so remove it
@@ -442,32 +424,17 @@ ancillaries, field ancillaries).
     
             # Still here? Then remove auxiliary coordinates (unless they
             # have been promoted) and their bounds.
-            if 'coordinates' in attributes[ncvar]:
-                # Allow for (incorrect) comma separated lists
-                for aux in re.split('\s+|\s*,\s*', attributes[ncvar]['coordinates']):
+            coordinates = attributes[ncvar].get('coordinates')
+            if coordinates is not None:
+                for aux in re.split('\s+', coordinates):
                     if aux in variables:
                         # ------------------------------------------------
                         # aux is a CF auxiliary coordinate variable
                         # ------------------------------------------------
-#                        g['referenced'][aux] = ('auxiliary_coordinate' not in g['field'])
-                        self._ppp(aux, ('auxiliary_coordinate' in g['field']))
+#                        self._referenced(aux, ('auxiliary_coordinate' in g['field']))
                         if _debug:
                             print '        Has auxiliary coordinate:', aux
- #                       if 'auxiliary_coordinate' in g['field']:
- #                           # Add the auxiliary coordinate to the set of
- #                           # top-level fields, so that it doesn't get
- #                           # demoted if the auxiliary coordinate is also
- #                           # in a coordinate reference.
- #                           g['promoted'].append(ncvar)
- #                       else:
- #                           # Do not promote an auxiliary coordinate to
- #                           # also appear as a top-level field
- #                           if _debug:
- #                               print '        Has auxiliary coordinate:', aux
- #                           g['referenced'][aux] = ('cell_measure' not in g['field'])
- #
- #                           variables.discard(aux)
-                                        
+ 
                         for attr in ('bounds', 'climatology'):
                             if attr not in attributes[aux]:
                                 continue
@@ -478,19 +445,13 @@ ancillaries, field ancillaries).
                             # independent data variable.                            
                             bounds_ncvar = attributes[aux][attr]
 
-                            cf_compliant = self._check_bounds(nc,
-                                                              ncvar, bounds_ncvar)
-                            self._ppp(bounds_ncvar, False)
-#                            g['referenced'][bounds_ncvar] = True
+                            cf_compliant = self._check_bounds(nc, ncvar,
+                                                              bounds_ncvar)
+#                            self._referenced(bounds_ncvar, False)
                             if not cf_compliant:
-#                                # The auxiliary coordinate bounds are
-#                                # OK, so remove the bounds variable
-#                                # from the list of data variables
-#                                variables.discard(bounds_ncvar)
-#                            else:
                                 # There is something wrong with the
-                                # auxiliary coordinate bounds, so
-                                # remove the bounds/climatology
+                                # auxiliary coordinate
+                                # bounds/climatology, so remove the
                                 # attribute
                                 del attributes[aux][attr]
                 #--- End: for
@@ -499,13 +460,10 @@ ancillaries, field ancillaries).
             # Remove field ancillaries (unless they have been promoted).
             ancillary_variables = attributes[ncvar].get('ancillary_variables')
             if ancillary_variables is not None:
-#            if ('field_ancillary' not in g['field'] and
-#                'ancillary_variables' in attributes[ncvar]):
                 for anc in re.split('\s+', ancillary_variables):
-                    self._ppp(anc, ('field_ancillary' in g['field']))
+                    self._referenced(anc, ('field_ancillary' in g['field']))
                     if _debug:
                         print '        Has field ancillary:', anc
-#                    variables.discard(anc)
             #--- End: if
     
             # Remove grid mapping variables
@@ -518,7 +476,7 @@ ancillaries, field ancillaries).
                 if cf_compliant:
                     for x in parsed_grid_mapping:
                         term, values = x.items()[0]
-                        self._ppp(term, ('grid_mapping' in g['field']))
+                        self._referenced(term, ('grid_mapping' in g['field']))
                         if _debug:
                             print '        Has grid mapping:', term
                     
@@ -528,23 +486,18 @@ ancillaries, field ancillaries).
                     del attributes[ncvar]['grid_mapping']
                         
             # Remove cell measure variables (unless they have been promoted).
-#           if 'cell_measure' not in g['field'] and 'cell_measures' in attributes[ncvar]:
             if 'cell_measures' in attributes[ncvar]:
                 cell_measures = attributes[ncvar]['cell_measures']
                 parsed_cell_measures = self._parse_x(ncvar, cell_measures)
-                cf_compliant = self._check_x('cell_measure', nc, ncvar,
-                                             cell_measures,
-                                             parsed_cell_measures)
+                cf_compliant = self._check_cell_measures(nc, ncvar,
+                                                         cell_measures,
+                                                         parsed_cell_measures)
                 if cf_compliant:
                     for x in parsed_cell_measures:
                         msr, msr_ncvar = x.items()[0]
-#                        msr_ncvar = msr_ncvar[0]
-#                        g['cell_measures'].add(msr_ncvar)
-                        self._ppp(msr_ncvar[0], ('cell_measure' in g['field']))
-#                        g['referenced'][msr_var] = ('cell_measure' not in g['field'])
+#                        self._referenced(msr_ncvar[0], ('cell_measure' in g['field']))
                         if _debug:
                             print '        Has cell measure:', msr
-#                        variables.discard(msr_var)
                 else:
                     # There is something wrong with the
                     # cell_measures attribute, so remove it
@@ -574,11 +527,13 @@ ancillaries, field ancillaries).
         auxiliary_coordinates = {}
         cell_measures         = {}
         list_variables        = {}
-    
+        fields                = {}
+        
         fields_in_file = []
     
         for data_ncvar in variables:
-            f = self._create_Field(data_ncvar, attributes,
+            print 'DATA_NCVAR=', data_ncvar
+            f = self._create_field(data_ncvar, attributes,
                                    dimension_coordinates,
                                    auxiliary_coordinates,
                                    cell_measures,
@@ -586,9 +541,34 @@ ancillaries, field ancillaries).
                                    field_ancillaries,
                                    list_variables,
                                    verbose=verbose)
-    
+            fields[data_ncvar] = f
             fields_in_file.append(f)
         #--- End: for
+
+        xx = []
+        print fields.keys()
+        while True:
+#            if all(g['references'].values()):
+#                break
+            
+            for ncvar in fields.keys():
+                print '           ',ncvar, g['reference_map'][ncvar]
+                if self._is_referenced(ncvar):
+                    for var in g['reference_map'].get(ncvar, ()):
+                        self._decrement_reference(var)
+                    g['reference_map'].pop(ncvar, None)
+                else:
+                    xx.append(fields.pop(ncvar))
+                    for var in g['reference_map'].get(ncvar, ()):
+                        fields.pop(var, None)
+
+            break
+        #--- End: while
+        
+        print fields.keys()
+        print xx
+        print "g['references']   =",g['references']         
+        print "g['reference_map']=",g['reference_map']        
 
         # ------------------------------------------------------------        
         # Close the netCDF file
@@ -598,14 +578,52 @@ ancillaries, field ancillaries).
         return fields_in_file
     #--- End: def
 
-    def _ppp(self, ncvar, also_as_field):
+    def _is_referenced(self, ncvar):
+        '''
+        '''
+        return self.read_vars['references'].get(ncvar, 0)
+    #--- End: def
+    
+    def _referenced(self, ncvar, also_as_field):
         '''
         '''
         g = self.read_vars
         if also_as_field:
-            g['referenced'][ncvar] = False
+            g['referenced'][ncvar] = 0
         elif ncvar not in g['referenced']:
-            g['referenced'][ncvar] = True
+            g['referenced'][ncvar] = 1
+        else:
+            g['referenced'][ncvar] += 1
+    #--- End: def 
+    
+    def _reference2(self, parent, child):
+        '''
+        '''
+        self.read_vars['reference_map'].setdefault(parent, []).append(child)
+    #--- End: def 
+    def _reference(self, ncvar, referencer=None):
+        '''
+        '''
+        g = self.read_vars
+        if ncvar not in g['references']:
+            g['references'][ncvar] = 1
+        else:
+            g['references'][ncvar] += 1
+
+        if referencer:
+            g['reference_map'].setdefault(referencer, []).append(ncvar)
+    #--- End: def 
+    
+    def _dereference(self, ncvar):
+        '''
+        '''
+        self.read_vars['references'][ncvar] = 0
+    #--- End: def 
+    
+    def _decrement_reference(self, ncvar):
+        '''
+        '''
+        self.read_vars['references'][ncvar] -= 1
     #--- End: def 
     
     def close_file(self):
@@ -1008,7 +1026,7 @@ ancillaries, field ancillaries).
         return out                            
     #--- End: def
     
-    def _create_Field(self, data_ncvar, attributes,
+    def _create_field(self, data_ncvar, attributes,
                       dimension_coordinates,
                       auxiliary_coordinates, cell_measures,
                       domain_ancillaries, field_ancillaries,
@@ -1032,6 +1050,7 @@ ancillaries, field ancillaries).
         The new field.
 
         '''
+    
         g = self.read_vars
         nc = g['nc']
         
@@ -1128,8 +1147,6 @@ ancillaries, field ancillaries).
                     dimension_coordinates[ncdim] = coord
                 
                 domain_axis = self._create_domain_axis(coord.get_data().size, ncdim)
-#                domain_axis = self._DomainAxis(coord.get_data().size)
-#                self._set_ncdim(domain_axis, ncdim)
                 if _debug:
                     print '    Inserting', repr(domain_axis)                    
                 axis = self._set_domain_axis(f, domain_axis, copy=False)
@@ -1144,6 +1161,16 @@ ancillaries, field ancillaries).
                     f.unlimited({axis: True})
     
                 ncvar_to_key[ncdim] = dim
+
+                self._reference2(ncdim, data_ncvar)
+                if coord.has_bounds():
+                    self._reference2(coord.get_bounds().get_ncvar(), data_ncvar)
+                
+#                if 'dimension_coordinate' in g['field']:
+#                    self._dereference(ncdim)
+#                else:
+#                    self._reference(ncdim, data_ncvar)
+                    
             else:
                 # There is no dimension coordinate for this dimension,
                 # so just create a domain axis with the correct size.
@@ -1191,7 +1218,7 @@ ancillaries, field ancillaries).
             
             # Split the list (allowing for incorrect comma separated
             # lists).
-            for ncvar in re.split('\s+|\s*,\s*', coordinates):
+            for ncvar in re.split('\s+', coordinates):
                 # Skip dimension coordinates which are in the list
                 if ncvar in field_ncdimensions:
                     continue
@@ -1215,7 +1242,7 @@ ancillaries, field ancillaries).
                                                            verbose=verbose)
                     auxiliary_coordinates[ncvar] = coord
                 #--- End: if
-    
+     
                 # --------------------------------------------------------
                 # Turn a 
                 # --------------------------------------------------------
@@ -1229,15 +1256,10 @@ ancillaries, field ancillaries).
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
                         domain_axis = self._create_domain_axis(1)
-#                        domain_axis = self._DomainAxis(1)
                         dim = self._set_domain_axis(f, domain_axis)
                         if _debug:
                             print '    Inserting', repr(domain_axis)
 
-#                        # Record the netCDF dimension name for this axis
-#                        domain_axis = f.axes()[dim]
-#                        self._set_ncdim(domain_axis, ncdim)
-                                        
                         dimensions = [dim]
                     else:  
                         # Numeric valued scalar coordinate
@@ -1251,7 +1273,6 @@ ancillaries, field ancillaries).
                     if _debug:
                         print '    Inserting', repr(coord)
     
-#                    domain_axis = self._DomainAxis(coord.get_data().size)
                     domain_axis = self._create_domain_axis(coord.get_data().size)
 
                     axis = self._set_domain_axis(f, domain_axis, copy=False)
@@ -1263,6 +1284,12 @@ ancillaries, field ancillaries).
                     ncvar_to_key[ncvar] = dim
                     dimension_coordinates[ncvar] = coord
                     del auxiliary_coordinates[ncvar]
+
+                    if 'dimension_coordinate' in g['field']:
+                        self._dereference(ncvar)
+                    else:
+                        self._reference(ncvar, data_ncvar)
+                    
                 else:
                     # Insert auxiliary coordinate
                     if _debug:
@@ -1272,6 +1299,16 @@ ancillaries, field ancillaries).
                                                          copy=False)
                     ncvar_to_key[ncvar] = aux
                 
+                    if 'auxiliary_coordinate' in g['field']:
+                        self._dereference(ncvar)
+                    else:
+                        self._reference(ncvar, data_ncvar)
+                        print 'AUX=', ncvar, data_ncvar, g['references'][ncvar]
+                       
+                self._reference2(ncvar, data_ncvar)
+                if coord.has_bounds():
+                    self._reference2(coord.get_bounds().get_ncvar(), data_ncvar)
+                 
                 if scalar:
                     ncscalar_to_axis[ncvar] = dimensions[0]
             #--- End: for
@@ -1286,13 +1323,15 @@ ancillaries, field ancillaries).
             # Only add coordinate references to metadata variables
 
             for key, coord in f.coordinates().iteritems():
-                print coord.dump()
-                formula_terms = attributes[coord.get_ncvar()].get('formula_terms', None)
+                coord_ncvar = coord.get_ncvar()
+                formula_terms = attributes[coord_ncvar].get('formula_terms')        
                 if formula_terms is None:
                     # This coordinate doesn't have a formula_terms attribute
                     continue
-        
-                for term, ncvar in g['formula_terms'][coord.get_ncvar()]['coord'].iteritems():
+
+                parsed_formula_terms = self._parse_x(data_ncvar, formula_terms)
+                
+                for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].iteritems():
                     # Set dimensions 
                     axes = [ncdim_to_axis[ncdim]
                             for ncdim in self._ncdimensions(ncvar)
@@ -1351,29 +1390,38 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         measures = f.get_property('cell_measures', None)
         if measures is not None:
-            for measure, ncvar in self._parse_cell_measures(measures):
-                if ncvar not in attributes:
-                    self._add_messages(data_ncvar, ['missing cell meausres variable', ncvar])
-                    continue
-    
-                # Set cell measures' dimensions 
-                cm_ncdimensions = self._ncdimensions(ncvar)
-                axes = [ncdim_to_axis[ncdim] for ncdim in cm_ncdimensions]
-    
-                if ncvar in cell_measures:
-                    # Copy the cell measure as it already exists
-                    cell = cell_measures[ncvar].copy()
-                else:
-                    cell = self._create_cell_measure(measure, ncvar,
-                                                     attributes)
-                    cell.measure = measure
-                    cell_measures[ncvar] = cell
-                #--- End: if
-    
-                clm = self._set_cell_measure(f, cell, axes=axes, copy=False)
-    
-                ncvar_to_key[ncvar] = clm
-            #--- End: for
+            parsed_cell_measures = self._parse_x(data_ncvar, measures)
+            cf_compliant = self._check_cell_measures(nc, data_ncvar,
+                                                     measures,
+                                                     parsed_cell_measures)
+            if cf_compliant:
+                for x in parsed_cell_measures:
+                    measure, ncvars = x.items()[0]
+                    ncvar = ncvars[0]
+                           
+                    # Set cell measures' dimensions 
+                    cm_ncdimensions = self._ncdimensions(ncvar)
+                    axes = [ncdim_to_axis[ncdim] for ncdim in cm_ncdimensions]
+        
+                    if ncvar in cell_measures:
+                        # Copy the cell measure as it already exists
+                        cell = cell_measures[ncvar].copy()
+                    else:
+                        cell = self._create_cell_measure(measure, ncvar,
+                                                         attributes)
+                        cell.measure = measure
+                        cell_measures[ncvar] = cell
+                    #--- End: if
+        
+                    clm = self._set_cell_measure(f, cell, axes=axes, copy=False)
+        
+                    ncvar_to_key[ncvar] = clm
+                    
+                    if 'cell_measure' in g['field']:
+                        self._dereference(ncvar)
+                    else:
+                        self._reference(ncvar, data_ncvar)
+            #--- End: if
     
             f.del_property('cell_measures')
         #--- End: if
@@ -1490,8 +1538,8 @@ ancillaries, field ancillaries).
         elif domainancillary:
             properties.pop('coordinates', None)
             properties.pop('grid_mapping', None)
-            properties.pop('cell_measures', None)
-            properties.pop('formula_terms', None)
+#            properties.pop('cell_measures', None)
+#            properties.pop('formula_terms', None)
             properties.pop('positive', None)
     
             c = self._DomainAncillary(properties=properties)
@@ -1509,34 +1557,39 @@ ancillaries, field ancillaries).
         # Add any bounds
         # ------------------------------------------------------------
         if ncbounds is not None:
-            properties = attributes[ncbounds].copy()
-            properties.pop('formula_terms', None)                
-            bounds = self._Bounds(properties=properties, copy=False)
+                       
+            cf_compliant = self._check_bounds(nc, ncvar, ncbounds)
+            if cf_compliant:
+                properties = attributes[ncbounds].copy()
+                properties.pop('formula_terms', None)                
+                bounds = self._Bounds(properties=properties, copy=False)
+                    
+                bounds_data = self._create_data(ncbounds, bounds)
+    
+                # Make sure that the bounds dimensions are in the same
+                # order as its parent's dimensions. It is assumed that we
+                # have already checked that the bounds netCDF variable has
+                # appropriate dimensions.
+                c_ncdims = nc.variables[ncvar].dimensions
+                b_ncdims = nc.variables[ncbounds].dimensions
+                c_ndim = len(c_ncdims)
+                b_ndim = len(b_ncdims)
+                if b_ncdims[:c_ndim] != c_ncdims:
+                    axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c_ndim]
+                            if ncdim in c_ncdims]
+                    axes.extend(range(c_ndim, b_ndim))
+                    bounds_data = self._transpose_data(bounds_data,
+                                                       axes=axes, copy=False)
+                #--- End: if
+    
+                self._set_data(bounds, bounds_data, copy=False)
                 
-            bounds_data = self._create_data(ncbounds, bounds)
+                # Store the netCDF variable name
+                self._set_ncvar(bounds, ncbounds)
+    
+                self._set_bounds(c, bounds, copy=False)
 
-            # Make sure that the bounds dimensions are in the same
-            # order as its parent's dimensions. It is assumed that we
-            # have already checked that the bounds netCDF variable has
-            # appropriate dimensions.
-            c_ncdims = nc.variables[ncvar].dimensions
-            b_ncdims = nc.variables[ncbounds].dimensions
-            c_ndim = len(c_ncdims)
-            b_ndim = len(b_ncdims)
-            if b_ncdims[:c_ndim] != c_ncdims:
-                axes = [c_ncdims.index(ncdim) for ncdim in b_ncdims[:c_ndim]
-                        if ncdim in c_ncdims]
-                axes.extend(range(c_ndim, b_ndim))
-                bounds_data = self._transpose_data(bounds_data,
-                                                   axes=axes, copy=False)
-            #--- End: if
-
-            self._set_data(bounds, bounds_data, copy=False)
-            
-            # Store the netCDF variable name
-            self._set_ncvar(bounds, ncbounds)
-
-            self._set_bounds(c, bounds, copy=False)
+                self._reference(ncbounds, ncvar)
         #--- End: if
     
         # Store the netCDF variable name
@@ -2325,8 +2378,8 @@ Set the Data attribute of a variable.
         return True
     #--- End: def
     
-    def _check_cell_measures(self, nc, field_ncvar, cell_measures,
-                             parsed_cell_measures):
+    def _check_cell_measures(self, nc, parent_ncvar, string,
+                             parsed_string):
         '''
 :Parameters:
 
@@ -2345,85 +2398,28 @@ Set the Data attribute of a variable.
     out: `bool`
 
         '''
-        b = re.split('\s+', cell_measures)
-        
-        if len(b) != len(parsed_cell_measures) * 2:
-            self._add_message(field_ncvar, 0, 'Badly formed cell_meausres attribute')
-            return False
-
-        return True
-    #--- End: def
-
-    def _check_x(self, attribute_type, nc, parent_ncvar, string, parsed_string):
-        '''
-        '''
         if not parsed_string:
             self._add_message(parent_ncvar, 0,
-                              'Badly formed {0} attribute'.format(attribute_type),
+                              'Badly formed cell_measures attribute',
                               string)
             return False
 
         ok = True
-        if attribute_type == 'grid_mapping':
-            for x in parsed_string:
-                term, values = x.items()[0]
-                if term not in nc.variables:
-                    ok = False
-                    self._add_message(parent_ncvar, 0,
-                                      'missing grid mapping variable',
-                                      term)
-                    
-                if not values:
-                    continue
-                
-                for ncvar in values:
-                    if ncvar not in nc.variables:
-                        ok = False
-                        self._add_message(parent_ncvar, 0,
-                                          'missing grid mapping coordinate variable',
-                                          ncvar)
-                                
-        elif attribute_type == 'cell_measure':
-            for x in parsed_string:
-                term, values = x.items()[0]
-                if len(values) != 1:
-                    ok = False
-                    self._add_message(parent_ncvar, 0,
-                                      'Badly formed cell_measure attribute',
-                                      string)
-                    continue
-
-                for ncvar in values:
-                    if ncvar not in nc.variables:
-                        ok = False
-                        self._add_message(parent_ncvar, 0,
-                                          'missing cell measure variable',
-                                          ncvar)
-
-        elif attribute_type == 'formula_terms':
-            for x in parsed_string:
-                term, values = x.items()[0]
-                if values is None:
-                    ok = False
-                    self._add_message(parent_ncvar, 0,
-                                      'Badly formed formula_terms attribute',
-                                      string)
-                    continue
-                
-                if len(values) != 1:
-                    ok = False
-                    self._add_message(parent_ncvar, 0,
-                                      'Badly formed formula_terms attribute',
-                                      string)
-                    continue
-                
-                for ncvar in values:
-                    if ncvar not in nc.variables:
-                        ok = False
-                        self._add_message(parent_ncvar, 0,
-                                          'missing formula terms variable',
-                                          ncvar)
-        #--- End: if
+        for x in parsed_string:
+            term, values = x.items()[0]
+            if len(values) != 1:
+                ok = False
+                self._add_message(parent_ncvar, 0,
+                                  'Badly formed cell_measure attribute',
+                                  string)
+                continue
+            
+            if values[0] not in nc.variables:
+                ok = False
+                self._add_message(parent_ncvar, 0,
+                                  'missing cell measure variable',
+                                  values[0])
+        #--- End: for
         
         if not ok:
             return False
