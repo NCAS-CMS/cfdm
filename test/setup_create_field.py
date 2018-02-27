@@ -178,6 +178,12 @@ class create_fieldTest(unittest.TestCase):
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 
+        print'f'
+        print f
+        print 'g'
+        print g
+        f.dump()
+        g.dump()
         self.assertTrue(g.equals(f, traceback=True),
                         "Field not equal to itself read back in")
 

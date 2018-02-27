@@ -203,6 +203,7 @@ Keys are item identifiers, values are item objects.
                     continue
             
                 for construct_type in self._array_constructs:
+#                    print construct_type
                     matched_role = False
 
                     role_items0 = items0[construct_type]
@@ -218,13 +219,15 @@ Keys are item identifiers, values are item objects.
                     # items
                     for key0, item0 in role_items0.iteritems():
                         matched_item = False
+#                        print  repr(item0),
                         for key1, item1 in role_items1.items():
                             if item0.equals(item1, rtol=rtol,
                                             atol=atol,
-                                            traceback=False, **kwargs):
+                                            traceback=True, **kwargs): # FALSE
                                 del role_items1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_item = True
+#                                print 'matched'
                                 break
                         #--- End: for
 
@@ -252,6 +255,11 @@ Keys are item identifiers, values are item objects.
                 if traceback:
                     names = [self.domain_axis_name(axis0) for axis0 in axes0]
                     print("Can't match items spanning axes {0}".format(names))
+#                    print 'XXX'
+#                    print self.constructs(axes=axes0)
+#                    print self
+#                    print other
+#                    print other.contructs(axes=axes0)
                 return False
         #--- End: for
 

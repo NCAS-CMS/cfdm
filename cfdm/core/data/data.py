@@ -1634,7 +1634,8 @@ False
     # Compression class methods
     # ----------------------------------------------------------------
     @classmethod
-    def compression_initialize_gathered(cls, uncompressed_shape):
+    def compression_initialize_gathered(cls, dtype,
+                                        uncompressed_shape):
         '''Create an empty Data array
         
 :Parameters:
@@ -1644,13 +1645,13 @@ False
     out: `Data`
 
         '''
-        array = numpy.ma.masked_all(uncompressed_shape)
+        array = numpy.ma.masked_all(uncompressed_shape, dtype=dtype)
                    
         return cls(array)
     #--- End: def
 
     @classmethod
-    def compression_initialize_indexed_contiguous(cls,
+    def compression_initialize_indexed_contiguous(cls, dtype,
                                                   instance_dimension_size,
                                                   element_dimension_1_size,
                                                   element_dimension_2_size,
@@ -1683,27 +1684,26 @@ False
         '''
         array = numpy.ma.masked_all((instance_dimension_size,
                                      element_dimension_1_size,
-                                     element_dimension_2_size))
+                                     element_dimension_2_size), dtype=dtype)
                    
         return cls(array)
     #--- End: def
 
     @classmethod
-    def compression_initialize_contiguous(cls,
+    def compression_initialize_contiguous(cls, dtype,
                                           instance_dimension_size,
                                           element_dimension_size,
                                           elements_per_instance):
         '''Create an empty Data array which has dimensions
         (instance_dimension_size, element_dimension_size)
 
-instance_dimension_size = count.size
-
-element_dimension_size  = count.max()
-
-
 :Parameters:
 
-    count: `Data`
+    instance_dimension_size: `int`
+
+    element_dimension_size: `int`
+
+    elements_per_instance: data-like
 
 :Returns:
  
@@ -1711,13 +1711,14 @@ element_dimension_size  = count.max()
 
         '''
         array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_size))
+                                     element_dimension_size),
+                                    dtype=dtype)
         
         return cls(array)
     #--- End: def
 
     @classmethod
-    def compression_initialize_indexed(cls, instance_dimension_size,
+    def compression_initialize_indexed(cls, dtype, instance_dimension_size,
                                        element_dimension_size, index):
         '''Create an empty Data array which has shape
         (instance_dimension_size, element_dimension_size)
@@ -1736,7 +1737,8 @@ element_dimension_size  = count.max()
 
         '''
         array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_size))
+                                     element_dimension_size),
+                                    dtype=dtype)
         
         return cls(array)
     #--- End: def
@@ -1756,14 +1758,18 @@ element_dimension_size  = count.max()
 
         '''
         data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
+
+        data.set_units(units)
+        data.set_calendar(calendar)
+        data.set_fill_value(fill_value)
 
         uncompressed_array = data.varray 
        
-        compressed_axes = range(sample_axis, uncompressed_array.ndim - (gathered_array.ndim - sample_axis - 1))
+        compressed_axes = range(sample_axis,
+                                uncompressed_array.ndim - (gathered_array.ndim - sample_axis - 1))
         
-        zzz = [reduce(operator.mul, [uncompressed_array.shape[i] for i in compressed_axes[i:]], 1)
+        zzz = [reduce(operator.mul, [uncompressed_array.shape[i]
+                                     for i in compressed_axes[i:]], 1)
                for i in range(1, len(compressed_axes))]
         
         xxx = [[0] * indices.size for i in compressed_axes]
