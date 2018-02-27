@@ -2113,7 +2113,7 @@ Set the Data attribute of a variable.
                         profile_indices       = c['DSG_indexed_contiguous']['profile_indices']
     
                         data = self._Data.compression_fill_indexed_contiguous(
-                            empty_data.copy(),
+                            empty_data,
                             dtype,
                             units,
                             fill_value,
