@@ -1630,310 +1630,310 @@ False
             self._set_master_array(NumpyArray(array))
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Compression class methods
-    # ----------------------------------------------------------------
-    @classmethod
-    def compression_initialize_gathered(cls, dtype,
-                                        uncompressed_shape):
-        '''Create an empty Data array
-        
-:Parameters:
-
-:Returns:
- 
-    out: `Data`
-
-        '''
-        array = numpy.ma.masked_all(uncompressed_shape, dtype=dtype)
-                   
-        return cls(array)
-    #--- End: def
-
-    @classmethod
-    def compression_initialize_indexed_contiguous(cls, dtype,
-                                                  instance_dimension_size,
-                                                  element_dimension_1_size,
-                                                  element_dimension_2_size,
-                                                  profiles_per_instance,
-                                                  elements_per_profile,
-                                                  profile_indices):
-        '''Create an empty Data array which has dimensions
-        (instance_dimension_size, element_dimension_1_size,
-        element_dimension_2_size)
-        
-:Parameters:
-
-    instance: `Data`
-        Number of instances
-
-    features_per_instance: `Data`
-        Number of features per instance
-
-    elements_per_feature: `Data`
-        Number of elements per feature
-
-    profile_indices: `Data`
-        The indices of the sample dimension which define the start
-        position of each profile of each instance.
-
-:Returns:
- 
-    out: `Data`
-
-        '''
-        array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_1_size,
-                                     element_dimension_2_size), dtype=dtype)
-                   
-        return cls(array)
-    #--- End: def
-
-    @classmethod
-    def compression_initialize_contiguous(cls, dtype,
-                                          instance_dimension_size,
-                                          element_dimension_size,
-                                          elements_per_instance):
-        '''Create an empty Data array which has dimensions
-        (instance_dimension_size, element_dimension_size)
-
-:Parameters:
-
-    instance_dimension_size: `int`
-
-    element_dimension_size: `int`
-
-    elements_per_instance: data-like
-
-:Returns:
- 
-    out: `Data`
-
-        '''
-        array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_size),
-                                    dtype=dtype)
-        
-        return cls(array)
-    #--- End: def
-
-    @classmethod
-    def compression_initialize_indexed(cls, dtype, instance_dimension_size,
-                                       element_dimension_size, index):
-        '''Create an empty Data array which has shape
-        (instance_dimension_size, element_dimension_size)
-
-:Parameters:
-
-    instance_dimension_size: `int`
-
-    element_dimension_size: `int`
-
-    index: data-like
-
-:Returns:
- 
-    out: `Data`
-
-        '''
-        array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_size),
-                                    dtype=dtype)
-        
-        return cls(array)
-    #--- End: def
-
-    @classmethod
-    def compression_fill_gathered(cls, data, dtype, units, fill_value,
-                                  gathered_array, sample_axis, indices):
-        '''
-        
-    data: `Data`
-
-    gathered_array:
-        
-    sample_axes: `int`
-
-    indices: `Data`
-
-        '''
-        data.dtype = dtype
-
-        data.set_units(units)
-        data.set_calendar(calendar)
-        data.set_fill_value(fill_value)
-
-        uncompressed_array = data.varray 
-       
-        compressed_axes = range(sample_axis,
-                                uncompressed_array.ndim - (gathered_array.ndim - sample_axis - 1))
-        
-        zzz = [reduce(operator.mul, [uncompressed_array.shape[i]
-                                     for i in compressed_axes[i:]], 1)
-               for i in range(1, len(compressed_axes))]
-        
-        xxx = [[0] * indices.size for i in compressed_axes]
-
-
-        for n, b in enumerate(indices.varray):
-            if not zzz or b < zzz[-1]:
-                xxx[-1][n] = b
-                continue
-            
-            for i, z in enumerate(zzz):
-                if b >= z:
-                    (a, b) = divmod(b, z)
-                    xxx[i][n] = a
-                    xxx[-1][n] = b
-        #--- End: for
-
-        uncompressed_indices = [slice(None)] * uncompressed_array.ndim        
-        for i, x in enumerate(xxx):
-            uncompressed_indices[sample_axis+i] = x
-
-        uncompressed_array[tuple(uncompressed_indices)] = gathered_array[...]
-
-        return data
-    #--- End: def
-
-    @classmethod
-    def compression_fill_indexed(cls, data, dtype, units, fill_value,
-                                 ragged_array, index):
-        '''sdfsdfsd
-
-:Parameters:
-
-    data: `Data`
-        The `Data` object to filled as an incomplete orthogonal
-        array. The instance dimension must be in position 0 and the
-        element dimension must be in position 1.
- 
-    ragged_array: 
-        
-    index: `Data`
-
-        '''
-        data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
-
-        uncompressed_array = data.varray
-
-        for i in range(uncompressed_array.shape[0]): #index.unique():
-            sample_dimension_indices = numpy.where(index == i)[0]
-            
-            indices = (slice(i, i+1),
-                       slice(0, len(sample_dimension_indices)))
-
-            uncompressed_array[indices] = ragged_array[sample_dimension_indices]
-        #--- End: for
-
-        return data
-    #--- End: def
-
-    @classmethod
-    def compression_fill_contiguous(cls, data, dtype, units,
-                                    fill_value, ragged_array,
-                                    elements_per_feature):
-        '''
-        
-    data: `Data`
-
-    ragged_array:
-        
-    elements_per_feature: `Data`
-
-        '''
-        data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
-
-        uncompressed_array = data.varray 
-
-        start = 0 
-        for i, n in enumerate(elements_per_feature):
-            n = int(n)
-            sample_indices = slice(start, start + n)
-
-            indices = (slice(i, i+1),
-                       slice(0, sample_indices.stop - sample_indices.start))
-                             
-            uncompressed_array[indices ] = ragged_array[sample_indices]
-                             
-            start += n
-        #--- End: for
-
-        return data
-    #--- End: def
-
-    @classmethod
-    def compression_fill_indexed_contiguous(cls, data, dtype, units,
-                                            fill_value, ragged_array,
-                                            profiles_per_instance,
-                                            elements_per_profile,
-                                            profile_indices):
-        '''
-        
-    data: `Data`
-
-    ragged_array: array-like
-        
-    profiles_per_instance: `Data`
-
-    elements_per_profile: `Data`
-
-    profile_indices: `Data`
-        The indices of the sample dimension which define the start
-        position of each profile of each instance.
-
-        '''
-        print 'elements_per_profile.shape =',elements_per_profile.shape
-        data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
-
-        uncompressed_array = data.varray 
-
-        # Loop over instances
-        for i in range(uncompressed_array.shape[0]):
-
-            # For all of the profiles in ths instance, find the
-            # locations in the elements_per_profile array of the
-            # number of elements in the profile
-            xprofile_indices = numpy.where(profile_indices == i)[0]
-
-            # Find the number of profiles in this instance
-            n_profiles = xprofile_indices.size
-
-            # Loop over profiles in this instance
-            for j in range(uncompressed_array.shape[1]):
-                print 'j=',j
-                if j >= n_profiles:
-                    continue
-                
-                # Find the location in the elements_per_profile array
-                # of the number of elements in this profile
-                profile_index = xprofile_indices[j]
-
-                if profile_index == 0:
-                    start = 0
-                else:                    
-                    start = int(elements_per_profile[:profile_index].sum())
-
-                print profile_index, elements_per_profile.shape,  elements_per_profile[j, profile_index], elements_per_profile
-                stop  = start + int(elements_per_profile[j, profile_index])
-                
-                sample_indices = slice(start, stop)
-                
-                indices = (slice(i, i+1),
-                           slice(j, j+1), 
-                           slice(0, sample_indices.stop - sample_indices.start))
-                
-                uncompressed_array[indices] = ragged_array[sample_indices]
-        #--- End: for
-
-        return data
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Compression class methods
+#    # ----------------------------------------------------------------
+#    @classmethod
+#    def compression_initialize_gathered(cls, dtype,
+#                                        uncompressed_shape):
+#        '''Create an empty Data array
+#        
+#:Parameters:
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all(uncompressed_shape, dtype=dtype)
+#                   
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_initialize_indexed_contiguous(cls, dtype,
+#                                                  instance_dimension_size,
+#                                                  element_dimension_1_size,
+#                                                  element_dimension_2_size,
+#                                                  profiles_per_instance,
+#                                                  elements_per_profile,
+#                                                  profile_indices):
+#        '''Create an empty Data array which has dimensions
+#        (instance_dimension_size, element_dimension_1_size,
+#        element_dimension_2_size)
+#        
+#:Parameters:
+#
+#    instance: `Data`
+#        Number of instances
+#
+#    features_per_instance: `Data`
+#        Number of features per instance
+#
+#    elements_per_feature: `Data`
+#        Number of elements per feature
+#
+#    profile_indices: `Data`
+#        The indices of the sample dimension which define the start
+#        position of each profile of each instance.
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all((instance_dimension_size,
+#                                     element_dimension_1_size,
+#                                     element_dimension_2_size), dtype=dtype)
+#                   
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_initialize_contiguous(cls, dtype,
+#                                          instance_dimension_size,
+#                                          element_dimension_size,
+#                                          elements_per_instance):
+#        '''Create an empty Data array which has dimensions
+#        (instance_dimension_size, element_dimension_size)
+#
+#:Parameters:
+#
+#    instance_dimension_size: `int`
+#
+#    element_dimension_size: `int`
+#
+#    elements_per_instance: data-like
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all((instance_dimension_size,
+#                                     element_dimension_size),
+#                                    dtype=dtype)
+#        
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_initialize_indexed(cls, dtype, instance_dimension_size,
+#                                       element_dimension_size, index):
+#        '''Create an empty Data array which has shape
+#        (instance_dimension_size, element_dimension_size)
+#
+#:Parameters:
+#
+#    instance_dimension_size: `int`
+#
+#    element_dimension_size: `int`
+#
+#    index: data-like
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all((instance_dimension_size,
+#                                     element_dimension_size),
+#                                    dtype=dtype)
+#        
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_gathered(cls, data, dtype, units, fill_value,
+#                                  gathered_array, sample_axis, indices):
+#        '''
+#        
+#    data: `Data`
+#
+#    gathered_array:
+#        
+#    sample_axes: `int`
+#
+#    indices: `Data`
+#
+#        '''
+#        data.dtype = dtype
+#
+#        data.set_units(units)
+#        data.set_calendar(calendar)
+#        data.set_fill_value(fill_value)
+#
+#        uncompressed_array = data.varray 
+#       
+#        compressed_axes = range(sample_axis,
+#                                uncompressed_array.ndim - (gathered_array.ndim - sample_axis - 1))
+#        
+#        zzz = [reduce(operator.mul, [uncompressed_array.shape[i]
+#                                     for i in compressed_axes[i:]], 1)
+#               for i in range(1, len(compressed_axes))]
+#        
+#        xxx = [[0] * indices.size for i in compressed_axes]
+#
+#
+#        for n, b in enumerate(indices.varray):
+#            if not zzz or b < zzz[-1]:
+#                xxx[-1][n] = b
+#                continue
+#            
+#            for i, z in enumerate(zzz):
+#                if b >= z:
+#                    (a, b) = divmod(b, z)
+#                    xxx[i][n] = a
+#                    xxx[-1][n] = b
+#        #--- End: for
+#
+#        uncompressed_indices = [slice(None)] * uncompressed_array.ndim        
+#        for i, x in enumerate(xxx):
+#            uncompressed_indices[sample_axis+i] = x
+#
+#        uncompressed_array[tuple(uncompressed_indices)] = gathered_array[...]
+#
+#        return data
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_indexed(cls, data, dtype, units, fill_value,
+#                                 ragged_array, index):
+#        '''sdfsdfsd
+#
+#:Parameters:
+#
+#    data: `Data`
+#        The `Data` object to filled as an incomplete orthogonal
+#        array. The instance dimension must be in position 0 and the
+#        element dimension must be in position 1.
+# 
+#    ragged_array: 
+#        
+#    index: `Data`
+#
+#        '''
+#        data.dtype = dtype
+#        data.Units = units
+#        data.fill_value = fill_value
+#
+#        uncompressed_array = data.varray
+#
+#        for i in range(uncompressed_array.shape[0]): #index.unique():
+#            sample_dimension_indices = numpy.where(index == i)[0]
+#            
+#            indices = (slice(i, i+1),
+#                       slice(0, len(sample_dimension_indices)))
+#
+#            uncompressed_array[indices] = ragged_array[sample_dimension_indices]
+#        #--- End: for
+#
+#        return data
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_contiguous(cls, data, dtype, units,
+#                                    fill_value, ragged_array,
+#                                    elements_per_feature):
+#        '''
+#        
+#    data: `Data`
+#
+#    ragged_array:
+#        
+#    elements_per_feature: `Data`
+#
+#        '''
+#        data.dtype = dtype
+#        data.Units = units
+#        data.fill_value = fill_value
+#
+#        uncompressed_array = data.varray 
+#
+#        start = 0 
+#        for i, n in enumerate(elements_per_feature):
+#            n = int(n)
+#            sample_indices = slice(start, start + n)
+#
+#            indices = (slice(i, i+1),
+#                       slice(0, sample_indices.stop - sample_indices.start))
+#                             
+#            uncompressed_array[indices ] = ragged_array[sample_indices]
+#                             
+#            start += n
+#        #--- End: for
+#
+#        return data
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_indexed_contiguous(cls, data, dtype, units,
+#                                            fill_value, ragged_array,
+#                                            profiles_per_instance,
+#                                            elements_per_profile,
+#                                            profile_indices):
+#        '''
+#        
+#    data: `Data`
+#
+#    ragged_array: array-like
+#        
+#    profiles_per_instance: `Data`
+#
+#    elements_per_profile: `Data`
+#
+#    profile_indices: `Data`
+#        The indices of the sample dimension which define the start
+#        position of each profile of each instance.
+#
+#        '''
+#        print 'elements_per_profile.shape =',elements_per_profile.shape
+#        data.dtype = dtype
+#        data.Units = units
+#        data.fill_value = fill_value
+#
+#        uncompressed_array = data.varray 
+#
+#        # Loop over instances
+#        for i in range(uncompressed_array.shape[0]):
+#
+#            # For all of the profiles in ths instance, find the
+#            # locations in the elements_per_profile array of the
+#            # number of elements in the profile
+#            xprofile_indices = numpy.where(profile_indices == i)[0]
+#
+#            # Find the number of profiles in this instance
+#            n_profiles = xprofile_indices.size
+#
+#            # Loop over profiles in this instance
+#            for j in range(uncompressed_array.shape[1]):
+#                print 'j=',j
+#                if j >= n_profiles:
+#                    continue
+#                
+#                # Find the location in the elements_per_profile array
+#                # of the number of elements in this profile
+#                profile_index = xprofile_indices[j]
+#
+#                if profile_index == 0:
+#                    start = 0
+#                else:                    
+#                    start = int(elements_per_profile[:profile_index].sum())
+#
+#                print profile_index, elements_per_profile.shape,  elements_per_profile[j, profile_index], elements_per_profile
+#                stop  = start + int(elements_per_profile[j, profile_index])
+#                
+#                sample_indices = slice(start, stop)
+#                
+#                indices = (slice(i, i+1),
+#                           slice(j, j+1), 
+#                           slice(0, sample_indices.stop - sample_indices.start))
+#                
+#                uncompressed_array[indices] = ragged_array[sample_indices]
+#        #--- End: for
+#
+#        return data
+#    #--- End: def
 
 #--- End: class
 

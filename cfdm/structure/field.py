@@ -170,6 +170,16 @@ Field objects are picklable.
     def construct_axes(self, key=None):
         return self._get_constructs().construct_axes(key=key)
     
+    def construct(self, construct, copy=False):
+        '''
+        '''
+        c = self._get_constructs().constructs(copy=False)[construct]
+        if copy:
+            c = c.copy()
+
+        return c
+    #--- End: def
+        
     def constructs(self, copy=False):
         '''Return all of the data model constructs of the field.
 

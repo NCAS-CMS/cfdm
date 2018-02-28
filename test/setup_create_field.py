@@ -191,6 +191,9 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
+        g = cfdm.read(self.filename, _debug=True, field=['dimension_coordinate'])
+        print g
+
     #--- End: def
 
 #--- End: class

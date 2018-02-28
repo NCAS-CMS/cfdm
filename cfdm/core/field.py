@@ -830,6 +830,48 @@ by the data array may be selected.
         return f
     #--- End: def
 
+    def field(self, construct):
+        '''
+        '''
+        c = self.construct(construct, copy=False)
+    
+        f = type(self)(properties=c.properties(), copy=True)
+
+        data_axes = self.construct_axes(construct)
+        
+        f.set_data(c.get_data(), axes=data_axes, copy=True)
+       
+        for key, con in self.constructs(axes=data_axes, copy=False):
+            axes = self.construct_axes().get(key)
+            if axes is None:
+                continue
+
+            if set(axes).issubset(data_axes):
+                construct_type = self.get_constructs().construct_type()[key]
+                f.set_construct(construct_type, con, key=key,
+                                axes=axes, copy=True)
+        #--- End: for
+        
+        # Add coordinate references which span a subset of the item's
+        # axes
+        for key, ref in self.coordinate_references().iteritems():
+            ok = True
+            for coord in (tuple(ref.coordinates()) +
+                          tuple(ref.domain_ancillaries().values())):
+                axes = self.construct_axes()[coord]
+                if not set(axes).issubset(data_axes):
+                    ok = False
+                    break
+
+            if not ok:
+                continue
+
+            f.set_coordinate_reference(ref, key=key, copy=True)
+        #--- End: for
+              
+        return f
+    #--- End: def
+    
     def field_ancillaries(self, axes=None, copy=False):
         '''
         '''
