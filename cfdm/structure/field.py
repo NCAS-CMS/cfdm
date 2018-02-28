@@ -501,7 +501,7 @@ ValueError: Can't initialize data: Data already exists
         domain_axes = self.domain_axes()
         for axis in value:
             if axis not in domain_axes:
-                raise ValueError("asdajns dpunpuewnd p9wun lun 0[9io3jed pjn j nn jk")
+                raise ValueError("Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
             
         self._set_component(1, 'data_axes', None, tuple(value))
     #--- End: def

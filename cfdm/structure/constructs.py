@@ -350,7 +350,7 @@ Return a deep or shallow copy.
         '''
         if key is None:
             key = self.new_identifier(construct_type)
-        elif key in self._consructs[construct_type]:
+        elif key in self._constructs[construct_type]:
             raise ValueError("Key exists. Use replace")
         
         if construct_type in self._array_constructs:

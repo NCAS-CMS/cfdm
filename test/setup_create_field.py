@@ -104,8 +104,10 @@ class create_fieldTest(unittest.TestCase):
 
         orog = cfdm.DomainAncillary(data=f.get_data())
         orog.set_property('standard_name', 'surface_altitude')
+        orog.set_property('units', 'm')
         orog = f.set_domain_ancillary(orog, axes=[axisY, axisX])
 
+        
         ref1 = cfdm.CoordinateReference(
             properties={'standard_name': 'atmosphere_hybrid_height_coordinate'},
             domain_ancillaries={'orog': orog,
@@ -191,9 +193,14 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, _debug=True, field=['dimension_coordinate'])
-        print g
+#        g = cfdm.read(self.filename, _debug=True, field=['domain_ancillarie'])
+#        print g
 
+        h = g.field('domainancillary2')
+        h.dump()
+        print h
+        
+        
     #--- End: def
 
 #--- End: class

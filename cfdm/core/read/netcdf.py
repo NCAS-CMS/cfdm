@@ -2,6 +2,8 @@ import copy
 import re
 import struct
 
+from collections import OrderedDict
+
 import numpy
 
 from ..functions import abspath, flat
@@ -340,7 +342,7 @@ ancillaries, field ancillaries).
         list_variables        = {}
         fields                = {}
         
-        fields = {}
+        fields = OrderedDict()
         for ncvar in variables:
             field = self._create_field(ncvar, attributes,
                                        dimension_coordinates,
@@ -354,7 +356,8 @@ ancillaries, field ancillaries).
         #--- End: for
 
         got = []
-        
+
+        # 
         fields_in_file = []
         for ncvar, field in fields.iteritems():
             if self._is_unreferenced(ncvar):
@@ -362,19 +365,16 @@ ancillaries, field ancillaries).
                 got.append(ncvar)
             elif _debug:
                 print '   ', ncvar, 'not a field'
-
+        #--- End: for
+        
+        # Promote non-field constructs to field constructs
         for xx in g['fields']:
             for ncvar, f in fields.iteritems():
-                if self._is_unreferenced(ncvar):
-                    continue
-
-                if xx == 'dimension_coordinate':
-                    for x in f.dimension_coordinates().values():
-                        print repr(x)
-                        ncvar = x.get_ncvar()
-                        if ncvar not in got:
-                            fields_in_file.append(fields[ncvar])
-                            got.append(ncvar)
+                for construct in getattr(f, xx+'s')().values():
+                    ncvar = construct.get_ncvar()
+                    if ncvar not in got:
+                        fields_in_file.append(fields[ncvar])
+                        got.append(ncvar)
         #--- End: for
                 
         if _debug:
@@ -382,9 +382,6 @@ ancillaries, field ancillaries).
             for x in fields_in_file:
                 print x
 
-        
-
-            
         # ------------------------------------------------------------        
         # Close the netCDF file
         # ------------------------------------------------------------                
@@ -789,8 +786,7 @@ netCDF variable.
             ncvar = bounds_ncvar
         
         parsed_formula_terms = self._parse_x(ncvar, formula_terms)
-        cf_compliant = self._check_formula_terms(g['nc'], ncvar,
-                                                 formula_terms,
+        cf_compliant = self._check_formula_terms(ncvar, formula_terms,
                                                  parsed_formula_terms)
         if not cf_compliant:
             # There is something wrong with the formula_terms
@@ -1114,7 +1110,7 @@ netCDF variable.
 
                 # Populate the g['formula_terms'][coord_ncvar] dictionary
                 parsed_formula_terms = self._parse_x(coord_ncvar, formula_terms)
-                cf_compliant = self._check_formula_terms(nc, coord_ncvar,
+                cf_compliant = self._check_formula_terms(coord_ncvar,
                                                          formula_terms,
                                                          parsed_formula_terms)
                 if not cf_compliant:
@@ -1193,7 +1189,7 @@ netCDF variable.
         grid_mapping = f.get_property('grid_mapping', None)
         if grid_mapping is not None:
             parsed_grid_mapping = self._parse_x(ncvar, grid_mapping)
-            cf_compliant = self._check_grid_mapping(nc, data_ncvar,
+            cf_compliant = self._check_grid_mapping(data_ncvar,
                                                     grid_mapping,
                                                     parsed_grid_mapping)
             if not cf_compliant:
@@ -1852,7 +1848,7 @@ also be provided.
 
         '''
 #        parsed_grid_mapping = self._parse_x(ncvar, grid_mapping)
-#        cf_compliant = self._check_grid_mapping(nc, ncvar,
+#        cf_compliant = self._check_grid_mapping(ncvar,
 #                                                grid_mapping,
 #                                                parsed_grid_mapping)
 #        if not cf_compliant:
@@ -1951,7 +1947,6 @@ also be provided.
                 ancillaries[term] = domain_ancillaries[ncvar][0]
             else:
                 ancillaries[term] = None
-#            ancillaries[term] = domain_ancillaries[ncvar][0]
 
         props = {}
         name = coord.get_property('standard_name', None)
@@ -2311,9 +2306,11 @@ Checks that
         return True
     #--- End: def
 
-    def _check_grid_mapping(self, nc, parent_ncvar, string, parsed_string):
+    def _check_grid_mapping(self, parent_ncvar, string, parsed_string):
         '''
         '''
+        nc = self.read_vars['nc']
+        
         if not parsed_string:
             self._add_message(parent_ncvar, 0,
                               'Badly formed grid_mapping attribute',
@@ -2347,9 +2344,11 @@ Checks that
         return True
     #--- End: def
 
-    def _check_formula_terms(self, nc, parent_ncvar, string, parsed_string):
+    def _check_formula_terms(self, parent_ncvar, string, parsed_string):
         '''
         '''
+        nc = self.read_vars['nc']
+        
         if not parsed_string:
             self._add_message(parent_ncvar, 0,
                               'Badly formed formula_terms attribute',
