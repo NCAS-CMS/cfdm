@@ -512,8 +512,9 @@ netCDF variable.
             return 
             
         variable = g['nc'].variables[ncvar]
-        instance_ncdimension = variable.dimensions[0]
-    
+        instance_ncdimension = variable.dimensions[0]    
+        instance_dimension_size = variable.size
+        
         elements_per_instance = self._create_array(ncvar)
     
         instance_dimension_size = elements_per_instance.size    
@@ -549,15 +550,20 @@ netCDF variable.
                element_dimension in g['new_dimensions']):
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
-             
+
         g['compression'].setdefault(sample_ncdimension, {})['DSG_contiguous'] = {
-            'empty_data'            : data,
-            'elements_per_instance' : elements_per_instance,
-            'implied_ncdimensions'  : (instance_ncdimension,
-                                       element_dimension),
-            'profile_ncdimension'   : instance_ncdimension,
-            'element_dimension'     : element_dimension,
-            'element_dimension_size': element_dimension_size,
+            'count_array'            : count_array,
+            'empty_data'             : data,
+            'elements_per_instance'  : elements_per_instance,
+            'implied_ncdimensions'   : (instance_ncdimension,
+                                        element_dimension),
+            'profile_ncdimension'    : instance_ncdimension,
+            'element_dimension'      : element_dimension,
+            'element_dimension_size' : element_dimension_size,
+            'instance_dimension_size': instance_dimension_size,
+            'instance_axis'          : 0,
+            'instance_index'         : 0,
+            'c_element_axis'         : 1,
         }
     
         g['new_dimensions'][element_dimension] = element_dimension_size
@@ -654,6 +660,7 @@ netCDF variable.
                                         element_dimension),
             'element_dimension'      : element_dimension,
             'instance_dimension_size': instance_dimension_size,
+            'element_dimension_size' : element_dimension_size,
         }
     
         g['new_dimensions'][element_dimension] = element_dimension_size
@@ -2071,90 +2078,101 @@ Set the Data attribute of a variable.
                 if ncdim in compression:
                     c = compression[ncdim]
                     if 'gathered' in c:
-                        # Create an empty Data array which has dimensions
-                        # uncompressed_shape  
-                        ncdims = self._ncdimensions(ncvar)
-                        uncompressed_shape = tuple([nc[dim].size for dim in ncdims])
-    
-                        empty_data = self._Data.compression_initialize_gathered(
-                            dtype=dtype,
-                            uncompressed_shape=uncompressed_shape)
-    
-                        # The position of the compressed axis in the
-                        # gathered array
-    
-                        sample_axis = ncvariable.dimensions.index(ncdim)
-    
-                        # The uncompression indices
-                        indices = c['gathered']['indices']
-    
-    #                    data = data.array.GatheredArray(uncompressed_shape=uncompressed_shape, 
-    #                                                             dtype=dtype,
-    #                                                             gathered_array=filearray,
-    #                                                             sample_axis=sample_axis, 
-    #                                                             indices=indices)
-    
-                        data = self._Data.compression_fill_gathered(empty_data,
-                                                                    dtype,
-                                                                    units,
-                                                                    fill_value,
-                                                                    filearray,
-                                                                    sample_axis,
-                                                                    indices)
-    
+                        data = self._aaa0(ncvar, c['gathered'], filearray, units,
+                                          calendar, fill_value)
                     elif 'DSG_indexed_contiguous' in c:
                         # DSG contiguous indexed ragged array. Check
                         # this before DSG_indexed and DSG_contiguous
                         # because both of these will exist for an
                         # indexed and contiguous array.
-                        empty_data            = c['DSG_indexed_contiguous']['empty_data'].copy()
-                        profiles_per_instance = c['DSG_indexed_contiguous']['profiles_per_instance']
-                        elements_per_profile  = c['DSG_indexed_contiguous']['elements_per_profile']
-                        profile_indices       = c['DSG_indexed_contiguous']['profile_indices']
-    
-                        data = self._Data.compression_fill_indexed_contiguous(
-                            empty_data.copy(),
-                            dtype,
-                            units,
-                            fill_value,
-                            filearray,
-                            profiles_per_instance,
-                            elements_per_profile,
-                            profile_indices)
-                        
+                        data = self._aaa3(ncvar,
+                                          c['DSG_indexed_contiguous'],
+                                          filearray, units, calendar,
+                                          fill_value)
                     elif 'DSG_contiguous' in c:                    
                         # DSG contiguous ragged array
-                        empty_data            = c['DSG_contiguous']['empty_data'].copy()
-                        elements_per_instance = c['DSG_contiguous']['elements_per_instance']
-                                            
-                        data = self._Data.compression_fill_contiguous(
-                            empty_data,
-                            dtype,
-                            units,
-                            fill_value,
-                            filearray,
-                            elements_per_instance)
-                        
+                        data = self._aaa1(ncvar, c['DSG_contiguous'],
+                                          filearray, units, calendar,
+                                          fill_value)
                     elif 'DSG_indexed' in c:
                         # DSG indexed ragged array
-                        empty_data       = c['DSG_indexed']['empty_data'].copy()
-                        instance_indices = c['DSG_indexed']['instance_indices']
-                        
-                        data = self._Data.compression_fill_indexed(
-                            empty_data,
-                            dtype,
-                            units,
-                            fill_value,
-                            filearray,
-                            instance_indices)
-                            
+                        data = self._aaa2(ncvar, c['DSG_indexed'] ,
+                                          filearray, units, calendar, fill_value)
                     else:
                         raise ValueError("Bad compression vibes. c.keys()={}".format(c.keys()))
         #--- End: if
-            
+                    
         return data
     #--- End: def
 
+    def _aaa0(self, ncvar, c, filearray,  units, calendar, fill_value):
+        '''
+        '''
+        g = self.read_vars
+        
+        uncompressed_shape = tuple([g['nc'][dim].size
+                                    for dim in self._ncdimensions(ncvar)])
+        uncompressed_ndim  = len(uncompressed_shape)
+        uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+                        
+        c = c.copy()
+        c['sample_axis'] = g['nc'].variables[ncvar].dimensions.index(ncdim)
+        
+        xx = self._GatheredArray(
+            filearray,
+            ndim=uncompressed_shape,
+            shape=uncompressed_shape,
+            size=uncompressed_size,
+            compression={'gathered': c})
+        )
+        
+        return self._Data(xx, units=units,
+                          calendar=calendar,
+                          fill_value=fill_value)
+    #--- End: def
+    
+    def _aaa1(self, ncvar, c, filearray, units, calendar, fill_value):
+        '''
+        '''
+        uncompressed_shape = (c['instance_dimension_size'],
+                              c['element_dimension_size'])
+        uncompressed_ndim  = len(uncompressed_shape)
+        uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        
+        xx = self._GatheredArray(
+            filearray,
+            ndim=uncompressed_shape,
+            shape=uncompressed_shape,
+            size=uncompressed_size,
+            compression={'DSG_contiguous': c})
+        )
+        
+        return self._Data(xx, units=units,
+                          calendar=calendar,
+                          fill_value=fill_value)
+    #--- End: def
+    
+    def _aaa2(self, ncvar, c, filearray, units, calendar, fill_value):
+        '''
+        '''
+        uncompressed_shape = (c['instance_dimension_size'],
+                              c['element_dimension_size'])
+        uncompressed_ndim  = len(uncompressed_shape)
+        uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        
+        xx = self._GatheredArray(
+            filearray,
+            ndim=uncompressed_shape,
+            shape=uncompressed_shape,
+            size=uncompressed_size,
+            compression={'DSG_indexed': c})
+        )
+        
+        return self._Data(xx, units=units,
+                          calendar=calendar,
+                          fill_value=fill_value)
+    #--- End: def
+    
     def _create_Data(self, array=None, units=None, calendar=None,
                           fill_value=None, netcdf_variable=None):
         '''
