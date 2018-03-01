@@ -5,15 +5,13 @@ import numpy
 import netCDF4
 
 from ..constants  import masked
-from ..cfdatetime import rt2dt, st2rt, st2dt
-#from ..units      import Units
-from ..functions  import RTOL, ATOL, parse_indices, _numpy_allclose
 
-from .array import Array, NumpyArray
+from ..functions  import RTOL, ATOL, _numpy_allclose
 
-#_units_None = Units()
-#_units_1    = Units('1')
+from .array      import Array
+from .numpyarray import NumpyArray
 
+from ..structure import Data as structure_Data
 
 # ====================================================================
 #
@@ -21,7 +19,7 @@ from .array import Array, NumpyArray
 #
 # ====================================================================
 
-class Data(object):
+class Data(structure_Data):
     '''
 
 An N-dimensional data array with units and masked values.
@@ -83,7 +81,7 @@ There are three extensions to the numpy indexing functionality:
     '''
 
     def __init__(self, data=None, units=None, calendar=None,
-                 fill_value=None):
+                 fill_value=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -104,173 +102,94 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''
-#        units = Units(units)
-#        self.Units = units
-        self.units    = units
-        self.calendar = calendar
-        
-        self._fill_value  = fill_value
-        self._array       = None
-
-        # The _HDF_chunks attribute is.... Is either None or a
-        # dictionary. DO NOT CHANGE IN PLACE.
-        self._HDF_chunks = {}
-
-        if data is None:
-            return
-
-        if isinstance(data, self.__class__):
-            data = data._array
-            
-        if not isinstance(data, Array):
+        if data is not None and not isinstance(data, Array):
             if not isinstance(data, numpy.ndarray):
                 data = numpy.asanyarray(data)
+                
+            data = NumpyArray(data)
+        #-- End: if
 
-            if (data.dtype.kind == 'O' and not dt and 
-                hasattr(data.item((0,)*data.ndim), 'timetuple')):
-                # We've been given one or more date-time objects
-                dt = True
-        #--- End: if
-        
-        if isinstance(data, Array):
-            self._array = data
-        else:
-            self._array = NumpyArray(data)
+        super(Data, self).__init__(data=data, units=units,
+                                   calendar=calendar,
+                                   fill_value=fill_value,
+                                   source=source, copy=copy)
+                                   
+        # The _HDF_chunks attribute is.... Is either None or a
+        # dictionary. DO NOT CHANGE IN PLACE.
+#        self._HDF_chunks = {}
     #--- End: def
-
-    def __array__(self, *dtype):
-        '''
-
-Returns a numpy array copy the data array.
-
-If the data array is stored as date-time objects then a numpy array of
-numeric reference times will be returned.
-
-:Returns:
-
-    out: `numpy.ndarray`
-        The numpy array copy the data array.
-
-:Examples:
-
->>> (d.array == numpy.array(d)).all()
-True
- 
-'''
-        if not dtype:
-            return self.array
-        else:
-            return self.array.astype(dtype[0])
-    #--- End: def
-
+                                   
     def __data__(self):
         '''Return self
 
         '''
         return self
     #--- End: def
-
-    def __deepcopy__(self, memo):
-        '''Used if `copy.deepcopy` is called.
-
-        ''' 
-        return self.copy()
-    #--- End: def
-
-    def __repr__(self):
-        '''The built-in function `repr`
-
-x.__repr__() <==> repr(x)
-
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
-    def __str__(self):
-        '''The built-in function `str`
-
-x.__str__() <==> str(x)
-
-        '''
-        units    = self.units
-        calendar = self.calendar
-
-        if units is not None:
-            isreftime = ('since' in units)
-        else:
-            isreftime = False
-            
-        try:
-            first = self.datum(0)
-        except:            
-            out = ''
-            if units:
-                out += ' {0}'.format(units)
-            if calendar:
-                out += ' {0}'.format(calendar)
-               
-            return out
-        #--- End: try
-        
-        size = self.size
-        ndim = self.ndim
-        open_brackets  = '[' * ndim
-        close_brackets = ']' * ndim
-
-        if size == 1:
-            if isreftime:
-                # Convert reference time to date-time
-#                first = netCDF4.num2date(first, units, calendar)
-                first = type(self)(first, units, calendar).dtarray
-
-            out = '{0}{1}{2}'.format(open_brackets,
-                                     first,
-                                     close_brackets)
-        else:
-            last = self.datum(-1)
-            if isreftime:
-                # Convert reference times to date-times
-                first, last = type(self)([first, last], units, calendar).dtarray
-#                first, last = netCDF4.num2date(numpy.ma.array((first, last)),
-#                                               units, calendar)
-
-            if size > 3:
-                out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
-                                                   first,last,
-                                                   close_brackets)
-            elif size == 3:                
-                middle = self.datum(1)
-                if isreftime:
-                    # Convert reference times to date-times
-#                    middle = netCDF4.num2date(middle, units, calendar)
-                    middle = type(self)(middle, units, calendar).dtarray
-
-                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
-                                                   first, middle, last,
-                                                   close_brackets)
-            else:
-                out = '{0}{1}, {2}{3}'.format(open_brackets,
-                                              first, last,
-                                              close_brackets)
-        #--- End: if
-        
-        if isreftime:
-            out += ' {0}'.format(calendar)
-        elif units:
-            out += ' {0}'.format(units)
-            
-        return out
-    #--- End: def
-
+ 
     def __getitem__(self, indices):
-        '''Implement indexing
-
-x.__getitem__(indices) <==> x[indices]
+        '''x.__getitem__(indices) <==> x[indices]
 
         '''
-        return type(self)(self._array[indices], units=self.units,
-                          calendar=self.calendar,
-                          fill_value=self.fill_value)
+        array = self._get_master_array()
+        return type(self)(array[indices], units=self.get_units(None),
+                          calendar=self.get_calendar(None),
+                          fill_value=self.get_fill_value(None))
+    #--- End: def
+
+    def __int__(self):
+        '''x.__int__() <==> int(x)
+
+        '''
+        if self.size != 1:
+            raise TypeError(
+"only length-1 arrays can be converted to Python scalars. Got {}".format(self))
+
+        array = self.get_array()
+        return int(array)
+    #--- End: def
+
+    def __iter__(self):
+        '''x.__iter__() <==> iter(x)
+
+:Examples:
+
+>>> d = Data([1, 2, 3], 'metres')
+>>> for i in d:
+...    print repr(i), type(i)
+...
+1 <type 'int'>
+2 <type 'int'>
+3 <type 'int'>
+
+>>> d = Data([[1, 2], [4, 5]], 'metres')
+>>> for e in d:
+...    print repr(e)
+...
+<Data: [1, 2] metres>
+<Data: [4, 5] metres>
+
+>>> d = Data(34, 'metres')
+>>> for e in d:
+...     print repr(e)
+...
+TypeError: iteration over a 0-d Data
+
+        '''
+        ndim = self.ndim
+
+        if not ndim:
+            raise TypeError(
+                "Iteration over 0-d {}".format(self.__class__.__name__))
+            
+        if ndim == 1:
+            array = self.get_array()
+            i = iter(array)
+            while 1:
+                yield i.next()
+        else:
+            # ndim > 1
+            for n in range(self.shape[0]):
+                yield self[n, ...].squeeze(0, copy=False)
     #--- End: def
 
     def __setitem__(self, indices, value):
@@ -302,16 +221,8 @@ elements.
 
 :Examples:
 
-        '''            
-#        # If value has Units then make sure that they're the same
-#        # as self.Units
-#        if (isinstance(value, self.__class__) and
-#            self.Units and value.Units and
-#            value.Units != self.Units):
-#            raise ValueError(
-#"Can't set to values with different units: {!r}".format(value.Units))
-
-        array = self._array[...]
+        '''
+        array = self.get_array()
 
         if value is masked or numpy.ma.isMA(value):
             # The data is not masked and the assignment is masking
@@ -323,109 +234,77 @@ elements.
 
         self._set_subspace(array, indices, numpy.asanyarray(value))
 
-        self._array = NumpyArray(array)
+        self._set_master_array(NumpyArray(array))
     #--- End: def
 
-    def __int__(self):
-        if self.size != 1:
-            raise TypeError(
-                "only length-1 arrays can be converted to Python scalars. Got {}".format(self))
-        return int(self.datum())
-    #--- End: def
+    def __str__(self):
+        '''x.__str__() <==> str(x)
 
-    def __iter__(self):
         '''
+        units    = self.get_units(None)
+        calendar = self.get_calendar(None)
 
-Efficient iteration.
-
-x.__iter__() <==> iter(x)
-
-:Examples:
-
->>> d = Data([1, 2, 3], 'metres')
->>> for i in d:
-...    print repr(i), type(i)
-...
-1 <type 'int'>
-2 <type 'int'>
-3 <type 'int'>
-
->>> d = Data([[1, 2], [4, 5]], 'metres')
->>> for e in d:
-...    print repr(e)
-...
-<Data: [1, 2] metres>
-<Data: [4, 5] metres>
-
->>> d = Data(34, 'metres')
->>> for e in d:
-...     print repr(e)
-...
-TypeError: iteration over a 0-d Data
-
-'''
-        ndim = self.ndim
-
-        if not ndim:
-            raise TypeError(
-                "Iteration over 0-d {}".format(self.__class__.__name__))
-            
-        if ndim == 1:
-            i = iter(self.array)
-            while 1:
-                yield i.next()
+        if units is not None:
+            isreftime = ('since' in units)
         else:
-            # ndim > 1
-            for n in xrange(self.shape[0]):
-                yield self[n, ...].squeeze(0, copy=False)
-    #--- End: def
+            isreftime = False
+            
+        try:
+            first = self.first_element()
+        except:            
+            out = ''
+            if units:
+                out += ' {0}'.format(units)
+            if calendar:
+                out += ' {0}'.format(calendar)
+               
+            return out
+        #--- End: try
 
-    def __eq__(self, y):
-        array = numpy.isclose(self.varray, y, atol=ATOL(), rtol=RTOL())
-        return type(self)(array)
+        size = self.size
+        ndim = self.ndim
+        open_brackets  = '[' * ndim
+        close_brackets = ']' * ndim
 
-    def __ne__(self, y):
-        array = (self == y).varray
-        return type(self)(~array)
-    
-    @property
-    def isscalar(self):
-        '''
+        if size == 1:
+            if isreftime:
+                # Convert reference time to date-time
+                first = type(self)(first, units, calendar).get_dtarray()
 
-True if the data array is a 0-d scalar array.
+            out = '{0}{1}{2}'.format(open_brackets,
+                                     first,
+                                     close_brackets)
+        else:
+            last = self.last_element()
+            if isreftime:
+                # Convert reference times to date-times
+                first, last = type(self)([first, last], units, calendar).get_dtarray()
 
-:Examples:
+            if size > 3:
+                out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
+                                                   first,last,
+                                                   close_brackets)
+            elif size == 3:                
+                middle = self.second_element()
+                if isreftime:
+                    # Convert reference times to date-times
+                    middle = type(self)(middle, units, calendar).get_dtarray()
 
->>> d.ndim
-0
->>> d.isscalar
-True
-
->>> d.ndim >= 1
-True
->>> d.isscalar
-False
-
-'''
-        return not self.ndim
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def data(self):
-        '''
-
-The data array object as an object identity.
-
-:Examples:
-
->>> d.data is d
-True
-
-'''
-        return self
+                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
+                                                   first, middle, last,
+                                                   close_brackets)
+            else:
+                out = '{0}{1}, {2}{3}'.format(open_brackets,
+                                              first, last,
+                                              close_brackets)
+        #--- End: if
+        
+        if isreftime:
+            out += ' {0}'.format(calendar)
+        elif units:
+            out += ' {0}'.format(units)
+            
+        return out
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -464,13 +343,8 @@ dtype('float64')
 [ 0.  1.  1.]
 
         '''
-        return self._array.dtype
+        return self._get_master_array().dtype
     #--- End: def
-    @dtype.setter
-    def dtype(self, value):
-        value = numpy.dtype(value)
-        if value != self.dtype:
-            self._array = NumpyArray(numpy.asanyarray(self.array, dtype=value))
 
     # ----------------------------------------------------------------
     # Attribute
@@ -503,86 +377,6 @@ None
     def fill_value(self, value): self._fill_value = value
     @fill_value.deleter
     def fill_value(self)       : self._fill_value = None
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def ndim(self):
-        '''
-
-Number of dimensions in the data array.
-
-:Examples:
-
->>> d.shape
-(73, 96)
->>> d.ndim
-2
-
->>> d.shape
-()
->>> d.ndim
-0
-
-'''
-        return self._array.ndim
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def shape(self):
-        '''
-
-Tuple of the data array's dimension sizes.
-
-:Examples:
-
->>> d.shape
-(73, 96)
-
->>> d.ndim
-0
->>> d.shape
-()
-
-'''
-        return self._array.shape
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def size(self):
-        '''
-
-Number of elements in the data array.
-
-:Examples:
-
->>> d.shape
-(73, 96)
->>> d.size
-7008
-
->>> d.shape
-(1, 1, 1)
->>> d.size
-1
-
->>> d.ndim
-0
->>> d.shape
-()
->>> d.size
-1
-
-'''
-        return self._array.size
-    #--- End: def
 
     # ----------------------------------------------------------------
     # Attribute (read only)
@@ -628,96 +422,32 @@ True
         return array
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def varray(self):
-        '''A numpy array view the data.
-
-.. note:: If the data array is stored as date-time objects then a
-          numpy array of numeric reference times will be returned. A
-          numpy array of date-time objects may be returned by the
-          `dtarray` attribute.
-
-.. seealso:: `array`, `dtarray`
-
-:Examples:
-
-        '''
-        array = self._array[...]
-
-        if self.fill_value is not None and numpy.ma.isMA(array):
-            array.set_fill_value(self.fill_value)
-
-        self._array = NumpyArray(array)
-
-        return array
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def dtarray(self):
-        '''
-        '''
-        array = self.array
-
-        mask = None
-        if numpy.ma.isMA(array):
-            # num2date has issues if the mask is nomask
-            mask = array.mask
-            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
-                array = array.view(numpy.ndarray)
-        #--- End: if
-
-        calendar = self.calendar
-        if calendar is None:
-            calendar = 'standard'
-            
-        array = netCDF4.num2date(array, self.units, calendar)    
-        if mask is None:
-            # There is no missing data
-            array = numpy.array(array, dtype=object)
-        else:
-            # There is missing data
-            array = numpy.ma.masked_where(mask, array)
-            if not numpy.ndim(array):
-                array = numpy.ma.masked_all((), dtype=object)
-
-        return array
-    #--- End: def
-
-    @property
-    def mask(self):
-        '''The boolean missing data mask of the data.
-
-The boolean mask has True where the data has missing values and False
-otherwise.
-
-:Examples:
-
->>> d.shape
-(12, 73, 96)
->>> m = d.mask
->>> m
-<Data: [[[False, ..., True]]]>
->>> m.dtype
-dtype('bool')
->>> m.shape
-(12, 73, 96)
-
-        '''
-        array = self.array
-        
-        if not numpy.ma.is_masked(array):
-            mask = numpy.zeros(self.shape, dtype=bool)
-        else:
-            mask = array.mask
-            
-        return type(self)(mask)
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Attribute (read only)
+#    # ----------------------------------------------------------------
+#    @property
+#    def varray(self):
+#        '''A numpy array view the data.
+#
+#.. note:: If the data array is stored as date-time objects then a
+#          numpy array of numeric reference times will be returned. A
+#          numpy array of date-time objects may be returned by the
+#          `dtarray` attribute.
+#
+#.. seealso:: `array`, `dtarray`
+#
+#:Examples:
+#
+#        '''
+#        array = self._get_master_array()[...]
+#
+#        if self.fill_value is not None and numpy.ma.isMA(array):
+#            array.set_fill_value(self.fill_value)
+#
+#        self._set_master_array(NumpyArray(array))
+#
+#        return array
+#    #--- End: def
 
     @classmethod
     def asdata(cls, d, copy=False):
@@ -760,6 +490,36 @@ True
             return data.copy()
         else:
             return data
+    #--- End: def
+
+    def get_dtarray(self):
+        '''
+        '''
+        array = self.get_array()
+
+        mask = None
+        if numpy.ma.isMA(array):
+            # num2date has issues if the mask is nomask
+            mask = array.mask
+            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+                array = array.view(numpy.ndarray)
+        #--- End: if
+
+        calendar = self.get_calendar(None)
+        if calendar is None:
+            calendar = 'standard'
+            
+        array = netCDF4.num2date(array, self.get_units(None), calendar)    
+        if mask is None:
+            # There is no missing data
+            array = numpy.array(array, dtype=object)
+        else:
+            # There is missing data
+            array = numpy.ma.masked_where(mask, array)
+            if not numpy.ndim(array):
+                array = numpy.ma.masked_all((), dtype=object)
+
+        return array
     #--- End: def
 
     def parse_indices(self, indices):
@@ -981,14 +741,14 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 #    def close(self):
 #        '''
 #'''
-#        self._array.close()
+#        self._get_Array().close()
 #    #--- End: def
 #    
 #    def open(self):
 #        '''
 #'''
-#        self._array.open()
-#        self._array.keep_open(True)
+#        self._get_Array().open()
+#        self._get_Array().keep_open(True)
 #    #--- End: def
 
     def copy(self):
@@ -1005,13 +765,9 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 
 >>> e = d.copy()
 
-        '''        
-        new = type(self)(self._array, units=self.units,
-                         calendar=self.calendar,
-                         fill_value=self.fill_value)
-
-        new.HDF_chunks(self.HDF_chunks())
-
+        '''
+        new = super(Data, self).copy()
+#        new.HDF_chunks(self.HDF_chunks())
         return new
     #--- End: def
 
@@ -1038,18 +794,19 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'max')
 
-        array = numpy.amax(self.varray, axis=axes, keepdims=True)
+        array = self.get_array()
+        array = numpy.amax(array, axis=axes, keepdims=True)
 
         d = self.copy()
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
         
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
 
         return d
     #--- End: def
@@ -1077,18 +834,19 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'min')
 
-        array = numpy.amin(self.varray, axis=axes, keepdims=True)
+        array = self.get_array()
+        array = numpy.amin(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
 
         return d
     #--- End: def
@@ -1126,9 +884,8 @@ dimension is iterated over first.
 ()
 
         '''
-        return itertools.product(*[xrange(0, r) for r in self.shape])  
+        return itertools.product(*[range(0, r) for r in self.shape])  
     #--- End: def
-
 
     def sum(self, axes=None):
         '''Return the sum of an array or the sum along axes.
@@ -1153,69 +910,70 @@ Missing data array elements are omitted from the calculation.
         if axes is not None:
             axes = self._parse_axes(axes, 'sum')
 
-        array = numpy.sum(self.varray, axis=axes, keepdims=True)
+        array = self.get_array()
+        array = numpy.sum(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
         
         return d
     #--- End: def
 
-    def HDF_chunks(self, *chunks):
-        '''
-        '''
-        _HDF_chunks = self._HDF_chunks
-
-        org_HDF_chunks = dict([(i, _HDF_chunks.get(i))
-                               for i in range(self.ndim)])
-
-        org_HDF_chunks = _HDF_chunks.copy()
-        
-        if not chunks:
-            return org_HDF_chunks
-
-#        if _HDF_chunks is None:
-#            _HDF_chunks = {}
-#        else:
-#        _HDF_chunks = _HDF_chunks.copy()
-
+#    def HDF_chunks(self, *chunks):
+#        '''
+#        '''
+#        _HDF_chunks = self._HDF_chunks
+#
+#        org_HDF_chunks = dict([(i, _HDF_chunks.get(i))
+#                               for i in range(self.ndim)])
+#
 #        org_HDF_chunks = _HDF_chunks.copy()
-            
- 
-        if not chunks:
-            return org_HDF_chunks
-
-        chunks = chunks[0]
-        
-        if chunks is None:
-            # Clear all chunking
-            self._HDF_chunks = {}
-            return org_HDF_chunks
-
-#        for i in range(self.ndim):
-            
-
-        for axis, size in chunks.iteritems():
-            if size is not None:
-                _HDF_chunks[axis] = size
-            else:
-                _HDF_chunks.pop(axis, None)
-                
-#        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
-#            _HDF_chunks = None
-
-#        self._HDF_chunks = _HDF_chunks
-            
-        return org_HDF_chunks
-    #--- End: def
+#        
+#        if not chunks:
+#            return org_HDF_chunks
+#
+##        if _HDF_chunks is None:
+##            _HDF_chunks = {}
+##        else:
+##        _HDF_chunks = _HDF_chunks.copy()
+#
+##        org_HDF_chunks = _HDF_chunks.copy()
+#            
+# 
+#        if not chunks:
+#            return org_HDF_chunks
+#
+#        chunks = chunks[0]
+#        
+#        if chunks is None:
+#            # Clear all chunking
+#            self._HDF_chunks = {}
+#            return org_HDF_chunks
+#
+##        for i in range(self.ndim):
+#            
+#
+#        for axis, size in chunks.iteritems():
+#            if size is not None:
+#                _HDF_chunks[axis] = size
+#            else:
+#                _HDF_chunks.pop(axis, None)
+#                
+##        if _HDF_chunks.values() == [None] * len(_HDF_chunks):
+##            _HDF_chunks = None
+#
+##        self._HDF_chunks = _HDF_chunks
+#            
+#        return org_HDF_chunks
+#    #--- End: def
 
     def _parse_axes(self, axes, method):
         '''
@@ -1424,9 +1182,10 @@ selected with the keyword arguments.
         if not axes:
             return d
         
-        array = numpy.squeeze(self.varray, axes)
+        array = self.get_array()
+        array = numpy.squeeze(array, axes)
 
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
         return d
     #--- End: def
@@ -1473,17 +1232,18 @@ data array shape.
         else:
             d = self
 
-        array = numpy.expand_dims(self.varray, position)
+        array = self.get_array()
+        array = numpy.expand_dims(array, position)
 
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
-        if d._HDF_chunks:            
-            HDF = {}
-            for axis in axes:
-                HDF[axis] = None
-
-            d.HDF_chunks(HDF)
-        #--- End: if
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
 
         return d
     #--- End: def
@@ -1550,9 +1310,10 @@ data array shape.
                     "Can't transpose: Axes don't match array: {}".format(axes))
         #--- End: if
 
-        array = numpy.transpose(self.varray, axes=axes)
+        array = self.get_array()
+        array = numpy.transpose(array, axes=axes)
         
-        d._array = NumpyArray(array)
+        d._set_master_array(NumpyArray(array))
 
         return d
     #--- End: def
@@ -1580,14 +1341,15 @@ missing values.
 <Data: [1, 2, 4] metre>
 
         '''
-        array = numpy.unique(self.array)
+        array = self.get_array()
+        array = numpy.unique(array)
 
         if numpy.ma.is_masked(array):
             array = array.compressed()
 
-        return type(self)(array, units=self.units,
-                          calendar=self.calendar,
-                          fill_value=self.fill_value)
+        return type(self)(array, units=self.get_units(None),
+                          calendar=self.get_calendar(None),
+                          fill_value=self.get_fill_value(None))
     #--- End: def
 
     def dump(self, display=True, prefix=None):
@@ -1708,8 +1470,8 @@ False
 
         # Check that each instance has the same units
         for attr in ('units', 'calendar'):
-            x = getattr(self, attr)
-            y = getattr(other, attr)
+            x = getattr(self, 'get_'+attr)(None)
+            y = getattr(other, 'get_'+attr)(None)
             if x != y:
                 if traceback:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(
@@ -1718,11 +1480,12 @@ False
         #--- End: for
            
         # Check that each instance has the same fill value
-        if not ignore_fill_value and self.fill_value != other.fill_value:
+        if (not ignore_fill_value and
+            self.get_fill_value(None) != other.get_fill_value(None)):
             if traceback:
                 print("{0}: Different fill value: {1}, {2}".format(
                     self.__class__.__name__, 
-                    self.fill_value, other.fill_value))
+                    self.get_fill_value(None), other.get_fill_value(None)))
             return False
         #--- End: if
 
@@ -1748,7 +1511,8 @@ False
         if atol is None:
             atol = ATOL()        
 
-        if not _numpy_allclose(self.array, other.array, rtol=rtol, atol=atol):
+        if not _numpy_allclose(self.get_array(), other.get_array(),
+                               rtol=rtol, atol=atol):
             if traceback:
                 print("{0}: Different data array values".format(
                     self.__class__.__name__))
@@ -1760,98 +1524,8 @@ False
         return True            
     #--- End: def
 
-    def datum(self, *index):
-        '''Return an element of the data array as a standard Python scalar.
-
-The first and last elements are always returned with ``d.datum(0)``
-and ``d.datum(-1)`` respectively, even if the data array is a scalar
-array or has two or more dimensions.
-
-The returned object is of the same type as is stored internally.
-
-.. seealso:: `array`, `dtarray`, `varray`
-
-:Parameters:
-
-    index: *optional*
-        Specify which element to return. When no positional arguments
-        are provided, the method only works for data arrays with one
-        element (but any number of dimensions), and the single element
-        is returned. If positional arguments are given then they must
-        be one of the following:
-
-          * An integer. This argument is interpreted as a flat index
-            into the array, specifying which element to copy and
-            return.
-         
-              Example: If the data aray shape is ``(2, 3, 6)`` then:
-                * ``d.datum(0)`` is equivalent to ``d.datum(0, 0, 0)``.
-                * ``d.datum(-1)`` is equivalent to ``d.datum(1, 2, 5)``.
-                * ``d.datum(16)`` is equivalent to ``d.datum(0, 2, 4)``.
-
-            If *index* is ``0`` or ``-1`` then the first or last data
-            array element respecitively will be returned, even if the
-            data array is a scalar array.
-        ..
-         
-          * Two or more integers. These arguments are interpreted as a
-            multidimensionsal index to the array. There must be the
-            same number of integers as data array dimensions.
-        ..
-         
-          * A tuple of integers. This argument is interpreted as a
-            multidimensionsal index to the array. There must be the
-            same number of integers as data array dimensions.
-         
-              Example:
-                ``d.datum((0, 2, 4))`` is equivalent to ``d.datum(0,
-                2, 4)``; and ``d.datum(())`` is equivalent to
-                ``d.datum()``.
-
-:Returns:
-
-    out: scalar
-        A copy of the specified element of the array as a suitable
-        Python scalar.
-
-:Examples:
-
->>> d = Data(2)
->>> d.datum()
-2
->>> 2 == d.datum(0) == d.datum(-1) == d.datum(())
-True
-
->>> d = Data([[2]])
->>> 2 == d.datum() == d.datum(0) == d.datum(-1)
-True
->>> 2 == d.datum(0, 0) == d.datum((-1, -1)) == d.datum(-1, 0)
-True
-
->>> d = Data([[4, 5, 6], [1, 2, 3]], 'metre')
->>> d[0, 1] = masked
->>> print d
-[[4 -- 6]
- [1 2 3]]
->>> d.datum(0)
-4
->>> d.datum(-1)
-3
->>> d.datum(1)
-masked
->>> d.datum(4)
-2
->>> d.datum(-2)
-2
->>> d.datum(0, 0)
-4
->>> d.datum(-2, -1)
-6
->>> d.datum(1, 2)
-3
->>> d.datum((0, 2))
-6
-
+    def element(self, *index):
+        '''
         '''
         if index:
             n_index = len(index)
@@ -1864,34 +1538,29 @@ masked
                     # This also works for scalar arrays
                     index = (slice(-1, None),) * self.ndim
                 elif isinstance(index, (int, long)):
-                    # e.g. index=345
                     if index < 0:
                         index += self.size
 
                     index = numpy.unravel_index(index, self.shape)
-                elif len(index) == self.ndim:
-                    # e.g. index=[0, 3]
-                    index = tuple(index)
-                else:
+                elif len(index) != self.ndim:
                     raise ValueError(
-                        "Incorrect number of indices for {} array".format(
-                            self.__class__.__name__))
+                        "Incorrect number of indices for %s array" %
+                        self.__class__.__name__)
                 #--- End: if
-            elif n_index == self.ndim:
-                index = tuple(index)
-            else:
+            elif n_index != self.ndim:
                 raise ValueError(
-                    "Incorrect number of indices for {} array".format(
-                        self.__class__.__name__))
+                    "Incorrect number of indices for %s array" %
+                    self.__class__.__name__)
 
-            array = self[index].array
+            array = self[index].get_array()
 
         elif self.size == 1:
-            array = self.array
+            array = self.get_array()
+
         else:
             raise ValueError(
-                "Can't convert {} with size {} to a Python scalar".format(
-                    self.__class__.__name__, self.size))
+"Can only convert a {} array of size 1 to a Python scalar".format(
+    self.__class__.__name__))
 
         if not numpy.ma.isMA(array):
             return array.item()
@@ -1902,305 +1571,369 @@ masked
 
         return numpy.ma.masked
     #--- End: def
-
-    # ----------------------------------------------------------------
-    # Compression class methods
-    # ----------------------------------------------------------------
-    @classmethod
-    def compression_initialize_gathered(cls, uncompressed_shape):
-        '''Create an empty Data array
-        
-:Parameters:
-
-:Returns:
- 
-    out: `Data`
-
+    
+    def first_element(self):
         '''
-        array = numpy.ma.masked_all(uncompressed_shape)
-                   
-        return cls(array)
+        '''
+        d = self[(slice(0, 1),)*self.ndim]
+        array = d.get_array()
+        
+        if not numpy.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked        
+    #--- End: def
+    
+    def last_element(self):
+        '''
+        '''
+        d = self[(slice(-1, None),)*self.ndim]
+        array = d.get_array()
+        
+        if not numpy.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked
+    #--- End: def
+    
+    def second_element(self):
+        '''
+        '''
+        index = numpy.unravel_index(1, self.shape)
+        d = self[index]
+        array = d.get_array()
+        
+        if not numpy.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked
     #--- End: def
 
-    @classmethod
-    def compression_initialize_indexed_contiguous(cls,
-                                                  instance_dimension_size,
-                                                  element_dimension_1_size,
-                                                  element_dimension_2_size,
-                                                  profiles_per_instance,
-                                                  elements_per_profile,
-                                                  profile_indices):
-        '''Create an empty Data array which has dimensions
-        (instance_dimension_size, element_dimension_1_size,
-        element_dimension_2_size)
-        
-:Parameters:
-
-    instance: `Data`
-        Number of instances
-
-    features_per_instance: `Data`
-        Number of features per instance
-
-    elements_per_feature: `Data`
-        Number of elements per feature
-
-    profile_indices: `Data`
-        The indices of the sample dimension which define the start
-        position of each profile of each instance.
-
-:Returns:
- 
-    out: `Data`
-
+    def set_dtype(self, value):
         '''
-        array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_1_size,
-                                     element_dimension_2_size))
-                   
-        return cls(array)
+        '''
+        value = numpy.dtype(value)
+        if value != self.dtype:
+            array = numpy.asanyarray(self.get_array(), dtype=value)
+            self._set_master_array(NumpyArray(array))
     #--- End: def
 
-    @classmethod
-    def compression_initialize_contiguous(cls,
-                                          instance_dimension_size,
-                                          element_dimension_size,
-                                          elements_per_instance):
-        '''Create an empty Data array which has dimensions
-        (instance_dimension_size, element_dimension_size)
-
-instance_dimension_size = count.size
-
-element_dimension_size  = count.max()
-
-
-:Parameters:
-
-    count: `Data`
-
-:Returns:
- 
-    out: `Data`
-
-        '''
-        array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_size))
-        
-        return cls(array)
-    #--- End: def
-
-    @classmethod
-    def compression_initialize_indexed(cls, instance_dimension_size,
-                                       element_dimension_size, index):
-        '''Create an empty Data array which has shape
-        (instance_dimension_size, element_dimension_size)
-
-:Parameters:
-
-    instance_dimension_size: `int`
-
-    element_dimension_size: `int`
-
-    index: data-like
-
-:Returns:
- 
-    out: `Data`
-
-        '''
-        array = numpy.ma.masked_all((instance_dimension_size,
-                                     element_dimension_size))
-        
-        return cls(array)
-    #--- End: def
-
-    @classmethod
-    def compression_fill_gathered(cls, data, dtype, units, fill_value,
-                                  gathered_array, sample_axis, indices):
-        '''
-        
-    data: `Data`
-
-    gathered_array:
-        
-    sample_axes: `int`
-
-    indices: `Data`
-
-        '''
-        data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
-
-        uncompressed_array = data.varray 
-       
-        compressed_axes = range(sample_axis, uncompressed_array.ndim - (gathered_array.ndim - sample_axis - 1))
-        
-        zzz = [reduce(operator.mul, [uncompressed_array.shape[i] for i in compressed_axes[i:]], 1)
-               for i in range(1, len(compressed_axes))]
-        
-        xxx = [[0] * indices.size for i in compressed_axes]
-
-
-        for n, b in enumerate(indices.varray):
-            if not zzz or b < zzz[-1]:
-                xxx[-1][n] = b
-                continue
-            
-            for i, z in enumerate(zzz):
-                if b >= z:
-                    (a, b) = divmod(b, z)
-                    xxx[i][n] = a
-                    xxx[-1][n] = b
-        #--- End: for
-
-        uncompressed_indices = [slice(None)] * uncompressed_array.ndim        
-        for i, x in enumerate(xxx):
-            uncompressed_indices[sample_axis+i] = x
-
-        uncompressed_array[tuple(uncompressed_indices)] = gathered_array[...]
-
-        return data
-    #--- End: def
-
-    @classmethod
-    def compression_fill_indexed(cls, data, dtype, units, fill_value,
-                                 ragged_array, index):
-        '''sdfsdfsd
-
-:Parameters:
-
-    data: `Data`
-        The `Data` object to filled as an incomplete orthogonal
-        array. The instance dimension must be in position 0 and the
-        element dimension must be in position 1.
- 
-    ragged_array: 
-        
-    index: `Data`
-
-        '''
-        data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
-
-        uncompressed_array = data.varray
-
-        for i in range(uncompressed_array.shape[0]): #index.unique():
-            sample_dimension_indices = numpy.where(index == i)[0]
-            
-            indices = (slice(i, i+1),
-                       slice(0, len(sample_dimension_indices)))
-
-            uncompressed_array[indices] = ragged_array[sample_dimension_indices]
-        #--- End: for
-
-        return data
-    #--- End: def
-
-    @classmethod
-    def compression_fill_contiguous(cls, data, dtype, units,
-                                    fill_value, ragged_array,
-                                    elements_per_feature):
-        '''
-        
-    data: `Data`
-
-    ragged_array:
-        
-    elements_per_feature: `Data`
-
-        '''
-        data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
-
-        uncompressed_array = data.varray 
-
-        start = 0 
-        for i, n in enumerate(elements_per_feature):
-            n = int(n)
-            sample_indices = slice(start, start + n)
-
-            indices = (slice(i, i+1),
-                       slice(0, sample_indices.stop - sample_indices.start))
-                             
-            uncompressed_array[indices ] = ragged_array[sample_indices]
-                             
-            start += n
-        #--- End: for
-
-        return data
-    #--- End: def
-
-    @classmethod
-    def compression_fill_indexed_contiguous(cls, data, dtype, units,
-                                            fill_value, ragged_array,
-                                            profiles_per_instance,
-                                            elements_per_profile,
-                                            profile_indices):
-        '''
-        
-    data: `Data`
-
-    ragged_array: array-like
-        
-    profiles_per_instance: `Data`
-
-    elements_per_profile: `Data`
-
-    profile_indices: `Data`
-        The indices of the sample dimension which define the start
-        position of each profile of each instance.
-
-        '''
-        print 'elements_per_profile.shape =',elements_per_profile.shape
-        data.dtype = dtype
-        data.Units = units
-        data.fill_value = fill_value
-
-        uncompressed_array = data.varray 
-
-        # Loop over instances
-        for i in range(uncompressed_array.shape[0]):
-
-            # For all of the profiles in ths instance, find the
-            # locations in the elements_per_profile array of the
-            # number of elements in the profile
-            xprofile_indices = numpy.where(profile_indices == i)[0]
-
-            # Find the number of profiles in this instance
-            n_profiles = xprofile_indices.size
-
-            # Loop over profiles in this instance
-            for j in range(uncompressed_array.shape[1]):
-                print 'j=',j
-                if j >= n_profiles:
-                    continue
-                
-                # Find the location in the elements_per_profile array
-                # of the number of elements in this profile
-                profile_index = xprofile_indices[j]
-
-                if profile_index == 0:
-                    start = 0
-                else:                    
-                    start = int(elements_per_profile[:profile_index].sum())
-
-                print profile_index, elements_per_profile.shape,  elements_per_profile[j, profile_index], elements_per_profile
-                stop  = start + int(elements_per_profile[j, profile_index])
-                
-                sample_indices = slice(start, stop)
-                
-                indices = (slice(i, i+1),
-                           slice(j, j+1), 
-                           slice(0, sample_indices.stop - sample_indices.start))
-                
-                uncompressed_array[indices] = ragged_array[sample_indices]
-        #--- End: for
-
-        return data
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Compression class methods
+#    # ----------------------------------------------------------------
+#    @classmethod
+#    def compression_initialize_gathered(cls, dtype,
+#                                        uncompressed_shape):
+#        '''Create an empty Data array
+#        
+#:Parameters:
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all(uncompressed_shape, dtype=dtype)
+#                   
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_initialize_indexed_contiguous(cls, dtype,
+#                                                  instance_dimension_size,
+#                                                  element_dimension_1_size,
+#                                                  element_dimension_2_size,
+#                                                  profiles_per_instance,
+#                                                  elements_per_profile,
+#                                                  profile_indices):
+#        '''Create an empty Data array which has dimensions
+#        (instance_dimension_size, element_dimension_1_size,
+#        element_dimension_2_size)
+#        
+#:Parameters:
+#
+#    instance: `Data`
+#        Number of instances
+#
+#    features_per_instance: `Data`
+#        Number of features per instance
+#
+#    elements_per_feature: `Data`
+#        Number of elements per feature
+#
+#    profile_indices: `Data`
+#        The indices of the sample dimension which define the start
+#        position of each profile of each instance.
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all((instance_dimension_size,
+#                                     element_dimension_1_size,
+#                                     element_dimension_2_size), dtype=dtype)
+#                   
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_initialize_contiguous(cls, dtype,
+#                                          instance_dimension_size,
+#                                          element_dimension_size,
+#                                          elements_per_instance):
+#        '''Create an empty Data array which has dimensions
+#        (instance_dimension_size, element_dimension_size)
+#
+#:Parameters:
+#
+#    instance_dimension_size: `int`
+#
+#    element_dimension_size: `int`
+#
+#    elements_per_instance: data-like
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all((instance_dimension_size,
+#                                     element_dimension_size),
+#                                    dtype=dtype)
+#        
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_initialize_indexed(cls, dtype, instance_dimension_size,
+#                                       element_dimension_size, index):
+#        '''Create an empty Data array which has shape
+#        (instance_dimension_size, element_dimension_size)
+#
+#:Parameters:
+#
+#    instance_dimension_size: `int`
+#
+#    element_dimension_size: `int`
+#
+#    index: data-like
+#
+#:Returns:
+# 
+#    out: `Data`
+#
+#        '''
+#        array = numpy.ma.masked_all((instance_dimension_size,
+#                                     element_dimension_size),
+#                                    dtype=dtype)
+#        
+#        return cls(array)
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_gathered(cls, data, dtype, units, fill_value,
+#                                  gathered_array, sample_axis, indices):
+#        '''
+#        
+#    data: `Data`
+#
+#    gathered_array:
+#        
+#    sample_axes: `int`
+#
+#    indices: `Data`
+#
+#        '''
+#        data.dtype = dtype
+#
+#        data.set_units(units)
+#        data.set_calendar(calendar)
+#        data.set_fill_value(fill_value)
+#
+#        uncompressed_array = data.varray 
+#       
+#        compressed_axes = range(sample_axis,
+#                                uncompressed_array.ndim - (gathered_array.ndim - sample_axis - 1))
+#        
+#        zzz = [reduce(operator.mul, [uncompressed_array.shape[i]
+#                                     for i in compressed_axes[i:]], 1)
+#               for i in range(1, len(compressed_axes))]
+#        
+#        xxx = [[0] * indices.size for i in compressed_axes]
+#
+#
+#        for n, b in enumerate(indices.varray):
+#            if not zzz or b < zzz[-1]:
+#                xxx[-1][n] = b
+#                continue
+#            
+#            for i, z in enumerate(zzz):
+#                if b >= z:
+#                    (a, b) = divmod(b, z)
+#                    xxx[i][n] = a
+#                    xxx[-1][n] = b
+#        #--- End: for
+#
+#        uncompressed_indices = [slice(None)] * uncompressed_array.ndim        
+#        for i, x in enumerate(xxx):
+#            uncompressed_indices[sample_axis+i] = x
+#
+#        uncompressed_array[tuple(uncompressed_indices)] = gathered_array[...]
+#
+#        return data
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_indexed(cls, data, dtype, units, fill_value,
+#                                 ragged_array, index):
+#        '''sdfsdfsd
+#
+#:Parameters:
+#
+#    data: `Data`
+#        The `Data` object to filled as an incomplete orthogonal
+#        array. The instance dimension must be in position 0 and the
+#        element dimension must be in position 1.
+# 
+#    ragged_array: 
+#        
+#    index: `Data`
+#
+#        '''
+#        data.dtype = dtype
+#        data.Units = units
+#        data.fill_value = fill_value
+#
+#        uncompressed_array = data.varray
+#
+#        for i in range(uncompressed_array.shape[0]): #index.unique():
+#            sample_dimension_indices = numpy.where(index == i)[0]
+#            
+#            indices = (slice(i, i+1),
+#                       slice(0, len(sample_dimension_indices)))
+#
+#            uncompressed_array[indices] = ragged_array[sample_dimension_indices]
+#        #--- End: for
+#
+#        return data
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_contiguous(cls, data, dtype, units,
+#                                    fill_value, ragged_array,
+#                                    elements_per_feature):
+#        '''
+#        
+#    data: `Data`
+#
+#    ragged_array:
+#        
+#    elements_per_feature: `Data`
+#
+#        '''
+#        data.dtype = dtype
+#        data.Units = units
+#        data.fill_value = fill_value
+#
+#        uncompressed_array = data.varray 
+#
+#        start = 0 
+#        for i, n in enumerate(elements_per_feature):
+#            n = int(n)
+#            sample_indices = slice(start, start + n)
+#
+#            indices = (slice(i, i+1),
+#                       slice(0, sample_indices.stop - sample_indices.start))
+#                             
+#            uncompressed_array[indices ] = ragged_array[sample_indices]
+#                             
+#            start += n
+#        #--- End: for
+#
+#        return data
+#    #--- End: def
+#
+#    @classmethod
+#    def compression_fill_indexed_contiguous(cls, data, dtype, units,
+#                                            fill_value, ragged_array,
+#                                            profiles_per_instance,
+#                                            elements_per_profile,
+#                                            profile_indices):
+#        '''
+#        
+#    data: `Data`
+#
+#    ragged_array: array-like
+#        
+#    profiles_per_instance: `Data`
+#
+#    elements_per_profile: `Data`
+#
+#    profile_indices: `Data`
+#        The indices of the sample dimension which define the start
+#        position of each profile of each instance.
+#
+#        '''
+#        print 'elements_per_profile.shape =',elements_per_profile.shape
+#        data.dtype = dtype
+#        data.Units = units
+#        data.fill_value = fill_value
+#
+#        uncompressed_array = data.varray 
+#
+#        # Loop over instances
+#        for i in range(uncompressed_array.shape[0]):
+#
+#            # For all of the profiles in ths instance, find the
+#            # locations in the elements_per_profile array of the
+#            # number of elements in the profile
+#            xprofile_indices = numpy.where(profile_indices == i)[0]
+#
+#            # Find the number of profiles in this instance
+#            n_profiles = xprofile_indices.size
+#
+#            # Loop over profiles in this instance
+#            for j in range(uncompressed_array.shape[1]):
+#                print 'j=',j
+#                if j >= n_profiles:
+#                    continue
+#                
+#                # Find the location in the elements_per_profile array
+#                # of the number of elements in this profile
+#                profile_index = xprofile_indices[j]
+#
+#                if profile_index == 0:
+#                    start = 0
+#                else:                    
+#                    start = int(elements_per_profile[:profile_index].sum())
+#
+#                print profile_index, elements_per_profile.shape,  elements_per_profile[j, profile_index], elements_per_profile
+#                stop  = start + int(elements_per_profile[j, profile_index])
+#                
+#                sample_indices = slice(start, stop)
+#                
+#                indices = (slice(i, i+1),
+#                           slice(j, j+1), 
+#                           slice(0, sample_indices.stop - sample_indices.start))
+#                
+#                uncompressed_array[indices] = ragged_array[sample_indices]
+#        #--- End: for
+#
+#        return data
+#    #--- End: def
 
 #--- End: class
 

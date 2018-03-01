@@ -1,26 +1,16 @@
-from .variable import Variable
+import abc
 
-class FieldAncillary(Variable):
+import mixin
+
+from .structure import FieldAncillary as structure_FieldAncillary
+
+class FieldAncillary(mixin.PropertiesData, structure_FieldAncillary):
     '''A CF field ancillary construct.
-'''
+    '''
+    __metaclass__ = abc.ABCMeta
 
-    @property
-    def isfieldancillary(self):
-        '''True, denoting that the variable is a field ancillary object.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.isfieldancillary
-True
-
-        '''
-        return True
-    #--- End: def
-
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key=None, _level=0, _title=None):
         '''Return a string containing a full description of the field ancillary
 object.
 
@@ -43,8 +33,10 @@ object.
             _title = 'Field Ancillary: ' + self.name(default='')
 
         return super(FieldAncillary, self).dump(
-            display=display, omit=omit, field=field, key=key,
-             _level=_level, _title=_title)
+            display=display,
+            field=field, key=key,
+             _omit_properties=_omit_properties,
+            _level=_level, _title=_title)
     #--- End: def
     
 #--- End: class

@@ -1,4 +1,8 @@
-from .variable import Variable
+import abc
+
+import mixin
+
+from .structure import CellMeasure as structure_CellMeasure
 
 # ====================================================================
 #
@@ -6,7 +10,7 @@ from .variable import Variable
 #
 # ====================================================================
 
-class CellMeasure(Variable):
+class CellMeasure(mixin.PropertiesData, structure_CellMeasure):
     '''A CF cell measure construct.
 
 A cell measure construct provides information that is needed about the
@@ -26,65 +30,20 @@ spanned by the array, along which the values are implicitly
 propagated. CF-netCDF cell measure variables correspond to cell
 measure constructs.
 
-**Attributes**
+    '''
+    __metaclass__ = abc.ABCMeta
+#Coordinate Reference: atmosphere_hybrid_height_coordinate
+#    standard_name = 'atmosphere_hybrid_height_coordinate'
+#    term.a = Domain Ancillary: 
+#    term.b = Domain Ancillary: 
+#    term.orog = Domain Ancillary: surface_altitude
+#    coordinate = Dimension Coordinate: longitude
+#    coordinate = Dimension Coordinate: latitude
+#    Coordinate = Dimension Coordinate: atmosphere_hybrid_height_coordinate
 
-==========  =====  ===================================================
-Attribute   Type   Description
-==========  =====  ===================================================
-`!measure`  `str`  The spatial measure being represented, either
-                   ``'area'`` or ``'volume'``.
-==========  =====  ===================================================
 
-    '''   
-    def __init__(self, properties={}, data=None, source=None,
-                 copy=True):
-        '''**Initialization**
-
-:Parameters:
-
-    properties: `dict`, optional
-        Initialize properties from the dictionary's key/value pairs.
-
-#    attributes: `dict`, optional
-#        Provide attributes from the dictionary's key/value pairs.
-
-    data: `Data`, optional
-        Provide a data array.
-        
-    source: `{+Variable}`, optional
-        Take the attributes, CF properties and data array from the
-        source {+variable}. Any attributes, CF properties or data
-        array specified with other parameters are set after
-        initialisation from the source {+variable}.
-
-    copy: `bool`, optional
-        If False then do not deep copy arguments prior to
-        initialization. By default arguments are deep copied.
-
-        '''
-        super(CellMeasure, self).__init__(properties=properties,
-                                          source=source, data=data, copy=copy)
-        
-        self._measure = None
-    #--- End: def
-
-    @property
-    def ismeasure(self): 
-        '''
-
-Always True.
-
-:Examples: 
-
->>> c.ismeasure
-True
-
-'''
-        return True
-    #--- End: def
-
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key=None, _level=0, _title=None):
         '''
 
 Return a string containing a full description of the cell measure.
@@ -104,68 +63,46 @@ Return a string containing a full description of the cell measure.
 :Examples:
 
 ''' 
-        if _title is None:  
-            if hasattr(self, 'measure'):
-                _title = 'Cell Measure: ' + str(self.measure)
-            elif hasattr(self.Units, 'units'):
-                _title = 'Cell Measure: ' + str(self.units)
-            else:
-                _title = 'Cell Measure: ' + self.name(default='')
-
+        if _title is None:
+            name = self.name(default=self.get_property('units', ''))
+            _title = 'Cell Measure: ' + name
+            
         return super(CellMeasure, self).dump(
-            display=display, omit=omit, field=field, key=key,
+            display=display,
+            field=field, key=key,
+            _omit_properties=_omit_properties,
              _level=_level, _title=_title)
     #--- End: def
 
-    def identity(self, default=None, relaxed_identity=None):
+    def equals(self, other, rtol=None, atol=None, traceback=False,
+               ignore_data_type=False, ignore_fill_value=False,
+               ignore_properties=(), ignore_construct_type=False):
         '''
+        '''
+        if not super(CellMeasure, self).equals(
+                other, rtol=rtol, atol=atol,
+                traceback=traceback,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,
+                ignore_properties=ignore_properties,
+                ignore_construct_type=ignore_construct_type):
+	    return False
 
-Return the cell measure's identity.
+        self_measure = self.get_measure(None)
+        other_measure = self.get_measure(None)
 
-The identity is first found of:
+        if self_measure != other_measure:
+            if traceback:
+                print("{0}: Different measure ({1} != {2})".format(
+                    self.__class__.__name__, self_measure,
+                    other_measure))
+            return False
+        #--- End: if
 
-* The `!measure` attribute.
-
-* The `standard_name` CF property.
-
-* The `!id` attribute.
-
-* The value of the *default* parameter.
-
-:Parameters:
-
-    default : optional
-        If none of `measure`, `standard_name` and `!id` exist then
-        return *default*. By default, *default* is None.
-
-:Returns:
-
-    out :
-        The identity.
-
-:Examples:
-
-'''
-        n = self.measure()
-        if n is not None:
-            return n
-        
-        return super(CellMeasure, self).identity(default, relaxed_identity=relaxed_identity)
+        return True
     #--- End: def
 
-    def measure(self, *name):
-        '''
-        '''
-        if not name:
-            return self._measure
-
-        name = name[0]
-        self._measure = name
-
-        return name
-    #--- End: def
-
-    def name(self, default=None, identity=False, ncvar=False, relaxed_identity=None):
+    def name(self, default=None, ncvar=False):
         '''Return a name for the cell measure.
 
 By default the name is the first found of the following:
@@ -227,28 +164,13 @@ None
 >>> f.name('no_name')
 'air_temperature'
 
-        '''      
-#        if ncvar:
-#            if identity:
-#                raise ValueError(
-#"Can't find name: ncvar and identity parameters can't both be True")
-#
-#            n = getattr(self, 'ncvar', None)
-#            if n is not None:
-#                return 'ncvar%%%s' % n
-#            
-#            return default
-#        #--- End: if
+        '''
+        n = self.get_measure(None)
+        if n is not None:
+            return n
 
-        if not ncvar:
-            n = self.measure()
-            if n is not None:
-                return n
-
-        return super(CellMeasure, self).name(default,
-                                             identity=identity,
-                                             ncvar=ncvar,
-                                             relaxed_identity=relaxed_identity)
+        return super(CellMeasure, self).name(default=default,
+                                             ncvar=ncvar)
     #--- End: def
 
 #--- End: class

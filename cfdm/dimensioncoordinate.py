@@ -1,3 +1,5 @@
+import abc
+
 from .coordinate import Coordinate
 
 # ====================================================================
@@ -7,66 +9,38 @@ from .coordinate import Coordinate
 # ====================================================================
 
 class DimensionCoordinate(Coordinate):
-    '''A CF dimension coordinate construct.
-
-**Attributes**
-
-==============  ========  ============================================
-Attribute       Type      Description
-==============  ========  ============================================
-`!climatology`  ``bool``  Whether or not the bounds are intervals of
-                          climatological time. Presumed to be False if
-                          unset.
-==============  ========  ============================================
+    '''A dimension coordinate construct of the CF data model.
 
     '''
-    @property
-    def isdimension(self):
-        '''True, denoting that the variable is a dimension coordinate object.
+    __metaclass__ = abc.ABCMeta
 
-.. seealso::`role`
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key=None, _level=0, _title=None):
+        '''Return a string containing a full description of the auxiliary
+coordinate object.
 
-.. seealso:: `isboundedvariable`, `iscoordinate`, `isvariable`
+:Parameters:
+
+    display: `bool`, optional
+        If False then return the description as a string. By default
+        the description is printed, i.e. ``f.dump()`` is equivalent to
+        ``print f.dump(display=False)``.
+
+:Returns:
+
+    out: `None` or `str`
+        A string containing the description.
 
 :Examples:
 
->>> c.isdimension
-True
-
         '''
-        return True
+        if _title is None:
+            _title = 'Dimension coordinate: ' + self.name(default='')
+
+        return super(DimensionCoordinate, self).dump(
+            display=display, _omit_properties=_omit_properties,
+            field=field, key=key,
+             _level=_level, _title=_title)
     #--- End: def
-  
-    def isvalid(self, traceback=False):
-        '''
-        '''
-        if self.hasdata:
-            if self.ndim > 1:
-                if traceback:
-                    print(
-"Dimension coordinate object must be 1-d (not {}-d)".format(self.ndim))
-            return False
 
-        elif self.hasbounds:
-            if self.bounds.ndim != bounds.ndim + 1:
-                if traceback:
-                    print (
-"Expected {}-d bounds (got {}-d)".format(self.ndim+1, self.ndim))
-            return False
-
-        # Check data type
-        if self.dtype.kind not in ('i', 'u', 'f'):
-            if traceback:
-                print ("Not numeric")
-            return False
-
-        # Check for strict monotonicity
-        array = self.array
-        steps = array[1:] - array[:-1]
-        if not ((steps > 0).all() or (steps < 0).all()):
-            if traceback:
-                print ("Not strictly monotonic")
-            return False
-
-        return True                
 #--- End: class

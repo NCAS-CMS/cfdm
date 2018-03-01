@@ -500,6 +500,31 @@ field.
             return string
     #--- End: def
 
+    def set_global_attributes(self, global_attributes):
+        '''
+        '''
+        self._set_component(3, 'global_attributes', None,
+                            tuple(global_attributes))
+    #--- End: def
+    
+    def get_global_attributes(self, global_attributes, *default):
+        '''
+        '''
+        self._get_component(3, 'global_attributes', None, *default)
+    #--- End: def    
+
+    def get_read_report(self, *default):
+        '''
+        '''
+        self._get_component(4, 'read_report', None, *default)
+    #--- End: def    
+   
+    def set_read_report(self, value):
+        '''
+        '''
+        self._set_component(4, 'read_report', None, value)
+    #--- End: def    
+   
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''
         '''    
@@ -831,14 +856,14 @@ by the data array may be selected.
         return f
     #--- End: def
 
-    def field(self, construct):
+    def field(self, key):
         '''
         '''
-        c = self.construct(construct, copy=False)
+        c = self.construct(key, copy=False)
     
         f = type(self)(properties=c.properties(), copy=True)
 
-        data_axes = self.construct_axes(construct)
+        data_axes = self.construct_axes(key)
         for domain_axis in data_axes:
             f.set_domain_axis(self.domain_axes()[domain_axis],
                               key=domain_axis, copy=True)
@@ -846,32 +871,32 @@ by the data array may be selected.
         f.set_data(c.get_data(), axes=data_axes, copy=True)
 
         for construct_type in ('dimensioncoordinate', 'auxiliarycoordinate', 'cellmeasure'):
-            for key, con in self.constructs(construct_type=construct_type,
-                                            axes=data_axes, copy=False).iteritems():
-                axes = self.construct_axes().get(key)
+            for ckey, con in self.constructs(construct_type=construct_type,
+                                             axes=data_axes,
+                                             copy=False).iteritems():
+                axes = self.construct_axes().get(ckey)
                 if axes is None:
                     continue
 
                 if set(axes).issubset(data_axes):
-                    construct_type = self._get_constructs().construct_types()[key]
-                    f.set_construct(construct_type, con, key=key,
+                    f.set_construct(self.construct_type(ckey), con, key=ckey,
                                     axes=axes, copy=True)
         #--- End: for
         
         # Add coordinate references which span a subset of the item's
         # axes
-        for key, ref in self.coordinate_references().iteritems():
+        for rkey, ref in self.coordinate_references().iteritems():
             ok = True
-            for construct in (tuple(ref.coordinates()) +
-                              tuple(ref.domain_ancillaries().values())):
-                axes = self.construct_axes()[construct]
+            for ckey in (tuple(ref.coordinates()) +
+                         tuple(ref.domain_ancillaries().values())):
+                axes = self.construct_axes()[ckey]
                 if not set(axes).issubset(data_axes):
                     ok = False
                     break
             #--- End: for
             
             if ok:
-                f.set_coordinate_reference(ref, key=key, copy=True)
+                f.set_coordinate_reference(ref, key=rkey, copy=True)
         #--- End: for
               
         return f

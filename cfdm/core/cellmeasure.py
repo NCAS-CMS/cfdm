@@ -2,7 +2,7 @@ import abc
 
 import mixin
 
-from ..structure import CellMeasure as structure_CellMeasure
+from .structure import CellMeasure as structure_CellMeasure
 
 # ====================================================================
 #

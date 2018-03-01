@@ -1,3 +1,5 @@
+import abc
+
 from .coordinate import Coordinate
 
 # ====================================================================
@@ -7,35 +9,40 @@ from .coordinate import Coordinate
 # ====================================================================
 
 class AuxiliaryCoordinate(Coordinate):
+    '''A CF auxiliary coordinate construct.
+
     '''
+    __metaclass__ = abc.ABCMeta
+      
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key=None, _level=0, _title=None):
+        '''Return a string containing a full description of the auxiliary
+coordinate object.
 
-A CF auxiliary coordinate construct.
+:Parameters:
 
+    display: `bool`, optional
+        If False then return the description as a string. By default
+        the description is printed, i.e. ``f.dump()`` is equivalent to
+        ``print f.dump(display=False)``.
 
-**Attributes**
+:Returns:
 
-===============  ========  ===================================================
-Attribute        Type      Description
-===============  ========  ===================================================
-`!climatology`   ``bool``  Whether or not the bounds are intervals of
-                           climatological time. Presumed to be False if unset.
-===============  ========  ===================================================
-
-'''
-    @property
-    def isauxiliary(self):
-        '''True, denoting that the variable is an auxilliary coordinate
-object.
-
-.. seealso:: `iscoordinate`, `isboundedvariable`, `isvariable`
+    out: `None` or `str`
+        A string containing the description.
 
 :Examples:
 
->>> c.isauxiliary
-True
-
         '''
-        return True
+        if _title is None:
+            _title = 'Auxiliary coordinate: ' + self.name(default='')
+
+        return super(AuxiliaryCoordinate, self).dump(
+            display=display,
+            field=field, key=key,
+             _level=_level, _title=_title,
+            _omit_properties=_omit_properties)
     #--- End: def
 
+    
 #--- End: class

@@ -1,6 +1,10 @@
-from .boundedvariable import BoundedVariable
+import abc
 
-class DomainAncillary(BoundedVariable):
+import mixin
+
+from .structure import DomainAncillary as structure_DomainAncillary
+
+class DomainAncillary(mixin.PropertiesDataBounds, structure_DomainAncillary):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for
@@ -19,22 +23,10 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
-    @property
-    def isdomainancillary(self):
-        '''True, denoting that the variable is a domain ancillary object.
-
-.. versionadded:: 1.6
-
-:Examples:
-
->>> f.isdomainancillary
-True
-        '''
-        return True
-    #--- End: def
+    __metaclass__ = abc.ABCMeta
     
-    def dump(self, display=True, omit=(), field=None, key=None,
-             _level=0, _title=None):
+    def dump(self, display=True, _omit_properties=None, field=None,
+             key='', _level=0, _title=None):
         '''Return a string containing a full description of the domain
 ancillary object.
 
@@ -58,17 +50,19 @@ ancillary object.
 :Examples:
 
         '''
-        ncvar = self.ncvar()
-        if ncvar is not None:
-            ncvar = ' (ncvar%{0})'.format(ncvar)
-        else:
-            ncvar = ''
-
         if _title is None:
-            _title = 'Domain Ancillary: ' + self.name(default='')
+            ncvar = self.get_ncvar(None)
+            if ncvar is not None:
+                ncvar = ' (ncvar%{0})'.format(ncvar)
+            else:
+                ncvar = ''
+
+            _title = 'Domain Ancillary: ' + self.name(default=key) + ncvar
+            
 
         return super(DomainAncillary, self).dump(
-            display=display, omit=omit, field=field, key=key, _level=_level,
+            display=display, _omit_properties=_omit_properties,
+            field=field, key=key, _level=_level,
             _title=_title)
     #--- End: def
 

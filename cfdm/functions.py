@@ -14,64 +14,6 @@ import numpy
 from .          import __version__, __file__
 from .constants import CONSTANTS
 
-
-def RELAXED_IDENTITIES(*arg):
-    '''
-
-:Parameters:
-
-    arg: `bool`, optional
-      
-:Returns:
-
-    out: `bool`
-        The value prior to the change, or the current value if no new
-        value was specified.
-
-:Examples:
-
->>> org = RELAXED_IDENTITIES()
->>> print org
-False
->>> RELAXED_IDENTITIES(True)
-False
->>> RELAXED_IDENTITIES()
-True
->>> RELAXED_IDENTITIES(org)
-True
->>> RELAXED_IDENTITIES()
-False
-
-    '''
-    old = CONSTANTS['RELAXED_IDENTITIES']
-    if arg:
-        CONSTANTS['RELAXED_IDENTITIES'] = bool(arg[0])
-    
-    return old
-#--- End:def
-
-def open_files_threshold_exceeded():
-    '''Return True if the total number of open files is greater than the
-current threshold.
-    
-The threshold is defined as a fraction of the maximum possible number
-of concurrently open files (an operating system dependent amount). The
-fraction is retrieved and set with the `OF_FRACTION` function.
-
-:Returns:
-
-    out: `bool`
-        Whether or not the number of open files exceeds the threshold.
-
-:Examples:
-
->>> print open_files_threshold_exceeded()
-True
-
-    '''
-    return True
-#---End: def
-
 def _numpy_allclose(a, b, rtol=None, atol=None):
     '''
 
@@ -536,22 +478,13 @@ False
     if callable(eq):
         # x has a callable equals method
         return eq(y, rtol=rtol, atol=atol, **kwargs)
-#                  ignore_data_type=ignore_data_type,
-#                  ignore_fill_value=ignore_fill_value,
-#                  ignore_type=ignore_type,
-#                  traceback=traceback)
 
     eq = getattr(y, 'equals', None)
     if callable(eq):
         # y has a callable equals method
         return eq(x, rtol=rtol, atol=atol, **kwargs)
-#                  ignore_data_type=ignore_data_type,
- #                 ignore_fill_value=ignore_fill_value,
- #                 ignore_type=ignore_type,
- #                 traceback=traceback)
  
     if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
-#        if isinstance(y, numpy.ndarray):
         if numpy.shape(x) != numpy.shape(y):
             return False
 
@@ -561,11 +494,6 @@ False
             atol = ATOL()
                 
         return _numpy_allclose(x, y, rtol=rtol, atol=atol)
-#        else:
-#            return False
-#    elif isinstance(y, numpy.ndarray):
-#        print 'rrrr2'
-#        return False
 
     else:
         return x == y

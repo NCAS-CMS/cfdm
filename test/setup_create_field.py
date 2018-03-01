@@ -5,7 +5,7 @@ import unittest
 
 import numpy
 
-import cfdm.core as cfdm
+import cfdm #.core as cfdm
 
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -193,12 +193,22 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-#        g = cfdm.read(self.filename, _debug=True, field=['domain_ancillarie'])
-#        print g
+        g = cfdm.read(self.filename, _debug=True, field=['domain_ancillarie'])
+        print g
 
-        h = g.field('domainancillary2')
-        h.dump()
-        print h
+#        h = g.field('domainancillary2')
+#        h.dump()
+#        print h
+#        
+#
+#        h = g.field('domainancillary1')
+#        print h
+#        
+#        h = g.field('domainancillary0')
+#        print h
+#        
+#        h = g.field('cellmeasure0')
+#        print h
         
         
     #--- End: def

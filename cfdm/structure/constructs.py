@@ -60,6 +60,12 @@ Keys are item identifiers, values are item objects.
         return ' '
     #--- End: def
 
+    def construct_type(self, key):
+        '''
+        '''
+        return self._construct_type.get(key)
+    #--- End: def
+
     def construct_types(self):
         '''
         '''

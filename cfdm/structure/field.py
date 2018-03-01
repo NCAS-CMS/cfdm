@@ -170,6 +170,9 @@ Field objects are picklable.
     def construct_axes(self, key=None):
         return self._get_constructs().construct_axes(key=key)
     
+    def construct_type(self, key):
+        return self._get_constructs().construct_type(key)
+    
     def construct(self, construct, copy=False):
         '''
         '''
