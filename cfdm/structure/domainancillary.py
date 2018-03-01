@@ -4,7 +4,7 @@ import abstract
 
 
 class DomainAncillary(abstract.PropertiesDataBounds):
-    '''A CF domain ancillary construct.
+    '''A domain ancillary construct of the CF data model.
 
 A domain ancillary construct provides information which is needed for
 computing the location of cells in an alternative coordinate

@@ -5,7 +5,7 @@ import unittest
 
 import numpy
 
-import cfdm #.core as cfdm
+import cfdm
 
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),

@@ -10,7 +10,7 @@ import abstract
 # ====================================================================
 
 class DomainAxis(abstract.Properties):
-    '''A CF domain axis construct.
+    '''A CF domain axis construct of the CF data model.
 
 A domain axis construct specifies the number of points along an
 independent axis of the domain. It comprises a positive integer

@@ -17,17 +17,18 @@ size or shape of the cells and that depends on a subset of the domain
 axis constructs. Cell measure constructs have to be used when the size
 or shape of the cells cannot be deduced from the dimension or
 auxiliary coordinate constructs without special knowledge that a
-generic application cannot be expected to have. The cell measure
-construct consists of a numeric array of the metric data which spans a
-subset of the domain axis constructs, and properties to describe the
-data (in the same sense as for the field construct). The properties
-must contain a "measure" property, which indicates which metric of the
-space it supplies e.g. cell horizontal areas, and a units property
-consistent with the measure property e.g. square metres. It is assumed
-that the metric does not depend on axes of the domain which are not
-spanned by the array, along which the values are implicitly
-propagated. CF-netCDF cell measure variables correspond to cell
-measure constructs.
+generic application cannot be expected to have.
+
+The cell measure construct consists of a numeric array of the metric
+data which spans a subset of the domain axis constructs, and
+properties to describe the data (in the same sense as for the field
+construct). The properties must contain a "measure" property, which
+indicates which metric of the space it supplies e.g. cell horizontal
+areas, and a units property consistent with the measure property
+e.g. square metres. It is assumed that the metric does not depend on
+axes of the domain which are not spanned by the array, along which the
+values are implicitly propagated. CF-netCDF cell measure variables
+correspond to cell measure constructs.
 
     '''   
     __metaclass__ = abc.ABCMeta

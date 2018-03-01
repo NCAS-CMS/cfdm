@@ -11,7 +11,7 @@ from .constructs import Constructs
 # ====================================================================
 
 class Field(abstract.PropertiesData):
-    '''A CF field construct.
+    '''A CF field construct of the CF data model.
 
 The field construct is central to the CF data model, and includes all
 the other constructs. A field corresponds to a CF-netCDF data variable
@@ -83,8 +83,7 @@ Field objects are picklable.
 :Parameters:
 
     properties: `dict`, optional
-        Provide the new field with CF properties from the dictionary's
-        key/value pairs.
+        Provide the new field with descriptive properties.
 
     source: 
 
@@ -129,14 +128,6 @@ Field objects are picklable.
             self.set_data_axes(data_axes)
     #--- End: def
     
-#    def _del_constructs(self):
-#        '''
-#.. versionadded:: 1.6
-#        
-#        '''
-#        return self._del_component('constructs', None)
-#    #--- End: def
-    
     def _get_constructs(self, *default):
         '''
 .. versionadded:: 1.6
@@ -144,16 +135,6 @@ Field objects are picklable.
         '''
         return self._get_component(1, 'constructs', None, *default)
     #--- End: def
-    
-#    def _set_constructs(self, constructs, copy=True):
-#        '''
-#.. versionadded:: 1.6
-#        '''
-#        if copy:
-#            constructs = constructs.copy()
-#            
-#        self._set_attribute('constructs', constructs)
-#    #--- End: def
     
     def array_constructs(self, copy=False):
         return self._get_constructs().array_constructs(copy=copy)
@@ -237,14 +218,6 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
         return out
     #--- End: def
 
-#    def copy(self, data=True):
-#        '''
-#        '''
-#        new = super(Field, self)(source=self, copy=True, _use_data=data)#
-#
-#        if self.
-#    #--- End: def
-    
     def del_data_axes(self):
         '''
         '''
@@ -357,15 +330,6 @@ None
         
         return out
     #--- End: def
-        
-#    def _del_constructs(self):
-#        '''
-#
-#.. versionadded:: 1.6
-#
-#        '''
-#        return self._del_attribute('constructs')
-#    #--- End: def
 
     def set_auxiliary_coordinate(self, item, key=None, axes=None,
                                  copy=True, replace=True):
@@ -641,10 +605,6 @@ ValueError: Can't initialize data: Data already exists
     {+copy_item_in}
       
         '''
-#        if not replace and key in self.field_ancillaries():
- #           raise ValueError(
-#"Can't insert field ancillary object: Identifier {0!r} already exists".format(key))
-
         if replace:
             if key is None:
                 raise ValueError("Must specify which construct to replace")

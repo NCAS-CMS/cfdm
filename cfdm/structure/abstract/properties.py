@@ -186,15 +186,23 @@ All components of a variable are optional.
     #--- End: def
     
     def del_property(self, prop):
-        '''Delete a CF or non-CF property.
+        '''Delete a property.
+
+A property describes an aspect of the construct that is independent of
+the domain.
+
+A property may have any name and any value. Some properties correspond
+to some netCDF attributes of variables (e.g. "units", "long_name", and
+"standard_name"), or netCDF global file attributes (e.g. "history" and
+"institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `getprop`, `hasprop`, `setprop`
+.. seealso:: `get_property`, `has_property`, `set_property`
 
 :Examples 1:
 
->>> f.{+name}('standard_name')
+>>> f.del_property('standard_name')
 
 :Parameters:
 
@@ -203,61 +211,68 @@ All components of a variable are optional.
 
 :Returns:
 
-     `None`
+     out:
+        The value of the deleted property, or `None` if the property
+        was not set.
 
 :Examples 2:
 
->>> f.setprop('project', 'CMIP7')
->>> f.{+name}('project')
->>> f.{+name}('project')
-AttributeError: Can't delete non-existent property 'project'
+>>> f.set_property('project', 'CMIP7')
+>>> print f.del_property('project')
+'CMIP7'
+>>> print f.del_property('project')
+None
 
         '''
         return self._del_component(1, 'properties', prop)
     #--- End: def
 
     def get_property(self, prop, *default):
-        '''
+        '''Get a property.
 
-Get a CF property.
+A property describes an aspect of the construct that is independent of
+the domain.
 
-When a default argument is given, it is returned when the attribute
-doesn't exist; without it, an exception is raised in that case.
+A property may have any name and any value. Some properties correspond to
+some netCDF attributes of variables (e.g. "units", "long_name", and
+"standard_name"), or netCDF global file attributes (e.g. "history" and
+"institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `delprop`, `hasprop`, `setprop`
+.. seealso:: `del_property`, `has_property`, `set_property`
 
 :Examples 1:
 
->>> f.{+name}('standard_name')
+>>> x = f.get_property('standard_name')
 
 :Parameters:
 
     prop: `str`
-        The name of the CF property to be retrieved.
+        The name of the property to be retrieved.
 
     default: optional
-        Return *default* if and only if the variable does not have the
-        named property.
+        Return *default* if and only if the property has not been set.
 
 :Returns:
 
     out:
-        The value of the named property or the default value, if set.
+        The value of the property or the default value. If the
+        property has not been set, then return *default* if provided
+        or else raise an `ArtributeError`.
 
 :Examples 2:
 
->>> f.setprop('standard_name', 'air_temperature')
->>> f.{+name}('standard_name')
+>>> f.set_property('standard_name', 'air_temperature')
+>>> print f.get_property('standard_name')
 'air_temperature'
->>> f.delprop('standard_name')
->>> f.{+name}('standard_name')
-AttributeError: Field doesn't have CF property 'standard_name'
->>> f.{+name}('standard_name', 'foo')
-'foo'
+>>> f.del_property('standard_name')
+>>> print f.get_property('standard_name')
+AttributeError: Field doesn't have property 'standard_name'
+>>> print f.get_property('standard_name', 'UNSET')
+'UNSET'
 
-'''
+        '''
         try:
             return self._get_component(1, 'properties', prop, *default)
         except AttributeError:
@@ -265,18 +280,23 @@ AttributeError: Field doesn't have CF property 'standard_name'
     #--- End: def
 
     def has_property(self, prop):
-        '''
+        '''Return True if a property has been set.
 
-Return True if a CF property exists, otherise False.
+A property describes an aspect of the construct that is independent of
+the domain.
+
+A property may have any name and any value. Some properties correspond
+to some netCDF attributes of variables (e.g. "units", "long_name", and
+"standard_name"), or netCDF global file attributes (e.g. "history" and
+"institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `delprop`, `getprop`, `setprop`
+.. seealso:: `del_property`, `get_property`, `set_property`
 
 :Examples 1:
 
->>> if f.{+name}('standard_name'):
-...     print 'Has standard name'
+>>> x = f.has_property('long_name')
 
 :Parameters:
 
@@ -286,7 +306,14 @@ Return True if a CF property exists, otherise False.
 :Returns:
 
      out: `bool`
-         True if the CF property exists, otherwise False.
+        True if the property has been set, otherwise False.
+
+:Examples 1:
+
+>>> if f.has_property('standard_name'):
+...     print 'Has standard name'
+
+
 
 '''
         return self._has_component(1, 'properties', prop)
@@ -356,16 +383,23 @@ Return True if a CF property exists, otherise False.
     #--- End: def
 
     def set_property(self, prop, value):
-        '''Set a CF or non-CF property.
+        '''Set a property.
+
+A property describes an aspect of the construct that is independent of
+the domain.
+
+A property may have any name and any value. Some properties correspond
+to some netCDF attributes of variables (e.g. "units", "long_name", and
+"standard_name"), or netCDF global file attributes (e.g. "history" and
+"institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `delprop`, `getprop`, `hasprop`
+.. seealso:: `del_property`, `get_property`, `has_property`
 
 :Examples 1:
 
->>> f.setprop('standard_name', 'time')
->>> f.setprop('project', 'CMIP7')
+>>> f.set_property('standard_name', 'time')
 
 :Parameters:
 

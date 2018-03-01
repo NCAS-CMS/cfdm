@@ -10,5 +10,6 @@ Reference manual
    discrete_sampling_geometries
    function
    class
+   class_structure
    constant
 
