@@ -168,10 +168,12 @@ class create_fieldTest(unittest.TestCase):
         g = g[0].squeeze(copy=False)
         
         g.dump()
-
+        print g
         self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
-                        '\n\nf\n{}\n\ng\n{}'.format(
+                        '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
+                            sorted(f.constructs()),
                             sorted(f.constructs().items()),
+                            sorted(g.constructs()),
                             sorted(g.constructs().items())))
 
         self.assertTrue(f.equals(f.copy(), traceback=True),
@@ -195,7 +197,8 @@ class create_fieldTest(unittest.TestCase):
 
         g = cfdm.read(self.filename, _debug=True, field=['domain_ancillarie'])
         print g
-
+        for x in g:
+            x.dump()
 #        h = g.field('domainancillary2')
 #        h.dump()
 #        print h
