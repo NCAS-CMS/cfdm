@@ -46,6 +46,7 @@ class ReadNetCDF(object):
             'formula_terms': {},
             #
             'compression': {},
+            # Flag on whether or not to uncompress compressed variables
             'uncompress' : True,
             #
             'external_nc': [],
@@ -199,7 +200,7 @@ ancillaries, field ancillaries).
         g['dimension_coordinates'] = {}
         g['auxiliary_coordinates'] = {}
         g['cell_measures']         = {}
-        g['list_variables']        = {}
+        g['list_variables']        = set()
 
         compression = {}
         
@@ -283,63 +284,63 @@ ancillaries, field ancillaries).
             #--- End: for
         #--- End: for
     
-        # ----------------------------------------------------------------
-        # Remove everything bar data variables from the list of
-        # variables. I.e. remove dimension and auxiliary coordinates,
-        # their bounds and grid_mapping variables
-        # ----------------------------------------------------------------
         nc_dimensions = map(str, nc.dimensions)
         if _debug:
             print '    netCDF dimensions:', nc_dimensions
     
-        featureType = g['global_attributes'].get('featureType')
-        
+        # ------------------------------------------------------------
+        # List variables
+        # ------------------------------------------------------------
         for ncvar in attributes:
-            # Parse list, index and count variables
-            compressed_ncdims = attributes[ncvar].get('compress')
-            if compressed_ncdims is not None:
-                if tuple(nc.variables[ncvar].dimensions) == (ncvar,):
+            if tuple(nc.variables[ncvar].dimensions) == (ncvar,):
+                compress = attributes[ncvar].get('compress')
+                if compress is not None:
                     # This variable is a list variable for gathering arrays
-                    self._parse_compression_gathered(ncvar,
-                                                     compressed_ncdims)
-                    continue
-                
-            if featureType is None:
-                continue
+                    self._parse_compression_gathered(ncvar, compress)
+                    self._reference(ncvar)
+                    g['list_variables'].add(ncvar)
+        #--- End: for
 
-            sample_ncdimension   = None
-            instance_ncdimension = None
-            
-            if 'sample_dimension' in attributes[ncvar]:
-                # This variable is a count variable for DSG contiguous
-                # ragged arrays
-                sample_ncdimension = attributes[ncvar]['sample_dimension']        
-                element_dimension_2 = self._parse_DSG_contiguous_compression(
-                    ncvar,
-                    attributes,
-                    sample_ncdimension)
-                self._reference(ncvar)
-                
-            if 'instance_dimension' in attributes[ncvar]:
-                # This variable is an index variable for DSG indexed
-                # ragged arrays
-                instance_ncdimension = attributes[ncvar]['instance_dimension']
-                element_dimension_1 = self._parse_DSG_indexed_compression(
-                    ncvar,
-                    attributes,
-                    instance_ncdimension)
-                self._reference(ncvar)
-                
-            if sample_ncdimension and instance_ncdimension:
-                self._parse_DSG_indexed_contiguous_compression(
-                    ncvar,
-                    sample_ncdimension,
-                    instance_ncdimension)
+        # ------------------------------------------------------------
+        # DSG variables
+        # ------------------------------------------------------------
+        featureType = g['global_attributes'].get('featureType')
+        if featureType is not None:
+            for ncvar in attributes:
                 sample_ncdimension   = None
                 instance_ncdimension = None
-                self._reference(ncvar)
-            #--- End: if
-        #--- End: for
+            
+                if 'sample_dimension' in attributes[ncvar]:
+                    # This variable is a count variable for DSG contiguous
+                    # ragged arrays
+                    sample_ncdimension = attributes[ncvar]['sample_dimension']        
+                    element_dimension_2 = self._parse_DSG_contiguous_compression(
+                        ncvar,
+                        attributes,
+                        sample_ncdimension)
+                    self._reference(ncvar)
+                    
+                if 'instance_dimension' in attributes[ncvar]:
+                    # This variable is an index variable for DSG indexed
+                    # ragged arrays
+                    instance_ncdimension = attributes[ncvar]['instance_dimension']
+                    element_dimension_1 = self._parse_DSG_indexed_compression(
+                        ncvar,
+                        attributes,
+                        instance_ncdimension)
+                    self._reference(ncvar)
+                    
+                if sample_ncdimension and instance_ncdimension:
+                    self._parse_DSG_indexed_contiguous_compression(
+                        ncvar,
+                        sample_ncdimension,
+                        instance_ncdimension)
+                    sample_ncdimension   = None
+                    instance_ncdimension = None
+                    self._reference(ncvar)
+                #--- End: if
+            #--- End: for
+        #--- End: if
         
         fields = OrderedDict()
         for ncvar in variables:
@@ -474,7 +475,7 @@ netCDF variable.
    
         gathered_ncdimension = g['nc'].variables[ncvar].dimensions[0]
 
-        parsed_compress = self._parse_compress(compress)
+        parsed_compress = self._parse_y(ncvar, compress)
         cf_compliant = self._check_compress(ncvar, compress, parsed_compress)
         if not cf_compliant:
             return
@@ -871,7 +872,7 @@ netCDF variable.
                         term, variable = x.items()[0]
                         variable = variable[0]
                         g['formula_terms'][coord_ncvar]['bounds'][term] = variable
-#                        if zdim in variables[variable].dimensions:
+#                        if z_ncdim in variables[variable].dimensions:
 #                            if variable == g['formula_terms'][coord_ncvar]['coord'][term]:
 #                                ok = False
 #                                self._add_message(
@@ -1004,10 +1005,10 @@ netCDF variable.
             print '    Field dimensions:', field_ncdimensions
             
         for ncdim in field_ncdimensions:
-            if ncdim in nc.variables:
-                
-                # There is a Unidata coordinate variable for this dimension, so
-                # create a domain axis and dimension coordinate
+            if ncdim in nc.variables and tuple(nc.variables[ncdim].dimensions) == (ncdim,):
+                # There is a Unidata coordinate variable for this
+                # dimension, so create a domain axis and dimension
+                # coordinate
                 if ncdim in g['dimension_coordinates']:
                     coord = g['dimension_coordinates'][ncdim].copy()
                 else:
@@ -1169,7 +1170,8 @@ netCDF variable.
                 # This coordinate doesn't have a formula_terms attribute
                 continue
 
-            zdim = nc.variables[coord_ncvar].dimensions[0]
+            # Get the netCDf dimension name of the vertical dimension
+            z_ncdim = nc.variables[coord_ncvar].dimensions[0]
 
             if coord_ncvar not in g['formula_terms']:                        
                 cf_compliant = self._formula_terms_variables(field_ncvar,
@@ -1407,7 +1409,7 @@ netCDF variable.
         #--- End: if
     
         if dimension:
-            properties.pop('compress', None)
+            properties.pop('compress', None) #??
             c = self._DimensionCoordinate(properties=properties)
         elif auxiliary:
             c = self._AuxiliaryCoordinate(properties=properties)
