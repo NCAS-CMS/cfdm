@@ -200,7 +200,7 @@ ancillaries, field ancillaries).
         g['dimension_coordinates'] = {}
         g['auxiliary_coordinates'] = {}
         g['cell_measures']         = {}
-        g['list_variables']        = set()
+#        g['list_variables']        = set()
 
         compression = {}
         
@@ -298,7 +298,7 @@ ancillaries, field ancillaries).
                     # This variable is a list variable for gathering arrays
                     self._parse_compression_gathered(ncvar, compress)
                     self._reference(ncvar)
-                    g['list_variables'].add(ncvar)
+#                    g['list_variables'].add(ncvar)
         #--- End: for
 
         # ------------------------------------------------------------
@@ -306,37 +306,38 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         featureType = g['global_attributes'].get('featureType')
         if featureType is not None:
-            for ncvar in attributes:
-                sample_ncdimension   = None
-                instance_ncdimension = None
+            g['featureType'] = featureType
             
-                if 'sample_dimension' in attributes[ncvar]:
+            for ncvar in attributes:
+                sample_ncdimension   = attributes[ncvar].get('sample_dimension')
+                instance_ncdimension = attributes[ncvar].get('instance_dimension')
+                
+                if 'sample_dimension' is not None:
                     # This variable is a count variable for DSG contiguous
                     # ragged arrays
-                    sample_ncdimension = attributes[ncvar]['sample_dimension']        
                     element_dimension_2 = self._parse_DSG_contiguous_compression(
                         ncvar,
                         attributes,
                         sample_ncdimension)
                     self._reference(ncvar)
-                    
-                if 'instance_dimension' in attributes[ncvar]:
+
+                if 'instance_dimension' is not None:
                     # This variable is an index variable for DSG indexed
                     # ragged arrays
-                    instance_ncdimension = attributes[ncvar]['instance_dimension']
                     element_dimension_1 = self._parse_DSG_indexed_compression(
                         ncvar,
                         attributes,
                         instance_ncdimension)
                     self._reference(ncvar)
                     
-                if sample_ncdimension and instance_ncdimension:
+                if (sample_ncdimension   is not None and
+                    instance_ncdimension is not None):
                     self._parse_DSG_indexed_contiguous_compression(
                         ncvar,
                         sample_ncdimension,
                         instance_ncdimension)
-                    sample_ncdimension   = None
-                    instance_ncdimension = None
+#                    sample_ncdimension   = None
+#                    instance_ncdimension = None
                     self._reference(ncvar)
                 #--- End: if
             #--- End: for
@@ -345,7 +346,6 @@ ancillaries, field ancillaries).
         fields = OrderedDict()
         for ncvar in variables:
             fields[ncvar] = self._create_field(ncvar, attributes, verbose=verbose)
-        #--- End: for
 
         got = []
 
@@ -534,7 +534,7 @@ netCDF variable.
             print '    DSG contiguous array implied shape:', data.shape
     
         # Make up a netCDF dimension name for the element dimension
-        featureType = g['global_attributes'].get('featureType')
+        featureType = g['featureType']
         if featureType in ('timeSeries', 'trajectory', 'profile'):
             element_dimension = featureType.lower()
         elif featureType == 'timeSeriesProfile':
@@ -620,7 +620,7 @@ netCDF variable.
         element_dimension_size  = int(elements_per_instance.max())
     
         # Make up a netCDF dimension name for the element dimension
-        featureType = g['global_attributes'].get('featureType')
+        featureType = g['featureType']
         if featureType in ('timeSeries', 'trajectory', 'profile'):
             element_dimension = featureType.lower()
         elif featureType == 'timeSeriesProfile':
