@@ -248,7 +248,7 @@ elements.
             isreftime = ('since' in units)
         else:
             isreftime = False
-            
+
         try:
             first = self.first_element()
         except:            
@@ -269,7 +269,8 @@ elements.
         if size == 1:
             if isreftime:
                 # Convert reference time to date-time
-                first = type(self)(first, units, calendar).get_dtarray()
+                first = type(self)(
+                    numpy.ma.array(first), units, calendar).get_dtarray()
 
             out = '{0}{1}{2}'.format(open_brackets,
                                      first,
@@ -278,7 +279,8 @@ elements.
             last = self.last_element()
             if isreftime:
                 # Convert reference times to date-times
-                first, last = type(self)([first, last], units, calendar).get_dtarray()
+                first, last = type(self)(
+                    numpy.ma.array([first, last]), units, calendar).get_dtarray()
 
             if size > 3:
                 out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
@@ -288,7 +290,8 @@ elements.
                 middle = self.second_element()
                 if isreftime:
                     # Convert reference times to date-times
-                    middle = type(self)(middle, units, calendar).get_dtarray()
+                    middle = type(self)(
+                        numpy.ma.array(middle), units, calendar).get_dtarray()
 
                 out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
                                                    first, middle, last,
@@ -300,7 +303,8 @@ elements.
         #--- End: if
         
         if isreftime:
-            out += ' {0}'.format(calendar)
+            if calendar:
+                out += ' {0}'.format(calendar)
         elif units:
             out += ' {0}'.format(units)
             
@@ -422,33 +426,6 @@ True
         return array
     #--- End: def
 
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def varray(self):
-#        '''A numpy array view the data.
-#
-#.. note:: If the data array is stored as date-time objects then a
-#          numpy array of numeric reference times will be returned. A
-#          numpy array of date-time objects may be returned by the
-#          `dtarray` attribute.
-#
-#.. seealso:: `array`, `dtarray`
-#
-#:Examples:
-#
-#        '''
-#        array = self._get_master_array()[...]
-#
-#        if self.fill_value is not None and numpy.ma.isMA(array):
-#            array.set_fill_value(self.fill_value)
-#
-#        self._set_master_array(NumpyArray(array))
-#
-#        return array
-#    #--- End: def
-
     @classmethod
     def asdata(cls, d, copy=False):
         '''Convert the input to a `Data` object.
@@ -505,11 +482,13 @@ True
                 array = array.view(numpy.ndarray)
         #--- End: if
 
-        calendar = self.get_calendar(None)
-        if calendar is None:
-            calendar = 'standard'
-            
-        array = netCDF4.num2date(array, self.get_units(None), calendar)    
+#        calendar = self.get_calendar('standard')
+#        if calendar is None:
+#            calendar = 'standard'
+
+        array = netCDF4.num2date(array, units=self.get_units(None),
+                                 calendar=self.get_calendar('standard'))
+        
         if mask is None:
             # There is no missing data
             array = numpy.array(array, dtype=object)
@@ -1607,10 +1586,10 @@ False
     def second_element(self):
         '''
         '''
-        index = numpy.unravel_index(1, self.shape)
-        d = self[index]
-        array = d.get_array()
-        
+        index = (slice(0, 1),)*(self.ndim-1) + (slice(1, 2),)
+      
+        array = self[index].get_array()
+
         if not numpy.ma.isMA(array):
             return array.item()
 

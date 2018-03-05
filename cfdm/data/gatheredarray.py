@@ -9,7 +9,7 @@ class GatheredArray(Array):
 
     '''
     def __init__(self, array=None, shape=None, size=None, ndim=None,
-                 compression=None):
+                 compression_type=None, compression_parameters=None):
         '''
         
 **Initialization**
@@ -25,7 +25,8 @@ class GatheredArray(Array):
         self._size  = size
         self._ndim  = ndim
 
-        self._compression = compression
+        self.compression_type       = compression_type
+        self.compression_parameters = compression_parameters
     #--- End: def
 
     def __getitem__(self, indices):
@@ -34,13 +35,20 @@ class GatheredArray(Array):
 Returns an independent numpy array.
 
         '''
-        (compression_type, uncompression) = self._compression.items()[0]
+#        print 'self.compression_type =',self.compression_type
+#        print 'self.compression_parameters =',self.compression_parameters
+
+        compression_type       = self.compression_type
+        compression_parameters = self.compression_parameters
         
         if compression_type == 'gathered':
+            # --------------------------------------------------------
+            # Compression by gathering
+            # --------------------------------------------------------
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
             
-            sample_axis           = uncompression['axis']
-            uncompression_indices = uncompression['indices']
+            sample_axis           = compression_parameters['axis']
+            uncompression_indices = compression_parameters['indices']
             
             compressed_axes = range(sample_axis, self.ndim - (array.ndim - sample_axis - 1))
             n_compressed_axes = len(compressed_axes)
@@ -71,11 +79,16 @@ Returns an independent numpy array.
             #--- End: for
 
         elif compression_type == 'DSG_contiguous':
+            # --------------------------------------------------------
+            # Compression by contiguous ragged array
+            # --------------------------------------------------------
             # Create an empty Data array which has dimensions (instance
             # dimension, element dimension).
+            compressed_array = self.array
+
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
-            elements_per_instance = uncompression['elements_per_instance']
+            elements_per_instance = compression_parameters['elements_per_instance']
             
             start = 0 
             for i, n in enumerate(elements_per_instance):
@@ -85,33 +98,46 @@ Returns an independent numpy array.
                 u_indices = (slice(i, i+1),
                              slice(0, sample_indices.stop - sample_indices.start))
                 
-                uarray[u_indices] = array[sample_indices]
+                uarray[u_indices] = compressed_array[sample_indices]
                 
                 start += n
             #--- End: for
 
         elif compression_type == 'DSG_indexed':
+            # --------------------------------------------------------
+            # Compression by indexed ragged array
+            # --------------------------------------------------------
             # Create an empty Data array which has dimensions (instance
             # dimension, element dimension).
-            array = self.array
-            
+            compressed_array = self.array
+
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
+            instances = compression_parameters['instances']
+            instances = instances.get_array()
+
             for i in range(uarray.shape[0]):
-                sample_dimension_indices = numpy.where(index == i)[0]
-                
+                sample_dimension_indices = numpy.where(instances == i)[0]
+
                 u_indices = (slice(i, i+1),
-                           slice(0, len(sample_dimension_indices)))
-                
-                uarray[u_indices] = array[sample_dimension_indices]
+                             slice(0, len(sample_dimension_indices)))
+
+                uarray[u_indices] = compressed_array[sample_dimension_indices]
             #--- End: for
 
         elif compression_type == 'DSG_indexed_contiguous':
-            array = self.array
+            # --------------------------------------------------------
+            # Compression by indexed contiguous ragged array
+            # --------------------------------------------------------
+            compressed_array = self.array
 
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
-            elements_per_profile = uncompression['elements_per_profile']
+            elements_per_profile = compression_parameters['elements_per_profile']
+            elements_per_profile.get_array()
+
+            profile_indices = compression_parameters['profile_indices']
+            profile_indices = profile_indices.get_array()
             
             # Loop over instances
             for i in range(uarray.shape[0]):
@@ -137,16 +163,16 @@ Returns an independent numpy array.
                         start = 0
                     else:                    
                         start = int(elements_per_profile[:profile_index].sum())
-                        
-                    stop  = start + int(elements_per_profile[j, profile_index])
+
+                    stop = start + int(elements_per_profile[profile_index])
                     
                     sample_indices = slice(start, stop)
                     
                     u_indices = (slice(i, i+1),
                                  slice(j, j+1), 
                                  slice(0, sample_indices.stop - sample_indices.start))
-                    
-                    uarray[u_indices] = array[sample_indices]
+
+                    uarray[u_indices] = compressed_array[sample_indices]
         #--- End: if
 
         return uarray[indices]

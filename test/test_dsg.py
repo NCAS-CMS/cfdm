@@ -115,10 +115,13 @@ class DSGTest(unittest.TestCase):
 
         f = cfdm.read(self.contiguous)
 
-#        q = f.select('specific')[0]
-        q = [g.match('specific') for g in f][0]
-        
-        self.assertTrue(cfdm.functions._numpy_allclose(q.array, self.a))
+        self.assertTrue(len(f) == 2)
+
+        # Select the specific humidity field
+        q = [g for g in f
+             if g.get_property('standard_name') == 'specific_humidity'][0]
+
+        self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
     #--- End: def        
 
     def test_DSG_INDEXED(self):
@@ -127,25 +130,32 @@ class DSGTest(unittest.TestCase):
 
         f = cfdm.read(self.indexed)
 
-#        q = f.select('specific')[0]
-        q = [g.match('specific') for g in f][0]
-        
-        self.assertTrue(cfdm.functions._numpy_allclose(q.array, self.a))
+        self.assertTrue(len(f) == 2)
+
+        # Select the specific humidity field
+        q = [g for g in f
+             if g.get_property('standard_name') == 'specific_humidity'][0]
+
+        self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
     #--- End: def        
 
     def test_DSG_INDEXED_CONTIGUOUS(self):  
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.indexed_contiguous)
+        f = cfdm.read(self.indexed_contiguous, _debug=True)
 
-#        q = f.select('specific')[0]
-        q = [g.match('specific') for g in f][0]
+        self.assertTrue(len(f) == 2)
+
+        # Select the specific humidity field
+        q = [g for g in f
+             if g.get_property('standard_name') == 'specific_humidity'][0]
+
+        q = q.get_array()
         
-        message= repr(q.array-self.b) +'\n'+repr(q.array[2,0])+'\n'+repr(self.b[2, 0])
-        self.assertTrue(cfdm.functions._numpy_allclose(q.array, self.b),
-                        message)
-        
+        message= repr(q-self.b) +'\n'+repr(q[2,0])+'\n'+repr(self.b[2, 0])
+        self.assertTrue(cfdm.functions._numpy_allclose(q, self.b),
+                        message)        
     #--- End: def        
 
 #--- End: class

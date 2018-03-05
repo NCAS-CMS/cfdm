@@ -230,9 +230,22 @@ True
 
         '''
         try:
-            return self._get_component(1, 'data', None, *default)
+            data = self._get_component(1, 'data', None, None)
         except AttributeError:
             raise AttributeError("There is no data")
+
+        if data is None and default:
+            return default[0]
+        
+        units = self.get_property('units', None)
+        if units is not None:
+            data.set_units(units)
+
+        calendar = self.get_property('calendar', None)
+        if calendar is not None:
+            data.set_calendar(calendar)
+
+        return data        
     #--- End: def
 
     def has_data(self):

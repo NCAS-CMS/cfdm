@@ -16,7 +16,8 @@ from ..bounds    import Bounds
 #from ..units     import Units
 
 from ..data.data  import Data
-from ..data.netcdfarray import NetCDF
+from ..data.netcdfarray   import NetCDF
+from ..data.gatheredarray import GatheredArray
 
 
 netcdf = ReadNetCDF(AuxiliaryCoordinate = AuxiliaryCoordinate,
@@ -32,7 +33,8 @@ netcdf = ReadNetCDF(AuxiliaryCoordinate = AuxiliaryCoordinate,
                     Bounds    = Bounds,
                     Data      = Data,
 
-                    NetCDF = NetCDF)
+                    NetCDF        = NetCDF,
+                    GatheredArray = GatheredArray)
 
 def read(filename, external_files=(), verbose=False,
          ignore_read_error=False, uncompress=True, field=None,

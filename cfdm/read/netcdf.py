@@ -1,5 +1,6 @@
 import copy
 import re
+import operator
 import struct
 
 from collections import OrderedDict
@@ -200,7 +201,8 @@ ancillaries, field ancillaries).
         g['dimension_coordinates'] = {}
         g['auxiliary_coordinates'] = {}
         g['cell_measures']         = {}
-#        g['list_variables']        = set()
+
+        g['do_not_create_field']   = set()
 
         compression = {}
         
@@ -297,8 +299,8 @@ ancillaries, field ancillaries).
                 if compress is not None:
                     # This variable is a list variable for gathering arrays
                     self._parse_compression_gathered(ncvar, compress)
-                    self._reference(ncvar)
-#                    g['list_variables'].add(ncvar)
+#                    self._reference(ncvar)
+                    g['do_not_create_field'].add(ncvar)
         #--- End: for
 
         # ------------------------------------------------------------
@@ -308,45 +310,61 @@ ancillaries, field ancillaries).
         if featureType is not None:
             g['featureType'] = featureType
             
+            sample_dimension = None
             for ncvar in attributes:
-                sample_ncdimension   = attributes[ncvar].get('sample_dimension')
-                instance_ncdimension = attributes[ncvar].get('instance_dimension')
-                
-                if 'sample_dimension' is not None:
+                if attributes[ncvar].get('sample_dimension') is not None:
                     # This variable is a count variable for DSG contiguous
                     # ragged arrays
-                    element_dimension_2 = self._parse_DSG_contiguous_compression(
-                        ncvar,
-                        attributes,
-                        sample_ncdimension)
-                    self._reference(ncvar)
+                    sample_dimension = attributes[ncvar]['sample_dimension']
+                    cf_compliant = self._check_sample_dimension(ncvar,
+                                                                sample_dimension)
+                    if not cf_compliant:
+                        sample_dimension = None
+                    else:
+                        element_dimension_2 = self._parse_DSG_contiguous_compression(
+                            ncvar,
+                            attributes,
+                            sample_dimension)
+                        #                        self._reference(ncvar)
+                        g['do_not_create_field'].add(ncvar)
+          #--- End: for
 
-                if 'instance_dimension' is not None:
+            instance_dimension = None
+            for ncvar in attributes:
+                                
+                if attributes[ncvar].get('instance_dimension') is not None:
                     # This variable is an index variable for DSG indexed
                     # ragged arrays
-                    element_dimension_1 = self._parse_DSG_indexed_compression(
-                        ncvar,
-                        attributes,
-                        instance_ncdimension)
-                    self._reference(ncvar)
-                    
-                if (sample_ncdimension   is not None and
-                    instance_ncdimension is not None):
-                    self._parse_DSG_indexed_contiguous_compression(
-                        ncvar,
-                        sample_ncdimension,
-                        instance_ncdimension)
-#                    sample_ncdimension   = None
-#                    instance_ncdimension = None
-                    self._reference(ncvar)
-                #--- End: if
+                    instance_dimension = attributes[ncvar]['instance_dimension']
+                    cf_compliant = self._check_instance_dimension(ncvar,
+                                                                  instance_dimension)
+                    if not cf_compliant:
+                        instance_dimension = None
+                    else:
+                        element_dimension_1 = self._parse_DSG_indexed_compression(
+                            ncvar,
+                            attributes,
+                            instance_dimension)
+                        self._reference(ncvar)
+                        g['do_not_create_field'].add(ncvar)
             #--- End: for
+            print 'sample_dimension, instance_dimension =',sample_dimension, instance_dimension
+            if (sample_dimension   is not None and
+                instance_dimension is not None):
+                
+                self._parse_DSG_indexed_contiguous_compression(                
+                        sample_dimension,
+                        instance_dimension)
         #--- End: if
         
         fields = OrderedDict()
         for ncvar in variables:
-            fields[ncvar] = self._create_field(ncvar, attributes, verbose=verbose)
+            if ncvar in g['do_not_create_field']:
+                continue
 
+            fields[ncvar] = self._create_field(ncvar, attributes, verbose=verbose)
+        #--- End: for
+        
         got = []
 
         # 
@@ -472,7 +490,10 @@ netCDF variable.
         '''
         '''
         g = self.read_vars
-   
+        _debug = g['_debug']
+        if _debug:
+            print '        List variable: compress =', compress
+    
         gathered_ncdimension = g['nc'].variables[ncvar].dimensions[0]
 
         parsed_compress = self._parse_y(ncvar, compress)
@@ -480,12 +501,8 @@ netCDF variable.
         if not cf_compliant:
             return
             
-        _debug = g['_debug']
-        if _debug:
-            print '        List variable: compress =', compress
- 
         compression_type = 'gathered'
-        indices = self._create_array(ncvar)
+        indices = self._create_data(ncvar, uncompress_override=True)
         
         g['compression'][gathered_ncdimension] = {
             'gathered': {'indices'             : indices,
@@ -493,7 +510,7 @@ netCDF variable.
     #--- End: def
     
     def _parse_DSG_contiguous_compression(self, ncvar, attributes,
-                                          sample_ncdimension):
+                                          sample_dimension):
         '''
 
 :Parameters:
@@ -503,7 +520,7 @@ netCDF variable.
 
     attributes: `dict`
 
-    sample_ncdimension: `str`
+    sample_dimension: `str`
         The netCDF dimension name of the DSG sample dimension.
 
 :Returns:
@@ -516,22 +533,18 @@ netCDF variable.
 
         _debug = g['_debug']
         if _debug:
-            print '    DSG count variable: sample_dimension =', sample_ncdimension
+            print '    DSG count variable: sample_dimension =', sample_dimension
 
-        if sample_dimension not in g['nc'].dimensions:
-            print 'BAD sample_dimension'
-            return 
-            
         variable = g['nc'].variables[ncvar]
-        instance_ncdimension = variable.dimensions[0] 
+        instance_dimension = variable.dimensions[0] 
         
-        elements_per_instance = self._create_array(ncvar)
+        elements_per_instance = self._create_data(ncvar, uncompress_override=True)
     
         instance_dimension_size = elements_per_instance.size    
         element_dimension_size  = int(elements_per_instance.max())
     
         if _debug:
-            print '    DSG contiguous array implied shape:', data.shape
+            print '    DSG contiguous array implied shape:', (instance_dimension_size,element_dimension_size)
     
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType']
@@ -553,11 +566,11 @@ netCDF variable.
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
 
-        g['compression'].setdefault(sample_ncdimension, {})['DSG_contiguous'] = {
+        g['compression'].setdefault(sample_dimension, {})['DSG_contiguous'] = {
             'elements_per_instance'  : elements_per_instance,
-            'implied_ncdimensions'   : (instance_ncdimension,
+            'implied_ncdimensions'   : (instance_dimension,
                                         element_dimension),
-            'profile_ncdimension'    : instance_ncdimension,
+            'profile_ncdimension'    : instance_dimension,
             'element_dimension'      : element_dimension,
             'element_dimension_size' : element_dimension_size,
             'instance_dimension_size': instance_dimension_size,
@@ -570,20 +583,20 @@ netCDF variable.
         
         if _debug:
             print "    Creating g['compression'][{!r}]['DSG_contiguous']".format(
-                sample_ncdimension)
+                sample_dimension)
     
         return element_dimension
     #--- End: def
     
     def _parse_DSG_indexed_compression(self, ncvar, attributes,
-                                       instance_ncdimension):
+                                       instance_dimension):
         '''
         ncvar: `str`
             The netCDF variable name of the DSG index variable.
     
         attributes: `dict`
     
-        instance_ncdimension: `str`
+        instance_dimension: `str`
             The netCDF variable name of the DSG instance dimension.
     
         '''
@@ -591,32 +604,28 @@ netCDF variable.
                 
         _debug = g['_debug']
         if _debug:
-            print '    DSG index variable: instance_dimension =', instance_ncdimension
+            print '    DSG index variable: instance_dimension =', instance_dimension
         
-        if instance_dimension not in g['nc'].dimensions:
-            print 'BAD instance_dimension'
-            return
-
         variable = g['nc'].variables[ncvar]
 
-        index = self._create_array(ncvar, attributes)
-        
-        (instance, inverse, count) = numpy.unique(index,
+        index = self._create_data(ncvar, uncompress_override=True)
+
+        (instance, inverse, count) = numpy.unique(index.get_array(),
                                                   return_inverse=True,
                                                   return_counts=True)
-    
+
         # The indices of the sample dimension which apply to each
-        # instance. For example, if the sample dimension has size 20 and
-        # there are 3 instances then the instance_indices arary might look
-        # like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1, 2, 2, 1, 0, 0, 0, 2,
-        # 0].
-        instance_indices = self._create_Data(array=inverse)
-    
-        # The number of elements per instance. For the instance_indices
-        # example, the elements_per_instance array is [7, 5, 7].
+        # instance. For example, if the sample dimension has size 20
+        # and there are 3 instances then the instances array might
+        # look like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1, 2, 2, 1, 0,
+        # 0, 0, 2, 0].
+        instances = self._create_Data(array=inverse)
+
+        # The number of elements per instance. For the instances array
+        # example above, the elements_per_instance array is [7, 5, 7].
         elements_per_instance = self._create_Data(array=count)
     
-        instance_dimension_size = g['nc'].dimensions[instance_ncdimension].size
+        instance_dimension_size = g['nc'].dimensions[instance_dimension].size
         element_dimension_size  = int(elements_per_instance.max())
     
         # Make up a netCDF dimension name for the element dimension
@@ -642,10 +651,10 @@ netCDF variable.
         indexed_sample_dimension = g['nc'][ncvar].dimensions[0]
         
         g['compression'].setdefault(indexed_sample_dimension, {})['DSG_indexed'] = {
-            'empty_data'             : data,
+#            'empty_data'             : data,
             'elements_per_instance'  : elements_per_instance,
-            'instance_indices'       : instance_indices,
-            'implied_ncdimensions'   : (instance_ncdimension,
+            'instances'              : instances,
+            'implied_ncdimensions'   : (instance_dimension,
                                         element_dimension),
             'element_dimension'      : element_dimension,
             'instance_dimension_size': instance_dimension_size,
@@ -661,14 +670,14 @@ netCDF variable.
         return element_dimension
     #--- End: def
     
-    def _parse_DSG_indexed_contiguous_compression(self, ncvar,
-                                                  sample_ncdimension,
-                                                  instance_ncdimension):
+    def _parse_DSG_indexed_contiguous_compression(self,
+                                                  sample_dimension,
+                                                  instance_dimension):
         '''
 
 :Parameters:
     
-    sample_ncdimension: `str`
+    sample_dimension: `str`
         The netCDF dimension name of the DSG sample dimension.
 
     element_dimension_1: `str`
@@ -686,19 +695,19 @@ netCDF variable.
         if _debug:
             print 'Pre-processing DSG indexed and contiguous compression'
     
-        profile_ncdimension = g['compression'][sample_ncdimension]['DSG_contiguous']['profile_ncdimension']
+        profile_ncdimension = g['compression'][sample_dimension]['DSG_contiguous']['profile_ncdimension']
     
         if _debug:
-            print '    sample_ncdimension  :', sample_ncdimension
-            print '    instance_ncdimension:', instance_ncdimension
+            print '    sample_dimension  :', sample_dimension
+            print '    instance_dimension:', instance_dimension
             print '    profile_ncdimension :', profile_ncdimension
             
-        contiguous = g['compression'][sample_ncdimension]['DSG_contiguous']
+        contiguous = g['compression'][sample_dimension]['DSG_contiguous']
         indexed    = g['compression'][profile_ncdimension]['DSG_indexed']
     
         # The indices of the sample dimension which define the start
         # positions of each instances profiles
-        profile_indices = indexed['instance_indices']
+        profile_indices = indexed['instances']
     
         profiles_per_instance = indexed['elements_per_instance']
         elements_per_profile  = contiguous['elements_per_instance']
@@ -709,13 +718,13 @@ netCDF variable.
         
         if _debug:
             print "    Creating g['compression'][{!r}]['DSG_indexed_contiguous']".format(
-                sample_ncdimension)
+                sample_dimension)
             
-        g['compression'][sample_ncdimension]['DSG_indexed_contiguous'] = {
+        g['compression'][sample_dimension]['DSG_indexed_contiguous'] = {
             'profiles_per_instance'   : profiles_per_instance,
             'elements_per_profile'    : elements_per_profile,
             'profile_indices'         : profile_indices,
-            'implied_ncdimensions'    : (instance_ncdimension,
+            'implied_ncdimensions'    : (instance_dimension,
                                          indexed['element_dimension'],
                                          contiguous['element_dimension']),
             'instance_dimension_size' : instance_dimension_size,
@@ -725,14 +734,14 @@ netCDF variable.
     
         if _debug:
             print '    Implied dimensions: {} -> {}'.format(
-                sample_ncdimension,
-                g['compression'][sample_ncdimension]['DSG_indexed_contiguous']['implied_ncdimensions'])
+                sample_dimension,
+                g['compression'][sample_dimension]['DSG_indexed_contiguous']['implied_ncdimensions'])
     
         if _debug:
             print "    Removing g['compression'][{!r}]['DSG_contiguous']".format(
-                sample_ncdimension)
+                sample_dimension)
             
-        del g['compression'][sample_ncdimension]['DSG_contiguous']
+        del g['compression'][sample_dimension]['DSG_contiguous']
     #--- End: def
     
     def _reference(self, ncvar):
@@ -1038,9 +1047,11 @@ netCDF variable.
                 # so just create a domain axis with the correct size.
                 if ncdim in g['new_dimensions']:
                     size = g['new_dimensions'][ncdim]
+#                    domain_axis = self._create_domain_axis(size, None)
                 else:
                     size = len(nc.dimensions[ncdim])
-    
+#                    domain_axis = self._create_domain_axis(size, ncdim)
+
                 domain_axis = self._create_domain_axis(size, ncdim)
                 if _debug:
                     print '    [2] Inserting', repr(domain_axis)
@@ -1063,9 +1074,10 @@ netCDF variable.
             ncdim_to_axis[ncdim] = axis
         #--- End: for
 
-        data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)
+        data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)        
         if _debug:
-            print '    [3] Inserting', repr(data)
+            print '    [3] Inserting data from {}: '.format(field_ncvar),
+            print '{!r}'.format(data)
 
         self._set_data(f, data, axes=data_axes, copy=False)
           
@@ -1591,6 +1603,7 @@ netCDF variable.
 
     out: `str`
         '''
+        print '_set_dimension_coordinate:\n',  construct.dump()
         self._reference(self._get_ncvar(construct))
         if construct.has_bounds():
             self._reference(self._get_ncvar(construct.get_bounds()))
@@ -1713,29 +1726,6 @@ also be provided.
         return data
     #-- End: def
     
-    def _create_array(self, ncvar, attributes={}):
-        '''Create
-    
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-    attributes: `dict`
-        Dictionary of the netCDF variable's attributes.
-
-:Returns:
-    
-    out: `Data`
-
-        '''
-#        properties = attributes[ncvar]
-    
-        data = self._create_data(ncvar, uncompress_override=True)
-    
-        return data
-    #--- End: def
-        
     def _create_cell_measure(self, measure, ncvar, attributes):
         '''Create a cell measure object.
     
@@ -1802,7 +1792,6 @@ Set the Data attribute of a variable.
         g = self.read_vars
         nc = g['nc']
         
-#        ncvariable = nc.variables[ncvar]
         ncvariable = nc.variables.get(ncvar)
         if ncvariable is None:
             return None
@@ -1829,7 +1818,8 @@ Set the Data attribute of a variable.
         filearray = self._NetCDF(filename=g['filename'], ncvar=ncvar,
                                  dtype=dtype, ndim=ndim, shape=shape,
                                  size=size)
-    
+
+        print 'ncvar=',ncvar, 'dtype=',dtype, 'ndim=',ndim, 'shape=',shape, 'size=',size
         # Find the units for the data
         if units is None:
             try:
@@ -1880,17 +1870,20 @@ Set the Data attribute of a variable.
                         # this before DSG_indexed and DSG_contiguous
                         # because both of these will exist for an
                         # indexed and contiguous array.
+                        print 'DSG_indexed_contiguous'
                         data = self._aaa3(ncvar,
                                           c['DSG_indexed_contiguous'],
                                           filearray, units, calendar,
                                           fill_value)
                     elif 'DSG_contiguous' in c:                    
                         # DSG contiguous ragged array
+                        print 'DSG contiguous ragged array'
                         data = self._aaa1(ncvar, c['DSG_contiguous'],
                                           filearray, units, calendar,
                                           fill_value)
                     elif 'DSG_indexed' in c:
                         # DSG indexed ragged array
+                        print 'DSG indexed ragged array'
                         data = self._aaa2(ncvar, c['DSG_indexed'] ,
                                           filearray, units, calendar, fill_value)
                     else:
@@ -2167,7 +2160,8 @@ Set the Data attribute of a variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            compression={'gathered': c}
+            compression_type=gathered,
+            compression_parameters=c
         )
         
         return self._Data(xx, units=units,
@@ -2182,13 +2176,14 @@ Set the Data attribute of a variable.
                               c['element_dimension_size'])
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
-        
+
         xx = self._GatheredArray(
             filearray,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            compression={'DSG_contiguous': c}
+            compression_type='DSG_contiguous',
+            compression_parameters=c
         )
         
         return self._Data(xx, units=units,
@@ -2209,7 +2204,8 @@ Set the Data attribute of a variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            compression={'DSG_indexed': c}
+            compression_type='DSG_indexed',
+            compression_parameters=c
         )
         
         return self._Data(xx, units=units,
@@ -2231,8 +2227,9 @@ Set the Data attribute of a variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            compression={'DSG_indexed_contiguous': c}
-        )
+            compression_type='DSG_indexed_contiguous',
+            compression_parameters=c
+       )
         
         return self._Data(xx, units=units,
                           calendar=calendar,
@@ -2540,29 +2537,58 @@ Checks that
         return True
     #--- End: def
 
-    def _parse_compress(self, compress):
-        '''
-        '''
-        return compress.split()
-    
-
     def _check_compress(self, parent_ncvar, compress, parsed_compress):
         '''
         '''
-        ncdimensions = g['nc'].dimensions
-        
+        ncdimensions = self.read_vars['nc'].dimensions
+
+        # Check that each named netCDF dimension exists in the file
         for ncdim in parsed_compress:
             if ncdim not in ncdimensions:
                 return False
-                
+        #--- End: for
+        
         return True
+    #--- End: def
+
+    def _check_instance_dimension(self, parent_ncvar, instance_dimension):
+        '''asdasd
+
+CF-1.7 Appendix A
+
+* instance_dimension: An attribute which identifies an index variable
+                      and names the instance dimension to which it
+                      applies. The index variable indicates that the
+                      indexed ragged array representation is being
+                      used for a collection of features.
+
+        '''        
+        # Check that the named netCDF dimension exists in the file
+        return instance_dimension in self.read_vars['nc'].dimensions
+    #--- End: def
+                
+    def _check_sample_dimension(self, parent_ncvar, sample_dimension):
+        '''asdasd
+
+CF-1.7 Appendix A
+
+* sample_dimension: An attribute which identifies a count variable and
+                    names the sample dimension to which it
+                    applies. The count variable indicates that the
+                    contiguous ragged array representation is being
+                    used for a collection of features.
+
+        '''        
+        # Check that the named netCDF dimension exists in the file
+        return sample_dimension in self.read_vars['nc'].dimensions
     #--- End: def
         
     def _parse_y(self, parent_ncvar, string):
         '''
         '''
         return string.split()
-    
+    #--- End: def
+
     def _parse_x(self, parent_ncvar, string):
         '''
 
