@@ -516,7 +516,7 @@ field.
     def get_read_report(self, *default):
         '''
         '''
-        self._get_component(4, 'read_report', None, *default)
+        return self._get_component(4, 'read_report', None, *default)
     #--- End: def    
    
     def set_read_report(self, value):

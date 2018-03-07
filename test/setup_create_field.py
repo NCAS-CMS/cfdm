@@ -163,7 +163,7 @@ class create_fieldTest(unittest.TestCase):
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
 
-        self.assertTrue(len(g) == 1)
+        self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
 
         g = g[0].squeeze(copy=False)
         
@@ -195,7 +195,7 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, _debug=True, field=['domain_ancillarie'])
+        g = cfdm.read(self.filename, _debug=True, field=['domain_ancillary'])
         print g
         for x in g:
             x.dump()
@@ -212,7 +212,14 @@ class create_fieldTest(unittest.TestCase):
 #        
 #        h = g.field('cellmeasure0')
 #        print h
-        
+
+        for x in g:
+            print x.get_ncvar(None)
+#            print x._components[4]
+#            print '@RR=',x._get_component(4, 'read_report', None, 'arse')
+            print x.get_read_report('NONE')
+
+
         
     #--- End: def
 

@@ -485,7 +485,7 @@ True
 #        calendar = self.get_calendar('standard')
 #        if calendar is None:
 #            calendar = 'standard'
-
+        print  'array=', array
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'))
         
