@@ -26,6 +26,8 @@ _x = {
     121: 'ancillary_variables attribute',
     130: 'Formula terms variable',
     131: 'formula_terms attribute',
+    140: 'Auxiliary/scalar coordinate variable',
+    141: 'coordinates attribute',
     150: 'grid mapping variable',
     151: 'grid_mapping attribute',
     152: 'Grid mapping coordinate variable',
@@ -230,7 +232,9 @@ ancillaries, field ancillaries).
         g['uncompress']  = uncompress
         g['verbose']     = verbose
         g['_debug']      = _debug        
-        g['read_report'] = {None: {'variables': {}}}
+
+        g['read_report']     = {None: {'variables': {}}}
+        g['variable_report'] = {}
         
         g['domain_ancillaries']    = {}
         g['field_ancillaries']     = {}
@@ -1097,7 +1101,8 @@ netCDF variable.
                 # dimension, so create a domain axis and dimension
                 # coordinate
                 if ncdim in g['dimension_coordinates']:
-                    coord = g['dimension_coordinates'][ncdim].copy()
+#                    coord = g['dimension_coordinates'][ncdim].copy()
+                    coord = self._copy_construct('dimension_coordinates', field_ncvar, ncdim)
                 else:
                     coord = self._create_bounded_construct(field_ncvar, ncdim,
                                                            attributes, f,
@@ -1170,13 +1175,14 @@ netCDF variable.
             # Split the list (allowing for incorrect comma separated
             # lists).
             for ncvar in parsed_coordinates:
+
                 # Skip dimension coordinates which are in the list
                 if ncvar in field_ncdimensions:
                     continue
     
-                # Skip auxiliary coordinates which are in the list but not
-                # in the file
-                if ncvar not in nc.variables:
+                cf_compliant = self._check_auxiliary_scalar_coordinate(
+                    field_ncvar, ncvar, coordinates, parsed_coordinates)
+                if not cf_compliant:
                     continue
     
                 # Set dimensions for this variable 
@@ -1440,20 +1446,28 @@ netCDF variable.
     #--- End: def
 
     def _add_message(self, field_ncvar, ncvar, code, message=None,
-                     attribute=None, value=None, dimensions=None):
+                     attribute=None, dimensions=None, variable=None):
         '''
         '''
-        report = self.read_vars['read_report'][field_ncvar]['variables']
-               
         if message is None:
             q, w = divmod(code, 1000)
             message = ' '.join([_x.get(q, '<?>'), _y.get(w, '<?>')])
+
         
-        report.setdefault(ncvar, []).append(
-            {'code'      : code,
+        d = {'code'      : code,
              'attribute' : attribute,
-             'message'   : message,
-             'dimensions': dimensions})
+             'message'   : message}
+
+        
+        if dimensions is not None:
+            d['dimensions'] = dimensions
+
+        if variable is not None:
+            d['variable'] = variable
+        
+        self.read_vars['read_report'][field_ncvar]['variables'].setdefault(ncvar, []).append(d)
+
+        self.read_vars['variable_report'].setdefault(ncvar, []).append(d)
     #--- End: def
     
     def _create_bounded_construct(self, field_ncvar, ncvar, attributes, f,
@@ -1490,6 +1504,8 @@ netCDF variable.
         '''
         g = self.read_vars
         nc = g['nc']
+
+        print 'CB', field_ncvar, ncvar
         
         properties = attributes[ncvar].copy()
 
@@ -1875,8 +1891,6 @@ also be provided.
         # Store the netCDF variable name
         self._set_ncvar(cell_measure, ncvar)
     
-#        self._reference(ncvar)
-
         return cell_measure
     #--- End: def
 
@@ -1932,7 +1946,6 @@ Set the Data attribute of a variable.
                                  dtype=dtype, ndim=ndim, shape=shape,
                                  size=size)
 
-        print 'ncvar=',ncvar, 'dtype=',dtype, 'ndim=',ndim, 'shape=',shape, 'size=',size
         # Find the units for the data
         if units is None:
             try:
@@ -2370,6 +2383,20 @@ Set the Data attribute of a variable.
         return self._Data(array)
     #--- End: def
 
+    def _copy_construct(self, construct_type, field_ncvar, ncvar):
+        '''
+        '''
+        g = self.read_vars
+
+        variable_report = g['variable_report'].get(ncvar)
+        print 'PPPPPPPP',field_ncvar, ncvar, variable_report
+        if variable_report is not None:
+            g['read_report'][field_ncvar]['variables'].setdefault(ncvar, []).extend(
+                variable_report)
+        
+        return g[construct_type][ncvar].copy()    
+    #--- End: def
+    
     # ================================================================
     #
     # Methods for checking CF compliance
@@ -2412,12 +2439,14 @@ Checks that
         
         missing_variable      = 110*1000 + 3
         incorrect_dimensions  = 110*1000 + 4
+        print 'GGGG', field_ncvar, bounds_ncvar
         
         nc = self.read_vars['nc']
         
-        if bounds_ncvar not in nc.variables:            
-            self._add_message(field_ncvar, bounds_ncvar,
-                              missing_variable, attribute=attribute)
+        if bounds_ncvar not in nc.variables:
+            self._add_message(field_ncvar, parent_ncvar,
+                              missing_variable, attribute=attribute,
+                              variable=bounds_ncvar)
             return False
 
         ok = True
@@ -2427,17 +2456,19 @@ Checks that
         
         if len(b_ncdims) == len(c_ncdims) + 1:
             if c_ncdims != b_ncdims[:-1]:
-                self._add_message(field_ncvar, bounds_ncvar,
+                self._add_message(field_ncvar, parent_ncvar,
                                   incorrect_dimensions,
                                   attribute=attribute,
-                                  dimensions=b_ncdims)
+                                  dimensions=b_ncdims,
+                                  variable=bounds_ncvar)
                 ok = False
 
         else:
-            self._add_message(field_ncvar, bounds_ncvar,
+            self._add_message(field_ncvar, parent_ncvar,
                               incorrect_dimensions,
                               attribute=attribute,
-                              dimensions=b_ncdims)
+                              dimensions=b_ncdims,
+                              variable=bounds_ncvar)
             ok = False
 
         return ok
@@ -2573,6 +2604,51 @@ Checks that
         #--- End: for
 
         return ok
+    #--- End: def
+
+    def _check_auxiliary_scalar_coordinate(self, field_ncvar,
+                                           coord_ncvar, string, parsed_string):
+        '''
+:Parameters:
+
+    field_ncvar: `str`
+        
+    ancillary_variables: `str`
+        The value of the netCDF cell_measures attribute.
+
+    parsed_ancillary_variables: `list`
+
+:Returns:
+
+    out: `bool`
+
+        '''
+        attribute = {field_ncvar+':coordinates': string}
+
+        incorrectly_formatted = 141*1000 + 2
+        missing_variable      = 140*1000 + 3
+        incorrect_dimensions  = 140*1000 + 4
+        
+        nc = self.read_vars['nc']
+
+        if coord_ncvar not in nc.variables:
+            self._add_message(field_ncvar, coord_ncvar,
+                              missing_variable,
+                              attribute=attribute)
+            return False
+            
+        # Check that the variable's dimensions span a subset of
+        # the parent variable's dimensions
+        dimensions        = nc.variables[coord_ncvar].dimensions
+        parent_dimensions = nc.variables[field_ncvar].dimensions
+        if not set(dimensions).issubset(parent_dimensions):
+            self._add_message(field_ncvar, coord_ncvar,
+                              incorrect_dimensions,
+                              attribute=attribute,
+                              dimensions=dimensions)
+            return False
+
+        return True
     #--- End: def
 
     def _check_grid_mapping(self, field_ncvar, string, parsed_string):
