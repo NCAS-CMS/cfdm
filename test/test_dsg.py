@@ -113,7 +113,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.contiguous)
+        f = cfdm.read(self.contiguous, _debug=True)
 
         self.assertTrue(len(f) == 2)
 
@@ -143,7 +143,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.indexed_contiguous, _debug=True)
+        f = cfdm.read(self.indexed_contiguous, _debug=False)
 
         self.assertTrue(len(f) == 2)
 

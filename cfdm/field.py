@@ -20,56 +20,29 @@ _debug = False
 class Field(mixin.PropertiesData, structure_Field):
     '''A CF field construct.
 
-The field construct is central to the CF data model, and includes all
-the other constructs. A field corresponds to a CF-netCDF data variable
-with all of its metadata. All CF-netCDF elements are mapped to some
-element of the CF field construct and the field constructs completely
-contain all the data and metadata which can be extracted from the file
-using the CF conventions.
+The field construct is central to the CF data model. A field
+corresponds to a CF-netCDF data variable with all of its metadata. All
+CF-netCDF elements are mapped to some element of the CF field
+construct, and the field constructs completely contain all the data
+and metadata which can be extracted from the file using the CF
+conventions. 
 
-The field construct consists of a data array (stored in a `Data`
-object) and the definition of its domain, ancillary metadata fields
-defined over the same domain (stored in `FieldAncillary` objects), and
-cell methods constructs to describe how the cell values represent the
-variation of the physical quantity within the cells of the domain
-(stored in `CellMethod` objects).
-
-The domain is defined collectively by various other constructs
-included in the field:
-
-====================  ================================================
-Domain construct      Description
-====================  ================================================
-Domain axis           Independent axes of the domain stored in
-                      `DomainAxis` objects
-
-Dimension coordinate  Domain cell locations stored in
-                      `DimensionCoordinate` objects
-
-Auxiliary coordinate  Domain cell locations stored in
-                      `AuxiliaryCoordinate` objects
-
-Coordinate reference  Domain coordinate systems stored in
-                      `CoordinateReference` objects
-
-Domain ancillary      Cell locations in alternative coordinate systems
-                      stored in `DomainAncillary` objects
-
-Cell measure          Domain cell size or shape stored in
-                      `CellMeasure` objects
-====================  ================================================
-
-All of the constructs contained by the field construct are optional.
+The field construct consists of a data array and the definition of its
+domain, ancillary metadata fields defined over the same domain, and
+cell method constructs to describe how the cell values represent the
+variation of the physical quantity within the cells of the
+domain. Because the CF conventions do not mention the concept of the
+domain, we do not regard it as a construct of the data model.
+Instead, the domain is defined collectively by various other
+constructs included in the field. All of the constructs contained by
+the field construct are optional. The only component of the field
+which is mandatory is the data array.
 
 The field construct also has optional properties to describe aspects
 of the data that are independent of the domain. These correspond to
 some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).
-
-**Miscellaneous**
-
-Field objects are picklable.
 
     '''
     __metaclass__ = abc.ABCMeta
@@ -500,31 +473,6 @@ field.
             return string
     #--- End: def
 
-    def set_global_attributes(self, global_attributes):
-        '''
-        '''
-        self._set_component(3, 'global_attributes', None,
-                            tuple(global_attributes))
-    #--- End: def
-    
-    def get_global_attributes(self, global_attributes, *default):
-        '''
-        '''
-        self._get_component(3, 'global_attributes', None, *default)
-    #--- End: def    
-
-    def get_read_report(self, *default):
-        '''
-        '''
-        return self._get_component(4, 'read_report', None, *default)
-    #--- End: def    
-   
-    def set_read_report(self, value):
-        '''
-        '''
-        self._set_component(4, 'read_report', None, value)
-    #--- End: def    
-   
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''
         '''    
@@ -908,6 +856,31 @@ by the data array may be selected.
         return self._get_constructs().constructs('fieldancillary',
                                                  axes=axes, copy=copy)
 
+    def get_global_attributes(self, global_attributes, *default):
+        '''
+        '''
+        self._get_component(3, 'global_attributes', None, *default)
+    #--- End: def
+
+    def get_read_report(self, *default):
+        '''
+        '''
+        return self._get_component(4, 'read_report', None, *default)
+    #--- End: def
+   
+    def set_global_attributes(self, global_attributes):
+        '''
+        '''
+        self._set_component(3, 'global_attributes', None,
+                            tuple(global_attributes))
+    #--- End: def
+
+    def set_read_report(self, value):
+        '''
+        '''
+        self._set_component(4, 'read_report', None, value)
+    #--- End: def    
+   
     def squeeze(self, axes=None, copy=True):
         '''Remove size-1 axes from the data array.
 

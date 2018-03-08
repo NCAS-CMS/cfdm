@@ -20,10 +20,8 @@ domain ancillary objects.
     __metaclass__ = abc.ABCMeta
     
     def __getitem__(self, indices):
-        '''
+        '''x.__getitem__(indices) <==> x[indices]
 
-x.__getitem__(indices) <==> x[indices]
-        
         '''
         if indices is Ellipsis:
             return self.copy()

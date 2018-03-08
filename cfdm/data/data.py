@@ -269,8 +269,11 @@ elements.
         if size == 1:
             if isreftime:
                 # Convert reference time to date-time
-                first = type(self)(
-                    numpy.ma.array(first), units, calendar).get_dtarray()
+                try:
+                    first = type(self)(
+                        numpy.ma.array(first), units, calendar).get_dtarray()
+                except OverflowError:
+                    first = '??'
 
             out = '{0}{1}{2}'.format(open_brackets,
                                      first,
@@ -279,9 +282,11 @@ elements.
             last = self.last_element()
             if isreftime:
                 # Convert reference times to date-times
-                first, last = type(self)(
-                    numpy.ma.array([first, last]), units, calendar).get_dtarray()
-
+                try:
+                    first, last = type(self)(
+                        numpy.ma.array([first, last]), units, calendar).get_dtarray()
+                except OverflowError:
+                    first, last = ('??', '??')
             if size > 3:
                 out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
                                                    first,last,
@@ -290,9 +295,12 @@ elements.
                 middle = self.second_element()
                 if isreftime:
                     # Convert reference times to date-times
-                    middle = type(self)(
-                        numpy.ma.array(middle), units, calendar).get_dtarray()
-
+                    try:
+                        middle = type(self)(
+                            numpy.ma.array(middle), units, calendar).get_dtarray()
+                    except OverflowError:
+                        middle = '??'
+                        
                 out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
                                                    first, middle, last,
                                                    close_brackets)
@@ -485,10 +493,12 @@ True
 #        calendar = self.get_calendar('standard')
 #        if calendar is None:
 #            calendar = 'standard'
-        print  'array=', array
+#        print  'array=', array
+#        try:
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'))
-        
+#        except OverflowError:
+            
         if mask is None:
             # There is no missing data
             array = numpy.array(array, dtype=object)

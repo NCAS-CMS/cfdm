@@ -11,7 +11,7 @@ from .constructs import Constructs
 # ====================================================================
 
 class Field(abstract.PropertiesData):
-    '''A CF field construct of the CF data model.
+    '''BLAH A CF field construct of the CF data model.
 
 The field construct is central to the CF data model, and includes all
 the other constructs. A field corresponds to a CF-netCDF data variable

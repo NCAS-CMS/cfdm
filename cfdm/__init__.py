@@ -26,11 +26,12 @@ if not (StrictVersion('2.7.0')
         platform.python_version()))
 
 from .bounds              import Bounds
+from .coordinate          import Coordinate
 from .coordinateancillary import CoordinateAncillary
 from .constants           import *
 from .functions           import *
-from .read.read           import read
-from .write.write         import write
+from .read.read           import read, ReadNetCDF
+from .write.write         import write, WriteNetCDF
 from .data.data           import Data
 from .data.netcdfarray    import NetCDF
 

@@ -1,5 +1,7 @@
 import sys
 
+from operator import mul
+
 import numpy
 
 from .array import Array
@@ -45,18 +47,22 @@ Returns an independent numpy array.
             # --------------------------------------------------------
             # Compression by gathering
             # --------------------------------------------------------
+            compressed_array = self.array
+                        
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
             
-            sample_axis           = compression_parameters['axis']
+            sample_axis           = compression_parameters['sample_axis']
             uncompression_indices = compression_parameters['indices']
             
-            compressed_axes = range(sample_axis, self.ndim - (array.ndim - sample_axis - 1))
+            compressed_axes = range(sample_axis, self.ndim - (compressed_array.ndim - sample_axis - 1))
             n_compressed_axes = len(compressed_axes)
-            
-            zzz = [reduce(mul, [shape[i] for i in compressed_axes[i:]], 1)
-                   for i in range(1, n_compressed_axes)]
 
-            sample_indices = [slice(None)] * self.array.ndim
+            uncompressed_shape = self.shape
+            partial_uncompressed_shapes =  [
+                reduce(mul, [uncompressed_shape[i] for i in compressed_axes[i:]], 1)
+                for i in range(1, n_compressed_axes)]
+            
+            sample_indices = [slice(None)] * compressed_array.ndim
             u_indices      = [slice(None)] * self.ndim        
         
 
@@ -64,18 +70,16 @@ Returns an independent numpy array.
             for ii, b in enumerate(uncompression_indices):
                 sample_indices[sample_axis] = ii
                 
+                u_indices[compressed_axes[0]:compressed_axes[-1]+1] = zeros
                 xxx = zeros[:]
-                for i, z in enumerate(zzz):                
+                for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
                     if b >= z:
                         (a, b) = divmod(b, z)
-                        xxx[i] = a
-                    xxx[-1] = b
-                #--- End: for
-                        
-                for j, x in izip(compressed_axes, xxx):
-                    u_indices[j] = x
-                    
-                uarray[u_indices] = array[sample_indices]
+                        u_indices[i] = a
+                #--- End: for                    
+                u_indices[compressed_axes[-1]] = b
+
+                uarray[u_indices] = compressed_array[sample_indices]
             #--- End: for
 
         elif compression_type == 'DSG_contiguous':
