@@ -10,24 +10,70 @@ Keys are item identifiers, values are item objects.
 
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, array_constructs=(), non_array_constructs=(),
-                 ordered_constructs=()):
+    def __init__(self, 
+                 auxiliary_coordinate=None,                
+                 dimension_coordinate=None,         
+                 domain_ancillary=None,         
+                 field_ancillary=None,         
+                 cell_measure=None,
+                 coordinate_reference=None,
+                 domain_axis=None,
+                 cell_method=None):
         '''
-'''
-        self._array_constructs     = set(array_constructs)
-        self._non_array_constructs = set(non_array_constructs)
-        self._ordered_constructs   = set(ordered_constructs)
-        self._construct_axes = {}
-        self._construct_type = {}
-        self._constructs     = {}
+        '''
+        self._zzz = {}
 
-        for x in array_constructs:
+        self._array_constructs     = set()
+        self._non_array_constructs = set()
+        self._ordered_constructs   = set()
+
+        self._construct_axes = {}
+        # The construct type for each key. For example
+        # {'domainaxis1':'domain_axis', 'aux3':'auxiliary_coordinate'}
+        self._construct_type = {}
+        
+        self._constructs     = {}
+        
+        if auxiliary_coordinate:
+            self._zzz['auxiliary_coordinate'] = auxiliary_coordinate
+            self._array_constructs.add(auxiliary_coordinate)
+            
+        if dimension_coordinate:
+            self._zzz['dimension_coordinate'] = dimension_coordinate
+            self._array_constructs.add(dimension_coordinate)
+            
+        if domain_ancillary:
+            self._zzz['domain_ancillary'] = domain_ancillary
+            self._array_constructs.add(domain_ancillary)
+            
+        if field_ancillary:
+            self._zzz['field_ancillary'] = field_ancillary
+            self._array_constructs.add(field_ancillary)
+
+        if cell_measure:
+            self._zzz['cell_measure'] = cell_measure
+            self._array_constructs.add(cell_measure)
+
+        if domain_axis:
+            self._zzz['domain_axis'] = domain_axis
+            self._non_array_constructs.add(domain_axis)
+
+        if coordinate_reference:
+            self._zzz['coordinate_reference'] = coordinate_reference
+            self._non_array_constructs.add(coordinate_reference)
+
+        if cell_method:
+            self._zzz['cell_method'] = cell_method
+            self._non_array_constructs.add(cell_method)
+            self._ordered_constructs.add(cell_method)
+
+        for x in self._array_constructs:
             self._constructs[x] = {}
         
-        for x in non_array_constructs:
+        for x in self._non_array_constructs:
             self._constructs[x] = {}
         
-        for x in ordered_constructs:
+        for x in self._ordered_constructs:
             self._constructs[x] = OrderedDict()
     #--- End: def
 
@@ -101,31 +147,6 @@ Keys are item identifiers, values are item objects.
         return out
     #--- End: def
 
-#    def construct(self, key, new_construct=None, copy=False):
-#        '''
-#        '''
-#        construct_type  = self._construct_type.get(key)
-#        if construct_type is None:
-#            return None
-#
-#
-#        
-#        if key is None:
-#            # Return all of the constructs' axes
-#            return self._construct_axes.copy()
-#
-#        if new_construct is None:
-#            # Return a particular construct
-#            construct = self._construct[construct_type][key]
-#            if copy:
-#                construct = construct.copy()
-#
-#            return construct
-# 
-#        # Still here? The set new construct
-#        self._construct[construct_type][key] = new_construct
-#    #--- End: def
-
     def clear(self):
         '''
         '''
@@ -140,10 +161,20 @@ Keys are item identifiers, values are item objects.
         for x in ordered_constructs:
             self._constructs[x].clear()
     #--- End: def
-    
+
+    def _xxx(self, construct_type):
+        if construct_type is None:
+            return None
+        
+        x = self._zzz.get(construct_type)
+        if x is None:
+            raise ValueError("Invalid construct type: {!r}".format(construct_type))
+        return x
+        
     def constructs(self, construct_type=None, copy=False):
         '''
         '''
+        construct_type = self._xxx(construct_type)
         if construct_type is not None:
             out = self._constructs[construct_type].copy()
         else:
@@ -231,6 +262,7 @@ Return a deep or shallow copy.
         X = type(self)
         new = X.__new__(X)
 
+        new._zzz                  = self._zzz.copy()
         new._array_constructs     = self._array_constructs.copy()
         new._non_array_constructs = self._non_array_constructs.copy()
         new._ordered_constructs   = self._ordered_constructs.copy()
@@ -295,19 +327,19 @@ Return a deep or shallow copy.
 >>> i.axes_to_constructs()
 {
  ('dim1',): {
-        '_dimension_coordinates': {'dim1': <DimensionCoordinate>},
-        '_auxiliary_coordinates': {},
-        '_cell_measures'        : {},
-        '_domain_ancillaries'   : {},
-        '_field_ancillaries'    : {},
+        'dimension_coordinates': {'dim1': <DimensionCoordinate>},
+        'auxiliary_coordinates': {},
+        'cell_measures'        : {},
+        'domain_ancillaries'   : {},
+        'field_ancillaries'    : {},
         }
  ('dim1', 'dim2',): {
-        '_dimension_coordinates': {},
-        '_auxiliary_coordinates': {'aux0': <AuxiliaryCoordinate:>,
-                                   'aux1': <AuxiliaryCoordinate:>},
-        '_cell_measures'        : {},
-        '_domain_ancillaries'   : {},
-        '_field_ancillaries'    : {},
+        'dimension_coordinates': {},
+        'auxiliary_coordinates': {'aux0': <AuxiliaryCoordinate:>,
+                                  'aux1': <AuxiliaryCoordinate:>},
+        'cell_measures'        : {},
+        'domain_ancillaries'   : {},
+        'field_ancillaries'    : {},
         }
 }
 '''
@@ -316,7 +348,7 @@ Return a deep or shallow copy.
         for axes in self.construct_axes().values():
             d = {}
             for construct_type in self._array_constructs:
-                d[construct_type] = {}
+                d[construct_type] = {}  ARRAY CONSTRUCTS SHOULD CONTAIN GENERIC NAME, NOT KEY BASE .....
 
             out[axes] = d
         #--- End: for
@@ -325,19 +357,12 @@ Return a deep or shallow copy.
             axes = self.construct_axes(key)
             construct_type = self._construct_type[key]
             out[axes][construct_type][key] = construct
-        
+
         return out
     #--- End: def
-#
-#    @abc.abstractmethod
-#    def equals(self, rtol=None, atol=None, traceback=False, **kwargs):
-#        '''
-#        '''
-#        pass
-#    #--- End: def
 
     def domain_axes(self, copy=False):
-        return self.constructs('domainaxis', copy=copy)
+        return self.constructs('domain_axis', copy=copy)
     #--- End: def
     
     def get_construct(self, key, *default):
@@ -360,6 +385,7 @@ Return a deep or shallow copy.
                       axes=None, copy=True):
         '''
         '''
+        construct_type = self._xxx(construct_type)
         if key is None:
             key = self.new_identifier(construct_type)
         elif key in self._constructs[construct_type]:
@@ -436,9 +462,7 @@ Return a new, unique identifier for the construct.
         '''
         keys = self._constructs[construct_type]
 
-        n = len(keys)
-        key = '{0}{1}'.format(construct_type, n)
-
+        key = '{0}{1}'.format(construct_type, len(keys))
         while key in keys:
             n += 1
             key = '{0}{1}'.format(construct_type, n)

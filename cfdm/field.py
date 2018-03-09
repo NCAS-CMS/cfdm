@@ -476,14 +476,14 @@ field.
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''
         '''    
-        return self._get_constructs().constructs('auxiliarycoordinate',
+        return self._get_constructs().constructs('auxiliary_coordinate',
                                                  axes=axes, copy=copy)
     #--- End: def
 
     def cell_measures(self, axes=None, copy=False):
         '''
         '''    
-        return self._get_constructs().constructs('cellmeasure',
+        return self._get_constructs().constructs('cell_measure',
                                                  axes=axes, copy=copy)
     #--- End: def
 
@@ -497,14 +497,14 @@ field.
     def dimension_coordinates(self, axes=None, copy=False):
         '''
         '''    
-        return self._get_constructs().constructs('dimensioncoordinate',
+        return self._get_constructs().constructs('dimension_coordinate',
                                                  axes=axes, copy=copy)
     #--- End: def
 
     def domain_ancillaries(self, axes=None, copy=False):
         '''
         '''    
-        return self._get_constructs().constructs('domainancillary',
+        return self._get_constructs().constructs('domain_ancillary',
                                                  axes=axes, copy=copy)
     #--- End: def
 
@@ -853,7 +853,7 @@ by the data array may be selected.
     def field_ancillaries(self, axes=None, copy=False):
         '''
         '''
-        return self._get_constructs().constructs('fieldancillary',
+        return self._get_constructs().constructs('field_ancillary',
                                                  axes=axes, copy=copy)
 
     def get_global_attributes(self, global_attributes, *default):

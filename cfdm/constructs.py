@@ -9,14 +9,13 @@ from .structure import Constructs as structure_Constructs
 
 class Constructs(structure_Constructs):
     '''
-Keys are item identifiers, values are item objects.
     '''    
     __metaclass__ = abc.ABCMeta
     
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''
         '''
-        return self.constructs('auxiliarycoordinate', axes=axes, copy=copy)
+        return self.constructs('auxiliary_coordinate', axes=axes, copy=copy)
     #--- End: def
 
     def constructs(self, construct_type=None, axes=None, copy=False):
@@ -38,15 +37,15 @@ Keys are item identifiers, values are item objects.
     #--- End: def
 
     def cell_methods(self, copy=False):
-        return self.constructs('cellmethod', copy=copy)
+        return self.constructs('cell_method', copy=copy)
     #--- End: def
     
     def coordinate_references(self, copy=False):
-        return self.constructs('coordinatereference', copy=copy)
+        return self.constructs('coordinate_reference', copy=copy)
     #--- End: def
 
     def dimension_coordinates(self, axes=None, copy=False):
-        return self.constructs('dimensioncoordinate', axes=axes, copy=copy)
+        return self.constructs('dimension_coordinate', axes=axes, copy=copy)
     #--- End: def
 
     def domain_axis_name(self, axis):
@@ -189,7 +188,8 @@ Keys are item identifiers, values are item objects.
         # ------------------------------------------------------------
         axes_to_items0 = self.axes_to_constructs()
         axes_to_items1 = other.axes_to_constructs()
-        
+        print 'axes_to_items0 =', axes_to_items0
+        print '\naxes_to_items1 =', axes_to_items1
         for axes0, items0 in axes_to_items0.iteritems():
             matched_all_items_with_these_axes = False
 
@@ -205,7 +205,8 @@ Keys are item identifiers, values are item objects.
                 for construct_type in self._array_constructs:
 #                    print construct_type
                     matched_role = False
-
+                    print 1, construct_type
+                    print 'items1.keys()=',items1.keys()
                     role_items0 = items0[construct_type]
                     role_items1 = items1[construct_type]
 
@@ -219,7 +220,6 @@ Keys are item identifiers, values are item objects.
                     # items
                     for key0, item0 in role_items0.iteritems():
                         matched_item = False
-#                        print  repr(item0),
                         for key1, item1 in role_items1.items():
                             if item0.equals(item1, rtol=rtol,
                                             atol=atol,
@@ -227,7 +227,6 @@ Keys are item identifiers, values are item objects.
                                 del role_items1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_item = True
-#                                print 'matched'
                                 break
                         #--- End: for
 
