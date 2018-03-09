@@ -364,7 +364,7 @@ ancillaries, field ancillaries).
         featureType = g['global_attributes'].get('featureType')
         if featureType is not None:
             g['featureType'] = featureType
-            
+
             sample_dimension = None
             for ncvar in attributes:
                 if attributes[ncvar].get('sample_dimension') is not None:
@@ -383,7 +383,7 @@ ancillaries, field ancillaries).
                         # Do not attempt to create a field from a
                         # count variable
                         g['do_not_create_field'].add(ncvar)
-          #--- End: for
+            #--- End: for
 
             instance_dimension = None
             for ncvar in attributes:
@@ -427,8 +427,8 @@ ancillaries, field ancillaries).
         #--- End: for
         
         # ------------------------------------------------------------
-        # Discard fields that were created from netCDF variables that
-        # are referenced by othe netCDF variables
+        # Discard fields created from netCDF variables that are
+        # referenced by other netCDF variables
         # ------------------------------------------------------------
         fields = OrderedDict()
         for ncvar, f in all_fields.iteritems():
@@ -447,14 +447,15 @@ ancillaries, field ancillaries).
         #--- End: for
         
         # ------------------------------------------------------------
-        # Reinstate selected fields that were created from netCDF
-        # variables that are referenced by othe netCDF variables
+        # If requested, reinstate fields created from netCDF variables
+        # that are referenced by othe netCDF variables
         # ------------------------------------------------------------
         if g['fields']:
             fields0 = fields.values()
-            for xx in g['fields']:
+            for construct_type in g['fields']:
                 for f in fields0:
-                    for construct in getattr(self, '_get_'+xx)(f).values():
+                    constructs = getattr(self, '_get_'+construct_type)(f).itervalues()
+                    for construct in constructs:
                         ncvar = self._get_ncvar(construct)
                         if ncvar not in all_fields:
                             continue
@@ -640,17 +641,17 @@ netCDF variable.
             print '    DSG contiguous array implied shape:', (instance_dimension_size,element_dimension_size)
     
         # Make up a netCDF dimension name for the element dimension
-        featureType = g['featureType']
-        if featureType in ('timeSeries', 'trajectory', 'profile'):
-            element_dimension = featureType.lower()
-        elif featureType == 'timeSeriesProfile':
+        featureType = g['featureType'].lower()
+        if featureType in ('timeseries', 'trajectory', 'profile'):
+            element_dimension = featureType
+        elif featureType == 'timeseriesprofile':
             element_dimension = 'profile'
-        elif featureType == 'trajectoryProfile':
+        elif featureType == 'trajectoryprofile':
             element_dimension = 'profile'
         else:
             element_dimension = 'element'
         if _debug:        
-            print '    featureType =', featureType
+            print '    featureType =', g['featureType']
     
         base = element_dimension
         n = 0
@@ -663,13 +664,13 @@ netCDF variable.
             'elements_per_instance'  : elements_per_instance,
             'implied_ncdimensions'   : (instance_dimension,
                                         element_dimension),
-            'profile_ncdimension'    : instance_dimension,
+            'profile_dimension'      : instance_dimension,
             'element_dimension'      : element_dimension,
             'element_dimension_size' : element_dimension_size,
             'instance_dimension_size': instance_dimension_size,
-            'instance_axis'          : 0,
-            'instance_index'         : 0,
-            'c_element_axis'         : 1,
+#            'instance_axis'          : 0,
+#            'instance_index'         : 0,
+#            'c_element_axis'         : 1,
         }
     
         g['new_dimensions'][element_dimension] = element_dimension_size
@@ -722,17 +723,17 @@ netCDF variable.
         element_dimension_size  = int(elements_per_instance.max())
     
         # Make up a netCDF dimension name for the element dimension
-        featureType = g['featureType']
-        if featureType in ('timeSeries', 'trajectory', 'profile'):
+        featureType = g['featureType'].lower()
+        if featureType in ('timeseries', 'trajectory', 'profile'):
             element_dimension = featureType.lower()
-        elif featureType == 'timeSeriesProfile':
+        elif featureType == 'timeseriesprofile':
             element_dimension = 'timeseries'
-        elif featureType == 'trajectoryProfile':
+        elif featureType == 'trajectoryprofile':
             element_dimension = 'trajectory'
         else:
             element_dimension = 'element'
         if _debug:        
-            print '    featureType =', featureType
+            print '    featureType =', g['featureType']
     
         base = element_dimension
         n = 0
@@ -744,7 +745,6 @@ netCDF variable.
         indexed_sample_dimension = g['nc'][ncvar].dimensions[0]
         
         g['compression'].setdefault(indexed_sample_dimension, {})['DSG_indexed'] = {
-#            'empty_data'             : data,
             'elements_per_instance'  : elements_per_instance,
             'instances'              : instances,
             'implied_ncdimensions'   : (instance_dimension,
@@ -788,15 +788,15 @@ netCDF variable.
         if _debug:
             print 'Pre-processing DSG indexed and contiguous compression'
     
-        profile_ncdimension = g['compression'][sample_dimension]['DSG_contiguous']['profile_ncdimension']
+        profile_dimension = g['compression'][sample_dimension]['DSG_contiguous']['profile_dimension']
     
         if _debug:
             print '    sample_dimension  :', sample_dimension
             print '    instance_dimension:', instance_dimension
-            print '    profile_ncdimension :', profile_ncdimension
+            print '    profile_dimension :', profile_dimension
             
         contiguous = g['compression'][sample_dimension]['DSG_contiguous']
-        indexed    = g['compression'][profile_ncdimension]['DSG_indexed']
+        indexed    = g['compression'][profile_dimension]['DSG_indexed']
     
         # The indices of the sample dimension which define the start
         # positions of each instances profiles
@@ -2008,29 +2008,53 @@ Set the Data attribute of a variable.
                 if ncdim in compression:
                     c = compression[ncdim]
                     if 'gathered' in c:
-                        data = self._aaa0(ncvar, c['gathered'], filearray, units,
-                                          calendar, fill_value)
+                        c = c['gathered']
+                        dimensions = g['nc'].dimensions        
+                        uncompressed_shape = tuple(
+                            [dimensions[dim].size
+                             for dim in self._ncdimensions(ncvar)])
+                        sample_axis = g['nc'].variables[ncvar].dimensions.index(c['sample_dimension'])
+                        data = self._create_data_DSG_gathered(
+                            ncvar,
+                            filearray,
+                            uncompressed_shape=uncompressed_shape,
+                            sample_axis=sample_axis,
+                            list_indices=c['indices'])
                     elif 'DSG_indexed_contiguous' in c:
                         # DSG contiguous indexed ragged array. Check
                         # this before DSG_indexed and DSG_contiguous
                         # because both of these will exist for an
                         # indexed and contiguous array.
-                        print 'DSG_indexed_contiguous'
-                        data = self._aaa3(ncvar,
-                                          c['DSG_indexed_contiguous'],
-                                          filearray, units, calendar,
-                                          fill_value)
+                        c = c['DSG_indexed_contiguous']
+                        uncompressed_shape = (c['instance_dimension_size'],
+                                              c['element_dimension_1_size'],
+                                              c['element_dimension_2_size'])
+                        data = self._create_data_DSG_indexed_contiguous(
+                            ncvar,
+                            filearray,
+                            uncompressed_shape=uncompressed_shape,
+                            profile_indices=c['profile_indices'],
+                            elements_per_profile=c['elements_per_profile'])
                     elif 'DSG_contiguous' in c:                    
                         # DSG contiguous ragged array
-                        print 'DSG contiguous ragged array'
-                        data = self._aaa1(ncvar, c['DSG_contiguous'],
-                                          filearray, units, calendar,
-                                          fill_value)
+                        c = c['DSG_contiguous']
+                        uncompressed_shape=(c['instance_dimension_size'],
+                                            c['element_dimension_size'])
+                        data = self._create_data_DSG_contiguous(
+                            ncvar,
+                            filearray,
+                            uncompressed_shape=uncompressed_shape,
+                            elements_per_instance=c['elements_per_instance'])
                     elif 'DSG_indexed' in c:
                         # DSG indexed ragged array
-                        print 'DSG indexed ragged array'
-                        data = self._aaa2(ncvar, c['DSG_indexed'] ,
-                                          filearray, units, calendar, fill_value)
+                        c = c['DSG_indexed']
+                        uncompressed_shape = (c['instance_dimension_size'],
+                                              c['element_dimension_size'])
+                        data = self._create_data_DSG_indexed(
+                            ncvar,
+                            filearray,
+                            uncompressed_shape=uncompressed_shape,
+                            instances=c['instances'])
                     else:
                         raise ValueError("Bad compression vibes. c.keys()={}".format(c.keys()))
         #--- End: if
@@ -2289,62 +2313,61 @@ dimensions are returned.
         return re.sub('\s*:\s*', ': ', grid_mapping).split()
     #--- End: def
     
-    
-    def _aaa0(self, ncvar, c, filearray,  units, calendar, fill_value):
+    def _create_data_DSG_gathered(self, ncvar, filearray,
+                                  uncompressed_shape=None,
+                                  sample_axis=None, list_indices=None):
         '''
         '''
-        g = self.read_vars
-        
-        dimensions = g['nc'].dimensions
-        
-        uncompressed_shape = tuple([dimensions[dim].size
-                                    for dim in self._ncdimensions(ncvar)])
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
 
-        c = c.copy()
-        sample_dimension = c['sample_dimension']
-        c['sample_axis'] = g['nc'].variables[ncvar].dimensions.index(sample_dimension)
-        
+        compression_parameters = {'sample_axis': sample_axis,
+                                  'indices'    : list_indices}
+            
         array = self._GatheredArray(
             filearray,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
             compression_type='gathered',
-            compression_parameters=c
+            compression_parameters=compression_parameters
         )
 
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _aaa1(self, ncvar, c, filearray, units, calendar, fill_value):
+    def _create_data_DSG_contiguous(self, ncvar, filearray,
+                                    uncompressed_shape=None,
+                                    elements_per_instance=None):
         '''
         '''
-        uncompressed_shape = (c['instance_dimension_size'],
-                              c['element_dimension_size'])
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
 
+        compression_parameters = {
+            'elements_per_instance': elements_per_instance} 
+        
         array = self._GatheredArray(
             filearray,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
             compression_type='DSG_contiguous',
-            compression_parameters=c
+            compression_parameters=compression_parameters
         )
         
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _aaa2(self, ncvar, c, filearray, units, calendar, fill_value):
+    def _create_data_DSG_indexed(self, ncvar, filearray,
+                                 uncompressed_shape=None,
+                                 instances=None):
         '''
         '''
-        uncompressed_shape = (c['instance_dimension_size'],
-                              c['element_dimension_size'])
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        
+        compression_parameters = {'instances': instances}
         
         array = self._GatheredArray(
             filearray,
@@ -2352,20 +2375,24 @@ dimensions are returned.
             shape=uncompressed_shape,
             size=uncompressed_size,
             compression_type='DSG_indexed',
-            compression_parameters=c
+            compression_parameters=compression_parameters
         )
 
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _aaa3(self, ncvar, c, filearray, units, calendar, fill_value):
+    def _create_data_DSG_indexed_contiguous(self, ncvar, filearray,
+                                            uncompressed_shape=None,
+                                            profile_indices=None,
+                                            elements_per_profile=None):
         '''
         '''
-        uncompressed_shape = (c['instance_dimension_size'],
-                              c['element_dimension_1_size'],
-                              c['element_dimension_2_size'])
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        
+        compression_parameters = {
+            'profile_indices'     : profile_indices,
+            'elements_per_profile': elements_per_profile}
         
         array = self._GatheredArray(
             filearray,
@@ -2373,7 +2400,7 @@ dimensions are returned.
             shape=uncompressed_shape,
             size=uncompressed_size,
             compression_type='DSG_indexed_contiguous',
-            compression_parameters=c
+            compression_parameters=compression_parameters
         )
         
         return self._create_Data(array, ncvar=ncvar)

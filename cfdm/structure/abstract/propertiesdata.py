@@ -117,12 +117,12 @@ True
 True
 >>> print f.data
 [0, ..., 9] m
->>> d = f.remove_data()
+>>> d = f.del_data()
 >>> print d
 [0, ..., 9] m
 >>> f.hasdata
 False
->>> print f.remove_data()
+>>> print f.del_data()
 None
 
         '''

@@ -206,6 +206,12 @@ None
         self._construct_axes[key] = tuple(new_axes)
     #--- End: def
 
+    def set_construct_axes(self, key, axes):
+        '''
+        '''        
+        self._construct_axes[key] = tuple(new_axes)
+    #--- End: def
+
     def copy(self, data=True):
         '''
 Return a deep or shallow copy.
@@ -440,16 +446,33 @@ Return a new, unique identifier for the construct.
         return key
     #--- End: def
 
-    def remove(self, key, default=None):
+    def del_construct(self, key):        
+        '''Remove a construct.
+
+:Examples 1:
+
+>>> x = c.del_construct('auxiliarycoordinate2')
+
+:Parameters:
+
+    key: `str`
+
+:Returns:
+
+    out:
+        The removed construct, or `None` if the given key did not
+        exist.
+
+:Examples 2:
+
         '''
-'''
         self._construct_axes.pop(key, None)
 
         construct_type = self._construct_type.pop(key, None)
         if construct_type is None:
-            return default
+            return
 
-        return self._constructs[construct_type].pop(key, default)
+        return self._constructs[construct_type].pop(key, None)
     #--- End: def
 
     def replace(self, key, construct=None, axes=None, copy=True):

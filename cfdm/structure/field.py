@@ -11,7 +11,7 @@ from .constructs import Constructs
 # ====================================================================
 
 class Field(abstract.PropertiesData):
-    '''BLAH A CF field construct of the CF data model.
+    '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
 the other constructs. A field corresponds to a CF-netCDF data variable
@@ -66,12 +66,36 @@ Field objects are picklable.
 
     '''
     __metaclass__ = abc.ABCMeta
+
+    _construct_id = {'dimension_coordinate': 'dimensioncoordinate',
+                     'auxiliary_coordinate': 'auxiliarycoordinate',
+                     'cell_measure'        : 'cellmeasure',
+                     'domain_ancillary'    : 'domainancillary',
+                     'field_ancillary'     : 'fieldancillary',
+                     'cell_method'         : 'cellmethod',
+                     'coordinate_reference': 'coordinatereference',
+                     'domain_axis'         : 'domainaxis',
+                     'cell_method'         : 'cellmethod',
+    }
+
+    # Constructs that may contain data arrays
+    _array_constructs     = (_construct_id['dimension_coordinate'],
+                             _construct_id['auxiliary_coordinate'],
+                             _construct_id['cell_measure'],
+                             _construct_id['domain_ancillary'],
+                             _construct_id['field_ancillary'],)
+    # Constructs that do not contain data arrays
+    _non_array_constructs = (_construct_id['cell_method'],
+                             _construct_id['coordinate_reference'],
+                             _construct_id['domain_axis'],)
+    # Constructs that must be kept in a particular order
+    _ordered_constructs   = (_construct_id['cell_method'],)
     
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
         
         obj._Constructs = Constructs
-#        obj._Domain     = Domain
+        
 
         return obj
     #--- End: def
@@ -109,15 +133,18 @@ Field objects are picklable.
             data      = source.get_data(None)
         else:
             constructs = self._Constructs(
-                array_constructs=('dimensioncoordinate',
-                                  'auxiliarycoordinate',
-                                  'cellmeasure',
-                                  'domainancillary',
-                                  'fieldancillary'),
-                non_array_constructs=('cellmethod',
-                                      'coordinatereference',
-                                      'domainaxis'),
-                ordered_constructs=('cellmethod',)
+                array_constructs=self._array_constructs,
+                #('dimensioncoordinate',
+                #                  'auxiliarycoordinate',
+                #                  'cellmeasure',
+                #                  'domainancillary',
+                #                  'fieldancillary'),
+                non_array_constructs=self._non_array_constructs,
+                #('cellmethod',
+                #                      'coordinatereference',
+                #                      'domainaxis'),
+                ordered_constructs=self._ordered_constructs,
+                #('cellmethod',)
             )
 
         self._set_component(1, 'constructs', None, constructs)
@@ -251,7 +278,7 @@ Axes           : time(1) = [2057-06-01T00:00:00Z] 360_day
 3
 >>> f.{+name}()
 ['dim2', 'dim0', 'dim1']
->>> f.remove_data()
+>>> f.del_data()
 >>> print f.{+name}()
 None
 
@@ -282,43 +309,32 @@ None
     def field_ancillaries(self, copy=False):
         return self._get_constructs().constructs('fieldancillary', copy=copy)
 
-    def del_construct(self, key, *default):
+    def del_construct(self, key):
         '''
         '''
         constructs = self._get_constructs()
         
-        # Remove domain axis
         if key in self.domain_axes():
+            # Remove a domain axis
             domain_axis = True
             
             if key in self.get_data_axes(()):
                 raise ValueError(
-"Can't remove domain axis that is spanned by the field's data")
+"Can't remove domain axis {!r} that is spanned by the field's data".format(key))
 
-            for k, value in self.variable_axes().items():
+            for k, value in self.construct_axes().iteritems():
                 if key in value:
                     raise ValueError(
-"Can't remove domain axis that is spanned by {!r}".format(self.construct(k)))
+"Can't remove domain axis that is spanned by {}: {!r}".format(
+    k, self.construct(k)))
 
         else:
             domain_axis = False
 
-        out = constructs.remove(key, None)
-        if out is not None:
-            out = out.copy()
-                      
-        # Remove reference to removed construct in coordiante
-        # reference constructs
-        for ref in self.coordinate_references.itervalues():
-            for term, value in ref.terms().iteritems():
-                if value == key:
-                    ref.set_term(term, None)
-        #--- End: for
-        
-        # Remove reference to removed construct in cell method
-        # constructs
         if domain_axis:
-            for cm_key, cm in self.cell_methods.items():
+            # Remove reference to removed domain axis construct in
+            # cell method constructs
+            for cm_key, cm in self.cell_methods.iteritems():
                 axes = cm.get_axes()
                 if key not in axes:
                     continue
@@ -326,9 +342,16 @@ None
                 axes = list(axes)
                 axes.remove(key)
                 cm.set_axes(axes)
+        else:
+            # Remove reference to removed construct in coordiante
+            # reference constructs
+            for ref in self.coordinate_references.itervalues():
+                for term, value in ref.domain_ancillaries().iteritems():
+                    if key == value:
+                        ref.set_domain_ancillary(term, None)
         #--- End: if
         
-        return out
+        return constructs.del_construct(key)
     #--- End: def
 
     def set_auxiliary_coordinate(self, item, key=None, axes=None,
@@ -644,6 +667,12 @@ ValueError: Can't initialize data: Data already exists
                                                     copy=copy)
     #--- End: def
 
+    def set_construct_axes(self, key, axes):
+        '''
+        '''
+        return self._get_constructs().set_construct_axes(key, axes)
+    #--- End: def
+
     def set_cell_measure(self, item, key=None, axes=None, copy=True, replace=True):
         '''Insert a cell measure object into the {+variable}.
 
@@ -782,12 +811,11 @@ ValueError: Can't initialize data: Data already exists
                                   copy=copy)
     #--- End: def
 
-    def remove_data(self):
+    def del_data(self):
         '''
 
         '''
-        self.del_data_axes()
-        return super(Field, self).remove_data()
+        return super(Field, self).del_data()
     #--- End: def
 
 #--- End: class
