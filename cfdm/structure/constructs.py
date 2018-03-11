@@ -21,51 +21,53 @@ Keys are item identifiers, values are item objects.
                  cell_method=None):
         '''
         '''
-        self._zzz = {}
+        self._key_base = {}
 
         self._array_constructs     = set()
         self._non_array_constructs = set()
         self._ordered_constructs   = set()
 
         self._construct_axes = {}
-        # The construct type for each key. For example
+
+        # The construct type for each key. For example:
         # {'domainaxis1':'domain_axis', 'aux3':'auxiliary_coordinate'}
         self._construct_type = {}
         
         self._constructs     = {}
         
         if auxiliary_coordinate:
-            self._zzz['auxiliary_coordinate'] = auxiliary_coordinate
-            self._array_constructs.add(auxiliary_coordinate)
+            self._key_base['auxiliary_coordinate'] = auxiliary_coordinate
+#            self._array_constructs.add(auxiliary_coordinate)
+            self._array_constructs.add('auxiliary_coordinate')
             
         if dimension_coordinate:
-            self._zzz['dimension_coordinate'] = dimension_coordinate
-            self._array_constructs.add(dimension_coordinate)
+            self._key_base['dimension_coordinate'] = dimension_coordinate
+            self._array_constructs.add('dimension_coordinate')
             
         if domain_ancillary:
-            self._zzz['domain_ancillary'] = domain_ancillary
-            self._array_constructs.add(domain_ancillary)
+            self._key_base['domain_ancillary'] = domain_ancillary
+            self._array_constructs.add('domain_ancillary')
             
         if field_ancillary:
-            self._zzz['field_ancillary'] = field_ancillary
-            self._array_constructs.add(field_ancillary)
+            self._key_base['field_ancillary'] = field_ancillary
+            self._array_constructs.add('field_ancillary')
 
         if cell_measure:
-            self._zzz['cell_measure'] = cell_measure
-            self._array_constructs.add(cell_measure)
+            self._key_base['cell_measure'] = cell_measure
+            self._array_constructs.add('cell_measure')
 
         if domain_axis:
-            self._zzz['domain_axis'] = domain_axis
-            self._non_array_constructs.add(domain_axis)
+            self._key_base['domain_axis'] = domain_axis
+            self._non_array_constructs.add('domain_axis')
 
         if coordinate_reference:
-            self._zzz['coordinate_reference'] = coordinate_reference
-            self._non_array_constructs.add(coordinate_reference)
+            self._key_base['coordinate_reference'] = coordinate_reference
+            self._non_array_constructs.add('coordinate_reference')
 
         if cell_method:
-            self._zzz['cell_method'] = cell_method
-            self._non_array_constructs.add(cell_method)
-            self._ordered_constructs.add(cell_method)
+            self._key_base['cell_method'] = cell_method
+            self._non_array_constructs.add('cell_method')
+            self._ordered_constructs.add('cell_method')
 
         for x in self._array_constructs:
             self._constructs[x] = {}
@@ -166,10 +168,12 @@ Keys are item identifiers, values are item objects.
         if construct_type is None:
             return None
         
-        x = self._zzz.get(construct_type)
-        if x is None:
+#        x = self._key_base.get(construct_type)
+#        if x is None:
+        if construct_type not in self._key_base:
             raise ValueError("Invalid construct type: {!r}".format(construct_type))
-        return x
+
+        return construct_type 
         
     def constructs(self, construct_type=None, copy=False):
         '''
@@ -262,7 +266,7 @@ Return a deep or shallow copy.
         X = type(self)
         new = X.__new__(X)
 
-        new._zzz                  = self._zzz.copy()
+        new._key_base                  = self._key_base.copy()
         new._array_constructs     = self._array_constructs.copy()
         new._non_array_constructs = self._non_array_constructs.copy()
         new._ordered_constructs   = self._ordered_constructs.copy()
@@ -348,7 +352,7 @@ Return a deep or shallow copy.
         for axes in self.construct_axes().values():
             d = {}
             for construct_type in self._array_constructs:
-                d[construct_type] = {}  ARRAY CONSTRUCTS SHOULD CONTAIN GENERIC NAME, NOT KEY BASE .....
+                d[construct_type] = {}  #ARRAY CONSTRUCTS SHOULD CONTAIN GENERIC NAME, NOT KEY BASE .....
 
             out[axes] = d
         #--- End: for
@@ -462,10 +466,12 @@ Return a new, unique identifier for the construct.
         '''
         keys = self._constructs[construct_type]
 
-        key = '{0}{1}'.format(construct_type, len(keys))
+#        key = '{0}{1}'.format(construct_type, len(keys))
+        key_base = self._key_base[construct_type]
+        key = '{0}{1}'.format(key_base, len(keys))
         while key in keys:
             n += 1
-            key = '{0}{1}'.format(construct_type, n)
+            key = '{0}{1}'.format(key_base, n)
 
         return key
     #--- End: def
