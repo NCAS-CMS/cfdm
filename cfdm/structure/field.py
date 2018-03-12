@@ -67,15 +67,15 @@ Field objects are picklable.
     '''
     __metaclass__ = abc.ABCMeta
 
-    # Define the base of the identity keys for each constricts type
-    _construct_key = {'auxiliary_coordinate': 'auxiliary_coordinate',
-                      'cell_measure'        : 'cellmeasure',
-                      'cell_method'         : 'cellmethod',
-                      'coordinate_reference': 'coordinatereference',
-                      'dimension_coordinate': 'dimensioncoordinate',
-                      'domain_ancillary'    : 'domainancillary',
-                      'domain_axis'         : 'domainaxis',
-                      'field_ancillary'     : 'fieldancillary',
+    # Define the base of the identity keys for each construct type
+    _construct_key_base = {'auxiliary_coordinate': 'auxiliarycoordinate',
+                           'cell_measure'        : 'cellmeasure',
+                           'cell_method'         : 'cellmethod',
+                           'coordinate_reference': 'coordinatereference',
+                           'dimension_coordinate': 'dimensioncoordinate',
+                           'domain_ancillary'    : 'domainancillary',
+                           'domain_axis'         : 'domainaxis',
+                           'field_ancillary'     : 'fieldancillary',
     }
     
     def __new__(cls, *args, **kwargs):
@@ -116,16 +116,16 @@ Field objects are picklable.
             data_axes = source.get_data_axes(None)
             data      = source.get_data(None)
         else:
-            construct_key = self._construct_key
+            key_base = self._construct_key_base
             constructs = self._Constructs(
-                auxiliary_coordinate = construct_key['auxiliary_coordinate'],
-                dimension_coordinate = construct_key['dimension_coordinate'],
-                cell_measure         = construct_key['cell_measure'],
-                domain_ancillary     = construct_key['domain_ancillary'],
-                field_ancillary      = construct_key['field_ancillary'],
-                coordinate_reference = construct_key['coordinate_reference'],
-                domain_axis          = construct_key['domain_axis'],
-                cell_method          = construct_key['cell_method'],
+                auxiliary_coordinate = key_base['auxiliary_coordinate'],
+                dimension_coordinate = key_base['dimension_coordinate'],
+                cell_measure         = key_base['cell_measure'],
+                domain_ancillary     = key_base['domain_ancillary'],
+                field_ancillary      = key_base['field_ancillary'],
+                coordinate_reference = key_base['coordinate_reference'],
+                domain_axis          = key_base['domain_axis'],
+                cell_method          = key_base['cell_method'],
             )
 
         self._set_component(1, 'constructs', None, constructs)

@@ -152,11 +152,6 @@ class Constructs(structure_Constructs):
                     self.__class__.__name__, other.__class__.__name__))
             return False
         
-#        if rtol is None:
-#            rtol = RTOL()
-#        if atol is None:
-#            atol = ATOL()
-
         axes0_to_axes1 = {}
         axis0_to_axis1 = {}
         axis1_to_axis0 = {}
@@ -165,101 +160,91 @@ class Constructs(structure_Constructs):
         # ------------------------------------------------------------
         # Domain axes
         # ------------------------------------------------------------
-        if not self._equals_domainaxis(other, rtol=rtol, atol=atol,
-                                       traceback=traceback,
-                                       axis1_to_axis0=axis1_to_axis0,
-                                       key1_to_key0=key1_to_key0, **kwargs):
+        if not self._equals_domain_axis(other, rtol=rtol, atol=atol,
+                                        traceback=traceback,
+                                        axis1_to_axis0=axis1_to_axis0,
+                                        key1_to_key0=key1_to_key0, **kwargs):
             return False
         
-#        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
-#        other_sizes = [d.get_size() for d in other.domain_axes().values()]
-#        
-#        if sorted(self_sizes) != sorted(other_sizes):
-#            # There is not a 1-1 correspondence between axis sizes
-#            if traceback:
-#                print("{0}: Different domain axes: {1} != {2}".format(
-#                    self.__class__.__name__,
-#                    sorted(self.values()),
-#                    sorted(other.values())))
-#            return False
-
         # ------------------------------------------------------------
         # Check the array constructs
         # ------------------------------------------------------------
-        axes_to_items0 = self.axes_to_constructs()
-        axes_to_items1 = other.axes_to_constructs()
-        print 'axes_to_items0 =', axes_to_items0
-        print '\naxes_to_items1 =', axes_to_items1
-        for axes0, items0 in axes_to_items0.iteritems():
-            matched_all_items_with_these_axes = False
+        axes_to_constructs0 = self.axes_to_constructs()
+        axes_to_constructs1 = other.axes_to_constructs()
+#        print 'axes_to_constructs0 =', axes_to_constructs0
+#        print '\naxes_to_constructs1 =', axes_to_constructs1
+        for axes0, constructs0 in axes_to_constructs0.iteritems():
+#            print '\n\naxes0 = ', axes0
+            matched_all_constructs_with_these_axes = False
 
             len_axes0 = len(axes0) 
-            for axes1, items1 in axes_to_items1.items():
+            for axes1, constructs1 in axes_to_constructs1.items():
+                constructs1 = constructs1.copy()
+#                print '    axes1 = ', axes1
+#                print '    constructs1 = ', constructs1
                 matched_roles = False
 
                 if len_axes0 != len(axes1):
                     # axes1 and axes0 contain differents number of
-                    # axes.
+                    # domain axes.
                     continue
             
                 for construct_type in self._array_constructs:
-#                    print construct_type
+#                    print '        construct_type =', construct_type
                     matched_role = False
-                    print 1, construct_type
-                    print 'items1.keys()=',items1.keys()
-                    role_items0 = items0[construct_type]
-                    role_items1 = items1[construct_type]
+                    role_constructs0 = constructs0[construct_type]
+                    role_constructs1 = constructs1[construct_type].copy()
 
-                    if len(role_items0) != len(role_items1):
-                        # There are the different numbers of items
-                        # with this role
-                        matched_all_items_with_these_axes = False
+                    if len(role_constructs0) != len(role_constructs1):
+                        # There are the different numbers of
+                        # constructs of this type
+                        matched_all_constructs_with_these_axes = False
                         break
 
                     # Check that there are matching pairs of equal
-                    # items
-                    for key0, item0 in role_items0.iteritems():
-                        matched_item = False
-                        for key1, item1 in role_items1.items():
+                    # constructs
+                    for key0, item0 in role_constructs0.iteritems():
+                        matched_construct = False
+                        for key1, item1 in role_constructs1.items():
                             if item0.equals(item1, rtol=rtol,
                                             atol=atol,
-                                            traceback=True, **kwargs): # FALSE
-                                del role_items1[key1]
+                                            traceback=False, **kwargs):
+                                del role_constructs1[key1]
                                 key1_to_key0[key1] = key0
-                                matched_item = True
+                                matched_construct = True
                                 break
                         #--- End: for
 
-                        if not matched_item:
+                        if not matched_construct:
                             break
                     #--- End: for
 
-                    if role_items1:
+                    if role_constructs1:
+                        # At least one construct in other is not equal
+                        # to a construct in self                        
                         break
 
-                    del items1[construct_type]
+                    # Still here? Then all constructs of this type
+                    # that spanning these axes match
+#                    print '        del constructs1[',construct_type,']'
+                    del constructs1[construct_type]
                 #--- End: for
 
-                matched_all_items_with_these_axes = not items1
+                matched_all_constructs_with_these_axes = not constructs1
 
-                if matched_all_items_with_these_axes:
-                    del axes_to_items1[axes1]
+                if matched_all_constructs_with_these_axes:
+                    del axes_to_constructs1[axes1]
                     break
             #--- End: for
 
-            # Map item axes in the two instances
-            axes0_to_axes1[axes0] = axes1
-
-            if not matched_all_items_with_these_axes:
+            if not matched_all_constructs_with_these_axes:
                 if traceback:
                     names = [self.domain_axis_name(axis0) for axis0 in axes0]
-                    print("Can't match items spanning axes {0}".format(names))
-#                    print 'XXX'
-#                    print self.constructs(axes=axes0)
-#                    print self
-#                    print other
-#                    print other.contructs(axes=axes0)
+                    print("Can't match constructs spanning axes {0}".format(names))
                 return False
+
+            # Map item axes in the two instances
+            axes0_to_axes1[axes0] = axes1
         #--- End: for
 
         for axes0, axes1 in axes0_to_axes1.iteritems():
@@ -296,15 +281,15 @@ class Constructs(structure_Constructs):
                 return False
 
         # ------------------------------------------------------------
-        # Still here? Then the two Constructs are equal
+        # Still here? Then the two objects are equal
         # ------------------------------------------------------------     
         return True
     #--- End: def
     
-    def _equals_coordinatereference(self, other, rtol=None, atol=None,
-                                    traceback=False,
-                                    axis1_to_axis0=None,
-                                    key1_to_key0=None, **kwargs):
+    def _equals_coordinate_reference(self, other, rtol=None, atol=None,
+                                     traceback=False,
+                                     axis1_to_axis0=None,
+                                     key1_to_key0=None, **kwargs):
         '''
         '''
         refs0 = self.coordinate_references()
@@ -359,9 +344,9 @@ class Constructs(structure_Constructs):
         return True
     #--- End: def
 
-    def _equals_cellmethod(self, other, rtol=None, atol=None,
-                           traceback=False, axis1_to_axis0=None,
-                           key1_to_key0=None, **kwargs):
+    def _equals_cell_method(self, other, rtol=None, atol=None,
+                            traceback=False, axis1_to_axis0=None,
+                            key1_to_key0=None, **kwargs):
         '''
         
         '''
@@ -441,9 +426,9 @@ class Constructs(structure_Constructs):
         return True
     #--- End: def
 
-    def _equals_domainaxis(self, other, rtol=None, atol=None,
-                           traceback=False, axis1_to_axis0=None,
-                           key1_to_key0=None, **kwargs):
+    def _equals_domain_axis(self, other, rtol=None, atol=None,
+                            traceback=False, axis1_to_axis0=None,
+                            key1_to_key0=None, **kwargs):
         '''
         '''
         # ------------------------------------------------------------

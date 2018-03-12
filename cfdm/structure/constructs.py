@@ -325,27 +325,56 @@ Return a deep or shallow copy.
     #--- End: def
         
     def axes_to_constructs(self):
-        '''(
-:Examples:
+        '''e3 49jrjfn
 
->>> i.axes_to_constructs()
-{
- ('dim1',): {
-        'dimension_coordinates': {'dim1': <DimensionCoordinate>},
-        'auxiliary_coordinates': {},
-        'cell_measures'        : {},
-        'domain_ancillaries'   : {},
-        'field_ancillaries'    : {},
-        }
- ('dim1', 'dim2',): {
-        'dimension_coordinates': {},
-        'auxiliary_coordinates': {'aux0': <AuxiliaryCoordinate:>,
-                                  'aux1': <AuxiliaryCoordinate:>},
-        'cell_measures'        : {},
-        'domain_ancillaries'   : {},
-        'field_ancillaries'    : {},
+:Examples 1:
+
+>>> d = c.axes_to_constructs()
+
+:Returns:
+
+    out: `dict`
+
+:Examples 2:
+
+>>> print c.axes_to_constructs()
+{('domainaxis1',): {
+        'auxiliary_coordinate': {'auxiliary_coordinate2': <AuxiliaryCoordinate: greek_letters(10) >},
+        'field_ancillary'     : {'fieldancillary2': <FieldAncillary: ncvar%ancillary_data_2(10) >},
+        'domain_ancillary'    : {}, 
+        'cell_measure'        : {}, 
+        'dimension_coordinate': {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
+        },
+('domainaxis1', 'domainaxis2'): {
+        'auxiliary_coordinate': {'auxiliary_coordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>},
+        'field_ancillary'     : {'fieldancillary0': <FieldAncillary: ncvar%ancillary_data(10, 9) >},
+        'domain_ancillary'    : {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>},
+        'cell_measure'        : {},
+        'dimension_coordinate': {}
+        },
+('domainaxis2', 'domainaxis1'): {
+        'auxiliary_coordinate': {'auxiliary_coordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>},
+        'field_ancillary'     : {},
+        'domain_ancillary'    : {},
+        'cell_measure'        : {'cell_measure0': <CellMeasure: area(9, 10) km2>},
+        'dimension_coordinate': {}
+        },
+('domainaxis0',): {
+        'auxiliary_coordinate': {},
+        'field_ancillary'     : {},
+        'domain_ancillary'    : {'domainancillary1': <DomainAncillary: ncvar%b(1) >, 'domainancillary0': <DomainAncillary: ncvar%a(1) m>},
+        'cell_measure'        : {},
+        'dimension_coordinate': {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >}
+        },
+('domainaxis2',): {
+        'auxiliary_coordinate': {},
+        'field_ancillary'     : {'fieldancillary1': <FieldAncillary: ncvar%ancillary_data_1(9) >},
+        'domain_ancillary'    : {},
+        'cell_measure'        : {},
+        'dimension_coordinate': {'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
         }
 }
+
 '''
         out = {}
 
