@@ -336,7 +336,8 @@ functionality:
         shape = data.shape
 
         indices = data.parse_indices(indices)
-
+        indices = tuple(indices)
+        
         new = self.copy(data=False)
 
         data_axes = new.get_data_axes()
@@ -347,7 +348,8 @@ functionality:
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-        new.set_data(data[indices], data_axes)
+
+        new.set_data(data[tuple(indices)], data_axes)
 
         # ------------------------------------------------------------
         # Subspace constructs
@@ -783,7 +785,7 @@ by the data array may be selected.
         '''
         domain_axis = self.domain_axes().get(axis)
         data_axes = list(self.get_data_axes(()))
-        
+
         if domain_axis is None:
             raise ValueError("Can't insert non-existent domain axis: {}".format(axis))
         
@@ -931,7 +933,7 @@ axes, use the `remove_axes` method.
         #--- End: if
         
         iaxes = [data_axes.index(axis) for axis in axes]
-        
+
         # Squeeze the field's data array
         f = super(Field, self).squeeze(iaxes, copy=copy)
 

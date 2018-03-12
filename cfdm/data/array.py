@@ -134,9 +134,9 @@ x.__str__() <==> str(x)
     
 :Parameters:
 
-    array : numpy array
+    array: numpy array
 
-    indices : list
+    indices: list
 
 Subset the input numpy array with the given indices. Indexing is similar to
 that of a numpy array. The differences to numpy array indexing are:
@@ -153,10 +153,11 @@ indices must contain an index for each dimension of the input array.
         if indices is Ellipsis:
             return array
         
-        gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
-        len_gg = len(gg)
+        axes_with_list_indices = [i for i, x in enumerate(indices)
+                                  if not isinstance(x, slice)]
+        n_axes_with_list_indices = len(axes_with_list_indices)
     
-        if len_gg < 2:
+        if n_axes_with_list_indices < 2:
             # ------------------------------------------------------------
             # At most one axis has a list-of-integers index so we can do a
             # normal numpy subspace
@@ -174,12 +175,12 @@ indices must contain an index for each dimension of the input array.
                 take = numpy.take
     
             indices = list(indices)
-            for axis in gg:
+            for axis in axes_with_list_indices:
                 array = take(array, indices[axis], axis=axis)
                 indices[axis] = slice(None)
-            #--- End: for
     
-            if len_gg < len(indices):
+            if n_axes_with_list_indices < len(indices):
+                # Apply subspace defined by slices
                 array = array[tuple(indices)]
     
             return array
@@ -194,46 +195,3 @@ indices must contain an index for each dimension of the input array.
     #---End: def
     
 #--- End: class
-
-class GatheredArray(Array):
-    '''
-    '''        
-    def __getitem__(self, indices):
-        '''
-        '''
-
-        array = numpy.ma.masked_all(self.shape, dtype=dtype)
-        
-        compressed_axes = range(self.sample_axis, array.ndim - (self.gathered_array.ndim - self.sample_axis - 1))
-        
-        zzz = [reduce(operator.mul, [array.shape[i] for i in compressed_axes[i:]], 1)
-               for i in range(1, len(compressed_axes))]
-        
-        xxx = [[0] * self.indices.size for i in compressed_axes]
-
-
-        for n, b in enumerate(self.indices.varray):
-            if not zzz or b < zzz[-1]:
-                xxx[-1][n] = b
-                continue
-            
-            for i, z in enumerate(zzz):
-                if b >= z:
-                    (a, b) = divmod(b, z)
-                    xxx[i][n] = a
-                    xxx[-1][n] = b
-        #--- End: for
-
-        uncompressed_indices = [slice(None)] * array.ndim        
-        for i, x in enumerate(xxx):
-            uncompressed_indices[sample_axis+i] = x
-
-        array[tuple(uncompressed_indices)] = self.gathered_array[...]
-
-        if indices is Ellpisis:
-            return array
-
-#        indices = self.parse_indices(indices)
-        array = self.get_subspace(array, indices)
-        
-        return array

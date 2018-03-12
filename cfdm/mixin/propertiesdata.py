@@ -56,7 +56,7 @@ x.__setitem__(indices, value) <==> x[indices]
         if data is None:
             raise ValueError("Can't set elements when there is no data")    
 
-        value = type(data).asdata(value)
+#        value = type(data).asdata(value)
         data[indices] = value
     #--- End: def
 
@@ -279,7 +279,7 @@ True
 
 .. versionadded:: 1.6
 
-.. seealso:: `squeeze`, `transpose`
+.. seealso:: `squeeze`
 
 :Examples 1:
 

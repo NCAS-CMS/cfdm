@@ -1869,12 +1869,12 @@ also be provided.
         construct.set_ncdim(ncdim)
     #-- End: def
 
-    def _transpose_data(self, data, axes=None, copy=True):
-        '''
-        '''
-        data = data.tranpose(axes=axes, copy=copy)
-        return data
-    #-- End: def
+#    def _transpose_data(self, data, axes=None, copy=True):
+#        '''
+#        '''
+#        data = data.tranpose(axes=axes, copy=copy)
+#        return data
+#    #-- End: def
     
     def _create_cell_measure(self, measure, ncvar, attributes):
         '''Create a cell measure object.
