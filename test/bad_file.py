@@ -7,6 +7,7 @@ nc.Conventions = 'CF-1.7'
 
 time    = nc.createDimension('time'   ,  2)
 z       = nc.createDimension('z'      ,  3)
+#z2      = nc.createDimension('z2'     ,  3)
 lat     = nc.createDimension('lat'    ,  4)
 lon     = nc.createDimension('lon'    ,  5)
 p       = nc.createDimension('p'      ,  6)
@@ -31,7 +32,7 @@ nc.createVariable('z_bounds', 'f8', ('time', 'bounds2')) #  Bounds span incorrec
 
 nc.createVariable('ps', 'f8', ('time', 'bounds2')) #  Bounds span incorrect dimensions
 
-nc.createVariable('ptop', 'f8', ('lon', 'lat')) #  Bounds span incorrect dimensions
+nc.createVariable('ptop', 'f8', ('lon', 'lat'))
 
 lat = nc.createVariable('lat', 'f8', ('lat',))
 lat.standard_name = 'latitude'

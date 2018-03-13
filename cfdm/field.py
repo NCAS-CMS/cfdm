@@ -870,6 +870,30 @@ by the data array may be selected.
         return self._get_component(4, 'read_report', None, *default)
     #--- End: def
    
+    def print_read_report(self, *default):
+        '''
+        '''
+        d = self.get_read_report({'dimensions': None, 
+                                  'components': {}})
+        
+        for key0, value0 in d.iteritems():
+            print '{{{0!r}:'.format(key0)
+            print '    dimensions: {0!r},'.format(value0['dimensions'])
+            print '    components: {'
+            for key1, value1 in sorted(value0['components'].items()):
+                for x in value1:
+                    print '        {!r}: ['.format(key1)
+                    print '            {{{0}}},'.format(
+                        '\n             '.join(['{0!r}: {1!r},'.format(key2, value2)
+                                                for key2, value2 in sorted(x.items())]))
+                #--- End: for
+                print '        ],'
+            #--- End: for
+            print '    },'
+            print '}\n'
+        #--- End: for
+    #--- End: def
+   
     def set_global_attributes(self, global_attributes):
         '''
         '''
