@@ -6,7 +6,7 @@ nc = netCDF4.Dataset('test/bad_file.nc', 'w', format='NETCDF3_CLASSIC')
 nc.Conventions = 'CF-1.7'
 
 time    = nc.createDimension('time'   ,  2)
-height  = nc.createDimension('height' ,  3)
+z       = nc.createDimension('z'      ,  3)
 lat     = nc.createDimension('lat'    ,  4)
 lon     = nc.createDimension('lon'    ,  5)
 p       = nc.createDimension('p'      ,  6)
@@ -19,14 +19,19 @@ time.units = "days since 2000-1-1"
 time.bounds = 'time_bounds' # Bounds variable is not in file
 time[...] = numpy.arange(time.size)
 
-height = nc.createVariable('height', 'f8', ('height',))
-height.standard_name = "height"
-height.units = "metres"
-height.positive = "up"
-height.bounds = 'height_bounds'
-height[...] = numpy.arange(height.size)
+z = nc.createVariable('z', 'f8', ('z',))
+z.standard_name = "atmosphere_sigma_coordinate"
+z.units = "metres"
+z.positive = "up"
+z.bounds = 'z_bounds'
+z.formula_terms = "sigma: z ps: ps ptop: ptop"
+z[...] = numpy.arange(z.size)
 
-nc.createVariable('height_bounds', 'f8', ('time', 'bounds2')) #  Bounds span incorrect dimensions
+nc.createVariable('z_bounds', 'f8', ('time', 'bounds2')) #  Bounds span incorrect dimensions
+
+nc.createVariable('ps', 'f8', ('time', 'bounds2')) #  Bounds span incorrect dimensions
+
+nc.createVariable('ptop', 'f8', ('lon', 'lat')) #  Bounds span incorrect dimensions
 
 lat = nc.createVariable('lat', 'f8', ('lat',))
 lat.standard_name = 'latitude'
@@ -44,7 +49,7 @@ lon[...] = numpy.arange(lon.size)
 
 nc.createVariable('lon_bounds', 'f8', ())  # Bounds span incorrect dimensions
 
-eastward_wind = nc.createVariable('eastward_wind', 'f8', ('time', 'height', 'lat', 'lon'))
+eastward_wind = nc.createVariable('eastward_wind', 'f8', ('time', 'z', 'lat', 'lon'))
 eastward_wind.coordinates = 'var1' # Auxiliary/scalar coordinate variable is not in file
 eastward_wind[...] = numpy.arange(eastward_wind.size)
 

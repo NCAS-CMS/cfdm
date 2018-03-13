@@ -10,23 +10,12 @@ import numpy
 from ..functions import abspath, flat
 
 _z = {
-    1: 'Auxiliary coordinate variable',
-    1: 'Cell measure variable',
-    2: 'cell_methods attribute',
-    3: 'Coordinate variable',
-    2: 'Cell method',
-    3: 'Domain ancillary',
-    1: 'Cell measure',
-    2: 'Cell method',
-
     # Physically meaningful and corresponding to constructs
-    'Cell measure variable'  : 100,
+    'Cell measures variable' : 100,
     'cell_measures attribute': 101,
 
     'Bounds variable'        : 200,
     'bounds attribute'       : 201,
-
-    110: 'Dimension',
 
     'Ancillary variable': 120,
     'ancillary_variables attribute': 121,
@@ -37,68 +26,18 @@ _z = {
     'Auxiliary/scalar coordinate variable': 140,
     'coordinates attribute': 141,
 
-    150: 'grid mapping variable',
-    151: 'grid_mapping attribute',
-    152: 'Grid mapping coordinate variable',
+    'grid mapping variable': 150,
+    'grid_mapping attribute' : 151,
+    'Grid mapping coordinate variable': 152, 
 
    
     # Purely structural
-    300: 'Compressed dimension',
-    301: 'compress attribute',
-    310: 'Instance dimension',
-    311: 'instance_dimension attribute',
-    320: 'Count dimension',
-    321: 'count_dimension attribute',
-}
-
-_x = {
-    1: 'Auxiliary coordinate variable',
-    1: 'Cell measure variable',
-    2: 'cell_methods attribute',
-    3: 'Coordinate variable',
-    2: 'Cell method',
-    3: 'Domain ancillary',
-    1: 'Cell measure',
-    2: 'Cell method',
-
-    # Physically meaningful and corresponding to constructs
-    100: 'Cell measures variable',
-    101: 'cell_measures attribute',
-
-    110: 'Dimension',
-
-    120: 'Ancillary variable',
-    121: 'ancillary_variables attribute',
-
-    130: 'Formula terms variable',
-    131: 'formula_terms attribute',
-
-    140: 'Auxiliary/scalar coordinate variable',
-    141: 'coordinates attribute',
-
-    150: 'grid mapping variable',
-    151: 'grid_mapping attribute',
-    152: 'Grid mapping coordinate variable',
-
-    
-    # Physically meaningful but not constructs
-    200: 'Bounds variable',
-    201: 'bounds attribute',
-    
-    # Purely structural
-    300: 'Compressed dimension',
-    301: 'compress attribute',
-    310: 'Instance dimension',
-    311: 'instance_dimension attribute',
-    320: 'Count dimension',
-    321: 'count_dimension attribute',
-}
-
-_y = {
-    2: 'is incorrectly formatted',
-    3: 'is not in file',
-    4: 'spans incorrect dimensions',
-    5: 'is not in file nor referenced by the external_variables global attribute',
+    'Compressed dimension': 300,
+    'compress attribute': 301,
+    'Instance dimension':310,
+    'instance_dimension attribute':311,
+    'Count dimension': 320,
+    'count_dimension attribute': 321,
 }
 
 _yy = {
@@ -106,6 +45,8 @@ _yy = {
     'is not in file': 3,
     'spans incorrect dimensions': 4,
     'is not in file nor referenced by the external_variables global attribute': 5,
+    'has incompatible terms': 6,
+    'that spans the vertical dimension has no bounds': 7),
 }
 
 class ReadNetCDF(object):
@@ -302,6 +243,7 @@ ancillaries, field ancillaries).
         g['cell_measure']         = {}
         g['dimension_coordinate'] = {}
         g['domain_ancillary']     = {}
+        g['domain_ancillary_key'] = {}
         g['field_ancillary']      = {}
 
         g['do_not_create_field']   = set()
@@ -924,9 +866,9 @@ netCDF variable.
         return r
     #--- End: def 
     
-    def _formula_terms_variables(self, field_ncvar, coord_ncvar,
-                                 formula_terms, bounds=False,
-                                 bounds_ncvar=None):
+    def _check_formula_terms(self, field_ncvar, coord_ncvar,
+                             formula_terms, bounds=False,
+                             bounds_ncvar=None, z_ncdim=None):
         '''asdsdsa
 
 :Parameters:
@@ -973,74 +915,206 @@ netCDF variable.
         # =============================================================
 
         g = self.read_vars
-        variables = g['nc'].variables
+ 
+        nc = g['nc']
+        
+        variables = nc.variables
+        
+        attribute = {coord_ncvar+':formula_terms': formula_terms}
+
+        incorrectly_formatted = ('formula_terms attribute', 'is incorrectly formatted')
+        missing_variable      = ('Formula terms variable', 'is not in file')
+        incorrect_dimensions  = ('Formula terms variable', 'spans incorrect dimensions')
         
         g['formula_terms'].setdefault(coord_ncvar, {'coord' : {},
                                                     'bounds': {}})
         ok = True
         
         parsed_formula_terms = self._parse_x(coord_ncvar, formula_terms)
-        cf_compliant = self._check_formula_terms(field_ncvar, coord_ncvar,
-                                                 formula_terms,
-                                                 parsed_formula_terms)
-        if not cf_compliant:
-            # There is something wrong with the formula_terms
-            # attribut
-            return False
         
-        for x in parsed_formula_terms:
-            term, variable = x.items()[0]
-            g['formula_terms'][coord_ncvar]['coord'][term] = variable[0]
+        if not parsed_formula_terms:
+            self._add_message(field_ncvar, coord_ncvar,
+                              message=incorrectly_formatted,
+                              attribute=attribute)
+            return False
 
+        parent_dimensions = self._ncdimensions(field_ncvar)
+ 
         ok = True
-        # Bounds formula terms
-        if 'bounds' in variables[coord_ncvar].ncattrs():
+        for x in parsed_formula_terms:
+            term, values = x.items()[0]
+            
+            g['formula_terms'][coord_ncvar]['coord'][term] = None
+
+            if len(values) != 1:
+                self._add_message(field_ncvar, coord_ncvar,
+                                  message=incorrectly_formatted,
+                                  attribute=attribute)
+                ok = False
+                continue
+
+            ncvar = values[0]
+
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=missing_variable,
+                                  attribute=attribute)
+                continue
+                
+#            if not self._dimensions_are_subset(ncvar, self._ncdimensions(ncvar),
+#                                               parent_dimensions):
+#                self._add_message(field_ncvar, ncvar,
+#                                  message=incorrect_dimensions,
+#                                  attribute=attribute,
+#                                  dimensions=nc.variables[ncvar].dimensions ,
+#                                  variable=field_ncvar)
+#                ok = False
+#                continue
+
+            g['formula_terms'][coord_ncvar]['coord'][term] = ncvar
+        #--- End: for
+
+        has_bounds = 'bounds' in variables[coord_ncvar].ncattrs()
+        bounds_formula_terms = None
+
+        if not has_bounds:
+            # Parametric Z coordinate doe not have bounds               
+            for term in g['formula_terms'][coord_ncvar]['coord']:
+                g['formula_terms'][coord_ncvar]['bounds'][term] = None
+        else:
+            # Parametric Z coordinate has bounds               
             bounds_ncvar = variables[coord_ncvar].getncattr('bounds')
             if 'formula_terms' in variables[bounds_ncvar].ncattrs():
-                formula_terms = variables[bounds_ncvar].getncattr('formula_terms')
-                if formula_terms is not None:
-                    parsed_formula_terms = self._parse_x(bounds_ncvar, formula_terms)
-                    cf_compliant = self._check_formula_terms(field_ncvar, bounds_ncvar,
-                                                             formula_terms,
-                                                             parsed_formula_terms)
-                    if not cf_compliant:
-                        # There is something wrong with the bounds formula_terms
-                        # attribute
-                        return False
-                    
-                    for x in parsed_formula_terms:
-                        term, variable = x.items()[0]
-                        variable = variable[0]
-                        g['formula_terms'][coord_ncvar]['bounds'][term] = variable
-#                        if z_ncdim in variables[variable].dimensions:
-#                            if variable == g['formula_terms'][coord_ncvar]['coord'][term]:
-#                                ok = False
-#                                self._add_message(
-#                                    bounds_ncvar, 0, "oops",
-#                                    attribute='formala_terms', value=formula_terms)
-#                            # more
-#                        elif variable == g['formula_terms'][coord_ncvar]['coord'][term]:
-#                            ok = False
-#                            self._add_message(
-#                                bounds_ncvar, 0, "oops 3",
-#                                attribute='formala_terms', value=formula_terms)
-#                            
-                                
-                        
-                    if (set(g['formula_terms'][coord_ncvar]['coord']) !=
-                        set(g['formula_terms'][coord_ncvar]['bounds'])):
-                        ok = False
-                        self._add_message(
-                            field_ncvar, bounds_ncvar, 0, "oops",
-                            attribute='formala_terms', value=formula_terms)
-                #--- End: if
-        #--- End: if
+                # Parametric Z coordinate has bounds, and the bounds
+                # variable has a formula_terms attribute
+                bounds_attribute = {bounds_ncvar+':formula_terms': bounds_formula_terms}
 
-        if not ok:
-            return False
-        
-        return True
-    #--- End: def
+                bounds_formula_terms = variables[bounds_ncvar].getncattr('formula_terms')
+
+                parsed_bounds_formula_terms = self._parse_x(bounds_ncvar, bounds_formula_terms)
+
+                if not parsed_bounds_formula_terms:
+                    self._add_message(field_ncvar, bounds_ncvar,
+                                      message=incorrectly_formatted,
+                                      attribute=attribute,
+                                      variable=coord_ncvar)
+
+                for x in parsed_bounds_formula_terms:
+                    term, values = x.items()[0]
+                    
+                    g['formula_terms'][coord_ncvar]['bounds'][term] = None
+
+                    if len(values) != 1:
+                        self._add_message(field_ncvar, bounds_ncvar,
+                                          message=incorrectly_formatted,
+                                          attribute=bounds_attribute,
+                                          variable=coord_ncvar)
+                        continue
+            
+                    ncvar = values[0]
+                    
+                    if ncvar not in nc.variables:
+                        self._add_message(field_ncvar, ncvar,
+                                          message=missing_variable,
+                                          attribute=bounds_attribute,
+                                          variable=coord_ncvar)
+                        continue
+
+                    if term not in g['formula_terms'][coord_ncvar]['coord']:
+                        self._add_message(
+                            field_ncvar, bounds_ncvar,
+                            message=('blah', 'de blah'),
+                            attribute=bounds_attribute,
+                            dimensions=nc.variables[bounds_ncvar].dimensions,
+                            variable=parent_ncvar)
+                        continue
+                    
+                    parent_ncvar = g['formula_terms'][coord_ncvar]['coord'][term]
+                    d_ncdims = self._ncdimensions(parent_ncvar)
+                    b_ncdims = self._ncdimensions(ncvar)
+                    dimensions=nc.variables[bounds_ncvar].dimensions
+                            
+                    if z_ncdim not in d_ncdims:
+                        if ncvar != parent_ncvar:
+                            self._add_message(
+                                    field_ncvar, bounds_ncvar,
+                                    message=('blah', 'de blah'),
+                                    attribute=bounds_attribute,
+                                    dimensions=dimensions,
+                                    variable=coord_ncvar)
+                            continue
+                        #--- End: if
+                    elif len(b_ncdims) != len(d_ncdims) + 1:
+                        self._add_message(
+                            field_ncvar, bounds_ncvar,
+                            message=('blah', 'de blah 2'),
+                            attribute=bounds_attribute,
+                            dimensions=dimensions,
+                            variable=coord_ncvar)
+                        continue
+                    elif d_ncdims != b_ncdims[:-1]: # WRONG - need to account for char arrays
+                        self._add_message(
+                            field_ncvar, bounds_ncvar,
+                            message=('blah', 'de blah 1'),
+                            attribute=bounds_attribute,
+                            dimensions=dimensions,
+                            variable=coord_ncvar)
+                        continue
+                    
+                    g['formula_terms'][coord_ncvar]['bounds'][term] = ncvar                        
+                #--- End: for
+                
+                if (set(g['formula_terms'][coord_ncvar]['coord']) !=
+                    set(g['formula_terms'][coord_ncvar]['bounds'])):
+                    self._add_message(
+                        field_ncvar, bounds_ncvar,
+                        message=('formula_terms attribute', 'has incompatible terms'),
+                        attribute=bounds_attribute,
+                        variable=coord_ncvar)
+            
+            else:
+                # Parametric Z coordinate has bounds, but the bounds
+                # variable does not have a formula_terms attribute =>
+                # Infer the bounds of formula terms variables from the
+                # coordinates
+                for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].iteritems():
+                    g['formula_terms'][coord_ncvar]['bounds'][term] = None
+                    
+                    if z_ncdim not in self._ncdimensions(ncvar):
+                        g['formula_terms'][coord_ncvar]['bounds'][term] = ncvar
+                        continue
+
+                    is_coordinate_with_bounds = False
+                    for key, coord in f.coordinates().iteritems():
+                        if ncvar != self._get_ncvar(coord):
+                            continue
+                        
+                        is_coordinate_with_bounds = True
+                        if z_axis not in f.construct_axes(key):
+                            g['formula_terms'][coord_ncvar]['bounds'][term] = ncvar
+                        else:                                         
+                            b = coord.get_bounds(None)
+                            if b is not None:
+                                g['formula_terms'][coord_ncvar]['bounds'][term] = self._get_ncvar(b)
+                            else:
+                                is_coordinate_with_bounds = False
+                        #--- End: if
+                    
+                        break
+                    #--- End: for
+
+                    if not is_coordinate_with_bounds:
+                         self._add_message(
+                             field_ncvar, ncvar,
+                             message=('Formula terms variable',
+                                      'that spans the vertical dimension has no bounds'),
+                             attribute=attribute,
+                             variable=coord_ncvar)
+                         ok = False
+                #--- End: for
+            #--- End: if
+        #--- End: if
+   #--- End: def
 
     def _parse_cell_measures(self, cell_measures):
         '''
@@ -1311,20 +1385,20 @@ netCDF variable.
                 # This coordinate doesn't have a formula_terms attribute
                 continue
 
-            # Get the netCDf dimension name of the vertical dimension
-            z_ncdim = nc.variables[coord_ncvar].dimensions[0]
 
             if coord_ncvar not in g['formula_terms']:                        
-                cf_compliant = self._formula_terms_variables(field_ncvar,
-                                                             coord_ncvar,
-                                                             formula_terms)
-                if not cf_compliant:
-                    continue
-            #--- End: if
-
+                self._check_formula_terms(
+                    field_ncvar,
+                    coord_ncvar,
+                    formula_terms,
+                    z_ncdim=nc.variables[coord_ncvar].dimensions[0])
+                
             ok = True
             domain_ancillaries = []
             for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].iteritems():
+                if ncvar is None:
+                    continue
+
                 ncdimensions =  self._ncdimensions(ncvar)
                 
                 # Set dimensions 
@@ -1333,7 +1407,7 @@ netCDF variable.
                         if ncdim in ncdim_to_axis]    
 
                 if ncvar in g['domain_ancillary']:
-                    domain_anc = g['domain_ancillary'][ncvar][1].copy()
+                    domain_anc = self._copy_construct('domain_ancillary', field_ncvar, ncvar)
                 else:
                     bounds = g['formula_terms'][coord_ncvar]['bounds'].get(term)
                     if bounds == ncvar:
@@ -1351,9 +1425,10 @@ netCDF variable.
                     domain_ancillaries.append((ncvar, domain_anc, axes))
                 else:
                     # The domain ancillary variable spans a dimension
-                    # that is not spanned by its parent data variable    ppp          
+                    # that is not spanned by its parent data variable
                     self._add_message(
-                        field_ncvar, ncvar, code=130*1000 + 4,
+                        field_ncvar, ncvar,
+                        message=('Formula terms variable', 'spans incorrect dimensions'),
                         attribute={coord_ncvar+':formula_terms': formula_terms},
                         dimensions=nc.variables[ncvar].dimensions)
                     ok = False
@@ -1361,6 +1436,7 @@ netCDF variable.
             #--- End: for
 
             if not ok:
+                # Move on to the next coordinate
                 continue
 
             # Still here? Create a formula terms coordinate reference.
@@ -1373,7 +1449,8 @@ netCDF variable.
                 if ncvar not in ncvar_to_key:
                     ncvar_to_key[ncvar] = da_key
                     
-                g['domain_ancillary'][ncvar] = (da_key, domain_anc)
+                g['domain_ancillary'][ncvar]     = domain_anc
+                g['domain_ancillary_key'][ncvar] = da_key
             #--- End: for
             
             coordinate_reference = self._create_formula_terms_ref(
@@ -1493,7 +1570,7 @@ netCDF variable.
         return f
     #--- End: def
 
-    def _add_message(self, field_ncvar, ncvar, code=None, message=None,
+    def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None):
         '''
         '''
@@ -1502,11 +1579,14 @@ netCDF variable.
         if message is not None:
             code = _z[message[0]]*1000 + _yy[message[1]]
             message = ' '.join(message)
-        else:    
-            if code is not None:
-                # Create a readable error message from the error code
-                part1, part2 = divmod(code, 1000)         
-                message = ' '.join([_x.get(part1, '<?>'), _y.get(part2, '<?>')])
+        else:
+            code = None
+            
+#        else:    
+#            if code is not None:
+#                # Create a readable error message from the error code
+#                part1, part2 = divmod(code, 1000)         
+#                message = ' '.join([_x.get(part1, '<?>'), _y.get(part2, '<?>')])
         
         d = {'code'     : code,
              'attribute': attribute,
@@ -1570,11 +1650,26 @@ netCDF variable.
         '''
         g = self.read_vars
         nc = g['nc']
-
+      
+#        cf_compliant = self._check_zz(field_ncvar, ncvar, attribute)
+#        if not cf_compliant:
+#            pass
+        
         properties = attributes[ncvar].copy()
 
         properties.pop('formula_terms', None)
-
+#if len(axes) == len(ncdimensions):
+#                    domain_ancillaries.append((ncvar, domain_anc, axes))
+#                else:
+#                    # The domain ancillary variable spans a dimension
+#                    # that is not spanned by its parent data variable    ppp
+#                    self._add_message(
+#                        field_ncvar, ncvar,
+#                        message=('Formula terms variable', 'spans incorrect dimensions'),
+#                        attribute={coord_ncvar+':formula_terms': formula_terms},
+#                        dimensions=nc.variables[ncvar].dimensions)
+#                    ok = False
+#                    break
         attribute = 'bounds'
         climatology = False
         if bounds is not None:
@@ -2261,8 +2356,8 @@ Set the Data attribute of a variable.
         for term, ncvar in formula_terms.iteritems():
             # The term's value is a domain ancillary of the field, so
             # we put its identifier into the coordinate reference.
-            if ncvar in g['domain_ancillary']:
-                ancillaries[term] = g['domain_ancillary'][ncvar][0]
+            if ncvar in g['domain_ancillary_key']:
+                ancillaries[term] = g['domain_ancillary_key'][ncvar]
             else:
                 ancillaries[term] = None
 
@@ -2274,8 +2369,6 @@ Set the Data attribute of a variable.
         coordref = self._CoordinateReference(properties=props,
                                              coordinates=(key,),
                                              domain_ancillaries=ancillaries)
-    
-#        f.set_coordinate_reference(coordref, copy=False)
     
         return coordref
     #--- End: def
@@ -2488,13 +2581,11 @@ dimensions are returned.
         A copy of the construct.
 
         '''
-        print '    COPY', construct_type, ncvar
         g = self.read_vars
 
         component_report = g['component_report'].get(ncvar)
 
         if component_report is not None:
-            print 'addingreport'
             for var, report in component_report.iteritems():                
                 g['read_report'][field_ncvar]['components'].setdefault(var, []).extend(
                     report)
@@ -2543,12 +2634,6 @@ Checks that
         '''
         attribute = {parent_ncvar+':'+attribute: bounds_ncvar}
         
-#        missing_variable      = 200*1000 + 3
-#        incorrect_dimensions  = 200*1000 + 4
-
- #       missing_variable      = _z['Bounds variable']*1000 + _yy['is not in file']
-#        incorrect_dimensions  = _z['Bounds variable']*1000 + _yy['spans incorrect dimensions']
-        
         missing_variable      = ('Bounds variable', 'is not in file')
         incorrect_dimensions  = ('Bounds variable', 'spans incorrect dimensions')
         
@@ -2557,10 +2642,9 @@ Checks that
         
         if bounds_ncvar not in nc.variables:
             self._add_message(field_ncvar, bounds_ncvar,
-#                              code=missing_variable,
+                              message=missing_variable,
                               attribute=attribute,
-                              variable=parent_ncvar,
-                              message=missing_variable)
+                              variable=parent_ncvar)
             return False
 
         ok = True
@@ -2571,20 +2655,18 @@ Checks that
         if len(b_ncdims) == len(c_ncdims) + 1:
             if c_ncdims != b_ncdims[:-1]:
                 self._add_message(field_ncvar, bounds_ncvar,
-#                                  code=incorrect_dimensions,
+                                  message=incorrect_dimensions,
                                   attribute=attribute,
                                   dimensions=nc.variables[bounds_ncvar].dimensions,
-                                  variable=parent_ncvar,
-                                  message=incorrect_dimensions)
+                                  variable=parent_ncvar)
                 ok = False
 
         else:
             self._add_message(field_ncvar, bounds_ncvar,
-#                              code=incorrect_dimensions,
+                              message=incorrect_dimensions,
                               attribute=attribute,
                               dimensions=nc.variables[bounds_ncvar].dimensions,
-                              variable=parent_ncvar,
-                              message=incorrect_dimensions)
+                              variable=parent_ncvar)
             ok = False
 
         return ok
@@ -2611,17 +2693,9 @@ Checks that
         '''
         attribute = {field_ncvar+':cell_measures': string}
 
-#        incorrectly_formatted = 101*1000 + 2
-#        missing_variable      = 100*1000 + 5
-#        incorrect_dimensions  = 100*1000 + 4
-#        
-#        incorrectly_formatted = _z['cell_measures attribute']*1000 + _yy['is incorrectly formatted']
-#        incorrect_dimensions  = _z['Cell measure variable']  *1000 + _yy['spans incorrect dimensions']
-#        missing_variable      = _z['Cell measure variable']  *1000 + _yy['is not in file nor referenced by the external_variables global attribute']
-
         incorrectly_formatted = ('cell_measures attribute', 'is incorrectly formatted')
-        incorrect_dimensions  = ('Cell measure variable', 'spans incorrect dimensions')
-        missing_variable      = ('Cell measure variable', 'is not in file nor referenced by the external_variables global attribute')
+        incorrect_dimensions  = ('Cell measures variable', 'spans incorrect dimensions')
+        missing_variable      = ('Cell measures variable', 'is not in file nor referenced by the external_variables global attribute')
 
         
         nc = self.read_vars['nc']
@@ -2660,8 +2734,9 @@ Checks that
                 
             # Check that the variable's dimensions span a subset of
             # the parent variable's dimensions.
+            dimensions = self._ncdimensions(ncvar)
             if (not external and
-                not set(self._ncdimensions(ncvar)).issubset(parent_dimensions)):
+                not self._dimensions_are_subset(ncvar, dimensions, parent_dimensions)):
                 self._add_message(field_ncvar, ncvar,
                                   message=incorrect_dimensions,
                                   attribute=attribute,
@@ -2692,10 +2767,6 @@ Checks that
         '''
         attribute = {field_ncvar+':ancillary_variables': string}
 
-#        incorrectly_formatted = _z['ancillary_variables attribute']*1000 + _yy['is incorrectly formatted']
-#        missing_variable      = _z['Ancillary variable']           *1000 + _yy['is not in file']
-#        incorrect_dimensions  = _z['Ancillary variable']           *1000 + _yy['spans incorrect dimensions']
-        
         incorrectly_formatted = ('ancillary_variables attribute', 'is incorrectly formatted')
         missing_variable      = ('Ancillary variable', 'is not in file')
         incorrect_dimensions  = ('Ancillary variable', 'spans incorrect dimensions')
@@ -2714,7 +2785,7 @@ Checks that
 
             return False
 
-        parent_dimensions = set(nc.variables[field_ncvar].dimensions)
+        parent_dimensions = self._ncdimensions(field_ncvar)
         
         ok = True
         for ncvar in parsed_string:
@@ -2727,8 +2798,8 @@ Checks that
             
             # Check that the variable's dimensions span a subset of
             # the parent variable's dimensions
-            dimensions = nc.variables[ncvar].dimensions
-            if not set(dimensions).issubset(parent_dimensions):
+            if not self._dimensions_are_subset(ncvar, self._ncdimensions(ncvar),
+                                               parent_dimensions):
                 self._add_message(field_ncvar, ncvar,
                                   message=incorrect_dimensions,
                                   attribute=attribute,
@@ -2759,10 +2830,6 @@ Checks that
         '''
         attribute = {field_ncvar+':coordinates': string}
 
-#        incorrectly_formatted = 141*1000 + _yy['is incorrectly formatted']
-#        missing_variable      = 140*1000 + _yy['is not in file']
-#        incorrect_dimensions  = 140*1000 + _yy['spans incorrect dimensions']
-        
         incorrectly_formatted = ('coordinate attribute', 'is incorrectly formatted')
         missing_variable      = ('Auxiliary/scalar coordinate variable', 'is not in file')
         incorrect_dimensions  = ('Auxiliary/scalar coordinate variable', 'spans incorrect dimensions')
@@ -2773,7 +2840,7 @@ Checks that
 
         if coord_ncvar not in nc.variables:
             self._add_message(field_ncvar, coord_ncvar,
-                              missing_variable,
+                              message=missing_variable,
                               attribute=attribute)
             return False
             
@@ -2782,32 +2849,43 @@ Checks that
         # with a trailing dimension)
         dimensions        = self._ncdimensions(coord_ncvar)
         parent_dimensions = self._ncdimensions(field_ncvar)
-        if not set(dimensions).issubset(parent_dimensions):
-            if not (nc.variables[coord_ncvar].datatype.kind == 'S' and
-                    set(dimensions[:-1]).issubset(parent_dimensions)):
-                d = self._add_message(field_ncvar, coord_ncvar,
-                                      incorrect_dimensions,
-                                      attribute=attribute,
-                                      dimensions=nc.variables[coord_ncvar].dimensions)
-                return False
+        if not self._dimensions_are_subset(coord_ncvar,
+                                           self._ncdimensions(coord_ncvar),
+                                           self._ncdimensions(field_ncvar)):
+            d = self._add_message(field_ncvar, coord_ncvar,
+                                  message=incorrect_dimensions,
+                                  attribute=attribute,
+                                  dimensions=nc.variables[coord_ncvar].dimensions)
+            return False
 
         return True
     #--- End: def
 
+    def _dimensions_are_subset(self, ncvar, dimensions, parent_dimensions):
+        '''Return True if 
+        '''
+        if not set(dimensions).issubset(parent_dimensions):
+            if not (self.read_vars['nc'].variables[ncvar].datatype.kind == 'S' and
+                    set(dimensions[:-1]).issubset(parent_dimensions)):
+                return False
+
+        return True
+    #--- End: def
+    
     def _check_grid_mapping(self, field_ncvar, string, parsed_string):
         '''
         '''
         attribute = {field_ncvar+':grid_mapping': string}
 
-        incorrectly_formatted = 151*1000 + _yy['is incorrectly formatted']
-        missing_variable      = 150*1000 + _yy['is not in file']
-        missing_coordinate    = 152*1000 + _yy['is not in file']
+        incorrectly_formatted = ('grid_mapping attribute', 'is incorrectly formatted')
+        missing_variable      = ('grid_mapping variable', 'is not in file')
+        missing_coordinate    = ('Grid mapping coordinate variable''is not in file')
         
         nc = self.read_vars['nc']
         
         if not parsed_string:
             self._add_message(field_ncvar, field_ncvar,
-                              incorrectly_formatted,
+                              message=incorrectly_formatted,
                               attribute=attribute)
             return False
 
@@ -2817,14 +2895,14 @@ Checks that
             if grid_mapping_ncvar not in nc.variables:
                 ok = False
                 self._add_message(field_ncvar, grid_mapping_ncvar,
-                                  missing_variable,
+                                  message=missing_variable,
                                   attribute=attribute)
             
             for coord_ncvar in values:
                 if coord_ncvar not in nc.variables:
                     ok = False
                     self._add_message(field_ncvar, coord_ncvar,
-                                      missing_coordinate,
+                                      message=missing_coordinate,
                                       attribute=attribute)
                                 
         #--- End: for
@@ -2835,58 +2913,58 @@ Checks that
         return True
     #--- End: def
 
-    def _check_formula_terms(self, field_ncvar, coordinate_ncvar,
-                             formula_terms, parsed_formula_terms):
-        '''
-        '''
-        attribute = {field_ncvar+':formula_terms': formula_terms}
-
-        incorrectly_formatted = _z['formula_terms attribute']*1000 + _yy['is incorrectly formatted']
-        missing_variable      = _z['Formula terms variable'] *1000 + _yy['is not in file']
-        incorrect_dimensions  = _z['Formula terms variable'] *1000 + _yy['spans incorrect dimensions']
-        
-        attribute = 'formula_terms'
-        
-        nc = self.read_vars['nc']
-        
-        if not parsed_formula_terms:
-            self._add_message(field_ncvar, coordinate_ncvar,
-                              incorrectly_formatted,
-                              attribute=attribute)
-            return False
-
-        ok = True
-        for x in parsed_formula_terms:
-            term, values = x.items()[0]
-            if len(values) != 1:
-                self._add_message(field_ncvar, coordinate_ncvar,
-                                  incorrectly_formatted,
-                                  attribute=attribute)
-                ok = False
-                continue
-
-            ncvar = values[0]
-            if ncvar not in nc.variables:
-                self._add_message(field_ncvar, ncvar,
-                                  missing_variable,
-                                  attribute=attribute)
-                ok = False
-        #--- End: for
-        
-        return ok
-    #--- End: def
+#    def _check_formula_terms(self, field_ncvar, coordinate_ncvar,
+#                             formula_terms, parsed_formula_terms):
+#        '''
+#        '''
+#        attribute = {field_ncvar+':formula_terms': formula_terms}
+#
+#        incorrectly_formatted = ('formula_terms attribute', 'is incorrectly formatted')
+#        missing_variable      = ('Formula terms variable', 'is not in file')
+#        incorrect_dimensions  = ('Formula terms variable', 'spans incorrect dimensions')
+#        
+#        attribute = 'formula_terms'
+#        
+#        nc = self.read_vars['nc']
+#        
+#        if not parsed_formula_terms:
+#            self._add_message(field_ncvar, coordinate_ncvar,
+#                              message=incorrectly_formatted,
+#                              attribute=attribute)
+#            return False
+#
+#        ok = True
+#        for x in parsed_formula_terms:
+#            term, values = x.items()[0]
+#            if len(values) != 1:
+#                self._add_message(field_ncvar, coordinate_ncvar,
+#                                  message=incorrectly_formatted,
+#                                  attribute=attribute)
+#                ok = False
+#                continue
+#
+#            ncvar = values[0]
+#            if ncvar not in nc.variables:
+#                self._add_message(field_ncvar, ncvar,
+#                                  message=missing_variable,
+#                                  attribute=attribute)
+#                ok = False
+#        #--- End: for
+#        
+#        return ok
+#    #--- End: def
 
     def _check_compress(self, parent_ncvar, compress, parsed_compress):
         '''
         '''
         attribute = {parent_ncvar+':compress': compress}
-      
-        incorrectly_formatted = 301*1000 + _yy['is incorrectly formatted']
-        missing_dimension     = 300*1000 + 3
+
+        incorrectly_formatted = ('compress attribute', 'is incorrectly formatted')
+        missing_dimension     = ('Compressed dimension', 'is not in file')
         
         if not parsed_compress:
             self._add_message(None, parent_ncvar,
-                              incorrectly_formatted,
+                              message=incorrectly_formatted,
                               attribute=attribute)
             return False
 
@@ -2896,7 +2974,7 @@ Checks that
         for ncdim in parsed_compress:
             if ncdim not in ncdimensions:
                 self._add_message(None, parent_ncvar,
-                                  missing_dimension,
+                                  message=missing_dimension,
                                   attribute=attribute)
                 ok = False
                 continue
@@ -2918,12 +2996,12 @@ CF-1.7 Appendix A
 
         '''  
         attribute = {parent_ncvar+':instance_dimension': instance_dimension}
-
-        missing_dimension = 310*1000 + 3
+ 
+        missing_dimension = ('Instance dimension', 'is not in file')
 
         if instance_dimension not in self.read_vars['nc'].dimensions:
             self._add_message(None, parent_ncvar,
-                              missing_dimension,
+                              message=missing_dimension,
                               attribute=attribute)
             return False
 
