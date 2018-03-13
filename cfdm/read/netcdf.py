@@ -9,6 +9,48 @@ import numpy
 
 from ..functions import abspath, flat
 
+_z = {
+    1: 'Auxiliary coordinate variable',
+    1: 'Cell measure variable',
+    2: 'cell_methods attribute',
+    3: 'Coordinate variable',
+    2: 'Cell method',
+    3: 'Domain ancillary',
+    1: 'Cell measure',
+    2: 'Cell method',
+
+    # Physically meaningful and corresponding to constructs
+    'Cell measure variable'  : 100,
+    'cell_measures attribute': 101,
+
+    'Bounds variable'        : 200,
+    'bounds attribute'       : 201,
+
+    110: 'Dimension',
+
+    'Ancillary variable': 120,
+    'ancillary_variables attribute': 121,
+
+    'Formula terms variable': 130,
+    'formula_terms attribute': 131,
+
+    'Auxiliary/scalar coordinate variable': 140,
+    'coordinates attribute': 141,
+
+    150: 'grid mapping variable',
+    151: 'grid_mapping attribute',
+    152: 'Grid mapping coordinate variable',
+
+   
+    # Purely structural
+    300: 'Compressed dimension',
+    301: 'compress attribute',
+    310: 'Instance dimension',
+    311: 'instance_dimension attribute',
+    320: 'Count dimension',
+    321: 'count_dimension attribute',
+}
+
 _x = {
     1: 'Auxiliary coordinate variable',
     1: 'Cell measure variable',
@@ -56,7 +98,14 @@ _y = {
     2: 'is incorrectly formatted',
     3: 'is not in file',
     4: 'spans incorrect dimensions',
-    5: 'is not in file nor listed by external_variables global attribute',
+    5: 'is not in file nor referenced by the external_variables global attribute',
+}
+
+_yy = {
+    'is incorrectly formatted': 2,
+    'is not in file': 3,
+    'spans incorrect dimensions': 4,
+    'is not in file nor referenced by the external_variables global attribute': 5,
 }
 
 class ReadNetCDF(object):
@@ -470,6 +519,8 @@ ancillaries, field ancillaries).
         for x in fields.values():
             x._set_component(4, 'component_report', None, g['component_report'])
 
+        print g['component_report']
+        print g['component_report'].keys()
         
                 
         # ------------------------------------------------------------        
@@ -479,19 +530,6 @@ ancillaries, field ancillaries).
         
         return fields.values()
     #--- End: def
-
-#{'precipitation': {}}
-#{'PS': {}}
-#{'PTOP': {}}
-#{'rh': {'bounds_lat2d': [{'attribute': {'lat2d:bounds': 'bounds_lat2d'},
-#                          'message': 'Bounds variable is not in file',
-#                          'code': 200003,
-#                          'dimensions': None}]}}
-#{'sh': {}}
-#{'uwind': {'PS': [{'attribute': {'sigma:formula_terms': 'sigma: sigma ps: PS ptop: PTOP'},
-#                   'message': 'Formula terms variable spans incorrect dimensions',
-#                   'code': 130004,
-#                   'dimensions': (u'lat', u'lon')}]}}
 
     def close_file(self):
         '''Close the netCDF that has been read.
@@ -1113,7 +1151,6 @@ netCDF variable.
                 # dimension, so create a domain axis and dimension
                 # coordinate
                 if ncdim in g['dimension_coordinate']:
-#                    coord = g['dimension_coordinate'][ncdim].copy()
                     coord = self._copy_construct('dimension_coordinate', field_ncvar, ncdim)
                 else:
                     coord = self._create_bounded_construct(field_ncvar, ncdim,
@@ -1456,14 +1493,20 @@ netCDF variable.
         return f
     #--- End: def
 
-    def _add_message(self, field_ncvar, ncvar, code, message=None,
+    def _add_message(self, field_ncvar, ncvar, code=None, message=None,
                      attribute=None, dimensions=None, variable=None):
         '''
         '''
-        if message is None:
-            # Create a readable error message
-            part1, part2 = divmod(code, 1000)
-            message = ' '.join([_x.get(part1, '<?>'), _y.get(part2, '<?>')])
+        g = self.read_vars
+
+        if message is not None:
+            code = _z[message[0]]*1000 + _yy[message[1]]
+            message = ' '.join(message)
+        else:    
+            if code is not None:
+                # Create a readable error message from the error code
+                part1, part2 = divmod(code, 1000)         
+                message = ' '.join([_x.get(part1, '<?>'), _y.get(part2, '<?>')])
         
         d = {'code'     : code,
              'attribute': attribute,
@@ -1475,12 +1518,12 @@ netCDF variable.
         if variable is None:
             variable = ncvar
         
-        self.read_vars['read_report'][field_ncvar]['components'].setdefault(ncvar, []).append(d)
+        g['read_report'][field_ncvar]['components'].setdefault(ncvar, []).append(d)
 
-        e = self.read_vars['component_report'].setdefault(variable, {})
+        e = g['component_report'].setdefault(variable, {})
         e.setdefault(ncvar, []).append(d)
 
-        if self.read_vars['_debug']:
+        if g['_debug']:
             if dimensions is None:
                 dimensions = ''
             else:
@@ -1551,10 +1594,10 @@ netCDF variable.
         elif auxiliary:
             c = self._AuxiliaryCoordinate(properties=properties)
         elif domainancillary:
-            properties.pop('coordinates', None)
-            properties.pop('grid_mapping', None)
-            properties.pop('cell_measures', None)
-            properties.pop('positive', None)
+#            properties.pop('coordinates', None)
+#            properties.pop('grid_mapping', None)
+#            properties.pop('cell_measures', None)
+#            properties.pop('positive', None)
             c = self._DomainAncillary(properties=properties)
         else:
             raise ValueError(
@@ -2445,11 +2488,13 @@ dimensions are returned.
         A copy of the construct.
 
         '''
+        print '    COPY', construct_type, ncvar
         g = self.read_vars
 
         component_report = g['component_report'].get(ncvar)
 
         if component_report is not None:
+            print 'addingreport'
             for var, report in component_report.iteritems():                
                 g['read_report'][field_ncvar]['components'].setdefault(var, []).extend(
                     report)
@@ -2498,42 +2543,48 @@ Checks that
         '''
         attribute = {parent_ncvar+':'+attribute: bounds_ncvar}
         
-        missing_variable      = 200*1000 + 3
-        incorrect_dimensions  = 200*1000 + 4
+#        missing_variable      = 200*1000 + 3
+#        incorrect_dimensions  = 200*1000 + 4
+
+ #       missing_variable      = _z['Bounds variable']*1000 + _yy['is not in file']
+#        incorrect_dimensions  = _z['Bounds variable']*1000 + _yy['spans incorrect dimensions']
+        
+        missing_variable      = ('Bounds variable', 'is not in file')
+        incorrect_dimensions  = ('Bounds variable', 'spans incorrect dimensions')
+        
         
         nc = self.read_vars['nc']
         
         if bounds_ncvar not in nc.variables:
             self._add_message(field_ncvar, bounds_ncvar,
-                              code=missing_variable,
+#                              code=missing_variable,
                               attribute=attribute,
-                              variable=bounds_ncvar)
+                              variable=parent_ncvar,
+                              message=missing_variable)
             return False
 
         ok = True
         
-        c_ncdims = self._ncdimensions(parent_ncvar) #c.variables[parent_ncvar].dimensions
-        b_ncdims = self._ncdimensions(bounds_ncvar) #nc.variables[bounds_ncvar].dimensions
-
-#            if not (nc.variables[coord_ncvar].datatype.kind == 'S' and
-#                    set(dimensions[:-1]).issubset(parent_dimensions)):
-
+        c_ncdims = self._ncdimensions(parent_ncvar)
+        b_ncdims = self._ncdimensions(bounds_ncvar)
         
         if len(b_ncdims) == len(c_ncdims) + 1:
             if c_ncdims != b_ncdims[:-1]:
                 self._add_message(field_ncvar, bounds_ncvar,
-                                  code=incorrect_dimensions,
+#                                  code=incorrect_dimensions,
                                   attribute=attribute,
                                   dimensions=nc.variables[bounds_ncvar].dimensions,
-                                  variable=parent_ncvar)
+                                  variable=parent_ncvar,
+                                  message=incorrect_dimensions)
                 ok = False
 
         else:
             self._add_message(field_ncvar, bounds_ncvar,
-                              code=incorrect_dimensions,
+#                              code=incorrect_dimensions,
                               attribute=attribute,
                               dimensions=nc.variables[bounds_ncvar].dimensions,
-                              variable=parent_ncvar)
+                              variable=parent_ncvar,
+                              message=incorrect_dimensions)
             ok = False
 
         return ok
@@ -2558,17 +2609,26 @@ Checks that
     out: `bool`
 
         '''
-        attribute={field_ncvar+':cell_measures': string}
+        attribute = {field_ncvar+':cell_measures': string}
 
-        incorrectly_formatted = 101*1000 + 2
-        missing_variable      = 100*1000 + 5
-        incorrect_dimensions  = 100*1000 + 4
+#        incorrectly_formatted = 101*1000 + 2
+#        missing_variable      = 100*1000 + 5
+#        incorrect_dimensions  = 100*1000 + 4
+#        
+#        incorrectly_formatted = _z['cell_measures attribute']*1000 + _yy['is incorrectly formatted']
+#        incorrect_dimensions  = _z['Cell measure variable']  *1000 + _yy['spans incorrect dimensions']
+#        missing_variable      = _z['Cell measure variable']  *1000 + _yy['is not in file nor referenced by the external_variables global attribute']
+
+        incorrectly_formatted = ('cell_measures attribute', 'is incorrectly formatted')
+        incorrect_dimensions  = ('Cell measure variable', 'spans incorrect dimensions')
+        missing_variable      = ('Cell measure variable', 'is not in file nor referenced by the external_variables global attribute')
+
         
         nc = self.read_vars['nc']
         
         if not parsed_string:
             self._add_message(field_ncvar, field_ncvar,
-                              code=incorrectly_formatted,
+                              message=incorrectly_formatted,
                               attribute=attribute)
             return False
 
@@ -2580,7 +2640,7 @@ Checks that
             measure, values = x.items()[0]
             if len(values) != 1:
                 self._add_message(field_ncvar, field_ncvar,
-                                  code=incorrectly_formatted,
+                                  message=incorrectly_formatted,
                                   attribute=attribute)
                 ok = False
                 continue
@@ -2593,7 +2653,7 @@ Checks that
             # file attribute
             if ncvar not in nc.variables and not external:
                 self._add_message(field_ncvar, ncvar,
-                                  code=missing_variable,
+                                  message=missing_variable,
                                   attribute=attribute)
                 ok = False
                 continue
@@ -2603,7 +2663,7 @@ Checks that
             if (not external and
                 not set(self._ncdimensions(ncvar)).issubset(parent_dimensions)):
                 self._add_message(field_ncvar, ncvar,
-                                  code=incorrect_dimensions,
+                                  message=incorrect_dimensions,
                                   attribute=attribute,
                                   dimensions=nc.variables[ncvar].dimensions)
                 ok = False
@@ -2632,16 +2692,20 @@ Checks that
         '''
         attribute = {field_ncvar+':ancillary_variables': string}
 
-        incorrectly_formatted = 121*1000 + 2
-        missing_variable      = 120*1000 + 3
-        incorrect_dimensions  = 120*1000 + 4
+#        incorrectly_formatted = _z['ancillary_variables attribute']*1000 + _yy['is incorrectly formatted']
+#        missing_variable      = _z['Ancillary variable']           *1000 + _yy['is not in file']
+#        incorrect_dimensions  = _z['Ancillary variable']           *1000 + _yy['spans incorrect dimensions']
+        
+        incorrectly_formatted = ('ancillary_variables attribute', 'is incorrectly formatted')
+        missing_variable      = ('Ancillary variable', 'is not in file')
+        incorrect_dimensions  = ('Ancillary variable', 'spans incorrect dimensions')
         
         _debug = self.read_vars['_debug']
         nc     = self.read_vars['nc']
         
         if not parsed_string:
             d = self._add_message(field_ncvar, field_ncvar,
-                                  incorrectly_formatted,
+                                  message=incorrectly_formatted,
                                   attribute=attribute)
 
             if _debug:
@@ -2657,7 +2721,7 @@ Checks that
             # Check that the variable exists in the file
             if ncvar not in nc.variables:
                 self._add_message(field_ncvar, ncvar,
-                                  missing_variable,
+                                  message=missing_variable,
                                   attribute=attribute)
                 return False
             
@@ -2666,7 +2730,7 @@ Checks that
             dimensions = nc.variables[ncvar].dimensions
             if not set(dimensions).issubset(parent_dimensions):
                 self._add_message(field_ncvar, ncvar,
-                                  incorrect_dimensions,
+                                  message=incorrect_dimensions,
                                   attribute=attribute,
                                   dimensions=nc.variables[ncvar].dimensions)
                 ok = False                
@@ -2695,9 +2759,13 @@ Checks that
         '''
         attribute = {field_ncvar+':coordinates': string}
 
-        incorrectly_formatted = 141*1000 + 2
-        missing_variable      = 140*1000 + 3
-        incorrect_dimensions  = 140*1000 + 4
+#        incorrectly_formatted = 141*1000 + _yy['is incorrectly formatted']
+#        missing_variable      = 140*1000 + _yy['is not in file']
+#        incorrect_dimensions  = 140*1000 + _yy['spans incorrect dimensions']
+        
+        incorrectly_formatted = ('coordinate attribute', 'is incorrectly formatted')
+        missing_variable      = ('Auxiliary/scalar coordinate variable', 'is not in file')
+        incorrect_dimensions  = ('Auxiliary/scalar coordinate variable', 'spans incorrect dimensions')
         
         g = self.read_vars
         _debug = g['_debug']
@@ -2731,9 +2799,9 @@ Checks that
         '''
         attribute = {field_ncvar+':grid_mapping': string}
 
-        incorrectly_formatted = 151*1000 + 2
-        missing_variable      = 150*1000 + 3
-        missing_coordinate    = 152*1000 + 3
+        incorrectly_formatted = 151*1000 + _yy['is incorrectly formatted']
+        missing_variable      = 150*1000 + _yy['is not in file']
+        missing_coordinate    = 152*1000 + _yy['is not in file']
         
         nc = self.read_vars['nc']
         
@@ -2773,9 +2841,9 @@ Checks that
         '''
         attribute = {field_ncvar+':formula_terms': formula_terms}
 
-        incorrectly_formatted = 131*1000 + 2
-        missing_variable      = 130*1000 + 3
-        incorrect_dimensions  = 130*1000 + 4
+        incorrectly_formatted = _z['formula_terms attribute']*1000 + _yy['is incorrectly formatted']
+        missing_variable      = _z['Formula terms variable'] *1000 + _yy['is not in file']
+        incorrect_dimensions  = _z['Formula terms variable'] *1000 + _yy['spans incorrect dimensions']
         
         attribute = 'formula_terms'
         
@@ -2813,7 +2881,7 @@ Checks that
         '''
         attribute = {parent_ncvar+':compress': compress}
       
-        incorrectly_formatted = 301*1000 + 2
+        incorrectly_formatted = 301*1000 + _yy['is incorrectly formatted']
         missing_dimension     = 300*1000 + 3
         
         if not parsed_compress:
