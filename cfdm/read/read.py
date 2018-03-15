@@ -1,6 +1,8 @@
 import os
 
-from .netcdf import ReadNetCDF
+#from .netcdf import ReadNetCDF
+from .readnetcdf import ReadNetCDF
+from .imp import xxxF
 
 from ..auxiliarycoordinate import AuxiliaryCoordinate
 from ..cellmethod          import CellMethod
@@ -19,22 +21,39 @@ from ..data.data  import Data
 from ..data.netcdfarray   import NetCDF
 from ..data.gatheredarray import GatheredArray
 
+implementation = xxxF(AuxiliaryCoordinate = AuxiliaryCoordinate,
+                      CellMeasure         = CellMeasure,
+                      CellMethod          = CellMethod,
+                      CoordinateReference = CoordinateReference,
+                      DimensionCoordinate = DimensionCoordinate,
+                      DomainAncillary     = DomainAncillary,
+                      DomainAxis          = DomainAxis,
+                      Field               = Field,
+                      FieldAncillary      = FieldAncillary,
+                      
+                      Bounds    = Bounds,
+                      Data      = Data,
+                      
+                      NetCDF        = NetCDF,
+                      GatheredArray = GatheredArray)
 
-netcdf = ReadNetCDF(AuxiliaryCoordinate = AuxiliaryCoordinate,
-                    CellMeasure         = CellMeasure,
-                    CellMethod          = CellMethod,
-                    CoordinateReference = CoordinateReference,
-                    DimensionCoordinate = DimensionCoordinate,
-                    DomainAncillary     = DomainAncillary,
-                    DomainAxis          = DomainAxis,
-                    Field               = Field,
-                    FieldAncillary      = FieldAncillary,
-                    
-                    Bounds    = Bounds,
-                    Data      = Data,
+netcdf = ReadNetCDF(implementation)
 
-                    NetCDF        = NetCDF,
-                    GatheredArray = GatheredArray)
+#netcdf = ReadNetCDF(AuxiliaryCoordinate = AuxiliaryCoordinate,
+#                    CellMeasure         = CellMeasure,
+#                    CellMethod          = CellMethod,
+#                    CoordinateReference = CoordinateReference,
+#                    DimensionCoordinate = DimensionCoordinate,
+#                    DomainAncillary     = DomainAncillary,
+#                    DomainAxis          = DomainAxis,
+#                    Field               = Field,
+#                    FieldAncillary      = FieldAncillary,
+#                    
+#                    Bounds    = Bounds,
+#                    Data      = Data,
+#
+#                    NetCDF        = NetCDF,
+#                    GatheredArray = GatheredArray)
 
 def read(filename, external_files=(), verbose=False,
          ignore_read_error=False, uncompress=True, field=None,
