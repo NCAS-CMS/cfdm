@@ -1,6 +1,8 @@
 import abc
 
-from .coordinate import Coordinate
+from .mixin import Coordinate
+
+from .structure import DimensionCoordinate as structure_DimensionCoordinate
 
 # ====================================================================
 #
@@ -8,7 +10,7 @@ from .coordinate import Coordinate
 #
 # ====================================================================
 
-class DimensionCoordinate(Coordinate):
+class DimensionCoordinate(Coordinate, structure_DimensionCoordinate):
     '''A dimension coordinate construct of the CF data model.
 
     '''

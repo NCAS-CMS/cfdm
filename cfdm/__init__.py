@@ -26,7 +26,7 @@ if not (StrictVersion('2.7.0')
         platform.python_version()))
 
 from .bounds              import Bounds
-from .coordinate          import Coordinate
+#from .coordinate          import Coordinate
 from .coordinateancillary import CoordinateAncillary
 from .constants           import *
 from .functions           import *

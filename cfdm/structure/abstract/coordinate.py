@@ -1,7 +1,6 @@
 import abc
 
-import abstract
-
+from .propertiesdatabounds import PropertiesDataBounds
 
 # ====================================================================
 #
@@ -9,7 +8,7 @@ import abstract
 #
 # ====================================================================
 
-class Coordinate(abstract.PropertiesDataBounds):
+class Coordinate(PropertiesDataBounds):
     '''Base class for a CFDM dimension or auxiliary coordinate construct.
 
     '''

@@ -1,6 +1,8 @@
 import abc
 
-from .coordinate import Coordinate
+from .mixin import Coordinate
+
+from .structure import AuxiliaryCoordinate as structure_AuxiliaryCoordinate
 
 # ====================================================================
 #
@@ -8,7 +10,7 @@ from .coordinate import Coordinate
 #
 # ====================================================================
 
-class AuxiliaryCoordinate(Coordinate):
+class AuxiliaryCoordinate(Coordinate, structure_AuxiliaryCoordinate):
     '''A CF auxiliary coordinate construct.
 
     '''

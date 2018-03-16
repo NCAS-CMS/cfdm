@@ -1,6 +1,6 @@
 import abc
 
-from .coordinate import Coordinate
+from .abstract import Coordinate
 
 
 # ====================================================================

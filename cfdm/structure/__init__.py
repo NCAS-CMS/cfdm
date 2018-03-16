@@ -20,7 +20,7 @@ if not (StrictVersion('2.7.0')
 
 from .bounds              import Bounds
 from .constructs          import Constructs
-from .coordinate          import Coordinate
+#from .coordinate          import Coordinate
 from .coordinateancillary import CoordinateAncillary
 from .data.data           import Data
 from .data.dataunits      import DataUnits

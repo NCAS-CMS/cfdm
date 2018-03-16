@@ -1,8 +1,6 @@
 import abc
 
-import mixin
-
-from .structure import Coordinate as structure_Coordinate
+from .propertiesdatabounds import PropertiesDataBounds
 
 # ====================================================================
 #
@@ -10,7 +8,7 @@ from .structure import Coordinate as structure_Coordinate
 #
 # ====================================================================
 
-class Coordinate(mixin.PropertiesDataBounds, structure_Coordinate):
+class Coordinate(PropertiesDataBounds):
     '''Base class for a CF dimension or auxiliary coordinate construct.
 
     '''
