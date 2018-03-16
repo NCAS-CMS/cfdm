@@ -2,7 +2,7 @@ import abc
 
 from copy import deepcopy
 
-#from ..collection import Collection
+from .container import Container
 
 # ====================================================================
 #
@@ -10,7 +10,7 @@ from copy import deepcopy
 #
 # ====================================================================
 
-class Properties(object):
+class Properties(Container):
     '''
 
 Base class for storing a data array with metadata.
@@ -37,23 +37,10 @@ All components of a variable are optional.
     copy: `bool`, optional
 
         '''
-        self._components = {
-            # Components that are considered for equality and are deep
-            # copied with, both with bespoke algorithms. DO NOT ADD
-            # COMPONENTS TO THIS PARTITION.
-            1: {'properties': {}},
-            # Components that are considered for equality via their
-            # `equals` method and are deep copied with via their
-            # `copy` method
-            2: {},
-            # Components that are *not* considered for equality but are
-            # deep copied
-            3: {},
-            # Components that are *not* considered for equality and are
-            # *not* deep copied
-            4: {},
-        }
- 
+        super(Properties, self).__init__()
+
+        self._set_component(1, 'properties', None, {})
+        
         if source is not None:
             p = source.properties(copy=False)
             if properties:
@@ -92,7 +79,8 @@ All components of a variable are optional.
                 for key, value in properties.items():
                     properties[key] = deepcopy(value)
                     
-            self._components[1]['properties'] = properties
+#            self._components[1]['properties'] = properties
+            self._set_component(1, 'properties', None, properties)
     #--- End: def
         
     def __deepcopy__(self, memo):
