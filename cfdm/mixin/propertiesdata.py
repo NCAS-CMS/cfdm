@@ -187,7 +187,6 @@ standard_name = 'time'
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-#               _equals=None):
         '''
 
 True if two {+variable}s are equal, False otherwise.

@@ -197,7 +197,7 @@ False
 None
 
         '''
-        return self._del_component(1, 'data')
+        return self._del_component(3, 'data')
     #--- End: def
 
     def fill_value(self, default=None):
@@ -301,7 +301,7 @@ True
 
         '''
         try:
-            data = self._get_component(1, 'data', None, None)
+            data = self._get_component(3, 'data', None, None)
         except AttributeError:
             raise AttributeError("There is no data")
 
@@ -334,7 +334,7 @@ If present, the data array is stored in the `data` attribute.
 ...     print f.data
 
         '''     
-        return self._has_component(1, 'data')
+        return self._has_component(3, 'data')
     #--- End: def
 
     def set_data(self, data, copy=True):
@@ -359,7 +359,7 @@ If present, the data array is stored in the `data` attribute.
         data.set_units(None)
         data.set_calendar(None)
         
-        self._set_component(1, 'data', None, data)
+        self._set_component(3, 'data', None, data)
     #--- End: def
 
 #--- End: class

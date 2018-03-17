@@ -124,7 +124,7 @@ All components of a variable are optional.
     def del_ncvar(self):
         '''
         '''        
-        return self._del_component(4, 'ncvar')
+        return self._del_component(1, 'ncvar')
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
@@ -150,9 +150,6 @@ All components of a variable are optional.
         if ignore_fill_value:
             ignore_properties += ('_FillValue', 'missing_value')
 
-
-        
-            
         self_properties  = self.properties()
         other_properties = other.properties()
 
@@ -183,26 +180,26 @@ All components of a variable are optional.
                 return False
         #--- End: for
 
-        if set(self._components[2]) != set(other._components[2]):
-            if traceback:
-                print("{0}: Different properties 2: {1}, {2}".format( 
-                    self.__class__.__name__,
-                    sorted(self._components[2]), sorted(other._components[2])))
-            return False
-
-        
-        for key, x in self._components[2].iteritems():
-            y = other._components[2][key]
-            if not self._equals(x, y,
-                                rtol=rtol, atol=atol,
-                                ignore_fill_value=ignore_fill_value,
-                                ignore_data_type=ignore_data_type,
-                                traceback=traceback):
-                if traceback:
-                    print("{0}: Different {1}: {2!r}, {3!r}".format(
-                        self.__class__.__name__, prop, x, y))
-                return False
-        #--- End: for
+#        if set(self._components[2]) != set(other._components[2]):
+#            if traceback:
+#                print("{0}: Different properties 2: {1}, {2}".format( 
+#                    self.__class__.__name__,
+#                    sorted(self._components[2]), sorted(other._components[2])))
+#            return False
+#
+#        
+#        for key, x in self._components[2].iteritems():
+#            y = other._components[2][key]
+#            if not self._equals(x, y,
+#                                rtol=rtol, atol=atol,
+#                                ignore_fill_value=ignore_fill_value,
+#                                ignore_data_type=ignore_data_type,
+#                                traceback=traceback):
+#                if traceback:
+#                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+#                        self.__class__.__name__, prop, x, y))
+#                return False
+#        #--- End: for
 
         return True
     #--- End: def
@@ -210,13 +207,13 @@ All components of a variable are optional.
     def get_ncvar(self, *default):
         '''
         '''        
-        return self._get_component(4, 'ncvar', None, *default)
+        return self._get_component(1, 'ncvar', None, *default)
     #--- End: def
 
     def set_ncvar(self, value):
         '''
         '''        
-        return self._set_component(4, 'ncvar', None, value)
+        return self._set_component(1, 'ncvar', None, value)
     #--- End: def
 
 #--- End: class
