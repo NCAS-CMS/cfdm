@@ -1,5 +1,7 @@
 import abc
 
+from copy import deepcopy
+
 # ====================================================================
 #
 
@@ -24,61 +26,49 @@ All components of a variable are optional.
 
 :Parameters:
 
-    properties: `dict`, optional
-
     source: optional
 
     copy: `bool`, optional
 
         '''
         self._components = {
-            # Components that are considered for equality and are deep
-            # copied with, both with bespoke algorithms.
+            # Components that not copied as object identities. Good
+            # for immutable objects (e.g. a str or a tuple)
             1: {},
-            # Components that are considered for equality via their
-            # `equals` method and are deep copied with via their
-            # `copy` method
-            2: {},
-            # Components that are *not* considered for equality but are
-            # deep copied
-            3: {},
-            # Components that are *not* considered for equality and are
-            # *not* deep copied
+            # Components that may be sufficiently copied with a copy
+            # method (e.g. a set or a dict with immutable values)
             4: {},
+            # Components that need to be deep copied with copy.deepcopy
+            2: {},
+            # Components that are should have bespoke copy algorithms
+            3: {},
         }
 
-        if source is not None:
-            p = source.properties(copy=False)
-            if properties:
-                p.update(properties)
+        if source is not None:            
+            components = source._components[1]
+            if components:
+                self._components[1] = components.copy()
 
-            properties = p
-
-            components = source._components[2]
-            if components:            
-                components = components2.copy()
-                if copy:
-                    for key, value in components.items():
-                        self._components[key] = value.copy()
-
-                self._components[2] = components
-            #--- End: if
-            
-            components = source._components[3]
+            key = 4
+            components = source._components[key]
             if components:
                 components = components.copy()
                 if copy:
-                    for key, value in components.items():
-                        components[key] = deepcopy(value)
+                    for k, v in components.items():
+                        components[k] = v.copy()
                         
-                self._components[3] = components
-            #--- End: if
+                self._components[key] = components
 
-            components = source._components[4]
+            key = 2
+            components = source._components[key]
             if components:
-                self._components[4] = components.copy()
+                components = components.copy()
+                if copy:
+                    for k, v in components.items():
+                        components[k] = deepcopy(v)
+                        
+                self._components[key] = components
         #--- End: if
-
     #--- End: def
         
     def __repr__(self):
@@ -124,8 +114,10 @@ All components of a variable are optional.
         
         if value is None:
             if default:
-                return default[0]           
-            raise AttributeError("Can't get non-existent {0} {1!r} ".format(component, key))
+                return default[0]
+            if key is None:
+                raise AttributeError("Can't get non-existent {!r}".format(component))
+            raise AttributeError("Can't get non-existent {!r}".format(key))
 
         return value
     #--- End: def
@@ -150,4 +142,8 @@ All components of a variable are optional.
             components[component][key] = value
     #--- End: def
 
+    def copy(self):
+        '''
+        '''
+        return type(self)(source=self, copy=True)
 #--- End: class

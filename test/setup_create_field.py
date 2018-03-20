@@ -30,7 +30,8 @@ class create_fieldTest(unittest.TestCase):
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
         
-        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]), bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
+        dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
+                                        bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
         dim2.set_property('standard_name', 'atmosphere_hybrid_height_coordinate')
         
         # Auxiliary coordinates
@@ -158,16 +159,18 @@ class create_fieldTest(unittest.TestCase):
         
         
         f.dump()
-
+        print "####################################################"
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
+        for x in g:
+            x.print_read_report()
 
         self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
 
         g = g[0].squeeze(copy=False)
         
-        g.dump()
+#        g.dump()
         print g
         self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
                         '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
@@ -182,12 +185,12 @@ class create_fieldTest(unittest.TestCase):
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 
-        print'f'
-        print f
-        print 'g'
-        print g
-        f.dump()
-        g.dump()
+#        print'f'
+#        print f
+#        print 'g'
+#        print g
+#        f.dump()
+#        g.dump()
         self.assertTrue(g.equals(f, traceback=True),
                         "Field not equal to itself read back in")
 
@@ -196,9 +199,13 @@ class create_fieldTest(unittest.TestCase):
         x = f.dump(display=False)
 
         g = cfdm.read(self.filename, _debug=True, field=['domain_ancillary'])
-        print g
         for x in g:
-            x.dump()
+            x.print_read_report()
+
+
+        print g
+#        for x in g:
+#            x.dump()
 #        h = g.field('domainancillary2')
 #        h.dump()
 #        print h
@@ -212,13 +219,6 @@ class create_fieldTest(unittest.TestCase):
 #        
 #        h = g.field('cellmeasure0')
 #        print h
-
-        for x in g:
-            print x.get_ncvar(None)
-#            print x._components[4]
-#            print '@RR=',x._get_component(4, 'read_report', None, 'arse')
-            print x.get_read_report('NONE')
-
 
         
     #--- End: def

@@ -785,7 +785,7 @@ a new netCDF dimension for the bounds.
     out: `str`
         The netCDF name of the dimension coordinate.
 
-        '''       
+        '''
         g = self.write_vars
 
         seen = g['seen']
@@ -808,7 +808,7 @@ a new netCDF dimension for the bounds.
         if create:
             ncdim = self._create_netcdf_variable_name(coord,
                                                       default='coordinate')
-    
+            
             # Create a new dimension, if it is not a scalar coordinate
 #            if self._get_data(coord).ndim > 0:
             if self._get_ndim(coord) > 0:
@@ -1234,7 +1234,8 @@ then the input coordinate is not written.
         '''
         g = self.write_vars
 
-        ncdimensions = tuple([g['axis_to_ncdim'][axis] for axis in self._get_construct_axes(f, key)])
+        ncdimensions = tuple([g['axis_to_ncdim'][axis]
+                              for axis in self._get_construct_axes(f, key)])
     
         create = not self._already_in_file(anc, ncdimensions, ignore_type=True)
     
@@ -1706,10 +1707,9 @@ extra trailing dimension.
         
         # For each of the field's axes ...
         for axis in sorted(self._get_domain_axes(f)):
-
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.iteritems():
-                if self._get_construct_axes(key) != (axis,):
+                if self._get_construct_axes(f, key) != (axis,):
                     continue
 
                 # --------------------------------------------------------
@@ -1720,7 +1720,7 @@ extra trailing dimension.
                     # The data array spans this domain axis, so write
                     # the dimension coordinate to the file as a
                     # coordinate variable.
-                    ncdim = self._write_dimension_coordinate(f, key, dim_coord)
+                    ncvar = self._write_dimension_coordinate(f, key, dim_coord)
                 else:
                     # The data array does not span this axis (and
                     # therefore it must have size 1).
@@ -1730,11 +1730,11 @@ extra trailing dimension.
                         # ancillaries which span this domain axis, so
                         # write the dimension coordinate to the file
                         # as a coordinate variable.
-                        ncdim = self._write_dimension_coordinate(f, key, dim_coord)
+                        ncvar = self._write_dimension_coordinate(f, key, dim_coord)
     
                         # Expand the field's data array to include
                         # this domain axis
-                        self._expand_dims(f, position=0, axis=axis, copy=False) 
+                        f = self._expand_dims(f, position=0, axis=axis, copy=False) 
                     else:
                         # There are NO auxiliary coordinates, cell
                         # measures, domain ancillaries or field
@@ -1760,7 +1760,7 @@ extra trailing dimension.
                     # an auxiliary coordinate, cell measure, domain
                     # ancillary or field ancillary does, so expand the
                     # data array to include it.
-                    self._expand_dims(f, position=0, axis=axis, copy=False)
+                    f = self._expand_dims(f, position=0, axis=axis, copy=False)
                     data_axes.append(axis)
                 #--- End: if
     
@@ -1931,8 +1931,7 @@ extra trailing dimension.
         ncvar = self._create_netcdf_variable_name(f, default='data')
     
 #        ncdimensions = tuple([g['axis_to_ncdim'][axis] for axis in f.get_data_axes()])
-#        ncdimensions = tuple([g['axis_to_ncdim'][axis] for axis in self._get_data_axes(f)])
-        ncdimensions = tuple([g['axis_to_ncdim'][axis] for axis in data_axes])
+        ncdimensions = tuple([g['axis_to_ncdim'][axis] for axis in self._get_data_axes(f)])
     
         extra = {}
     
@@ -2006,6 +2005,11 @@ extra trailing dimension.
         '''
         return construct.get_bounds(*default)
 
+    def _get_cell_measures(self, field):
+        '''
+        '''
+        return field.cell_measures()
+        
     def _get_cell_methods(self, field):
         '''
         '''
@@ -2027,7 +2031,7 @@ extra trailing dimension.
     def _get_coordinates(self, field):
         '''
         '''
-        return field.get_coordinates()
+        return field.coordinates()
     
     def _get_data(self, construct, *default):
         '''

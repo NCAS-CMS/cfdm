@@ -21,6 +21,7 @@ Keys are item identifiers, values are item objects.
                  cell_method=None):
         '''
         '''
+        
         self._key_base = {}
 
         self._array_constructs     = set()
@@ -266,7 +267,7 @@ Return a deep or shallow copy.
         X = type(self)
         new = X.__new__(X)
 
-        new._key_base                  = self._key_base.copy()
+        new._key_base             = self._key_base.copy()
         new._array_constructs     = self._array_constructs.copy()
         new._non_array_constructs = self._non_array_constructs.copy()
         new._ordered_constructs   = self._ordered_constructs.copy()
@@ -274,8 +275,8 @@ Return a deep or shallow copy.
         
         new._construct_type = {}
         d = {}
-        for construct_type in (tuple(new._array_constructs) +
-                               tuple(new._non_array_constructs)):
+        
+        for construct_type in new._array_constructs:
             v = self._constructs[construct_type]
             new_v = {}
             for key, construct in v.iteritems():
@@ -284,7 +285,35 @@ Return a deep or shallow copy.
                 
             d[construct_type] = new_v
         #--- End: for
+#        new._constructs = d
+#
+#        new._construct_type = {}
+#        d = {}
+        for construct_type in new._non_array_constructs:
+            v = self._constructs[construct_type]
+            new_v = {}
+            for key, construct in v.iteritems():
+                new_v[key] = construct.copy()
+                new._construct_type[key] = construct_type
+                
+            d[construct_type] = new_v
+        #--- End: for
+        
         new._constructs = d
+
+#        new._construct_type = {}
+#        d = {}
+#        for construct_type in (tuple(new._array_constructs) +
+#                               tuple(new._non_array_constructs)):
+#            v = self._constructs[construct_type]
+#            new_v = {}
+#            for key, construct in v.iteritems():
+#                new_v[key] = construct.copy(data=data)
+#                new._construct_type[key] = construct_type
+#                
+#            d[construct_type] = new_v
+#        #--- End: for
+#        new._constructs = d
 
         return new
     #--- End: def

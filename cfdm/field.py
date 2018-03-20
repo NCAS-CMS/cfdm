@@ -78,8 +78,8 @@ and institution).
                                     source=source, copy=copy,
                                     _use_data=_use_data) 
                
-        self._set_component(3, 'unlimited', None, None)
-        self._set_component(3, 'HDFgubbins', None, None)
+        self._set_component(2, 'unlimited', None, None)
+        self._set_component(2, 'HDFgubbins', None, None)
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
@@ -861,13 +861,13 @@ by the data array may be selected.
     def get_global_attributes(self, global_attributes, *default):
         '''
         '''
-        self._get_component(3, 'global_attributes', None, *default)
+        self._get_component(2, 'global_attributes', None, *default)
     #--- End: def
 
     def get_read_report(self, *default):
         '''
         '''
-        return self._get_component(4, 'read_report', None, *default)
+        return self._get_component(1, 'read_report', None, *default)
     #--- End: def
    
     def print_read_report(self, *default):
@@ -897,14 +897,14 @@ by the data array may be selected.
     def set_global_attributes(self, global_attributes):
         '''
         '''
-        self._set_component(3, 'global_attributes', None,
+        self._set_component(2, 'global_attributes', None,
                             tuple(global_attributes))
     #--- End: def
 
     def set_read_report(self, value):
         '''
         '''
-        self._set_component(4, 'read_report', None, value)
+        self._set_component(1, 'read_report', None, value)
     #--- End: def    
    
     def squeeze(self, axes=None, copy=True):

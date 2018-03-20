@@ -114,11 +114,10 @@ domain ancillary objects.
                 for key, value in topology_arrays.items():
                     topology_arrays[key] = value.copy(data=_use_data)
         
-        self._set_component(1, 'extent_parameters', None, extent_parameters)
-        self._set_component(1, 'topology_parameters', None, topology_parameters)
-
-        self._set_component(1, 'extent_arrays', None, extent_arrays)
-        self._set_component(1, 'topology_arrays', None, topology_arrays)
+        self._set_component(3, 'extent_parameters', None, extent_parameters)
+        self._set_component(3, 'topology_parameters', None, topology_parameters)
+        self._set_component(3, 'extent_arrays', None, extent_arrays)
+        self._set_component(3, 'topology_arrays', None, topology_arrays)
     #--- End: def
 
     def del_bounds(self):
@@ -133,43 +132,43 @@ domain ancillary objects.
     out: `None` or `Bounds`
 
         '''
-        return self._del_component(1, 'bounds')
+        return self._del_component(3, 'bounds')
     #--- End: def
 
     def del_extent_array(self, name):
         '''
         '''
-        return self._component(1, 'extent_arrays', name)
+        return self._component(3, 'extent_arrays', name)
     #--- End: def
 
     def del_extent_parameter(self, name):
         '''
         '''
-        return self._del_component(1, 'extent_parameters', name)
+        return self._del_component(3, 'extent_parameters', name)
     #--- End: def
 
     def del_topology_parameter(self, name):
         '''
         '''
-        return self._del_component(1, 'topology_parameters', name)
+        return self._del_component(3, 'topology_parameters', name)
     #--- End: def
 
     def del_topology_array(self, name):
         '''
         '''
-        return self._del_component(1, 'topology_arrays', name)
+        return self._del_component(3, 'topology_arrays', name)
     #--- End: def
 
     def extent_arrays(self):
         '''
         '''
-        return self._get_component(1, 'extent_arrays', None, {}).copy()
+        return self._get_component(3, 'extent_arrays', None, {}).copy()
     #--- End: def
        
     def extent_parameters(self):
         '''
         '''
-        return self._get_component(1, 'extent_parameters', None, {}).copy()
+        return self._get_component(3, 'extent_parameters', None, {}).copy()
     #--- End: def
 
     def get_bounds(self, *default):
@@ -190,19 +189,19 @@ domain ancillary objects.
     `None`
 
         '''
-        return self._get_component(1, 'bounds', None, *default)
+        return self._get_component(3, 'bounds', None, *default)
     #--- End: def
 
     def get_extent_array(self, array, *default):
         '''
         '''
-        return self._get_component(1, 'extent_arrays', array, *default)
+        return self._get_component(3, 'extent_arrays', array, *default)
     #--- End: def
 
     def get_extent_parameter(self, parameter, *default):
         '''
         '''
-        return self._get_component(1, 'extent_parameters', parameter, *default)
+        return self._get_component(3, 'extent_parameters', parameter, *default)
     #--- End: def
 
         self._get_parameters('extent')[name] = value
@@ -211,13 +210,13 @@ domain ancillary objects.
     def get_topology_array(self, name, *default):
         '''
         '''
-        return self._get_component(1, 'topology_arrays', name, *default)
+        return self._get_component(3, 'topology_arrays', name, *default)
     #--- End: def
 
     def get_topology_parameter(self, name, *default):
         '''
         '''
-        return self._get_component(1, 'topology_parameters', name, *default)
+        return self._get_component(3, 'topology_parameters', name, *default)
     #--- End: def
 
     def has_bounds(self):
@@ -238,7 +237,7 @@ domain ancillary objects.
     `None`
 
         '''
-        return self._has_component(1, 'bounds')
+        return self._has_component(3, 'bounds')
     #--- End: def
 
     def set_bounds(self, bounds, copy=True):
@@ -262,7 +261,7 @@ domain ancillary objects.
         if copy:
             bounds = bounds.copy()
 
-        self._set_component(1, 'bounds', None, bounds)
+        self._set_component(3, 'bounds', None, bounds)
     #--- End: def
 
     def set_extent_array(self, name, value, copy=True):
@@ -271,7 +270,7 @@ domain ancillary objects.
         if copy:
             value = value.copy()
 
-        self._set_component(1, 'extent_arrays', name, value)
+        self._set_component(3, 'extent_arrays', name, value)
     #--- End: def
 
     def set_extent_parameter(self, parameter, value, copy=True):
@@ -280,7 +279,7 @@ domain ancillary objects.
         if copy:
             value = deepcopy(value)
 
-        self._set_component(1, 'extent_parameters', parameter, value)
+        self._set_component(3, 'extent_parameters', parameter, value)
     #--- End: def
 
     def set_topology_array(self, name, value, copy=True):
@@ -289,7 +288,7 @@ domain ancillary objects.
         if copy:
             value = value.copy()
 
-        return self._set_component(1, 'topology_arrays', name, value)
+        return self._set_component(3, 'topology_arrays', name, value)
     #--- End: def
 
 
@@ -299,21 +298,21 @@ domain ancillary objects.
         if copy:
             value = deepcopy(value)
 
-        return self._set_component(1, 'topology_parameters', name, value)
+        return self._set_component(3, 'topology_parameters', name, value)
     #--- End: def
 
     
     def topology_arrays(self):
         '''
         '''
-        return self._get_component(1, 'topology_arrays', None, {}).copy()
+        return self._get_component(3, 'topology_arrays', None, {}).copy()
     #--- End: def
     
 
     def topology_parameters(self):
         '''
         '''
-        return self._get_component(1, 'topology_parameters', None, {}).copy()
+        return self._get_component(3, 'topology_parameters', None, {}).copy()
     #--- End: def
 
 #--- End: class

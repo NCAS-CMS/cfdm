@@ -447,6 +447,7 @@ ancillaries, field ancillaries).
         # that are referenced by othe netCDF variables
         # ------------------------------------------------------------
         if g['fields']:
+            print 'PPPPPPPPPPPPPPPPPPPPPP'
             fields0 = fields.values()
             for construct_type in g['fields']:
                 for f in fields0:
@@ -464,12 +465,19 @@ ancillaries, field ancillaries).
                 print repr(x)
 
         for x in fields.values():
-            x._set_component(4, 'component_report', None, g['component_report'])
+            x._set_component(1, 'component_report', None, g['component_report'])
 
-        print g['component_report']
-        print g['component_report'].keys()
-        
-                
+#        print g['component_report']
+#        print g['component_report'].keys()
+#        
+#
+#        print  "READ REPORT"
+#        
+#        for x in fields.values():
+#            x.print_read_report()
+#            print '__________________________\n'
+
+        print "g['references'] =",g['references']
         # ------------------------------------------------------------        
         # Close the netCDF file
         # ------------------------------------------------------------                
@@ -483,7 +491,7 @@ ancillaries, field ancillaries).
 
 :Returns:
 
-    None
+    `None`
 
         '''
         nc = self.read_vars['nc']
@@ -506,7 +514,7 @@ ancillaries, field ancillaries).
     
 :Examples:
 
->>> filetype = file_type(filename)
+>>> filetype = n.file_type(filename)
     
     '''
         # ----------------------------------------------------------------
@@ -1210,7 +1218,7 @@ netCDF variable.
         # ----------------------------------------------------------------
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
-        f = self._initialise_implemented('Field')
+        f = self._initialise('Field')
         self._set_properties(f, properties, copy=False)
 
         # Store the field's netCDF variable name
@@ -1363,6 +1371,8 @@ netCDF variable.
                 if is_dimension_coordinate:
                     # Insert dimension coordinate
                     coord = self.implementation.DimensionCoordinate(source=coord, copy=False)
+#                    coord = self._initialise('DimensionCoordinate',
+#                                             source=coord, copy=False)
     
                     if _debug:
                         print '    [5] Inserting', repr(coord)
@@ -1458,7 +1468,7 @@ netCDF variable.
             if not ok:
                 # Move on to the next coordinate
                 continue
-
+               
             # Still here? Create a formula terms coordinate reference.
             for ncvar, domain_anc, axes in domain_ancillaries:
                 if _debug:
@@ -1715,15 +1725,15 @@ netCDF variable.
     
         if dimension:
             properties.pop('compress', None) #??
-            c = self._initialise_implemented('DimensionCoordinate')
+            c = self._initialise('DimensionCoordinate')
         elif auxiliary:
-            c = self._initialise_implemented('AuxiliaryCoordinate')
+            c = self._initialise('AuxiliaryCoordinate')
         elif domain_ancillary:
 #            properties.pop('coordinates', None)
 #            properties.pop('grid_mapping', None)
 #            properties.pop('cell_measures', None)
 #            properties.pop('positive', None)
-            c = self._initialise_implemented('DomainAncillary')
+            c = self._initialise('DomainAncillary')
         else:
             raise ValueError(
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
@@ -1746,7 +1756,7 @@ netCDF variable.
             if not cf_compliant:
                 pass
             else:
-                bounds = self._initialise_implemented('Bounds')
+                bounds = self._initialise('Bounds')
 
                 properties = attributes[ncbounds].copy()
                 properties.pop('formula_terms', None)                
@@ -1878,7 +1888,7 @@ netCDF variable.
 
     out: `str`
         '''
-        ncvar = self._get_ncvar(construct)
+        ncvar = self._get_ncvar(construct, None)
         if ncvar is not None:
             self._reference(ncvar)
                     
@@ -2005,10 +2015,16 @@ also be provided.
         construct.set_ncvar(ncvar)
     #-- End: def
 
-    def _get_ncvar(self, construct):
+    def _get_ncvar(self, construct, *default):
        '''
        '''
-       return construct.get_ncvar(None)
+       return construct.get_ncvar(*default)
+    #-- End: def
+
+    def _get_property(self, construct, prop, *default):
+       '''
+       '''
+       return construct.get_property(prop, *default)
     #-- End: def
 
     def _get_auxiliary_coordinate(self, f):
@@ -2080,8 +2096,7 @@ also be provided.
         The new item.
 
         '''
-        cell_measure = self._initialise_implemented('CellMeasure',
-                                                    measure=measure)
+        cell_measure = self._initialise('CellMeasure', measure=measure)
 
         self._set_properties(cell_measure, attributes[ncvar])
 
@@ -2246,18 +2261,16 @@ Set the Data attribute of a variable.
                        ndim=None, shape=None, size=None):
         '''
         '''
-        return self.implementation.NetCDF(filename=filename,
-                                          ncvar=ncvar,
-                                          dtype=dtype,
-                                          ndim=ndim,
-                                          shape=shape,
-                                          size=size)
+        return self._initialise('NetCDF', filename=filename,
+                                ncvar=ncvar, dtype=dtype,
+                                ndim=ndim, shape=shape,
+                                size=size)
     #--- End: def
     
     def _create_domain_axis(self, size, ncdim=None):
         '''
         '''
-        domain_axis = self.implementation.DomainAxis(size)
+        domain_axis = self._initialise('DomainAxis', size=size)
         if ncdim is not None:
             self._set_ncdim(domain_axis, ncdim)
 
@@ -2282,7 +2295,7 @@ Set the Data attribute of a variable.
 
         '''
         # Create a field ancillary object
-        field_ancillary = self._initialise_implemented('FieldAncillary')
+        field_ancillary = self._initialise('FieldAncillary')
 
         # Insert properties
         self._set_properties(field_ancillary, attributes[ncvar], copy=True)
@@ -2297,11 +2310,17 @@ Set the Data attribute of a variable.
         return field_ancillary
     #--- End: def
 
-    def _initialise_implemented(self, object_type, **kwargs):
+    def _initialise(self, object_type, **kwargs):
+        '''
+        '''
         return getattr(self.implementation, object_type)(**kwargs)
+    #--- End: def
 
     def _set_properties(self, construct, properties, copy=True):
+        '''
+        '''
         return construct.properties(properties, copy=copy)
+    #--- End: def
 
     def _create_grid_mapping_ref(self, f, grid_mapping,
                                  attributes, ncvar_to_key):
@@ -2369,13 +2388,13 @@ Set the Data attribute of a variable.
                     coordinates = []
                     for x in self.implementation.CoordinateReference._name_to_coordinates.get(name, ()):
                         for key, coord in f.coordinates().iteritems():
-                            if x == coord.get_property('standard_name', None):
+                            if x == self._get_property(coord, 'standard_name', None):
                                 coordinates.append(key)
                 #--- End: if
                 
-                coordref = self._initialise_implemented('CoordinateReference',
-                                                        coordinates=coordinates,
-                                                        parameters=parameters)
+                coordref = self._initialise('CoordinateReference',
+                                            coordinates=coordinates,
+                                            parameters=parameters)
 
                 self._set_properties(coordref, props)
                 
@@ -2389,8 +2408,8 @@ Set the Data attribute of a variable.
     #--- End: def
     
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
-        '''
-    
+        '''asdasdasdas
+
 :Parameters:
 
     f: `Field`
@@ -2402,13 +2421,14 @@ Set the Data attribute of a variable.
     formula_terms: `dict`
         The formula_terms attribute value from the netCDF file.
 
-    coordref_parameters: `dict`
+          *Example:*
+            ``formula_terms={'a':'a','b':'b','orog':'surface_altitude'}``
 
 :Returns:
 
     out: `CoordinateReference`
-    
-    '''
+
+        '''
         g = self.read_vars
 
         ancillaries = {}
@@ -2421,12 +2441,12 @@ Set the Data attribute of a variable.
             else:
                 ancillaries[term] = None
 
-        coordref = self._initialise_implemented('CoordinateReference',
-                                                coordinates=(key,),
-                                                domain_ancillaries=ancillaries)
+        coordref = self._initialise('CoordinateReference',
+                                    coordinates=(key,),
+                                    domain_ancillaries=ancillaries)
 
         props = {}
-        name = coord.get_property('standard_name', None)
+        name = self._get_property(coord, 'standard_name', None)
         if name is not None:
             props['standard_name'] = name
 
@@ -2518,14 +2538,22 @@ dimensions are returned.
                                compression_parameters=None):
         '''
         '''
-        return self.implementation.GatheredArray(
-            array,
+        return self._initialise('GatheredArray',
+            array=array,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
             compression_type=compression_type,
-            compression_parameters=compression_parameters
-        )
+            compression_parameters=compression_parameters)
+#        return self.implementation.GatheredArray(
+#            array,
+#            ndim=uncompressed_ndim,
+#            shape=uncompressed_shape,
+#            size=uncompressed_size,
+#            compression_type=compression_type,
+#            compression_parameters=compression_parameters
+#        )
+    #--- End: def
 
     def _create_data_DSG_gathered(self, ncvar, filearray,
                                   uncompressed_shape=None,
@@ -2631,7 +2659,9 @@ dimensions are returned.
             units    = getattr(variable, 'units', None)
             calendar = getattr(variable, 'calendar', None)
 
-        return self.implementation.Data(array, units=units, calendar=calendar, **kwargs)
+        return self._initialise('Data', data=array, units=units,
+                                calendar=calendar, **kwargs)
+    #    return self.implementation.Data(array, units=units, calendar=calendar, **kwargs)
     #--- End: def
 
     def _copy_construct(self, construct_type, field_ncvar, ncvar):
@@ -2668,7 +2698,7 @@ dimensions are returned.
                 g['read_report'][field_ncvar]['components'].setdefault(var, []).extend(
                     report)
         #--- End: if
-        
+
         return g[construct_type][ncvar].copy()    
     #--- End: def
     

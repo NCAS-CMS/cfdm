@@ -37,9 +37,9 @@ All components of a variable are optional.
     copy: `bool`, optional
 
         '''
-        super(Properties, self).__init__()
+        super(Properties, self).__init__(source=source, copy=copy)
 
-        self._set_component(1, 'properties', None, {})
+        self._set_component(3, 'properties', None, {})
         
         if source is not None:
             p = source.properties(copy=False)
@@ -47,30 +47,6 @@ All components of a variable are optional.
                 p.update(properties)
 
             properties = p
-
-            components = source._components[2]
-            if components:            
-                components = components2.copy()
-                if copy:
-                    for key, value in components.items():
-                        self._components[key] = value.copy()
-
-                self._components[2] = components
-            #--- End: if
-            
-            components = source._components[3]
-            if components:
-                components = components.copy()
-                if copy:
-                    for key, value in components.items():
-                        components[key] = deepcopy(value)
-                        
-                self._components[3] = components
-            #--- End: if
-
-            components = source._components[4]
-            if components:
-                self._components[4] = components.copy()
         #--- End: if
 
         if properties:
@@ -78,9 +54,8 @@ All components of a variable are optional.
             if copy:
                 for key, value in properties.items():
                     properties[key] = deepcopy(value)
-                    
-#            self._components[1]['properties'] = properties
-            self._set_component(1, 'properties', None, properties)
+
+            self._set_component(3, 'properties', None, properties)
     #--- End: def
         
     def __deepcopy__(self, memo):
@@ -101,78 +76,6 @@ All components of a variable are optional.
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
-    def _del_component(self, component_type, component, key=None):
-        '''
-        '''
-        components = self._components[component_type]
-        if key is None:            
-            return components.pop(component, None)
-        else:
-            return components[component].pop(key, None)
-    #--- End: def
-
-    def _get_component(self, component_type, component, key, *default):
-        '''
-        '''
-        components = self._components[component_type]
-        if key is None:
-            value = components.get(component)
-        else:
-            value = components[component].get(key)
-        
-        if value is None:
-            if default:
-                return default[0]           
-            raise AttributeError("Can't get non-existent {0} {1!r} ".format(component, key))
-
-        return value
-    #--- End: def
-
-    def _has_component(self, component_type, component, key=None):
-        '''
-        '''
-        components = self._components[component_type]
-        if key is None:
-            return component in components
-        else:
-            return key in components[component]
-    #--- End: def
-
-    def _set_component(self, component_type, component, key, value):
-        '''
-        '''
-        components = self._components[component_type]
-        if key is None:
-            components[component] = value
-        else:
-            components[component][key] = value
-    #--- End: def
-
-    def copy(self, data=True):
-        '''Return a deep copy.
-
-``x.copy()`` is equivalent to ``copy.deepcopy(x)``.
-
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> d = c.copy()
-
-:Parameters:
-
-    data: `bool`, optional
-        This parameter has no effect and is ignored.
-
-:Returns:
-
-    out:
-        The deep copy.
-
-        '''        
-        return type(self)(source=self, copy=True)
-    #--- End: def
-    
     def del_property(self, prop):
         '''Delete a property.
 
@@ -212,7 +115,7 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 None
 
         '''
-        return self._del_component(1, 'properties', prop)
+        return self._del_component(3, 'properties', prop)
     #--- End: def
 
     def get_property(self, prop, *default):
@@ -262,7 +165,7 @@ AttributeError: Field doesn't have property 'standard_name'
 
         '''
         try:
-            return self._get_component(1, 'properties', prop, *default)
+            return self._get_component(3, 'properties', prop, *default)
         except AttributeError:
             raise AttributeError("Can't get non-existent property {!r}".format(prop))
     #--- End: def
@@ -304,7 +207,7 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 
 
 '''
-        return self._has_component(1, 'properties', prop)
+        return self._has_component(3, 'properties', prop)
     #--- End: def
 
     def properties(self, props=None, clear=False, copy=True):
@@ -340,11 +243,11 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 :Examples 2:
 
         '''
-        existing_properties = self._get_component(1, 'properties', None, None)
+        existing_properties = self._get_component(3, 'properties', None, None)
 
         if existing_properties is None:
            existing_properties = {}
-           self._set_component(1, 'properties', None, existing_properties)
+           self._set_component(3, 'properties', None, existing_properties)
         
         out = existing_properties.copy()
 
@@ -402,7 +305,7 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
      `None`
 
         '''
-        self._set_component(1, 'properties', prop, value)
+        self._set_component(3, 'properties', prop, value)
     #--- End: def
 
 #--- End: class
