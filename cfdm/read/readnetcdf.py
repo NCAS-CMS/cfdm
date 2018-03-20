@@ -447,7 +447,6 @@ ancillaries, field ancillaries).
         # that are referenced by othe netCDF variables
         # ------------------------------------------------------------
         if g['fields']:
-            print 'PPPPPPPPPPPPPPPPPPPPPP'
             fields0 = fields.values()
             for construct_type in g['fields']:
                 for f in fields0:
@@ -466,16 +465,6 @@ ancillaries, field ancillaries).
 
         for x in fields.values():
             x._set_component(1, 'component_report', None, g['component_report'])
-
-#        print g['component_report']
-#        print g['component_report'].keys()
-#        
-#
-#        print  "READ REPORT"
-#        
-#        for x in fields.values():
-#            x.print_read_report()
-#            print '__________________________\n'
 
         print "g['references'] =",g['references']
         # ------------------------------------------------------------        

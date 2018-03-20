@@ -858,10 +858,10 @@ by the data array may be selected.
         return self._get_constructs().constructs('field_ancillary',
                                                  axes=axes, copy=copy)
 
-    def get_global_attributes(self, global_attributes, *default):
+    def get_global_attributes(self, *default):
         '''
         '''
-        self._get_component(2, 'global_attributes', None, *default)
+        return self._get_component(1, 'global_attributes', None, *default)
     #--- End: def
 
     def get_read_report(self, *default):
@@ -896,8 +896,16 @@ by the data array may be selected.
    
     def set_global_attributes(self, global_attributes):
         '''
+Consider [get|set|del_global_attribute [NO S]
+
+:Examples 2:
+
+>>> f.set_global_attributes(['project', 'experiment'])
+>>> f.get_global_attributes()
+('project', 'experiment')
+
         '''
-        self._set_component(2, 'global_attributes', None,
+        self._set_component(1, 'global_attributes', None,
                             tuple(global_attributes))
     #--- End: def
 
