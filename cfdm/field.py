@@ -1,11 +1,11 @@
 import abc
 
 import mixin
-
+import structure
 from .constructs import Constructs
-#from .domain      import Domain
+from .domain      import Domain
 
-from .structure import Field as structure_Field
+#from .structure import Field as structure_Field
 
 
 _debug = False
@@ -17,7 +17,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(mixin.PropertiesData, structure_Field):
+class Field(mixin.PropertiesData, structure.Field):
     '''A CF field construct.
 
 The field construct is central to the CF data model. A field
@@ -51,7 +51,7 @@ and institution).
         obj = object.__new__(cls, *args, **kwargs)
         
         obj._Constructs = Constructs
-#        obj._Domain     = Domain
+        obj._Domain     = Domain
 
         return obj
     #--- End: def
@@ -502,6 +502,11 @@ field.
         return self._get_constructs().constructs('dimension_coordinate',
                                                  axes=axes, copy=copy)
     #--- End: def
+
+    def domain(self, copy=False):
+        '''
+        '''
+        return self._Domain(source=self, copy=copy)
 
     def domain_ancillaries(self, axes=None, copy=False):
         '''

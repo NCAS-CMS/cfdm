@@ -153,6 +153,12 @@ frame and consists of the following:
         return self._del_component(3, 'datum')
     #--- End: def
     
+    def del_coordinate(self, key):
+        '''
+        '''        
+        self._get_component(4, 'coordinates', None).discard(key)
+    #--- End: def
+    
     def del_term(self, term):
         '''
         '''        
