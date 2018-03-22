@@ -21,8 +21,8 @@ class DomainConstructMethods(object):
         pass #        return self._get_component(3, 'constructs', None, *default)
     #--- End: def
     
-    def array_constructs(self, copy=False):
-        return self._get_constructs().array_constructs(copy=copy)
+    def array_constructs(self, copy=False, ignore=()):
+        return self._get_constructs().array_constructs(copy=copy, ignore=ignore)
     
     def auxiliary_coordinates(self, copy=False):
         return self._get_constructs().constructs('auxiliary_coordinate', copy=copy)
@@ -458,4 +458,135 @@ class DomainConstructMethods(object):
                                   item, key=key, axes=axes, copy=copy)
     #--- End: def
 
+#--- End: class
+
+
+class ConstructAccess(object):
+    '''
+    '''
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def _get_constructs(self, *default):
+        '''
+.. versionadded:: 1.6
+        
+        '''
+        pass #        return self._get_component(3, 'constructs', None, *default)
+    #--- End: def
+    
+    def array_constructs(self, copy=False, ignore=())
+        return self._get_constructs().array_constructs(copy=copy, ignore=ignore)
+    
+    def construct_axes(self, key=None):
+        return self._get_constructs().construct_axes(key=key)
+    
+    def construct_type(self, key):
+        return self._get_constructs().construct_type(key)
+       
+    def constructs(self, copy=False):
+        '''Return all of the data model constructs of the field.
+
+.. versionadded:: 1.6
+
+.. seealso:: `dump`
+
+:Examples 1:
+
+>>> f.{+name}()
+
+:Returns:
+
+    out: `list`
+        The objects correposnding CF data model constructs.
+
+:Examples 2:
+
+>>> f.constructs()
+[<DomainAxis: 96>,
+ <DomainAxis: 1>,
+
+<DomainAxis: 15>,
+ <DomainAxis: 72>,
+ <CellMethod: dim3: mean>,
+ <DimensionCoordinate: longitude(96) degrees_east>,
+ <DimensionCoordinate: time(1) 360_day>,
+ <DimensionCoordinate: air_pressure(15) hPa>,
+ <DimensionCoordinate: latitude(72) degrees_north>]
+
+        '''
+        return self._get_constructs().constructs(copy=copy)
+    #--- End: def
+
+    def get_construct(self, key, *default):
+        '''
+        '''
+        return self._get_constructs().get_construct(key, *default)
+    #--- End: def
+
+    @abc.abstractmethod
+    def del_construct(self, key):
+        '''
+        '''
+        constructs = self._get_constructs()
+        
+#        if key in constructs.domain_axes():
+#            # Remove a domain axis
+#            domain_axis = True
+#            
+#            for k, value in self.construct_axes().iteritems():
+#                if key in value:
+#                    raise ValueError(
+#"Can't remove domain axis that is spanned by {}: {!r}".format(
+#    k, self.get_construct(k)))##
+#
+#        else:
+#            domain_axis = False
+#
+#        if domain_axis:
+
+#        # Remove reference to removed domain axis construct in
+#        # cell method constructs
+#        for cm_key, cm in self.cell_methods().iteritems():
+#            axes = cm.get_axes()
+#            if key not in axes:
+#                continue
+#            
+#            axes = list(axes)
+#            axes.remove(key)
+#                cm.set_axes(axes)
+#        else:
+
+        # Remove reference to removed construct in coordinate
+        # reference constructs
+        for ref in self.coordinate_references().itervalues():
+            for term, value in ref.domain_ancillaries().iteritems():
+                if key == value:
+                    ref.set_domain_ancillary(term, None)
+                    
+            for coord_key in ref.coordinates():
+                if key == coord_key:
+                    ref.del_coordinate(coord_key)
+                    break
+        #--- End: for
+        
+        return constructs.del_construct(key)
+    #--- End: def
+
+    def set_construct(self, construct_type, construct, key=None, axes=None,
+                      copy=True):
+        '''
+        '''
+        return self._get_constructs().set_construct(construct_type,
+                                                    construct,
+                                                    key=key,
+                                                    axes=axes,
+                                                    copy=copy)
+    #--- End: def
+
+    def set_construct_axes(self, key, axes):
+        '''
+        '''
+        return self._get_constructs().set_construct_axes(key, axes)
+    #--- End: def
 #--- End: class

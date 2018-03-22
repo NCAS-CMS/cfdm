@@ -19,10 +19,24 @@ Keys are item identifiers, values are item objects.
                  coordinate_reference=None,
                  domain_axis=None,
                  cell_method=None,
-                 source=None, copy=True, _use_data=True):
+                 source=None, copy=True, _use_data=True, view=False, ignore=()):
         '''
-        '''        
+        '''
+        self._ignore = set(ignore)
+    
         if source is not None:
+            if view:
+                self._key_base             = source._key_base
+                self._array_constructs     = source._array_constructs
+                self._non_array_constructs = source._non_array_constructs
+                self._ordered_constructs   = source._ordered_constructs
+                self._construct_axes       = source._construct_axes
+                self._construct_type       = source._construct_type
+                self._constructs           = source._constructs
+
+                return
+            #--- End: if
+            
             self._key_base             = source._key_base.copy()
             self._array_constructs     = source._array_constructs.copy()
             self._non_array_constructs = source._non_array_constructs.copy()
@@ -183,21 +197,37 @@ Keys are item identifiers, values are item objects.
     def construct_type(self, key):
         '''
         '''
-        return self._construct_type.get(key)
+        x = self._construct_type.get(key)
+        if x in self._ignore:
+            return
+        
+        return x
     #--- End: def
 
     def construct_types(self):
         '''
         '''
-        return self._construct_type.copy()
+        out =  self._construct_type.copy()
+        if self._ignore:
+            for x in self._ignore:
+                del out[x]
+
+        return out
     #--- End: def
 
     def array_constructs(self, axes=None, copy=False):
         '''
         '''
         out = {}
-        for construct_type in self._array_constructs:
-            out.update(self._constructs[construct_type])
+
+        if not self._ignore:
+            for construct_type in self._array_constructs:
+                out.update(self._constructs[construct_type])
+        else:
+            ignore = self._ignore
+            for construct_type in self._array_constructs:
+                if construct_type not in ignore:
+                    out.update(self._constructs[construct_type])
 
         if axes:
             spans_axes = set(axes)
@@ -214,9 +244,15 @@ Keys are item identifiers, values are item objects.
     def non_array_constructs(self):
         '''
         '''
-        out = {}
-        for construct_type in self._non_array_constructs:
-            out.update(self._constructs[construct_type])
+        out = {}        
+        if not self._ignore:
+            for construct_type in self._non_array_constructs:
+                out.update(self._constructs[construct_type])
+        else:
+            ignore = self._ignore
+            for construct_type in self._non_array_constructs:
+                if construct_type not in ignore:
+                    out.update(self._constructs[construct_type])
 
         return out
     #--- End: def
@@ -236,16 +272,25 @@ Keys are item identifiers, values are item objects.
             self._constructs[x].clear()
     #--- End: def
 
-    def _check_construct_type(self, construct_type):
+    def _check_construct_type(self, construct_type): #, key=None):
         '''
         '''
         if construct_type is None:
             return None
+
+        x = self._key_base
+        if self._ignore:
+            x = set(x).difference(self._ignore)
         
-        if construct_type not in self._key_base:
+        if construct_type not in x:
+#            if key is not None:
+#                m = ' for key {}'.format(key)
+#            else:
+#                m = ''
+                
             raise ValueError(
                 "Invalid construct type: {!r}. Must be one of {}".format(
-                    construct_type, sorted(self._key_base.keys())))
+                    construct_type, sorted(x)))
 
         return construct_type    
     #--- End: def
@@ -254,12 +299,15 @@ Keys are item identifiers, values are item objects.
         '''
         '''
         construct_type = self._check_construct_type(construct_type)
+
         if construct_type is not None:
             out = self._constructs[construct_type].copy()
         else:
             out = {}
-            for v in self._constructs.values():
-                out.update(v)
+            ignore = self._ignore
+            for key, value in self._constructs.values():
+                if key not in ignore:
+                    out.update(value)
         #--- End: if
 
         if copy:
@@ -269,7 +317,7 @@ Keys are item identifiers, values are item objects.
         return out
     #--- End: def
     
-    def construct_axes(self, key=None, new_axes=None, default=None):
+    def construct_axes(self, key=None, *default):
         '''
 :Examples 1:
 
@@ -306,20 +354,51 @@ None
 '''
         if key is None:
             # Return all of the constructs' axes
-            return self._construct_axes.copy()
+            if not self._ignore:
+                return self._construct_axes.copy()
+            else:
+                ignore = self._ignore
+                out = {}
+                for construct_type, keys in self._constructs:
+                    if construct_type not in ignore:
+                        for key in keys:
+                            out[key] = self._construct_axes[key]
 
-        if new_axes is None:
-            # Return a particular construct's axes
-            return self._construct_axes.get(key, default)
- 
-        # Still here? The set new item axes.
-        self._construct_axes[key] = tuple(new_axes)
+        # Return a particular construct's axes
+        if self._ignore:
+            if self.construct_type(key) is None:
+                key = None
+            
+        out = self._construct_axes.get(key)
+        if out is None:
+            if default:
+                return default[0]
+
+            raise ValueError("ascdscj w0hdpiqund s")
+            
+        return out
+        
+#        # Still here? The set new item axes.
+#        self._construct_axes[key] = tuple(new_axes)
     #--- End: def
+
+
+#    def _check_construct_type_of_key(self, key):
+#        '''
+#        '''
+#        construct_type = self.construct_type(key)
+#        if construct_type is not None:
+#            self._check_construct_type(construct_type, key=key)
+#
+#        return construct_type
 
     def set_construct_axes(self, key, axes):
         '''
-        '''        
-        self._construct_axes[key] = tuple(new_axes)
+        '''
+        if self.construct_type(key) is None:
+            raise ValueError("Can't set axes of non-existent key")
+
+        self._construct_axes[key] = tuple(axes)
     #--- End: def
 
     def copy(self, data=True):
@@ -338,7 +417,7 @@ Return a deep copy.
 >>> d = c.copy()
 
 '''
-        return type(self)(source=self, copy=True, _use_data=data)
+        return type(self)(source=self, copy=True, view=False, _use_data=data)
 #        X = type(self)
 #        new = X.__new__(X)
 #
@@ -396,7 +475,7 @@ Return a deep copy.
     def subset(self, construct_types=(), copy=True):
         '''
         '''
-        new = type(self)(source=self, copy=False)
+        new = type(self)(source=self, copy=False, view=False)
 
         for x in self._key_base:
             if x in construct_types:
@@ -413,6 +492,8 @@ Return a deep copy.
             new._non_array_constructs.discard(x)
             new._ordered_constructs.discard(x)
 
+        
+        
         if copy:
             new = new.copy()
             
@@ -496,7 +577,13 @@ Return a deep copy.
     def get_construct(self, key, *default):
         '''
         '''
-        d = self._constructs.get(self._construct_type.get(key))
+        cosntruct_type = self.construct_type(key)
+        if construct_type is None:
+            if default:
+                return default[0]
+            raise ValueError("Can't get construct!!!!!!")
+            
+        d = self._constructs.get(construct_type)
         if d is None:
             d = {}
             
@@ -514,6 +601,7 @@ Return a deep copy.
         '''
         '''
         construct_type = self._check_construct_type(construct_type)
+                                                
         if key is None:
             key = self.new_identifier(construct_type)
         elif key in self._constructs[construct_type]:

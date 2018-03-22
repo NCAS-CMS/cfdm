@@ -147,9 +147,15 @@ Field objects are picklable.
     
 #    def array_constructs(self, copy=False):
 #        return self._get_constructs().array_constructs(copy=copy)
-#    
-#    def auxiliary_coordinates(self, copy=False):
-#        return self._get_constructs().constructs('auxiliary_coordinate', copy=copy)
+#
+    @property
+    def domain(self):
+        '''
+'''
+        return self._Domain(_constructs=self._get_constructs())
+
+    def auxiliary_coordinates(self, copy=False):
+        return self.domain.auxiliary_coordinates(self, copy=copy)
 #    
 #    def cell_measures(self, copy=False):
 #        return self._get_constructs().constructs('cell_measure', copy=copy)

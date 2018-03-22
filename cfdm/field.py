@@ -503,10 +503,10 @@ field.
                                                  axes=axes, copy=copy)
     #--- End: def
 
-    def domain(self, copy=False):
-        '''
-        '''
-        return self._Domain(source=self, copy=copy)
+#    def domain(self, copy=False):
+#        '''
+#        '''
+#        return self._Domain(source=self, copy=copy)
 
     def domain_ancillaries(self, axes=None, copy=False):
         '''
