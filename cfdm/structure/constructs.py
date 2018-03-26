@@ -33,7 +33,6 @@ Keys are item identifiers, values are item objects.
                 self._construct_axes       = source._construct_axes
                 self._construct_type       = source._construct_type
                 self._constructs           = source._constructs
-
                 return
             #--- End: if
             
@@ -43,9 +42,23 @@ Keys are item identifiers, values are item objects.
             self._ordered_constructs   = source._ordered_constructs.copy()
             self._construct_axes       = source._construct_axes.copy()           
             self._construct_type       = source._construct_type.copy()
+            self._constructs           = source._constructs.copy()
 
+            for construct_type in self._ignore:
+                self._key_base.pop(construct_type, None)
+                self._array_constructs.pop(construct_type, None)
+                self._non_array_constructs.pop(construct_type, None)
+                self._ordered_constructs.pop(construct_type, None)
+#                self._constructs.pop(construct_type, None)                
+            
             d = {}            
             for construct_type in source._array_constructs:
+                if construct_type in self._ignore:
+                    for key in source._constructs[construct_type]:
+                        self._construct_axes.pop(key, None)
+                        self._construct_type.pop(key, None)
+                    continue
+                
                 if copy:
                     new_v = {}
                     for key, construct in source._constructs[construct_type].iteritems():
@@ -57,6 +70,11 @@ Keys are item identifiers, values are item objects.
             #--- End: for
             
             for construct_type in source._non_array_constructs:
+                if construct_type in self._ignore:
+                    for key in source._constructs[construct_type]:
+                        self._construct_type.pop(key, None)
+                    continue
+                
                 if copy:
                     new_v = {}
                     for key, construct in source._constructs[construct_type].iteritems():
@@ -69,6 +87,8 @@ Keys are item identifiers, values are item objects.
         
             self._constructs = d
 
+            self._ignore = set()
+            
             return
         #--- End: if
         
@@ -127,42 +147,6 @@ Keys are item identifiers, values are item objects.
         
         for x in self._ordered_constructs:
             self._constructs[x] = OrderedDict()
-
-
-        if source is not None:
-
-#            new._key_base             = self._key_base.copy()
-#            new._array_constructs     = self._array_constructs.copy()
-#            new._non_array_constructs = self._non_array_constructs.copy()
-#            new._ordered_constructs   = self._ordered_constructs.copy()
-            new._construct_axes       = self._construct_axes.copy()
-            
-            new._construct_type = {}
-            d = {}
-            
-            for construct_type in source._array_constructs:
-                v = self._constructs[construct_type]
-                new_v = {}
-                for key, construct in v.iteritems():
-                    new_v[key] = construct.copy(data=_use_data)
-                    new._construct_type[key] = construct_type
-                
-                d[construct_type] = new_v
-            #--- End: for
-            
-            for construct_type in source._non_array_constructs:
-                v = self._constructs[construct_type]
-                new_v = {}
-                for key, construct in v.iteritems():
-                    new_v[key] = construct.copy()
-                    new._construct_type[key] = construct_type
-                
-                d[construct_type] = new_v
-            #--- End: for
-        
-            self._constructs = d
-        #--- End: if
-        
     #--- End: def
 
     def __call__(self):
@@ -272,7 +256,7 @@ Keys are item identifiers, values are item objects.
             self._constructs[x].clear()
     #--- End: def
 
-    def _check_construct_type(self, construct_type): #, key=None):
+    def _check_construct_type(self, construct_type):
         '''
         '''
         if construct_type is None:
@@ -305,7 +289,7 @@ Keys are item identifiers, values are item objects.
         else:
             out = {}
             ignore = self._ignore
-            for key, value in self._constructs.values():
+            for key, value in self._constructs.iteritems():
                 if key not in ignore:
                     out.update(value)
         #--- End: if
@@ -417,7 +401,8 @@ Return a deep copy.
 >>> d = c.copy()
 
 '''
-        return type(self)(source=self, copy=True, view=False, _use_data=data)
+        return type(self)(source=self, copy=True, view=False,
+                          _use_data=data, ignore=self._ignore)
 #        X = type(self)
 #        new = X.__new__(X)
 #
@@ -577,7 +562,7 @@ Return a deep copy.
     def get_construct(self, key, *default):
         '''
         '''
-        cosntruct_type = self.construct_type(key)
+        construct_type = self.construct_type(key)
         if construct_type is None:
             if default:
                 return default[0]

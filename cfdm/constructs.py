@@ -271,7 +271,7 @@ class Constructs(structure_Constructs):
         # ------------------------------------------------------------
         # Check non-array constructs
         # ------------------------------------------------------------
-        for construct_type in self.non_array_constructs():
+        for construct_type in self._non_array_constructs:
             if not getattr(self, '_equals_'+construct_type)(
                     other,
                     rtol=rtol, atol=atol,
