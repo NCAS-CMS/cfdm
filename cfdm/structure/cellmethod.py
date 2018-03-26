@@ -32,6 +32,9 @@ over El Nino years).
         super(CellMethod, self).__init__(properties=properties,
                                          source=source, copy=copy)
 
+        self._set_copy_method('axes'  , self.NOCOPY)
+        self._set_copy_method('method', self.NOCOPY)
+        
         if source:
             if not isinstance(source, CellMethod):
                 raise ValueError(
@@ -81,37 +84,37 @@ modified, where appropriate, to reflect netCDF variable names.
     def del_axes(self):
         '''
 '''
-        return self._del_component(1, 'axes')
+        return self._del_component('axes')
     #--- End: def
     
     def del_method(self):
         '''
 '''
-        return self._del_component(1, 'method')
+        return self._del_component('method')
     #--- End: def
     
     def get_axes(self, *default):
         '''
 '''
-        return self._get_component(1, 'axes', None, *default)
+        return self._get_component('axes', None, *default)
     #--- End: def
 
     def get_method(self, *default):
         '''
         '''
-        return self._get_component(1, 'method', None, *default)
+        return self._get_component('method', None, *default)
     #--- End: def
     
     def has_axes(self):
         '''
 '''
-        return self._has_component(1, 'axes')
+        return self._has_component('axes')
     #--- End: def
 
     def has_method(self):
         '''
 '''
-        return self._has_component(1, 'method')
+        return self._has_component('method')
     #--- End: def
 
     def set_axes(self, value):
@@ -122,13 +125,13 @@ modified, where appropriate, to reflect netCDF variable names.
         else:
             value = tuple(value)
             
-        return self._set_component(1, 'axes', None, value)
+        return self._set_component('axes', None, value)
     #--- End: def
 
     def set_method(self, value):
         '''
 '''
-        return self._set_component(1, 'method', None, value)
+        return self._set_component('method', None, value)
     #--- End: def
 
 #--- End: class

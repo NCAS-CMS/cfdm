@@ -51,22 +51,29 @@ to the order of the elements.
         return str(self.get_size(''))
     #--- End: def
 
+
+    def del_size(self):
+        '''
+        '''
+        return self._del_component('size')
+    #--- End: def
+
+    def has_size(self):
+        '''
+        '''
+        return self._has_component('size')
+    #--- End: def
+
     def get_size(self, *default):
         '''
         '''
-        return self._get_component(1, 'size', None, *default)
+        return self._get_component('size', None, *default)
     #--- End: def
 
     def set_size(self, size):
         '''
         '''
-        self._set_component(1, 'size', None, size)
-    #--- End: def
-
-    def del_size(self):
-        '''
-        '''
-        return self._del_component(1, 'size')
+        self._set_component('size', None, size)
     #--- End: def
 
 #--- End: class

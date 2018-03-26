@@ -45,6 +45,8 @@ All components of a variable are optional.
         '''
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
+
+        self._set_copy_method('data', self.CUSTOMCOPY)
         
         if source is not None:
             if _use_data and data is None:
@@ -60,7 +62,7 @@ All components of a variable are optional.
         '''
         data = self.get_data(None)
         if data is None:
-            raise ValueError("sdif n;u3jnr42[ 4890yh 8u;jkb")
+            raise ValueError("sdif n;ujnr42[ 4890yh 8u;jkb")
 
         return data
     #--- End: def
@@ -197,7 +199,8 @@ False
 None
 
         '''
-        return self._del_component(3, 'data')
+#        return self._del_component(self.CUSTOMCOPY, 'data')
+        return self._del_component('data')
     #--- End: def
 
     def fill_value(self, default=None):
@@ -301,7 +304,8 @@ True
 
         '''
         try:
-            data = self._get_component(3, 'data', None, None)
+#            data = self._get_component(self.CUSTOMCOPY, 'data', None, None)
+            data = self._get_component('data', None, None)
         except AttributeError:
             raise AttributeError("There is no data")
 
@@ -334,7 +338,8 @@ If present, the data array is stored in the `data` attribute.
 ...     print f.data
 
         '''     
-        return self._has_component(3, 'data')
+#        return self._has_component(self.CUSTOMCOPY, 'data')
+        return self._has_component('data')
     #--- End: def
 
     def set_data(self, data, copy=True):
@@ -359,7 +364,8 @@ If present, the data array is stored in the `data` attribute.
         data.set_units(None)
         data.set_calendar(None)
         
-        self._set_component(3, 'data', None, data)
+#        self._set_component(self.CUSTOMCOPY, 'data', None, data)
+        self._set_component('data', None, data)
     #--- End: def
 
 #--- End: class

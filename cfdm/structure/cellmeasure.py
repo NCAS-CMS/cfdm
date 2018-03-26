@@ -32,6 +32,8 @@ correspond to cell measure constructs.
 
     '''   
     __metaclass__ = abc.ABCMeta
+
+    
     
     def __init__(self, measure=None, properties={}, data=None,
                  source=None, copy=True, _use_data=True):
@@ -60,6 +62,8 @@ correspond to cell measure constructs.
                                           source=source, data=data,
                                           copy=copy, _use_data=_use_data)
 
+        self._set_copy_method('measure', self.NOCOPY)
+        
         if source is not None:
             if measure is None:
                 measure = source.get_measure(None)
@@ -71,25 +75,25 @@ correspond to cell measure constructs.
     def del_measure(self):
         '''
         '''
-        return self._del_component(1, 'measure')
+        return self._del_component('measure')
     #--- End: def
 
     def has_measure(self):
         '''
         '''
-        return self._has_component(1, 'measure')
+        return self._has_component('measure')
     #--- End: def
 
     def get_measure(self, *default):
         '''
         '''
-        return self._get_component(1, 'measure', None, *default)
+        return self._get_component('measure', None, *default)
     #--- End: def
 
     def set_measure(self, measure):
         '''
         '''
-        return self._set_component(1, 'measure', None, measure)
+        return self._set_component('measure', None, measure)
     #--- End: def
 
 #--- End: class

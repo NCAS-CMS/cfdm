@@ -80,8 +80,14 @@ frame and consists of the following:
 
         '''
         super(CoordinateReference, self).__init__(
-            properties=properties, source=source, copy=copy)
+            properties=properties,
+            source=source,
+            copy=copy)
 
+        self._set_copy_method('parameters'        , self.DEEPCOPY)
+        self._set_copy_method('coordinates'       , self.COPY)
+        self._set_copy_method('domain_ancillaries', self.COPY)
+                            
         if source and  isinstance(source, CoordinateReference):
             if coordinates is None:
                 coordinates = source.coordinates()
@@ -129,9 +135,9 @@ frame and consists of the following:
         else:
             parameters = parameters.copy()
 
-        self._set_component(4, 'coordinates',        None, coordinates)
-        self._set_component(4, 'domain_ancillaries', None, domain_ancillaries)
-        self._set_component(3, 'parameters',         None, parameters)
+        self._set_component('coordinates',        None, coordinates)
+        self._set_component('domain_ancillaries', None, domain_ancillaries)
+        self._set_component('parameters'        , None, parameters)
     #--- End: def
    
     def __str__(self):
@@ -144,27 +150,27 @@ frame and consists of the following:
     def coordinates(self):
         '''
         '''
-        return self._get_component(4, 'coordinates', None).copy()
+        return self._get_component('coordinates', None).copy()
     #--- End: def
 
     def del_datum(self):
         '''
         '''
-        return self._del_component(3, 'datum')
+        return self._del_component('datum')
     #--- End: def
     
     def del_coordinate(self, key):
         '''
         '''        
-        self._get_component(4, 'coordinates', None).discard(key)
+        self._get_component('coordinates', None).discard(key)
     #--- End: def
     
     def del_term(self, term):
         '''
         '''        
-        value = self._get_component(4, 'domain_ancillaries', None).pop(term, None)
+        value = self._get_component('domain_ancillaries', None).pop(term, None)
         if value is None:
-            value = self._get_component(3, 'parameters', None).pop(term, None)
+            value = self._get_component('parameters', None).pop(term, None)
 
         return value
     #--- End: def
@@ -172,23 +178,23 @@ frame and consists of the following:
     def domain_ancillaries(self):
         '''
         '''
-        return self._get_component(4, 'domain_ancillaries', None, {}).copy()
+        return self._get_component('domain_ancillaries', None, {}).copy()
     #--- End: def
 
     def get_datum(self, *default):
         '''
         '''
-        return self._get_component(3, 'datum', None, *default)       
+        return self._get_component('datum', None, *default)       
     #--- End: def
 
     def get_term(self, term, *default):
         '''
         '''
-        d = self._get_component(4, 'domain_ancillaries', None)
+        d = self._get_component('domain_ancillaries', None)
         if term in d:
             return d[term]
         
-        d = self._get_component(3, 'parameters', None)
+        d = self._get_component('parameters', None)
         if term in d:
             return d[term]
         
@@ -202,33 +208,33 @@ frame and consists of the following:
     def has_datum(self):
         '''
         '''
-        return self._has_component(3, 'datum')
+        return self._has_component('datum')
     #--- End: def
 
     def has_term(self, term):
         '''
         '''
-        return (self._has_component(4, 'domain_ancillaries', term) or
-                self._has_component(3, 'parameters', term))
+        return (self._has_component('domain_ancillaries', term) or
+                self._has_component('parameters', term))
     #--- End: def
 
     def insert_coordinate(self, coordinate):
         '''
         '''
-        c = self._get_component(4, 'coordinates', None)
+        c = self._get_component('coordinates', None)
         c.add(coordinate)
     #--- End: def
 
     def parameters(self):
         '''
         '''
-        return self._get_component(3, 'parameters', None, {}).copy()
+        return self._get_component('parameters', None, {}).copy()
     #--- End: def
 
     def remove_coordinate(self, coordinate):
         '''
         '''
-        c = self._get_component(4, 'coordinates', None)
+        c = self._get_component('coordinates', None)
         c.discard(coordinate)
     #--- End: def
     
@@ -238,13 +244,13 @@ frame and consists of the following:
         if copy:
             value = deepcopy(value)
             
-        self._set_component(3, 'datum', None, value)
+        self._set_component('datum', None, value)
     #--- End: def
 
     def set_domain_ancillary(self, term, value, copy=True):
         '''
         '''
-        self._set_component(4, 'domain_ancillaries', term, value)
+        self._set_component('domain_ancillaries', term, value)
     #--- End: def
     
     def set_parameter(self, term, value, copy=True):
@@ -253,7 +259,7 @@ frame and consists of the following:
         if copy:
             value = deepcopy(value)
             
-        self._set_component(3, 'parameters', term, value)
+        self._set_component('parameters', term, value)
     #--- End: def
     
     def terms(self):

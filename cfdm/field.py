@@ -77,9 +77,12 @@ and institution).
         super(Field, self).__init__(properties=properties,
                                     source=source, copy=copy,
                                     _use_data=_use_data) 
-               
-        self._set_component(2, 'unlimited', None, None)
-        self._set_component(2, 'HDFgubbins', None, None)
+
+        self._set_copy_method('unlimited' , self.DEEPCOPY)
+        self._set_copy_method('HDFgubbins', self.DEEPCOPY)
+        
+        self._set_component('unlimited' , None, {})
+        self._set_component('HDFgubbins', None, {})
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
@@ -866,13 +869,13 @@ by the data array may be selected.
     def get_global_attributes(self, *default):
         '''
         '''
-        return self._get_component(1, 'global_attributes', None, *default)
+        return self._get_component('global_attributes', None, *default)
     #--- End: def
 
     def get_read_report(self, *default):
         '''
         '''
-        return self._get_component(1, 'read_report', None, *default)
+        return self._get_component('read_report', None, *default)
     #--- End: def
    
     def print_read_report(self, *default):
@@ -910,14 +913,14 @@ Consider [get|set|del_global_attribute [NO S]
 ('project', 'experiment')
 
         '''
-        self._set_component(1, 'global_attributes', None,
+        self._set_component('global_attributes', None,
                             tuple(global_attributes))
     #--- End: def
 
     def set_read_report(self, value):
         '''
         '''
-        self._set_component(1, 'read_report', None, value)
+        self._set_component('read_report', None, value)
     #--- End: def    
    
     def squeeze(self, axes=None, copy=True):

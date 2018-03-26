@@ -106,22 +106,27 @@ to the order of the elements.
         return True
     #--- End: def
 
+    def del_ncdim(self):
+        '''
+        '''
+        return self._del_component('ncdim')
+    #--- End: def
+
     def get_ncdim(self, *default):
         '''
         '''
-        return self._get_component(1, 'ncdim', None, *default)
+        return self._get_component('ncdim', None, *default)
+    #--- End: def
+
+    def has_ncdim(self):
+        '''
+        '''
+        self._has_component('ncdim')
     #--- End: def
 
     def set_ncdim(self, ncdim):
         '''
         '''
-        self._set_component(1, 'ncdim', None, ncdim)
+        self._set_component('ncdim', None, ncdim)
     #--- End: def
-
-    def del_ncdim(self):
-        '''
-        '''
-        return self._del_component(1, 'ncdim')
-    #--- End: def
-
 #--- End: class

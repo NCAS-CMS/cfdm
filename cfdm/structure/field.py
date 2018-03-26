@@ -104,6 +104,8 @@ Field objects are picklable.
         super(Field, self).__init__(properties=properties,
                                     source=source, copy=copy,
                                     _use_data=False)
+
+        self._set_copy_method('constructs', self.CUSTOMCOPY)
         
         data_axes  = None
         data       = None
@@ -129,7 +131,7 @@ Field objects are picklable.
 #                cell_method          = key_base['cell_method'],
 #           )
 
-        self._set_component(3, 'constructs', None, constructs)
+        self._set_component('constructs', None, constructs)
 
         if data is not None:
             self.set_data(data, data_axes, copy=copy)
@@ -142,7 +144,7 @@ Field objects are picklable.
 .. versionadded:: 1.6
         
         '''
-        return self._get_component(3, 'constructs', None, *default)
+        return self._get_component('constructs', None, *default)
     #--- End: def
     
     @property
@@ -158,7 +160,7 @@ Field objects are picklable.
     def del_data_axes(self):
         '''
         '''
-        return self._del_component(1, 'data_axes')
+        return self._del_component('data_axes')
     #--- End: def
 
     def get_domain(self, copy=True):
@@ -198,7 +200,7 @@ None
 []
 
         '''    
-        return self._get_component(1, 'data_axes', None, *default)
+        return self._get_component('data_axes', None, *default)
     #--- End: def
     
     def field_ancillaries(self, copy=False):
@@ -321,7 +323,7 @@ ValueError: Can't initialize data: Data already exists
             if axis not in domain_axes:
                 raise ValueError("Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
             
-        self._set_component(1, 'data_axes', None, tuple(value))
+        self._set_component('data_axes', None, tuple(value))
     #--- End: def
     
 #    def cell_methods(self, copy=False):

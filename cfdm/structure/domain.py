@@ -4,9 +4,6 @@ import abstract
 import mixin
 
 from .constructs import Constructs
-from .con_con import ConCon
-
-
 
 
 # ====================================================================

@@ -39,7 +39,9 @@ All components of a variable are optional.
         '''
         super(Properties, self).__init__(source=source, copy=copy)
 
-        self._set_component(3, 'properties', None, {})
+#        self._set_component(self.CUSTOMCOPY, 'properties', None, {})
+        self._set_copy_method('properties', self.CUSTOMCOPY)
+        self._set_component('properties', None, {})
         
         if source is not None:
             p = source.properties(copy=False)
@@ -55,7 +57,8 @@ All components of a variable are optional.
                 for key, value in properties.items():
                     properties[key] = deepcopy(value)
 
-            self._set_component(3, 'properties', None, properties)
+#            self._set_component(self.CUSTOMCOPY, 'properties', None, properties)
+            self._set_component('properties', None, properties)
     #--- End: def
         
     def __deepcopy__(self, memo):
@@ -115,7 +118,8 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 None
 
         '''
-        return self._del_component(3, 'properties', prop)
+#        return self._del_component(self.CUSTOMCOPY, 'properties', prop)
+        return self._del_component('properties', prop)
     #--- End: def
 
     def get_property(self, prop, *default):
@@ -165,7 +169,8 @@ AttributeError: Field doesn't have property 'standard_name'
 
         '''
         try:
-            return self._get_component(3, 'properties', prop, *default)
+#            return self._get_component(self.CUSTOMCOPY, 'properties', prop, *default)
+            return self._get_component('properties', prop, *default)
         except AttributeError:
             raise AttributeError("Can't get non-existent property {!r}".format(prop))
     #--- End: def
@@ -207,7 +212,8 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 
 
 '''
-        return self._has_component(3, 'properties', prop)
+#        return self._has_component(self.CUSTOMCOPY, 'properties', prop)
+        return self._has_component('properties', prop)
     #--- End: def
 
     def properties(self, props=None, clear=False, copy=True):
@@ -243,11 +249,13 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 :Examples 2:
 
         '''
-        existing_properties = self._get_component(3, 'properties', None, None)
+#        existing_properties = self._get_component(self.CUSTOMCOPY, 'properties', None, None)
+        existing_properties = self._get_component('properties', None, None)
 
         if existing_properties is None:
            existing_properties = {}
-           self._set_component(3, 'properties', None, existing_properties)
+#           self._set_component(self.CUSTOMCOPY, 'properties', None, existing_properties)
+           self._set_component('properties', None, existing_properties)
         
         out = existing_properties.copy()
 
@@ -305,7 +313,8 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
      `None`
 
         '''
-        self._set_component(3, 'properties', prop, value)
+        self._set_component('properties', prop, value)
+#        self._set_component(self.CUSTOMCOPY, 'properties', prop, value)
     #--- End: def
 
 #--- End: class
