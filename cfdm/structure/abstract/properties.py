@@ -40,7 +40,7 @@ All components of a variable are optional.
         super(Properties, self).__init__(source=source, copy=copy)
 
 #        self._set_component(self.CUSTOMCOPY, 'properties', None, {})
-        self._set_copy_method('properties', self.CUSTOMCOPY)
+#        self._set_copy_method('properties', self.CUSTOMCOPY)
         self._set_component('properties', None, {})
         
         if source is not None:

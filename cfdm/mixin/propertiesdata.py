@@ -247,7 +247,8 @@ True
                 ignore_properties=ignore_properties,
                 ignore_construct_type=ignore_construct_type):
             if traceback:
-                print("{0}: Different properties".format(self.__class__.__name__))
+                print(
+"{0}: Different properties".format(self.__class__.__name__))
 	    return False
 
         # ------------------------------------------------------------
@@ -256,7 +257,7 @@ True
         if self.has_data() != other.has_data():
             if traceback:
                 print(
-"{0}: Different data: Only one field has data".format(self.__class__.__name__))
+"{0}: Different data: Only one {0} has data".format(self.__class__.__name__))
             return False
             
         if self.has_data():
@@ -266,7 +267,8 @@ True
                                 ignore_data_type=ignore_data_type,
                                 ignore_fill_value=ignore_fill_value):
                 if traceback:
-                    print("{0}: Different data".format(self.__class__.__name__))
+                    print(
+"{0}: Different data values".format(self.__class__.__name__))
                 return False
         #--- End: for
 
@@ -473,6 +475,41 @@ None
         return v
     #--- End: def
 
+    def transpose(self, axes=None, copy=True):
+        '''
+
+.. versionadded:: 1.6
+
+.. seealso:: `squeeze`
+
+:Examples 1:
+
+>>> g = f.{+name}()
+
+:Parameters:
+
+    {+copy}
+
+:Returns:
+
+    out: 
+
+:Examples:
+
+>>> 
+        '''       
+        if copy:
+            v = self.copy()
+        else:
+            v = self
+
+        data = v.get_data(None)
+        if data is not None:
+            data.transpose(axes, copy=False)
+        
+        return v
+    #--- End: def
+    
     # ----------------------------------------------------------------
     # Attribute (read only)
     # ----------------------------------------------------------------

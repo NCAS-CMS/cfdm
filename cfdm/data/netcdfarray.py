@@ -151,9 +151,11 @@ Returns a numpy array.
         # (fastest varying) dimension of string valued array into
         # memory. E.g. [['a','b','c']] becomes ['abc']
         # ------------------------------------------------------------
-        if array.dtype.kind == 'S' and array.ndim > (self.ndim -
-                                                     getattr(self, 'gathered', 0) -
-                                                     getattr(self, 'ragged', 0)):
+        if array.dtype.kind in ('S', 'U'): # == 'S' and array.ndim > (self.ndim -
+                                                 #    getattr(self, 'gathered', 0) -
+                                                 #    getattr(self, 'ragged', 0)):
+            #array = netCDF4.chartostring(array)
+            
             strlen = array.shape[-1]
             
             new_shape = array.shape[0:-1]
@@ -162,12 +164,12 @@ Returns a numpy array.
             array = numpy.ma.resize(array, (new_size, strlen))
             
             array = array.filled(fill_value='')
-
+            
             array = numpy.array([''.join(x).rstrip() for x in array],
                                 dtype='S{0}'.format(strlen))
             
             array = array.reshape(new_shape)
-
+            
             array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
 
@@ -242,9 +244,8 @@ x.__str__() <==> str(x)
 >>> f.close()
 
         '''
-        nc = self._nc        
+        self._nc.close()    
         del self._nc
-        nc.close()
     #--- End: def
 
     @classmethod

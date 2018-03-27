@@ -62,8 +62,6 @@ correspond to cell measure constructs.
                                           source=source, data=data,
                                           copy=copy, _use_data=_use_data)
 
-        self._set_copy_method('measure', self.NOCOPY)
-        
         if source is not None:
             if measure is None:
                 measure = source.get_measure(None)

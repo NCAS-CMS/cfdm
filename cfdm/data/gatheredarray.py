@@ -138,7 +138,6 @@ Returns an independent numpy array.
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
             elements_per_profile = compression_parameters['elements_per_profile']
-            elements_per_profile.get_array()
 
             profile_indices = compression_parameters['profile_indices']
             profile_indices = profile_indices.get_array()

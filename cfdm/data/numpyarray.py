@@ -33,6 +33,8 @@ x.__getitem__(indices) <==> x[indices]
 Returns an independent numpy array.
 
         '''
+        # Must ascertain uniqueness *before* we create another
+        # reference to self.array!
         isunique = self.isunique
         
         array = self.array

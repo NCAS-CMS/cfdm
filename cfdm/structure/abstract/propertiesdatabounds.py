@@ -54,10 +54,10 @@ domain ancillary objects.
             copy=copy,
             _use_data=_use_data)
 
-        self._set_copy_method('extent_parameters'  , self.CUSTOMCOPY) 
-        self._set_copy_method('topology_parameters', self.CUSTOMCOPY)
-        self._set_copy_method('extent_arrays'      , self.CUSTOMCOPY)
-        self._set_copy_method('topology_arrays'    , self.CUSTOMCOPY) 
+#        self._set_copy_method('extent_parameters'  , self.CUSTOMCOPY) 
+#        self._set_copy_method('topology_parameters', self.CUSTOMCOPY)
+#        self._set_copy_method('extent_arrays'      , self.CUSTOMCOPY)
+#        self._set_copy_method('topology_arrays'    , self.CUSTOMCOPY) 
 
         if source is not None and isinstance(source, PropertiesDataBounds):
             if bounds is None:

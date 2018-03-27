@@ -105,7 +105,7 @@ Field objects are picklable.
                                     source=source, copy=copy,
                                     _use_data=False)
 
-        self._set_copy_method('constructs', self.CUSTOMCOPY)
+#        self._set_copy_method('constructs', self.CUSTOMCOPY)
         
         data_axes  = None
         data       = None

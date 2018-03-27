@@ -180,27 +180,6 @@ All components of a variable are optional.
                 return False
         #--- End: for
 
-#        if set(self._components[2]) != set(other._components[2]):
-#            if traceback:
-#                print("{0}: Different properties 2: {1}, {2}".format( 
-#                    self.__class__.__name__,
-#                    sorted(self._components[2]), sorted(other._components[2])))
-#            return False
-#
-#        
-#        for key, x in self._components[2].iteritems():
-#            y = other._components[2][key]
-#            if not self._equals(x, y,
-#                                rtol=rtol, atol=atol,
-#                                ignore_fill_value=ignore_fill_value,
-#                                ignore_data_type=ignore_data_type,
-#                                traceback=traceback):
-#                if traceback:
-#                    print("{0}: Different {1}: {2!r}, {3!r}".format(
-#                        self.__class__.__name__, prop, x, y))
-#                return False
-#        #--- End: for
-
         return True
     #--- End: def
         
@@ -219,9 +198,6 @@ All components of a variable are optional.
     def set_ncvar(self, value):
         '''
         '''
-#        if 'ncvar' not in self._copy_method[self.NOCOPY]:
-#            self._set_copy_method('ncvar', self.NOCOPY)
-            
         return self._set_component('ncvar', None, value)
     #--- End: def
 

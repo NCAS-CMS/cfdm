@@ -77,11 +77,11 @@ domain ancillary objects.
         #--- End: if
 
         # Subspace the ancillary arrays
-        ancillary_arrays = self.ancillary_arrays()
+        ancillary_arrays = self.extent_arrays()
         if ancillary_arrays:
             for name, array in ancillary_arrays.iteritems():
                 if not array.has_data():
-                    new.set_ancillary_array(name, array, copy=True)
+#                    new.set_extent_array(name, array, copy=True)
                     continue
                 
                 ancillary_indices = list(indices)
@@ -93,7 +93,7 @@ domain ancillary objects.
                 data = array.get_data()
                 array = array.copy(data=False)
                 array.set_data(data[tuple(ancillary_indices)], copy=False)
-                new.set_ancillary_array(name, array, copy=False)
+                new.set_extent_array(name, array, copy=False)
         #--- End: if
 
         # Return the new bounded variable
@@ -295,7 +295,7 @@ domain ancillary objects.
         if bounds is not None:
             bounds.expand_dims(position, copy=False)
             
-        for array in c.ancillary_arrays().itervalues():                
+        for array in c.extent_arrays().itervalues():                
             array.expand_dims(position, copy=False)
 
         return c
@@ -312,72 +312,72 @@ domain ancillary objects.
         if bounds is not None:
             bounds.squeeze(axes, copy=False)
 
-        for array in c.ancillary_arrays().itervalues():                
+        for array in c.extent_arrays().itervalues():                
             array.squeeze(axes, copy=False)
         
         return c
     #--- End: def
     
-#    def transpose(self, axes=None, copy=True):
-#        '''Permute the dimensions of the data.
-#
-#.. versionadded:: 2.0 
-#
-#.. seealso:: `expand_dims`, `squeeze`
-#
-#:Parameters:
-#
-#    axes: (sequence of) `int`, optional
-#        The new order of the data array. By default, reverse the
-#        dimensions' order, otherwise the axes are permuted according
-#        to the values given. The values of the sequence comprise the
-#        integer positions of the dimensions in the data array in the
-#        desired order.
-#
-#    {+copy}
-#
-#:Returns:
-#
-#    out : `{+Variable}`
-#
-#:Examples:
-#
-#>>> c.ndim
-#3
-#>>> c.{+name}()
-#>>> c.{+name}([1, 2, 0])
-#
-#        '''
-#        if axes is None:
-#            axes = range(ndim-1, -1, -1)
-#        else:
-#            axes = self._parse_axes(axes)
-#
-#        c = super(PropertiesDataBounds, self).transpose(axes,
-#                                                        copy=copy)
-#
-#        axes.append(-1)
-#        
-#        bounds = c.get_bounds(None)
-#        if bounds is not None:
-#            bounds.transpose(axes, copy=False)
-#            
-#            data = bounds.get_data(None)
-#            if (data is not None and
-#                data.ndim == 3 and
-#                data.shape[-1] == 4 and 
-#                axes[0:2] == [1, 0]):
-#                # Swap columns 1 and 3 so that the values are still
-#                # contiguous (if they ever were). See section 7.1 of
-#                # the CF conventions.
+    def transpose(self, axes=None, copy=True):
+        '''Permute the dimensions of the data.
+
+.. versionadded:: 2.0 
+
+.. seealso:: `expand_dims`, `squeeze`
+
+:Parameters:
+
+    axes: (sequence of) `int`, optional
+        The new order of the data array. By default, reverse the
+        dimensions' order, otherwise the axes are permuted according
+        to the values given. The values of the sequence comprise the
+        integer positions of the dimensions in the data array in the
+        desired order.
+
+    {+copy}
+
+:Returns:
+
+    out : `{+Variable}`
+
+:Examples:
+
+>>> c.ndim
+3
+>>> c.{+name}()
+>>> c.{+name}([1, 2, 0])
+
+        '''
+        if axes is None:
+            axes = range(ndim-1, -1, -1)
+        else:
+            axes = self._parse_axes(axes)
+
+        c = super(PropertiesDataBounds, self).transpose(axes,
+                                                        copy=copy)
+
+        axes.append(-1)
+        
+        bounds = c.get_bounds(None)
+        if bounds is not None:
+            bounds.transpose(axes, copy=False)
+            
+            data = bounds.get_data(None)
+            if (data is not None and
+                data.ndim == 3 and data.shape[-1] == 4 and 
+                axes[0:2] == [1, 0]):
+                # Swap elements 1 and 3 of the trailing dimension so
+                # that the values are still contiguous (if they ever
+                # were). See section 7.1 of the CF conventions.
 #                data[..., [1, 3]] = data[..., [3, 1]]
-#                bounds.set_data(data, copy=False)
-#        #--- End: if
-#
-#        for array in c.ancillary_arrays().itervalues():                
-#            array.transpose(axes, copy=False)
-#        
-#        return c
-#    #--- End: def
+                data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
+                bounds.set_data(data, copy=False)
+        #--- End: if
+        
+        for array in c.extent_arrays().itervalues():                
+            array.transpose(axes, copy=False)
+        
+        return c
+    #--- End: def
 
 #--- End: class

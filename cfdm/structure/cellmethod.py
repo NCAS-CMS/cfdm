@@ -32,9 +32,6 @@ over El Nino years).
         super(CellMethod, self).__init__(properties=properties,
                                          source=source, copy=copy)
 
-        self._set_copy_method('axes'  , self.NOCOPY)
-        self._set_copy_method('method', self.NOCOPY)
-        
         if source:
             if not isinstance(source, CellMethod):
                 raise ValueError(
@@ -79,6 +76,12 @@ modified, where appropriate, to reflect netCDF variable names.
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
         string.append(self.get_method(''))
         return ' '.join(string)
+    #--- End: def
+
+    def copy(self):
+        '''
+        '''
+        return super(CellMethod, self).copy()
     #--- End: def
 
     def del_axes(self):

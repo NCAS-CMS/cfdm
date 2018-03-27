@@ -21,10 +21,10 @@ All components of a variable are optional.
 '''
     __metaclass__ = abc.ABCMeta
 
-    NOCOPY      = 'nocopy'
-    COPY        = 'copy'
-    DEEPCOPY    = 'deepcopy'
-    CUSTOMCOPY  = 'customcopy'
+#    NOCOPY      = 'nocopy'
+#    COPY        = 'copy'
+#    DEEPCOPY    = 'deepcopy'
+#    CUSTOMCOPY  = 'customcopy'
     
     def __init__(self, source=None, copy=True):
         '''**Initialization**
@@ -36,14 +36,12 @@ All components of a variable are optional.
     copy: `bool`, optional
 
         '''
-        self._copy_method = {
-            self.NOCOPY    : (),
-            self.COPY      : (),
-            self.DEEPCOPY  : (),
-            self.CUSTOMCOPY: (),
-        }
+#        self._copy_method = {
+#            self.COPY      : (),
+#            self.DEEPCOPY  : (),
+#        }
         
-        self._components = {}
+        
 #            # Components that not copied as object identities. Good
 #            # for immutable objects (e.g. a str or a tuple)
 #            self.NOCOPY: {},
@@ -58,20 +56,21 @@ All components of a variable are optional.
 #        }
 
         if source is not None:
-            self._copy_method.update(source._copy_method)
+#            self._copy_method.update(source._copy_method)
 
-            components = source._components.copy()
-            
-#            for component in source._copy_method[self.NOCOPY]:
+            self._components = source._components.copy()
+        else:
+            self._components = {}
+            #            for component in source._copy_method[self.NOCOPY]:
 #                components[component] = component
 
-            for component in source._copy_method[self.COPY]:
-                components[component] = components[component].copy()
-
-            for component in source._copy_method[self.DEEPCOPY]:
-                components[component] = deepcopy(components[component])
-
-            self._components = components
+#            for component in source._copy_method[self.COPY]:
+#                components[component] = components[component].copy()
+#
+#            for component in source._copy_method[self.DEEPCOPY]:
+#                components[component] = deepcopy(components[component])
+#
+#            self._components = components
 
 #            key = self.NOCOPY
 #            components = source._components[key]
@@ -129,26 +128,26 @@ All components of a variable are optional.
         '''
         '''
 #        components = self._components[component_type]
-        components = self._components
+#        components = self._components
         if key is None:            
-            return components.pop(component, None)
+            return self._components.pop(component, None)
         else:
-            return components[component].pop(key, None)
+            return self._components[component].pop(key, None)
     #--- End: def
 
-    def _set_copy_method(self, component, copy_method):
-        self._copy_method[copy_method] = self._copy_method[copy_method] + (component,)
+#    def _set_copy_method(self, component, copy_method):
+#        self._copy_method[copy_method] = self._copy_method[copy_method] + (component,)
 
 #    def _get_component(self, component_type, component, key, *default):
     def _get_component(self, component, key, *default):
         '''
         '''
 #        components = self._components[component_type]
-        components = self._components
+#        components = self._components
         if key is None:
-            value = components.get(component)
+            value = self._components.get(component)
         else:
-            value = components[component].get(key)
+            value = self._components[component].get(key)
         
         if value is None:
             if default:
@@ -165,11 +164,11 @@ All components of a variable are optional.
         '''
         '''
 #        components = self._components[component_type]
-        components = self._components
+#        components = self._components
         if key is None:
-            return component in components
+            return component in self._components
         else:
-            return key in components[component]
+            return key in self._components[component]
     #--- End: def
 
 #    def _set_component(self, component_type, component, key, value):
@@ -177,13 +176,14 @@ All components of a variable are optional.
         '''
         '''
 #        components = self._components[component_type]
-        components = self._components
+#        components = self._components
         if key is None:
-            components[component] = value
+            self._components[component] = value
         else:
-            components[component][key] = value
+            self._components[component][key] = value
     #--- End: def
 
+    @abc.abstractmethod
     def copy(self):
         '''
         '''

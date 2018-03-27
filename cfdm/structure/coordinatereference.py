@@ -83,11 +83,7 @@ frame and consists of the following:
             properties=properties,
             source=source,
             copy=copy)
-
-        self._set_copy_method('parameters'        , self.DEEPCOPY)
-        self._set_copy_method('coordinates'       , self.COPY)
-        self._set_copy_method('domain_ancillaries', self.COPY)
-                            
+              
         if source and  isinstance(source, CoordinateReference):
             if coordinates is None:
                 coordinates = source.coordinates()
@@ -113,7 +109,7 @@ frame and consists of the following:
 
         if datum is not None:
             if copy:
-                datum = deepcopy(datum)
+                datum = datum.copy()
                 
             self.set_datum(datum, copy=False)
         #--- End: if                
@@ -145,6 +141,12 @@ frame and consists of the following:
 
         '''    
         return ', '.join(sorted(self.properties().values()))
+    #--- End: def
+
+    def copy(self):
+        '''
+        '''
+        return super(CoordinateReference, self).copy()
     #--- End: def
 
     def coordinates(self):

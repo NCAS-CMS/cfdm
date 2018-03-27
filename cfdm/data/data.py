@@ -150,8 +150,7 @@ There are three extensions to the numpy indexing functionality:
             raise TypeError(
 "only length-1 arrays can be converted to Python scalars. Got {}".format(self))
 
-        array = self.get_array()
-        return int(array)
+        return int(self.get_array())
     #--- End: def
 
     def __iter__(self):
@@ -481,6 +480,64 @@ True
             return data.copy()
         else:
             return data
+    #--- End: def
+
+    def expand_dims(self, position=0, copy=True):
+        '''Expand the shape of the data array.
+
+Insert a new size 1 axis, corresponding to a given position in the
+data array shape.
+
+.. versionadded:: 1.6
+
+.. seealso:: `squeeze`, `transpose`, `unsqueeze`
+
+:Parameters:
+
+    position: `int`, optional
+        Specify the position that the new axis will have in the data
+        array axes. By default the new axis has position 0, the
+        slowest varying position.
+
+    copy: `bool`, optional
+        If False then update the data array in place. By default a new
+        data array is created.
+
+:Returns:
+
+    out: `Data`
+
+:Examples:
+
+        '''
+        # Parse position
+        ndim = self.ndim 
+        if -ndim-1 <= position < 0:
+            position += ndim + 1
+        elif not 0 <= position <= ndim:
+            raise ValueError(
+                "Can't expand_dims: Invalid position (%d)" % position)
+        #--- End: for
+
+        if copy:
+            d = self.copy()
+        else:
+            d = self
+
+        array = self.get_array()
+        array = numpy.expand_dims(array, position)
+
+        d._set_master_array(NumpyArray(array))
+
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
+#
+#            d.HDF_chunks(HDF)
+#        #--- End: if
+
+        return d
     #--- End: def
 
     def get_dtarray(self):
@@ -887,46 +944,6 @@ dimension is iterated over first.
         return itertools.product(*[range(0, r) for r in self.shape])  
     #--- End: def
 
-    def sum(self, axes=None):
-        '''Return the sum of an array or the sum along axes.
-
-Missing data array elements are omitted from the calculation.
-
-.. seealso:: `max`, `min`
-
-:Parameters:
-
-    axes: (sequence of) `int`, optional
-
-:Returns:
-
-    out: `Data`
-        The sum of the data along the specified axes.
-
-:Examples:
-
-        '''
-        # Parse the axes. By default flattened input is used.
-        if axes is not None:
-            axes = self._parse_axes(axes, 'sum')
-
-        array = self.get_array()
-        array = numpy.sum(array, axis=axes, keepdims=True)
-            
-        d = self.copy()
-        d._set_master_array(NumpyArray(array))
-
-#        if d._HDF_chunks:            
-#            HDF = {}
-#            for axis in axes:
-#                HDF[axis] = None
-#
-#            d.HDF_chunks(HDF)
-#        #--- End: if
-        
-        return d
-    #--- End: def
-
 #    def HDF_chunks(self, *chunks):
 #        '''
 #        '''
@@ -1192,51 +1209,33 @@ selected with the keyword arguments.
         return d
     #--- End: def
 
-    def expand_dims(self, position=0, copy=True):
-        '''Expand the shape of the data array.
+    def sum(self, axes=None):
+        '''Return the sum of an array or the sum along axes.
 
-Insert a new size 1 axis, corresponding to a given position in the
-data array shape.
+Missing data array elements are omitted from the calculation.
 
-.. versionadded:: 1.6
-
-.. seealso:: `squeeze`, `transpose`, `unsqueeze`
+.. seealso:: `max`, `min`
 
 :Parameters:
 
-    position: `int`, optional
-        Specify the position that the new axis will have in the data
-        array axes. By default the new axis has position 0, the
-        slowest varying position.
-
-    copy: `bool`, optional
-        If False then update the data array in place. By default a new
-        data array is created.
+    axes: (sequence of) `int`, optional
 
 :Returns:
 
     out: `Data`
+        The sum of the data along the specified axes.
 
 :Examples:
 
         '''
-        # Parse position
-        ndim = self.ndim 
-        if -ndim-1 <= position < 0:
-            position += ndim + 1
-        elif not 0 <= position <= ndim:
-            raise ValueError(
-                "Can't expand_dims: Invalid position (%d)" % position)
-        #--- End: for
-
-        if copy:
-            d = self.copy()
-        else:
-            d = self
+        # Parse the axes. By default flattened input is used.
+        if axes is not None:
+            axes = self._parse_axes(axes, 'sum')
 
         array = self.get_array()
-        array = numpy.expand_dims(array, position)
-
+        array = numpy.sum(array, axis=axes, keepdims=True)
+            
+        d = self.copy()
         d._set_master_array(NumpyArray(array))
 
 #        if d._HDF_chunks:            
@@ -1246,7 +1245,7 @@ data array shape.
 #
 #            d.HDF_chunks(HDF)
 #        #--- End: if
-
+        
         return d
     #--- End: def
 

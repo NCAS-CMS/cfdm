@@ -78,11 +78,8 @@ and institution).
                                     source=source, copy=copy,
                                     _use_data=_use_data) 
 
-        self._set_copy_method('unlimited' , self.DEEPCOPY)
-        self._set_copy_method('HDFgubbins', self.DEEPCOPY)
-        
-        self._set_component('unlimited' , None, {})
-        self._set_component('HDFgubbins', None, {})
+        self._set_component('unlimited' , None, 'TO DO')
+        self._set_component('HDFgubbins', None, 'TO DO')
     #--- End: def
 
     def unlimited(self, *args, **kwargs):

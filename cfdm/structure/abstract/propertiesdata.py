@@ -46,7 +46,7 @@ All components of a variable are optional.
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
 
-        self._set_copy_method('data', self.CUSTOMCOPY)
+#        self._set_copy_method('data', self.CUSTOMCOPY)
         
         if source is not None:
             if _use_data and data is None:

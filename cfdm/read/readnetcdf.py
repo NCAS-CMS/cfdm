@@ -464,7 +464,7 @@ ancillaries, field ancillaries).
                 print repr(x)
 
         for x in fields.values():
-            x._set_component(1, 'component_report', None, g['component_report'])
+            x._set_component('component_report', None, g['component_report'])
 
         print "g['references'] =",g['references']
         # ------------------------------------------------------------        
