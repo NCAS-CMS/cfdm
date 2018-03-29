@@ -7,9 +7,9 @@ import sys
 import numpy
 import netCDF4
 
-from .io import IOWrite
+from ....functions import abspath, flat
 
-from ..functions import abspath, flat
+from .. import IOWrite
 
 class NetCDFWrite(IOWrite):
     '''
@@ -326,7 +326,7 @@ and auxiliary coordinate roles for different data variables.
         # Open the netCDF file to be written
         # ------------------------------------------------------------
         g['filename'] = filename
-        g['netcdf'] = self._file_open(filename, mode, fmt)
+        g['netcdf'] = self.open_file(filename, mode, fmt)
     
         # ---------------------------------------------------------------
         # Set the fill mode for a Dataset open for writing to off. This
@@ -380,17 +380,59 @@ and auxiliary coordinate roles for different data variables.
         # ---------------------------------------------------------------
         # Write all of the buffered data to disk
         # ---------------------------------------------------------------
-        self._file_close(filename)
+        self.close_file(filename)
     #--- End: def
 
-    def _file_close(self, filename):
-        '''
+    @classmethod
+    def file_type(cls, filename):
+        '''Find the format of a file.
+    
+:Parameters:
+    
+    filename: `str`
+        The file name.
+    
+:Returns:
+ 
+    out: `str`
+        The format type of the file.
+    
+:Examples:
+
+>>> filetype = n.file_type(filename)
+    
+    '''
+        # ----------------------------------------------------------------
+        # Assume that URLs are in netCDF format
+        # ----------------------------------------------------------------
+        if filename.startswith('http://'):
+           return 'netCDF'
+    
+        # ----------------------------------------------------------------
+        # netCDF
+        # ----------------------------------------------------------------
+        if netcdf.is_netcdf_file(filename):
+            return 'netCDF'
+    #--- End: def
+
+    def close_file(self, filename):
+        '''Close the netCDF file that has been written.
+
+:Returns:
+
+    `None`
+
         '''
         self.write_vars['netcdf'].close()
     #--- End: def
     
-    def _file_open(self, filename, mode, fmt):
-        '''
+    def open_file(self, filename, mode, fmt):
+        '''Open the netCDf file for writing.
+        
+:Returns:
+        
+    out: `netCDF.Dataset`
+        
         '''
         try:        
             nc = netCDF4.Dataset(filename, mode, format=fmt)
@@ -399,7 +441,7 @@ and auxiliary coordinate roles for different data variables.
         else:
             return nc
     #--- End: def
-    
+
 #    def _reset_write_vars(self, extra_write_vars):
 #        '''
 #        '''

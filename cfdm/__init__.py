@@ -30,8 +30,10 @@ from .bounds              import Bounds
 from .coordinateancillary import CoordinateAncillary
 from .constants           import *
 from .functions           import *
-from .read.read           import read, ReadNetCDF
-from .write.write         import write, WriteNetCDF
+#from .read.read           import read, ReadNetCDF
+from .io.read             import read
+from .io.write            import write
+#from .write.write         import write, WriteNetCDF
 from .data.data           import Data
 from .data.netcdfarray    import NetCDF
 

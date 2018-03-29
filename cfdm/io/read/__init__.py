@@ -1,3 +1,4 @@
 '''
 '''
-from read import read
+from ioread import IORead
+from read   import read

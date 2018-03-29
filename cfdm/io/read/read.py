@@ -1,25 +1,24 @@
 import os
 
-from .netcdf import ReadNetCDF
+from ...auxiliarycoordinate import AuxiliaryCoordinate
+from ...cellmethod          import CellMethod
+from ...cellmeasure         import CellMeasure
+from ...coordinatereference import CoordinateReference
+from ...dimensioncoordinate import DimensionCoordinate
+from ...domainancillary     import DomainAncillary
+from ...domainaxis          import DomainAxis
+from ...field               import Field
+from ...fieldancillary      import FieldAncillary
 
-from .implementation import Implementation
+from ...bounds    import Bounds
 
-from ..auxiliarycoordinate import AuxiliaryCoordinate
-from ..cellmethod          import CellMethod
-from ..cellmeasure         import CellMeasure
-from ..coordinatereference import CoordinateReference
-from ..dimensioncoordinate import DimensionCoordinate
-from ..domainancillary     import DomainAncillary
-from ..domainaxis          import DomainAxis
-from ..field               import Field
-from ..fieldancillary      import FieldAncillary
+from ...data.data  import Data
+from ...data.netcdfarray   import NetCDF
+from ...data.gatheredarray import GatheredArray
 
-from ..bounds    import Bounds
-#from ..units     import Units
+from ..implementation import Implementation
 
-from ..data.data  import Data
-from ..data.netcdfarray   import NetCDF
-from ..data.gatheredarray import GatheredArray
+from .netcdf import NetCDFRead
 
 implementation = Implementation(AuxiliaryCoordinate = AuxiliaryCoordinate,
                                 CellMeasure         = CellMeasure,

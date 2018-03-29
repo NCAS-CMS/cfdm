@@ -7,11 +7,9 @@ from collections import OrderedDict
 
 import numpy
 
-from .abstract_read import ReadFile
+from ....functions import abspath, flat
 
-from ..functions import abspath, flat
-
-from .ioread import IORead
+from .. import IORead
 
 _z = {
     # Physically meaningful and corresponding to constructs
@@ -55,7 +53,7 @@ _yy = {
     'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
 }
 
-class ReadNetCDF(IORead):
+class NetCDFRead(IORead):
     '''
     '''
     
@@ -478,7 +476,7 @@ ancillaries, field ancillaries).
     #--- End: def
 
     def close_file(self):
-        '''Close the netCDF that has been read.
+        '''Close the netCDF file that has been read.
 
 :Returns:
 
