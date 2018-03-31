@@ -117,7 +117,7 @@ x.__str__() <==> str(x)
 .. versionadded:: 1.6
         
         '''
-        return self._get_component(3, 'constructs', None, *default)
+        return self._get_component('constructs', None, *default)
     #--- End: def
     
     def del_construct(self, key):
