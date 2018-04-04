@@ -10,10 +10,6 @@ class IO(object):
     def __init__(self, implementation):
         self.implementation = implementation
 
-#    @abc.abstractmethod
-#    def read(self, *args, **kwargs):
-#        raise NotImplementedError(NOT_IMPLEMENTED)
-
     @abc.abstractmethod
     def close_file(self, *args, **kwargs):
         '''Open the file for reading.
@@ -34,10 +30,6 @@ class IO(object):
         '''
         raise NotImplementedError(NOT_IMPLEMENTED)
     #--- End: def
-
-#    @abc.abstractmethod
-#    def write(self, *args, **kwargs):
-#        raise NotImplementedError(NOT_IMPLEMENTED)
 
 #--- End: class
 

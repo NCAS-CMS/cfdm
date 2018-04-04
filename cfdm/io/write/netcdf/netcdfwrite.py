@@ -2246,7 +2246,7 @@ write them to the netCDF4.Dataset.
         #--- End: for
     
         # Write the global properties to the file
-        g['netcdf'].setncattr('Conventions', self.implementation.Conventions)
+        g['netcdf'].setncattr('Conventions', self.implementation.get_class('Conventions'))
         
         for attr in global_properties - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self._get_property(f0, attr)) 

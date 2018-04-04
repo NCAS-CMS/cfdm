@@ -1,6 +1,6 @@
 import abc
 
-from .. import IO
+from ... import IO
 
 NOT_IMPLEMENTED = 'This method must be implemented'
 

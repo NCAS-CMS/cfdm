@@ -527,7 +527,7 @@ ancillaries, field ancillaries).
     out: `netCDF.Dataset`
 
         '''
-        return self.implementation.NetCDF.file_open(filename, 'r')
+        return self.implementation.get_class('NetCDF').file_open(filename, 'r')
     #--- End: def        
 
     def _is_unreferenced(self, ncvar):
@@ -1592,8 +1592,8 @@ netCDF variable.
     def _parse_cell_methods(self, cell_methods, allow_error=True):
         '''
         '''
-        return self.implementation.CellMethod.parse(cell_methods,
-                                                    allow_error=allow_error)
+        return self.implementation.get_class('CellMethod').parse(cell_methods,
+                                                                 allow_error=allow_error)
     #--- End: def
     
     def _add_message(self, field_ncvar, ncvar, message=None,
@@ -2302,7 +2302,7 @@ Set the Data attribute of a variable.
     def _initialise(self, object_type, **kwargs):
         '''
         '''
-        return getattr(self.implementation, object_type)(**kwargs)
+        return self.implementation.get_class(object_type)(**kwargs)
     #--- End: def
 
     def _set_properties(self, construct, properties, copy=True):
@@ -2375,7 +2375,7 @@ Set the Data attribute of a variable.
                 
                 if not named_coordinates:
                     coordinates = []
-                    for x in self.implementation.CoordinateReference._name_to_coordinates.get(name, ()):
+                    for x in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
                         for key, coord in f.coordinates().iteritems():
                             if x == self._get_property(coord, 'standard_name', None):
                                 coordinates.append(key)
@@ -2534,14 +2534,6 @@ dimensions are returned.
             size=uncompressed_size,
             compression_type=compression_type,
             compression_parameters=compression_parameters)
-#        return self.implementation.GatheredArray(
-#            array,
-#            ndim=uncompressed_ndim,
-#            shape=uncompressed_shape,
-#            size=uncompressed_size,
-#            compression_type=compression_type,
-#            compression_parameters=compression_parameters
-#        )
     #--- End: def
 
     def _create_data_DSG_gathered(self, ncvar, filearray,
@@ -2650,7 +2642,6 @@ dimensions are returned.
 
         return self._initialise('Data', data=array, units=units,
                                 calendar=calendar, **kwargs)
-    #    return self.implementation.Data(array, units=units, calendar=calendar, **kwargs)
     #--- End: def
 
     def _copy_construct(self, construct_type, field_ncvar, ncvar):

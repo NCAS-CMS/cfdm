@@ -1,10 +1,10 @@
 from ... import __Conventions__
 
-from ..implementation import Implementation
+from .. import CFDMImplementation
 
 from .netcdf import NetCDFWrite
 
-implementation = Implementation(Conventions=__Conventions__)
+implementation = CFDMImplementation(Conventions=__Conventions__)
 
 netcdf = NetCDFWrite(implementation)
 

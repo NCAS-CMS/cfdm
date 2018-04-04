@@ -1,5 +1,7 @@
 import os
 
+from ... import __Conventions__
+
 from ...auxiliarycoordinate import AuxiliaryCoordinate
 from ...cellmethod          import CellMethod
 from ...cellmeasure         import CellMeasure
@@ -16,25 +18,27 @@ from ...data.data  import Data
 from ...data.netcdfarray   import NetCDF
 from ...data.gatheredarray import GatheredArray
 
-from ..implementation import Implementation
+from ..cfdmimplementation import CFDMImplementation
 
 from .netcdf import NetCDFRead
 
-implementation = Implementation(AuxiliaryCoordinate = AuxiliaryCoordinate,
-                                CellMeasure         = CellMeasure,
-                                CellMethod          = CellMethod,
-                                CoordinateReference = CoordinateReference,
-                                DimensionCoordinate = DimensionCoordinate,
-                                DomainAncillary     = DomainAncillary,
-                                DomainAxis          = DomainAxis,
-                                Field               = Field,
-                                FieldAncillary      = FieldAncillary,
-                                
-                                Bounds    = Bounds,
-                                Data      = Data,
-                                
-                                NetCDF        = NetCDF,
-                                GatheredArray = GatheredArray)
+implementation = CFDMImplementation(AuxiliaryCoordinate = AuxiliaryCoordinate,
+                                    CellMeasure         = CellMeasure,
+                                    CellMethod          = CellMethod,
+                                    CoordinateReference = CoordinateReference,
+                                    DimensionCoordinate = DimensionCoordinate,
+                                    DomainAncillary     = DomainAncillary,
+                                    DomainAxis          = DomainAxis,
+                                    Field               = Field,
+                                    FieldAncillary      = FieldAncillary,
+                                    
+                                    Bounds    = Bounds,
+                                    Data      = Data,
+                                    
+                                    NetCDF        = NetCDF,
+                                    GatheredArray = GatheredArray,
+
+                                    Conventions = __Conventions__)
 
 netcdf = NetCDFRead(implementation)
 # um = UMRead(implementation)
