@@ -61,7 +61,8 @@ Cell measure          Domain cell size or shape stored in
         return obj
     #--- End: def
     
-    def __init__(self, source=None, copy=True, _use_data=True, _view_constructs=None):
+    def __init__(self, properties=None, source=None, copy=True,
+                 _use_data=True, _view_constructs=None):
         '''**Initialization**
 
 :Parameters:
@@ -73,13 +74,13 @@ Cell measure          Domain cell size or shape stored in
         initialization. By default arguments are deep copied.
 
         '''
-        super(Domain, self).__init__(source=source, copy=copy)
+        super(Domain, self).__init__(properties=properties,
+                                     source=source, copy=copy)
         
         if _view_constructs is not None:
-            constructs = self._Constructs(
-                source=_view_constructs,
-                view=True,
-                ignore=('cell_method', 'field_ancillary'))
+            constructs = self._Constructs(source=_view_constructs,
+                                          view=True,
+                                          ignore=('cell_method', 'field_ancillary'))
         elif source is None:
             constructs = self._Constructs(**self._construct_key_base)
         else:
@@ -128,7 +129,7 @@ x.__str__() <==> str(x)
                 if key in self.construct_axes(k):
                     raise ValueError("asda ;wo3in dp08hi n")
         else:
-            # Remove reference to removed construct in coordinate
+            # Remove pointers to removed construct in coordinate
             # reference constructs
             for ref in self.coordinate_references().itervalues():
                 for term, value in ref.domain_ancillaries().iteritems():

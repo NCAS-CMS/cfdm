@@ -22,7 +22,7 @@ Keys are item identifiers, values are item objects.
                  source=None, copy=True, _use_data=True, view=False, ignore=()):
         '''
         '''
-        self._ignore = set(ignore)
+        self._ignore = tuple(set(ignore))
     
         if source is not None:
             if view:
@@ -87,7 +87,7 @@ Keys are item identifiers, values are item objects.
         
             self._constructs = d
 
-            self._ignore = set()
+            self._ignore = ()
             
             return
         #--- End: if
