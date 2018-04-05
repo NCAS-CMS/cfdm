@@ -219,6 +219,9 @@ ancillaries, field ancillaries).
         }
         g = self.read_vars
 
+        # ------------------------------------------------------------
+        # Add custom read vars
+        # ------------------------------------------------------------
         if extra_read_vars:
             g.update(copy.deepcopy(extra_read_vars))
 
@@ -231,7 +234,6 @@ ancillaries, field ancillaries).
             name = filename.name
             filename.close()
             filename = name
-
 
 #        g['uncompress']  = uncompress
 #        g['verbose']     = verbose
@@ -2444,6 +2446,12 @@ Set the Data attribute of a variable.
         return coordref
     #--- End: def
 
+    def _get_netcdf_dimensions(self, ncvar):
+        '''
+        '''
+        return list(self.read_vars['nc'].variables[ncvar].dimensions)
+    #--- End: def
+    
     def _ncdimensions(self, ncvar):
         '''Return a list of the netCDF dimensions corresponding to a netCDF
 variable.
@@ -2472,10 +2480,11 @@ dimensions are returned.
                 
         ncvariable = g['nc'].variables[ncvar]
     
-        ncattrs = ncvariable.ncattrs()
+#        ncattrs = ncvariable.ncattrs()
     
-        ncdimensions = list(ncvariable.dimensions)
-          
+#        ncdimensions = list(ncvariable.dimensions)
+        ncdimensions = self._get_netcdf_dimensions(ncvar)
+        
         # Remove a string-length dimension, if there is one. DCH ALERT
         if (ncvariable.datatype.kind == 'S' and
             ncvariable.ndim >= 2 and ncvariable.shape[-1] > 1):
