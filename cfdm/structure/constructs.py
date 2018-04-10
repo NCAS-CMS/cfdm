@@ -178,6 +178,8 @@ Keys are item identifiers, values are item objects.
         return 'SOMETHING BETTER NEEDED'
     #--- End: def
 
+    
+    
     def construct_type(self, key):
         '''
         '''
@@ -186,6 +188,18 @@ Keys are item identifiers, values are item objects.
             return
         
         return x
+    #--- End: def
+
+    def _construct_type_description(self, construct_type):
+        '''
+        '''
+        return construct_type.replace('_', ' ')
+    #--- End: def
+
+    def _set_construct_axes(self, key, axes):
+        '''
+        '''
+        self._construct_axes[key] = tuple(axes)
     #--- End: def
 
     def construct_types(self):
@@ -241,21 +255,6 @@ Keys are item identifiers, values are item objects.
         return out
     #--- End: def
 
-    def clear(self):
-        '''
-        '''
-        self._construct_axes.clear()
-
-        for x in array_constructs:
-            self._constructs[x].clear()
-        
-        for x in non_array_constructs:
-            self._constructs[x].clear()
-        
-        for x in ordered_constructs:
-            self._constructs[x].clear()
-    #--- End: def
-
     def _check_construct_type(self, construct_type):
         '''
         '''
@@ -267,13 +266,8 @@ Keys are item identifiers, values are item objects.
             x = set(x).difference(self._ignore)
         
         if construct_type not in x:
-#            if key is not None:
-#                m = ' for key {}'.format(key)
-#            else:
-#                m = ''
-                
             raise ValueError(
-                "Invalid construct type: {!r}. Must be one of {}".format(
+                "Invalid construct type {!r}. Must be one of {}".format(
                     construct_type, sorted(x)))
 
         return construct_type    
@@ -305,7 +299,7 @@ Keys are item identifiers, values are item objects.
         '''
 :Examples 1:
 
->>> x = c.construct_axes()
+>>> x = f.construct_axes()
 
 :Parameters:
 
@@ -321,18 +315,18 @@ Keys are item identifiers, values are item objects.
 
 :Examples 2:
 
->>> c.variable_axes()
+>>> f.variable_axes()
 {'aux0': ('dim1', 'dim0'),
  'aux1': ('dim0',),
  'aux2': ('dim0',),
  'aux3': ('dim0',),
  'aux4': ('dim0',),
  'aux5': ('dim0',)}
->>> c._axes(key='aux0')
+>>> f._axes(key='aux0')
 ('dim1', 'dim0')
 >>> print c.item_axes(key='aux0', new_axes=['dim0', 'dim1'])
 None
->>> c._axes(key='aux0')
+>>> f._axes(key='aux0')
 ('dim0', 'dim1')
 
 '''
@@ -382,7 +376,7 @@ None
         if self.construct_type(key) is None:
             raise ValueError("Can't set axes of non-existent key")
 
-        self._construct_axes[key] = tuple(axes)
+        self._set_construct_axes(key, axes)
     #--- End: def
 
     def copy(self, data=True):
@@ -403,88 +397,8 @@ Return a deep copy.
 '''
         return type(self)(source=self, copy=True, view=False,
                           _use_data=data, ignore=self._ignore)
-#        X = type(self)
-#        new = X.__new__(X)
-#
-#        new._key_base             = self._key_base.copy()
-#        new._array_constructs     = self._array_constructs.copy()
-#        new._non_array_constructs = self._non_array_constructs.copy()
-#        new._ordered_constructs   = self._ordered_constructs.copy()
-#        new._construct_axes       = self._construct_axes.copy()
-#        
-#        new._construct_type = {}
-#        d = {}
-#        
-#        for construct_type in new._array_constructs:
-#            v = self._constructs[construct_type]
-#            new_v = {}
-#            for key, construct in v.iteritems():
-#                new_v[key] = construct.copy(data=data)
-#                new._construct_type[key] = construct_type
-#                
-#            d[construct_type] = new_v
-#        #--- End: for
-##        new._constructs = d
-##
-##        new._construct_type = {}
-##        d = {}
-#        for construct_type in new._non_array_constructs:
-#            v = self._constructs[construct_type]
-#            new_v = {}
-#            for key, construct in v.iteritems():
-#                new_v[key] = construct.copy()
-#                new._construct_type[key] = construct_type
-#                
-#            d[construct_type] = new_v
-#        #--- End: for
-#        
-#        new._constructs = d
-#
-##        new._construct_type = {}
-##        d = {}
-##        for construct_type in (tuple(new._array_constructs) +
-##                               tuple(new._non_array_constructs)):
-##            v = self._constructs[construct_type]
-##            new_v = {}
-##            for key, construct in v.iteritems():
-##                new_v[key] = construct.copy(data=data)
-##                new._construct_type[key] = construct_type
-##                
-##            d[construct_type] = new_v
-##        #--- End: for
-##        new._constructs = d
-#
-#        return new
     #--- End: def
 
-    def subset(self, construct_types=(), copy=True):
-        '''
-        '''
-        new = type(self)(source=self, copy=False, view=False)
-
-        for x in self._key_base:
-            if x in construct_types:
-                continue
-
-            for y in self.constructs(x):
-                new._construct_type.pop(y, None)
-
-            new._constructs.pop(x, None)
-            new._construct_axes.pop(x, None)
-            new._key_base.pop(x, None)
-            
-            new._array_constructs.discard(x)
-            new._non_array_constructs.discard(x)
-            new._ordered_constructs.discard(x)
-
-        
-        
-        if copy:
-            new = new.copy()
-            
-        return new
-    #--- End: def
-        
     def axes_to_constructs(self):
         '''e3 49jrjfn
 
@@ -556,6 +470,42 @@ Return a deep copy.
     #--- End: def
 
     def domain_axes(self, copy=False):
+        '''
+:Examples 1:
+
+>>> d = f.domain_axes()
+
+:Parameters:
+
+    copy: 
+
+:Examples 2:
+
+>>> d = f.domain_axes()
+>>> d
+{'domainaxis1': <DomainAxis: 106>,
+ 'domainaxis0': <DomainAxis: 111>}
+>>> d['domainaxis0'].set_size(73)
+>>> f.domain_axes()
+{'domainaxis1': <DomainAxis: 106>,
+ 'domainaxis0': <DomainAxis: 73>}
+
+>>> d['domainaxis0'].set_size(73)
+>>> f.domain_axes()
+{'domainaxis1': <DomainAxis: 106>,
+ 'domainaxis0': <DomainAxis: 73>}
+
+>>> d = f.domain_axes(copy=True)
+>>> d
+{'domainaxis1': <DomainAxis: 106>,
+ 'domainaxis0': <DomainAxis: 73>}
+>>> d['domainaxis0'].set_size(111)
+>>> f.domain_axes()
+{'domainaxis1': <DomainAxis: 106>,
+ 'domainaxis0': <DomainAxis: 73>}
+
+     
+        '''
         return self.constructs('domain_axis', copy=copy)
     #--- End: def
     
@@ -582,42 +532,71 @@ Return a deep copy.
     #--- End: def
     
     def set_construct(self, construct_type, construct, key=None,
-                      axes=None, copy=True):
-        '''
+                      axes=None, replace=True, copy=True):
+        '''Insert a construct.
+
+:Parameters:
+
+    construct_type: `str`
+        TODO
+
+          *Example*:
+            ``construct_type='auxiliary_coordinate'``
+          
+    construct: construct
+        The construct to be inserted.
+
         '''
         construct_type = self._check_construct_type(construct_type)
                                                 
         if key is None:
+            # Create a new construct identifier
             key = self.new_identifier(construct_type)
-        elif key in self._constructs[construct_type]:
-            raise ValueError("Key exists. Use replace")
-        
+        elif not replace and key in self._constructs[construct_type]:
+            raise ValueError(
+"Can't set {} construct: Identifier already exisits".format(
+    self._construct_type_description(construct_type)))
+    
         if construct_type in self._array_constructs:
+            # The construct has a data array
             if axes is None:
-                raise ValueError("sdf lsbe lhbkhjb iuhj-98qohu n")
-            if len(axes) != construct.get_data().ndim:
                 raise ValueError(
-"Can't insert {}: Mismatched axis sizes (got {}, expected {})".format(
-    construct_type, len(axes), construct.get_data().ndim))
+"Can't set {} construct: Must specify the data array axes".format(
+    self._construct_type_description(construct_type)))
 
             domain_axes = self.domain_axes()
-            for axis, size in zip(axes, construct.get_data().shape):
-                if size != domain_axes[axis].get_size():
-                    raise ValueError(
-"Can't insert {}: Mismatched axis size (got {}, expected {})".format(
-    construct_type, size, domain_axes[axis].get_size()))
-            #--- End: for
 
-            self._construct_axes[key] = tuple(axes)
+            axes_shape = []
+            for axis in axes:
+                if axis not in domain_axes:
+                    raise ValueError(                    
+"Can't set {} construct: Domain axis {!r} does not exist".format(
+    self._construct_type_description(construct_type), axis))
+
+                axes_shape.append(domain_axes[axis].get_size())
+            #--- End: for
+            axes_shape = tuple(axes_shape)
+                    
+            if construct.shape != axes_shape:
+                raise ValueError(
+"Can't set {} construct: Data array shape {} does not match the axes shape {}".format(
+    self._construct_type_description(construct_type),
+    construct.shape, axes_shape))
+
+            self._set_construct_axes(key, axes)
         #--- End: if
-        
+
+        # Record the construct type
         self._construct_type[key] = construct_type
 
         if copy:
+            # Create a deep copy of the construct
             construct = construct.copy()
 
+        # Insert (a copy of) the construct
         self._constructs[construct_type][key] = construct
-        
+
+        # Return the construct's identifier
         return key
     #--- End: def
 
@@ -678,7 +657,7 @@ Return a new, unique identifier for the construct.
 
 :Examples 1:
 
->>> x = c.del_construct('auxiliarycoordinate2')
+>>> x = f.del_construct('auxiliarycoordinate2')
 
 :Parameters:
 
@@ -702,21 +681,21 @@ Return a new, unique identifier for the construct.
         return self._constructs[construct_type].pop(key, None)
     #--- End: def
 
-    def replace(self, key, construct=None, axes=None, copy=True):
+    def replace(self, key, construct, axes=None, copy=True):
         '''
+.. note:: No checks on the axes are done!!!!!
 '''
         construct_type = self.construct_types().get(key)
         if construct_type is None:
             raise ValueError("Can't replace non-existent construct {!r}".format(key))
 
         if axes is not None and construct_type in self._array_constructs:        
-            self._construct_axes[key] = tuple(axes)
+            self._set_construct_axes(key, axes)
 
-        if construct is not None:
-            if copy:
-                construct = construct.copy()
+        if copy:
+            construct = construct.copy()
             
-            self._constructs[construct_type][key] = construct
+        self._constructs[construct_type][key] = construct
     #--- End: def
     
 #--- End: class

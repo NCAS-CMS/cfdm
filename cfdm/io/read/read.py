@@ -1,7 +1,5 @@
 import os
 
-from ... import __Conventions__
-
 from ...auxiliarycoordinate import AuxiliaryCoordinate
 from ...cellmethod          import CellMethod
 from ...cellmeasure         import CellMeasure
@@ -36,9 +34,7 @@ implementation = CFDMImplementation(AuxiliaryCoordinate = AuxiliaryCoordinate,
                                     Data      = Data,
                                     
                                     NetCDF        = NetCDF,
-                                    GatheredArray = GatheredArray,
-
-                                    Conventions = __Conventions__)
+                                    GatheredArray = GatheredArray)
 
 netcdf = NetCDFRead(implementation)
 # um = UMRead(implementation)

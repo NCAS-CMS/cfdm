@@ -9,12 +9,10 @@ class CFDMImplementation(Implementation):
                  CoordinateAncillary=None ,CoordinateReference=None,
                  DimensionCoordinate=None, DomainAncillary=None,
                  DomainAxis=None, Field=None, FieldAncillary=None,
-                 Bounds=None, Data=None, GatheredArray=None,
-                 Conventions=None):
+                 Bounds=None, Data=None, GatheredArray=None):
+#                 Conventions=None):
         '''
 
-        self.Conventions         = Conventions
-        
         self.Bounds              = Bounds
         self.CoordinateAncillary = CoordinateAncillary
         self.Data                = Data
@@ -47,6 +45,6 @@ class CFDMImplementation(Implementation):
             FieldAncillary=FieldAncillary,
             Bounds=Bounds,
             Data=Data,
-            GatheredArray=GatheredArray,
-            Conventions=Conventions)
+            GatheredArray=GatheredArray)
+#            Conventions=Conventions)
     #--- End: def

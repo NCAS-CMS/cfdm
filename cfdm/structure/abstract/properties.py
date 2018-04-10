@@ -39,8 +39,6 @@ All components of a variable are optional.
         '''
         super(Properties, self).__init__(source=source, copy=copy)
 
-#        self._set_component(self.CUSTOMCOPY, 'properties', None, {})
-#        self._set_copy_method('properties', self.CUSTOMCOPY)
         self._set_component('properties', None, {})
         
         if source is not None:
@@ -57,7 +55,6 @@ All components of a variable are optional.
                 for key, value in properties.items():
                     properties[key] = deepcopy(value)
 
-#            self._set_component(self.CUSTOMCOPY, 'properties', None, properties)
             self._set_component('properties', None, properties)
     #--- End: def
         
@@ -79,6 +76,26 @@ All components of a variable are optional.
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
+    def copy(self):
+        '''Return a deep copy.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> g = f.copy()
+
+:Returns:
+
+    out:
+        The deep copy.
+
+        '''
+        return type(self)(source=self, copy=True)
+    #--- End: def
+
     def del_property(self, prop):
         '''Delete a property.
 
@@ -86,13 +103,13 @@ A property describes an aspect of the construct that is independent of
 the domain.
 
 A property may have any name and any value. Some properties correspond
-to some netCDF attributes of variables (e.g. "units", "long_name", and
+to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `get_property`, `has_property`, `set_property`
+.. seealso:: `get_property`, `has_property`, `properties`, `set_property`
 
 :Examples 1:
 
@@ -118,7 +135,6 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 None
 
         '''
-#        return self._del_component(self.CUSTOMCOPY, 'properties', prop)
         return self._del_component('properties', prop)
     #--- End: def
 
@@ -128,14 +144,14 @@ None
 A property describes an aspect of the construct that is independent of
 the domain.
 
-A property may have any name and any value. Some properties correspond to
-some netCDF attributes of variables (e.g. "units", "long_name", and
+A property may have any name and any value. Some properties correspond
+to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `del_property`, `has_property`, `set_property`
+.. seealso:: `del_property`, `has_property`, `properties`, `set_property`
 
 :Examples 1:
 
@@ -153,8 +169,8 @@ some netCDF attributes of variables (e.g. "units", "long_name", and
 
     out:
         The value of the property or the default value. If the
-        property has not been set, then return *default* if provided
-        or else raise an `ArtributeError`.
+        property has not been set, then *default* if provided
+        or else raise an `AttributeError`.
 
 :Examples 2:
 
@@ -169,10 +185,10 @@ AttributeError: Field doesn't have property 'standard_name'
 
         '''
         try:
-#            return self._get_component(self.CUSTOMCOPY, 'properties', prop, *default)
             return self._get_component('properties', prop, *default)
         except AttributeError:
-            raise AttributeError("Can't get non-existent property {!r}".format(prop))
+            raise AttributeError("{!r} object has no CF property {!r}".format(
+                self.__class__.__name__, prop))
     #--- End: def
 
     def has_property(self, prop):
@@ -182,13 +198,13 @@ A property describes an aspect of the construct that is independent of
 the domain.
 
 A property may have any name and any value. Some properties correspond
-to some netCDF attributes of variables (e.g. "units", "long_name", and
+to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `del_property`, `get_property`, `set_property`
+.. seealso:: `del_property`, `get_property`, `properties`, `set_property`
 
 :Examples 1:
 
@@ -204,15 +220,12 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
      out: `bool`
         True if the property has been set, otherwise False.
 
-:Examples 1:
+:Examples 2:
 
 >>> if f.has_property('standard_name'):
-...     print 'Has standard name'
+...     print 'Has a standard name'
 
-
-
-'''
-#        return self._has_component(self.CUSTOMCOPY, 'properties', prop)
+        '''
         return self._has_component('properties', prop)
     #--- End: def
 
@@ -249,12 +262,10 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 :Examples 2:
 
         '''
-#        existing_properties = self._get_component(self.CUSTOMCOPY, 'properties', None, None)
         existing_properties = self._get_component('properties', None, None)
 
         if existing_properties is None:
            existing_properties = {}
-#           self._set_component(self.CUSTOMCOPY, 'properties', None, existing_properties)
            self._set_component('properties', None, existing_properties)
         
         out = existing_properties.copy()
@@ -288,13 +299,13 @@ A property describes an aspect of the construct that is independent of
 the domain.
 
 A property may have any name and any value. Some properties correspond
-to some netCDF attributes of variables (e.g. "units", "long_name", and
+to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
 
 .. versionadded:: 1.6
 
-.. seealso:: `del_property`, `get_property`, `has_property`
+.. seealso:: `del_property`, `get_property`, `has_property`, `properties`
 
 :Examples 1:
 
@@ -314,7 +325,6 @@ to some netCDF attributes of variables (e.g. "units", "long_name", and
 
         '''
         self._set_component('properties', prop, value)
-#        self._set_component(self.CUSTOMCOPY, 'properties', prop, value)
     #--- End: def
 
 #--- End: class

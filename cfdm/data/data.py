@@ -795,19 +795,6 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
         return type(self)(array)
     #--- End: def
 
-#    def close(self):
-#        '''
-#'''
-#        self._get_Array().close()
-#    #--- End: def
-#    
-#    def open(self):
-#        '''
-#'''
-#        self._get_Array().open()
-#        self._get_Array().keep_open(True)
-#    #--- End: def
-
     def copy(self):
         '''Return a deep copy.
 

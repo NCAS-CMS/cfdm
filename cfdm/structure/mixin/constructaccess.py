@@ -83,18 +83,18 @@ class ConstructAccess(object):
 
     def set_auxiliary_coordinate(self, item, key=None, axes=None,
                                  copy=True, replace=True):
-        '''
+        '''Insert an auxiliary coordinate construct.
         '''
         if not replace and key in self.auxiliary_coordinates():
             raise ValueError(
-"Can't insert auxiliary coordinate object: Identifier {!r} already exists".format(key))
+"Can't insert auxiliary coordinate construct: Identifier {!r} already exists".format(key))
 
         return self.set_construct('auxiliary_coordinate', item,
                                   key=key, axes=axes, copy=copy)
     #--- End: def
 
     def set_domain_axis(self, domain_axis, key=None, replace=True, copy=True):
-        '''
+        '''Insert a domain axis construct.
         '''
         axes = self.domain_axes()
         if not replace and key in axes and axes[key].size != domain_axis.size:
@@ -108,11 +108,11 @@ class ConstructAccess(object):
 
     def set_domain_ancillary(self, item, key=None, axes=None,
                                 copy=True, replace=True):
-        '''
+        '''Insert a domain ancillary construct.
         '''       
         if not replace and key in self.domain_ancillaries():
             raise ValueError(
-"Can't insert domain ancillary object: Identifier {0!r} already exists".format(key))
+"Can't insert domain ancillary construct: Identifier {0!r} already exists".format(key))
 
         return self.set_construct('domain_ancillary', item, key=key,
                                   axes=axes,
@@ -120,13 +120,14 @@ class ConstructAccess(object):
     #--- End: def
 
     def set_construct(self, construct_type, construct, key=None, axes=None,
-                      copy=True):
-        '''
+                      replace=True, copy=True):
+        '''Insert a construct.
         '''
         return self._get_constructs().set_construct(construct_type,
                                                     construct,
                                                     key=key,
                                                     axes=axes,
+                                                    replace=replace,
                                                     copy=copy)
     #--- End: def
 
@@ -141,7 +142,7 @@ class ConstructAccess(object):
         '''
         if not replace and key in self.cell_measures():
             raise ValueError(
-"Can't insert cell measure object: Identifier {0!r} already exists".format(key))
+"Can't insert cell measure construct: Identifier {0!r} already exists".format(key))
 
         return self.set_construct('cell_measure', item, key=key,
                                   axes=axes, copy=copy)
@@ -160,7 +161,7 @@ class ConstructAccess(object):
         '''
         if not replace and key in self.dimension_coordinates():
             raise ValueError(
-"Can't insert dimension coordinate object: Identifier {!r} already exists".format(key))
+"Can't insert dimension coordinate construct: Identifier {!r} already exists".format(key))
 
         return self.set_construct('dimension_coordinate',
                                   item, key=key, axes=axes, copy=copy)

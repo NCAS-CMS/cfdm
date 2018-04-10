@@ -15,396 +15,6 @@ class NetCDFWrite(IOWrite):
     '''
     '''
 
-    def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
-              verbose=False, mode='w', least_significant_digit=None,
-              endian='native', compress=0, fletcher32=False,
-              no_shuffle=False, datatype=None,
-              variable_attributes=None, HDF_chunks=None,
-              unlimited=None, extra_write_vars=None,_debug=False,):
-        '''Write fields to a CF-netCDF file.
-        
-NetCDF dimension and variable names will be taken from variables'
-`!ncvar` attributes and the field attribute `!ncdimensions` if
-present, otherwise they are inferred from standard names or set to
-defaults. NetCDF names may be automatically given a numerical suffix
-to avoid duplication.
-    
-Output netCDF file global properties are those which occur in the set
-of CF global properties and non-standard data variable properties and
-which have equal values across all input fields.
-    
-Logically identical field components are only written to the file
-once, apart from when they need to fulfil both dimension coordinate
-and auxiliary coordinate roles for different data variables.
-    
-:Parameters:
-
-    fields : (arbitrarily nested sequence of) `cf.Field`
-        The field or fields to write to the file.
-
-    filename : str
-        The output CF-netCDF file. Various type of expansion are
-        applied to the file names:
-        
-          ====================  ======================================
-          Expansion             Description
-          ====================  ======================================
-          Tilde                 An initial component of ``~`` or
-                                ``~user`` is replaced by that *user*'s
-                                home directory.
-           
-          Environment variable  Substrings of the form ``$name`` or
-                                ``${name}`` are replaced by the value
-                                of environment variable *name*.
-          ====================  ======================================
-    
-        Where more than one type of expansion is used in the same
-        string, they are applied in the order given in the above
-        table.
-
-          Example: If the environment variable *MYSELF* has been set
-          to the "david", then ``'~$MYSELF/out.nc'`` is equivalent to
-          ``'~david/out.nc'``.
-  
-    fmt : str, optional
-        The format of the output file. One of:
-
-           =====================  ================================================
-           fmt                    Description
-           =====================  ================================================
-           ``'NETCDF3_CLASSIC'``  Output to a CF-netCDF3 classic format file
-           ``'NETCDF3_64BIT'``    Output to a CF-netCDF3 64-bit offset format file
-           ``'NETCDF4_CLASSIC'``  Output to a CF-netCDF4 classic format file
-           ``'NETCDF4'``          Output to a CF-netCDF4 format file
-           =====================  ================================================
-
-        By default the *fmt* is ``'NETCDF3_CLASSIC'``. Note that the
-        netCDF3 formats may be slower than any of the other options.
-
-    overwrite: bool, optional
-        If False then raise an exception if the output file
-        pre-exists. By default a pre-existing output file is over
-        written.
-
-    verbose : bool, optional
-        If True then print one-line summaries of each field written.
-
-    mode : str, optional
-        Specify the mode of write access for the output file. One of:
- 
-           =======  ==================================================
-           mode     Description
-           =======  ==================================================
-           ``'w'``  Create the file. If it already exists and
-                    *overwrite* is True then the file is deleted prior
-                    to being recreated.
-           =======  ==================================================
-       
-        By default the file is opened with write access mode ``'w'``.
-    
-    datatype : dict, optional
-        Specify data type conversions to be applied prior to writing
-        data to disk. Arrays with data types which are not specified
-        remain unchanged. By default, array data types are preserved
-        with the exception of booleans (``numpy.dtype(bool)``, which
-        are converted to 32 bit integers.
-
-          **Example:**
-            To convert 64 bit floats and integers to their 32 bit
-            counterparts: ``dtype={numpy.dtype(float):
-            numpy.dtype('float32'), numpy.dtype(int):
-            numpy.dtype('int32')}``.
-
-:Returns:
-
-    `None`
-
-:Examples 2:
-
->>> f
-[<CF Field: air_pressure(30, 24)>,
- <CF Field: u_compnt_of_wind(19, 29, 24)>,
- <CF Field: v_compnt_of_wind(19, 29, 24)>,
- <CF Field: potential_temperature(19, 30, 24)>]
->>> write(f, 'file')
-
->>> type(f)
-<class 'cf.field.FieldList'>
->>> type(g)
-<class 'cf.field.Field'>
->>> cf.write([f, g], 'file.nc', verbose=True)
-[<CF Field: air_pressure(30, 24)>,
- <CF Field: u_compnt_of_wind(19, 29, 24)>,
- <CF Field: v_compnt_of_wind(19, 29, 24)>,
- <CF Field: potential_temperature(19, 30, 24)>]
-        '''    
-        if _debug:
-            print 'Writing to netCDF:'
-
-        # ------------------------------------------------------------
-        # Initialize dictionary of useful global variables
-        # ------------------------------------------------------------
-                # ------------------------------------------------------------
-        # Initialise netCDF write parameters
-        # ------------------------------------------------------------
-        self.write_vars = {
-            # Format of output file
-            'fmt': None,
-            # netCDF4.Dataset instance
-            'netcdf'           : None,    
-            # Map netCDF variable names to netCDF4.Variable instances
-            'nc': {},      
-            # Map netCDF dimension names to netCDF dimension sizes
-            'ncdim_to_size': {},
-            # Dictionary of netCDF variable names and netCDF
-            # dimensions keyed by items of the field (such as a
-            # coordinate or a coordinate reference)
-            'seen': {},
-            # Set of all netCDF dimension and netCDF variable names.
-            'ncvar_names': set(()),
-            # Set of global or non-standard CF properties which have
-            # identical values across all input fields.
-            'global_properties': set(()), 
-            'variable_attributes': set(()),
-            'bounds': {},
-            # Compression/endian
-            'compression': {},
-            'endian': 'native',
-            'least_significant_digit': None,
-            # CF properties which need not be set on bounds if they're set
-            # on the parent coordinate
-            'omit_bounds_properties': ('units', 'standard_name', 'axis',
-                                       'positive', 'calendar', 'month_lengths',
-                                       'leap_year', 'leap_month'),
-            # Data type conversions to be applied prior to writing
-            'datatype': {},
-            #
-            'unlimited': (),
-            # Print statements
-            'verbose': False,
-            '_debug' : False,
-        }
-        g = self.write_vars
-        
-#        d = copy.deepcopy(self._write_vars)
-        if extra_write_vars:
-            g.update(copy.deepcopy(extra_write_vars))
-
-
-#        self.write_vars = self._reset_write_vars(extra_write_vars)
-
-
-        compress = int(compress)
-        zlib = bool(compress) 
-    
-        if fmt not in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
-                       'NETCDF4', 'NETCDF4_CLASSIC'):
-            raise ValueError("Unknown output file format: {}".format(fmt))
-    
-        if compress and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT'):
-            raise ValueError("Can't compress {} format file".format(fmt))
-        
-        # ------------------------------------------------------------
-        # Set up non-global attributes
-        # ------------------------------------------------------------
-        if variable_attributes:
-            if isinstance(variable_attributes, basestring):
-                variable_attributes = set((variable_attributes,))
-            else:
-                variable_attributes = set(variable_attributes)
-
-            g['variable_attributes'] = variable_attributes
-        #--- End: def
-    
-        # ------------------------------------------------------------
-        # Set up data type conversions. By default, booleans are
-        # converted to 32-bit integers and python objects are
-        # converted to 64-bit floats.
-        # ------------------------------------------------------------
-        dtype_conversions = {numpy.dtype(bool)  : numpy.dtype('int32'),
-                             numpy.dtype(object): numpy.dtype(float)}
-        if datatype:
-            dtype_conversions.update(datatype)
-
-        g['datatype'].update(dtype_conversions)
-
-        if unlimited:
-            g['unlimited'] = unlimited
-    
-        # -------------------------------------------------------
-        # Compression/endian
-        # -------------------------------------------------------
-        g['compression'].update(
-            {'zlib'       : zlib,
-             'complevel'  : compress,
-             'fletcher32' : fletcher32,
-             'shuffle'    : not no_shuffle,
-            })
-        g['endian'] = endian
-        g['least_significant_digit'] = least_significant_digit
-        
-        g['verbose'] = verbose
-        g['_debug']  = _debug        
-        
-        g['fmt'] = fmt
-    
-        # ---------------------------------------------------------------
-        # Flatten the sequence of intput fields
-        # ---------------------------------------------------------------
-        fields = list(flat(fields))
-    
-        # ---------------------------------------------------------------
-        # Still here? Open the output netCDF file.
-        # ---------------------------------------------------------------
-    #    if mode != 'w':
-    #        raise ValueError("Can only set mode='w' at the moment")
-    
-        filename = os.path.expanduser(os.path.expandvars(filename))
-        
-        if mode == 'w' and os.path.isfile(filename):
-            if not overwrite:
-                raise IOError(
-                    "Can't write to an existing file unless overwrite=True: {}".format(
-                        abspath(filename)))
-                    
-            if not os.access(filename, os.W_OK):
-                raise IOError(
-                    "Can't overwrite an existing file without permission: {}".format(
-                        abspath(filename)))
-                
-            os.remove(filename)
-        #--- End: if          
-
-        # ------------------------------------------------------------
-        # Open the netCDF file to be written
-        # ------------------------------------------------------------
-        g['filename'] = filename
-        g['netcdf'] = self.open_file(filename, mode, fmt)
-    
-        # ---------------------------------------------------------------
-        # Set the fill mode for a Dataset open for writing to off. This
-        # will prevent the data from being pre-filled with fill values,
-        # which may result in some performance improvements.
-        # ---------------------------------------------------------------
-        g['netcdf'].set_fill_off()
-    
-        # ---------------------------------------------------------------
-        # Write global properties to the file first. This is important as
-        # doing it later could slow things down enormously. This function
-        # also creates the g['global_properties'] set, which is used in
-        # the _write_field function.
-        # ---------------------------------------------------------------
-        self._write_global_properties(fields)
-    
-        # ---------------------------------------------------------------
-        #
-        # ---------------------------------------------------------------
-        for f in fields:
-    
-    #        # Set HDF chunking
-    #        chunks = f.HDF_chunks()
-    #        if chunks
-    #        
-    #        org_chunks = f.HDF_chunks(HDF_chunks)
-    #        default_chunks = f.HDF_chunks()
-    #        chunks = org_chunks.copy()
-    #        shape = f.shape
-    #        for i, size in org_chunks.iteritems():
-    #            if size is None:
-    #                size = default_chunks[i]
-    #            dim_size = shape[i]
-    #            if size is None or size > dim_size:
-    #                size = dim_size
-    #            chunks[i] = size
-    #        #--- End: for
-    #        f.HDF_chunks(chunks)
-    
-            if g['_debug']:            
-                print '  Field shape:', self._get_shape(f)
-                print '  HDF chunks :', 'PASS FOR NOW' #f.HDF_chunks()
-            
-            # Write the field
-            self._write_field(f)
-    
-    #        # Reset HDF chunking
-    #        f.HDF_chunks(org_chunks)
-        #-- End: for
-    
-        # ---------------------------------------------------------------
-        # Write all of the buffered data to disk
-        # ---------------------------------------------------------------
-        self.close_file(filename)
-    #--- End: def
-
-    @classmethod
-    def file_type(cls, filename):
-        '''Find the format of a file.
-    
-:Parameters:
-    
-    filename: `str`
-        The file name.
-    
-:Returns:
- 
-    out: `str`
-        The format type of the file.
-    
-:Examples:
-
->>> filetype = n.file_type(filename)
-    
-    '''
-        # ----------------------------------------------------------------
-        # Assume that URLs are in netCDF format
-        # ----------------------------------------------------------------
-        if filename.startswith('http://'):
-           return 'netCDF'
-    
-        # ----------------------------------------------------------------
-        # netCDF
-        # ----------------------------------------------------------------
-        if netcdf.is_netcdf_file(filename):
-            return 'netCDF'
-    #--- End: def
-
-    def close_file(self, filename):
-        '''Close the netCDF file that has been written.
-
-:Returns:
-
-    `None`
-
-        '''
-        self.write_vars['netcdf'].close()
-    #--- End: def
-    
-    def open_file(self, filename, mode, fmt):
-        '''Open the netCDf file for writing.
-        
-:Returns:
-        
-    out: `netCDF.Dataset`
-        
-        '''
-        try:        
-            nc = netCDF4.Dataset(filename, mode, format=fmt)
-        except RuntimeError as error:
-            raise RuntimeError("{}: {}".format(error, filename))        
-        else:
-            return nc
-    #--- End: def
-
-#    def _reset_write_vars(self, extra_write_vars):
-#        '''
-#        '''
-#        d = copy.deepcopy(self._write_vars)
-#        if extra_write_vars:
-#            d.update(copy.deepcopy(extra_write_vars))
-#
-#        return d
-#    #--- End: def
-    
     def _check_name(self, base, dimsize=None):
         '''
     
@@ -449,32 +59,30 @@ and auxiliary coordinate roles for different data variables.
         return ncvar
     #--- End: def
     
-    def _write_attributes(self, variable, ncvar, extra={}, omit=()):
+    def _write_attributes(self, parent, ncvar, extra={}, omit=()):
         '''
+:Examples 1:
+
+>>> w._write_attributes(x, 'lat')
     
 :Parameters:
 
-    variable: `Variable` or `Data`
+    parent:
 
     ncvar: `str`
 
     extra: `dict`, optional
     
-    omit : sequence of `str`, optional
+    omit: sequence of `str`, optional
 
 :Returns:
 
     `None`
 
-:Examples:
+:Examples 2:
     
-        '''  
-        netcdf_var = self.write_vars['nc'][ncvar]
-
-        try:
-            netcdf_attrs = self._get_properties(variable)
-        except AttributeError:
-            netcdf_attrs = {}
+        '''
+        netcdf_attrs = self.get_properties(parent)
 
         netcdf_attrs.update(extra)
         netcdf_attrs.pop('_FillValue', None)
@@ -484,8 +92,8 @@ and auxiliary coordinate roles for different data variables.
     
         if not netcdf_attrs:
             return
-
-        netcdf_var.setncatts(netcdf_attrs)
+        
+        self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
     #--- End: def
     
     def _character_array(self, array):
@@ -564,7 +172,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
         '''
         g = self.write_vars
 
-        data = self._get_data(variable, None)
+        data = self.get_data(variable, None)
         if data is None:
             return 'S1'
 
@@ -615,46 +223,41 @@ If the input variable has no `!dtype` attribute (or it is None) then
         return ncdim
     #--- End: def
     
-    def _write_grid_ncdimensions(self, f, key):
+    def _netcdf_dimensions(self, field, key):
         '''Return a tuple of the netCDF dimension names for the axes of a
 coordinate or cell measures objects.
     
 :Parameters:
 
-    f : `Field`
+    field: `Field`
 
-    key : str
-
-#    axis_to_ncdim : dict
-#        Mapping of field axis identifiers to netCDF dimension names.
-
-    g : dict
+    key: `str`
 
 :Returns:
 
-    out : tuple
-        A tuple of the netCDF dimension names.
+    out: `tuple`
+        The netCDF dimension names.
 
         '''
         g = self.write_vars
                 
-        return tuple([g['axis_to_ncdim'][axis] for axis in self._get_construct_axes(f, key)])
+        return tuple([g['axis_to_ncdim'][axis]
+                      for axis in self._get_construct_axes(field, key)])
     #--- End: def
         
-    def _create_netcdf_variable_name(self, construct, default):
+    def _create_netcdf_variable_name(self, parent, default):
         '''asdasdasd
         
 :Parameter:
         
-    construct: `Properties`
+    parent:
            
     default: `str`
     
         '''
-#        ncvar = construct.get_ncvar(None)
-        ncvar = self._get_ncvar(construct, None)
+        ncvar = self.get_ncvar(parent, None)
         if ncvar is None:
-            ncvar = self._get_property(construct, 'standard_name', default)
+            ncvar = self.get_property(parent, 'standard_name', default)
                 
         return self._check_name(ncvar)
     #--- End: def
@@ -807,16 +410,16 @@ a new netCDF dimension for the bounds.
                                                       default='coordinate')
             
             # Create a new dimension, if it is not a scalar coordinate
-#            if self._get_data(coord).ndim > 0:
-            if self._get_ndim(coord) > 0:
+            if self.get_ndim(coord) > 0:
                 unlimited = self._unlimited(f, axis)
                 self._write_dimension(ncdim, f, axis, unlimited=unlimited)
     
-            ncdimensions = self._write_grid_ncdimensions(f, key)
+            ncdimensions = self._netcdf_dimensions(f, key)
             
-            # If this dimension coordinate has bounds then create the
-            # bounds netCDF variable and add the bounds or climatology
-            # attribute to a dictionary of extra attributes
+            # If this dimension coordinate has bounds then write the
+            # bounds to the netCDF file and add the 'bounds' or
+            # 'climatology' attribute to a dictionary of extra
+            # attributes
             extra = self._write_bounds(coord, ncdimensions, ncdim)
     
             # Create a new dimension coordinate variable
@@ -958,7 +561,7 @@ dictionary.
         if bounds is None:
             return {}
 
-        data = self._get_data(bounds, None) 
+        data = self.get_data(bounds, None) 
         if data is None:
             return {}
 
@@ -988,11 +591,7 @@ dictionary.
                 g['netcdf'].createDimension(ncdim, size)
             #--- End: if
             
-#            ncvar = getattr(bounds, 'ncvar', coord_ncvar+'_bounds')
-            ncvar = self._get_ncvar(bounds, None)
-            if ncvar is None:
-                ncvar = coord_ncvar+'_bounds'
-                
+            ncvar = self.get_ncvar(bounds, coord_ncvar+'_bounds')                
             ncvar = self._check_name(ncvar)
             
             # Note that, in a field, bounds always have equal units to
@@ -1001,7 +600,7 @@ dictionary.
             # Select properties to omit
             omit = []
             for prop in g['omit_bounds_properties']:
-                if self._has_property(coord, prop):
+                if self.has_property(coord, prop):
                     omit.append(prop)
     
             # Create the bounds netCDF variable
@@ -1172,7 +771,7 @@ then the input coordinate is not written.
 
 #        coord = self._change_reference_datetime(coord)
     
-        ncdimensions = self._write_grid_ncdimensions(f, key)
+        ncdimensions = self._netcdf_dimensions(f, key)
     
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
@@ -1243,7 +842,7 @@ then the input coordinate is not written.
             # See if we can set the default netCDF variable name to
             # its formula_terms term
             default = None
-            for ref in self._get_coordinate_references(f).itervalues():
+            for ref in self.get_coordinate_references(f).itervalues():
                 for term, da_key in ref.domain_ancillaries().iteritems():
                     if da_key == key:
                         default = term
@@ -1318,25 +917,21 @@ it is not re-written.
         return ncvar
     #--- End: def
       
-    def _write_cell_measure(self, f, key, msr):
-        '''Write an auxiliary coordinate and bounds to the netCDF file.
+    def _write_cell_measure(self, field, key, cell_measure):
+        '''Write a cell measure construct to the netCDF file.
 
-If an equal cell measure has already been written to the file then the
-input coordinate is not written.
+If an identical construct has already in the file then the cell
+measure will not be written.
 
 :Parameters:
 
-    f: `Field`
+    field: `Field`
         The field containing the cell measure.
 
-    key: str
+    key: `str`
         The identifier of the cell measure (e.g. 'msr0').
 
-#    key_to_ncvar: dict
-#        Mapping of field item identifiers to netCDF dimension names.
-#
-#    axis_to_ncdim: dict
-#        Mapping of field axis identifiers to netCDF dimension names.
+    cell_measure: `CellMeasure`
 
 :Returns:
 
@@ -1348,23 +943,20 @@ input coordinate is not written.
         '''
         g = self.write_vars
 
-        ncdimensions = self._write_grid_ncdimensions(f, key)
-    
-        create = not self._already_in_file(msr, ncdimensions)
+        measure = self.get_measure(cell_measure)
+        if measure is None:
+            raise ValueError(
+"Can't create a netCDF cell measure variable without a 'measure' property")
 
-        measure = self._get_measure(msr)
-        
-        if not create:
-            ncvar = g['seen'][id(msr)]['ncvar']
+        ncdimensions = self._netcdf_dimensions(field, key)
+    
+        if self._already_in_file(cell_measure, ncdimensions):
+            # Use existing cell measure variable
+            ncvar = g['seen'][id(cell_measure)]['ncvar']
         else:
-            if measure is None:
-                raise ValueError(
-"Can't create a cell measure variable without a 'measure'")
-    
-            ncvar = self._create_netcdf_variable_name(msr, default='cell_measure')
-    
-            self._write_netcdf_variable(ncvar, ncdimensions, msr)
-        #--- End: if
+            # Create a new cell measure variable
+            ncvar = self._create_netcdf_variable_name(cell_measure, default='cell_measure')
+            self._write_netcdf_variable(ncvar, ncdimensions, cell_measure)
                 
         g['key_to_ncvar'][key] = ncvar
     
@@ -1373,7 +965,6 @@ input coordinate is not written.
     #--- End: def
       
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
-#                            key_to_ncvar):
         '''Write a grid mapping georeference to the netCDF file.
     
 .. note:: This function updates ``grid_mapping``, ``g['seen']``.
@@ -1387,9 +978,6 @@ input coordinate is not written.
 
     multiple_grid_mappings: `bool`
 
-#    key_to_ncvar: dict
-#        Mapping of field item identifiers to netCDF variable names.
-
 :Returns:
 
     out : str
@@ -1400,11 +988,11 @@ input coordinate is not written.
         g = self.write_vars
 
         if self._already_in_file(ref):
-            # Use existing grid_mapping
+            # Use existing grid_mapping variable
             ncvar = g['seen'][id(ref)]['ncvar']
     
         else:
-            # Create a new grid mapping
+            # Create a new grid mapping variable
             ncvar = self._create_netcdf_variable_name(ref, default='grid_mapping')
     
             g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
@@ -1415,7 +1003,7 @@ input coordinate is not written.
 #            cref = ref.canonical(f) # NOTE: NOT converting units
     
             # Add named parameters
-            parameters = ref.parameters()
+            parameters = self.get_coordinate_reference_parameters(ref)
             for term, value in parameters.items():
                 if value is None:
                     del parameters[term]
@@ -1430,7 +1018,7 @@ input coordinate is not written.
             #--- End: for
 
             # Add the grid mapping name property
-            grid_mapping_name = self._get_property(ref, 'grid_mapping_name', None)
+            grid_mapping_name = self.get_property(ref, 'grid_mapping_name', None)
             if grid_mapping_name is not None:
                 parameters['grid_mapping_name'] = grid_mapping_name
                 
@@ -1443,10 +1031,12 @@ input coordinate is not written.
                               }
         #--- End: if
     
-        # Update the grid_mapping list in place
         if multiple_grid_mappings:
-            return ncvar+':'+' '.join(sorted([g['key_to_ncvar'][key]
-                                              for key in ref.coordinates]))
+            return '{0}: {1}'.format(
+                ncvar,
+                ' '.join(
+                    sorted([g['key_to_ncvar'][key]
+                            for key in self.get_coordinate_reference_coordinates(ref)])))
         else:
             return ncvar
     #--- End: def
@@ -1492,7 +1082,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         datatype = self._datatype(cfvar)
     
-        data = self._get_data(cfvar, None)
+        data = self.get_data(cfvar, None)
 
         if data is not None and datatype == 'S1':
             # --------------------------------------------------------
@@ -1579,8 +1169,8 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         # ------------------------------------------------------------
         if data is not None:  
             # Find the missing data values, if any.
-            _FillValue    = self._get_property(cfvar, '_FillValue', None) 
-            missing_value = self._get_property(cfvar, 'missing_value', None)
+            _FillValue    = self.get_property(cfvar, '_FillValue', None) 
+            missing_value = self.get_property(cfvar, 'missing_value', None)
             unset_values = [value for value in (_FillValue, missing_value)
                             if value is not None]
             self._write_data(data, ncvar, unset_values)
@@ -1801,8 +1391,8 @@ extra trailing dimension.
         # ----------------------------------------------------------------
         # Create netCDF variables grid mappings
         # ----------------------------------------------------------------
-        grid_mapping_refs = [ref for ref in self._get_coordinate_references(f).values()
-                             if self._get_property(ref, 'grid_mapping_name', False)]
+        grid_mapping_refs = [ref for ref in self.get_coordinate_references(f).values()
+                             if self.get_property(ref, 'grid_mapping_name', False)]
             
         multiple_grid_mappings = (len(grid_mapping_refs) > 1)
     
@@ -1830,8 +1420,8 @@ extra trailing dimension.
         # ----------------------------------------------------------------
         # formula_terms
         # ----------------------------------------------------------------
-        formula_terms_refs = [ref for ref in self._get_coordinate_references(f).values()
-                              if self._get_property(ref, 'standard_name', False)]
+        formula_terms_refs = [ref for ref in self.get_coordinate_references(f).values()
+                              if self.get_property(ref, 'standard_name', False)]
 
         for ref in formula_terms_refs:
             formula_terms = []
@@ -1841,8 +1431,8 @@ extra trailing dimension.
             formula_terms_name = ref.name()
             if formula_terms_name is not None:
 #                owning_coord = f.item(formula_terms_name, role=('d', 'a'))
-                c = [(key, coord) for key, coord in self._get_coordinates(f).items()
-                     if self._get_property(coord, 'standard_name', None) == formula_terms_name]
+                c = [(key, coord) for key, coord in self.get_coordinates(f).items()
+                     if self.get_property(coord, 'standard_name', None) == formula_terms_name]
                 if len(c) == 1:
                     owning_coord_key, owning_coord = c[0]
             #--- End: if
@@ -2020,22 +1610,7 @@ extra trailing dimension.
     def _get_constructs(self, field, axes=None):
         return field.constructs(axes=axes)
 
-    def _get_coordinate_references(self, field):
-        '''
-        '''
-        return field.coordinate_references()
-
-    def _get_coordinates(self, field):
-        '''
-        '''
-        return field.coordinates()
     
-    def _get_data(self, construct, *default):
-        '''
-        '''
-        return construct.get_data(*default)
-    #--- End: def
-
     def _get_data_axes(self, field):
         '''
         '''
@@ -2068,43 +1643,6 @@ extra trailing dimension.
         '''
         return field.field_ancillaries()
 
-    def _get_measure(self, cell_measure):
-        '''
-        '''
-        return cell_measure.get_measure(None)
-
-    def _get_ncvar(self, construct, *default):
-        '''
-        '''
-        return construct.get_ncvar(*default)
-    #--- End: def
-
-    def _get_ndim(self, construct):
-        '''
-        '''
-        return construct.ndim
-    #--- End: def
-
-    def _get_properties(self, construct):
-        '''
-        '''
-        return construct.properties()
-                            
-    def _get_property(self, construct, prop, *default):
-        '''
-        '''
-        return construct.get_property(prop, *default)
-                            
-    def _get_shape(self, construct):
-        '''
-        '''
-        return construct.shape
-    #--- End: def
-
-    def _has_property(self, construct, prop):
-        '''
-        '''
-        return construct.has_property(prop)
                             
     def _unlimited(self, field, axis):
         '''
@@ -2184,27 +1722,704 @@ write them to the netCDF4.Dataset.
         # have different values in different fields
         f0 = fields[0]
         for prop in tuple(global_properties):
-            if not self._has_property(f0, prop):
+            if not self.has_property(f0, prop):
                 global_properties.remove(prop)
                 continue
                 
-            prop0 = self._get_property(f0, prop)
+            prop0 = self.get_property(f0, prop)
     
             if len(fields) > 1:
                 for f in fields[1:]:
-                    if (not self._has_property(f, prop) or 
-                        not equals(self._get_property(f, prop), prop0, traceback=False)):
+                    if (not self.has_property(f, prop) or 
+                        not equals(self.get_property(f, prop), prop0, traceback=False)):
                         global_properties.remove(prop)
                         break
         #--- End: for
     
         # Write the global properties to the file
-        g['netcdf'].setncattr('Conventions', self.implementation.get_class('Conventions'))
+        g['netcdf'].setncattr('Conventions', g['Conventions'])
         
         for attr in global_properties - set(('Conventions',)):
-            g['netcdf'].setncattr(attr, self._get_property(f0, attr)) 
+            g['netcdf'].setncattr(attr, self.get_property(f0, attr)) 
     
         g['global_properties'] = global_properties
     #--- End: def
 
+    def file_close(self, filename):
+        '''Close the netCDF file that has been written.
+
+:Returns:
+
+    `None`
+
+        '''
+        self.write_vars['netcdf'].close()
+    #--- End: def
+
+    def file_open(self, filename, mode, fmt):
+        '''Open the netCDf file for writing.
+        
+:Returns:
+        
+    out: `netCDF.Dataset`
+        
+        '''
+        try:        
+            nc = netCDF4.Dataset(filename, mode, format=fmt)
+        except RuntimeError as error:
+            raise RuntimeError("{}: {}".format(error, filename))        
+        else:
+            return nc
+    #--- End: def
+
+    @classmethod
+    def file_type(cls, filename):
+        '''Find the format of a file.
+    
+:Parameters:
+    
+    filename: `str`
+        The file name.
+    
+:Returns:
+ 
+    out: `str`
+        The format type of the file.
+    
+:Examples:
+
+>>> filetype = n.file_type(filename)
+    
+    '''
+        # ----------------------------------------------------------------
+        # Assume that URLs are in netCDF format
+        # ----------------------------------------------------------------
+        if filename.startswith('http://'):
+           return 'netCDF'
+    
+        # ----------------------------------------------------------------
+        # netCDF
+        # ----------------------------------------------------------------
+        if netcdf.is_netcdf_file(filename):
+            return 'netCDF'
+    #--- End: de
+
+    def get_coordinate_reference_coordinates(self, coordinate_reference):
+        '''
+
+:Returns:
+
+    out: `dict`
+
+        '''
+        return coordinate_reference.coordinates()
+    #--- End: def
+
+    def get_coordinate_reference_parameters(self, coordinate_reference):
+        '''
+
+:Returns:
+
+    out: `dict`
+
+        '''
+        return coordinate_reference.parameters()
+    #--- End: def
+
+    def get_coordinate_references(self, field):
+        '''
+        '''
+        return field.coordinate_references()
+    #--- End: def
+
+    def get_coordinates(self, field):
+        '''
+        '''
+        return field.coordinates()
+    #--- End: def
+
+    def get_data(self, parent, *default):
+        '''Return the data array.
+
+:Examples 1:
+
+>>> data = w.get_data(x)
+
+:Parameters:
+
+    parent: 
+        The object containing the data array.
+
+:Returns:
+
+    out: 
+        The data array.
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.get_data(d)
+<Data: [-89.5, ..., 89.5] degrees_north>
+
+>>> b
+<Bounds: latitude(180, 2) degrees_north>
+>>> w.get_data(b)
+<Data: [[-90, ..., 90]] degrees_north>
+        '''
+        return parent.get_data(*default)
+    #--- End: def
+
+    def get_measure(self, cell_measure):
+        '''Return the measure property of a cell measure contruct.
+
+:Examples 1:
+
+>>> measure = w.get_measure(c)
+
+:Parameters:
+
+    cell_measure: 
+        The cell measure object.
+
+:Returns:
+
+    out: `str` or `None`
+        The measure property, or `None` if it has not been set.
+
+:Examples 2:
+
+>>> c
+<CellMeasure: area(73, 96) km2>
+>>> w.get_measure(c)
+'area'
+        '''
+        return cell_measure.get_measure(None)
+    #--- End: def
+    
+    def get_ncvar(self, parent, *default):
+        '''Return the netCDF variable name.
+
+:Examples 1:
+
+>>> ncvar = w.get_ncvar(x)
+
+:Parameters:
+
+    parent: 
+        The object containing the data array.
+
+    default: `str`, optional
+
+:Returns:
+
+    out: 
+        The netCDF variable name.
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.get_ncvar(d)
+'lat'
+
+>>> b
+<Bounds: latitude(180, 2) degrees_north>
+>>> w.get_ncvar(b)
+'lat_bnds'
+
+>>> w.get_ncvar(x)
+AttributeError: Can't get non-existent 'ncvar'
+>>> w.get_ncvar(x, 'newname')
+'newname'
+        '''
+        return parent.get_ncvar(*default)
+    #--- End: def
+
+    def get_ndim(self, parent):
+        '''Return the number of dimensions spanned by the data array.
+
+:Parameters:
+
+    parent: 
+        The object containing the data array.
+
+:Returns:
+
+    out: int
+        The number of dimensions spanned by the data array.
+
+:Examples 1:
+
+>>> ndim = w.get_ndim(x)
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.get_ndim(d)
+1
+
+>>> b
+<Bounds: latitude(180, 2) degrees_north>
+>>> w.get_ndim(b)
+2
+        '''
+        return parent.ndim
+    #--- End: def
+
+    def get_properties(self, parent):
+        '''Return all properties.
+
+:Parameters:
+
+    parent: 
+        The object containing the properties.
+
+:Returns:
+
+    out: `dict`
+        The property names and their values
+
+:Examples 1:
+
+>>> properties = w.get_properties(x)
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.get_properties(d)
+{'units: 'degrees_north'}
+ 'standard_name: 'latitude',
+ 'foo': 'bar'}
+        '''
+        return parent.properties()
+    #--- End: def
+    
+    def get_property(self, parent, prop, *default):
+        '''Return a property value.
+
+:Parameters:
+
+    parent: 
+        The object containing the property.
+
+:Returns:
+
+    out: 
+        The value of the property.
+
+:Examples 1:
+
+>>> value = w.get_property(x, 'standard_name')
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.get_property(d, 'units')
+'degees_north'
+
+>>> b
+<Bounds: latitude(180, 2) degrees_north>
+>>> w.get_property(b, 'long_name')
+'Latitude Bounds'
+
+>>> w.get_property(x, 'foo')
+AttributeError: Can't get non-existent property 'foo'
+>>> w.get_property(x, 'foo', 'bar')
+'bar'
+        '''
+        return parent.get_property(prop, *default)
+                            
+    def get_shape(self, parent):
+        '''Return the shape of the data array.
+
+:Parameters:
+
+    parent: 
+        The object containing the data array.
+
+:Returns:
+
+    out: tuple
+        The shape of the data array.
+
+:Examples 1:
+
+>>> shape = w.get_shape(x)
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.get_shape(d)
+(180,)
+
+>>> b
+<Bounds: latitude(180, 2) degrees_north>
+>>> w.get_shape(b)
+(180, 2)
+
+        '''
+        return parent.shape
+    #--- End: def
+
+    def has_property(self, parent, prop):
+        '''Return True if a property exists.
+
+:Parameters:
+
+    parent: 
+        The object containing the property.
+
+:Returns:
+
+    out: `bool`
+        `True` if the property exists, otherwise `False`.
+
+:Examples 1:
+
+>>> has_standard_name = w.has_property(x, 'standard_name')
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.has_property(d, 'units')
+True
+
+>>> b
+<Bounds: latitude(180, 2) degrees_north>
+>>> w.has_property(b, 'long_name')
+False
+        '''
+        return parent.has_property(prop)
+    #--- End: def
+
+    def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
+              verbose=False, mode='w', least_significant_digit=None,
+              endian='native', compress=0, fletcher32=False,
+              no_shuffle=False, datatype=None,
+              variable_attributes=None, HDF_chunks=None,
+              unlimited=None, extra_write_vars=None, Conventions=None,
+              _debug=False):
+        '''Write fields to a netCDF file.
+        
+NetCDF dimension and variable names will be taken from variables'
+`!ncvar` attributes and the field attribute `!ncdimensions` if
+present, otherwise they are inferred from standard names or set to
+defaults. NetCDF names may be automatically given a numerical suffix
+to avoid duplication.
+    
+Output netCDF file global properties are those which occur in the set
+of CF global properties and non-standard data variable properties and
+which have equal values across all input fields.
+    
+Logically identical field components are only written to the file
+once, apart from when they need to fulfil both dimension coordinate
+and auxiliary coordinate roles for different data variables.
+    
+:Parameters:
+
+    fields : (arbitrarily nested sequence of) `cf.Field`
+        The field or fields to write to the file.
+
+    filename : str
+        The output CF-netCDF file. Various type of expansion are
+        applied to the file names:
+        
+          ====================  ======================================
+          Expansion             Description
+          ====================  ======================================
+          Tilde                 An initial component of ``~`` or
+                                ``~user`` is replaced by that *user*'s
+                                home directory.
+           
+          Environment variable  Substrings of the form ``$name`` or
+                                ``${name}`` are replaced by the value
+                                of environment variable *name*.
+          ====================  ======================================
+    
+        Where more than one type of expansion is used in the same
+        string, they are applied in the order given in the above
+        table.
+
+          Example: If the environment variable *MYSELF* has been set
+          to the "david", then ``'~$MYSELF/out.nc'`` is equivalent to
+          ``'~david/out.nc'``.
+  
+    fmt : str, optional
+        The format of the output file. One of:
+
+           =====================  ================================================
+           fmt                    Description
+           =====================  ================================================
+           ``'NETCDF3_CLASSIC'``  Output to a CF-netCDF3 classic format file
+           ``'NETCDF3_64BIT'``    Output to a CF-netCDF3 64-bit offset format file
+           ``'NETCDF4_CLASSIC'``  Output to a CF-netCDF4 classic format file
+           ``'NETCDF4'``          Output to a CF-netCDF4 format file
+           =====================  ================================================
+
+        By default the *fmt* is ``'NETCDF3_CLASSIC'``. Note that the
+        netCDF3 formats may be slower than any of the other options.
+
+    overwrite: bool, optional
+        If False then raise an exception if the output file
+        pre-exists. By default a pre-existing output file is over
+        written.
+
+    verbose : bool, optional
+        If True then print one-line summaries of each field written.
+
+    mode : str, optional
+        Specify the mode of write access for the output file. One of:
+ 
+           =======  ==================================================
+           mode     Description
+           =======  ==================================================
+           ``'w'``  Create the file. If it already exists and
+                    *overwrite* is True then the file is deleted prior
+                    to being recreated.
+           =======  ==================================================
+       
+        By default the file is opened with write access mode ``'w'``.
+    
+    datatype : dict, optional
+        Specify data type conversions to be applied prior to writing
+        data to disk. Arrays with data types which are not specified
+        remain unchanged. By default, array data types are preserved
+        with the exception of booleans (``numpy.dtype(bool)``, which
+        are converted to 32 bit integers.
+
+          **Example:**
+            To convert 64 bit floats and integers to their 32 bit
+            counterparts: ``dtype={numpy.dtype(float):
+            numpy.dtype('float32'), numpy.dtype(int):
+            numpy.dtype('int32')}``.
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> f
+[<CF Field: air_pressure(30, 24)>,
+ <CF Field: u_compnt_of_wind(19, 29, 24)>,
+ <CF Field: v_compnt_of_wind(19, 29, 24)>,
+ <CF Field: potential_temperature(19, 30, 24)>]
+>>> write(f, 'file')
+
+>>> type(f)
+<class 'cf.field.FieldList'>
+>>> type(g)
+<class 'cf.field.Field'>
+>>> cf.write([f, g], 'file.nc', verbose=True)
+[<CF Field: air_pressure(30, 24)>,
+ <CF Field: u_compnt_of_wind(19, 29, 24)>,
+ <CF Field: v_compnt_of_wind(19, 29, 24)>,
+ <CF Field: potential_temperature(19, 30, 24)>]
+        '''    
+        if _debug:
+            print 'Writing to netCDF:'
+
+        # ------------------------------------------------------------
+        # Initialize dictionary of useful global variables
+        # ------------------------------------------------------------
+                # ------------------------------------------------------------
+        # Initialise netCDF write parameters
+        # ------------------------------------------------------------
+        self.write_vars = {
+            # CF conventions for output file
+            'Conventions': Conventions,
+            # Format of output file
+            'fmt': None,
+            # netCDF4.Dataset instance
+            'netcdf'           : None,    
+            # Map netCDF variable names to netCDF4.Variable instances
+            'nc': {},      
+            # Map netCDF dimension names to netCDF dimension sizes
+            'ncdim_to_size': {},
+            # Dictionary of netCDF variable names and netCDF
+            # dimensions keyed by items of the field (such as a
+            # coordinate or a coordinate reference)
+            'seen': {},
+            # Set of all netCDF dimension and netCDF variable names.
+            'ncvar_names': set(()),
+            # Set of global or non-standard CF properties which have
+            # identical values across all input fields.
+            'global_properties': set(()), 
+            'variable_attributes': set(()),
+            'bounds': {},
+            # Compression/endian
+            'compression': {},
+            'endian': 'native',
+            'least_significant_digit': None,
+            # CF properties which need not be set on bounds if they're set
+            # on the parent coordinate
+            'omit_bounds_properties': ('units', 'standard_name', 'axis',
+                                       'positive', 'calendar', 'month_lengths',
+                                       'leap_year', 'leap_month'),
+            # Data type conversions to be applied prior to writing
+            'datatype': {},
+            #
+            'unlimited': (),
+            # Print statements
+            'verbose': False,
+            '_debug' : False,
+        }
+        g = self.write_vars
+        
+#        d = copy.deepcopy(self._write_vars)
+        if extra_write_vars:
+            g.update(copy.deepcopy(extra_write_vars))
+
+
+#        self.write_vars = self._reset_write_vars(extra_write_vars)
+
+
+        compress = int(compress)
+        zlib = bool(compress) 
+    
+        if fmt not in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT',
+                       'NETCDF4', 'NETCDF4_CLASSIC'):
+            raise ValueError("Unknown output file format: {}".format(fmt))
+    
+        if compress and fmt in ('NETCDF3_CLASSIC', 'NETCDF3_64BIT'):
+            raise ValueError("Can't compress {} format file".format(fmt))
+        
+        # ------------------------------------------------------------
+        # Set up non-global attributes
+        # ------------------------------------------------------------
+        if variable_attributes:
+            if isinstance(variable_attributes, basestring):
+                variable_attributes = set((variable_attributes,))
+            else:
+                variable_attributes = set(variable_attributes)
+
+            g['variable_attributes'] = variable_attributes
+        #--- End: def
+    
+        # ------------------------------------------------------------
+        # Set up data type conversions. By default, booleans are
+        # converted to 32-bit integers and python objects are
+        # converted to 64-bit floats.
+        # ------------------------------------------------------------
+        dtype_conversions = {numpy.dtype(bool)  : numpy.dtype('int32'),
+                             numpy.dtype(object): numpy.dtype(float)}
+        if datatype:
+            dtype_conversions.update(datatype)
+
+        g['datatype'].update(dtype_conversions)
+
+        if unlimited:
+            g['unlimited'] = unlimited
+    
+        # -------------------------------------------------------
+        # Compression/endian
+        # -------------------------------------------------------
+        g['compression'].update(
+            {'zlib'       : zlib,
+             'complevel'  : compress,
+             'fletcher32' : fletcher32,
+             'shuffle'    : not no_shuffle,
+            })
+        g['endian'] = endian
+        g['least_significant_digit'] = least_significant_digit
+        
+        g['verbose'] = verbose
+        g['_debug']  = _debug        
+        
+        g['fmt'] = fmt
+    
+        # ---------------------------------------------------------------
+        # Flatten the sequence of intput fields
+        # ---------------------------------------------------------------
+        fields = list(flat(fields))
+    
+        # ---------------------------------------------------------------
+        # Still here? Open the output netCDF file.
+        # ---------------------------------------------------------------
+    #    if mode != 'w':
+    #        raise ValueError("Can only set mode='w' at the moment")
+    
+        filename = os.path.expanduser(os.path.expandvars(filename))
+        
+        if mode == 'w' and os.path.isfile(filename):
+            if not overwrite:
+                raise IOError(
+                    "Can't write to an existing file unless overwrite=True: {}".format(
+                        abspath(filename)))
+                    
+            if not os.access(filename, os.W_OK):
+                raise IOError(
+                    "Can't overwrite an existing file without permission: {}".format(
+                        abspath(filename)))
+                
+            os.remove(filename)
+        #--- End: if          
+
+        # ------------------------------------------------------------
+        # Open the netCDF file to be written
+        # ------------------------------------------------------------
+        g['filename'] = filename
+        g['netcdf'] = self.file_open(filename, mode, fmt)
+    
+        # ---------------------------------------------------------------
+        # Set the fill mode for a Dataset open for writing to off. This
+        # will prevent the data from being pre-filled with fill values,
+        # which may result in some performance improvements.
+        # ---------------------------------------------------------------
+        g['netcdf'].set_fill_off()
+    
+        # ---------------------------------------------------------------
+        # Write global properties to the file first. This is important as
+        # doing it later could slow things down enormously. This function
+        # also creates the g['global_properties'] set, which is used in
+        # the _write_field function.
+        # ---------------------------------------------------------------
+        self._write_global_properties(fields)
+    
+        # ---------------------------------------------------------------
+        #
+        # ---------------------------------------------------------------
+        for f in fields:
+    
+    #        # Set HDF chunking
+    #        chunks = f.HDF_chunks()
+    #        if chunks
+    #        
+    #        org_chunks = f.HDF_chunks(HDF_chunks)
+    #        default_chunks = f.HDF_chunks()
+    #        chunks = org_chunks.copy()
+    #        shape = f.shape
+    #        for i, size in org_chunks.iteritems():
+    #            if size is None:
+    #                size = default_chunks[i]
+    #            dim_size = shape[i]
+    #            if size is None or size > dim_size:
+    #                size = dim_size
+    #            chunks[i] = size
+    #        #--- End: for
+    #        f.HDF_chunks(chunks)
+    
+            if g['_debug']:            
+                print '  Field shape:', self.get_shape(f)
+                print '  HDF chunks :', 'PASS FOR NOW' #f.HDF_chunks()
+            
+            # Write the field
+            self._write_field(f)
+    
+    #        # Reset HDF chunking
+    #        f.HDF_chunks(org_chunks)
+        #-- End: for
+    
+        # ---------------------------------------------------------------
+        # Write all of the buffered data to disk
+        # ---------------------------------------------------------------
+        self.file_close(filename)
+    #--- End: def
+   
 #--- End: class

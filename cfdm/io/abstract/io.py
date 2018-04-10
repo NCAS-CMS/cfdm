@@ -11,25 +11,24 @@ class IO(object):
         self.implementation = implementation
 
     @abc.abstractmethod
-    def close_file(self, *args, **kwargs):
-        '''Open the file for reading.
+    def file_close(self, *args, **kwargs):
+        '''Close the file.
         '''
         raise NotImplementedError(NOT_IMPLEMENTED)
     #--- End: def
-        
+
+    @abc.abstractmethod
+    def file_open(self, *args, **kwargs):
+        '''Open the file.
+        '''
+        raise NotImplementedError(NOT_IMPLEMENTED)
+    #--- End: def
+
     @abc.abstractmethod
     def file_type(cls, *args, **kwargs):
-        '''Find the format of a file.
+        '''Return the format of a file.
         '''
         raise NotImplementedError(NOT_IMPLEMENTED)
     #--- End: def
-
-    @abc.abstractmethod
-    def open_file(self, *args, **kwargs):
-        '''Close the file that has been read.
-        '''
-        raise NotImplementedError(NOT_IMPLEMENTED)
-    #--- End: def
-
 #--- End: class
 

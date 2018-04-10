@@ -51,6 +51,11 @@ class Constructs(structure_Constructs):
     def domain_axis_name(self, axis):
         '''Return the canonical name for an axis.
 
+:Examples 1:
+
+>>> f.domain_axis_name('domainaxis1')
+'longitude'
+
 :Parameters:
 
     axis: `str`
@@ -101,42 +106,13 @@ class Constructs(structure_Constructs):
 
         ncdim = domain_axes[axis].get_ncdim(None)
         if ncdim is not None:
-            # Get the name from netCDF dimension name            
+            # Get the name from a netCDF dimension
             return 'ncdim%{0}'.format(ncdim)
-        
+
+        # Get the name from the identifier
         return 'id%{0}'.format(axis)
     #--- End: def
 
-#    def equals(self, other, rtol=None, atol=None, traceback=False,
-#               **kwargs):
-#        '''
-#        '''
-#        
-#        axis1_to_axis0 = {}
-#        key1_to_key0   = {}
-#
-#        if not self._equals_array_constructs(
-#                other, rtol=rtol, atol=atol,
-#                traceback=traceback,
-#                axis1_to_axis0=axis1_to_axis0,
-#                key1_to_key0=key1_to_key0, **kwargs):
-#            return False
-#
-#        for construct_type in self._non_array_constructs:
-#            if not getattr(self, '_equals_'+construct_type)(
-#                    other,
-#                    rtol=rtol, atol=atol,
-#                    traceback=traceback,
-#                    axis1_to_axis0=axis1_to_axis0,
-#                    key1_to_key0=key1_to_key0, **kwargs):
-#                return False
-#
-#        return True
-#    #--- End: def
-        
-#    def _equals_array_constructs(self, other, rtol=None, atol=None,
-#                                traceback=False, axis1_to_axis0=None,
-#                                key1_to_key0=None, **kwargs):
     def equals(self, other, rtol=None, atol=None, traceback=False,
                **kwargs):
         '''

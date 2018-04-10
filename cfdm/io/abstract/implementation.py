@@ -13,9 +13,14 @@ class Implementation(object):
     #--- End: def
 
     def copy(self):
+        '''Copy 
+        
+        '''
         return type(self)(self._class)
     #--- End: def
 
     def get_class(self, classname):
+        '''Return a class of the implementation.
+        '''
         return self._class[classname]
     #--- End: def

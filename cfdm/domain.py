@@ -231,6 +231,13 @@ field.
             return string
     #--- End: def
 
+    def domain_axis_name(self, key):
+        '''
+        '''
+        constructs = self._get_constructs()
+        return constructs.domain_axis_name(key)
+    #--- End: def
+
     def dump(self, display=True, _level=0, _title='Field', _q='-'):
         '''A full description of the field.
 

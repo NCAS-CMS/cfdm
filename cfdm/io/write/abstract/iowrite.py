@@ -11,6 +11,8 @@ class IOWrite(IO):
 
     @abc.abstractmethod
     def write(self, *args, **kwargs):
+        '''Write fields to a netCDF file.
+        '''
         raise NotImplementedError(NOT_IMPLEMENTED)
 
 #--- End: class

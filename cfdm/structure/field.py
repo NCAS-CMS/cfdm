@@ -204,6 +204,8 @@ None
     #--- End: def
     
     def field_ancillaries(self, copy=False):
+        '''
+        '''
         return self._get_constructs().constructs('field_ancillary', copy=copy)
 
     def del_construct(self, key):

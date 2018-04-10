@@ -143,14 +143,37 @@ frame and consists of the following:
         return ', '.join(sorted(self.properties().values()))
     #--- End: def
 
-    def copy(self):
-        '''
-        '''
-        return super(CoordinateReference, self).copy()
-    #--- End: def
+#    def copy(self):
+#        '''
+#        '''
+#        return super(CoordinateReference, self).copy()
+#    #--- End: def
 
     def coordinates(self):
-        '''
+        '''Return the identifiers of the coordinate objects that define the
+coordinate system.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_coordinate`
+
+:Examples 1:
+
+>>> s = c.coordinates()
+
+:Returns:
+
+    out: `set`
+        The identifiers of the coordinate objects.
+
+:Examples 2:
+
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1',
+ 'auxiliarycoordinate0',
+ 'auxiliarycoordinate1'}
+
         '''
         return self._get_component('coordinates', None).copy()
     #--- End: def
@@ -162,7 +185,33 @@ frame and consists of the following:
     #--- End: def
     
     def del_coordinate(self, key):
-        '''
+        '''Delete the identifier of a coordinate object that defines the
+coordinate system.
+
+.. versionadded:: 1.6
+
+.. seealso:: `coordinates`
+
+:Examples 1:
+
+>>> c.del_coordinate('dimensioncoordinate1')
+
+:Parameters:
+
+    key: `str`
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1'}
+>>> c.del_coordinate('dimensioncoordinate0')
+>>> c.coordinates()
+{'dimensioncoordinate1'}
         '''        
         self._get_component('coordinates', None).discard(key)
     #--- End: def
@@ -178,7 +227,22 @@ frame and consists of the following:
     #--- End: def
 
     def domain_ancillaries(self):
-        '''
+        '''Return the domain ancillary-valued coordinate conversion terms.
+
+.. versionadded:: 1.6
+
+.. seealso:: `parameters`
+
+:Examples 1:
+
+>>> d = c.domain_ancillaries()
+
+:Returns:
+
+    out: `dict`
+
+:Examples 2:
+
         '''
         return self._get_component('domain_ancillaries', None, {}).copy()
     #--- End: def

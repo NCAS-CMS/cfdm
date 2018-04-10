@@ -281,7 +281,7 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         # Open the netCDF file to be read
         # ------------------------------------------------------------
-        nc = self.open_file(filename)
+        nc = self.file_open(filename)
         g['nc'] = nc
         
         if _debug:
@@ -472,12 +472,12 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------        
         # Close the netCDF file
         # ------------------------------------------------------------                
-        self.close_file()
+        self.file_close()
         
         return fields.values()
     #--- End: def
 
-    def close_file(self):
+    def file_close(self):
         '''Close the netCDF file that has been read.
 
 :Returns:
@@ -521,7 +521,7 @@ ancillaries, field ancillaries).
             return 'netCDF'
     #--- End: def
 
-    def open_file(self, filename):
+    def file_open(self, filename):
         '''Open the netCDf file for reading.
 
 :Returns:

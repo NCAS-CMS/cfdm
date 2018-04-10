@@ -29,8 +29,8 @@ An N-dimensional data array with units and masked values.
 
 :Parameters:
 
-    data: array-like, optional
-        The data for the array.
+    data: numpy.ndarray, optional
+        The data array.
 
     fill_value: optional 
         The fill value of the data. By default, or if None, the numpy
@@ -59,28 +59,24 @@ An N-dimensional data array with units and masked values.
                 fill_value = source.get_fill_value(None)
         #--- End: if
         
-#        self._array   = data
         self._units    = units
         self._calendar = calendar
         
         self._fill_value  = fill_value
 
         self._set_master_array(data)
-#        self._array       = None
-#
-#        if data is None:
-#            return
-#
-#        if isinstance(data, self.__class__):
-#            data = data._array
-#            
-#        if not isinstance(data, Array) and not isinstance(data, numpy.ndarray):
-#            data = numpy.asanyarray(data)
-#        
-#        if isinstance(data, Array):
-#            self._array = data
-#        else:
-#            self._array = NumpyArray(data)
+    #--- End: def
+
+    def __array__(self):
+        '''The numpy array interface.
+
+:Returns: 
+
+    out: `numpy.ndarray`
+        A numpy array of the data.
+
+        '''
+        return self.get_array()
     #--- End: def
 
     def __deepcopy__(self, memo):
@@ -101,7 +97,7 @@ An N-dimensional data array with units and masked values.
         '''x.__str__() <==> str(x)
 
         '''
-        return repr(self._array)
+        return str(self._get_master_array(None))
     #--- End: def
 
     def _del_master_array(self):
@@ -156,39 +152,16 @@ True
     # ----------------------------------------------------------------
     @property
     def dtype(self):
-        '''The `numpy` data type of the data.
-
-Setting the data type to a `numpy.dtype` object (or any object
-convertible to a `numpy.dtype` object, such as the string
-``'int32'``), will cause the data array elements to be recast to the
-specified type.
-
-.. versionadded:: 1.6
+        '''Describes the format of the elements in the data array.
 
 :Examples:
 
->>> d.dtype
+>>> f.dtype
 dtype('float64')
->>> type(d.dtype)
-<type 'numpy.dtype'>
-
->>> d = Data([0.5, 1.5, 2.5])
->>> print d.array
-[0.5 1.5 2.5]
->>> import numpy
->>> d.dtype = numpy.dtype(int)
->>> print d.array
-[0 1 2]
->>> d.dtype = bool
->>> print d.array
-[False  True  True]
->>> d.dtype = 'float64'
->>> print d.array
-[ 0.  1.  1.]
-
         '''
-        return self._array.dtype
+        return self._get_master_array().dtype        
     #--- End: def
+    
     # ----------------------------------------------------------------
     # Attribute
     # ----------------------------------------------------------------
@@ -226,7 +199,7 @@ None
     # ----------------------------------------------------------------
     @property
     def ndim(self):
-        '''Number of dimensions in the data array.
+        '''The number of dimensions of the data array.
 
 :Examples:
 
@@ -234,11 +207,22 @@ None
 (73, 96)
 >>> d.ndim
 2
+>>> d.size
+7008
+
+>>> d.shape
+(1, 1, 1)
+>>> d.ndim
+3
+>>> d.size
+1
 
 >>> d.shape
 ()
 >>> d.ndim
 0
+>>> d.size
+1
 
         '''
         return self._get_master_array().ndim
@@ -249,17 +233,30 @@ None
     # ----------------------------------------------------------------
     @property
     def shape(self):
-        '''Tuple of the data array's dimension sizes.
+        '''Shape of the data array.
 
 :Examples:
 
 >>> d.shape
 (73, 96)
-
 >>> d.ndim
-0
+2
+>>> d.size
+7008
+
+>>> d.shape
+(1, 1, 1)
+>>> d.ndim
+3
+>>> d.size
+1
+
 >>> d.shape
 ()
+>>> d.ndim
+0
+>>> d.size
+1
 
         '''
         return self._get_master_array().shape
@@ -278,16 +275,20 @@ None
 (73, 96)
 >>> d.size
 7008
+>>> d.ndim
+2
 
 >>> d.shape
 (1, 1, 1)
+>>> d.ndim
+3
 >>> d.size
 1
 
->>> d.ndim
-0
 >>> d.shape
 ()
+>>> d.ndim
+0
 >>> d.size
 1
 

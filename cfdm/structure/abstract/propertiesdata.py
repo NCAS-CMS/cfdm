@@ -46,8 +46,6 @@ All components of a variable are optional.
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
 
-#        self._set_copy_method('data', self.CUSTOMCOPY)
-        
         if source is not None:
             if _use_data and data is None:
                 data = source.get_data(None)
@@ -57,25 +55,39 @@ All components of a variable are optional.
             self.set_data(data, copy=copy)
     #--- End: def
 
-    def __data__(self):
-        '''
-        '''
-        data = self.get_data(None)
-        if data is None:
-            raise ValueError("sdif n;ujnr42[ 4890yh 8u;jkb")
+    def __array__(self):
+        '''The numpy array interface.
 
-        return data
+:Returns: 
+
+    out: `numpy.ndarray`
+        A numpy array of the data.
+
+        '''
+        return self.get_array()
     #--- End: def
+
+#    def __data__(self):
+#        '''
+#        '''
+#        data = self.get_data(None)
+#        if data is None:
+#            raise ValueError("sdif n;ujnr42[ 4890yh 8u;jkb")
+#
+#        return data
+#    #--- End: def
     
     # ----------------------------------------------------------------
     # Attribute (read only)
     # ----------------------------------------------------------------
     @property
     def dtype(self):
-        '''asdasds
+        '''Describes the format of the elements in the data array.
 
 :Examples:
 
+>>> f.dtype
+dtype('float64')
 
         '''
         return self.get_data().dtype
@@ -86,12 +98,67 @@ All components of a variable are optional.
     # ----------------------------------------------------------------
     @property
     def ndim(self):
-        '''Tasasds
+        '''The number of dimensions of the data array.
 
 :Examples:
 
+>>> d.shape
+(73, 96)
+>>> d.ndim
+2
+>>> d.size
+7008
+
+>>> d.shape
+(1, 1, 1)
+>>> d.ndim
+3
+>>> d.size
+1
+
+>>> d.shape
+()
+>>> d.ndim
+0
+>>> d.size
+1
+
         '''
         return self.get_data().ndim
+    #--- End: def
+
+    # ----------------------------------------------------------------
+    # Attribute (read only)
+    # ----------------------------------------------------------------
+    @property
+    def shape(self):
+        '''Shape of the data array.
+
+:Examples:
+
+>>> d.shape
+(73, 96)
+>>> d.ndim
+2
+>>> d.size
+7008
+
+>>> d.shape
+(1, 1, 1)
+>>> d.ndim
+3
+>>> d.size
+1
+
+>>> d.shape
+()
+>>> d.ndim
+0
+>>> d.size
+1
+
+        '''
+        return self.get_data().shape
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -103,39 +170,29 @@ All components of a variable are optional.
 
 :Examples:
 
-
-        '''
-        return self.get_data().size
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def shape(self):
-        '''asdasds
-
-:Examples:
-
 >>> d.shape
 (73, 96)
 >>> d.size
 7008
+>>> d.ndim
+2
 
 >>> d.shape
 (1, 1, 1)
+>>> d.ndim
+3
 >>> d.size
 1
 
->>> d.ndim
-0
 >>> d.shape
 ()
+>>> d.ndim
+0
 >>> d.size
 1
 
         '''
-        return self.get_data().shape
+        return self.get_data().size
     #--- End: def
 
     def copy(self, data=True):
@@ -177,7 +234,7 @@ True
 
 .. versionadded:: 1.6
 
-.. seealso:: `get_data`, `set_data`
+.. seealso:: `get_data`, `has_data`, `set_data`
 
 :Returns: 
 
@@ -199,7 +256,6 @@ False
 None
 
         '''
-#        return self._del_component(self.CUSTOMCOPY, 'data')
         return self._del_component('data')
     #--- End: def
 
@@ -291,7 +347,7 @@ True
         '''
         data = self.get_data(None)
         if data is None:
-            raise ValueError("No array to get")
+            raise ValueError("{!r} has no data array".format(self.__class__.__name__))
         
         return data.get_array()
     #--- End: def
@@ -304,7 +360,6 @@ True
 
         '''
         try:
-#            data = self._get_component(self.CUSTOMCOPY, 'data', None, None)
             data = self._get_component('data', None, None)
         except AttributeError:
             raise AttributeError("There is no data")
@@ -335,15 +390,14 @@ If present, the data array is stored in the `data` attribute.
 :Examples:
 
 >>> if f.has_data():
-...     print f.data
+...     print f.get_data()
 
         '''     
-#        return self._has_component(self.CUSTOMCOPY, 'data')
         return self._has_component('data')
     #--- End: def
 
     def set_data(self, data, copy=True):
-        '''Insert a new data array into the variable in place.
+        '''Insert a data array.
 
 .. versionadded:: 1.6
 
@@ -364,7 +418,6 @@ If present, the data array is stored in the `data` attribute.
         data.set_units(None)
         data.set_calendar(None)
         
-#        self._set_component(self.CUSTOMCOPY, 'data', None, data)
         self._set_component('data', None, data)
     #--- End: def
 
