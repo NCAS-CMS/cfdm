@@ -944,6 +944,43 @@ dimension is iterated over first.
         return itertools.product(*[range(0, r) for r in self.shape])  
     #--- End: def
 
+#    def get_HDF_chunks(self, dddd):
+#        '''Set HDF5 chunks for the data array.
+#    
+#Chunking refers to a storage layout where the data array is
+#partitioned into fixed-size multi-dimensional chunks when written to a
+#netCDF4 file on disk. Chunking is ignored if the data array is written
+#to a netCDF3 format file.
+#    
+#A chunk has the same rank as the data array, but with fewer (or no
+#more) elements along each axis. The chunk is defined by a dictionary
+#in which each key identifies an axis (by its index in the data array
+#shape) and its value is the chunk size (i.e. number of axis elements)
+#for that axis.
+#    
+#If a given chunk size for an axis is larger than the axis size, then
+#the size of the axis at the time of writing to disk will be used
+#instead.
+#    
+#If chunk sizes have been specified for some but not all axes, then the
+#each unspecified chunk size is assumed to be the full size of its
+#axis.
+#
+#If no chunk sizes have been set for any axes then the netCDF default
+#chunk is used. See
+#http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html.
+#
+#A detailed discussion of HDF chunking and I/O performance is available
+#at https://www.hdfgroup.org/HDF5/doc/H5.user/Chunking.html and
+#http://www.unidata.ucar.edu/software/netcdf/workshops/2011/nc4chunking. Basically,
+#you want the chunks for each dimension to match as closely as possible
+#the size and shape of the data block that users will read from the
+#file.
+#
+#        '''
+#        self._HDF_chunks = tuplchunks.copy()
+#
+#        
 #    def HDF_chunks(self, *chunks):
 #        '''
 #        '''

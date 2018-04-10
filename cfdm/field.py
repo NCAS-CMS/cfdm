@@ -476,7 +476,7 @@ field.
     #--- End: def
 
     def auxiliary_coordinates(self, axes=None, copy=False):
-        '''
+        '''Return the auxiliary coordinate 
         '''    
         return self._get_constructs().constructs('auxiliary_coordinate',
                                                  axes=axes, copy=copy)

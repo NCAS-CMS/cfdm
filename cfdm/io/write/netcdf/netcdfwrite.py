@@ -14,54 +14,7 @@ from .. import IOWrite
 class NetCDFWrite(IOWrite):
     '''
     '''
-#    def __init__(self, Conventions=None): #, NetCDF=None):
-#        '''
-#        '''
-#        self._Conventions = Conventions
-#        self._NetCDFArray = NetCDF
-#        
-#        # ------------------------------------------------------------
-#        # Initialise netCDF write parameters
-#        # ------------------------------------------------------------
-#        self._write_vars =  {
-#            # Format of output file
-#            'fmt': None,
-#            # netCDF4.Dataset instance
-#            'netcdf'           : None,    
-#            # Map netCDF variable names to netCDF4.Variable instances
-#            'nc': {},      
-#            # Map netCDF dimension names to netCDF dimension sizes
-#            'ncdim_to_size': {},
-#            # Dictionary of netCDF variable names and netCDF
-#            # dimensions keyed by items of the field (such as a
-#            # coordinate or a coordinate reference)
-#            'seen': {},
-#            # Set of all netCDF dimension and netCDF variable names.
-#            'ncvar_names': set(()),
-#            # Set of global or non-standard CF properties which have
-#            # identical values across all input fields.
-#            'global_properties': set(()), 
-#            'variable_attributes': set(()),
-#            'bounds': {},
-#            # Compression/endian
-#            'compression': {},
-#            'endian': 'native',
-#            'least_significant_digit': None,
-#            # CF properties which need not be set on bounds if they're set
-#            # on the parent coordinate
-#            'omit_bounds_properties': ('units', 'standard_name', 'axis',
-#                                       'positive', 'calendar', 'month_lengths',
-#                                       'leap_year', 'leap_month'),
-#            # Data type conversions to be applied prior to writing
-#            'datatype': {},
-#            #
-#            'unlimited': (),
-#            # Print statements
-#            'verbose': False,
-#            '_debug' : False,
-#        }
-#    #--- End: def    
-    
+
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               verbose=False, mode='w', least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
