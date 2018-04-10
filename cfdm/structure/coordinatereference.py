@@ -131,7 +131,7 @@ frame and consists of the following:
         else:
             parameters = parameters.copy()
 
-        self._set_component('coordinates',        None, coordinates)
+        self._set_component('coordinates'       , None, coordinates)
         self._set_component('domain_ancillaries', None, domain_ancillaries)
         self._set_component('parameters'        , None, parameters)
     #--- End: def
@@ -142,12 +142,6 @@ frame and consists of the following:
         '''    
         return ', '.join(sorted(self.properties().values()))
     #--- End: def
-
-#    def copy(self):
-#        '''
-#        '''
-#        return super(CoordinateReference, self).copy()
-#    #--- End: def
 
     def coordinates(self):
         '''Return the identifiers of the coordinate objects that define the
@@ -217,8 +211,31 @@ coordinate system.
     #--- End: def
     
     def del_term(self, term):
+        '''Delete a term from the coordinate conversion formula.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> v = c.del_term('orog')
+
+:Parameters:
+
+    term: `str`
+        The name of the term to be deleted.
+
+:Returns:
+
+    out:
+        The value of the deleted term, or `None` if the term did not exist.
+
+:Examples 2:
+
+>>> v = c.del_term('a')
+
+>>> v = c.del_term('false_northing')
+
         '''
-        '''        
         value = self._get_component('domain_ancillaries', None).pop(term, None)
         if value is None:
             value = self._get_component('parameters', None).pop(term, None)
@@ -254,7 +271,40 @@ coordinate system.
     #--- End: def
 
     def get_term(self, term, *default):
-        '''
+        '''Get the value of a term of the coordinate conversion formula.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> v = c.get_term('false_northing')
+
+:Parameters:
+
+    term: `str`
+        The name of the term.
+
+    default: optional
+
+:Returns:
+
+    out:
+        The value of the term <SOMETING BAOUT DEFAULT>
+
+:Examples 2:
+
+>>> c.get_term('b')
+'domainancillary2'
+
+>>> c.get_term('grid_north_pole_latitude')
+70.0
+
+>>> c.get_term('foo')
+ERROR
+>>> c.get_term('foo', 'nonexistent term')
+'nonexistent term'
+
+
         '''
         d = self._get_component('domain_ancillaries', None)
         if term in d:
@@ -292,7 +342,22 @@ coordinate system.
     #--- End: def
 
     def parameters(self):
-        '''
+        '''Return the parmaeter-valued coordinate conversion terms.
+
+.. versionadded:: 1.6
+
+.. seealso:: `domain_ancillaries`
+
+:Examples 1:
+
+>>> d = c.parameters()
+
+:Returns:
+
+    out: `dict`
+
+:Examples 2:
+
         '''
         return self._get_component('parameters', None, {}).copy()
     #--- End: def
