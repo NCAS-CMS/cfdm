@@ -1,11 +1,8 @@
-from distutils.core import setup, Extension
-from distutils.command.build import build
+from distutils.core import setup
 import os
 import fnmatch
 import sys
-import imp
 import re
-import subprocess
 
 def find_package_data_files(directory):
     for root, dirs, files in os.walk(directory):
@@ -41,11 +38,6 @@ etc_files    = [f for f in find_package_data_files('cfdm/etc')]
 package_data = etc_files
 
 long_description = """
-* **Note:** There have been some API changes between version 1.x and
-  2.x of cf-python. Version 1.x will not get any new functionality,
-  but will be patched for the foreseeable future. The latest 1.x
-  release is `version 1.5.4.post6
-  <https://pypi.python.org/pypi/cf-python/1.5.4.post6>`_
 
 Home page
 =========
@@ -77,33 +69,21 @@ Visualisation
   versions 1.x). This will be resolved soon.
 
 
-Command line utilities
-======================
-
-* The `cfdump` tool generates text representations on standard output
-  of the CF fields contained in the input files.
-
-* The `cfa` tool creates and writes to disk the CF fields contained in
-  the input files.
-
-* During installation these scripts will be copied automatically to a
-  location given by the ``PATH`` environment variable.
-
 Code license
 ============
 
 * `MIT License <http://opensource.org/licenses/mit-license.php>`_"""
 
-setup(name = "cf-python",
+setup(name = "cfdm",
       long_description = long_description,
       version      = version,
-      description  = "A reference implementation of the CF-1.6 data model",
+      description  = "A reference implementation of the CF data model",
       author       = "David Hassell",
       maintainer   = "David Hassell",
-      maintainer_email  = "d.c.hassell@reading.ac.uk",
-      author_email = "d.c.hassell@reading.ac.uk",
-      url          = "http://cfpython.bitbucket.io/",
-      download_url = "https://bitbucket.org/cfpython/cf-python/downloads",
+      maintainer_email  = "david.hassell@ncas.ac.uk",
+      author_email = "david.hassell@ncas.ac.uk",
+      url          = "https://bitbucket.org/cfpython/cfdm",
+      download_url = "",
       platforms    = ["Linux", "MacOS"],
       keywords     = ['cf','netcdf','data','science',
                       'oceanography','meteorology','climate'],
@@ -118,9 +98,11 @@ setup(name = "cf-python",
                       "Operating System :: MacOS"
                       ],
       packages     = ['cfdm',
-                      'cfdm.data'],
+                      'cfdm.data',
+                      'cfdm.io',
+                      'cfdm.structure',
+                      'cfdm.mixin'],
       package_data = {'cfdm': package_data},
-      scripts      = ['scripts/cfdump'],
       requires     = ['netCDF4 (>=1.2.5)',
                       'numpy (>=1.7)',
                       ],

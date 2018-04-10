@@ -192,10 +192,10 @@ AttributeError: Field doesn't have property 'standard_name'
     #--- End: def
 
     def has_property(self, prop):
-        '''Return True if a property has been set.
+        '''Return whether a CF property has been set.
 
-A property describes an aspect of the construct that is independent of
-the domain.
+A property describes an aspect of the construct that is independent
+of the domain.
 
 A property may have any name and any value. Some properties correspond
 to netCDF attributes of variables (e.g. "units", "long_name", and

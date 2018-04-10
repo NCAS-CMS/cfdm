@@ -74,10 +74,6 @@ frame and consists of the following:
         names of those expected by the CF conventions are used. For
         example:
 
-        >>> c = CoordinateReference('transverse_mercator')
-        >>> c.coordinates
-        {'latitude', 'longitude', 'projection_x_coordinate', 'projection_y_coordinate'}
-
         '''
         super(CoordinateReference, self).__init__(
             properties=properties,
@@ -257,9 +253,17 @@ coordinate system.
 :Returns:
 
     out: `dict`
+        The domain ancillary-valued terms and their values.
 
 :Examples 2:
 
+>>> c.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary2',
+ 'orog': 'domainancillary1'}
+
+>>> c.domain_ancillaries()
+{}
         '''
         return self._get_component('domain_ancillaries', None, {}).copy()
     #--- End: def
@@ -328,7 +332,31 @@ ERROR
     #--- End: def
 
     def has_term(self, term):
-        '''
+        '''Return whether a coordinate conversion formula term has been set.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> v = c.has_term('orog')
+
+:Parameters:
+
+    term: `str`
+        The name of the term.
+
+:Returns:
+
+    out: `bool`
+        True if the coordinate conversion formula as the term , False
+        oterwise.
+
+:Examples 2:
+
+>>> v = c.has_term('a')
+
+>>> v = c.has_term('false_northing')
+
         '''
         return (self._has_component('domain_ancillaries', term) or
                 self._has_component('parameters', term))
@@ -355,15 +383,24 @@ ERROR
 :Returns:
 
     out: `dict`
+        The parameter-valued terms and their values.
 
 :Examples 2:
+
+>>> c.parameters()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+
+>>> c.parameters()
+{}
 
         '''
         return self._get_component('parameters', None, {}).copy()
     #--- End: def
 
     def remove_coordinate(self, coordinate):
-        '''
+        ''' 
         '''
         c = self._get_component('coordinates', None)
         c.discard(coordinate)
