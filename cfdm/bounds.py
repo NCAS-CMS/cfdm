@@ -13,7 +13,7 @@ class Bounds(CoordinateAncillary):
         '''
         '''
         if _create_title and _title is None: 
-            _title = 'Coordinate bounds: ' + self.name(default='')
+            _title = 'Cell bounds: ' + self.name(default='')
 
         return super(Bounds, self).dump(
             display=display,
