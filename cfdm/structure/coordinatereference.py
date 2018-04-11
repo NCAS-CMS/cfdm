@@ -207,9 +207,14 @@ coordinate system.
     #--- End: def
     
     def del_term(self, term):
-        '''Delete a term from the coordinate conversion formula.
+        '''Delete a coordinate conversion formula term.
+
+To delete a term's value but retain term in the coordinate conversion
+formula as a placeholder, use the `del_term_value` method.
 
 .. versionadded:: 1.6
+
+.. seealso:: `del_term_value`, `get_term`, `terms`
 
 :Examples 1:
 
@@ -223,13 +228,86 @@ coordinate system.
 :Returns:
 
     out:
-        The value of the deleted term, or `None` if the term did not exist.
+        The value of the deleted term, or `None` if the term did not
+        exist.
 
 :Examples 2:
 
->>> v = c.del_term('a')
+>>> c.terms()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+>>> v = c.del_term('standard_parallel')
+>>> c.terms()
+{'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
 
->>> v = c.del_term('false_northing')
+>>> c.terms()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary2',
+ 'orog': 'domainancillary1'}
+>>> c.del_term('b')
+>>> c.terms()
+{'a': 'domainancillary0',
+ 'orog': 'domainancillary1'}
+
+        '''
+        value = self._get_component('domain_ancillaries', None).pop(term, None)
+        if value is None:
+            value = self._get_component('parameters', None).pop(term, None)
+
+        return value
+    #--- End: def
+
+    def del_term_value(self, term):
+        '''Delete the value of a coordinate conversion formula term.
+
+To delete a term's value but retain term in the coordinate conversion
+formula as a placeholder, use the `del_term_value` method.
+
+The term is retained in the coordinate conversion formula as a
+placeholder. To completely remove a term from the coordinate
+conversion formula, use the `del_term` method.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_term`, `get_term`, `terms`
+
+:Examples 1:
+
+>>> v = c.del_term_value('orog')
+
+:Parameters:
+
+    term: `str`
+        The name of the term whose value is to be deleted.
+
+:Returns:
+
+    out:
+        The deleted value, or `None` if the term did not exist.
+
+:Examples 2:
+
+>>> c.terms()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+>>> v = c.del_term_value('standard_parallel')
+>>> c.terms()
+{'standard_parallel': None,
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+
+>>> c.terms()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary2',
+ 'orog': 'domainancillary1'}
+>>> c.del_term_value('b')
+>>> c.terms()
+{'a': 'domainancillary0',
+ 'b': None,
+ 'orog': 'domainancillary1'}
 
         '''
         value = self._get_component('domain_ancillaries', None).pop(term, None)
@@ -240,7 +318,8 @@ coordinate system.
     #--- End: def
 
     def domain_ancillaries(self):
-        '''Return the domain ancillary-valued coordinate conversion terms.
+        '''Return the domain ancillary-valued coordinate conversion formula
+terms.
 
 .. versionadded:: 1.6
 
@@ -264,6 +343,7 @@ coordinate system.
 
 >>> c.domain_ancillaries()
 {}
+
         '''
         return self._get_component('domain_ancillaries', None, {}).copy()
     #--- End: def
@@ -275,7 +355,7 @@ coordinate system.
     #--- End: def
 
     def get_term(self, term, *default):
-        '''Get the value of a term of the coordinate conversion formula.
+        '''Get the value of a coordinate conversion formula term.
 
 .. versionadded:: 1.6
 
@@ -362,15 +442,8 @@ ERROR
                 self._has_component('parameters', term))
     #--- End: def
 
-    def insert_coordinate(self, coordinate):
-        '''
-        '''
-        c = self._get_component('coordinates', None)
-        c.add(coordinate)
-    #--- End: def
-
     def parameters(self):
-        '''Return the parmaeter-valued coordinate conversion terms.
+        '''Return the parmaeter-valued coordinate conversion formula terms.
 
 .. versionadded:: 1.6
 
@@ -399,13 +472,41 @@ ERROR
         return self._get_component('parameters', None, {}).copy()
     #--- End: def
 
-    def remove_coordinate(self, coordinate):
-        ''' 
+    def set_coordinate(self, coordinate):
+        '''Set a coordinate.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_coordinate`
+
+:Examples 1:
+
+>>> c.set_coordinates('auxiliarycoordinate1')
+
+:Parameters:
+
+    coordinate: `str`
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1'}
+>>> c.set_coordinates('auxiliarycoordinate0')
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1',
+ 'auxiliarycoordinate0'}
+
         '''
         c = self._get_component('coordinates', None)
-        c.discard(coordinate)
+        c.add(coordinate)
     #--- End: def
-    
+
     def set_datum(self, value, copy=True):
         '''
         '''
@@ -416,14 +517,61 @@ ERROR
     #--- End: def
 
     def set_domain_ancillary(self, term, value, copy=True):
-        '''
+        '''Set a domain ancillary-valued coordinate conversion formula term.
+
+.. versionadded:: 1.6
+
+.. seealso:: `domain_ancillaries`
+
+:Examples 1:
+
+>>> c.set_domain_ancillary('orog', 'domainancillary1')
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> c.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary2'}
+>>> c.set_domain_ancillary('orog', 'domainancillary1')
+>>> c.domain_ancillaries()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary2',
+ 'orog': 'domainancillary1'}
+
         '''
         self._set_component('domain_ancillaries', term, value)
     #--- End: def
     
     def set_parameter(self, term, value, copy=True):
+        '''Set a parameter-valued coordinate conversion formula term.
+
+.. versionadded:: 1.6
+
+.. seealso:: `domain_ancillaries`
+
+:Examples 1:
+
+>>> c.set_parameter('longitude_of_central_meridian', 265.0)
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> c.parameters()
+{'standard_parallel': 25.0;
+ 'latitude_of_projection_origin': 25.0}
+>>> c.set_parameter('longitude_of_central_meridian', 265.0)
+>>> c.parameters()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
         '''
-'''
         if copy:
             value = deepcopy(value)
             
@@ -431,7 +579,41 @@ ERROR
     #--- End: def
     
     def terms(self):
-        '''
+        '''Return the coordinate conversion formula terms.
+
+Both parameter-valued and domain_ancillary-valued terms are returned.
+
+Note that ``c.terms()`` is equivalent to
+``c.parameters().update(c.domain_ancillaries())``.
+
+.. versionadded:: 1.6
+
+.. seealso:: `domain_ancillaries`, `parameters`
+
+:Examples 1:
+
+>>> d = c.terms()
+
+:Returns:
+
+    out: `dict`
+        The terms and their values.
+
+:Examples 2:
+
+>>> c.terms()
+{'a': 'domainancillary0',
+ 'b': 'domainancillary2',
+ 'orog': 'domainancillary1'}
+
+>>> c.terms()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+
+>>> c.terms()
+{}
+
         '''
         out = self.parameters()
         out.update(self.domain_ancillaries())
