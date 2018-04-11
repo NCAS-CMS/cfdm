@@ -13,6 +13,9 @@ import abstract
 class CoordinateReference(abstract.Properties):
     '''A coordinate reference construct of the CF data model. 
 
+A coordinate reference construct relates the coordinate values of the
+coordinate system to locations in a planetary reference frame.
+
 The domain of a field construct may contain various coordinate
 systems, each of which is constructed from a subset of the dimension
 and auxiliary coordinate constructs. For example, the domain of a
