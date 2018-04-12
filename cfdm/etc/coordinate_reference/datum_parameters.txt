@@ -1,0 +1,13 @@
+# Column 0: Attributes from "Table F.1. Grid Mapping Attributes" that define the datum
+earth_radius
+geographic_crs_name
+geoid_name
+geopotential_datum_name
+horizontal_datum_name
+inverse_flattening
+longitude_of_prime_meridian
+prime_meridian_name
+reference_ellipsoid_name
+semi_major_axis
+semi_minor_axis
+towgs84

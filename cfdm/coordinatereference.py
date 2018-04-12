@@ -23,6 +23,20 @@ for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
         continue
     _name_to_coordinates[x[0]] = set(x[1:])
 
+# --------------------------------------------------------------------
+# Map coordinate conversion names to the set of coordinates to which
+# they apply
+# --------------------------------------------------------------------
+_datum_parameters = []
+_file = os.path.join(os.path.dirname(__file__),
+                     'etc/coordinate_reference/datum_parameters.txt')
+for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+    if not x or x[0] == '#':
+        continue
+    _datum_parameters.append(x[0])
+    
+_datum_parameters = set(_datum_parameters)
+
 # ====================================================================
 #
 # CoordinateReference object
@@ -34,11 +48,18 @@ class CoordinateReference(mixin.Container, structure_CoordinateReference):
 
     '''
    
-    # Map coordinate conversion names to their
     _name_to_coordinates = _name_to_coordinates
-    
-    def __init__(self, coordinates=None, domain_ancillaries=None,
-                 parameters=None, datum=None, source=None, copy=True):
+    _datum_parameters    = _datum_parameters
+
+    def __init__(self,
+                 coordinates=None,
+                 domain_ancillaries=None,
+                 parameters=None,
+                 coordinate_conversion_domain_ancillaries=None,
+                 coordinate_conversion_parameters=None,
+                 datum_parameters=None,
+                 datum_domain_ancillaries=None,
+                 source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -58,11 +79,30 @@ class CoordinateReference(mixin.Container, structure_CoordinateReference):
         {'ncvar%lat', 'latitude', 'longitude', 'projection_x_coordinate', 'projection_y_coordinate'}
 
         '''
+        if parameters is not None and source is None:
+            if datum_parameters is not None:
+                raise ValueError("zcnz x.cn 90 datum")
+            if coordinate_conversion_parameters is not None:
+                raise ValueError("zcnz x.cn 90 coordinate_conversion")
+            
+            datum_parameters = {}
+            coordinate_conversion_parameters = {}
+            
+            for p, value in parameters.iteritems():
+                if p in self._datum_parameters:
+                    datum_parameters[p] = value
+                else:
+                    coordinate_conversion_parameters[p] = value
+        #-- End: if
+        
         super(CoordinateReference, self).__init__(
             coordinates=coordinates,
-            domain_ancillaries=domain_ancillaries,
-            parameters=parameters,
-            datum=datum, source=source, copy=copy)
+            coordinate_conversion_domain_ancillaries=coordinate_conversion_domain_ancillaries,
+            coordinate_conversion_parameters=coordinate_conversion_parameters,
+            datum_domain_ancillaries=datum_domain_ancillaries,
+            datum_parameters=datum_parameters,
+            source=source,
+            copy=copy)
     #--- End: def
    
     def __str__(self):
@@ -114,23 +154,44 @@ reference object.
 #            super(CoordinateReference, self)._dump_properties(
 #                _level=_level+1))
             
-        # Parameter-valued term
-        for term in sorted(self.coordinate_conversion.parameters()):
-            string.append("{0}{1} = {2}".format(
-                indent1, term, self.coordinate_conversion.get_term(term)))
+        # Coordinate conversion parameter-valued terms
+        coordinate_conversion = self.get_coordinate_conversion()
+        for term, value in sorted(coordinate_conversion.parameters().items()):
+            string.append("{0}Coordinate conversion:{1} = {2}".format(
+                indent1, term, value))
 
-        # Domain ancillary-valued terms
+        # Coordinate conversion domain ancillary-valued terms
         if field:
-            for term, key in sorted(self.coordinate_conversion.domain_ancillaries().iteritems()):
-                value = field.domain_ancillaries().get(self.coordinate_conversion.get_term(term))
+            for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
+                value = field.domain_ancillaries().get(key)
                 if value is not None:
                     value = 'Domain Ancillary: '+value.name(default=key)
                 else:
                     value = ''
-                string.append('{0}{1} = {2}'.format(indent1, term, str(value)))
+                string.append('{0}Coordinate conversion:{1} = {2}'.format(
+                    indent1, term, str(value)))
         else:
-            for term, value in self.coordinate_conversion.domain_ancillaries.iteritems():
-                string.append("{0}{1} = {2}".format(indent1, term, str(value)))
+            for term, value in sorted(coordinate_conversion.domain_ancillaries.items()):
+                string.append("{0}Coordinate conversion:{1} = {2}".format(
+                    indent1, term, str(value)))
+
+        # Datum parameter-valued terms
+        datum = self.get_datum()
+        for term, value in sorted(datum.parameters().items()):
+            string.append("{0}Datum:{1} = {2}".format(indent1, term, value))
+
+        # Datum domain ancillary-valued terms
+        if field:
+            for term, key in sorted(datum.domain_ancillaries().items()):
+                value = field.domain_ancillaries().get(key)
+                if value is not None:
+                    value = 'Domain Ancillary: '+value.name(default=key)
+                else:
+                    value = ''
+                string.append('{0}Datum:{1} = {2}'.format(indent1, term, str(value)))
+        else:
+            for term, value in sorted(datum.domain_ancillaries().items()):
+                string.append("{0}Datum:{1} = {2}".format(indent1, term, str(value)))
 
         # Coordinates 
         if field:
@@ -201,20 +262,12 @@ True if two instances are equal, False otherwise.
                 ignore_construct_type=ignore_construct_type):
 	    return False
 
-
+        print '________________'
         for a in ('datum', 'coordinate_conversion'):
+
             x0 = getattr(self, 'get_'+a)()
             x1 = getattr(other, 'get_'+a)()
-            
-            # Check that the same coordinate conversion terms are present
-            if set(x0.terms()) != set(x1.terms()):
-                if traceback:
-                    print(
-"{0}: Different collections of {1} terms ({2} != {3})".format(
-    self.__class__.__name__, a,
-    set(self.terms()), set(other.terms())))
-                return False
-            #--- End: if
+            print 'AAAAAAAAAAAAAAA a=', a, x0.parameters(), x1.parameters()
             
             # Check that the coordinate conversion parameter terms match
             parameters0 = x0.parameters()
@@ -222,7 +275,7 @@ True if two instances are equal, False otherwise.
             if set(parameters0) != set(parameters1):
                 if traceback:
                     print(
-"{0}: Different parameter-valued {1} terms ({2} != {3})".format(
+"{0}: Different {1} parameter-valued terms ({2} != {3})".format(
     self.__class__.__name__, a,
     set(parameters0), set(parameters1)))
                 return False
@@ -235,7 +288,7 @@ True if two instances are equal, False otherwise.
             if set(ancillaries0) != set(ancillaries1):
                 if traceback:
                     print(
-"{0}: Different domain ancillary-valued {1} terms ({2} != {3})".format(
+"{0}: Different {1} domain ancillary-valued terms ({2} != {3})".format(
     self.__class__.__name__, a,
     set(ancillaries0), set(ancillaries1)))
                 return False

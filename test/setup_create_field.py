@@ -94,9 +94,10 @@ class create_fieldTest(unittest.TestCase):
 
         # Coordinate references
         ref0 = cfdm.CoordinateReference(
-            parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-                        'grid_north_pole_latitude': 38.0,
-                        'grid_north_pole_longitude': 190.0},
+            coordinate_conversion_parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+                                              'grid_north_pole_latitude': 38.0,
+                                              'grid_north_pole_longitude': 190.0,
+                                              'earth_radius': 6371007,},
             coordinates=[x, y, lat, lon]
         )
 
@@ -111,10 +112,10 @@ class create_fieldTest(unittest.TestCase):
 
         
         ref1 = cfdm.CoordinateReference(
-            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
-            domain_ancillaries={'orog': orog,
-                                'a'   : ak,
-                                'b'   : bk},
+            coordinate_conversion_parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
+            coordinate_conversion_domain_ancillaries={'orog': orog,
+                                                      'a'   : ak,
+                                                      'b'   : bk},
             coordinates=[z]
         )
         
@@ -182,7 +183,7 @@ class create_fieldTest(unittest.TestCase):
 
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")
-
+        print 2
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 
@@ -190,8 +191,10 @@ class create_fieldTest(unittest.TestCase):
 #        print f
 #        print 'g'
 #        print g
-#        f.dump()
-#        g.dump()
+        f.dump()
+        g.dump()
+
+        print 3
         self.assertTrue(g.equals(f, traceback=True),
                         "Field not equal to itself read back in")
 

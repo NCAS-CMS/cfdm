@@ -998,7 +998,7 @@ measure will not be written.
             # Create a new grid mapping variable
             default = self.get_coordinate_conversion_parameter(
                 ref, 'grid_mapping_name', 'grid_mapping')
-            ncvar = self._create_netcdf_variable_name(ref, default='grid_mapping')
+            ncvar = self._create_netcdf_variable_name(ref, default=default)
     
             g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
                                                         endian=g['endian'],
@@ -1009,6 +1009,8 @@ measure will not be written.
     
             # Add named parameters
             parameters = self.get_coordinate_conversion_parameters(ref)
+            parameters.update(self.get_datum_parameters(ref))
+            
             for term, value in parameters.items():
                 if value is None:
                     del parameters[term]
@@ -1811,8 +1813,14 @@ write them to the netCDF4.Dataset.
         # ----------------------------------------------------------------
         if netcdf.is_netcdf_file(filename):
             return 'netCDF'
-    #--- End: de
+    #--- End: def
 
+    def get_datum_parameters(self, coordinate_reference):
+        '''
+        '''        
+        return coordinate_reference.get_datum().parameters()
+    #--- End: def
+        
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         '''
 
@@ -1828,7 +1836,7 @@ write them to the netCDF4.Dataset.
                                             parameter, *default):
         '''
         '''
-        return coordinate_reference.coordinate_conversion.get_parameter(parameter, *default)
+        return coordinate_reference.get_coordinate_conversion().get_parameter(parameter, *default)
     #--- End: def
         
     def get_coordinate_conversion_parameters(self, coordinate_reference):

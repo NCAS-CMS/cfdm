@@ -64,8 +64,14 @@ frame and consists of the following:
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, coordinates=None, domain_ancillaries=None,
-                 parameters=None, datum=None, source=None, copy=True):
+    def __init__(self,
+                 coordinates=None,
+                 coordinate_conversion_domain_ancillaries=None,
+                 coordinate_conversion_parameters=None,
+                 datum_domain_ancillaries=None,
+                 datum_parameters=None,
+                 source=None,
+                 copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -80,36 +86,44 @@ frame and consists of the following:
         super(CoordinateReference, self).__init__(
             source=source,
             copy=copy)
-              
-        if source and isinstance(source, CoordinateReference):
+
+        if source:
             coordinates           = source.coordinates()
             coordinate_conversion = source.get_coordinate_conversion()
             datum                 = source.get_datum()
 
-            domain_ancillaries = coordinate_conversion.domain_ancillaries()
-            parameters         = coordinate_conversion.parameters()
-         #--- End: if
-
-        if datum is None:
-            datum = Terms()
-        elif copy:
-            datum = datum.copy()
-              
-        if not coordinates:
-            coordinates = set()
+            if copy:
+                coordinate_conversion = coordinate_conversion.copy()
+                datum                 = datum.copy()
         else:
-            coordinates = set(coordinates)
+            if not coordinates:
+                coordinates = set()
+            else:
+                coordinates = set(coordinates)
 
-        if not domain_ancillaries:
-            domain_ancillaries = {}
+            if coordinate_conversion_parameters is None:
+                coordinate_conversion_parameters = {}
+
+            if coordinate_conversion_domain_ancillaries is None:
+                coordinate_conversion_domain_ancillaries = {}
+
+            coordinate_conversion = Terms(
+                domain_ancillaries=coordinate_conversion_domain_ancillaries,
+                parameters=coordinate_conversion_parameters,
+                copy=copy)
             
-        if not parameters:
-            parameters = {}
+            if datum_parameters is None:
+                datum_parameters = {}
+                
+            if datum_domain_ancillaries is None:
+                datum_domain_ancillaries = {}
 
-        coordinate_conversion = Terms(domain_ancillaries=domain_ancillaries,
-                                               parameters=parameters,
-                                               copy=copy)
-
+            datum = Terms(
+                domain_ancillaries=datum_domain_ancillaries,
+                parameters=datum_parameters,
+                copy=copy)
+        #--- End: if
+              
         self._set_component('coordinates', None, coordinates)
         self.set_coordinate_conversion(coordinate_conversion)
         self.set_datum(datum)
