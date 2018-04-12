@@ -29,7 +29,7 @@ for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
 #
 # ====================================================================
 
-class CoordinateReference(mixin.Properties, structure_CoordinateReference):
+class CoordinateReference(mixin.Container, structure_CoordinateReference):
     '''A CF coordinate reference construct.
 
     '''
@@ -37,9 +37,8 @@ class CoordinateReference(mixin.Properties, structure_CoordinateReference):
     # Map coordinate conversion names to their
     _name_to_coordinates = _name_to_coordinates
     
-    def __init__(self, properties={}, coordinates=None,
-                 domain_ancillaries=None, parameters=None, datum=None,
-                 source=None, copy=True):
+    def __init__(self, coordinates=None, domain_ancillaries=None,
+                 parameters=None, datum=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -60,7 +59,6 @@ class CoordinateReference(mixin.Properties, structure_CoordinateReference):
 
         '''
         super(CoordinateReference, self).__init__(
-            properties=properties,
             coordinates=coordinates,
             domain_ancillaries=domain_ancillaries,
             parameters=parameters,
@@ -76,23 +74,6 @@ x.__str__() <==> str(x)
 
 '''    
         return self.name(default=self.get_ncvar(''))
-    #--- End: def
-
-    def close(self):
-        '''
-
-Close all files referenced by coordinate conversion term values.
-
-:Returns:
-
-    None
-
-:Examples:
-
->>> c.close()
-
-'''
-        pass
     #--- End: def
 
     def dump(self, display=True, _omit_properties=None, field=None,
@@ -129,25 +110,26 @@ reference object.
         else:
             string = [indent0 + _title]
 
-        string.append(
-            super(CoordinateReference, self)._dump_properties(
-                _level=_level+1))
+#        string.append(
+#            super(CoordinateReference, self)._dump_properties(
+#                _level=_level+1))
             
         # Parameter-valued term
-        for term in sorted(self.parameters()):
-            string.append("{0}{1} = {2}".format(indent1, term, self.get_term(term)))
+        for term in sorted(self.coordinate_conversion.parameters()):
+            string.append("{0}{1} = {2}".format(
+                indent1, term, self.coordinate_conversion.get_term(term)))
 
         # Domain ancillary-valued terms
         if field:
-            for term, key in sorted(self.domain_ancillaries().iteritems()):
-                value = field.domain_ancillaries().get(self.get_term(term))
+            for term, key in sorted(self.coordinate_conversion.domain_ancillaries().iteritems()):
+                value = field.domain_ancillaries().get(self.coordinate_conversion.get_term(term))
                 if value is not None:
                     value = 'Domain Ancillary: '+value.name(default=key)
                 else:
                     value = ''
                 string.append('{0}{1} = {2}'.format(indent1, term, str(value)))
         else:
-            for term, value in self.domain_ancillaries.iteritems():
+            for term, value in self.coordinate_conversion.domain_ancillaries.iteritems():
                 string.append("{0}{1} = {2}".format(indent1, term, str(value)))
 
         # Coordinates 
@@ -179,7 +161,7 @@ reference object.
             
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_construct_type=False):
         '''
 
 True if two instances are equal, False otherwise.
@@ -216,61 +198,83 @@ True if two instances are equal, False otherwise.
         if not super(CoordinateReference, self).equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,
                 ignore_construct_type=ignore_construct_type):
 	    return False
-        
-        # ------------------------------------------------------------
-        # Check that the same terms are present
-        # ------------------------------------------------------------
-        if set(self.terms()) != set(other.terms()):
-            if traceback:
-                print(
-                    "{0}: Different collections of terms ({1} != {2})".format(
-                        self.__class__.__name__, set(self.terms()),
-                        set(other.terms())))
-            return False
-        #--- End: if
 
-        # Check that the parameter terms match
-        parameters0 = self.parameters()
-        parameters1 = other.parameters()
-        if set(parameters0) != set(parameters1):
-            if traceback:
-                print(
-                    "{0}: Different parameter-valued terms ({1} != {2})".format(
-                        self.__class__.__name__,
-                        set(parameters0), set(parameters1)))
-            return False
-        #--- End: if
 
-        # Check that the domain ancillary terms match
-        ancillaries0 = self.domain_ancillaries()
-        ancillaries1 = other.domain_ancillaries()
-        if set(ancillaries0) != set(ancillaries1):
-            if traceback:
-                print(
-                    "{0}: Different ancillary-valued terms ({1} != {2})".format(
-                        self.__class__.__name__,
-                        set(ancillaries0), set(ancillaries1)))
-            return False
-        #--- End: if
-
-        for term, value0 in ancillaries0.iteritems():            
-            value1 = ancillaries1[term]  
-            if value0 is None or (value1 is None and value0 is not None):
+        for a in ('datum', 'coordinate_conversion'):
+            x0 = getattr(self, 'get_'+a)()
+            x1 = getattr(other, 'get_'+a)()
+            
+            # Check that the same coordinate conversion terms are present
+            if set(x0.terms()) != set(x1.terms()):
                 if traceback:
                     print(
-                        "{}: Unequal {!r} domain ancillary terms ({!r} != {!r})".format( 
-                            self.__class__.__name__, term, value0, value1))
+"{0}: Different collections of {1} terms ({2} != {3})".format(
+    self.__class__.__name__, a,
+    set(self.terms()), set(other.terms())))
                 return False
-        #--- End: for
+            #--- End: if
+            
+            # Check that the coordinate conversion parameter terms match
+            parameters0 = x0.parameters()
+            parameters1 = x1.parameters()
+            if set(parameters0) != set(parameters1):
+                if traceback:
+                    print(
+"{0}: Different parameter-valued {1} terms ({2} != {3})".format(
+    self.__class__.__name__, a,
+    set(parameters0), set(parameters1)))
+                return False
+            #--- End: if
 
-        # ------------------------------------------------------------
-        # Check that the parameter term values are equal.
-        # ------------------------------------------------------------
+            # Check that the coordinate conversion domain ancillary terms
+            # match
+            ancillaries0 = x0.domain_ancillaries()
+            ancillaries1 = x1.domain_ancillaries()
+            if set(ancillaries0) != set(ancillaries1):
+                if traceback:
+                    print(
+"{0}: Different domain ancillary-valued {1} terms ({2} != {3})".format(
+    self.__class__.__name__, a,
+    set(ancillaries0), set(ancillaries1)))
+                return False
+            #--- End: if
+
+            for term, value0 in ancillaries0.iteritems():            
+                value1 = ancillaries1[term]  
+                if value0 is None or (value1 is None and value0 is not None):
+                    if traceback:
+                        print(
+"{}: Unequal {!r} domain ancillary {} terms ({!r} != {!r})".format( 
+    self.__class__.__name__, term, a,
+    value0, value1))
+                    return False
+            #--- End: for
+     
+            # Check that the coordinate conversion parameter term
+            # values are equal.
+            for term, value0 in parameters0.iteritems():            
+                value1 = parameters1[term]  
+
+                if value0 is None and value1 is None:
+                    # Term values are None in both coordinate
+                    # references
+                    continue
+                
+                if not self._equals(value0, value1, rtol=rtol, atol=atol,
+                                    traceback=traceback,
+                                    ignore_data_type=ignore_data_type,
+                                    ignore_fill_value=ignore_fill_value,
+                                    ignore_construct_type=ignore_construct_type):
+                    if traceback:
+                        print(
+                            "{}: Unequal {!r} terms ({!r} != {!r})".format( 
+                                self.__class__.__name__, term, value0, value1))
+                    return False
+            #--- End: for
+        #--- End: for
+        
         coords0 = self.coordinates()
         coords1 = other.coordinates()
         if len(coords0) != len(coords1):
@@ -281,31 +285,8 @@ True if two instances are equal, False otherwise.
             return False
         #--- End: if
 
-        for term, value0 in parameters0.iteritems():            
-            value1 = parameters1[term]  
-
-            if value0 is None and value1 is None:
-                # Term values are None in both coordinate
-                # references
-                continue
-                
-            if not self._equals(value0, value1, rtol=rtol, atol=atol,
-                                traceback=traceback,
-                                ignore_data_type=ignore_data_type,
-                                ignore_fill_value=ignore_fill_value,
-                                ignore_properties=ignore_properties,
-                                ignore_construct_type=ignore_construct_type):
-                if traceback:
-                    print(
-                        "{}: Unequal {!r} terms ({!r} != {!r})".format( 
-                            self.__class__.__name__, term, value0, value1))
-                return False
-        #--- End: for
-
-        # ------------------------------------------------------------
         # Still here? Then the two coordinate references are as equal
         # as can be ascertained in the absence of domains.
-        # ------------------------------------------------------------
         return True
     #--- End: def
 
@@ -334,11 +315,11 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 >>> n = r.name()
 >>> n = r.name(default='NO NAME'))
 '''
-        n = self.get_property('standard_name', None)
+        n = self.coordinate_conversion.get_parameter('standard_name', None)
         if n is not None:
             return n
         
-        n = self.get_property('grid_mapping_name', None)
+        n = self.coordinate_conversion.get_parameter('grid_mapping_name', None)
         if n is not None:
             return n
         

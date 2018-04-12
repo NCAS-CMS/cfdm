@@ -296,9 +296,9 @@ class Constructs(structure_Constructs):
                         continue
     
                     # Domain ancillary terms
-                    terms0 = ref0.domain_ancillaries()
+                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
                     terms1 = {}
-                    for term, key in ref1.domain_ancillaries().items():
+                    for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:

@@ -2370,13 +2370,14 @@ Set the Data attribute of a variable.
                     
                 parameters = attributes[grid_mapping].copy()
                 
-                props = {}
-                name = parameters.pop('grid_mapping_name', None)                 
-                if name is not None:
-                    props['grid_mapping_name'] = name
+#                props = {}
+#                name = parameters.pop('grid_mapping_name', None)                 
+#                if name is not None:
+#                    props['grid_mapping_name'] = name
                 
                 if not named_coordinates:
                     coordinates = []
+                    name = parameters.get('grid_mapping_name', None)
                     for x in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
                         for key, coord in f.coordinates().iteritems():
                             if x == self._get_property(coord, 'standard_name', None):
@@ -2387,7 +2388,7 @@ Set the Data attribute of a variable.
                                             coordinates=coordinates,
                                             parameters=parameters)
 
-                self._set_properties(coordref, props)
+#                self._set_properties(coordref, props)
                 
                 # Store the netCDF variable name
                 self._set_ncvar(coordref, grid_mapping)
@@ -2422,26 +2423,32 @@ Set the Data attribute of a variable.
         '''
         g = self.read_vars
 
-        ancillaries = {}
+        domain_ancillaries = {}
     
         for term, ncvar in formula_terms.iteritems():
             # The term's value is a domain ancillary of the field, so
             # we put its identifier into the coordinate reference.
             if ncvar in g['domain_ancillary_key']:
-                ancillaries[term] = g['domain_ancillary_key'][ncvar]
+                domain_ancillaries[term] = g['domain_ancillary_key'][ncvar]
             else:
-                ancillaries[term] = None
+                domain_ancillaries[term] = None
 
+        parameters = {}
+        standard_name = self._get_property(coord, 'standard_name', None)
+        if standard_name is not None:
+            parameters['standard_name'] = standard_name
+            
         coordref = self._initialise('CoordinateReference',
-                                    coordinates=(key,),
-                                    domain_ancillaries=ancillaries)
+                                    coordinates=[key],
+                                    domain_ancillaries=domain_ancillaries,
+                                    parameters=parameters)
 
-        props = {}
-        name = self._get_property(coord, 'standard_name', None)
-        if name is not None:
-            props['standard_name'] = name
-
-        self._set_properties(coordref, props)
+#        props = {}
+#        name = self._get_property(coord, 'standard_name', None)
+#        if name is not None:
+#            props['standard_name'] = name
+#
+#        self._set_properties(coordref, props)
         
         return coordref
     #--- End: def

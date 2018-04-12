@@ -10,7 +10,7 @@ import abstract
 #
 # ====================================================================
 
-class CoordinateReference(abstract.Properties):
+class CoordinateReference(abstract.Container):
     '''A coordinate reference construct of the CF data model. 
 
 A coordinate reference construct relates the coordinate values of the
@@ -61,23 +61,11 @@ frame and consists of the following:
     field's coordinate values to locations in a planetary reference
     frame.
 
-
-c.coordinate_conversion.get_term('orog')
-c.coordinate_conversion.get_domain_ancillary('orog')
-
-c.coordinate_conversion.get_term('false_easting')
-c.coordinate_conversion.get_parameter('false_easting')
-
-c.datum.get_term('towgs84')
-c.datum.get_parameter('towgs84')
-
-
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, properties={}, coordinates=None,
-                 domain_ancillaries=None, parameters=None, datum=None,
-                 source=None, copy=True):
+    def __init__(self, coordinates=None, domain_ancillaries=None,
+                 parameters=None, datum=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -90,40 +78,23 @@ c.datum.get_parameter('towgs84')
 
         '''
         super(CoordinateReference, self).__init__(
-            properties=properties,
             source=source,
             copy=copy)
               
-        if source and  isinstance(source, CoordinateReference):
-            if coordinates is None:
-                coordinates = source.coordinates()
-            else:
-                coordinates = set(coordinates)
-                coordinates.update(source.coordinates())
-                
-            if datum is None:
-                datum = source.get_datum(None)
+        if source and isinstance(source, CoordinateReference):
+            coordinates           = source.coordinates()
+            coordinate_conversion = source.get_coordinate_conversion()
+            datum                 = source.get_datum()
 
-            if parameters is None:
-                parameters = source.parameters()
-            else:
-                parameters = parameters.copy()
-                parameters.update(source.parameters())
+            domain_ancillaries = coordinate_conversion.domain_ancillaries()
+            parameters         = coordinate_conversion.parameters()
+         #--- End: if
 
-            if domain_ancillaries is None:
-                domain_ancillaries = source.domain_ancillaries()
-            else:
-                domain_ancillaries = domain_ancillaries.copy()
-                domain_ancillaries.update(source.domain_ancillaries())
-        #--- End: if
-
-        if datum is not None:
-            if copy:
-                datum = datum.copy()
-                
-            self.set_datum(datum, copy=False)
-        #--- End: if                
-
+        if datum is None:
+            datum = Terms()
+        elif copy:
+            datum = datum.copy()
+              
         if not coordinates:
             coordinates = set()
         else:
@@ -131,26 +102,58 @@ c.datum.get_parameter('towgs84')
 
         if not domain_ancillaries:
             domain_ancillaries = {}
-        else:
-            domain_ancillaries = domain_ancillaries.copy()
-
+            
         if not parameters:
             parameters = {}
-        elif copy:
-            parameters = deepcopy(parameters)
-        else:
-            parameters = parameters.copy()
 
-        self._set_component('coordinates'       , None, coordinates)
-        self._set_component('domain_ancillaries', None, domain_ancillaries)
-        self._set_component('parameters'        , None, parameters)
+        coordinate_conversion = Terms(domain_ancillaries=domain_ancillaries,
+                                               parameters=parameters,
+                                               copy=copy)
+
+        self._set_component('coordinates', None, coordinates)
+        self.set_coordinate_conversion(coordinate_conversion)
+        self.set_datum(datum)
     #--- End: def
    
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''    
-        return ', '.join(sorted(self.properties().values()))
+        return ', '.join(sorted(self.coordinate_conversion.terms().values()))
+    #--- End: def
+
+    @property
+    def coordinate_conversion(self):
+        '''
+        '''
+        return self.get_coordinate_conversion()
+    #--- End: def
+        
+    @property
+    def datum(self):
+        '''
+        '''
+        return self.get_datum()
+    #--- End: def
+        
+    def copy(self):
+        '''Return a deep copy.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> g = f.copy()
+
+:Returns:
+
+    out:
+        The deep copy.
+
+        '''
+        return type(self)(source=self, copy=True)
     #--- End: def
 
     def coordinates(self):
@@ -182,12 +185,6 @@ coordinate system.
         return self._get_component('coordinates', None).copy()
     #--- End: def
 
-    def del_datum(self):
-        '''
-        '''
-        return self._del_component('datum')
-    #--- End: def
-    
     def del_coordinate(self, key):
         '''Delete the identifier of a coordinate object that defines the
 coordinate system.
@@ -220,11 +217,228 @@ coordinate system.
         self._get_component('coordinates', None).discard(key)
     #--- End: def
     
-    def del_term(self, term):
-        '''Delete a coordinate conversion formula term.
+    def del_coordinate_conversion(self):
+        '''
+        '''
+        coordinate_conversion = self.get_coordinate_conversion()
+        self.set_coordinate_conversion(Terms())
+        return coordinate_conversion
+    #--- End: def
+    
+    def del_datum(self):
+        '''
+        '''
+        datum = self.get_datum()
+        self.set_datum(Terms())
+        return datum
+    #--- End: def
+    
+    def get_coordinate_conversion(self):
+        '''Get the coordinate_conversion.
 
-To delete a term's value but retain term in the coordinate conversion
-formula as a placeholder, use the `del_term_value` method.
+:Returns:
+
+    out: `Datum`
+        '''
+        return self._get_component('coordinate_conversion', None)       
+    #--- End: def
+
+    def get_datum(self):
+        '''Get the datum.
+
+:Returns:
+
+    out: `Datum`
+        '''
+        return self._get_component('datum', None)       
+    #--- End: def
+    
+    def has_datum(self):
+        '''
+        '''
+        return bool(self._get_component('datum', None, False))
+    #--- End: def
+
+    def set_coordinate(self, coordinate):
+        '''Set a coordinate.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_coordinate`
+
+:Examples 1:
+
+>>> c.set_coordinates('auxiliarycoordinate1')
+
+:Parameters:
+
+    coordinate: `str`
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1'}
+>>> c.set_coordinates('auxiliarycoordinate0')
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1',
+ 'auxiliarycoordinate0'}
+
+        '''
+        c = self._get_component('coordinates', None)
+        c.add(coordinate)
+    #--- End: def
+
+    def set_datum(self, value, copy=True):
+        '''
+        '''
+        if copy:
+            value = value.copy()
+            
+        self._set_component('datum', None, value)
+    #--- End: def
+
+    def set_coordinate_conversion(self, value, copy=True):
+        '''
+        '''
+        if copy:
+            value = value.copy()
+            
+        self._set_component('coordinate_conversion', None, value)
+    #--- End: def
+
+    def name(self, default=None, identity=False, ncvar=False):
+        '''Return a name.
+
+By default the name is the first found of the following:
+
+  1. The `standard_name` CF property.
+  
+  2. The `!id` attribute.
+  
+  3. The `long_name` CF property, preceeded by the string
+     ``'long_name:'``.
+  
+  4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
+  
+  5. The value of the *default* parameter.
+
+Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
+
+.. seealso:: `identity`
+
+:Examples 1:
+
+>>> n = r.name()
+>>> n = r.name(default='NO NAME'))
+'''
+        if not ncvar:
+            parameter_terms = self.coordinate_conversion.parameters()
+
+            n = parameter_terms.get('standard_name')
+            if n is not None:
+                return n
+                
+            n = parameter_terms.get('grid_mapping_name')
+            if n is not None:
+                return n
+                
+            if identity:
+                return default
+
+        elif identity:
+            raise ValueError("Can't set identity=True and ncvar=True")
+
+        n = self.get_ncvar(None)
+        if n is not None:
+            return 'ncvar%{0}'.format(n)
+            
+        return default
+    #--- End: def
+
+#--- End: class
+
+
+
+# ====================================================================
+#
+
+#
+# ====================================================================
+
+class Terms(abstract.Container):
+    '''
+    '''
+    __metaclass__ = abc.ABCMeta
+
+
+    def __init__(self, domain_ancillaries=None, parameters=None,
+                 source=None, copy=True):
+        '''**Initialization**
+
+:Parameters:
+
+    source: optional
+
+    copy: `bool`, optional
+
+        '''
+        super(Terms, self).__init__(source=source, copy=copy)
+
+        if source:
+            parameters         = source.parameters()            
+            domain_ancillaries = source.domain_ancillaries()
+
+        if not domain_ancillaries:
+            domain_ancillaries = {}
+        else:
+            domain_ancillaries = domain_ancillaries.copy()
+
+        if not parameters:
+            parameters = {}
+        elif copy:
+            parameters = deepcopy(parameters)
+        else:
+            parameters = parameters.copy()
+
+        self._set_component('domain_ancillaries', None, domain_ancillaries)
+        self._set_component('parameters'        , None, parameters)
+    #--- End: def
+
+    def copy(self):
+        '''Return a deep copy.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> g = f.copy()
+
+:Returns:
+
+    out:
+        The deep copy.
+
+        '''
+        return type(self)(source=self, copy=True)
+    #--- End: def
+
+#    def __nonzero__(self):
+#        '''
+#        '''
+#        return 
+    def del_term(self, term):
+        '''Delete a term.
+
+To delete a term's value but retain term as a placeholder, use the
+`del_term_value` method.
 
 .. versionadded:: 1.6
 
@@ -274,14 +488,10 @@ formula as a placeholder, use the `del_term_value` method.
     #--- End: def
 
     def del_term_value(self, term):
-        '''Delete the value of a coordinate conversion formula term.
+        '''Delete the value term.
 
-To delete a term's value but retain term in the coordinate conversion
-formula as a placeholder, use the `del_term_value` method.
-
-The term is retained in the coordinate conversion formula as a
-placeholder. To completely remove a term from the coordinate
-conversion formula, use the `del_term` method.
+The term is retained as a placeholder. To completely remove a term,
+use the `del_term` method.
 
 .. versionadded:: 1.6
 
@@ -332,8 +542,7 @@ conversion formula, use the `del_term` method.
     #--- End: def
 
     def domain_ancillaries(self):
-        '''Return the domain ancillary-valued coordinate conversion formula
-terms.
+        '''Return the domain ancillary-valued terms.
 
 .. versionadded:: 1.6
 
@@ -362,31 +571,8 @@ terms.
         return self._get_component('domain_ancillaries', None, {}).copy()
     #--- End: def
 
-    def get_datum(self, *default):
-        '''Get the datum.
-
-:Parameters:
-
-    default: optional
-
-:Returns:
-
-    out: `Datum`
- A definition of a datum specifying the zeroes of the dimension and
-    auxiliary coordinate constructs which define the coordinate
-    system. The datum may be explicitly indicated via properties, or
-    it may be implied by the metadata of the contained dimension and
-    auxiliary coordinate constructs. Note that the datum may contain
-    the definition of a geophysical surface which corresponds to the
-    zero of a vertical coordinate construct, and this may be required
-    for both horizontal and vertical coordinate systems.
-
-        '''
-        return self._get_component('datum', None, *default)       
-    #--- End: def
-
     def get_term(self, term, *default):
-        '''Get the value of a coordinate conversion formula term.
+        '''Get the value of a term.
 
 .. versionadded:: 1.6
 
@@ -436,14 +622,52 @@ ERROR
                 self.__class__.__name__, term))
     #--- End: def
     
-    def has_datum(self):
-        '''
-        '''
-        return self._has_component('datum')
-    #--- End: def
+    def get_parameter(self, term, *default):
+        '''Get the value of a term.
 
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> v = c.get_parameter('false_northing')
+
+:Parameters:
+
+    term: `str`
+        The name of the term.
+
+    default: optional
+
+:Returns:
+
+    out:
+        The value of the term <SOMETING BAOUT DEFAULT>
+
+:Examples 2:
+
+>>> c.get_parameter('grid_north_pole_latitude')
+70.0
+
+>>> c.get_parameter('foo')
+ERROR
+>>> c.get_parameter('foo', 'nonexistent term')
+'nonexistent term'
+
+
+        '''
+        d = self._get_component('parameters', None)
+        if term in d:
+            return d[term]
+        
+        if default:
+            return default[0]
+
+        raise AttributeError("{} doesn't have parameter term {!r}".format(
+                self.__class__.__name__, term))
+    #--- End: def
+    
     def has_term(self, term):
-        '''Return whether a coordinate conversion formula term has been set.
+        '''Return whether a term has been set.
 
 .. versionadded:: 1.6
 
@@ -459,8 +683,7 @@ ERROR
 :Returns:
 
     out: `bool`
-        True if the coordinate conversion formula as the term , False
-        oterwise.
+        True if the term exists , False otherwise.
 
 :Examples 2:
 
@@ -474,7 +697,7 @@ ERROR
     #--- End: def
 
     def parameters(self):
-        '''Return the parmaeter-valued coordinate conversion formula terms.
+        '''Return the parmaeter-valued terms.
 
 .. versionadded:: 1.6
 
@@ -503,52 +726,8 @@ ERROR
         return self._get_component('parameters', None, {}).copy()
     #--- End: def
 
-    def set_coordinate(self, coordinate):
-        '''Set a coordinate.
-
-.. versionadded:: 1.6
-
-.. seealso:: `del_coordinate`
-
-:Examples 1:
-
->>> c.set_coordinates('auxiliarycoordinate1')
-
-:Parameters:
-
-    coordinate: `str`
-
-:Returns:
-
-    `None`
-
-:Examples 2:
-
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1'}
->>> c.set_coordinates('auxiliarycoordinate0')
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1',
- 'auxiliarycoordinate0'}
-
-        '''
-        c = self._get_component('coordinates', None)
-        c.add(coordinate)
-    #--- End: def
-
-    def set_datum(self, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = deepcopy(value)
-            
-        self._set_component('datum', None, value)
-    #--- End: def
-
     def set_domain_ancillary(self, term, value, copy=True):
-        '''Set a domain ancillary-valued coordinate conversion formula term.
+        '''Set a domain ancillary-valued term.
 
 .. versionadded:: 1.6
 
@@ -578,7 +757,7 @@ ERROR
     #--- End: def
     
     def set_parameter(self, term, value, copy=True):
-        '''Set a parameter-valued coordinate conversion formula term.
+        '''Set a parameter-valued term.
 
 .. versionadded:: 1.6
 
@@ -610,7 +789,7 @@ ERROR
     #--- End: def
     
     def terms(self):
-        '''Return the coordinate conversion formula terms.
+        '''Return the terms.
 
 Both parameter-valued and domain_ancillary-valued terms are returned.
 

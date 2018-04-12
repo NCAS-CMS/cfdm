@@ -132,9 +132,10 @@ x.__str__() <==> str(x)
             # Remove pointers to removed construct in coordinate
             # reference constructs
             for ref in self.coordinate_references().itervalues():
-                for term, value in ref.domain_ancillaries().iteritems():
+                coordinate_conversion = ref.coordinate_conversion
+                for term, value in coordinate_conversion.domain_ancillaries().iteritems():
                     if key == value:
-                        ref.set_domain_ancillary(term, None)
+                        coordinate_conversion.set_domain_ancillary(term, None)
                     
                 for coord_key in ref.coordinates():
                     if key == coord_key:

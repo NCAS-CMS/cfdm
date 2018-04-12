@@ -257,7 +257,10 @@ coordinate or cell measures objects.
         '''
         ncvar = self.get_ncvar(parent, None)
         if ncvar is None:
-            ncvar = self.get_property(parent, 'standard_name', default)
+            try:
+                ncvar = self.get_property(parent, 'standard_name', default)
+            except AttributeError:
+                ncvar = default
                 
         return self._check_name(ncvar)
     #--- End: def
@@ -843,7 +846,7 @@ then the input coordinate is not written.
             # its formula_terms term
             default = None
             for ref in self.get_coordinate_references(f).itervalues():
-                for term, da_key in ref.domain_ancillaries().iteritems():
+                for term, da_key in ref.coordinate_conversion.domain_ancillaries().iteritems():
                     if da_key == key:
                         default = term
                         break
@@ -993,6 +996,8 @@ measure will not be written.
     
         else:
             # Create a new grid mapping variable
+            default = self.get_coordinate_conversion_parameter(
+                ref, 'grid_mapping_name', 'grid_mapping')
             ncvar = self._create_netcdf_variable_name(ref, default='grid_mapping')
     
             g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
@@ -1003,7 +1008,7 @@ measure will not be written.
 #            cref = ref.canonical(f) # NOTE: NOT converting units
     
             # Add named parameters
-            parameters = self.get_coordinate_reference_parameters(ref)
+            parameters = self.get_coordinate_conversion_parameters(ref)
             for term, value in parameters.items():
                 if value is None:
                     del parameters[term]
@@ -1018,7 +1023,8 @@ measure will not be written.
             #--- End: for
 
             # Add the grid mapping name property
-            grid_mapping_name = self.get_property(ref, 'grid_mapping_name', None)
+            grid_mapping_name = self.get_coordinate_conversion_parameter(
+                ref, 'grid_mapping_name', None)
             if grid_mapping_name is not None:
                 parameters['grid_mapping_name'] = grid_mapping_name
                 
@@ -1391,8 +1397,9 @@ extra trailing dimension.
         # ----------------------------------------------------------------
         # Create netCDF variables grid mappings
         # ----------------------------------------------------------------
-        grid_mapping_refs = [ref for ref in self.get_coordinate_references(f).values()
-                             if self.get_property(ref, 'grid_mapping_name', False)]
+        grid_mapping_refs = [
+            ref for ref in self.get_coordinate_references(f).values()
+            if self.get_coordinate_conversion_parameter(ref, 'grid_mapping_name', False)]
             
         multiple_grid_mappings = (len(grid_mapping_refs) > 1)
     
@@ -1420,9 +1427,11 @@ extra trailing dimension.
         # ----------------------------------------------------------------
         # formula_terms
         # ----------------------------------------------------------------
-        formula_terms_refs = [ref for ref in self.get_coordinate_references(f).values()
-                              if self.get_property(ref, 'standard_name', False)]
+        formula_terms_refs = [
+            ref for ref in self.get_coordinate_references(f).values()
+            if self.get_coordinate_conversion_parameter(ref, 'standard_name', False)]
 
+        print 'AAAAAAAAAAAAAAAAAAAAAAa', formula_terms_refs
         for ref in formula_terms_refs:
             formula_terms = []
             bounds_formula_terms = []
@@ -1444,7 +1453,7 @@ extra trailing dimension.
                 # This formula_terms coordinate reference matches up with
                 # an existing coordinate
     
-                for term, value in ref.parameters().iteritems():
+                for term, value in self.get_coordinate_conversion_parameters(ref).iteritems():
                     if value is None:
                         continue
     
@@ -1458,7 +1467,7 @@ extra trailing dimension.
                     bounds_formula_terms.append('{0}: {1}'.format(term, ncvar))
                 #--- End: for
             
-                for term, key in ref.domain_ancillaries().iteritems():
+                for term, key in ref.coordinate_conversion.domain_ancillaries().iteritems():
                     if key is None:
                         continue
     
@@ -1815,7 +1824,14 @@ write them to the netCDF4.Dataset.
         return coordinate_reference.coordinates()
     #--- End: def
 
-    def get_coordinate_reference_parameters(self, coordinate_reference):
+    def get_coordinate_conversion_parameter(self, coordinate_reference,
+                                            parameter, *default):
+        '''
+        '''
+        return coordinate_reference.coordinate_conversion.get_parameter(parameter, *default)
+    #--- End: def
+        
+    def get_coordinate_conversion_parameters(self, coordinate_reference):
         '''
 
 :Returns:
@@ -1823,7 +1839,7 @@ write them to the netCDF4.Dataset.
     out: `dict`
 
         '''
-        return coordinate_reference.parameters()
+        return coordinate_reference.coordinate_conversion.parameters()
     #--- End: def
 
     def get_coordinate_references(self, field):
@@ -2032,7 +2048,8 @@ AttributeError: Can't get non-existent property 'foo'
 'bar'
         '''
         return parent.get_property(prop, *default)
-                            
+    #--- End: def
+    
     def get_shape(self, parent):
         '''Return the shape of the data array.
 

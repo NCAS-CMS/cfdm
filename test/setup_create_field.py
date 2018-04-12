@@ -94,8 +94,8 @@ class create_fieldTest(unittest.TestCase):
 
         # Coordinate references
         ref0 = cfdm.CoordinateReference(
-            properties={'grid_mapping_name': 'rotated_latitude_longitude'},
-            parameters={'grid_north_pole_latitude': 38.0,
+            parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+                        'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0},
             coordinates=[x, y, lat, lon]
         )
@@ -111,7 +111,7 @@ class create_fieldTest(unittest.TestCase):
 
         
         ref1 = cfdm.CoordinateReference(
-            properties={'standard_name': 'atmosphere_hybrid_height_coordinate'},
+            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
             domain_ancillaries={'orog': orog,
                                 'a'   : ak,
                                 'b'   : bk},
