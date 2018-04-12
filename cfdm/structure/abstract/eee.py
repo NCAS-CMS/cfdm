@@ -2,108 +2,35 @@ import abc
 
 from copy import deepcopy
 
-import abstract
+from .properties import Properties
 
 # ====================================================================
 #
-# CoordinateReference object
+
 #
 # ====================================================================
 
-class CoordinateReference(abstract.Properties):
-    '''A coordinate reference construct of the CF data model. 
-
-A coordinate reference construct relates the coordinate values of the
-coordinate system to locations in a planetary reference frame.
-
-The domain of a field construct may contain various coordinate
-systems, each of which is constructed from a subset of the dimension
-and auxiliary coordinate constructs. For example, the domain of a
-four-dimensional field construct may contain horizontal (y-x),
-vertical (z), and temporal (t) coordinate systems. There may be more
-than one of each of these, if there is more than one coordinate
-construct applying to a particular spatiotemporal dimension (for
-example, there could be both latitude-longitude and y-x projection
-coordinate systems). In general, a coordinate system may be
-constructed implicitly from any subset of the coordinate constructs,
-yet a coordinate construct does not need to be explicitly or
-exclusively associated with any coordinate system.
-
-A coordinate system of the field construct can be explicitly defined
-by a coordinate reference construct which relates the coordinate
-values of the coordinate system to locations in a planetary reference
-frame and consists of the following:
-
-  * The dimension coordinate and auxiliary coordinate constructs that
-    define the coordinate system to which the coordinate reference
-    construct applies. Note that the coordinate values are not
-    relevant to the coordinate reference construct, only their
-    properties.
-
-  * A definition of a datum specifying the zeroes of the dimension and
-    auxiliary coordinate constructs which define the coordinate
-    system. The datum may be explicitly indicated via properties, or
-    it may be implied by the metadata of the contained dimension and
-    auxiliary coordinate constructs. Note that the datum may contain
-    the definition of a geophysical surface which corresponds to the
-    zero of a vertical coordinate construct, and this may be required
-    for both horizontal and vertical coordinate systems.
-
-  * A coordinate conversion, which defines a formula for converting
-    coordinate values taken from the dimension or auxiliary coordinate
-    constructs to a different coordinate system. A term of the
-    conversion formula can be a scalar or vector parameter which does
-    not depend on any domain axis constructs, may have units (such as
-    a reference pressure value), or may be a descriptive string (such
-    as the projection name "mercator"), or it can be a domain
-    ancillary construct (such as one containing spatially varying
-    orography data) A coordinate reference construct relates the
-    field's coordinate values to locations in a planetary reference
-    frame.
-
-
-c.coordinate_conversion.get_term('orog')
-c.coordinate_conversion.get_domain_ancillary('orog')
-
-c.coordinate_conversion.get_term('false_easting')
-c.coordinate_conversion.get_parameter('false_easting')
-
-c.datum.get_term('towgs84')
-c.datum.get_parameter('towgs84')
-
-
+class Terms(Properties):
+    '''
     '''
     __metaclass__ = abc.ABCMeta
-    
-    def __init__(self, properties={}, coordinates=None,
-                 domain_ancillaries=None, parameters=None, datum=None,
-                 source=None, copy=True):
+
+
+    def __init__(self, properties=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
 
-    coordinates: sequence of `str`, optional
-        Identify the dimension and auxiliary coordinate objects which
-        apply to this coordinate reference. By default the standard
-        names of those expected by the CF conventions are used. For
-        example:
+    properties: `dict`, optional
+
+    source: optional
+
+    copy: `bool`, optional
 
         '''
-        super(CoordinateReference, self).__init__(
-            properties=properties,
-            source=source,
-            copy=copy)
-              
-        if source and  isinstance(source, CoordinateReference):
-            if coordinates is None:
-                coordinates = source.coordinates()
-            else:
-                coordinates = set(coordinates)
-                coordinates.update(source.coordinates())
-                
-            if datum is None:
-                datum = source.get_datum(None)
+        super(Terms, self).__init__(source=source, copy=copy)
 
+        if source:
             if parameters is None:
                 parameters = source.parameters()
             else:
@@ -117,18 +44,6 @@ c.datum.get_parameter('towgs84')
                 domain_ancillaries.update(source.domain_ancillaries())
         #--- End: if
 
-        if datum is not None:
-            if copy:
-                datum = datum.copy()
-                
-            self.set_datum(datum, copy=False)
-        #--- End: if                
-
-        if not coordinates:
-            coordinates = set()
-        else:
-            coordinates = set(coordinates)
-
         if not domain_ancillaries:
             domain_ancillaries = {}
         else:
@@ -141,90 +56,15 @@ c.datum.get_parameter('towgs84')
         else:
             parameters = parameters.copy()
 
-        self._set_component('coordinates'       , None, coordinates)
         self._set_component('domain_ancillaries', None, domain_ancillaries)
         self._set_component('parameters'        , None, parameters)
     #--- End: def
-   
-    def __str__(self):
-        '''x.__str__() <==> str(x)
 
-        '''    
-        return ', '.join(sorted(self.properties().values()))
-    #--- End: def
-
-    def coordinates(self):
-        '''Return the identifiers of the coordinate objects that define the
-coordinate system.
-
-.. versionadded:: 1.6
-
-.. seealso:: `del_coordinate`
-
-:Examples 1:
-
->>> s = c.coordinates()
-
-:Returns:
-
-    out: `set`
-        The identifiers of the coordinate objects.
-
-:Examples 2:
-
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1',
- 'auxiliarycoordinate0',
- 'auxiliarycoordinate1'}
-
-        '''
-        return self._get_component('coordinates', None).copy()
-    #--- End: def
-
-    def del_datum(self):
-        '''
-        '''
-        return self._del_component('datum')
-    #--- End: def
-    
-    def del_coordinate(self, key):
-        '''Delete the identifier of a coordinate object that defines the
-coordinate system.
-
-.. versionadded:: 1.6
-
-.. seealso:: `coordinates`
-
-:Examples 1:
-
->>> c.del_coordinate('dimensioncoordinate1')
-
-:Parameters:
-
-    key: `str`
-
-:Returns:
-
-    `None`
-
-:Examples 2:
-
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1'}
->>> c.del_coordinate('dimensioncoordinate0')
->>> c.coordinates()
-{'dimensioncoordinate1'}
-        '''        
-        self._get_component('coordinates', None).discard(key)
-    #--- End: def
-    
     def del_term(self, term):
-        '''Delete a coordinate conversion formula term.
+        '''Delete a term.
 
-To delete a term's value but retain term in the coordinate conversion
-formula as a placeholder, use the `del_term_value` method.
+To delete a term's value but retain term as a placeholder, use the
+`del_term_value` method.
 
 .. versionadded:: 1.6
 
@@ -274,14 +114,10 @@ formula as a placeholder, use the `del_term_value` method.
     #--- End: def
 
     def del_term_value(self, term):
-        '''Delete the value of a coordinate conversion formula term.
+        '''Delete the value term.
 
-To delete a term's value but retain term in the coordinate conversion
-formula as a placeholder, use the `del_term_value` method.
-
-The term is retained in the coordinate conversion formula as a
-placeholder. To completely remove a term from the coordinate
-conversion formula, use the `del_term` method.
+The term is retained as a placeholder. To completely remove a term,
+use the `del_term` method.
 
 .. versionadded:: 1.6
 
@@ -332,8 +168,7 @@ conversion formula, use the `del_term` method.
     #--- End: def
 
     def domain_ancillaries(self):
-        '''Return the domain ancillary-valued coordinate conversion formula
-terms.
+        '''Return the domain ancillary-valued terms.
 
 .. versionadded:: 1.6
 
@@ -362,31 +197,8 @@ terms.
         return self._get_component('domain_ancillaries', None, {}).copy()
     #--- End: def
 
-    def get_datum(self, *default):
-        '''Get the datum.
-
-:Parameters:
-
-    default: optional
-
-:Returns:
-
-    out: `Datum`
- A definition of a datum specifying the zeroes of the dimension and
-    auxiliary coordinate constructs which define the coordinate
-    system. The datum may be explicitly indicated via properties, or
-    it may be implied by the metadata of the contained dimension and
-    auxiliary coordinate constructs. Note that the datum may contain
-    the definition of a geophysical surface which corresponds to the
-    zero of a vertical coordinate construct, and this may be required
-    for both horizontal and vertical coordinate systems.
-
-        '''
-        return self._get_component('datum', None, *default)       
-    #--- End: def
-
     def get_term(self, term, *default):
-        '''Get the value of a coordinate conversion formula term.
+        '''Get the value of a term.
 
 .. versionadded:: 1.6
 
@@ -436,14 +248,8 @@ ERROR
                 self.__class__.__name__, term))
     #--- End: def
     
-    def has_datum(self):
-        '''
-        '''
-        return self._has_component('datum')
-    #--- End: def
-
     def has_term(self, term):
-        '''Return whether a coordinate conversion formula term has been set.
+        '''Return whether a term has been set.
 
 .. versionadded:: 1.6
 
@@ -459,8 +265,7 @@ ERROR
 :Returns:
 
     out: `bool`
-        True if the coordinate conversion formula as the term , False
-        oterwise.
+        True if the term exists , False otherwise.
 
 :Examples 2:
 
@@ -474,7 +279,7 @@ ERROR
     #--- End: def
 
     def parameters(self):
-        '''Return the parmaeter-valued coordinate conversion formula terms.
+        '''Return the parmaeter-valued terms.
 
 .. versionadded:: 1.6
 
@@ -503,52 +308,8 @@ ERROR
         return self._get_component('parameters', None, {}).copy()
     #--- End: def
 
-    def set_coordinate(self, coordinate):
-        '''Set a coordinate.
-
-.. versionadded:: 1.6
-
-.. seealso:: `del_coordinate`
-
-:Examples 1:
-
->>> c.set_coordinates('auxiliarycoordinate1')
-
-:Parameters:
-
-    coordinate: `str`
-
-:Returns:
-
-    `None`
-
-:Examples 2:
-
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1'}
->>> c.set_coordinates('auxiliarycoordinate0')
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1',
- 'auxiliarycoordinate0'}
-
-        '''
-        c = self._get_component('coordinates', None)
-        c.add(coordinate)
-    #--- End: def
-
-    def set_datum(self, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = deepcopy(value)
-            
-        self._set_component('datum', None, value)
-    #--- End: def
-
     def set_domain_ancillary(self, term, value, copy=True):
-        '''Set a domain ancillary-valued coordinate conversion formula term.
+        '''Set a domain ancillary-valued term.
 
 .. versionadded:: 1.6
 
@@ -578,7 +339,7 @@ ERROR
     #--- End: def
     
     def set_parameter(self, term, value, copy=True):
-        '''Set a parameter-valued coordinate conversion formula term.
+        '''Set a parameter-valued term.
 
 .. versionadded:: 1.6
 
@@ -610,7 +371,7 @@ ERROR
     #--- End: def
     
     def terms(self):
-        '''Return the coordinate conversion formula terms.
+        '''Return the terms.
 
 Both parameter-valued and domain_ancillary-valued terms are returned.
 
