@@ -2386,7 +2386,7 @@ Set the Data attribute of a variable.
                 
                 coordref = self._initialise('CoordinateReference',
                                             coordinates=coordinates,
-                                            coordinate_conversion_parameters=parameters)
+                                            parameters=parameters)
 
 #                self._set_properties(coordref, props)
                 
@@ -2440,8 +2440,8 @@ Set the Data attribute of a variable.
             
         coordref = self._initialise('CoordinateReference',
                                     coordinates=[key],
-                                    coordinate_conversion_domain_ancillaries=domain_ancillaries,
-                                    coordinate_conversion_parameters=parameters)
+                                    domain_ancillaries=domain_ancillaries,
+                                    parameters=parameters)
 
 #        props = {}
 #        name = self._get_property(coord, 'standard_name', None)

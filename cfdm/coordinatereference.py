@@ -35,8 +35,9 @@ for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
         continue
     _datum_parameters.append(x[0])
     
-_datum_parameters = set(_datum_parameters)
-
+_datum_parameters         = set(_datum_parameters)
+_datum_domain_ancillaries = set()
+    
 # ====================================================================
 #
 # CoordinateReference object
@@ -48,8 +49,9 @@ class CoordinateReference(mixin.Container, structure_CoordinateReference):
 
     '''
    
-    _name_to_coordinates = _name_to_coordinates
-    _datum_parameters    = _datum_parameters
+    _name_to_coordinates      = _name_to_coordinates
+    _datum_parameters         = _datum_parameters
+    _datum_domain_ancillaries = _datum_domain_ancillaries
 
     def __init__(self,
                  coordinates=None,
@@ -62,37 +64,149 @@ class CoordinateReference(mixin.Container, structure_CoordinateReference):
                  source=None, copy=True):
         '''**Initialization**
 
+There are three modes of initialization:
+
+  1. Specifying the *source* keyword. All other keywords apart from
+     *copy* are ignored.
+
+  2. If mode 1 is not in use, specifying the any or all of the
+     *coordinates*, *parameters* and *domain_ancillaries* keywords.
+     All other keywords apart from *copy* are ignored.
+
+  3. If modes 1 and 2 are not in use, specifying any or all of the
+     *coordinates*, *coordinate_conversion_parameters*,
+     *coordinate_conversion_domain_ancillaries*, *datum_parameters* 
+     and *datum_domain_ancillaries* keywords. All other keywords apart
+     from *copy* are ignored.
+
 :Parameters:
 
     coordinates: sequence of `str`, optional
         Identify the dimension and auxiliary coordinate objects which
-        apply to this coordinate reference. By default the standard
-        names of those expected by the CF conventions are used. For
-        example:
+        apply to this coordinate reference. 
 
-        >>> c = CoordinateReference('transverse_mercator')
-        >>> c.coordinates
-        {'latitude', 'longitude', 'projection_x_coordinate', 'projection_y_coordinate'}
+          *Example:*
+            ``coordinates=['dimensioncoordinate2']``
 
-        >>> c = cf.CoordinateReference('transverse_mercator', coordinates=['ncvar%lat'])
-        >>> c.coordinates
-        {'ncvar%lat', 'latitude', 'longitude', 'projection_x_coordinate', 'projection_y_coordinate'}
+          *Example:*
+            ``coordinates=['dimensioncoordinate0', 'dimensioncoordinate1',
+                           'auxiliarycoordinate0', 'auxiliarycoordinate1']``
+
+    parameters: `dict`, optional
+        Define parameter-valued terms of both the coordinate
+        conversion formula and the datum. A term is assumed to apply
+        to the coordinate conversion formula unless it is one of the
+        terms defined by `CoordinateReference._datum_parameters`.
+
+          *Example:*
+            In this case, the ``'earth_radius'`` term is applied to
+            the datum and all of the other terms are applied to the
+            coordinate conversion formula:
+
+            >>> c = CoordinateReference(parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+            ...                                     'grid_north_pole_latitude': 38.0,
+            ...                                     'grid_north_pole_longitude': 190.0,
+            ...                                     'earth_radius': 6371007})
+            ...
+            >>> c.coordinate_conversion.parameters()
+            {'grid_mapping_name': 'rotated_latitude_longitude',
+             'grid_north_pole_latitude': 38.0,
+             'grid_north_pole_longitude': 190.0}
+            >>> c.datum.parameters()
+            {'earth_radius': 6371007}
+
+    domain_ancillaries: `dict`, optional
+        Define domain ancillary-valued terms of both the coordinate
+        conversion formula and the datum. A term is assumed to apply
+        to the coordinate conversion formula unless it is one of the
+        terms defined by `CoordinateReference._datum_domain_ancillaries`.
+
+          *Example:*
+            In this case, all terms are applied to the coordinate
+            conversion formula:
+
+            >>> c = CoordinateReference(domain_ancillaries={'orog': 'domainancillary2',
+            ...                                             'a': 'domainancillary0',
+            ...                                             'b': 'domainancillary1'})
+            ...
+            >>> c.coordinate_conversion.domain_ancillaries()
+            {'a': 'domainancillary0',
+             'b': 'domainancillary1',
+             'orog': 'domainancillary2'}
+            >>> c.datum.domain_ancillaries()
+            {}
+
+    coordinate_conversion_parameters: `dict`, optional
+        Define parameter-valued terms of the coordinate conversion
+        formula.
+
+          *Example:*
+              ``coordinate_conversion_parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+                                                  'grid_north_pole_latitude': 38.0,
+                                                  'grid_north_pole_longitude': 190.0}``
+
+    coordinate_conversion_domain_ancillaries: `dict`, optional
+        Define domain ancillary-valued terms of the coordinate
+        conversion formula.
+
+          *Example:*
+              ``coordinate_conversion_domain_ancillies={'a': 'domainancillary0',
+                                                        'b': 'domainancillary1',
+                                                        'orog': 'domainancillary2'}``
+
+    datum_parameters: `dict`, optional
+        Define parameter-valued terms of the datum.
+
+          *Example:*
+              ``datum_parameters={'geographic_crs_name': 'OSGB 1936,
+                                  'horizontal_datum_name': 'OSGB_1936',
+                                  'reference_ellipsoid_name': 'Airy 1830',
+                                  'prime_meridian_name': 'Greenwich'}``
+
+    datum_domain_ancillaries: `dict`, optional
+        Define domain ancillary-valued terms of the datum.
+
+    source: optional
+
+    copy: `bool`, optional
+
 
         '''
-        if parameters is not None and source is None:
-            if datum_parameters is not None:
-                raise ValueError("zcnz x.cn 90 datum")
-            if coordinate_conversion_parameters is not None:
-                raise ValueError("zcnz x.cn 90 coordinate_conversion")
+        if source is None:
+            if parameters is not None:
+                if datum_parameters is not None:
+                    raise ValueError(
+"Can't set both 'parameters' and 'datum_parameters' keywords")
+                if coordinate_conversion_parameters is not None:
+                    raise ValueError(
+"Can't set both 'parameters' and 'coordinate_conversion_parameters' keywords")
+                
+                datum_parameters = {}
+                coordinate_conversion_parameters = {}
+                
+                for p, value in parameters.iteritems():
+                    if p in self._datum_parameters:
+                        datum_parameters[p] = value
+                    else:
+                        coordinate_conversion_parameters[p] = value
+            #-- End: if
             
-            datum_parameters = {}
-            coordinate_conversion_parameters = {}
-            
-            for p, value in parameters.iteritems():
-                if p in self._datum_parameters:
-                    datum_parameters[p] = value
-                else:
-                    coordinate_conversion_parameters[p] = value
+            if domain_ancillaries is not None:
+                if datum_domain_ancillaries is not None:
+                    raise ValueError(
+"Can't set both 'domain_ancillaries' and 'datum_conversion_domain_ancillaries' keywords")
+                if coordinate_conversion_domain_ancillaries is not None:
+                    raise ValueError(
+"Can't set both 'domain_ancillaries' and 'coordinate_conversion_domain_ancillaries' keywords")
+                
+                datum_domain_ancillaries = {}
+                coordinate_conversion_domain_ancillaries = {}
+                
+                for p, value in domain_ancillaries.iteritems():
+                    if p in self._datum_domain_ancillaries:
+                        datum_domain_ancillaries[p] = value
+                    else:
+                        coordinate_conversion_domain_ancillaries[p] = value
         #-- End: if
         
         super(CoordinateReference, self).__init__(
@@ -262,12 +376,10 @@ True if two instances are equal, False otherwise.
                 ignore_construct_type=ignore_construct_type):
 	    return False
 
-        print '________________'
         for a in ('datum', 'coordinate_conversion'):
 
             x0 = getattr(self, 'get_'+a)()
             x1 = getattr(other, 'get_'+a)()
-            print 'AAAAAAAAAAAAAAA a=', a, x0.parameters(), x1.parameters()
             
             # Check that the coordinate conversion parameter terms match
             parameters0 = x0.parameters()

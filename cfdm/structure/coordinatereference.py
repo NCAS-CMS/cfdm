@@ -133,7 +133,7 @@ frame and consists of the following:
         '''x.__str__() <==> str(x)
 
         '''    
-        return ', '.join(sorted(self.coordinate_conversion.terms().values()))
+        return ', '.join(sorted(self.terms()))
     #--- End: def
 
     @property
@@ -407,21 +407,36 @@ class Terms(abstract.Container):
         if source:
             parameters         = source.parameters()            
             domain_ancillaries = source.domain_ancillaries()
-
-        if not domain_ancillaries:
-            domain_ancillaries = {}
         else:
-            domain_ancillaries = domain_ancillaries.copy()
+            if not domain_ancillaries:
+                domain_ancillaries = {}
 
-        if not parameters:
-            parameters = {}
-        elif copy:
-            parameters = deepcopy(parameters)
-        else:
-            parameters = parameters.copy()
+            if not parameters:
+                parameters = {}
+        #--- End: if
+        
+        if domain_ancillaries:
+            self.domain_ancillaries(domain_ancillaries, copy=copy)
 
-        self._set_component('domain_ancillaries', None, domain_ancillaries)
-        self._set_component('parameters'        , None, parameters)
+        if parameters:
+            self.parameters(parameters, copy=copy)
+    #--- End: def
+
+    def __str__(self):
+        '''x.__str__() <==> str(x)
+
+        '''
+        out = []
+
+        parameters = self.parameters()
+        if parameters:
+            out.append('Parameters: {0}'.format(', '.join(sorted(parameters))))
+            
+        domain_ancillaries = self.domain_ancillaries()
+        if domain_ancillaries:
+            out.append('Domain ancillaries: {0}'.format(', '.join(sorted(domain_ancillaries))))
+            
+        return '; '.join(out)
     #--- End: def
 
     def copy(self):
@@ -555,8 +570,8 @@ use the `del_term` method.
         return value
     #--- End: def
 
-    def domain_ancillaries(self):
-        '''Return the domain ancillary-valued terms.
+    def domain_ancillaries(self, domain_ancillaries=None, copy=True):
+        '''Return or replace the domain_ancillary-valued terms.
 
 .. versionadded:: 1.6
 
@@ -566,23 +581,49 @@ use the `del_term` method.
 
 >>> d = c.domain_ancillaries()
 
+:Parameters:
+
+    domain_ancillaries: `dict`, optional
+        Replace all domain ancillary-valued terms with those provided.
+
+          *Example:*
+            ``domain_ancillies={'a': 'domainancillary0',
+                                'b': 'domainancillary1',
+                                'orog': 'domainancillary2'}``
+
+    copy: `bool`, optional
+
 :Returns:
 
     out: `dict`
-        The domain ancillary-valued terms and their values.
+        The domain ancillary-valued terms and their values. If the
+        *domain_ancillaries* keyword has been set then the domain
+        ancillary-valued terms prior to replacement are returned.
 
 :Examples 2:
 
->>> c.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary2',
- 'orog': 'domainancillary1'}
-
->>> c.domain_ancillaries()
-{}
-
         '''
-        return self._get_component('domain_ancillaries', None, {}).copy()
+#        return self._get_component('domain_ancillaries', None, {}).copy()
+
+        existing = self._get_component('domain_ancillaries', None, None)
+
+        if existing is None:
+            existing = {}
+            self._set_component('domain_ancillaries', None, existing)
+
+        out = existing.copy()
+
+        if not domain_ancillaries:
+            return out
+
+        # Still here?
+        if copy:
+            parameters = deepcopy(domain_ancillaries)
+
+        existing.clear()
+        existing.update(domain_ancillaries)
+
+        return out
     #--- End: def
 
     def get_term(self, term, *default):
@@ -710,8 +751,8 @@ ERROR
                 self._has_component('parameters', term))
     #--- End: def
 
-    def parameters(self):
-        '''Return the parmaeter-valued terms.
+    def parameters(self, parameters=None, copy=True):
+        '''Return or replace the parameter-valued terms.
 
 .. versionadded:: 1.6
 
@@ -721,10 +762,22 @@ ERROR
 
 >>> d = c.parameters()
 
+:Parameters:
+
+    parameters: `dict`, optional
+        Replace all parameter-valued terms with those provided.
+
+          *Example:*
+            ``parameters={'earth_radius': 6371007}``
+
+    copy: `bool`, optional
+
 :Returns:
 
     out: `dict`
-        The parameter-valued terms and their values.
+        The parameter-valued terms and their values. If the
+        *parameters* keyword has been set then the parameter-valued
+        terms prior to replacement are returned.
 
 :Examples 2:
 
@@ -737,7 +790,27 @@ ERROR
 {}
 
         '''
-        return self._get_component('parameters', None, {}).copy()
+#        return self._get_component('parameters', None, {}).copy()
+
+        existing = self._get_component('parameters', None, None)
+
+        if existing is None:
+            existing = {}
+            self._set_component('parameters', None, existing)
+
+        out = existing.copy()
+
+        if not parameters:
+            return out
+
+        # Still here?
+        if copy:
+            parameters = deepcopy(parameters)
+
+        existing.clear()
+        existing.update(parameters)
+
+        return out
     #--- End: def
 
     def set_domain_ancillary(self, term, value, copy=True):

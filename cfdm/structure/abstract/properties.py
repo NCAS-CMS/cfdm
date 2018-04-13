@@ -42,20 +42,12 @@ All components of a variable are optional.
         self._set_component('properties', None, {})
         
         if source is not None:
-            p = source.properties(copy=False)
-            if properties:
-                p.update(properties)
-
-            properties = p
-        #--- End: if
+            properties = source.properties()
+        elif not properties:
+            properties = {}
 
         if properties:
-            properties = properties.copy()
-            if copy:
-                for key, value in properties.items():
-                    properties[key] = deepcopy(value)
-
-            self._set_component('properties', None, properties)
+            self.properties(properties, copy=copy)
     #--- End: def
         
     def __deepcopy__(self, memo):
@@ -135,7 +127,10 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 None
 
         '''
-        return self._del_component('properties', prop)
+        if prop not in self._special_properties:
+            return self._del_component('properties', prop)
+        else:
+            return delattr(self, prop)
     #--- End: def
 
     def get_property(self, prop, *default):
@@ -185,7 +180,10 @@ AttributeError: Field doesn't have property 'standard_name'
 
         '''
         try:
-            return self._get_component('properties', prop, *default)
+            if prop not in self._special_properties:
+                return self._get_component('properties', prop, *default)
+            else:
+                return getattr(self, prop, *default)
         except AttributeError:
             raise AttributeError("{!r} object has no CF property {!r}".format(
                 self.__class__.__name__, prop))
@@ -226,17 +224,20 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 ...     print 'Has a standard name'
 
         '''
-        return self._has_component('properties', prop)
+        if prop not in self._special_properties:
+            return self._has_component('properties', prop)
+        else:
+            return hasattr(self, prop)
     #--- End: def
 
-    def properties(self, props=None, clear=False, copy=True):
+    def properties(self, properties=None, copy=True):
         '''Inspect or change the CF properties.
 
 .. versionadded:: 1.6
 
 :Examples 1:
 
->>> f.{+name}()
+>>> d = f.properties()
 
 :Parameters:
 
@@ -244,9 +245,6 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
         Set {+variable} attributes from the dictionary of values. If
         the *copy* parameter is True then the values in the *attrs*
         dictionary are deep copied
-
-    clear: `bool`, optional
-        If True then delete all CF properties.
 
     copy: `bool`, optional
         If False then any property values provided bythe *props*
@@ -262,32 +260,35 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 :Examples 2:
 
         '''
-        existing_properties = self._get_component('properties', None, None)
+        existing = self._get_component('properties', None, None)
 
-        if existing_properties is None:
-           existing_properties = {}
-           self._set_component('properties', None, existing_properties)
-        
-        out = existing_properties.copy()
+        if existing is None:
+            existing = {}
+            self._set_component('properties', None, existing)
+
+        out = existing.copy()
 
         for prop in self._special_properties:
-            value = getattr(self, 'get_'+prop)(None)
+            value = getattr(self, prop, None)
             if value is not None:
                 out[prop] = value
-        
-        if clear:
-            existing_properties.clear()
-            for prop in self._special_properties:
-                getattr(self, 'del_'+prop)
 
-        if not props:
+        if not properties:
             return out
 
         # Still here?
         if copy:
-            props = deepcopy(props)
+            properties = deepcopy(properties)
 
-        existing_properties.update(props)
+        existing.clear()
+        existing.update(properties)
+
+        for prop in self._special_properties:
+            if prop in properties:
+                value =  properties[prop]
+                if value is not None:
+                    self.set_property(prop, value)
+        #--- End: for
 
         return out
     #--- End: def
@@ -324,7 +325,10 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
      `None`
 
         '''
-        self._set_component('properties', prop, value)
+        if prop not in self._special_properties:
+            self._set_component('properties', prop, value)
+        else:
+            setattr(self, prop, value)
     #--- End: def
 
 #--- End: class
