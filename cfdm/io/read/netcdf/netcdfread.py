@@ -212,6 +212,8 @@ ancillaries, field ancillaries).
             'coordinates' : {},
             
             'bounds': {},
+
+            'vertical_crs': {},
             
             'do_not_create_field':  set(),
             'references': {},
@@ -1479,10 +1481,13 @@ netCDF variable.
                 g['formula_terms'][coord_ncvar]['coord'])
             
             self._set_coordinate_reference(f, coordinate_reference, copy=False)
+
+            g['vertical_crs'][coord_ncvar] = coordinate_reference
         #--- End: for
     
         # ----------------------------------------------------------------
-        # Add grid mapping coordinate references
+        # Add grid mapping coordinate references (do this after
+        # formula terms)
         # ----------------------------------------------------------------
         grid_mapping = f.del_property('grid_mapping')
         if grid_mapping is not None:
@@ -2374,7 +2379,9 @@ Set the Data attribute of a variable.
 #                name = parameters.pop('grid_mapping_name', None)                 
 #                if name is not None:
 #                    props['grid_mapping_name'] = name
-                
+
+                create_new = True
+
                 if not named_coordinates:
                     coordinates = []
                     name = parameters.get('grid_mapping_name', None)
@@ -2382,16 +2389,24 @@ Set the Data attribute of a variable.
                         for key, coord in f.coordinates().iteritems():
                             if x == self._get_property(coord, 'standard_name', None):
                                 coordinates.append(key)
+                else:
+                    # Add a datum to an already existing coordinate
+                    # reference created from a formula_terms
+                    for x, c in g['vertical_crs'].iteritems():
+                        if x in coordinates:
+                            c.datum.parameters(parameters)
+                            coordinates.remove(x)
+                            create_new = bool(coordinates)
+                            break
                 #--- End: if
-                
-                coordref = self._initialise('CoordinateReference',
-                                            coordinates=coordinates,
-                                            parameters=parameters)
 
-#                self._set_properties(coordref, props)
-                
-                # Store the netCDF variable name
-                self._set_ncvar(coordref, grid_mapping)
+                if create_new:
+                    coordref = self._initialise('CoordinateReference',
+                                                coordinates=coordinates,
+                                                parameters=parameters)
+
+                    # Store the netCDF variable name
+                    self._set_ncvar(coordref, grid_mapping)
 
                 coordinates = []
         #--- End: for

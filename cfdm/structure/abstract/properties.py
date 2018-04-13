@@ -134,7 +134,7 @@ None
     #--- End: def
 
     def get_property(self, prop, *default):
-        '''Get a property.
+        '''Return a property.
 
 A property describes an aspect of the construct that is independent of
 the domain.
@@ -190,7 +190,7 @@ AttributeError: Field doesn't have property 'standard_name'
     #--- End: def
 
     def has_property(self, prop):
-        '''Return whether a CF property has been set.
+        '''Whether a CF property has been set.
 
 A property describes an aspect of the construct that is independent
 of the domain.
@@ -285,9 +285,7 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 
         for prop in self._special_properties:
             if prop in properties:
-                value =  properties[prop]
-                if value is not None:
-                    self.set_property(prop, value)
+                self.set_property(prop, properties[prop])
         #--- End: for
 
         return out
