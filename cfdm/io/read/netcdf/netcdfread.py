@@ -2380,6 +2380,9 @@ Set the Data attribute of a variable.
 #                if name is not None:
 #                    props['grid_mapping_name'] = name
 
+                cr = self._initialise('CoordinateReference', parameters=parameters)
+                datum = cr.datum
+                
                 create_new = True
 
                 if not named_coordinates:
@@ -2389,12 +2392,19 @@ Set the Data attribute of a variable.
                         for key, coord in f.coordinates().iteritems():
                             if x == self._get_property(coord, 'standard_name', None):
                                 coordinates.append(key)
-                else:
+                    #--- End: for
+
                     # Add a datum to an already existing coordinate
-                    # reference created from a formula_terms
-                    for x, c in g['vertical_crs'].iteritems():
+                    # references created from formula_terms
+                    for x, cr in g['vertical_crs'].iteritems():
+                        cr.set_datum(datum)
+                else:
+                    for x, cr in g['vertical_crs'].iteritems():
                         if x in coordinates:
-                            c.datum.parameters(parameters)
+                            # Add a datum to an already existing
+                            # coordinate reference created from a
+                            # formula_terms
+                            cr.set_datum(datum)
                             coordinates.remove(x)
                             create_new = bool(coordinates)
                             break

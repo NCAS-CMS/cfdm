@@ -459,10 +459,6 @@ class Terms(abstract.Container):
         return type(self)(source=self, copy=True)
     #--- End: def
 
-#    def __nonzero__(self):
-#        '''
-#        '''
-#        return 
     def del_term(self, term):
         '''Delete a term.
 
