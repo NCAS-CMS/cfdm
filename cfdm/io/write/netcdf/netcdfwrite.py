@@ -1404,10 +1404,9 @@ extra trailing dimension.
             ref for ref in self.get_coordinate_references(f).values()
             if self.get_coordinate_conversion_parameter(ref, 'grid_mapping_name', False)]
         
-
-
         # ------------------------------------------------------------
-        # Create netCDF formula_terms attributes
+        # Create netCDF formula_terms attributes from vertical
+        # coordinate references
         # ------------------------------------------------------------
         for ref in formula_terms_refs:
             formula_terms = []
@@ -1486,25 +1485,49 @@ extra trailing dimension.
                     if g['_debug']:
                         print '  Bounds formula_terms =', bounds_formula_terms
 
-#            # Deal with a datum
-#            if owning_coord_key is not None:
-#                count = [0, None]
-#                for grid_mapping_ref in grid_mapping_refs:
-#                    if ref.get_datum().equals(grid_mapping_ref.get_datum()):
-#                        # dch SORT OUT TERMS.EQUALS (WITH OPTION FOR SAME MAPPING OF DOMAIN ANCILLARIES)
-#                        count = [count[0] + grid_mapping_ref]
-#
-#                if count[0] == 1:
-#                    grid_mapping_ref = count[1]
-#                    grid_mapping_ref.set_coordinate(owning_coord_key)
-#                else:
-#                    # Create a new grid mapping for the datum
-#                    new = self.implementation.class['Coordinatereference'](
-#                        coordinates=(owning_coord_key,),
-#                        datum=ref.get_datum()
-#                    )
-#                    grid_mapping_refs.append(new)
-#        #--- End: for
+            # Deal with a vertical datum
+            if owning_coord_key is not None:
+                datum = self.get_datum(ref)
+                if datum:
+                    if g['_debug']:
+                        print '  Datum =', datum
+
+                    domain_ancillaries = self.get_datum_domain_ancillaries(ref)
+
+                    count = [0, None]
+                    for grid_mapping_ref in grid_mapping_refs:
+                        datum1 = self.get_datum(grid_mapping_ref)
+                        if not datum1:
+                            continue
+
+                        domain_ancillaries1 = self.get_datum_domain_ancillaries(
+                            grid_mapping_ref)
+                         
+                        if (datum.equals(datum1) and
+                            domain_ancillaries == domain_ancillaries1):
+                            count = [count[0] + 1, grid_mapping_ref]
+                            if count[0] > 1:
+                                break
+                    #--- End: for
+    
+                    if count[0] == 1:
+                        # Add the vertical coordinate to an existing
+                        # horizontal coordinate reference
+                        grid_mapping_ref = count[1]
+                        self.set_coordinate_reference_coordinate(grid_mapping_ref,
+                                                                 owning_coord_key)
+                    else:
+                        # Create a new horizontal coordinate reference for
+                        # the vertical datum
+                        new_grid_mapping = self.initialise(
+                            'CoordinateReference',
+                            coordinates=(owning_coord_key,),
+                            datum_parameters=self.get_datum_parameters(ref),
+                            datum_domain_ancillaries=domain_ancillaries)
+                        
+                        grid_mapping_refs.append(new_grid_mapping)
+            #--- End: if
+        #--- End: for
     
         # ------------------------------------------------------------
         # Create netCDF variables grid mappings
@@ -1835,12 +1858,6 @@ write them to the netCDF4.Dataset.
             return 'netCDF'
     #--- End: def
 
-    def get_datum_parameters(self, coordinate_reference):
-        '''
-        '''        
-        return coordinate_reference.get_datum().parameters()
-    #--- End: def
-        
     def get_coordinate_reference_coordinates(self, coordinate_reference):
         '''
 
@@ -1914,6 +1931,47 @@ write them to the netCDF4.Dataset.
         return parent.get_data(*default)
     #--- End: def
 
+    def get_datum(self, coordinate_reference):
+        '''
+
+:Returns:
+
+    out: `dict`
+
+        '''
+        return coordinate_reference.get_datum()
+    #--- End: def
+
+    def get_datum_domain_ancillaries(self, coordinate_reference):
+        '''Return the domain ancillary-valued terms of a coordinate reference
+datum.
+
+:Parameters:
+
+    coordinate_reference: `CoordinateReference`
+
+:Returns:
+
+    out: `dict`
+        '''        
+        return self.get_datum(coordinate_reference).domain_ancillaries()
+    #--- End: def
+        
+    def get_datum_parameters(self, coordinate_reference):
+        '''Return the parameter-valued terms of a coordinate reference datum.
+
+:Parameters:
+
+    coordinate_reference: `CoordinateReference`
+
+:Returns:
+
+    out: `dict`
+
+        '''        
+        return self.get_datum(coordinate_reference).parameters()
+    #--- End: def
+        
     def get_measure(self, cell_measure):
         '''Return the measure property of a cell measure contruct.
 
@@ -2114,6 +2172,10 @@ AttributeError: Can't get non-existent property 'foo'
     def has_property(self, parent, prop):
         '''Return True if a property exists.
 
+:Examples 1:
+
+>>> has_standard_name = w.has_property(x, 'standard_name')
+
 :Parameters:
 
     parent: 
@@ -2124,25 +2186,34 @@ AttributeError: Can't get non-existent property 'foo'
     out: `bool`
         `True` if the property exists, otherwise `False`.
 
-:Examples 1:
-
->>> has_standard_name = w.has_property(x, 'standard_name')
-
 :Examples 2:
 
->>> d
+>>> coord
 <DimensionCoordinate: latitude(180) degrees_north>
->>> w.has_property(d, 'units')
+>>> w.has_property(coord, 'units')
 True
 
->>> b
+>>> bounds
 <Bounds: latitude(180, 2) degrees_north>
->>> w.has_property(b, 'long_name')
+>>> w.has_property(bounds, 'long_name')
 False
         '''
         return parent.has_property(prop)
     #--- End: def
 
+    def initialise(self, class_name, **kwargs):
+        '''
+        '''
+        return self.implementation.get_class(class_name)(**kwargs)
+    #--- End: def
+
+    def set_coordinate_reference_coordinate(self, coordinate_reference,
+                                            coordinate):
+        '''
+        '''
+        coordinate_reference.set_coordinate(coordinate)
+    #--- End: def
+        
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               verbose=False, mode='w', least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,

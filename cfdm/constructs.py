@@ -295,10 +295,19 @@ class Constructs(structure_Constructs):
                     if coordinates0 != coordinates1:
                         continue
     
-                    # Domain ancillary terms
-                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
+                    # Domain ancillary-valued coordinate conversion terms
+                    terms0 = ref0.get_coordinate_conversion().domain_ancillaries()
                     terms1 = {}
-                    for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
+                    for term, key in ref1.get_coordinate_conversion().domain_ancillaries().items():
+                        terms1[term] = key1_to_key0.get(key, key)
+    
+                    if terms0 != terms1:
+                        continue
+    
+                    # Domain ancillary-valued datum terms
+                    terms0 = ref0.get_datum().domain_ancillaries()
+                    terms1 = {}
+                    for term, key in ref1.get_datum().domain_ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:

@@ -161,7 +161,7 @@ class create_fieldTest(unittest.TestCase):
         print f.construct_axes()
         
         
-        f.dump()
+#        f.dump()
         print "####################################################"
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 
@@ -192,8 +192,8 @@ class create_fieldTest(unittest.TestCase):
 #        print f
 #        print 'g'
 #        print g
-        f.dump()
-        g.dump()
+#        f.dump()
+#        g.dump()
 
         print 3
         self.assertTrue(g.equals(f, traceback=True),

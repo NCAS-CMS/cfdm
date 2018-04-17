@@ -662,6 +662,20 @@ last values.
             return string
     #--- End: def
 
+    def equal_datums(self, coordinate_reference0,
+                     coordinate_reference1, rtol=None, atol=None,
+                     traceback=False, ignore_data_type=False,
+                     ignore_fill_value=False,
+                     ignore_construct_type=False):
+        '''
+        '''
+        coordinate_references = self.coordinate_references()
+        
+        datum0 = coordinate_references[coordinate_reference0].get_datum()
+        datum1 = coordinate_references[coordinate_reference1].get_datum()
+        
+    #--- End: def
+    
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):

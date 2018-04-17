@@ -64,6 +64,14 @@ frame and consists of the following:
     '''
     __metaclass__ = abc.ABCMeta
     
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        
+        obj._Terms = Terms
+
+        return obj
+    #--- End: def
+
     def __init__(self,
                  coordinates=None,
                  coordinate_conversion_domain_ancillaries=None,
@@ -107,10 +115,10 @@ frame and consists of the following:
             if coordinate_conversion_domain_ancillaries is None:
                 coordinate_conversion_domain_ancillaries = {}
 
-            coordinate_conversion = Terms(
+            coordinate_conversion = self._Terms(
                 domain_ancillaries=coordinate_conversion_domain_ancillaries,
                 parameters=coordinate_conversion_parameters,
-                copy=copy)
+                copy=False)
             
             if datum_parameters is None:
                 datum_parameters = {}
@@ -118,15 +126,15 @@ frame and consists of the following:
             if datum_domain_ancillaries is None:
                 datum_domain_ancillaries = {}
 
-            datum = Terms(
+            datum = self._Terms(
                 domain_ancillaries=datum_domain_ancillaries,
                 parameters=datum_parameters,
-                copy=copy)
+                copy=False)
         #--- End: if
               
         self._set_component('coordinates', None, coordinates)
-        self.set_coordinate_conversion(coordinate_conversion)
-        self.set_datum(datum)
+        self.set_coordinate_conversion(coordinate_conversion, copy=copy)
+        self.set_datum(datum, copy=copy)
     #--- End: def
    
     def __str__(self):
@@ -235,7 +243,7 @@ coordinate system.
         '''
         '''
         coordinate_conversion = self.get_coordinate_conversion()
-        self.set_coordinate_conversion(Terms())
+        self.set_coordinate_conversion(self._Terms())
         return coordinate_conversion
     #--- End: def
     
@@ -243,7 +251,7 @@ coordinate system.
         '''
         '''
         datum = self.get_datum()
-        self.set_datum(Terms())
+        self.set_datum(self._Terms())
         return datum
     #--- End: def
     

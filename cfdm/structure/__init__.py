@@ -28,7 +28,7 @@ from .domain              import Domain
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure
 from .cellmethod          import CellMethod
-from .coordinatereference import CoordinateReference
+from .coordinatereference import CoordinateReference, Terms
 from .dimensioncoordinate import DimensionCoordinate
 from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
