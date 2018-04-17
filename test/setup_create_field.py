@@ -112,7 +112,8 @@ class create_fieldTest(unittest.TestCase):
 
         
         ref1 = cfdm.CoordinateReference(
-            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
+            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
+                        'earth_radius' : 6371007,},
             domain_ancillaries={'orog': orog,
                                 'a'   : ak,
                                 'b'   : bk},

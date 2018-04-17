@@ -983,7 +983,7 @@ measure will not be written.
 
 :Returns:
 
-    out : str
+    out: `str`
 
 :Examples:
 
@@ -1382,58 +1382,33 @@ extra trailing dimension.
             coordinates = self._write_auxiliary_coordinate(f, key, aux_coord,
                                                            coordinates)
     
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Create netCDF variables from domain ancillaries
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         for key, anc in sorted(self._get_domain_ancillaries(f).iteritems()):
             self._write_domain_ancillary(f, key, anc)
     
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Create netCDF variables from cell measures 
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Set the list of 'cell_measures' attribute values (each of
         # the form 'measure: name')
         cell_measures = [self._write_cell_measure(f, key, msr)
                          for key, msr in sorted(self._get_cell_measures(f).iteritems())]
-    
-        # ----------------------------------------------------------------
-        # Create netCDF variables grid mappings
-        # ----------------------------------------------------------------
-        grid_mapping_refs = [
-            ref for ref in self.get_coordinate_references(f).values()
-            if self.get_coordinate_conversion_parameter(ref, 'grid_mapping_name', False)]
-            
-        multiple_grid_mappings = (len(grid_mapping_refs) > 1)
-    
-        grid_mapping = [self._write_grid_mapping(f, ref, multiple_grid_mappings)
-                        for ref in grid_mapping_refs]
         
-        if  multiple_grid_mappings:
-            grid_mapping2 = []
-            for x in grid_mapping:
-                name, a = x.split(':')
-                a = a.split()
-                for y in grid_mapping:
-                    if y == x:
-                        continue
-                    b = y.split(':')[1].split()
-    
-                    if len(a) > len(b) and set(b).issubset(a):
-                        a = [q for q in a if q not in b]
-                #--- End: for
-                grid_mapping2.apend(name+':'+' '.join(a))
-            #--- End: for
-            grid_mapping = grid_mapping2
-        #--- End: if
-    
-        # ----------------------------------------------------------------
-        # formula_terms
-        # ----------------------------------------------------------------
         formula_terms_refs = [
             ref for ref in self.get_coordinate_references(f).values()
             if self.get_coordinate_conversion_parameter(ref, 'standard_name', False)]
 
-        print 'AAAAAAAAAAAAAAAAAAAAAAa', formula_terms_refs
+        grid_mapping_refs = [
+            ref for ref in self.get_coordinate_references(f).values()
+            if self.get_coordinate_conversion_parameter(ref, 'grid_mapping_name', False)]
+        
+
+
+        # ------------------------------------------------------------
+        # Create netCDF formula_terms attributes
+        # ------------------------------------------------------------
         for ref in formula_terms_refs:
             formula_terms = []
             bounds_formula_terms = []
@@ -1441,14 +1416,12 @@ extra trailing dimension.
             
             formula_terms_name = ref.name()
             if formula_terms_name is not None:
-#                owning_coord = f.item(formula_terms_name, role=('d', 'a'))
                 c = [(key, coord) for key, coord in self.get_coordinates(f).items()
                      if self.get_property(coord, 'standard_name', None) == formula_terms_name]
                 if len(c) == 1:
                     owning_coord_key, owning_coord = c[0]
             #--- End: if
     
-#            z_axis = f.item_axes(formula_terms_name, role=('d', 'a'))[0]
             z_axis = self._get_construct_axes(f, owning_coord_key)[0]
                 
             if owning_coord is not None:
@@ -1462,7 +1435,6 @@ extra trailing dimension.
                     if term == 'standard_name':
                         continue
     
-    #                value = Data.asdata(value)
                     ncvar = self._write_scalar_data(value, ncvar=term)
     
                     formula_terms.append('{0}: {1}'.format(term, ncvar))
@@ -1513,7 +1485,55 @@ extra trailing dimension.
                     g['nc'][bounds].setncattr('formula_terms', bounds_formula_terms)
                     if g['_debug']:
                         print '  Bounds formula_terms =', bounds_formula_terms
-        #--- End: for
+
+#            # Deal with a datum
+#            if owning_coord_key is not None:
+#                count = [0, None]
+#                for grid_mapping_ref in grid_mapping_refs:
+#                    if ref.get_datum().equals(grid_mapping_ref.get_datum()):
+#                        # dch SORT OUT TERMS.EQUALS (WITH OPTION FOR SAME MAPPING OF DOMAIN ANCILLARIES)
+#                        count = [count[0] + grid_mapping_ref]
+#
+#                if count[0] == 1:
+#                    grid_mapping_ref = count[1]
+#                    grid_mapping_ref.set_coordinate(owning_coord_key)
+#                else:
+#                    # Create a new grid mapping for the datum
+#                    new = self.implementation.class['Coordinatereference'](
+#                        coordinates=(owning_coord_key,),
+#                        datum=ref.get_datum()
+#                    )
+#                    grid_mapping_refs.append(new)
+#        #--- End: for
+    
+        # ------------------------------------------------------------
+        # Create netCDF variables grid mappings
+        # ------------------------------------------------------------
+        multiple_grid_mappings = (len(grid_mapping_refs) > 1)
+        
+        grid_mapping = [self._write_grid_mapping(f, ref, multiple_grid_mappings)
+                        for ref in grid_mapping_refs]
+
+#        if  multiple_grid_mappings:
+#            grid_mapping2 = []
+#            for x in grid_mapping:
+#                grid_mapping_variable, coordinate_variables = x.split(':')
+#                coordinate_variables = coordinate_variables.split()
+#                for y in grid_mapping:
+#                    if y == coordinate_variables:
+#                        continue
+#
+#                    coordinate_variables1 = y.split(':')[1].split()
+#    
+#                    if (len(coordinate_variables1) <= len(coordinate_variables) and
+#                        set(coordinate_variables1).issubset(coordinate_variables)):
+#                        coordinate_variables = [c for c in coordinate_variables
+#                                                if c not in coordinate_variables1]
+#                #--- End: for
+#                grid_mapping2.apend(grid_mapping_variable+':'+' '.join(coordinate_variables))
+#            #--- End: for
+#            grid_mapping = grid_mapping2
+#        #--- End: if
     
         # ----------------------------------------------------------------
         # Field ancillary variables
@@ -1847,7 +1867,7 @@ write them to the netCDF4.Dataset.
     out: `dict`
 
         '''
-        return coordinate_reference.coordinate_conversion.parameters()
+        return coordinate_reference.get_coordinate_conversion().parameters()
     #--- End: def
 
     def get_coordinate_references(self, field):
