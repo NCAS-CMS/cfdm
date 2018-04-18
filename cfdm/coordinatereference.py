@@ -8,10 +8,8 @@ from .dimensioncoordinate import DimensionCoordinate
 from .auxiliarycoordinate import AuxiliaryCoordinate
 
 import mixin
-
 import structure
 
-from .structure import CoordinateReference as structure_CoordinateReference
 
 # --------------------------------------------------------------------
 # Map coordinate conversion names to the set of coordinates to which

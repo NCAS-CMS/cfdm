@@ -1,13 +1,13 @@
 import abc
 
-from .structure import Constructs as structure_Constructs
+import structure
 
 
 # ====================================================================
 #
 # ====================================================================
 
-class Constructs(structure_Constructs):
+class Constructs(structure.Constructs):
     '''
     '''    
     __metaclass__ = abc.ABCMeta

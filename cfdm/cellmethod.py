@@ -5,10 +5,10 @@ from re  import sub          as re_sub
 from re  import search       as re_search
 
 import mixin
+import structure
 
 from .data.data import Data
 
-from .structure import CellMethod as structure_CellMethod
 
 # ====================================================================
 #
@@ -16,7 +16,7 @@ from .structure import CellMethod as structure_CellMethod
 #
 # ====================================================================
 
-class CellMethod(mixin.Properties, structure_CellMethod):
+class CellMethod(mixin.Properties, structure.CellMethod):
     '''A cell method construct od the CF data model.
 
 Cell method constructs describe how the field construct's cell values

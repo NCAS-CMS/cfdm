@@ -1,10 +1,8 @@
 import abc
 
 import mixin
+import structure
 
-from .structure import DomainAxis as structure_DomainAxis
-
-#from .functions import equals
 
 # ====================================================================
 #
@@ -12,7 +10,7 @@ from .structure import DomainAxis as structure_DomainAxis
 #
 # ====================================================================
 
-class DomainAxis(mixin.Properties, structure_DomainAxis):
+class DomainAxis(mixin.Container, structure.DomainAxis):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an
@@ -26,12 +24,6 @@ to the order of the elements.
 
     '''
     __metaclass__ = abc.ABCMeta
-
-#    def __new__(cls, *args, **kwargs):
-#        obj = object.__new__(cls, *args, **kwargs)
-#        obj._equals = equals
-#        return obj
-#    #--- End: def
 
     def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**

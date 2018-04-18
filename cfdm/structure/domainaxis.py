@@ -54,7 +54,7 @@ to the order of the elements.
     def copy(self):
         '''
         '''
-        return super(DomainAxis, self).copy()
+        return type(self)(source=self)
     #--- End: def
 
     def del_size(self):

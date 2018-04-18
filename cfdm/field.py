@@ -2,11 +2,9 @@ import abc
 
 import mixin
 import structure
+
 from .constructs import Constructs
 from .domain      import Domain
-
-#from .structure import Field as structure_Field
-
 
 _debug = False
        

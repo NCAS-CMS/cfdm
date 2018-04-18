@@ -1,5 +1,6 @@
 import abc
 
+_NOT_IMPLEMENTED = 'This method must be implemented'
 
 # ====================================================================
 #
@@ -112,7 +113,7 @@ All components of a variable are optional.
 .. versionadded:: 1.6
 
         '''
-        pass
+        raise NotImplementedError(NOT_IMPLEMENTED)
     #--- End: def
     
 #--- End: class

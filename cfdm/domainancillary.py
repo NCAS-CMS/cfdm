@@ -1,10 +1,9 @@
 import abc
 
 import mixin
+import structure
 
-from .structure import DomainAncillary as structure_DomainAncillary
-
-class DomainAncillary(mixin.PropertiesDataBounds, structure_DomainAncillary):
+class DomainAncillary(mixin.PropertiesDataBounds, structure.DomainAncillary):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for

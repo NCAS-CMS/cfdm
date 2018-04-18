@@ -1,8 +1,7 @@
 import abc
 
 import mixin
-
-from .structure import CellMeasure as structure_CellMeasure
+import structure
 
 # ====================================================================
 #
@@ -10,7 +9,7 @@ from .structure import CellMeasure as structure_CellMeasure
 #
 # ====================================================================
 
-class CellMeasure(mixin.PropertiesData, structure_CellMeasure):
+class CellMeasure(mixin.PropertiesData, structure.CellMeasure):
     '''A CF cell measure construct.
 
 A cell measure construct provides information that is needed about the
