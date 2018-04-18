@@ -37,7 +37,7 @@ All components of a variable are optional.
     copy: `bool`, optional
 
         '''
-        super(Properties, self).__init__(source=source, copy=copy)
+        super(Properties, self).__init__(source=source)
 
         self._set_component('properties', None, {})
         

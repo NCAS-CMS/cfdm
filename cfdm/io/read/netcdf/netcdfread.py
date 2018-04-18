@@ -57,6 +57,147 @@ class NetCDFRead(IORead):
     '''
     '''
     
+    def _dereference(self, ncvar):
+        '''
+
+:Examples 1:
+
+>>> r._dereference('longitude')
+
+:Parameters:
+
+    ncvar: `str`
+        The netCDf variable name.
+
+:Returns:
+
+    `None`
+        '''
+        r = self.read_vars['references'].get(ncvar, 0)
+        r -= 1
+        if r < 0:
+            r = 0
+
+        self.read_vars['references'][ncvar] = r
+        return r
+    #--- End: def 
+
+    def _is_unreferenced(self, ncvar):
+        '''Return True if the netCDF variable is unfeferenced by any other
+netCDF variable.
+
+:Examples 1:
+
+>>> x = r._is_unreferenced('tas')
+
+:Parameters:
+
+    ncvar: `str`
+        The netCDf variable name.
+
+:Returns:
+
+    out: `bool`
+        '''
+        return self.read_vars['references'].get(ncvar, 0) <= 0
+    #--- End: def
+
+    def _reference(self, ncvar):
+        '''Mark the netCDF variable as being referenced by at least one other
+netCDF variable.
+
+:Examples 1:
+
+>>> r._reference('longitude')
+
+:Parameters:
+
+    ncvar: `str`
+        The netCDf variable name.
+
+:Returns:
+
+    `None`
+        '''
+        r = self.read_vars['references'].setdefault(ncvar, 0)
+        r += 1
+        self.read_vars['references'][ncvar] = r
+        return r
+    #--- End: def 
+
+    def file_close(self):
+        '''Close the netCDF file that has been read.
+
+:Returns:
+
+    `None`
+
+        '''
+        nc = self.read_vars['nc']
+        nc.close()
+    #--- End: def
+        
+    @classmethod
+    def file_type(cls, filename):
+        '''Find the format of a file.
+    
+:Parameters:
+    
+    filename: `str`
+        The file name.
+    
+:Returns:
+ 
+    out: `str`
+        The format type of the file.
+    
+:Examples:
+
+>>> filetype = n.file_type(filename)
+    
+    '''
+        # ----------------------------------------------------------------
+        # Assume that URLs are in netCDF format
+        # ----------------------------------------------------------------
+        if filename.startswith('http://'):
+           return 'netCDF'
+    
+        # ----------------------------------------------------------------
+        # netCDF
+        # ----------------------------------------------------------------
+        if netcdf.is_netcdf_file(filename):
+            return 'netCDF'
+    #--- End: def
+
+    def file_open(self, filename):
+        '''Open the netCDf file for reading.
+
+:Returns:
+
+    out: `netCDF.Dataset`
+
+        '''
+        return self.implementation.get_class('NetCDF').file_open(filename, 'r')
+    #--- End: def        
+
+    def get_coordinates(self, f):
+       '''
+       '''
+       return f.coordinates()
+    #-- End: def
+
+    def get_ncvar(self, construct, *default):
+       '''
+       '''
+       return construct.get_ncvar(*default)
+    #-- End: def
+
+    def get_property(self, construct, prop, *default):
+       '''
+       '''
+       return construct.get_property(prop, *default)
+    #-- End: def
+
     @classmethod    
     def is_netcdf_file(cls, filename):
         '''Return True if the file is a netCDF file.
@@ -456,7 +597,7 @@ ancillaries, field ancillaries).
                 for f in fields0:
                     constructs = getattr(self, '_get_'+construct_type)(f).itervalues()
                     for construct in constructs:
-                        ncvar = self._get_ncvar(construct)
+                        ncvar = self.get_ncvar(construct)
                         if ncvar not in all_fields:
                             continue
                         
@@ -465,7 +606,7 @@ ancillaries, field ancillaries).
                 
         if _debug:
             for x in fields.values():
-                print repr(x)
+                print x #repr(x)
 
         for x in fields.values():
             x._set_component('component_report', None, g['component_report'])
@@ -478,91 +619,218 @@ ancillaries, field ancillaries).
         
         return fields.values()
     #--- End: def
+    
+    def _set_auxiliary_coordinate(self, field, construct, axes, copy=True):
+        '''Insert a auxiliary coordinate object into a field.
 
-    def file_close(self):
-        '''Close the netCDF file that has been read.
+:Parameters:
+
+    field: `Field`
+
+    construct: `AuxiliaryCoordinate`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        self._reference(self.get_ncvar(construct))
+        if construct.has_bounds():
+            self._reference(self.get_ncvar(construct.get_bounds()))
+            
+        return field.set_auxiliary_coordinate(construct, axes=axes, copy=copy)
+    #--- End: def
+
+    def set_bounds(self, construct, bounds, copy=True):
+        '''
+        '''
+        construct.set_bounds(bounds, copy=copy)
+    #--- End: def
+    
+    def set_cell_measure(self, field, construct, axes, copy=True):
+        '''Insert a cell_measure object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `cell_measure`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        self._reference(self.get_ncvar(construct))
+
+        return field.set_cell_measure(construct, axes=axes, copy=copy)
+    #--- End: def
+    
+    def set_cell_method(self, field, construct, copy=True):
+        '''Insert a cell_method object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `cell_method`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_cell_method(construct, copy=copy)
+    #--- End: def
+
+    def set_coordinate_reference(self, field, construct, copy=True):
+        '''Insert a coordinate reference object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `CoordinateReference`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        ncvar = self.get_ncvar(construct, None)
+        if ncvar is not None:
+            self._reference(ncvar)
+                    
+        return field.set_coordinate_reference(construct, copy=copy)
+    #--- End: def
+
+    def set_coordinate_reference_coordinates(self, coordinate_reference,
+                                             coordinates):
+        '''
+
+:Parameters:
 
 :Returns:
 
     `None`
-
         '''
-        nc = self.read_vars['nc']
-        nc.close()
-    #--- End: def
-        
-    @classmethod
-    def file_type(cls, filename):
-        '''Find the format of a file.
-    
+        coordinate_reference.coordinates(coordinates)
+    #--- End: de
+
+    def set_dimension_coordinate(self, field, construct, axes, copy=True):
+        '''Insert a dimension coordinate object into a field.
+
 :Parameters:
-    
-    filename: `str`
-        The file name.
-    
+
+    field: `Field`
+
+    construct: `DimensionCoordinate`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
 :Returns:
- 
+
     out: `str`
-        The format type of the file.
-    
-:Examples:
-
->>> filetype = n.file_type(filename)
-    
-    '''
-        # ----------------------------------------------------------------
-        # Assume that URLs are in netCDF format
-        # ----------------------------------------------------------------
-        if filename.startswith('http://'):
-           return 'netCDF'
-    
-        # ----------------------------------------------------------------
-        # netCDF
-        # ----------------------------------------------------------------
-        if netcdf.is_netcdf_file(filename):
-            return 'netCDF'
-    #--- End: def
-
-    def file_open(self, filename):
-        '''Open the netCDf file for reading.
-
-:Returns:
-
-    out: `netCDF.Dataset`
-
         '''
-        return self.implementation.get_class('NetCDF').file_open(filename, 'r')
-    #--- End: def        
-
-    def _is_unreferenced(self, ncvar):
-        '''Return True if the netCDF variable is unfeferenced by any other
-netCDF variable.
-
-:Examples 1:
-
->>> x = r._is_unreferenced('tas')
+        self._reference(self.get_ncvar(construct))
+        if construct.has_bounds():
+            self._reference(self.get_ncvar(construct.get_bounds()))
+            
+        return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
+    #--- End: def
+    
+    def set_domain_ancillary(self, field, construct, axes, copy=True):
+        '''Insert a domain ancillary object into a field.
 
 :Parameters:
 
-    ncvar: `str`
-        The netCDf variable name.
+    field: `Field`
+
+    construct: `DomainAncillary`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
 
 :Returns:
 
-    out: `bool`
+    out: `str`
         '''
-        return self.read_vars['references'].get(ncvar, 0) <= 0
+        self._reference(self.get_ncvar(construct))
+        if construct.has_bounds():
+            self._reference(self.get_ncvar(construct.get_bounds()))
+
+        return field.set_domain_ancillary(construct, axes=axes, copy=copy)
     #--- End: def
     
-#    def _reset_read_vars(self, extra_read_vars):
-#        '''
-#        '''
-#        d = copy.deepcopy(self._read_vars)
-#        if extra_read_vars:
-#            d.update(copy.deepcopy(extra_read_vars))
-#
-#        return d
-#    #--- End: def
+    def set_domain_axis(self, field, construct, copy=True):
+        '''Insert a domain_axis object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `domain_axis`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return field.set_domain_axis(construct, copy=copy)
+    #--- End: def
+    
+    def set_field_ancillary(self, field, construct, axes, copy=True):
+        '''Insert a field ancillary object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `FieldAncillary`
+
+    axes: `tuple`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        self._reference(self.get_ncvar(construct))
+
+        return field.set_field_ancillary(construct, axes=axes, copy=copy)
+    #--- End: def
+
+    def set_ncdim(self, construct, ncdim):
+        '''
+        '''
+        construct.set_ncdim(ncdim)
+    #-- End: def
+
+
+    def set_ncvar(self, parent, ncvar):
+        '''
+        '''
+        parent.set_ncvar(ncvar)
+    #-- End: def
+
+    def set_properties(self, construct, properties, copy=True):
+        '''
+        '''
+        return construct.properties(properties, copy=copy)
+    #--- End: def
 
     def _parse_compression_gathered(self, ncvar, compress):
         '''
@@ -821,56 +1089,7 @@ netCDF variable.
             
         del g['compression'][sample_dimension]['DSG_contiguous']
     #--- End: def
-    
-    def _reference(self, ncvar):
-        '''Mark the netCDF variable as being referenced by at least one other
-netCDF variable.
-
-:Examples 1:
-
->>> r._reference('longitude')
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDf variable name.
-
-:Returns:
-
-    `None`
-        '''
-        r = self.read_vars['references'].setdefault(ncvar, 0)
-        r += 1
-        self.read_vars['references'][ncvar] = r
-        return r
-    #--- End: def 
-    
-    def _dereference(self, ncvar):
-        '''Mark the netCDF variable as being referenced by at least one other
-netCDF variable.
-
-:Examples 1:
-
->>> r._dereference('longitude')
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDf variable name.
-
-:Returns:
-
-    `None`
-        '''
-        r = self.read_vars['references'].get(ncvar, 0)
-        r -= 1
-        if r < 0:
-            r = 0
-
-        self.read_vars['references'][ncvar] = r
-        return r
-    #--- End: def 
-    
+       
     def _check_formula_terms(self, field_ncvar, coord_ncvar,
                              formula_terms, z_ncdim=None):
         '''asdsdsa
@@ -1212,14 +1431,14 @@ netCDF variable.
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
         f = self._initialise('Field')
-        self._set_properties(f, properties, copy=False)
+        self.set_properties(f, properties, copy=False)
 
         # Store the field's netCDF variable name
-        self._set_ncvar(f, field_ncvar)
+        self.set_ncvar(f, field_ncvar)
    
         f.set_global_attributes(g['global_attributes'])
 
-        # Map netCDF dimension dimension names to domain axis names.
+        # Map netCDF dimension names to domain axis names.
         # 
         # For example:
         # >>> ncdim_to_axis
@@ -1228,6 +1447,11 @@ netCDF variable.
     
         ncscalar_to_axis = {}
     
+        # Map netCDF variable names to internal identifiers
+        # 
+        # For example:
+        # >>> ncvar_to_key
+        # {'dimensioncoordinate1': 'time'}
         ncvar_to_key = {}
             
         data_axes = []
@@ -1254,11 +1478,11 @@ netCDF variable.
                 domain_axis = self._create_domain_axis(coord.get_data().size, ncdim)
                 if _debug:
                     print '    [0] Inserting', repr(domain_axis)                    
-                axis = self._set_domain_axis(f, domain_axis, copy=False)
+                axis = self.set_domain_axis(f, domain_axis, copy=False)
 
                 if _debug:
                     print '    [1] Inserting', repr(coord)
-                dim = self._set_dimension_coordinate(f, coord,
+                dim = self.set_dimension_coordinate(f, coord,
                                                      axes=[axis], copy=False)
                 
                 # Set unlimited status of axis
@@ -1280,7 +1504,7 @@ netCDF variable.
                 domain_axis = self._create_domain_axis(size, ncdim)
                 if _debug:
                     print '    [2] Inserting', repr(domain_axis)
-                axis = self._set_domain_axis(f, domain_axis, copy=False)
+                axis = self.set_domain_axis(f, domain_axis, copy=False)
                 
                 # Set unlimited status of axis
                 try:
@@ -1351,7 +1575,7 @@ netCDF variable.
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
                         domain_axis = self._create_domain_axis(1)
-                        dim = self._set_domain_axis(f, domain_axis)
+                        dim = self.set_domain_axis(f, domain_axis)
                         if _debug:
                             print '    [4] Inserting', repr(domain_axis)
 
@@ -1372,9 +1596,9 @@ netCDF variable.
     
                     domain_axis = self._create_domain_axis(coord.get_data().size)
 
-                    axis = self._set_domain_axis(f, domain_axis, copy=False)
+                    axis = self.set_domain_axis(f, domain_axis, copy=False)
                     
-                    dim = self._set_dimension_coordinate(f, coord,
+                    dim = self.set_dimension_coordinate(f, coord,
                                                          axes=[axis], copy=False)
                     
                     dimensions = [axis]
@@ -1401,8 +1625,8 @@ netCDF variable.
         # ----------------------------------------------------------------
         # Add coordinate references from formula_terms properties
         # ----------------------------------------------------------------
-        for key, coord in f.coordinates().iteritems():
-            coord_ncvar = self._get_ncvar(coord)
+        for key, coord in self.get_coordinates(f).iteritems():
+            coord_ncvar = self.get_ncvar(coord)
 
             formula_terms = attributes[coord_ncvar].get('formula_terms')        
             if formula_terms is None:
@@ -1467,8 +1691,8 @@ netCDF variable.
                 if _debug:
                     print '    [7] Inserting', repr(domain_anc)
                     
-                da_key = self._set_domain_ancillary(f, domain_anc,
-                                                    axes=axes, copy=False)
+                da_key = self.set_domain_ancillary(f, domain_anc,
+                                                   axes=axes, copy=False)
                 if ncvar not in ncvar_to_key:
                     ncvar_to_key[ncvar] = da_key
                     
@@ -1480,7 +1704,7 @@ netCDF variable.
                 f, key, coord,
                 g['formula_terms'][coord_ncvar]['coord'])
             
-            self._set_coordinate_reference(f, coordinate_reference, copy=False)
+            self.set_coordinate_reference(f, coordinate_reference, copy=False)
 
             g['vertical_crs'][coord_ncvar] = coordinate_reference
         #--- End: for
@@ -1492,17 +1716,64 @@ netCDF variable.
         grid_mapping = f.del_property('grid_mapping')
         if grid_mapping is not None:
             parsed_grid_mapping = self._parse_x(field_ncvar, grid_mapping)
+            print 'PPP 2', parsed_grid_mapping
             cf_compliant = self._check_grid_mapping(field_ncvar,
                                                     grid_mapping,
                                                     parsed_grid_mapping)
             if not cf_compliant:
                 if _debug:
                     print '        Bad grid_mapping:', grid_mapping
-            else:              
-                coordinate_reference = self._create_grid_mapping_ref(f, grid_mapping,
-                                                                     attributes,
-                                                                     ncvar_to_key)
-                self._set_coordinate_reference(f, coordinate_reference, copy=False)
+            else:
+                for x in parsed_grid_mapping:
+                    grid_mapping_ncvar, coordinates = x.items()[0]
+
+                    parameters = attributes[grid_mapping_ncvar].copy()
+
+                    # Convert netCDF variable names to internal identifiers
+                    coordinates2 = [ncvar_to_key[ncvar] for ncvar in coordinates
+                                    if ncvar in ncvar_to_key]
+#                    if len(coordinates2) < len(coordinates):
+#                        self._add_message(field_ncvar, ncvar, message='ppp',
+#                                          attribute='grid_mapping'):
+                    coordinates = coordinates2
+                    
+                    coordref = self._initialise('CoordinateReference',
+                                                parameters=parameters)                        
+                    datum = coordref.datum
+                    
+                    create_new = True
+                    
+                    if not coordinates:
+                        name = parameters.get('grid_mapping_name', None)
+                        for n in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
+                            for key, coord in self.get_coordinates(f).iteritems():
+                                if n == self.get_property(coord, 'standard_name', None):
+                                    coordinates.append(key)
+                        #--- End: for
+
+                        # Add a datum to already existing vertical
+                        # coordinate references created from
+                        # formula_terms
+                        for vcr in g['vertical_crs'].itervalues():
+                            vcr.set_datum(datum)
+                    else:
+                        for vcoord, vcr in g['vertical_crs'].iteritems():
+                            if vcoord in coordinates:
+                                # Add a datum to a already existing
+                                # vertical coordinate references
+                                # created from a formula_terms
+                                vcr.set_datum(datum)
+                                coordinates.remove(vcoord)
+                                create_new = bool(coordinates)
+                    #--- End: if
+
+                    if create_new:
+                        self.set_ncvar(coordref, grid_mapping_ncvar)
+                        key = self.set_coordinate_reference_coordinates(coordref,
+                                                                        coordinates)
+                        self.set_coordinate_reference(f, coordref, copy=False)
+                        ncvar_to_key[grid_mapping_ncvar] = key
+                #--- End: for
         #--- End: if
         
         # ----------------------------------------------------------------
@@ -1538,7 +1809,7 @@ netCDF variable.
         
                     if _debug:
                         print '    [8] Inserting', repr(cell)
-                    clm = self._set_cell_measure(f, cell, axes=axes, copy=False)
+                    clm = self.set_cell_measure(f, cell, axes=axes, copy=False)
         
                     ncvar_to_key[ncvar] = clm
             #--- End: if
@@ -1552,7 +1823,7 @@ netCDF variable.
             name_to_axis.update(ncscalar_to_axis)
             for cm in cell_methods:
                 cm = cm.change_axes(name_to_axis)
-                self._set_cell_method(f, cm, copy=False)
+                self.set_cell_method(f, cm, copy=False)
         #--- End: if
 
         # ----------------------------------------------------------------
@@ -1582,7 +1853,7 @@ netCDF variable.
                     # Insert the field ancillary
                     if _debug:
                         print '    [9] Inserting', repr(field_anc)                  
-                    key = self._set_field_ancillary(f, field_anc, axes=axes, copy=False)
+                    key = self.set_field_ancillary(f, field_anc, axes=axes, copy=False)
                     ncvar_to_key[ncvar] = key
         #--- End: if
 
@@ -1606,6 +1877,24 @@ netCDF variable.
     def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None):
         '''
+:Parameters:
+
+    field_ncvar: `str`a
+        The netCDF variable name of the field.
+
+    ncvar: `str`
+        The netCDF variable name of the field component.
+
+    message: `str`, optional
+
+    attribute: `str`, optional
+        The name of the netCDF attribute that has a problem.
+
+    dimensions: sequence of `str`, optional
+        The netCDF dimensions of the variable that has a problem.
+
+    variable: `str`, optional
+
         '''
         g = self.read_vars
 
@@ -1615,12 +1904,6 @@ netCDF variable.
         else:
             code = None
             
-#        else:    
-#            if code is not None:
-#                # Create a readable error message from the error code
-#                part1, part2 = divmod(code, 1000)         
-#                message = ' '.join([_x.get(part1, '<?>'), _y.get(part2, '<?>')])
-        
         d = {'code'     : code,
              'attribute': attribute,
              'message'  : message}
@@ -1698,7 +1981,7 @@ netCDF variable.
 #                    domain_ancillaries.append((ncvar, domain_anc, axes))
 #                else:
 #                    # The domain ancillary variable spans a dimension
-#                    # that is not spanned by its parent data variable    ppp
+#                    # that is not spanned by its parent data variable  
 #                    self._add_message(
 #                        field_ncvar, ncvar,
 #                        message=('Formula terms variable', 'spans incorrect dimensions'),
@@ -1734,7 +2017,7 @@ netCDF variable.
             raise ValueError(
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
 
-        self._set_properties(c, properties)
+        self.set_properties(c, properties)
         
         if climatology:
             c.set_extent_parameter('climatology', True, copy=False)
@@ -1756,7 +2039,7 @@ netCDF variable.
 
                 properties = attributes[ncbounds].copy()
                 properties.pop('formula_terms', None)                
-                self._set_properties(bounds, properties, copy=False)
+                self.set_properties(bounds, properties, copy=False)
                     
                 bounds_data = self._create_data(ncbounds, bounds)
     
@@ -1779,16 +2062,16 @@ netCDF variable.
                 self._set_data(bounds, bounds_data, copy=False)
                 
                 # Store the netCDF variable name
-                self._set_ncvar(bounds, ncbounds)
+                self.set_ncvar(bounds, ncbounds)
     
-                self._set_bounds(c, bounds, copy=False)
+                self.set_bounds(c, bounds, copy=False)
 
                 if not domain_ancillary:
                     g['bounds'][field_ncvar][ncvar] = ncbounds
         #--- End: if
     
         # Store the netCDF variable name
-        self._set_ncvar(c, ncvar)
+        self.set_ncvar(c, ncvar)
 
         if not domain_ancillary:
             g['coordinates'][field_ncvar].append(ncvar)
@@ -1797,186 +2080,6 @@ netCDF variable.
         # Return the bounded variable
         # ---------------------------------------------------------
         return c
-    #--- End: def
-    
-    def _set_auxiliary_coordinate(self, field, construct, axes, copy=True):
-        '''Insert a auxiliary coordinate object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `AuxiliaryCoordinate`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self._get_ncvar(construct))
-        if construct.has_bounds():
-            self._reference(self._get_ncvar(construct.get_bounds()))
-            
-        return field.set_auxiliary_coordinate(construct, axes=axes, copy=copy)
-    #--- End: def
-
-    def _set_bounds(self, construct, bounds, copy=True):
-        '''
-        '''
-        construct.set_bounds(bounds, copy=copy)
-    #--- End: def
-    
-    def _set_cell_measure(self, field, construct, axes, copy=True):
-        '''Insert a cell_measure object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `cell_measure`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self._get_ncvar(construct))
-
-        return field.set_cell_measure(construct, axes=axes, copy=copy)
-    #--- End: def
-    
-    def _set_cell_method(self, field, construct, copy=True):
-        '''Insert a cell_method object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `cell_method`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        return field.set_cell_method(construct, copy=copy)
-    #--- End: def
-
-    def _set_coordinate_reference(self, field, construct, copy=True):
-        '''Insert a coordinate reference object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `CoordinateReference`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        ncvar = self._get_ncvar(construct, None)
-        if ncvar is not None:
-            self._reference(ncvar)
-                    
-        return field.set_coordinate_reference(construct, copy=copy)
-    #--- End: def
-
-    def _set_dimension_coordinate(self, field, construct, axes, copy=True):
-        '''Insert a dimension coordinate object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `DimensionCoordinate`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self._get_ncvar(construct))
-        if construct.has_bounds():
-            self._reference(self._get_ncvar(construct.get_bounds()))
-            
-        return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
-    #--- End: def
-    
-    def _set_domain_ancillary(self, field, construct, axes, copy=True):
-        '''Insert a domain ancillary object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `DomainAncillary`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self._get_ncvar(construct))
-        if construct.has_bounds():
-            self._reference(self._get_ncvar(construct.get_bounds()))
-
-        return field.set_domain_ancillary(construct, axes=axes, copy=copy)
-    #--- End: def
-    
-    def _set_domain_axis(self, field, construct, copy=True):
-        '''Insert a domain_axis object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `domain_axis`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        return field.set_domain_axis(construct, copy=copy)
-    #--- End: def
-    
-    def _set_field_ancillary(self, field, construct, axes, copy=True):
-        '''Insert a field ancillary object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `FieldAncillary`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self._get_ncvar(construct))
-
-        return field.set_field_ancillary(construct, axes=axes, copy=copy)
     #--- End: def
     
     def _set_data(self, construct, data, axes=None, copy=True):
@@ -2005,24 +2108,6 @@ also be provided.
             construct.set_data(data, axes, copy=copy)
     #--- End: def
     
-    def _set_ncvar(self, construct, ncvar):
-        '''
-        '''
-        construct.set_ncvar(ncvar)
-    #-- End: def
-
-    def _get_ncvar(self, construct, *default):
-       '''
-       '''
-       return construct.get_ncvar(*default)
-    #-- End: def
-
-    def _get_property(self, construct, prop, *default):
-       '''
-       '''
-       return construct.get_property(prop, *default)
-    #-- End: def
-
     def _get_auxiliary_coordinate(self, f):
        '''
        '''
@@ -2053,12 +2138,6 @@ also be provided.
        return f.field_ancillaries()
     #-- End: def
                                    
-    def _set_ncdim(self, construct, ncdim):
-        '''
-        '''
-        construct.set_ncdim(ncdim)
-    #-- End: def
-
 #    def _transpose_data(self, data, axes=None, copy=True):
 #        '''
 #        '''
@@ -2094,14 +2173,14 @@ also be provided.
         '''
         cell_measure = self._initialise('CellMeasure', measure=measure)
 
-        self._set_properties(cell_measure, attributes[ncvar])
+        self.set_properties(cell_measure, attributes[ncvar])
 
         data = self._create_data(ncvar, cell_measure)
     
         self._set_data(cell_measure, data, copy=False)
 
         # Store the netCDF variable name
-        self._set_ncvar(cell_measure, ncvar)
+        self.set_ncvar(cell_measure, ncvar)
     
         return cell_measure
     #--- End: def
@@ -2268,7 +2347,7 @@ Set the Data attribute of a variable.
         '''
         domain_axis = self._initialise('DomainAxis', size=size)
         if ncdim is not None:
-            self._set_ncdim(domain_axis, ncdim)
+            self.set_ncdim(domain_axis, ncdim)
 
         return domain_axis
     #-- End: def
@@ -2294,14 +2373,14 @@ Set the Data attribute of a variable.
         field_ancillary = self._initialise('FieldAncillary')
 
         # Insert properties
-        self._set_properties(field_ancillary, attributes[ncvar], copy=True)
+        self.set_properties(field_ancillary, attributes[ncvar], copy=True)
 
         # Insert data
         data = self._create_data(ncvar, field_ancillary)
         self._set_data(field_ancillary, data, copy=False)
 
         # Store the netCDF variable name
-        self._set_ncvar(field_ancillary, ncvar)
+        self.set_ncvar(field_ancillary, ncvar)
     
         return field_ancillary
     #--- End: def
@@ -2312,118 +2391,6 @@ Set the Data attribute of a variable.
         return self.implementation.get_class(object_type)(**kwargs)
     #--- End: def
 
-    def _set_properties(self, construct, properties, copy=True):
-        '''
-        '''
-        return construct.properties(properties, copy=copy)
-    #--- End: def
-
-    def _create_grid_mapping_ref(self, f, grid_mapping,
-                                 attributes, ncvar_to_key):
-        '''
-    
-:Parameters:
-
-    f: `Field`
-
-    grid_mapping: `str`
-        The value of a CF grid_mapping attribute.
-
-    attributes: `dict`
-
-    ncvar_to_key: `dict`
-
-:Returns:
-
-    `None`
-
-        '''
-#        parsed_grid_mapping = self._parse_x(ncvar, grid_mapping)
-#        cf_compliant = self._check_grid_mapping(ncvar,
-#                                                grid_mapping,
-#                                                parsed_grid_mapping)
-#        if not cf_compliant:
-#            f.del_property('grid_mapping')
-#            return
-#        
-#        for x in parsed_grid_mapping:
-#            term, values = x.items()[0]
-#`        
-        g = self.read_vars
-                
-        if ':' not in grid_mapping:
-            grid_mapping = '{0}:'.format(grid_mapping)
-
-        coordinates = []
-        for x in self._parse_grid_mapping(grid_mapping)[::-1]:
-            named_coordinates = False
-            if not x.endswith(':'):
-                try:
-                    coordinates.append(ncvar_to_key[x])
-                    named_coordinates = True
-                except KeyError:
-                    continue
-            else:
-                if not coordinates:
-                    coordinates = None
-    
-                grid_mapping = x[:-1]
-    
-                if grid_mapping not in attributes:
-                    coordinates = []
-                    continue
-                    
-                parameters = attributes[grid_mapping].copy()
-                
-#                props = {}
-#                name = parameters.pop('grid_mapping_name', None)                 
-#                if name is not None:
-#                    props['grid_mapping_name'] = name
-
-                cr = self._initialise('CoordinateReference', parameters=parameters)
-                datum = cr.datum
-                
-                create_new = True
-
-                if not named_coordinates:
-                    coordinates = []
-                    name = parameters.get('grid_mapping_name', None)
-                    for x in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
-                        for key, coord in f.coordinates().iteritems():
-                            if x == self._get_property(coord, 'standard_name', None):
-                                coordinates.append(key)
-                    #--- End: for
-
-                    # Add a datum to an already existing coordinate
-                    # references created from formula_terms
-                    for x, cr in g['vertical_crs'].iteritems():
-                        cr.set_datum(datum)
-                else:
-                    for x, cr in g['vertical_crs'].iteritems():
-                        if x in coordinates:
-                            # Add a datum to an already existing
-                            # coordinate reference created from a
-                            # formula_terms
-                            cr.set_datum(datum)
-                            coordinates.remove(x)
-                            create_new = bool(coordinates)
-                            break
-                #--- End: if
-
-                if create_new:
-                    coordref = self._initialise('CoordinateReference',
-                                                coordinates=coordinates,
-                                                parameters=parameters)
-
-                    # Store the netCDF variable name
-                    self._set_ncvar(coordref, grid_mapping)
-
-                coordinates = []
-        #--- End: for
-
-        return coordref
-    #--- End: def
-    
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         '''asdasdasdas
 
@@ -2459,7 +2426,7 @@ Set the Data attribute of a variable.
                 domain_ancillaries[term] = None
 
         parameters = {}
-        standard_name = self._get_property(coord, 'standard_name', None)
+        standard_name = self.get_property(coord, 'standard_name', None)
         if standard_name is not None:
             parameters['standard_name'] = standard_name
             
@@ -2469,11 +2436,11 @@ Set the Data attribute of a variable.
                                     parameters=parameters)
 
 #        props = {}
-#        name = self._get_property(coord, 'standard_name', None)
+#        name = self.get_property(coord, 'standard_name', None)
 #        if name is not None:
 #            props['standard_name'] = name
 #
-#        self._set_properties(coordref, props)
+#        self.set_properties(coordref, props)
         
         return coordref
     #--- End: def
@@ -2555,11 +2522,11 @@ dimensions are returned.
         return map(str, ncdimensions)
     #--- End: def
 
-    def _parse_grid_mapping(self, grid_mapping):
-        '''
-        '''
-        return re.sub('\s*:\s*', ': ', grid_mapping).split()
-    #--- End: def
+#    def _parse_grid_mapping(self, grid_mapping):
+#        '''
+#        '''
+#        return re.sub('\s*:\s*', ': ', grid_mapping).split()
+#    #--- End: def
 
     def _create_gathered_array(self, array, uncompressed_ndim=None,
                                uncompressed_shape=None,
@@ -3001,25 +2968,41 @@ Checks that
         return True
     #--- End: def
     
-    def _check_grid_mapping(self, field_ncvar, string, parsed_string):
+    def _check_grid_mapping(self, field_ncvar, grid_mapping,
+                            parsed_grid_mapping):
         '''
+
+:Parameters:
+
+    field_ncvar: `str`
+
+    grid_mapping: `str`
+
+    parsed_grid_mapping: `dict`
+
+:Returns:
+
+    out: `bool`
+
         '''
-        attribute = {field_ncvar+':grid_mapping': string}
+        attribute = {field_ncvar+':grid_mapping': grid_mapping}
 
         incorrectly_formatted = ('grid_mapping attribute', 'is incorrectly formatted')
         missing_variable      = ('grid_mapping variable', 'is not in file')
-        missing_coordinate    = ('Grid mapping coordinate variable''is not in file')
+        coordinate_not_in_file = ('Grid mapping coordinate variable', 'is not in file')
+        coordinate_not_in_data_variable = ('Grid mapping coordinate variable',
+                                           'is not used by data variable')
         
         nc = self.read_vars['nc']
         
-        if not parsed_string:
+        if not parsed_grid_mapping:
             self._add_message(field_ncvar, field_ncvar,
                               message=incorrectly_formatted,
                               attribute=attribute)
             return False
 
         ok = True
-        for x in parsed_string:
+        for x in parsed_grid_mapping:
             grid_mapping_ncvar, values = x.items()[0]
             if grid_mapping_ncvar not in nc.variables:
                 ok = False
@@ -3031,9 +3014,11 @@ Checks that
                 if coord_ncvar not in nc.variables:
                     ok = False
                     self._add_message(field_ncvar, coord_ncvar,
-                                      message=missing_coordinate,
+                                      message=coordinate_not_in_file,
                                       attribute=attribute)
-                                
+
+
+#                    parsed_coordinates
         #--- End: for
         
         if not ok:
@@ -3163,7 +3148,9 @@ CF-1.7 Appendix A
         '''
 
         '''
-        # Thanks to Alan Iwi for creating these regexs
+        # ============================================================
+        # Thanks to Alan Iwi for creating these regular expressions
+        # ============================================================
         
         def subst(s):
             "substitute tokens for WORD and SEP (space or end of string)"

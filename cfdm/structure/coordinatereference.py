@@ -91,15 +91,14 @@ frame and consists of the following:
         example:
 
         '''
-        super(CoordinateReference, self).__init__(
-            source=source,
-            copy=copy)
+        super(CoordinateReference, self).__init__(source=source)
 
+        self._set_component('coordinates', None, set())
+        
         if source:
             coordinates           = source.coordinates()
             coordinate_conversion = source.get_coordinate_conversion()
             datum                 = source.get_datum()
-
             if copy:
                 coordinate_conversion = coordinate_conversion.copy()
                 datum                 = datum.copy()
@@ -132,7 +131,8 @@ frame and consists of the following:
                 copy=False)
         #--- End: if
               
-        self._set_component('coordinates', None, coordinates)
+#        self._set_component('coordinates', None, coordinates)
+        self.coordinates(coordinates)
         self.set_coordinate_conversion(coordinate_conversion, copy=copy)
         self.set_datum(datum, copy=copy)
     #--- End: def
@@ -157,7 +157,51 @@ frame and consists of the following:
         '''
         return self.get_datum()
     #--- End: def
-        
+
+    def coordinates(self, coordinates=None, copy=True):
+        '''Return or replace the identifiers of the coordinate objects that
+define the coordinate system.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_coordinate`
+
+:Examples 1:
+
+>>> coordinates = c.coordinates()
+
+:Returns:
+
+    out: `set`
+        The identifiers of the coordinate objects.
+
+:Examples 2:
+
+>>> c.coordinates()
+{'dimensioncoordinate0',
+ 'dimensioncoordinate1',
+ 'auxiliarycoordinate0',
+ 'auxiliarycoordinate1'}
+
+        '''
+        existing = self._get_component('coordinates', None, None)
+
+        if existing is None:
+            existing = set()
+            self._set_component('coordinates', None, existing)
+
+        out = existing.copy()
+
+        if not coordinates:
+            return out
+
+        # Still here?
+        existing.clear()
+        existing.update(coordinates)
+
+        return out
+    #--- End: def
+            
     def copy(self):
         '''Return a deep copy.
 
@@ -176,35 +220,6 @@ frame and consists of the following:
 
         '''
         return type(self)(source=self, copy=True)
-    #--- End: def
-
-    def coordinates(self):
-        '''Return the identifiers of the coordinate objects that define the
-coordinate system.
-
-.. versionadded:: 1.6
-
-.. seealso:: `del_coordinate`
-
-:Examples 1:
-
->>> s = c.coordinates()
-
-:Returns:
-
-    out: `set`
-        The identifiers of the coordinate objects.
-
-:Examples 2:
-
->>> c.coordinates()
-{'dimensioncoordinate0',
- 'dimensioncoordinate1',
- 'auxiliarycoordinate0',
- 'auxiliarycoordinate1'}
-
-        '''
-        return self._get_component('coordinates', None).copy()
     #--- End: def
 
     def del_coordinate(self, key):
@@ -247,14 +262,6 @@ coordinate system.
         return coordinate_conversion
     #--- End: def
     
-    def del_datum(self):
-        '''
-        '''
-        datum = self.get_datum()
-        self.set_datum(self._Terms())
-        return datum
-    #--- End: def
-    
     def get_coordinate_conversion(self):
         '''Get the coordinate_conversion.
 
@@ -263,6 +270,14 @@ coordinate system.
     out: `Datum`
         '''
         return self._get_component('coordinate_conversion', None)       
+    #--- End: def
+    
+    def del_datum(self):
+        '''
+        '''
+        datum = self.get_datum()
+        self.set_datum(self._Terms())
+        return datum
     #--- End: def
 
     def get_datum(self):
@@ -316,15 +331,6 @@ coordinate system.
         c.add(coordinate)
     #--- End: def
 
-    def set_datum(self, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = value.copy()
-            
-        self._set_component('datum', None, value)
-    #--- End: def
-
     def set_coordinate_conversion(self, value, copy=True):
         '''
         '''
@@ -332,6 +338,15 @@ coordinate system.
             value = value.copy()
             
         self._set_component('coordinate_conversion', None, value)
+    #--- End: def
+
+    def set_datum(self, value, copy=True):
+        '''
+        '''
+        if copy:
+            value = value.copy()
+            
+        self._set_component('datum', None, value)
     #--- End: def
 
     def name(self, default=None, identity=False, ncvar=False):
@@ -410,7 +425,7 @@ class Terms(abstract.Container):
     copy: `bool`, optional
 
         '''
-        super(Terms, self).__init__(source=source, copy=copy)
+        super(Terms, self).__init__(source=source)
 
         if source:
             parameters         = source.parameters()            

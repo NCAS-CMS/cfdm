@@ -283,7 +283,7 @@ class Constructs(structure_Constructs):
                 found_match = False
                 for key1, ref1 in refs1.items():
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       traceback=False, **kwargs): ####
+                                       traceback=True, **kwargs): ####
                         continue
 
                     # Coordinates

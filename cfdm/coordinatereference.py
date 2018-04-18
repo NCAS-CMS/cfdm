@@ -389,8 +389,8 @@ reference object.
         if len(coords0) != len(coords1):
             if traceback:
                 print(
-"{}: Different sized collections of coordinates ({} != {})".format(
-    self.__class__.__name__, len(coords0), len(coords1)))
+"{}: Different sized collections of coordinates ({}, {})".format(
+    self.__class__.__name__, coords0, coords1))
             return False
 
         if not self.get_coordinate_conversion().equals(

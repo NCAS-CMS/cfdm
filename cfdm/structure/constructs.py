@@ -380,8 +380,7 @@ None
     #--- End: def
 
     def copy(self, data=True):
-        '''
-Return a deep copy.
+        '''Return a deep copy.
 
 ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
@@ -394,7 +393,7 @@ Return a deep copy.
 
 >>> d = c.copy()
 
-'''
+        '''
         return type(self)(source=self, copy=True, view=False,
                           _use_data=data, ignore=self._ignore)
     #--- End: def

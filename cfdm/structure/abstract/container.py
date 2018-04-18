@@ -1,6 +1,5 @@
 import abc
 
-from copy import deepcopy
 
 # ====================================================================
 #
@@ -21,14 +20,12 @@ All components of a variable are optional.
 '''
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, source=None, copy=True):
+    def __init__(self, source=None):
         '''**Initialization**
 
 :Parameters:
 
     source: optional
-
-    copy: `bool`, optional
 
         '''
         if source is not None:
