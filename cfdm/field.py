@@ -15,7 +15,7 @@ _debug = False
 #
 # ====================================================================
 
-class Field(mixin.PropertiesData, structure.Field):
+class Field(mixin.ConstructAccess, mixin.PropertiesData, structure.Field):
     '''A CF field construct.
 
 The field construct is central to the CF data model. A field
@@ -126,7 +126,7 @@ x.__str__() <==> str(x)
         data_axes = self.get_data_axes(())
         non_spanning_axes = set(self.domain_axes()).difference(data_axes)
 
-        axis_names = self._axis_names_sizes()
+        axis_names = self._unique_construct_names('domain_axes')
         
         # Data
         string.append(
@@ -138,8 +138,9 @@ x.__str__() <==> str(x)
             x = []
             for cm in cell_methods.values():
                 cm = cm.copy()
-                cm.axes = tuple([axis_names.get(axis, axis)
-                                 for axis in cm.get_axes(())])
+                cm.set_axes(tuple([axis_names.get(axis, axis)
+                                   for axis in cm.get_axes(())]))
+                
                 x.append(str(cm))
                 
             c = ' '.join(x)
@@ -147,7 +148,6 @@ x.__str__() <==> str(x)
             string.append('Cell methods    : {0}'.format(c))
         #--- End: if
         
-#        axis_to_name = {}
         def _print_item(self, key, variable, dimension_coord):
             '''Private function called by __str__'''
             
@@ -395,22 +395,38 @@ functionality:
         return new
     #--- End: def
 
-    def _axis_names_sizes(self):
+    def _unique_construct_names(self, constructs):
         '''
         '''    
-        axis_names = {}
-        for key, domain_axis in self.domain_axes().iteritems():
-            axis_names[key] = '{0}({1})'.format(self.domain_axis_name(key),
-                                                domain_axis.get_size(''))
-           
-        return axis_names
+        key_to_name = {}
+        name_to_keys = {}
+
+        domain_axes = (constructs == 'domain_axes')
+        
+        for key, value in getattr(self, constructs)().iteritems():
+            if domain_axes:
+                name = '{0}({1})'.format(self.domain_axis_name(key), # DCH FIX UP DEFAULT?
+                                         value.get_size(''))
+            else:
+                name = value.name(default=key)                
+
+            name_to_keys.setdefault(name, []).append(key)
+            key_to_name[key] = name
+
+        for name, keys in name_to_keys.iteritems():
+            if len(keys) > 1:
+                for key in keys:
+                    key_to_name[key] = '{0}%{1}'.format(key, name)
+        #--- End: for
+        
+        return key_to_name
     #--- End: def
     
     def _one_line_description(self, axis_names_sizes=None):
         '''
         '''
         if axis_names_sizes is None:
-            axis_names_sizes = self._axis_names_sizes()
+            axis_names_sizes = self._unique_construct_names('domain_axes')
             
         x = [axis_names_sizes[axis] for axis in self.get_data_axes(())]
         axis_names = ', '.join(x)
@@ -501,11 +517,6 @@ field.
                                                  axes=axes, copy=copy)
     #--- End: def
 
-#    def domain(self, copy=False):
-#        '''
-#        '''
-#        return self._Domain(source=self, copy=copy)
-
     def domain_ancillaries(self, axes=None, copy=False):
         '''
         '''    
@@ -573,20 +584,20 @@ last values.
         # Title
         string = [line, indent0+_title, line]
 
-        axis_names = self._axis_names_sizes()
+        axis_names = self._unique_construct_names('domain_axes')
 
-        # Domain axes
-        axes = self._dump_axes(axis_names, display=False, _level=_level)
-        if axes:
-            string.append(axes)
-             
         # Simple properties
         properties = self.properties()
         if properties:
-            string.append('')
             string.append(
                 self._dump_properties(_level=_level))
-
+            
+        # Domain axes
+        axes = self._dump_axes(axis_names, display=False, _level=_level)
+        if axes:
+            string.append('')
+            string.append(axes)
+             
         # Data
         data = self.get_data(None)
         if data is not None:
@@ -597,9 +608,7 @@ last values.
             if self.isreftime:
                 data = data.asdata(data.dtarray)
                 
-#            string.extend(('', '{0}Data({1}) = {2}'.format(indent0,
-#                                                           ', '.join(x),
-#                                                           str(data))))
+            string.append('')
             string.append('{0}Data({1}) = {2}'.format(indent0,
                                                       ', '.join(x),
                                                       str(data)))
@@ -622,33 +631,46 @@ last values.
                 value.dump(display=False, field=self, key=key, _level=_level))
 
         # Dimension coordinates
+        name = self._unique_construct_names('dimension_coordinates')
         for key, value in sorted(self.dimension_coordinates().iteritems()):
             string.append('')
-            string.append(value.dump(display=False, 
-                                     field=self, key=key, _level=_level))
-             
+            string.append(
+                value.dump(display=False,
+                           field=self, key=key, _level=_level,
+                           _title='Dimension coordinate: {0}'.format(name[key])))
+            
         # Auxiliary coordinates
+        name = self._unique_construct_names('auxiliary_coordinates')
         for key, value in sorted(self.auxiliary_coordinates().iteritems()):
             string.append('')
-            string.append(value.dump(display=False, field=self, 
-                                     key=key, _level=_level))
-        # Domain ancillaries
+            string.append(
+                value.dump(display=False, field=self, 
+                           key=key, _level=_level,
+                           _title='Auxiliary coordinate: {0}'.format(name[key])))
+
+            # Domain ancillaries
+        name = self._unique_construct_names('domain_ancillaries')
         for key, value in sorted(self.domain_ancillaries().iteritems()):
             string.append('') 
             string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
+                value.dump(display=False, field=self, key=key, _level=_level,
+                           _title='Domain ancillary: {0}'.format(name[key]))
             
         # Coordinate references
+        name = self._unique_construct_names('coordinate_references')
         for key, value in sorted(self.coordinate_references().iteritems()):
             string.append('')
             string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
+                value.dump(display=False, field=self, key=key, _level=_level,
+                           _title='Coordinate reference: {0}'.format(name[key])))
 
         # Cell measures
-        for key, value in sorted(self.cell_measures().iteritems()):
+        name = self._unique_construct_names('cell_measures')
+       for key, value in sorted(self.cell_measures().iteritems()):
             string.append('')
             string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
+                value.dump(display=False, field=self, key=key, _level=_level,
+                           _title='Cell measure: {0}'.format(name[key]))
 
         string.append('')
         

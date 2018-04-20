@@ -25,7 +25,7 @@ over El Nino years).
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, axes=None, method=None, properties={},
+    def __init__(self, axes=None, method=None, properties=None,
                  source=None, copy=True):
         '''
         '''
@@ -33,16 +33,15 @@ over El Nino years).
                                          source=source, copy=copy)
 
         if source:
-            if not isinstance(source, CellMethod):
-                raise ValueError(
-"ERROR: source must be a subclass of 'CellMethod'. Got {!r}".format(
-    source.__class__.__name__))
-
-            if axes is None:
+            try:
                 axes = source.get_axes(None)
-
-            if method is None:
+            except AttributeErrror:
+                axes = None
+                
+            try:
                 method = source.get_method(None)
+            except AttributeErrror:
+                method = None
         #--- End: if
 
         if axes is not None:
@@ -53,18 +52,14 @@ over El Nino years).
     #--- End: def
 
     def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
-
-x.__repr__() <==> repr(x)
+        '''x.__repr__() <==> repr(x)
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
     def __str__(self):
-        '''
-
-x.__str__() <==> str(x)
+        '''x.__str__() <==> str(x)
 
 Return a CF-netCDF-like string of the cell method.
 
@@ -72,16 +67,10 @@ Note that if the intention use this string in a CF-netCDF cell_methods
 attribute then the cell method's `!name` attribute may need to be
 modified, where appropriate, to reflect netCDF variable names.
 
-'''     
+        '''     
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
         string.append(self.get_method(''))
         return ' '.join(string)
-    #--- End: def
-
-    def copy(self):
-        '''
-        '''
-        return super(CellMethod, self).copy()
     #--- End: def
 
     def del_axes(self):

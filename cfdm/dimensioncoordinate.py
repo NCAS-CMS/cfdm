@@ -36,8 +36,13 @@ coordinate object.
 
         '''
         if _title is None:
-            _title = 'Dimension coordinate: ' + self.name(default='')
-
+            if key is None:
+                default = ''
+            else:
+                default = key
+                
+            _title = 'Dimension coordinate: ' + self.name(default=default)
+                
         return super(DimensionCoordinate, self).dump(
             display=display, _omit_properties=_omit_properties,
             field=field, key=key,

@@ -47,8 +47,13 @@ All components of a variable are optional.
                                              source=source, copy=copy)
 
         if source is not None:
-            if _use_data and data is None:
-                data = source.get_data(None)
+            if not _use_data:
+                data = None
+            else:
+                try:
+                    data = source.get_data(None)
+                except AttributeError:
+                    data = None
         #--- End: if
 
         if _use_data and data is not None:

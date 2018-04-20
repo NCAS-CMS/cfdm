@@ -42,10 +42,12 @@ All components of a variable are optional.
         self._set_component('properties', None, {})
         
         if source is not None:
-            properties = source.properties()
-        elif not properties:
-            properties = {}
-
+            try:
+                properties = source.properties()
+            except AttributeError:
+                properties = None
+        #--- End: if
+        
         if properties:
             self.properties(properties, copy=copy)
     #--- End: def

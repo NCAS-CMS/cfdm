@@ -96,12 +96,20 @@ frame and consists of the following:
         self._set_component('coordinates', None, set())
         
         if source:
-            coordinates           = source.coordinates()
-            coordinate_conversion = source.get_coordinate_conversion()
-            datum                 = source.get_datum()
-            if copy:
-                coordinate_conversion = coordinate_conversion.copy()
-                datum                 = datum.copy()
+            try:
+                coordinates = source.coordinates()
+            except AttributeError:
+                coordinates = None
+
+            try:
+                coordinate_conversion = source.get_coordinate_conversion()
+            except AttributeError:
+                coordinate_conversion = None
+
+            try:
+                datum = source.get_datum()
+            except AttributeError:
+                datum = None
         else:
             if not coordinates:
                 coordinates = set()
@@ -131,7 +139,6 @@ frame and consists of the following:
                 copy=False)
         #--- End: if
               
-#        self._set_component('coordinates', None, coordinates)
         self.coordinates(coordinates)
         self.set_coordinate_conversion(coordinate_conversion, copy=copy)
         self.set_datum(datum, copy=copy)
@@ -262,6 +269,14 @@ coordinate system.
         return coordinate_conversion
     #--- End: def
     
+    def del_datum(self):
+        '''
+        '''
+        datum = self.get_datum()
+        self.set_datum(self._Terms())
+        return datum
+    #--- End: def
+
     def get_coordinate_conversion(self):
         '''Get the coordinate_conversion.
 
@@ -272,14 +287,6 @@ coordinate system.
         return self._get_component('coordinate_conversion', None)       
     #--- End: def
     
-    def del_datum(self):
-        '''
-        '''
-        datum = self.get_datum()
-        self.set_datum(self._Terms())
-        return datum
-    #--- End: def
-
     def get_datum(self):
         '''Get the datum.
 
@@ -294,6 +301,61 @@ coordinate system.
         '''
         '''
         return bool(self._get_component('datum', None, False))
+    #--- End: def
+
+    def has_coordinate_conversion(self):
+        '''
+        '''
+        return bool(self._get_component('coordinate_conversion', None, False))
+    #--- End: def
+
+    def name(self, default=None, identity=False, ncvar=False):
+        '''Return a name.
+
+By default the name is the first found of the following:
+
+  1. The `standard_name` CF property.
+  
+  2. The `!id` attribute.
+  
+  3. The `long_name` CF property, preceeded by the string
+     ``'long_name:'``.
+  
+  4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
+  
+  5. The value of the *default* parameter.
+
+Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
+
+.. seealso:: `identity`
+
+:Examples 1:
+
+>>> n = r.name()
+>>> n = r.name(default='NO NAME'))
+'''
+        if not ncvar:
+            parameters = self.coordinate_conversion.parameters()
+
+            n = parameters.get('standard_name')
+            if n is not None:
+                return n
+                
+            n = parameters.get('grid_mapping_name')
+            if n is not None:
+                return n
+                
+            if identity:
+                return default
+
+        elif identity:
+            raise ValueError("Can't set identity=True and ncvar=True")
+
+        n = self.get_ncvar(None)
+        if n is not None:
+            return 'ncvar%{0}'.format(n)
+            
+        return default
     #--- End: def
 
     def set_coordinate(self, coordinate):
@@ -349,55 +411,6 @@ coordinate system.
         self._set_component('datum', None, value)
     #--- End: def
 
-    def name(self, default=None, identity=False, ncvar=False):
-        '''Return a name.
-
-By default the name is the first found of the following:
-
-  1. The `standard_name` CF property.
-  
-  2. The `!id` attribute.
-  
-  3. The `long_name` CF property, preceeded by the string
-     ``'long_name:'``.
-  
-  4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
-  
-  5. The value of the *default* parameter.
-
-Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
-
-.. seealso:: `identity`
-
-:Examples 1:
-
->>> n = r.name()
->>> n = r.name(default='NO NAME'))
-'''
-        if not ncvar:
-            parameter_terms = self.coordinate_conversion.parameters()
-
-            n = parameter_terms.get('standard_name')
-            if n is not None:
-                return n
-                
-            n = parameter_terms.get('grid_mapping_name')
-            if n is not None:
-                return n
-                
-            if identity:
-                return default
-
-        elif identity:
-            raise ValueError("Can't set identity=True and ncvar=True")
-
-        n = self.get_ncvar(None)
-        if n is not None:
-            return 'ncvar%{0}'.format(n)
-            
-        return default
-    #--- End: def
-
 #--- End: class
 
 
@@ -428,15 +441,16 @@ class Terms(abstract.Container):
         super(Terms, self).__init__(source=source)
 
         if source:
-            parameters         = source.parameters()            
-            domain_ancillaries = source.domain_ancillaries()
-        else:
-            if not domain_ancillaries:
-                domain_ancillaries = {}
-
-            if not parameters:
-                parameters = {}
-        #--- End: if
+            try:
+                parameters = source.parameters()
+            except AttributeError:
+                parameters = None
+                
+            try:
+                domain_ancillaries = source.domain_ancillaries()
+            except AttributeError:
+                domain_ancillaries = None
+       #--- End: if
         
         if domain_ancillaries:
             self.domain_ancillaries(domain_ancillaries, copy=copy)
@@ -485,7 +499,7 @@ class Terms(abstract.Container):
     def del_term(self, term):
         '''Delete a term.
 
-To delete a term's value but retain term as a placeholder, use the
+To retain term as a placeholder but delete it's value, use the
 `del_term_value` method.
 
 .. versionadded:: 1.6
@@ -536,10 +550,10 @@ To delete a term's value but retain term as a placeholder, use the
     #--- End: def
 
     def del_term_value(self, term):
-        '''Delete the value term.
+        '''Delete the value of a term.
 
-The term is retained as a placeholder. To completely remove a term,
-use the `del_term` method.
+This method retains the term as a placeholder. To completely remove a
+term, use the `del_term` method.
 
 .. versionadded:: 1.6
 

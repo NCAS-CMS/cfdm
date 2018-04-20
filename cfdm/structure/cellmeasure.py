@@ -35,37 +35,74 @@ correspond to cell measure constructs.
 
     
     
-    def __init__(self, measure=None, properties={}, data=None,
+    def __init__(self, measure=None, properties=None, data=None,
                  source=None, copy=True, _use_data=True):
-        '''**Initialization**
+        '''**Initialisation**
 
 :Parameters:
 
+    measure: `str`, optional
+        Set the "measure", which indicates which metric given by the
+        data array. Ignored if the *source* parameter is set.
+
+          *Example:*
+             >>> c = CellMeasure(measure='area')
+        
+        The measure may also be set after initialisation with the
+        `set_measure` method.
+
     properties: `dict`, optional
-        Initialize properties from the dictionary's key/value pairs.
+        Set properties to describe the data. The dictionary keys are
+        property names, with corresponding values. Ignored if the
+        *source* parameter is set.
+
+          *Example:*
+             >>> c = CellMeasure(properties={'units': 'metres 2'})
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
 
     data: `Data`, optional
-        Provide a data array.
+        Set the data array. Ignored if the *source* parameter is set.
         
-    source: `{+Variable}`, optional
-        Take the attributes, CF properties and data array from the
-        source {+variable}. Any attributes, CF properties or data
-        array specified with other parameters are set after
-        initialisation from the source {+variable}.
+          *Example:*
+            >>> c = CellMeasure(data=d)
+        
+        The data array also may be set after initialisation with the
+        `set_data` method.
+
+    source: optional
+        Initialise from the *measure*, *properties* and *data*
+        parameters (if present) from *source*, which will be a
+        `CellMeasure` object, or a subclass of one of its parent
+        classes.
+
+          *Example:*
+            >>> d = CellMeasure(source=c)
 
     copy: `bool`, optional
-        If False then do not deep copy arguments prior to
-        initialization. By default arguments are deep copied.
+        If False then do not deep copy input parameters prior to
+        initialization By default parameters are deep copied.
+
+:Examples:
+
+>>> c = CellMeasure(measure='area'
+...                 properties={'units': 'km 2'},
+...                 data=d)
 
         '''
         super(CellMeasure, self).__init__(properties=properties,
                                           source=source, data=data,
-                                          copy=copy, _use_data=_use_data)
+                                          copy=copy,
+                                          _use_data=_use_data)
 
         if source is not None:
-            if measure is None:
+            try:
                 measure = source.get_measure(None)
-        
+            except AttributeError:
+                measure = None
+        #--- End: if
+                
         if measure is not None:
             self.set_measure(measure)
     #--- End: def

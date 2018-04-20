@@ -84,19 +84,21 @@ Cell measure          Domain cell size or shape stored in
         elif source is None:
             constructs = self._Constructs(**self._construct_key_base)
         else:
-            constructs = source._get_constructs()
-            constructs = constructs.subset(self._construct_key_base.keys(), copy=False)
-            if copy or not _use_data:
-                constructs = constructs.copy(data=_use_data)
+            try:                
+                constructs = source._get_constructs()
+            except AttributeError:
+                constructs = self._Constructs(**self._construct_key_base)
+            else:
+                constructs = constructs.subset(self._construct_key_base.keys(), copy=False)
+                if copy or not _use_data:
+                    constructs = constructs.copy(data=_use_data)
         #--- End: if
 
-        self._set_component(3, 'constructs', None, constructs)
+        self._set_component('constructs', None, constructs)
     #--- End: def
     
     def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
-
-x.__repr__() <==> repr(x)
+        '''x.__repr__() <==> repr(x)
 
         '''
         shape = sorted([domain_axis.size for domain_axis in self.domain_axes().values()])
@@ -105,9 +107,7 @@ x.__repr__() <==> repr(x)
     #--- End: def
 
     def __str__(self):
-        '''Called by the :py:obj:`str` built-in function.
-
-x.__str__() <==> str(x)
+        '''x.__str__() <==> str(x)
 
         '''
         return 'STRINASDAs da sa'
@@ -146,11 +146,5 @@ x.__str__() <==> str(x)
         return self._get_constructs().del_construct(key)
     #--- End: def
 
-    def domain_axis_name(self, axis):
-        '''
-        '''
-        return self._get_constructs().domain_axis_name(axis)
-    #--- End: for
-    
 
 #--- End: class

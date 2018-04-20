@@ -9,7 +9,6 @@ import abstract
 #
 # ====================================================================
 
-#class DomainAxis(abstract.Properties):
 class DomainAxis(abstract.Container):
     '''A domain axis construct of the CF data model. 
 
@@ -33,13 +32,21 @@ to the order of the elements.
     size: `int`, optional
         The size of the domain axis.
 
+    source:
+
+    copy: `bool`, optional
+        If True then . In any 
+
         '''
-#        super(DomainAxis, self).__init__(source=source, copy=copy)
         super(DomainAxis, self).__init__(source=source)
         
-        if source:
-            size = source.get_size(None)
-
+        if source is not None:
+            try:
+                size = source.get_size(None)
+            except AttributeError:
+                size = None
+        #--- End: if
+        
         if size is not None:
             self.set_size(size)        
     #--- End: def

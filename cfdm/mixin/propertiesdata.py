@@ -160,8 +160,8 @@ standard_name = 'time'
         data = self.get_data(None)
         if data is not None:
             if field and key:
-                axis_names_sizes = field._axis_names_sizes()
-                x = [axis_names_sizes[axis] for axis in field.construct_axes(key)]
+                axis_names = field._unique_construct_names('domain_axes')
+                x = [axis_names[axis] for axis in field.construct_axes(key)]
                 ndim = data.ndim
                 x = x[:ndim]                    
                 if len(x) < ndim:

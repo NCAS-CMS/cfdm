@@ -595,7 +595,7 @@ ancillaries, field ancillaries).
             fields0 = fields.values()
             for construct_type in g['fields']:
                 for f in fields0:
-                    constructs = getattr(self, '_get_'+construct_type)(f).itervalues()
+                    constructs = getattr(self, 'get_'+construct_type)(f).itervalues()
                     for construct in constructs:
                         ncvar = self.get_ncvar(construct)
                         if ncvar not in all_fields:
@@ -1430,7 +1430,7 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
-        f = self._initialise('Field')
+        f = self.initialise('Field')
         self.set_properties(f, properties, copy=False)
 
         # Store the field's netCDF variable name
@@ -1475,7 +1475,7 @@ ancillaries, field ancillaries).
                                                            verbose=verbose)
                     g['dimension_coordinate'][ncdim] = coord
                 
-                domain_axis = self._create_domain_axis(coord.get_data().size, ncdim)
+                domain_axis = self._create_domain_axis(self.get_data_size(coord), ncdim)
                 if _debug:
                     print '    [0] Inserting', repr(domain_axis)                    
                 axis = self.set_domain_axis(f, domain_axis, copy=False)
@@ -1565,7 +1565,7 @@ ancillaries, field ancillaries).
                 # --------------------------------------------------------
                 # Turn a 
                 # --------------------------------------------------------
-                is_dimension_coordinate = False
+                is_scalar_dimension_coordinate = False
                 scalar = False
                 if not dimensions:
                     scalar = True
@@ -1575,37 +1575,37 @@ ancillaries, field ancillaries).
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
                         domain_axis = self._create_domain_axis(1)
-                        dim = self.set_domain_axis(f, domain_axis)
                         if _debug:
                             print '    [4] Inserting', repr(domain_axis)
-
+                        dim = self.set_domain_axis(f, domain_axis)
                         dimensions = [dim]
                     else:  
                         # Numeric valued scalar coordinate
-                        is_dimension_coordinate = True
+                        is_scalar_dimension_coordinate = True
                 #--- End: if
     
-                if is_dimension_coordinate:
-                    # Insert dimension coordinate
-                    coord = self.implementation.DimensionCoordinate(source=coord, copy=False)
-#                    coord = self._initialise('DimensionCoordinate',
-#                                             source=coord, copy=False)
-    
+                if is_scalar_dimension_coordinate:
+                    # Insert a domain axis and dimension coordinate
+                    # derived from a numeric scalar auxiliary
+                    # coordinate
+                    coord = self.initialise('DimensionCoordinate',
+                                             source=coord, copy=False)
+                    coord = self.expand_dims(coord, position=0, copy=False)
+                    
+                    domain_axis = self._create_domain_axis(self.get_data_size(coord))
                     if _debug:
-                        print '    [5] Inserting', repr(coord)
-    
-                    domain_axis = self._create_domain_axis(coord.get_data().size)
-
+                        print '    [5] Inserting', repr(domain_axis)
                     axis = self.set_domain_axis(f, domain_axis, copy=False)
                     
+                    if _debug:
+                        print '    [5] Inserting', repr(coord)
                     dim = self.set_dimension_coordinate(f, coord,
-                                                         axes=[axis], copy=False)
+                                                        axes=[axis], copy=False)
                     
                     dimensions = [axis]
                     ncvar_to_key[ncvar] = dim
-#                    g['coordinates'].setdefault(field_ncvar, []).append(ncvar)
                                         
-                    g['dimension_coordinates'][ncvar] = coord
+                    g['dimension_coordinate'][ncvar] = coord
                     del g['auxiliary_coordinate'][ncvar]
                 else:
                     # Insert auxiliary coordinate
@@ -1615,7 +1615,6 @@ ancillaries, field ancillaries).
                                                          axes=dimensions,
                                                          copy=False)
                     ncvar_to_key[ncvar] = aux
-#                    g['coordinates'].setdefault(field_ncvar, []).append(ncvar)
 
                 if scalar:
                     ncscalar_to_axis[ncvar] = dimensions[0]
@@ -1737,7 +1736,7 @@ ancillaries, field ancillaries).
 #                                          attribute='grid_mapping'):
                     coordinates = coordinates2
                     
-                    coordref = self._initialise('CoordinateReference',
+                    coordref = self.initialise('CoordinateReference',
                                                 parameters=parameters)                        
                     datum = coordref.datum
                     
@@ -2004,15 +2003,15 @@ ancillaries, field ancillaries).
     
         if dimension:
             properties.pop('compress', None) #??
-            c = self._initialise('DimensionCoordinate')
+            c = self.initialise('DimensionCoordinate')
         elif auxiliary:
-            c = self._initialise('AuxiliaryCoordinate')
+            c = self.initialise('AuxiliaryCoordinate')
         elif domain_ancillary:
 #            properties.pop('coordinates', None)
 #            properties.pop('grid_mapping', None)
 #            properties.pop('cell_measures', None)
 #            properties.pop('positive', None)
-            c = self._initialise('DomainAncillary')
+            c = self.initialise('DomainAncillary')
         else:
             raise ValueError(
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
@@ -2035,7 +2034,7 @@ ancillaries, field ancillaries).
             if not cf_compliant:
                 pass
             else:
-                bounds = self._initialise('Bounds')
+                bounds = self.initialise('Bounds')
 
                 properties = attributes[ncbounds].copy()
                 properties.pop('formula_terms', None)                
@@ -2107,32 +2106,44 @@ also be provided.
         else:
             construct.set_data(data, axes, copy=copy)
     #--- End: def
+
+    def expand_dims(self, construct, position, copy=True):
+        '''
+        '''
+        return construct.expand_dims(position=position, copy=copy)
+    #--- End: def
     
-    def _get_auxiliary_coordinate(self, f):
+    def get_auxiliary_coordinate(self, f):
        '''
        '''
        return f.auxiliary_coordinates()
     #-- End: def
 
-    def _get_cell_measures(self, f):
+    def get_cell_measures(self, f):
        '''
        '''
        return f.cell_measures()
     #-- End: def
 
-    def _get_dimension_coordinate(self, f):
+    def get_data_size(self, construct):
+        '''
+        '''
+        return construct.get_data().size
+    #--- End: def
+    
+    def get_dimension_coordinate(self, f):
        '''
        '''
        return f.dimension_coordinates()
     #-- End: def
 
-    def _get_domain_ancillary(self, f):
+    def get_domain_ancillary(self, f):
        '''
        '''
        return f.domain_ancillaries()
     #-- End: def
  
-    def _get_field_ancillary(self, f):
+    def get_field_ancillary(self, f):
        '''
        '''
        return f.field_ancillaries()
@@ -2171,7 +2182,7 @@ also be provided.
         The new item.
 
         '''
-        cell_measure = self._initialise('CellMeasure', measure=measure)
+        cell_measure = self.initialise('CellMeasure', measure=measure)
 
         self.set_properties(cell_measure, attributes[ncvar])
 
@@ -2336,7 +2347,7 @@ Set the Data attribute of a variable.
                        ndim=None, shape=None, size=None):
         '''
         '''
-        return self._initialise('NetCDF', filename=filename,
+        return self.initialise('NetCDF', filename=filename,
                                 ncvar=ncvar, dtype=dtype,
                                 ndim=ndim, shape=shape,
                                 size=size)
@@ -2345,7 +2356,7 @@ Set the Data attribute of a variable.
     def _create_domain_axis(self, size, ncdim=None):
         '''
         '''
-        domain_axis = self._initialise('DomainAxis', size=size)
+        domain_axis = self.initialise('DomainAxis', size=size)
         if ncdim is not None:
             self.set_ncdim(domain_axis, ncdim)
 
@@ -2370,7 +2381,7 @@ Set the Data attribute of a variable.
 
         '''
         # Create a field ancillary object
-        field_ancillary = self._initialise('FieldAncillary')
+        field_ancillary = self.initialise('FieldAncillary')
 
         # Insert properties
         self.set_properties(field_ancillary, attributes[ncvar], copy=True)
@@ -2385,7 +2396,7 @@ Set the Data attribute of a variable.
         return field_ancillary
     #--- End: def
 
-    def _initialise(self, object_type, **kwargs):
+    def initialise(self, object_type, **kwargs):
         '''
         '''
         return self.implementation.get_class(object_type)(**kwargs)
@@ -2430,10 +2441,10 @@ Set the Data attribute of a variable.
         if standard_name is not None:
             parameters['standard_name'] = standard_name
             
-        coordref = self._initialise('CoordinateReference',
-                                    coordinates=[key],
-                                    domain_ancillaries=domain_ancillaries,
-                                    parameters=parameters)
+        coordref = self.initialise('CoordinateReference',
+                                   coordinates=[key],
+                                   domain_ancillaries=domain_ancillaries,
+                                   parameters=parameters)
 
 #        props = {}
 #        name = self.get_property(coord, 'standard_name', None)
@@ -2535,7 +2546,7 @@ dimensions are returned.
                                compression_parameters=None):
         '''
         '''
-        return self._initialise('GatheredArray',
+        return self.initialise('GatheredArray',
             array=array,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
@@ -2648,7 +2659,7 @@ dimensions are returned.
             units    = getattr(variable, 'units', None)
             calendar = getattr(variable, 'calendar', None)
 
-        return self._initialise('Data', data=array, units=units,
+        return self.initialise('Data', data=array, units=units,
                                 calendar=calendar, **kwargs)
     #--- End: def
 
