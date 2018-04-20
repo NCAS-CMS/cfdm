@@ -1,4 +1,5 @@
 import abc
+import re
 
 import mixin
 import structure
@@ -126,7 +127,7 @@ x.__str__() <==> str(x)
         data_axes = self.get_data_axes(())
         non_spanning_axes = set(self.domain_axes()).difference(data_axes)
 
-        axis_names = self._unique_construct_names('domain_axes')
+        axis_names = self._unique_domain_axis_names()
         
         # Data
         string.append(
@@ -401,22 +402,44 @@ functionality:
         key_to_name = {}
         name_to_keys = {}
 
-        domain_axes = (constructs == 'domain_axes')
+#        domain_axes = (constructs == 'domain_axes')
         
         for key, value in getattr(self, constructs)().iteritems():
-            if domain_axes:
-                name = '{0}({1})'.format(self.domain_axis_name(key), # DCH FIX UP DEFAULT?
-                                         value.get_size(''))
-            else:
-                name = value.name(default=key)                
-
+#            if domain_axes:
+#                name = '{0}({1})'.format(self.domain_axis_name(key), # DCH FIX UP DEFAULT?
+#                                         value.get_size(''))
+#            else:
+            name = value.name(default=key)
             name_to_keys.setdefault(name, []).append(key)
             key_to_name[key] = name
 
         for name, keys in name_to_keys.iteritems():
             if len(keys) > 1:
                 for key in keys:
-                    key_to_name[key] = '{0}%{1}'.format(key, name)
+                    key_to_name[key] = '{0}{{{1}}}'.format(name, re.findall('\d+$', key)[0])
+        #--- End: for
+        
+        return key_to_name
+    #--- End: def
+    
+    def _unique_domain_axis_names(self):
+        '''
+        '''    
+        key_to_name = {}
+        name_to_keys = {}
+
+        for key, value in self.domain_axes().iteritems():
+            name = (self.domain_axis_name(key), value.get_size(''))
+            name_to_keys.setdefault(name, []).append(key)
+            key_to_name[key] = name
+
+        for name, keys in name_to_keys.iteritems():
+            if len(keys) == 1:
+                key_to_name[keys[0]] = '{0}({1})'.format(*name)
+            else:
+                for key in keys:                    
+                    key_to_name[key] = '{0}{{{1}}}({2})'.format(
+                        name[0], re.findall('\d+$', key)[0], name[1])
         #--- End: for
         
         return key_to_name
@@ -426,7 +449,7 @@ functionality:
         '''
         '''
         if axis_names_sizes is None:
-            axis_names_sizes = self._unique_construct_names('domain_axes')
+            axis_names_sizes = self._unique_domain_axis_names()
             
         x = [axis_names_sizes[axis] for axis in self.get_data_axes(())]
         axis_names = ', '.join(x)
@@ -549,8 +572,8 @@ last values.
         the description is printed.
 
           *Example:*
-            ``f.dump()`` is equivalent to ``print
-            f.dump(display=False)``.
+            ``f.dump()`` is equivalent to
+            ``print f.dump(display=False)``.
 
 :Returns:
 
@@ -584,7 +607,7 @@ last values.
         # Title
         string = [line, indent0+_title, line]
 
-        axis_names = self._unique_construct_names('domain_axes')
+        axis_to_name = self._unique_domain_axis_names()
 
         # Simple properties
         properties = self.properties()
@@ -593,7 +616,7 @@ last values.
                 self._dump_properties(_level=_level))
             
         # Domain axes
-        axes = self._dump_axes(axis_names, display=False, _level=_level)
+        axes = self._dump_axes(axis_to_name, display=False, _level=_level)
         if axes:
             string.append('')
             string.append(axes)
@@ -601,10 +624,16 @@ last values.
         # Data
         data = self.get_data(None)
         if data is not None:
-            axes = self.domain_axes()
-            axis_name = self.domain_axis_name
-            x = ['{0}({1})'.format(axis_name(axis), axes[axis].get_size(''))
-                 for axis in self.get_data_axes(())]
+            x = [axis_to_name[axis] for axis in self.get_data_axes(())]
+#            axis_names = ', '.join(x)
+#            if axis_names:
+#                axis_names = '({0})'.format(axis_names)
+
+            
+#            axes = self.domain_axes()
+#            axis_name = self.domain_axis_name
+#            x = ['{0}({1})'.format(axis_name(axis), axes[axis].get_size(''))
+#                 for axis in self.get_data_axes(())]
             if self.isreftime:
                 data = data.asdata(data.dtarray)
                 
@@ -619,7 +648,7 @@ last values.
             string.append('')
             for cm in cell_methods.values():
                 cm = cm.copy()
-                cm.set_axes(tuple([axis_names.get(axis, axis)
+                cm.set_axes(tuple([axis_to_name.get(axis, axis)
                                    for axis in cm.get_axes(())]))
                 string.append(cm.dump(display=False,  _level=_level))
         #--- End: if
@@ -654,7 +683,7 @@ last values.
             string.append('') 
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level,
-                           _title='Domain ancillary: {0}'.format(name[key]))
+                           _title='Domain ancillary: {0}'.format(name[key])))
             
         # Coordinate references
         name = self._unique_construct_names('coordinate_references')
@@ -666,11 +695,11 @@ last values.
 
         # Cell measures
         name = self._unique_construct_names('cell_measures')
-       for key, value in sorted(self.cell_measures().iteritems()):
+        for key, value in sorted(self.cell_measures().iteritems()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level,
-                           _title='Cell measure: {0}'.format(name[key]))
+                           _title='Cell measure: {0}'.format(name[key])))
 
         string.append('')
         
