@@ -41,26 +41,28 @@ over El Nino years).
         return obj
     #--- End: def
     
-    def __init__(self, axes=None, method=None, where=None,
-                 within=None, over=None, interval=None, comment=None,
-                 source=None, copy=True):
-        '''
-        '''
-        properties = {'where'   : where,
-                      'within'  : within,
-                      'over'    : over,
-                      'interval': interval,
-                      'comment' : comment}
-
-        for key, value in properties.items():
-            if value is None:
-                del properties[key]
-        #--- End: def
-        
-        super(CellMethod, self).__init__(axes=axes, method=method,
-                                         properties=properties,
-                                         source=source, copy=copy)
-    #--- End: def
+#    def __init__(self, axes=None, method=None,
+#                 properties=None,
+##                 where=None,
+##                 within=None, over=None, interval=None, comment=None,
+#                 source=None, copy=True):
+#        '''
+#        '''
+#        properties = {'where'   : where,
+#                      'within'  : within,
+#                      'over'    : over,
+#                      'interval': interval,
+#                      'comment' : comment}
+#
+#        for key, value in properties.items():
+#            if value is None:
+#                del properties[key]
+#        #--- End: def
+#        
+#        super(CellMethod, self).__init__(axes=axes, method=method,
+#                                         properties=properties,
+#                                         source=source, copy=copy)
+#    #--- End: def
 
     def __str__(self):
         '''x.__str__() <==> str(x)
@@ -239,175 +241,181 @@ corresponding dimension or dimensions.
         return new
     #--- End: def
 
-    @classmethod
-    def parse(cls, string=None, allow_error=False): #, field=None):
-        '''Parse a CF cell_methods string into this `cf.CellMethods` instance
-in place.
-
-:Parameters:
-
-    string: `str`, optional
-        The CF cell_methods string to be parsed into the
-        `cf.CellMethods` object. By default the cell methods will be
-        empty.
-
-:Returns:
-
-    out: `list`
-
-:Examples:
-
->>> c = cf.CellMethods()
->>> c = c._parse('time: minimum within years time: mean over years (ENSO years)')    
->>> print c
-Cell methods    : time: minimum within years
-                  time: mean over years (ENSO years)
-
-        '''
-        if not string:
-            return []
-
-        out = []
-
-        # Split the cell_methods string into a list of strings ready
-        # for parsing into the result list. E.g.
-        #   'lat: mean (interval: 1 hour)'
-        # maps to 
-        #   ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
-        cell_methods = re_sub('\((?=[^\s])' , '( ', string)
-        cell_methods = re_sub('(?<=[^\s])\)', ' )', cell_methods).split()
-
-        while cell_methods:
-            cm = cls()
-
-            axes  = []
-            while cell_methods:
-                if not cell_methods[0].endswith(':'):
-                    break
-
-                # Check that "name" ebds with colon? How? ('lat: mean (area-weighted) or lat: mean (interval: 1 degree_north comment: area-weighted)')
-
-#                names.append(cell_methods.pop(0)[:-1])            
-#                axes.append(None)
-
-                axis = cell_methods.pop(0)[:-1]
-#                if field is not None:
-#                    axis = field.axis(axis, key=True)
-
-                axes.append(axis)
-            #--- End: while
-            cm.set_axes(axes)
-
-            if not cell_methods:
-                out.append(cm)
-                break
-
-            # Method
-            cm.set_method(cell_methods.pop(0))
-
-            if not cell_methods:
-                out.append(cm)
-                break
-
-            # Climatological statistics and statistics which apply to
-            # portions of cells
-            while cell_methods[0] in ('within', 'where', 'over'):
-                attr = cell_methods.pop(0)
-                cm.set_property(attr, cell_methods.pop(0))
-#                setattr(cm, attr, cell_methods.pop(0))
-                if not cell_methods:
-                    break
-            #--- End: while
-            if not cell_methods: 
-                out.append(cm)
-                break
-
-            # interval and comment
-            intervals = []
-            if cell_methods[0].endswith('('):
-                cell_methods.pop(0)
-
-                if not (re_search('^(interval|comment):$', cell_methods[0])):
-                    cell_methods.insert(0, 'comment:')
-                           
-                while not re_search('^\)$', cell_methods[0]):
-                    term = cell_methods.pop(0)[:-1]
-
-                    if term == 'interval':
-                        interval = cell_methods.pop(0)
-                        if cell_methods[0] != ')':
-                            units = cell_methods.pop(0)
-                        else:
-                            units = None
-
-                        try:
-                            parsed_interval = ast_literal_eval(interval)
-                        except:
-                            message = "Unparseable cell method interval"
-#                            interval+' '+units if units is not None else interval)
-                            if allow_error:
-                                cm = cls()
-                                cm.set_string(string)
-                                cm.set_error(message)
-                                return [out]
-                            else:
-                                raise ValueError("{}: {}".format(message, string))
-                        #---End: try
-
-                        try:
-                            intervals.append(cm._Data(parsed_interval, units=units))
-                        except:
-                            message = "Unparseable cell method interval"
-                            if allow_error:
-                                cm = cls()
-                                cm.set_string(string)
-                                cm.set_error(message)
-                                return [cm]
-                            else:
-                                raise ValueError("{}: {}".format(message, string))
-                        #---End: try
-
-                        continue
-                    #--- End: if
-
-                    if term == 'comment':
-                        comment = []
-                        while cell_methods:
-                            if cell_methods[0].endswith(')'):
-                                break
-                            if cell_methods[0].endswith(':'):
-                                break
-                            comment.append(cell_methods.pop(0))
-                        #--- End: while
-                        cm.set_property('comment', ' '.join(comment))
-                    #--- End: if
-
-                #--- End: while 
-
-                if cell_methods[0].endswith(')'):
-                    cell_methods.pop(0)
-            #--- End: if
-
-            n_intervals = len(intervals)          
-            if n_intervals > 1 and n_intervals != len(axes):
-                message = "Unparseable cell method intervals"
-                if allow_error:
-                    cm = cls()
-                    cm.set_string(string)
-                    cm.set_error(message)
-                    return [out]
-                else:
-                    raise ValueError("{}: {}".format(message, string))
-            #---End: if
-
-            if intervals:
-                cm.set_property('interval', tuple(intervals))
-
-            out.append(cm)
-        #--- End: while
-
-        return out
-    #--- End: def
+#    @classmethod
+#    def parse(cls, string, allow_error=False):
+#        '''Parse a CF cell_methods string.
+#
+#:Examples 1:
+#
+#>>> c = CellMethod('t: mean')
+#
+#:Parameters:
+#
+#    string: `str`
+#        The CF cell_methods string to be parsed into the
+#        `cf.CellMethods` object. By default the cell methods will be
+#        empty.
+#
+#    allow_error: `bool`, optional
+#
+#:Returns:
+#
+#    out: `list`
+#
+#:Examples 2:
+#
+#>>> c = CellMethod.parse('time: minimum within years time: mean over years (ENSO years)')
+#>>> print c
+#Cell methods    : time: minimum within years
+#                  time: mean over years (ENSO years)
+#
+#>>> c = CellMethod()
+#>>> d = c.parse('time: minimum within years time: mean over years (ENSO years)')
+#>>> print d
+#Cell methods    : time: minimum within years
+#                  time: mean over years (ENSO years)
+#
+#        '''
+#        out = []
+#        
+#        if not string:
+#            return out
+#
+#        # Split the cell_methods string into a list of strings ready
+#        # for parsing into the result list. For example,
+#        #
+#        # 'lat: mean (interval: 1 hour)
+#        # 
+#        # maps to
+#        #
+#        # ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
+#        cell_methods = re_sub('\((?=[^\s])' , '( ', string)
+#        cell_methods = re_sub('(?<=[^\s])\)', ' )', cell_methods).split()
+#
+#        while cell_methods:
+#            cm = cls()
+#
+#            axes  = []
+#            while cell_methods:
+#                if not cell_methods[0].endswith(':'):
+#                    break
+#
+#                # Check that "name" ebds with colon? How? ('lat: mean (area-weighted) or lat: mean (interval: 1 degree_north comment: area-weighted)')
+#
+#                axis = cell_methods.pop(0)[:-1]
+#
+#                axes.append(axis)
+#            #--- End: while
+#            cm.set_axes(axes)
+#
+#            if not cell_methods:
+#                out.append(cm)
+#                break
+#
+#            # Method
+#            cm.set_method(cell_methods.pop(0))
+#
+#            if not cell_methods:
+#                out.append(cm)
+#                break
+#
+#            # Climatological statistics and statistics which apply to
+#            # portions of cells
+#            while cell_methods[0] in ('within', 'where', 'over'):
+#                attr = cell_methods.pop(0)
+#                cm.set_property(attr, cell_methods.pop(0))
+#                if not cell_methods:
+#                    break
+#            #--- End: while
+#            if not cell_methods: 
+#                out.append(cm)
+#                break
+#
+#            # interval and comment
+#            intervals = []
+#            if cell_methods[0].endswith('('):
+#                cell_methods.pop(0)
+#
+#                if not (re_search('^(interval|comment):$', cell_methods[0])):
+#                    cell_methods.insert(0, 'comment:')
+#                           
+#                while not re_search('^\)$', cell_methods[0]):
+#                    term = cell_methods.pop(0)[:-1]
+#
+#                    if term == 'interval':
+#                        interval = cell_methods.pop(0)
+#                        if cell_methods[0] != ')':
+#                            units = cell_methods.pop(0)
+#                        else:
+#                            units = None
+#
+#                        try:
+#                            parsed_interval = ast_literal_eval(interval)
+#                        except:
+#                            message = "Cell method interval is incorrectly formatted"
+#                            if allow_error:
+#                                cm = cls()
+#                                cm.set_string(string)
+#                                cm.set_error(message)
+#                                return [out]
+#                            else:
+#                                raise ValueError("{}: {}".format(message, string))
+#                        #---End: try
+#
+#                        try:
+#                            intervals.append(cm._Data(parsed_interval, units=units))
+#                        except:
+#                            message = "Cell method interval is incorrectly formatted"
+#                            if allow_error:
+#                                cm = cls()
+#                                cm.set_string(string)
+#                                cm.set_error(message)
+#                                return [cm]
+#                            else:
+#                                raise ValueError("{}: {}".format(message, string))
+#                        #---End: try
+#
+#                        continue
+#                    #--- End: if
+#
+#                    if term == 'comment':
+#                        comment = []
+#                        while cell_methods:
+#                            if cell_methods[0].endswith(')'):
+#                                break
+#                            if cell_methods[0].endswith(':'):
+#                                break
+#                            comment.append(cell_methods.pop(0))
+#                        #--- End: while
+#                        cm.set_property('comment', ' '.join(comment))
+#                    #--- End: if
+#
+#                #--- End: while 
+#
+#                if cell_methods[0].endswith(')'):
+#                    cell_methods.pop(0)
+#            #--- End: if
+#
+#            n_intervals = len(intervals)          
+#            if n_intervals > 1 and n_intervals != len(axes):
+#                message = "Cell method interval is incorrectly formatted"
+#                if allow_error:
+#                    cm = cls()
+#                    cm.set_string(string)
+#                    cm.set_error(message)
+#                    return [out]
+#                else:
+#                    raise ValueError("{}: {}".format(message, string))
+#            #---End: if
+#
+#            if intervals:
+#                cm.set_property('interval', tuple(intervals))
+#
+#            out.append(cm)
+#        #--- End: while
+#
+#        return out
+#    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,

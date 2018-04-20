@@ -137,8 +137,8 @@ netCDF variable.
         nc.close()
     #--- End: def
         
-    @classmethod
-    def file_type(cls, filename):
+    @staticmethod
+    def file_type(filename):
         '''Find the format of a file.
     
 :Parameters:
@@ -168,7 +168,7 @@ netCDF variable.
         if netcdf.is_netcdf_file(filename):
             return 'netCDF'
     #--- End: def
-
+    
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
@@ -1404,13 +1404,36 @@ ancillaries, field ancillaries).
         
         # Take cell_methods out of the data variable's properties since it
         # will need special processing once the domain has been defined
-        cell_methods = properties.pop('cell_methods', None)
-        if cell_methods is not None:
-            cell_methods = self._parse_cell_methods(cell_methods, allow_error=True)
-            error = cell_methods[0].get_error(False)
-            if verbose and error:
-                print ("WARNING: {0}: {1!r}".format(error, cell_methods[0].get_string('')))
-        #--- End: if
+        cell_methods_string = properties.pop('cell_methods', None)
+#        cell_methods = []
+#        if cell_methods_string is not None:
+#            cell_methods = self._parse_cell_methods(cell_methods_string,
+#                                                    allow_error=True)
+#            error = cell_methods[0].get_error(False)
+#            if error:
+#                self._add_message(
+#                    field_ncvar, field_ncvar,
+#                    message=(error,),
+#                    attribute={field_ncvar+':cell_methods': cell_methods_string})
+#
+##                if verbose :
+##                    print ("WARNING: {0}: {1!r}".format(
+##                        error, cell_methods[0].get_string('')))
+#                cell_methods = None
+#        #--- End: if
+#        if cell_methods_string is not None:
+#            cell_methods = self.parse_cell_methods(cell_methods_string)
+#            if error:
+#                self._add_message(
+#                    field_ncvar, field_ncvar,
+#                    message=(error,),
+#                    attribute={field_ncvar+':cell_methods': cell_methods_string})
+#
+##                if verbose :
+##                    print ("WARNING: {0}: {1!r}".format(
+##                        error, cell_methods[0].get_string('')))
+#                cell_methods = None
+#        #--- End: if
     
         # Take add_offset and scale_factor out of the data variable's
         # properties since they will be dealt with by the variable's Data
@@ -1715,7 +1738,7 @@ ancillaries, field ancillaries).
         grid_mapping = f.del_property('grid_mapping')
         if grid_mapping is not None:
             parsed_grid_mapping = self._parse_x(field_ncvar, grid_mapping)
-            print 'PPP 2', parsed_grid_mapping
+#            print 'PPP 2', parsed_grid_mapping
             cf_compliant = self._check_grid_mapping(field_ncvar,
                                                     grid_mapping,
                                                     parsed_grid_mapping)
@@ -1732,7 +1755,7 @@ ancillaries, field ancillaries).
                     coordinates2 = [ncvar_to_key[ncvar] for ncvar in coordinates
                                     if ncvar in ncvar_to_key]
 #                    if len(coordinates2) < len(coordinates):
-#                        self._add_message(field_ncvar, ncvar, message='ppp',
+#                        self._add_message(field_ncvar, ncvar, message='qqq',
 #                                          attribute='grid_mapping'):
                     coordinates = coordinates2
                     
@@ -1817,12 +1840,21 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Add cell methods to the field
         # ----------------------------------------------------------------
-        if cell_methods:
+        if cell_methods_string is not None:
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
-            for cm in cell_methods:
-                cm = cm.change_axes(name_to_axis)
-                self.set_cell_method(f, cm, copy=False)
+
+            cell_methods = self._parse_cell_methods(field_ncvar, cell_methods_string)
+            
+            for cell_method_dict in cell_methods:
+                cell_method = self._create_cell_method(cell_method_dict)
+
+                cell_method = self.change_cell_method_axes(cell_method, name_to_axis)
+
+                if _debug:
+                    print '    [ ] Inserting', repr(cell_method)
+                        
+                self.set_cell_method(f, cell_method, copy=False)
         #--- End: if
 
         # ----------------------------------------------------------------
@@ -1866,32 +1898,45 @@ ancillaries, field ancillaries).
         return f
     #--- End: def
 
-    def _parse_cell_methods(self, cell_methods, allow_error=True):
-        '''
-        '''
-        return self.implementation.get_class('CellMethod').parse(cell_methods,
-                                                                 allow_error=allow_error)
-    #--- End: def
+#    def _parse_cell_methods(self, cell_methods, allow_error=True):
+#        '''
+#        '''
+#        return self.implementation.get_class('CellMethod').parse(cell_methods,
+#                                                                 allow_error=allow_error)
+#    #--- End: def
     
     def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None):
-        '''
-:Parameters:
+        ''':Parameters:
 
     field_ncvar: `str`a
         The netCDF variable name of the field.
 
+          *Example:*
+            ``field_ncvar='pr'``
+
+
     ncvar: `str`
-        The netCDF variable name of the field component.
+        The netCDF variable name of the field component that has the problem.
+
+          *Example:*
+            ``field_ncvar='rotated_latitude_longitude'``
 
     message: `str`, optional
 
     attribute: `str`, optional
-        The name of the netCDF attribute that has a problem.
+        The name and value of the netCDF attribute that has a problem.
+
+          *Example:*
+            ``attribute={'tas:cell_measures': 'area: areacella'}``
 
     dimensions: sequence of `str`, optional
         The netCDF dimensions of the variable that has a problem.
 
+          *Example:*
+            ``dimensions=('lat', 'lon')``
+
+        
     variable: `str`, optional
 
         '''
@@ -2196,6 +2241,54 @@ also be provided.
         return cell_measure
     #--- End: def
 
+    def set_cell_method_axes(self, cell_method, axes):
+        '''
+        '''
+        cell_method.set_axes(axes)
+        
+    def set_cell_method_method(self, cell_method, method):
+        '''
+        '''
+        cell_method.set_method(method)
+        
+    def set_cell_method_properties(self, cell_method, properties):
+        '''
+        '''
+        cell_method.properties(properties)
+
+    def change_cell_method_axes(self, cell_method, axis_map):
+        '''
+        '''
+        return cell_method.change_axes(axis_map)
+    
+    def _create_cell_method(self, cell_method_dict):
+        '''Create a cell method object.
+    
+:Parameters:
+
+    cell_method_dict: `dict`
+        
+          *Example:*
+:Returns:
+
+    out: `CellMethod`
+
+        '''
+        cell_method = self.initialise('CellMethod')
+
+        cell_method_dict = cell_method_dict.copy()
+
+        if 'axes' in cell_method_dict:
+            self.set_cell_method_axes(cell_method, cell_method_dict.pop(axes))
+
+        if 'method' in cm:
+            self.set_cell_method_method(cell_method, cell_method_dict.pop(method))
+
+        self.set_cell_method_properties(cell_method, cell_method_dict)
+            
+        return cell_method
+    #--- End: def
+
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
                      units=None, calendar=None, fill_value=None):
@@ -2400,6 +2493,175 @@ Set the Data attribute of a variable.
         '''
         '''
         return self.implementation.get_class(object_type)(**kwargs)
+    #--- End: def
+
+    def _parse_cell_methods(self, field_ncvar, cell_methods_string):
+        '''Parse a CF cell_methods string.
+
+:Examples 1:
+
+>>> cell_methods = c.parse_cell_methods('t: mean')
+
+:Parameters:
+
+    cell_methods_string: `str`
+        A CF cell_methods string.
+
+:Returns:
+
+    out: `list` of `dict`
+
+:Examples 2:
+
+>>> c = parse_cell_methods('time: minimum within years time: mean over years (ENSO years)')
+>>> print c
+[
+]
+
+        '''
+        attribute = {field_ncvar+':cell_methods': cell_methods_string}
+
+        incorrect_interval = ('Cell method interval', 'is incorrectly formatted')
+
+        out = []
+        
+        if not cell_methods_string:
+            return out
+        
+        # ------------------------------------------------------------
+        # Split the cell_methods string into a list of strings ready
+        # for parsing. For example:
+        #
+        #   'lat: mean (interval: 1 hour)'
+        # 
+        # would be split up into:
+        #
+        #   ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
+        # ------------------------------------------------------------
+        cell_methods = re_sub('\((?=[^\s])' , '( ', cell_methods_string)
+        cell_methods = re_sub('(?<=[^\s])\)', ' )', cell_methods).split()
+
+        while cell_methods:
+            cm = {}
+#            cm = self.implementation.get_class('CellMethod')
+#            cm = cls()
+
+            axes  = []
+            while cell_methods:
+                if not cell_methods[0].endswith(':'):
+                    break
+
+                # Check that "name" ebds with colon? How? ('lat: mean (area-weighted) or lat: mean (interval: 1 degree_north comment: area-weighted)')
+
+                axis = cell_methods.pop(0)[:-1]
+
+                axes.append(axis)
+            #--- End: while
+#            cm.set_axes(axes)
+            cm['axes'] = axes
+
+            if not cell_methods:
+                out.append(cm)
+                break
+
+            # Method
+#            cm.set_method(cell_methods.pop(0))
+            cm['method'] = cell_methods.pop(0)
+            
+            if not cell_methods:
+                out.append(cm)
+                break
+
+            # Climatological statistics and statistics which apply to
+            # portions of cells
+            while cell_methods[0] in ('within', 'where', 'over'):
+                attr = cell_methods.pop(0)
+#                cm.set_property(attr, cell_methods.pop(0))
+                cm[attr] = cell_methods.pop(0)
+                if not cell_methods:
+                    break
+            #--- End: while
+            if not cell_methods: 
+                out.append(cm)
+                break
+
+            # interval and comment
+            intervals = []
+            if cell_methods[0].endswith('('):
+                cell_methods.pop(0)
+
+                if not (re_search('^(interval|comment):$', cell_methods[0])):
+                    cell_methods.insert(0, 'comment:')
+                           
+                while not re_search('^\)$', cell_methods[0]):
+                    term = cell_methods.pop(0)[:-1]
+
+                    if term == 'interval':
+                        interval = cell_methods.pop(0)
+                        if cell_methods[0] != ')':
+                            units = cell_methods.pop(0)
+                        else:
+                            units = None
+
+                        try:
+                            parsed_interval = ast_literal_eval(interval)
+                        except:
+                            self._add_message(
+                                field_ncvar, field_ncvar,
+                                message=incorrrect_interval)
+                            return []
+
+                        try:
+                            data = self.initialise('Data',
+                                                   array=parsed_interval,
+                                                   units=units)
+                        except:
+                            self._add_message(
+                                field_ncvar, field_ncvar,
+                                message=incorrrect_interval,
+                                attribute=attribute,
+                                variable=parent_ncvar)
+                            return []
+
+                        intervals.append(data)
+                        continue
+                    #--- End: if
+
+                    if term == 'comment':
+                        comment = []
+                        while cell_methods:
+                            if cell_methods[0].endswith(')'):
+                                break
+                            if cell_methods[0].endswith(':'):
+                                break
+                            comment.append(cell_methods.pop(0))
+                        #--- End: while
+#                        cm.set_property('comment', ' '.join(comment))
+                        cm['comment'] = ' '.join(comment)
+                    #--- End: if
+
+                #--- End: while 
+
+                if cell_methods[0].endswith(')'):
+                    cell_methods.pop(0)
+            #--- End: if
+
+            n_intervals = len(intervals)          
+            if n_intervals > 1 and n_intervals != len(axes):
+                self._add_message(
+                    field_ncvar, field_ncvar,
+                    message=incorrrect_interval,
+                    attribute=attribute)
+                return []
+
+            if intervals:
+#                cm.set_property('interval', tuple(intervals))
+                cm['interval'] = intervals
+
+            out.append(cm)
+        #--- End: while
+
+        return out
     #--- End: def
 
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
