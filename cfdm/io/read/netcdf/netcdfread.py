@@ -34,6 +34,8 @@ _z = {
     'grid_mapping attribute' : 151,
     'Grid mapping coordinate variable': 152, 
 
+    'Cell method interval': 160,
+
     # Purely structural
     'Compressed dimension': 300,
     'compress attribute': 301,
@@ -2538,8 +2540,8 @@ Set the Data attribute of a variable.
         #
         #   ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
         # ------------------------------------------------------------
-        cell_methods = re_sub('\((?=[^\s])' , '( ', cell_methods_string)
-        cell_methods = re_sub('(?<=[^\s])\)', ' )', cell_methods).split()
+        cell_methods = re.sub('\((?=[^\s])' , '( ', cell_methods_string)
+        cell_methods = re.sub('(?<=[^\s])\)', ' )', cell_methods).split()
 
         while cell_methods:
             cm = {}
@@ -2590,10 +2592,10 @@ Set the Data attribute of a variable.
             if cell_methods[0].endswith('('):
                 cell_methods.pop(0)
 
-                if not (re_search('^(interval|comment):$', cell_methods[0])):
+                if not (re.search('^(interval|comment):$', cell_methods[0])):
                     cell_methods.insert(0, 'comment:')
                            
-                while not re_search('^\)$', cell_methods[0]):
+                while not re.search('^\)$', cell_methods[0]):
                     term = cell_methods.pop(0)[:-1]
 
                     if term == 'interval':
@@ -2608,7 +2610,7 @@ Set the Data attribute of a variable.
                         except:
                             self._add_message(
                                 field_ncvar, field_ncvar,
-                                message=incorrrect_interval)
+                                message=incorrect_interval)
                             return []
 
                         try:
@@ -2618,7 +2620,7 @@ Set the Data attribute of a variable.
                         except:
                             self._add_message(
                                 field_ncvar, field_ncvar,
-                                message=incorrrect_interval,
+                                message=incorrect_interval,
                                 attribute=attribute,
                                 variable=parent_ncvar)
                             return []
@@ -2650,7 +2652,7 @@ Set the Data attribute of a variable.
             if n_intervals > 1 and n_intervals != len(axes):
                 self._add_message(
                     field_ncvar, field_ncvar,
-                    message=incorrrect_interval,
+                    message=incorrect_interval,
                     attribute=attribute)
                 return []
 
