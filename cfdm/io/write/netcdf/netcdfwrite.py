@@ -615,7 +615,8 @@ dictionary.
         return extra
     #--- End: def
             
-    def _write_scalar_coordinate(self, f, axis, coord, coordinates):
+    def _write_scalar_coordinate(self, f, axis, coord, coordinates,
+                                 extra={}):
         '''Write a scalar coordinate and its bounds to the netCDF file.
     
 It is assumed that the input coordinate is has size 1, but this is not
@@ -648,15 +649,16 @@ then the input coordinate is not written.
     
         if not self._already_in_file(coord, ()):
             ncvar = self._write_netcdf_variable_name(coord,
-                                                     default='scalar')
+                                                     default='scalar',
+                                                     extra=extra)
     
             # If this scalar coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
             # attribute to the dictionary of extra attributes
-            extra = self._write_bounds(coord, (), ncvar)
+            bounds_extra = self._write_bounds(coord, (), ncvar)
     
             # Create a new auxiliary coordinate variable
-            self._write_netcdf_variable(ncvar, (), coord, extra=extra)
+            self._write_netcdf_variable(ncvar, (), coord, extra=bounds_extra)
     
         else:
             # This scalar coordinate has already been written to the
@@ -966,8 +968,8 @@ measure will not be written.
     
         else:
             # Create a new grid mapping variable
-            default = self.get_coordinate_conversion_parameter(
-                ref, 'grid_mapping_name', 'grid_mapping')
+            default = self.get_coordinate_conversion_parameters(ref).get(
+                'grid_mapping_name', 'grid_mapping')
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
             if g['verbose'] or _debug:
@@ -998,8 +1000,8 @@ measure will not be written.
             #--- End: for
 
             # Add the grid mapping name property
-            grid_mapping_name = self.get_coordinate_conversion_parameter(
-                ref, 'grid_mapping_name', None)
+            grid_mapping_name = self.get_coordinate_conversion_parameters(ref).get(
+                'grid_mapping_name', None)
             if grid_mapping_name is not None:
                 parameters['grid_mapping_name'] = grid_mapping_name
                 
@@ -1275,7 +1277,40 @@ extra trailing dimension.
         # Initialize the list of the field's auxiliary/scalar coordinates
         coordinates = []
 
-        dimension_coordinates = self._get_dimension_coordinates(f)
+        formula_terms_refs = [
+            ref for ref in self.get_coordinate_references(f).values()
+            if self.get_coordinate_conversion_parameters(ref).get('standard_name', False)]
+
+        grid_mapping_refs = [
+            ref for ref in self.get_coordinate_references(f).values()
+            if self.get_coordinate_conversion_parameters(ref).get('grid_mapping_name', False)]
+
+        owning_coordinates = []
+        computed_standard_names = []
+        for ref in formula_terms_refs:
+            coord_key = None
+            computed_standard_name = self.get_coordinate_conversion_parameters(ref).get(
+                'computed_standard_name')
+            
+            if computed_standard_name is not None:
+                standard_name = self.get_coordinate_conversion_parameters(ref).get('standard_name')
+                if standard_name is not None:
+                    for key in self.get_coordinate_reference_coordinates(ref):
+                        coord = self.get_coordinates(f)[key]
+                        if (self.get_ndim(coord) == 1 and                        
+                            self.get_property(coord, 'standard_name', None) == standard_name):
+                            if coord_key is not None:
+                                coord_key = None
+                                break
+
+                            coord_key = key
+            #--- End: if
+                
+            owning_coordinates.append(key)
+            computed_standard_names.append(computed_standard_name)
+        #--- End: for
+    
+        dimension_coordinates = self.get_dimension_coordinates(f)
         
         # For each of the field's axes ...
         for axis in sorted(self._get_domain_axes(f)):
@@ -1313,6 +1348,16 @@ extra trailing dimension.
                         # ancillaries which span this domain axis, so
                         # write the dimension coordinate to the file
                         # as a scalar coordinate variable.
+                        if key in owning_coordinates:
+                            i = owning_coordinates.index(key)
+                            ref = formula_terms_refs[i]
+                            computed_standard_name = self.get_coordinate_reference_parameters(ref).get(
+                                'computed_standard_name', None)
+                            if computed_standard_name is not None:
+                                self.set_property(dim_coord, 'computed_standard_name',
+                                                  computed_standard_name)
+                        #--- End: if
+                            
                         coordinates = self._write_scalar_coordinate(f, axis, dim_coord,
                                                                     coordinates)
                 #-- End: if
@@ -1373,11 +1418,11 @@ extra trailing dimension.
         
         formula_terms_refs = [
             ref for ref in self.get_coordinate_references(f).values()
-            if self.get_coordinate_conversion_parameter(ref, 'standard_name', False)]
+            if self.get_coordinate_conversion_parameters(ref).get('standard_name', False)]
 
         grid_mapping_refs = [
             ref for ref in self.get_coordinate_references(f).values()
-            if self.get_coordinate_conversion_parameter(ref, 'grid_mapping_name', False)]
+            if self.get_coordinate_conversion_parameters(ref).get('grid_mapping_name', False)]
         
         # ------------------------------------------------------------
         # Create netCDF formula_terms attributes from vertical
@@ -1388,10 +1433,16 @@ extra trailing dimension.
             bounds_formula_terms = []
             owning_coord = None
             
-            formula_terms_name = ref.name()
-            if formula_terms_name is not None:
-                c = [(key, coord) for key, coord in self.get_coordinates(f).items()
-                     if self.get_property(coord, 'standard_name', None) == formula_terms_name]
+            standard_name = self.get_coordinate_conversion_parameters(ref).get('standard_name')
+            if standard_name is not None:
+#                c = [(key, coord) for key, coord in self.get_coordinates(f).items()
+#                     if self.get_property(coord, 'standard_name', None) == standard_name]
+                c = []
+                for key in self.get_coordinate_reference_coordinates(ref):
+                    coord = self.get_coordinates(f)[key]
+                    if self.get_property(coord, 'standard_name', None) == standard_name:
+                        c.append((key, coord))
+
                 if len(c) == 1:
                     owning_coord_key, owning_coord = c[0]
             #--- End: if
@@ -1406,7 +1457,7 @@ extra trailing dimension.
                     if value is None:
                         continue
     
-                    if term == 'standard_name':
+                    if term in ('standard_name', 'computed_standard_name'):
                         continue
     
                     ncvar = self._write_scalar_data(value, ncvar=term)
@@ -1606,8 +1657,16 @@ extra trailing dimension.
         if cell_methods:
             axis_map = g['axis_to_ncdim'].copy()
             axis_map.update(g['axis_to_ncscalar'])
-            cell_methods = ' '.join([str(cm.change_axes(axis_map))
-                                              for cm in cell_methods.values()])
+
+            cell_methods_strings = []
+            for cm in cell_methods.values():                
+                axes = [axis_map.get(axis, axis) for axis in cm.get_axes(())]
+                cm.set_axes(axes)
+                cell_methods_strings.append(str(cm)) # self.cell_method_string(cm)
+
+#            cell_methods = ' '.join([str(cm.change_axes(axis_map))
+#                                              for cm in cell_methods.values()])
+            cell_methods = ' '.join(cell_methods_strings)
             if _debug:
                 print '    Writing cell_methods to netCDF variable', ncvar+':', cell_methods
 
@@ -1664,12 +1723,6 @@ extra trailing dimension.
         '''
         '''
         return field.get_data_axes()
-    #--- End: def
-
-    def _get_dimension_coordinates(self, field):
-        '''
-        '''
-        return field.dimension_coordinates()
     #--- End: def
 
     def _get_domain_ancillaries(self, field):
@@ -1878,13 +1931,6 @@ write them to the netCDF4.Dataset.
         return coordinate_reference.coordinates()
     #--- End: def
 
-    def get_coordinate_conversion_parameter(self, coordinate_reference,
-                                            parameter, *default):
-        '''
-        '''
-        return coordinate_reference.get_coordinate_conversion().get_parameter(parameter, *default)
-    #--- End: def
-        
     def get_coordinate_conversion_parameters(self, coordinate_reference):
         '''
 
@@ -1980,7 +2026,13 @@ datum.
         '''        
         return self.get_datum(coordinate_reference).parameters()
     #--- End: def
-        
+
+    def get_dimension_coordinates(self, field):
+        '''
+        '''
+        return field.dimension_coordinates()
+    #--- End: def
+
     def get_field_ancillaries(self, field):
         '''Return the field ancillaries of a field.
 

@@ -202,7 +202,6 @@ class Constructs(structure.Constructs):
 
                     # Still here? Then all constructs of this type
                     # that spanning these axes match
-#                    print '        del constructs1[',construct_type,']'
                     del constructs1[construct_type]
                 #--- End: for
 
@@ -361,7 +360,7 @@ class Constructs(structure.Constructs):
     cm0.__class__.__name__, cell_methods0, cell_methods1))
                 return False
     
-            argsort = []
+            indices = []
             for axis0 in axes0:
                 if axis0 is None:
                     return False
@@ -369,19 +368,18 @@ class Constructs(structure.Constructs):
                     if axis0 in axis0_to_axis1 and axis1 in axis1_to_axis0:
                         if axis1 == axis0_to_axis1[axis0]:
                             axes1.remove(axis1)
-                            argsort.append(cm1.get_axes(()).index(axis1))
+                            indices.append(cm1.get_axes(()).index(axis1))
                             break
                     elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
                         if traceback:
                             print (
 "Traceback: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
-    
                         return False
                     elif axis0 == axis1:
                         # Assume that the axes are standard names
                         axes1.remove(axis1)
-                        argsort.append(cm1.get_axes(()).index(axis1))
+                        indices.append(cm1.get_axes(()).index(axis1))
                     elif axis1 is None:
                         if traceback:
                             print (
@@ -390,13 +388,13 @@ class Constructs(structure.Constructs):
                         return False
             #--- End: for
 
-            if len(cm1.get_axes(())) != len(argsort):
+            if len(cm1.get_axes(())) != len(indices):
                 if traceback:
                     print ("Field: Different cell methods: {0!r}, {1!r}".format(
                         cell_methods0, cell_methods1))
                 return False
 
-            cm1 = cm1.sorted(argsort=argsort)
+            cm1 = cm1.sorted(indices=indices)
             cm1.set_axes(axes0)
 
             if not cm0.equals(cm1, atol=atol, rtol=rtol,

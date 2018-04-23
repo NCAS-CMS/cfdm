@@ -42,8 +42,8 @@ correspond to cell measure constructs.
 :Parameters:
 
     measure: `str`, optional
-        Set the "measure", which indicates which metric given by the
-        data array. Ignored if the *source* parameter is set.
+        Set the measure that indicates which metric given by the data
+        array. Ignored if the *source* parameter is set.
 
           *Example:*
              >>> c = CellMeasure(measure='area')
@@ -72,10 +72,9 @@ correspond to cell measure constructs.
         `set_data` method.
 
     source: optional
-        Initialise from the *measure*, *properties* and *data*
-        parameters (if present) from *source*, which will be a
-        `CellMeasure` object, or a subclass of one of its parent
-        classes.
+        Initialise the *measure*, *properties* and *data* parameters
+        (if present) from *source*, which will be a `CellMeasure`
+        object, or a subclass of one of its parent classes.
 
           *Example:*
             >>> d = CellMeasure(source=c)

@@ -1,14 +1,7 @@
 import abc
 
-from ast import literal_eval as ast_literal_eval
-from re  import sub          as re_sub
-from re  import search       as re_search
-
 import mixin
 import structure
-
-from data import Data
-
 
 # ====================================================================
 #
@@ -17,7 +10,7 @@ from data import Data
 # ====================================================================
 
 class CellMethod(mixin.Properties, structure.CellMethod):
-    '''A cell method construct od the CF data model.
+    '''A cell method construct of the CF data model.
 
 Cell method constructs describe how the field construct's cell values
 represent the variation of the physical quantity within its cells,
@@ -32,103 +25,6 @@ over El Nino years).
 
     '''
     __metaclass__ = abc.ABCMeta
-    
-    def __new__(cls, *args, **kwargs):
-        '''
-        '''
-        obj = object.__new__(cls, *args, **kwargs)
-        obj._Data = Data
-        return obj
-    #--- End: def
-    
-#    def __init__(self, axes=None, method=None,
-#                 properties=None,
-##                 where=None,
-##                 within=None, over=None, interval=None, comment=None,
-#                 source=None, copy=True):
-#        '''
-#        '''
-#        properties = {'where'   : where,
-#                      'within'  : within,
-#                      'over'    : over,
-#                      'interval': interval,
-#                      'comment' : comment}
-#
-#        for key, value in properties.items():
-#            if value is None:
-#                del properties[key]
-#        #--- End: def
-#        
-#        super(CellMethod, self).__init__(axes=axes, method=method,
-#                                         properties=properties,
-#                                         source=source, copy=copy)
-#    #--- End: def
-
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-Return a CF-netCDF-like string of the cell method.
-
-Note that if the intention use this string in a CF-netCDF cell_methods
-attribute then the cell method's `!name` attribute may need to be
-modified, where appropriate, to reflect netCDF variable names.
-
-        '''
-        string = [super(CellMethod, self).__str__()]
-
-        for portion in ('within', 'where', 'over'):
-            p = self.get_property(portion, None)
-            if p is not None:
-                string.extend((portion, p))
-        #--- End: for
-
-        intervals = self.get_property('interval', ())
-        comment   = self.get_property('comment', None)
-        if intervals:
-            x = ['(']
-
-            y = ['interval: {0}'.format(data) for data in intervals]
-            x.append(' '.join(y))
-
-            if comment is not None:
-                x.append(' comment: {0}'.format(comment))
-
-            x.append(')')
-
-            string.append(''.join(x))
-
-        elif comment is not None:
-            string.append('({0})'.format(comment))
-
-        return ' '.join(string)
-    #--- End: def
-
-    def change_axes(self, axis_map, copy=True):
-        '''
-:Parameters:
-
-    axis_map: `dict`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `CellMethod`
-
-        '''
-        if copy:
-            c = self.copy()
-        else:
-            c = self
-
-        if not axis_map:
-            return c
-
-        c.set_axes(tuple([axis_map.get(axis, axis)
-                          for axis in self.get_axes(())]))
-
-        return c
-    #--- End: def
 
     def dump(self, display=True, _title=None, _level=0):
         '''
@@ -164,82 +60,19 @@ corresponding dimension or dimensions.
         return indent0 + _title + str(self)
     #--- End: def
 
-    def expand_intervals(self, copy=True):
-        if copy:
-            c = self.copy()
-        else:
-            c = self
-
-        n_axes = len(c.get_axes(()))
-        interval = c.get_property('interval', ())
-        if n_axes > 1 and len(interval) == 1:
-            c.set_property('interval', interval * n_axes)
-
-        return c
-    #--- End: def
-
-    def del_error(self):
-        '''
-        '''
-        return self._del_component('error')
-    
-    def get_error(self, *default):
-        '''
-        '''
-        return self._get_component('error', None, *default)
-    
-    def set_error(self, value):
-        '''
-        '''
-        self._set_component('error', None, value)
-    
-    def del_string(self):
-        '''
-        '''
-        return self._del_component('string')
-    
-    def get_string(self, *default):
-        '''
-        '''
-        return self._get_component('string', None, *default)
-    
-    def set_string(self, value):
-        '''
-        '''
-        self._set_component('string', None, value)
-    
-    def sorted(self, argsort=None):
-        '''
-        '''
-        new = self.copy()
-        
-        axes = new.get_axes(())
-        if len(axes) == 1:
-            return new
-
-        if argsort is None:
-            argsort = numpy_argsort(axes)
-        elif len(argsort) != len(axes):
-            raise ValueError(".sjdn ;siljdf vlkjndf jk")
-
-        axes2 = []
-        for i in argsort:
-            axes2.append(axes[i])
-
-        new.set_axes(tuple(axes2))
-
-        intervals = new.get_property('interval', ())
-        if len(intervals) <= 1:
-            return new
-
-        intervals2 = []
-        for i in argsort:
-            intervals2.append(intervals[i])
-
-        new.set_property('interval', tuple(intervals2))
-
-        return new
-    #--- End: def
+#    def expand_intervals(self):
+#        '''
+#        '''
+#        c = self.copy()
+#
+#        n_axes = len(c.get_axes(()))
+#        if n_axes > 1:
+#            intervals = c.get_property('intervals', ())            
+#            if len(interval) == 1:
+#                c.set_property('intervals', interval*n_axes)
+#
+#        return c
+#    #--- End: def
 
 #    @classmethod
 #    def parse(cls, string, allow_error=False):
@@ -409,7 +242,7 @@ corresponding dimension or dimensions.
 #            #---End: if
 #
 #            if intervals:
-#                cm.set_property('interval', tuple(intervals))
+#                cm.set_property('intervals', tuple(intervals))
 #
 #            out.append(cm)
 #        #--- End: while
@@ -460,33 +293,46 @@ The `!axes` attribute is ignored in the comparison.
                 traceback=traceback,
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties + ('interval',),
+                ignore_properties=ignore_properties + ('intervals',),
                 ignore_construct_type=ignore_construct_type):
 	    return False
         
-        if 'interval' in ignore_properties:
+#        axes0 = self.get_axes(())
+#        axes1 = other.get_axes(())
+#        if len(axes0) != len(axes1):
+#            if traceback:
+#                print(
+#                    "{0}: Different axes: {1!r} != {2!r}".format(
+#                        self.__class__.__name__, axes0, axes1))
+#            return False
+#        #--- End: if
+        
+        if 'intervals' in ignore_properties:
             return True
 
-        self_interval  = self.get_property('interval', ())
-        other_interval = other.get_property('interval', ())
-        if self_interval:
-            if not other_interval:
+        intervals0 = self.get_property('intervals', ())
+        intervals1 = other.get_property('intervals', ())
+        if intervals0:
+            if not intervals1:
                 if traceback:
                     print(
-"{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self_interval, other_interval))
+                        "{0}: Different intervals: {1!r} != {2!r}".format(
+                            self.__class__.__name__, intervals0, intervals1))
                 return False
             #--- End: if
             
-            if len(self_interval) != len(other_interval):
+            if len(intervals0) != len(intervals1):
+#                intervals0 = self.expand_intervals().get_property('intervals', ())
+#                intervals1 = other.expand_intervals().get_property('intervals', ())        
+#                if len(intervals0) != len(intervals1):
                 if traceback:
                     print(
-"{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self_interval, other_interval))
-                return False
+                        "{0}: Different numbers of intervals: {1!r} != {2!r}".format(
+                            self.__class__.__name__, intervals0, intervals1))
+                    return False
             #--- End: if
-            
-            for data0, data1 in zip(self_interval, other_interval):
+
+            for data0, data1 in zip(intervals0, intervals1):
                 if not self._equals(data0, data1,
                                     rtol=rtol, atol=atol,
                                     ignore_data_type=ignore_data_type,
@@ -494,186 +340,157 @@ The `!axes` attribute is ignored in the comparison.
                                     traceback=traceback):
                     if traceback:
                         print(
-"{0}: Different intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self_interval, other_interval))
+                            "{0}: Different intervals: {1!r} != {2!r}".format(
+                                self.__class__.__name__, intervals0, intervals1))
                     return False
-            #--- End: for
 
-        elif other_interval:
+        elif intervals1:
             if traceback:
                 print("{}: Different intervals: {!r} != {!r}".format(
-                    self.__class__.__name__, self_interval, other_interval))
+                    self.__class__.__name__, intervals0, intervals1))
             return False
         #--- End: if
 
         return True
     #--- End: def
 
-    def equivalent(self, other, rtol=None, atol=None, traceback=False):
-        '''True if two cell methods are equivalent, False otherwise.
+#    def equivalent(self, other, rtol=None, atol=None, traceback=False):
+#        '''True if two cell methods are equivalent, False otherwise.
+#
+#The `axes` and `interval` attributes are ignored in the comparison.
+#
+#:Parameters:
+#
+#    other : 
+#        The object to compare for equality.
+#
+#    atol : float, optional
+#        The absolute tolerance for all numerical comparisons, By
+#        default the value returned by the `ATOL` function is used.
+#
+#    rtol : float, optional
+#        The relative tolerance for all numerical comparisons, By
+#        default the value returned by the `RTOL` function is used.
+#
+#:Returns: 
+#
+#    out : bool
+#        Whether or not the two instances are equivalent.
+#
+#:Examples:
+#
+#        '''
+#        if self is other:
+#            return True
+#
+#        # Check that each instance is the same type
+#        if self.__class__ != other.__class__:
+#            if traceback:
+#                print("{0}: Different types: {0} != {1}".format(
+#                    self.__class__.__name__, other.__class__.__name__))
+#            return False
+#        #--- End: if
+#
+#        axes0 = self.axes
+#        axes1 = other.axes
+#            
+#        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
+#            if traceback:
+#                print("{}: Nonequivalent axes: {!r}, {!r}".format(
+#                    self.__class__.__name__, axes0, axes1))
+#            return False
+#        #--- End: if
+#
+#        argsort = [axes1.index(axis0) for axis0 in axes0]
+#        other1 = other.sorted(argsort=argsort)
+#        self1 = self
+#
+#        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('intervals',)):
+#            if traceback:
+#                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
+#                    self.__class__.__name__, self, other))
+#            return False
+#        #--- End: if
+#
+#        self_interval  = self1.get_property('intervals', ())
+#        other_interval = other1.get_property('intervals', ())
+#        
+#        if len(self_interval) != len(other_interval):
+#            self1 = self1.expand_intervals(copy=False)
+#            other1.expand_intervals(copy=False)
+#
+#            self_interval  = self1.get_property('intervals', ())
+#            other_interval = other1.get_property('intervals', ())        
+#
+#            if len(self_interval) != len(other_interval):
+#                if traceback:
+#                    print(
+#"{0}: Different numbers of intervals: {1!r} != {2!r}".format(
+#    self.__class__.__name__, self_interval, other_interval))
+#                return False
+#        #--- End: if
+#
+##        intervals0 = self1.interval
+#        if self_interval:
+#            for data0, data1 in zip(self_interval, other_interval):
+#                if not data0.allclose(data1, rtol=rtol, atol=atol):
+#                    if traceback:
+#                        print(
+#"{0}: Different interval data: {1!r} != {2!r}".format(
+#    self.__class__.__name__, self_interval, other_interval))
+#                    return False
+#        #--- End: if
+#
+#        # Still here? Then they are equivalent
+#        return True
+#    #--- End: def
 
-The `axes` and `interval` attributes are ignored in the comparison.
+    def sorted(self, indices=None):
+        '''Return a sorted cell method sorted by axis names.
+
+:Examples 1:
+
+>>> d = c.sorted()
 
 :Parameters:
 
-    other : 
-        The object to compare for equality.
-
-    atol : float, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
-
-    rtol : float, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
-
-:Returns: 
-
-    out : bool
-        Whether or not the two instances are equivalent.
-
-:Examples:
-
-        '''
-        if self is other:
-            return True
-
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
-            if traceback:
-                print("{0}: Different types: {0} != {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-        #--- End: if
-
-        axes0 = self.axes
-        axes1 = other.axes
-            
-        if len(axes0) != len(axes1) or set(axes0) != set(axes1):
-            if traceback:
-                print("{}: Nonequivalent axes: {!r}, {!r}".format(
-                    self.__class__.__name__, axes0, axes1))
-            return False
-        #--- End: if
-
-#        other1 = other.copy()
-        argsort = [axes1.index(axis0) for axis0 in axes0]
-        other1 = other.sorted(argsort=argsort)
-        self1 = self
-
-        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('interval',)):
-            if traceback:
-                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
-                    self.__class__.__name__, self, other))
-            return False
-        #--- End: if
-
-        self_interval  = self1.get_property('interval', ())
-        other_interval = other1.get_property('interval', ())
-        
-        if len(self_interval) != len(other_interval):
-            self1 = self1.expand_intervals(copy=False)
-            other1.expand_intervals(copy=False)
-
-            self_interval  = self1.get_property('interval', ())
-            other_interval = other1.get_property('interval', ())        
-
-            if len(self_interval) != len(other_interval):
-                if traceback:
-                    print(
-"{0}: Different numbers of intervals: {1!r} != {2!r}".format(
-    self.__class__.__name__, self_interval, other_interval))
-                return False
-        #--- End: if
-
-#        intervals0 = self1.interval
-        if self_interval:
-            for data0, data1 in zip(self_interval, other_interval):
-                if not data0.allclose(data1, rtol=rtol, atol=atol):
-                    if traceback:
-                        print(
-"{0}: Different interval data: {1!r} != {2!r}".format(
-    self.__class__.__name__, self_interval, other_interval))
-                    return False
-        #--- End: if
-
-        # Still here? Then they are equivalent
-        return True
-    #--- End: def
-
-    def remove_axes(self, axes):
-        '''
-
-:Parameters:
-
-    axes: sequence of `str`
+    indices: ordered sequence of `int`, optional
 
 :Returns:
 
-    None
+    out: `CellMethod`
 
         '''
-        if len(self._interval) <= 1:
-            self._axes = tuple([axis for axis in self._axes if axis not in axes])
-            if not len(self._axes):
-                self._interval = ()
-            return
+        new = self.copy()
         
-        # Still here?
-        _axes = []
-        _intervals = []
+        axes = new.get_axes(())
+        if len(axes) == 1:
+            return new
 
-        for axis, interval in zip(self._axes, self._interval):
-            if axis not in axes:
-                _axes.append(axis)
-                _intervals.append(interval)
+        if indices is None:
+            indices = numpy_argsort(axes)
+        elif len(indices) != len(axes):
+            raise ValueError(".sjdn ;siljdf vlkjndf jk")
 
-        self._axes     = tuple(_axes)
-        self._interval = tuple(_intervals)
+        axes2 = []
+        for i in indices:
+            axes2.append(axes[i])
+
+        new.set_axes(tuple(axes2))
+
+        intervals = new.get_property('intervals', ())
+        if len(intervals) <= 1:
+            return new
+
+        intervals2 = []
+        for i in argsort:
+            intervals2.append(intervals[i])
+
+        new.set_property('intervals', tuple(intervals2))
+
+        return new
     #--- End: def
 
-#    def write(self, axis_map={}):
-#        '''
-#
-#Return a string of the cell method.
-#
-#
-#'''
-#        string = ['{0}:'.format(axis)
-#                  for axis in self.change_axes(axis_map).axes]
-#
-#        method = self._method
-#        if method is None:
-#            return ''
-#
-#        string.append(method)
-#
-#        for portion in ('within', 'where', 'over'):
-#            p = getattr(self, portion, None)
-#            if p is not None:
-#                string.extend((portion, p))
-#        #--- End: for
-#
-#        intervals = self.interval
-#        if intervals:
-#            x = ['(']
-#
-#            y = ['interval: {0}'.format(data) for data in intervals]
-#            x.append(' '.join(y))
-#
-#            if self.comment is not None:
-#                x.append(' comment: {0}'.format(self.comment))
-#
-#            x.append(')')
-#
-#            string.append(''.join(x))
-#
-#        elif self.comment is not None:
-#            string.append('({0})'.format(self.comment))
-#
-#        return ' '.join(string)
-#    #--- End: def
-#
 #    def match(self, description=None, inverse=False):
 #        '''
 #        '''

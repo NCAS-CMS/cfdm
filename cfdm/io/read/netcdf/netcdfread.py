@@ -1,7 +1,9 @@
-import copy
-import re
 import operator
+import re
 import struct
+
+from ast import literal_eval
+from copy import deepcopy
 
 from collections import OrderedDict
 
@@ -368,7 +370,7 @@ ancillaries, field ancillaries).
         # Add custom read vars
         # ------------------------------------------------------------
         if extra_read_vars:
-            g.update(copy.deepcopy(extra_read_vars))
+            g.update(deepcopy(extra_read_vars))
 
 #        self.read_vars = self._reset_read_vars(extra_read_vars)
 #        g = self.read_vars
@@ -1147,7 +1149,8 @@ ancillaries, field ancillaries).
         
         attribute = {coord_ncvar+':formula_terms': formula_terms}
 
-        incorrect_dimensions  = ('Formula terms variable', 'spans incorrect dimensions')
+#        incorrect_dimensions  = ('Formula terms variable',
+#                                 'spans incorrect dimensions')
         
         g['formula_terms'].setdefault(coord_ncvar, {'coord' : {},
                                                     'bounds': {}})
@@ -1407,6 +1410,7 @@ ancillaries, field ancillaries).
         # Take cell_methods out of the data variable's properties since it
         # will need special processing once the domain has been defined
         cell_methods_string = properties.pop('cell_methods', None)
+        
 #        cell_methods = []
 #        if cell_methods_string is not None:
 #            cell_methods = self._parse_cell_methods(cell_methods_string,
@@ -1699,11 +1703,12 @@ ancillaries, field ancillaries).
                     # that is not spanned by its parent data variable
                     self._add_message(
                         field_ncvar, ncvar,
-                        message=('Formula terms variable', 'spans incorrect dimensions'),
+                        message=('Formula terms variable',
+                                 'spans incorrect dimensions'),
                         attribute={coord_ncvar+':formula_terms': formula_terms},
                         dimensions=nc.variables[ncvar].dimensions)
                     ok = False
-                    break
+#                    break
             #--- End: for
 
             if not ok:
@@ -1839,20 +1844,21 @@ ancillaries, field ancillaries).
             #--- End: if
         #--- End: if
     
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         # Add cell methods to the field
-        # ----------------------------------------------------------------
+        # ------------------------------------------------------------
         if cell_methods_string is not None:
+
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
 
             cell_methods = self._parse_cell_methods(field_ncvar, cell_methods_string)
             
-            for cell_method_dict in cell_methods:
-                cell_method = self._create_cell_method(cell_method_dict)
-
-                cell_method = self.change_cell_method_axes(cell_method, name_to_axis)
-
+            for properties in cell_methods:
+                axes = [name_to_axis.get(axis, axis)
+                        for axis in properties.pop('axes')]
+                                
+                cell_method = self._create_cell_method(axes, properties)
                 if _debug:
                     print '    [ ] Inserting', repr(cell_method)
                         
@@ -1900,13 +1906,6 @@ ancillaries, field ancillaries).
         return f
     #--- End: def
 
-#    def _parse_cell_methods(self, cell_methods, allow_error=True):
-#        '''
-#        '''
-#        return self.implementation.get_class('CellMethod').parse(cell_methods,
-#                                                                 allow_error=allow_error)
-#    #--- End: def
-    
     def _add_message(self, field_ncvar, ncvar, message=None,
                      attribute=None, dimensions=None, variable=None):
         ''':Parameters:
@@ -2243,38 +2242,24 @@ also be provided.
         return cell_measure
     #--- End: def
 
-#    def set_cell_method_property(self, cell_method, prop, value):
-#        '''
-#        '''
-#        getattr(cell_method, 'set_'+prop)(value)
-#    #--- End: def
-
-    def change_cell_method_axes(self, cell_method, axis_map):
-        '''
-        '''
-        return cell_method.change_axes(axis_map)
-    #--- End: def
-    
-    def _create_cell_method(self, cell_method_dict):
+    def _create_cell_method(self, axes, properties):
         '''Create a cell method object.
     
+*Example:*
+
 :Parameters:
 
-    cell_method_dict: `dict`
+    axes: `tuple`
+
+    properties: `dict`
         
-          *Example:*
 :Returns:
 
     out: `CellMethod`
 
         '''
-        cell_method = self.initialise('CellMethod', **cell_method_dict)
-
-#        cell_method_dict = cell_method_dict.copy()
-#
-#        for key, value in cell_method_dict.iteritems():
-#            self.set_cell_method_property(cell_method, key, value)
-
+        cell_method = self.initialise('CellMethod',
+                                      axes=axes, properties=properties)
         return cell_method
     #--- End: def
 
@@ -2532,8 +2517,6 @@ Set the Data attribute of a variable.
 
         while cell_methods:
             cm = {}
-#            cm = self.implementation.get_class('CellMethod')
-#            cm = cls()
 
             axes  = []
             while cell_methods:
@@ -2546,7 +2529,6 @@ Set the Data attribute of a variable.
 
                 axes.append(axis)
             #--- End: while
-#            cm.set_axes(axes)
             cm['axes'] = axes
 
             if not cell_methods:
@@ -2554,7 +2536,6 @@ Set the Data attribute of a variable.
                 break
 
             # Method
-#            cm.set_method(cell_methods.pop(0))
             cm['method'] = cell_methods.pop(0)
             
             if not cell_methods:
@@ -2565,7 +2546,6 @@ Set the Data attribute of a variable.
             # portions of cells
             while cell_methods[0] in ('within', 'where', 'over'):
                 attr = cell_methods.pop(0)
-#                cm.set_property(attr, cell_methods.pop(0))
                 cm[attr] = cell_methods.pop(0)
                 if not cell_methods:
                     break
@@ -2593,8 +2573,8 @@ Set the Data attribute of a variable.
                             units = None
 
                         try:
-                            parsed_interval = ast_literal_eval(interval)
-                        except:
+                            parsed_interval = literal_eval(interval)
+                        except (SyntaxError, ValueError):
                             self._add_message(
                                 field_ncvar, field_ncvar,
                                 message=incorrect_interval)
@@ -2602,14 +2582,13 @@ Set the Data attribute of a variable.
 
                         try:
                             data = self.initialise('Data',
-                                                   array=parsed_interval,
+                                                   data=parsed_interval,
                                                    units=units)
                         except:
                             self._add_message(
                                 field_ncvar, field_ncvar,
                                 message=incorrect_interval,
-                                attribute=attribute,
-                                variable=parent_ncvar)
+                                attribute=attribute)
                             return []
 
                         intervals.append(data)
@@ -2625,7 +2604,6 @@ Set the Data attribute of a variable.
                                 break
                             comment.append(cell_methods.pop(0))
                         #--- End: while
-#                        cm.set_property('comment', ' '.join(comment))
                         cm['comment'] = ' '.join(comment)
                     #--- End: if
 
@@ -2644,7 +2622,6 @@ Set the Data attribute of a variable.
                 return []
 
             if intervals:
-#                cm.set_property('interval', tuple(intervals))
                 cm['intervals'] = intervals
 
             out.append(cm)
@@ -2682,28 +2659,27 @@ Set the Data attribute of a variable.
         for term, ncvar in formula_terms.iteritems():
             # The term's value is a domain ancillary of the field, so
             # we put its identifier into the coordinate reference.
-            if ncvar in g['domain_ancillary_key']:
-                domain_ancillaries[term] = g['domain_ancillary_key'][ncvar]
-            else:
-                domain_ancillaries[term] = None
+#            if ncvar in g['domain_ancillary_key']:
+            domain_ancillaries[term] = g['domain_ancillary_key'].get(ncvar)
+#            else:
+#                domain_ancillaries[term] = None
 
         parameters = {}
-        standard_name = self.get_property(coord, 'standard_name', None)
-        if standard_name is not None:
-            parameters['standard_name'] = standard_name
+
+        for name in ('standard_name', 'computed_standard_name'):            
+            value = self.get_property(coord, name, None)
+            if value is not None:
+                parameters[name] = value
+            
+#        standard_name = self.get_property(coord, 'standard_name', None)
+#        if standard_name is not None:
+#            parameters['standard_name'] = standard_name
             
         coordref = self.initialise('CoordinateReference',
                                    coordinates=[key],
                                    domain_ancillaries=domain_ancillaries,
                                    parameters=parameters)
 
-#        props = {}
-#        name = self.get_property(coord, 'standard_name', None)
-#        if name is not None:
-#            props['standard_name'] = name
-#
-#        self.set_properties(coordref, props)
-        
         return coordref
     #--- End: def
 
@@ -2741,9 +2717,6 @@ dimensions are returned.
                 
         ncvariable = g['nc'].variables[ncvar]
     
-#        ncattrs = ncvariable.ncattrs()
-    
-#        ncdimensions = list(ncvariable.dimensions)
         ncdimensions = self._get_netcdf_dimensions(ncvar)
         
         # Remove a string-length dimension, if there is one. DCH ALERT
@@ -2783,12 +2756,6 @@ dimensions are returned.
         
         return map(str, ncdimensions)
     #--- End: def
-
-#    def _parse_grid_mapping(self, grid_mapping):
-#        '''
-#        '''
-#        return re.sub('\s*:\s*', ': ', grid_mapping).split()
-#    #--- End: def
 
     def _create_gathered_array(self, array, uncompressed_ndim=None,
                                uncompressed_shape=None,
@@ -3288,47 +3255,6 @@ Checks that
         
         return True
     #--- End: def
-
-#    def _check_formula_terms(self, field_ncvar, coordinate_ncvar,
-#                             formula_terms, parsed_formula_terms):
-#        '''
-#        '''
-#        attribute = {field_ncvar+':formula_terms': formula_terms}
-#
-#        incorrectly_formatted = ('formula_terms attribute', 'is incorrectly formatted')
-#        missing_variable      = ('Formula terms variable', 'is not in file')
-#        incorrect_dimensions  = ('Formula terms variable', 'spans incorrect dimensions')
-#        
-#        attribute = 'formula_terms'
-#        
-#        nc = self.read_vars['nc']
-#        
-#        if not parsed_formula_terms:
-#            self._add_message(field_ncvar, coordinate_ncvar,
-#                              message=incorrectly_formatted,
-#                              attribute=attribute)
-#            return False
-#
-#        ok = True
-#        for x in parsed_formula_terms:
-#            term, values = x.items()[0]
-#            if len(values) != 1:
-#                self._add_message(field_ncvar, coordinate_ncvar,
-#                                  message=incorrectly_formatted,
-#                                  attribute=attribute)
-#                ok = False
-#                continue
-#
-#            ncvar = values[0]
-#            if ncvar not in nc.variables:
-#                self._add_message(field_ncvar, ncvar,
-#                                  message=missing_variable,
-#                                  attribute=attribute)
-#                ok = False
-#        #--- End: for
-#        
-#        return ok
-#    #--- End: def
 
     def _check_compress(self, parent_ncvar, compress, parsed_compress):
         '''

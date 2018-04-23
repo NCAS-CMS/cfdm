@@ -113,6 +113,7 @@ class create_fieldTest(unittest.TestCase):
         
         ref1 = cfdm.CoordinateReference(
             parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
+                        'computed_standard_name': 'altitude',
                         'earth_radius' : 6371007,},
             domain_ancillaries={'orog': orog,
                                 'a'   : ak,
@@ -153,13 +154,13 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_masks', [2, 1, 0])
 
         cm0 =  cfdm.CellMethod(axes=[axisX],
-                               method='mean',
-                               intervals=cfdm.Data(1, 'day'),
-                               comment='ok')
+                               properties={'method'   : 'mean',
+                                           'intervals': [cfdm.Data(1, 'day')],
+                                           'comment'  : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
-                               method='maximum',
-                               where='sea')
+                               properties={'method': 'maximum',
+                                           'where' : 'sea'})
 
 
         
@@ -177,7 +178,7 @@ class create_fieldTest(unittest.TestCase):
         f.dump()
         print "####################################################"
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
-        f.dump()
+#        f.dump()
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
         for x in g:
@@ -190,7 +191,7 @@ class create_fieldTest(unittest.TestCase):
 #        g.dump()
 #        print g
         self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
-                        '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
+                        '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
                             sorted(f.constructs()),
                             sorted(f.constructs().items()),
                             sorted(g.constructs()),

@@ -165,9 +165,8 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 :Returns:
 
     out:
-        The value of the property or the default value. If the
-        property has not been set, then *default* if provided
-        or else raise an `AttributeError`.
+        The value of the property. If the property has not been set,
+        then return the value of *default* parameter if provided.
 
 :Examples 2:
 
@@ -178,7 +177,7 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 >>> print f.get_property('standard_name')
 AttributeError: Field doesn't have property 'standard_name'
 >>> print f.get_property('standard_name', 'UNSET')
-'UNSET'
+UNSET
 
         '''
         try:

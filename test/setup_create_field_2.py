@@ -159,8 +159,20 @@ class create_fieldTest_2(unittest.TestCase):
         f.set_property('flag_meanings', 'a bb ccc')
         f.set_property('flag_masks', [2, 1, 0])
 
-        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment: ok) '+axisY+': max where sea'):
-            f.set_cell_method(cm)
+#        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment: ok) '+axisY+': max w#here sea'):
+#            f.set_cell_method(cm)
+
+        cm0 =  cfdm.CellMethod(axes=[axisX],
+                               properties={'method'   : 'mean',
+                                           'intervals': [cfdm.Data(1, 'day')],
+                                           'comment'  : 'ok'})
+    
+        cm1 =  cfdm.CellMethod(axes=[axisY],
+                               properties={'method': 'maximum',
+                                           'where' : 'sea'})
+
+        f.set_cell_method(cm0)
+        f.set_cell_method(cm1)
 
         print repr(f)
         print f

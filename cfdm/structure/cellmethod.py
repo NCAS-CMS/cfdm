@@ -1,8 +1,8 @@
 import abc
 
-import abstract
+from copy import deepcopy
 
-from data import Data
+import abstract
 
 # ====================================================================
 #
@@ -10,9 +10,8 @@ from data import Data
 #
 # ====================================================================
 
-#class CellMethod(abstract.Properties):
-class CellMethod(abstract.Container):
-    '''A cell method construct od the CF data model.
+class CellMethod(abstract.Properties):
+    '''A cell method construct of the CF data model.
 
 Cell method constructs describe how the field construct's cell values
 represent the variation of the physical quantity within its cells,
@@ -28,51 +27,68 @@ over El Nino years).
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        obj._Data = Data
-        return obj
-    #--- End: def
+    def __init__(self, axes=None, properties=None, source=None,
+                 copy=True):
+        '''**Initialisation**
 
-    def __init__(self, axes=None, method=None, comment=None,
-                 intervals=None, over=None, where=None, within=None,
-                 source=None, copy=True):
+    axes: (sequence of) `str`, optional
+        Set the axes of the cell method. Ignored if the *source*
+        parameter is set.
+
+          *Example:*
+             ``axes=('id%domainaxis0',)``
+        
+          *Example:*
+             ``axes=('id%domainaxis0', 'id%domainaxis1')``
+        
+          *Example:*
+             ``axes=('area',)``
+        
+          *Example:*
+             ``axes=('time',)``
+
+         The axes may also be set after initialisation with the
+        `set_axes` method.
+
+    properties: `dict`, optional
+        Set properties to describe the cell method. The dictionary
+        keys are property names, with corresponding values. Ignored if
+        the *source* parameter is set.
+
+          *Example:*
+             ``properties={'method': 'variance'}``
+        
+          *Example:*
+             ``properties={'method': 'mean', 'where': 'sea'}``
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
+
+    source: optional
+        Initialise the *axes* and *properties* parameters (if present)
+        from *source*, which will be a `CellMethod` object, or a
+        subclass of one of its parent classes.
+
+          *Example:*
+            ``d = CellMethod(source=c)``
+
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization By default parameters are deep copied.
+
         '''
-        '''
-        super(CellMethod, self).__init__(source=source)
+        super(CellMethod, self).__init__(properties=properties,
+                                         source=source, copy=copy)
 
         if source:
             try:
-                intervals = source.get_intervals(None)
+                axes = source.get_axes(None)
             except AttributeErrror:
-                intervals = None
-
-            if intervals is not None and copy:
-                self.set_intervals([i.copy() for i in intervals])
-            
-            return
+                axes = None              
         #--- End: if
 
         if axes is not None:
             axes = self.set_axes(axes)
-
-        if comment is not None:
-            axes = self.set_comment(comment)
-
-        if intervals is not None:
-            axes = self.set_intervals(intervals)
-
-        if method is not None:
-            method = self.set_method(method)
-
-        if over is not None:
-            axes = self.set_over(over)
-
-        if where is not None:
-            axes = self.set_where(where)
-
-        if within is not None:
-            axes = self.set_within(within)
     #--- End: def
 
     def __repr__(self):
@@ -88,115 +104,154 @@ over El Nino years).
 Return a CF-netCDF-like string of the cell method.
 
 Note that if the intention use this string in a CF-netCDF cell_methods
-attribute then the cell method's `!name` attribute may need to be
-modified, where appropriate, to reflect netCDF variable names.
+attribute then, unless they are standard names, the axes names will
+need to be modified to be netCDF dimension names.
 
         '''     
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
-        string.append(self.get_method(''))
+
+        string.append(self.get_property('method', ''))
+
+        for portion in ('within', 'where', 'over'):
+            p = self.get_property(portion, None)
+            if p is not None:
+                string.extend((portion, p))
+        #--- End: for
+
+        intervals = self.get_property('intervals', ())
+        comment   = self.get_property('comment', None)
+
+        if intervals:
+            x = ['(']
+
+            y = ['interval: {0}'.format(data) for data in intervals]
+            x.append(' '.join(y))
+
+            if comment is not None:
+                x.append(' comment: {0}'.format(comment))
+
+            x.append(')')
+
+            string.append(''.join(x))
+
+        elif comment is not None:
+            string.append('({0})'.format(comment))
+
         return ' '.join(string)
     #--- End: def
 
-    def copy(self):
-        '''Return a deep copy.
-
-``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+    def del_axes(self):
+        '''Delete the axes of the cell method.
 
 .. versionadded:: 1.6
 
+.. seealso:: `get_axes`, `has_axes`, `set_axes`
+
 :Examples 1:
 
->>> g = f.copy()
+>>> c.del_axes()
+
+:Returns:
+
+     out:
+        The value of the deleted axes, or `None` if the axes were not
+        set.
+
+:Examples 2:
+
+>>> c.set_axes('area')
+>>> print c.del_axes()
+('area',)
+>>> print f.del_axes()
+None
+
+        '''
+        return self._del_component('axes')
+    #--- End: def
+    
+    def get_axes(self, *default):
+        '''Return the axes of the cell method.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_axes`, `has_axes`, `set_axes`
+
+:Examples 1:
+
+>>> x = f.get_axes()
+
+:Parameters:
+
+    default: optional
+        Return *default* if and only if the axes have not been set.
 
 :Returns:
 
     out:
-        The deep copy.
+        The value of the property. If the axes have not been set, then
+        return the value of *default* parameter if provided.
+
+:Examples 2:
+
+>>> c.set_axes(['time'])
+>>> c.get_axes()
+('time',)
+>>> c.del_axes()
+>>> c.get_axes()
+AttributeError: 'CellMethod' object has no component 'axes'
+>>> c.get_axes('NO AXES')
+'NO AXES'
+
 
         '''
-        return type(self)(source=self, copy=True)
-    #--- End: def
-
-    def del_axes(self):
-        '''
-'''
-        return self._del_component('axes')
-    #--- End: def
-    
-    def del_intervals(self):
-        '''
-'''
-        return self._del_component('intervals')
-    #--- End: def
-    
-    def del_method(self):
-        '''
-'''
-        return self._del_component('method')
-    #--- End: def
-    
-    def get_axes(self, *default):
-        '''
-'''
         return self._get_component('axes', None, *default)
     #--- End: def
 
-    def get_comment(self, *default):
-        '''
-'''
-        return self._get_component('comment', None, *default)
-    #--- End: def
-
-    def get_intervals(self, *default):
-        '''
-'''
-        return self._get_component('intervals', None, *default)
-    #--- End: def
-
-    def get_method(self, *default):
-        '''
-        '''
-        return self._get_component('method', None, *default)
-    #--- End: def
-
-    def get_over(self, *default):
-        '''
-'''
-        return self._get_component('over', None, *default)
-    #--- End: def
-
-    def get_where(self, *default):
-        '''
-'''
-        return self._get_component('where', None, *default)
-    #--- End: def
-
-    def get_within(self, *default):
-        '''
-'''
-        return self._get_component('within', None, *default)
-    #--- End: def
-
-    def get_(self, *default):
-        '''
-'''
-        return self._get_component('', None, *default)
-    #--- End: def
-
     def has_axes(self):
-        '''
+        '''Whether the axes of the cell method have been set.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_axes`, `get_axes`, `set_axes`
+
+:Examples 1:
+
+>>> x = c.has_axes()
+
+:Returns:
+
+     out: `bool`
+        True if the axes have been set, otherwise False.
+
+:Examples 2:
+
+>>> if c.has_axes():
+...     print 'Has axes'
+
 '''
         return self._has_component('axes')
     #--- End: def
 
-    def has_method(self):
-        '''
-'''
-        return self._has_component('method')
-    #--- End: def
-
     def set_axes(self, value):
-        '''
+        '''Set the axes of the cell method.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_axes`, `get_axes`, `has_axes`
+
+:Examples 1:
+
+>>> c.set_axes('time')
+
+:Parameters:
+
+    value: (sequence of) `str`
+        The value for the axes.
+
+:Returns:
+
+     `None`
+
         '''
         if isinstance(value, basestring):
             value = (value,)
@@ -204,42 +259,6 @@ modified, where appropriate, to reflect netCDF variable names.
             value = tuple(value)
             
         return self._set_component('axes', None, value)
-    #--- End: def
-
-    def set_comment(self, value):
-        '''
-'''
-        return self._set_component('comment', None, value)
-    #--- End: def
-
-    def set_intervals(self, value):
-        '''
-'''
-        return self._set_component('intervals', None, value)
-    #--- End: def
-
-    def set_method(self, value):
-        '''
-'''
-        return self._set_component('method', None, value)
-    #--- End: def
-
-    def set_over(self, value):
-        '''
-'''
-        return self._set_component('over', None, value)
-    #--- End: def
-
-    def set_where(self, value):
-        '''
-'''
-        return self._set_component('where', None, value)
-    #--- End: def
-
-    def set_within(self, value):
-        '''
-'''
-        return self._set_component('within', None, value)
     #--- End: def
 
 #--- End: class
