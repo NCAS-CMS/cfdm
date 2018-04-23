@@ -7,7 +7,7 @@ from re  import search       as re_search
 import mixin
 import structure
 
-from .data.data import Data
+from data import Data
 
 
 # ====================================================================

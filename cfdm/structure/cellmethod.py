@@ -2,13 +2,16 @@ import abc
 
 import abstract
 
+from data import Data
+
 # ====================================================================
 #
 # Cell method object
 #
 # ====================================================================
 
-class CellMethod(abstract.Properties):
+#class CellMethod(abstract.Properties):
+class CellMethod(abstract.Container):
     '''A cell method construct od the CF data model.
 
 Cell method constructs describe how the field construct's cell values
@@ -25,30 +28,51 @@ over El Nino years).
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, axes=None, method=None, properties=None,
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        obj._Data = Data
+        return obj
+    #--- End: def
+
+    def __init__(self, axes=None, method=None, comment=None,
+                 intervals=None, over=None, where=None, within=None,
                  source=None, copy=True):
         '''
         '''
-        super(CellMethod, self).__init__(properties=properties,
-                                         source=source, copy=copy)
+        super(CellMethod, self).__init__(source=source)
 
         if source:
             try:
-                axes = source.get_axes(None)
+                intervals = source.get_intervals(None)
             except AttributeErrror:
-                axes = None
-                
-            try:
-                method = source.get_method(None)
-            except AttributeErrror:
-                method = None
+                intervals = None
+
+            if intervals is not None and copy:
+                self.set_intervals([i.copy() for i in intervals])
+            
+            return
         #--- End: if
 
         if axes is not None:
             axes = self.set_axes(axes)
 
+        if comment is not None:
+            axes = self.set_comment(comment)
+
+        if intervals is not None:
+            axes = self.set_intervals(intervals)
+
         if method is not None:
             method = self.set_method(method)
+
+        if over is not None:
+            axes = self.set_over(over)
+
+        if where is not None:
+            axes = self.set_where(where)
+
+        if within is not None:
+            axes = self.set_within(within)
     #--- End: def
 
     def __repr__(self):
@@ -73,10 +97,36 @@ modified, where appropriate, to reflect netCDF variable names.
         return ' '.join(string)
     #--- End: def
 
+    def copy(self):
+        '''Return a deep copy.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> g = f.copy()
+
+:Returns:
+
+    out:
+        The deep copy.
+
+        '''
+        return type(self)(source=self, copy=True)
+    #--- End: def
+
     def del_axes(self):
         '''
 '''
         return self._del_component('axes')
+    #--- End: def
+    
+    def del_intervals(self):
+        '''
+'''
+        return self._del_component('intervals')
     #--- End: def
     
     def del_method(self):
@@ -91,12 +141,48 @@ modified, where appropriate, to reflect netCDF variable names.
         return self._get_component('axes', None, *default)
     #--- End: def
 
+    def get_comment(self, *default):
+        '''
+'''
+        return self._get_component('comment', None, *default)
+    #--- End: def
+
+    def get_intervals(self, *default):
+        '''
+'''
+        return self._get_component('intervals', None, *default)
+    #--- End: def
+
     def get_method(self, *default):
         '''
         '''
         return self._get_component('method', None, *default)
     #--- End: def
-    
+
+    def get_over(self, *default):
+        '''
+'''
+        return self._get_component('over', None, *default)
+    #--- End: def
+
+    def get_where(self, *default):
+        '''
+'''
+        return self._get_component('where', None, *default)
+    #--- End: def
+
+    def get_within(self, *default):
+        '''
+'''
+        return self._get_component('within', None, *default)
+    #--- End: def
+
+    def get_(self, *default):
+        '''
+'''
+        return self._get_component('', None, *default)
+    #--- End: def
+
     def has_axes(self):
         '''
 '''
@@ -120,10 +206,40 @@ modified, where appropriate, to reflect netCDF variable names.
         return self._set_component('axes', None, value)
     #--- End: def
 
+    def set_comment(self, value):
+        '''
+'''
+        return self._set_component('comment', None, value)
+    #--- End: def
+
+    def set_intervals(self, value):
+        '''
+'''
+        return self._set_component('intervals', None, value)
+    #--- End: def
+
     def set_method(self, value):
         '''
 '''
         return self._set_component('method', None, value)
+    #--- End: def
+
+    def set_over(self, value):
+        '''
+'''
+        return self._set_component('over', None, value)
+    #--- End: def
+
+    def set_where(self, value):
+        '''
+'''
+        return self._set_component('where', None, value)
+    #--- End: def
+
+    def set_within(self, value):
+        '''
+'''
+        return self._set_component('within', None, value)
     #--- End: def
 
 #--- End: class

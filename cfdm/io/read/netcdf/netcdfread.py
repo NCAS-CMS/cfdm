@@ -2243,25 +2243,17 @@ also be provided.
         return cell_measure
     #--- End: def
 
-    def set_cell_method_axes(self, cell_method, axes):
-        '''
-        '''
-        cell_method.set_axes(axes)
-        
-    def set_cell_method_method(self, cell_method, method):
-        '''
-        '''
-        cell_method.set_method(method)
-        
-    def set_cell_method_properties(self, cell_method, properties):
-        '''
-        '''
-        cell_method.properties(properties)
+#    def set_cell_method_property(self, cell_method, prop, value):
+#        '''
+#        '''
+#        getattr(cell_method, 'set_'+prop)(value)
+#    #--- End: def
 
     def change_cell_method_axes(self, cell_method, axis_map):
         '''
         '''
         return cell_method.change_axes(axis_map)
+    #--- End: def
     
     def _create_cell_method(self, cell_method_dict):
         '''Create a cell method object.
@@ -2276,18 +2268,13 @@ also be provided.
     out: `CellMethod`
 
         '''
-        cell_method = self.initialise('CellMethod')
+        cell_method = self.initialise('CellMethod', **cell_method_dict)
 
-        cell_method_dict = cell_method_dict.copy()
+#        cell_method_dict = cell_method_dict.copy()
+#
+#        for key, value in cell_method_dict.iteritems():
+#            self.set_cell_method_property(cell_method, key, value)
 
-        if 'axes' in cell_method_dict:
-            self.set_cell_method_axes(cell_method, cell_method_dict.pop(axes))
-
-        if 'method' in cm:
-            self.set_cell_method_method(cell_method, cell_method_dict.pop(method))
-
-        self.set_cell_method_properties(cell_method, cell_method_dict)
-            
         return cell_method
     #--- End: def
 
@@ -2658,7 +2645,7 @@ Set the Data attribute of a variable.
 
             if intervals:
 #                cm.set_property('interval', tuple(intervals))
-                cm['interval'] = intervals
+                cm['intervals'] = intervals
 
             out.append(cm)
         #--- End: while
