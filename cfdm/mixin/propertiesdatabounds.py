@@ -76,25 +76,25 @@ domain ancillary objects.
                 bounds.set_data(data[tuple(bounds_indices)], copy=False)
         #--- End: if
 
-        # Subspace the ancillary arrays
-        ancillary_arrays = self.extent_arrays()
-        if ancillary_arrays:
-            for name, array in ancillary_arrays.iteritems():
-                if not array.has_data():
-#                    new.set_extent_array(name, array, copy=True)
-                    continue
-                
-                ancillary_indices = list(indices)
-                ancillary_indices.append(slice(None))
-                if _debug:
-                    print '{0}.__getitem__: indices for ancillary array {1!r}={2}'.format(
-                        self.__class__.__name__, name, ancillary_indices)
-
-                data = array.get_data()
-                array = array.copy(data=False)
-                array.set_data(data[tuple(ancillary_indices)], copy=False)
-                new.set_extent_array(name, array, copy=False)
-        #--- End: if
+#-#        # Subspace the ancillary arrays
+#-#        ancillary_arrays = self.extent_arrays()
+#-#        if ancillary_arrays:
+#-#            for name, array in ancillary_arrays.iteritems():
+#-#                if not array.has_data():
+#-##                    new.set_extent_array(name, array, copy=True)
+#-#                    continue
+#-#                
+#-#                ancillary_indices = list(indices)
+#-#                ancillary_indices.append(slice(None))
+#-#                if _debug:
+#-#                    print '{0}.__getitem__: indices for ancillary array {1!r}={2}'.format(
+#-#                        self.__class__.__name__, name, ancillary_indices)
+#-#
+#-#                data = array.get_data()
+#-#                array = array.copy(data=False)
+#-#                array.set_data(data[tuple(ancillary_indices)], copy=False)
+#-#                new.set_extent_array(name, array, copy=False)
+#-#        #--- End: if
 
         # Return the new bounded variable
         return new
@@ -148,18 +148,18 @@ domain ancillary objects.
         # Extent and topology properties
         # ------------------------------------------------------------
         indent1 = '    ' * (_level + 1)
-        for x in ['extent', 'topology']:
+        for x in ['extent']: #-#, 'topology']:
             parameters = getattr(self, x+'_parameters')()
             for name, parameter in sorted(parameters.items()):
                 string.append(
                     '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
 
-            arrays = getattr(self, x+'_arrays')()
-            for name, array in sorted(arrays.items()):
-                string.append(
-                    array.dump(display=False, field=field, key=key,
-                               _prefix=_prefix+x+'.'+name+'.',
-                               _create_title=False, _level=_level))
+#-#            arrays = getattr(self, x+'_arrays')()
+#-#            for name, array in sorted(arrays.items()):
+#-#                string.append(
+#-#                    array.dump(display=False, field=field, key=key,
+#-#                               _prefix=_prefix+x+'.'+name+'.',
+#-#                               _create_title=False, _level=_level))
         #--- End: for
             
         string = '\n'.join(string)
@@ -210,7 +210,7 @@ domain ancillary objects.
         if ignore_fill_value:
             ignore_properties += ('_FillValue', 'missing_value')
             
-        for x in ['extent', 'topology']:
+        for x in ['extent']: #-#, 'topology']:
             self_parameters  = getattr(self, x+'_parameters')()
             other_parameters = getattr(other, x+'_parameters')()
             if set(self_parameters) != set(other_parameters):
@@ -253,32 +253,32 @@ domain ancillary objects.
                 return False
         #--- End: if
 
-        # ------------------------------------------------------------
-        # Check the ancillary arrays
-        # ------------------------------------------------------------
-        for x in ['extent', 'topology']:
-            self_ancillary_arrays  = getattr(self, x+'_arrays')()
-            other_ancillary_arrays = getattr(other, x+'_arrays')()
-            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
-                if traceback:
-                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
-                        self.__class__.__name__,
-                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
-                return False
-    
-            for name, x in sorted(self_ancillary_arrays.items()):
-                y = other_arrays[name]
-                
-                if not self._equals(x, y,
-                                    rtol=rtol, atol=atol,
-                                    traceback=traceback,
-                                    ignore_data_type=ignore_data_type,
-                                    ignore_construct_type=ignore_construct_type,
-                                    ignore_fill_value=ignore_fill_value):
-                    if traceback:
-                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
-                    return False
-        #--- End: for
+#-#        # ------------------------------------------------------------
+#-#        # Check the ancillary arrays
+#-#        # ------------------------------------------------------------
+#-#        for x in ['extent']: #-#, 'topology']:
+#-#            self_ancillary_arrays  = getattr(self, x+'_arrays')()
+#-#            other_ancillary_arrays = getattr(other, x+'_arrays')()
+#-#            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
+#-#                if traceback:
+#-#                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
+#-#                        self.__class__.__name__,
+#-#                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
+#-#                return False
+#-#    
+#-#            for name, x in sorted(self_ancillary_arrays.items()):
+#-#                y = other_arrays[name]
+#-#                
+#-#                if not self._equals(x, y,
+#-#                                    rtol=rtol, atol=atol,
+#-#                                    traceback=traceback,
+#-#                                    ignore_data_type=ignore_data_type,
+#-#                                    ignore_construct_type=ignore_construct_type,
+#-#                                    ignore_fill_value=ignore_fill_value):
+#-#                    if traceback:
+#-#                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
+#-#                    return False
+#-#        #--- End: for
 
         return True
     #--- End: def

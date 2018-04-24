@@ -374,7 +374,7 @@ True
 Note that the data are returned in a `Data` object. Use the `get_array`
 method to return the data as a `numpy` array.
 
-.. seealso:: `del_data`, `get_array`, `has_Data`, `set_data`
+.. seealso:: `del_data`, `get_array`, `has_data`, `set_data`
 
 :Examples 1:
 
@@ -383,7 +383,7 @@ method to return the data as a `numpy` array.
 :Parameters:
 
     default: optional
-        Return *default* if and only if the data has not been set.
+        Return *default* if and only if the data have not been set.
 
 :Returns:
 
@@ -421,7 +421,7 @@ method to return the data as a `numpy` array.
     #--- End: def
 
     def has_data(self):
-        '''True if there is data.
+        '''True if there are data.
         
 .. versionadded:: 1.6
 
@@ -434,7 +434,7 @@ method to return the data as a `numpy` array.
 :Returns:
 
     out: `bool`
-        True if there is data, otherwise False.
+        True if there are data, otherwise False.
 
 :Examples 2:
 

@@ -6,7 +6,7 @@ from .propertiesdata import PropertiesData
 
 
 class PropertiesDataBounds(PropertiesData):
-    '''Base class for a data array with bounds and withdesciptive
+    '''Base class for a data array with bounds and with desciptive
 properties.
 
     '''
@@ -167,89 +167,77 @@ None
         return self._del_component('bounds')
     #--- End: def
 
-    def del_extent_array(self, name):
-        '''
-        '''
-        return self._component('extent_arrays', name)
-    #--- End: def
-
+#    def del_extent_array(self, name):
+#        '''
+#        '''
+#        return self._component('extent_arrays', name)
+#    #--- End: def
+#
     def del_extent_parameter(self, name):
         '''
         '''
         return self._del_component('extent_parameters', name)
     #--- End: def
 
-    def del_topology_parameter(self, name):
-        '''
-        '''
-        return self._del_component('topology_parameters', name)
-    #--- End: def
-
-    def del_topology_array(self, name):
-        '''
-        '''
-        return self._del_component('topology_arrays', name)
-    #--- End: def
-
-#    def extent_arrays(self):
+#    def del_topology_parameter(self, name):
 #        '''
 #        '''
-#        return self._get_component('extent_arrays', None, {}).copy()
+#        return self._del_component('topology_parameters', name)
 #    #--- End: def
-#      
-#    def extent_parameters(self):
+#
+#    def del_topology_array(self, name):
 #        '''
 #        '''
-#        return self._get_component('extent_parameters', None, {}).copy()
+#        return self._del_component('topology_arrays', name)
 #    #--- End: def
-
-    def extent_arrays(self, extent_arrays=None, copy=True):
-        '''Return or replace the identifiers of the coordinate objects that
-define the coordinate system.
-
-.. versionadded:: 1.6
-
-.. seealso:: `del_coordinate`
-
-:Examples 1:
-
->>> extent_arrays = c.extent_arrays()
-
-:Returns:
-
-    out: `set`
-        The identifiers of the coordinate objects.
-
-:Examples 2:
-
->>> c.extent_arrays()
-{}
-
-        '''
-        existing = self._get_component('extent_arrays', None, None)
-
-        if existing is None:
-            existing = {}
-            self._set_component('extent_arrays', None, existing)
-
-        out = existing.copy()
-
-        if not extent_arrays:
-            return out
-
-        # Still here?
-        if copy:
-            extent_arrays = extent_arrays.copy()
-            for key, value in extent_arrays.iteritems():                
-                extent_arrays[key] = value.copy()
-        #--- End: if
-        
-        # Still here?
-        existing.clear()
-        existing.update(extent_arrays)
-
-        return out
-    #--- End: def
+#
+#    def extent_arrays(self, extent_arrays=None, copy=True):
+#        '''Return or replace the identifiers of the coordinate objects that
+#define the coordinate system.
+#
+#.. versionadded:: 1.6
+#
+#.. seealso:: `del_coordinate`
+#
+#:Examples 1:
+#
+#>>> extent_arrays = c.extent_arrays()
+#
+#:Returns:
+#
+#    out: `set`
+#        The identifiers of the coordinate objects.
+#
+#:Examples 2:
+#
+#>>> c.extent_arrays()
+#{}
+#
+#        '''
+#        existing = self._get_component('extent_arrays', None, None)
+#
+#        if existing is None:
+#            existing = {}
+#            self._set_component('extent_arrays', None, existing)
+#
+#        out = existing.copy()
+#
+#        if not extent_arrays:
+#            return out
+#
+#        # Still here?
+#        if copy:
+#            extent_arrays = extent_arrays.copy()
+#            for key, value in extent_arrays.iteritems():                
+#                extent_arrays[key] = value.copy()
+#        #--- End: if
+#        
+#        # Still here?
+#        existing.clear()
+#        existing.update(extent_arrays)
+#
+#        return out
+#    #--- End: def
             
     def extent_parameters(self, extent_parameters=None, copy=True):
         '''Return or replace the identifiers of the coordinate objects that
@@ -297,87 +285,107 @@ define the coordinate system.
     #--- End: def
             
     def get_bounds(self, *default):
-        '''Insert cell bounds.
+        '''Return the bounds.
 
-.. versionadded:: 1.6
+.. seealso:: `get_array`, `get_data`, `has_buonds`, `set_bounds`
 
-.. seealso , `insert_data`, `remove_bounds`, `remove_data`
+:Examples 1:
+
+>>> b = c.get_bounds()
 
 :Parameters:
 
-    bounds: `Bounds`
-
-    copy: `bool`, optional
+    default: optional
+        Return *default* if and only if the bounds have not been set.
 
 :Returns:
 
-    `None`
+    out:
+        The bounds. If the bounds have not been set, then return the
+        value of *default* parameter if provided.
+
+:Examples 2:
+
+>>> f.del_bounds()
+>>> fprint .get_bounds('No bounds')
+'No bounds'
 
         '''
         return self._get_component('bounds', None, *default)
     #--- End: def
 
-    def get_extent_array(self, array, *default):
-        '''
-        '''
-        return self._get_component('extent_arrays', array, *default)
-    #--- End: def
-
-    def get_extent_parameter(self, parameter, *default):
-        '''
-        '''
-        return self._get_component('extent_parameters', parameter, *default)
-    #--- End: def
-    
-    def get_topology_array(self, name, *default):
-        '''
-        '''
-        return self._get_component('topology_arrays', name, *default)
-    #--- End: def
-
-    def get_topology_parameter(self, name, *default):
-        '''
-        '''
-        return self._get_component('topology_parameters', name, *default)
-    #--- End: def
+#    def get_extent_array(self, array, *default):
+#        '''
+#        '''
+#        return self._get_component('extent_arrays', array, *default)
+#    #--- End: def
+#
+#    def get_extent_parameter(self, parameter, *default):
+#        '''
+#        '''
+#        return self._get_component('extent_parameters', parameter, *default)
+#    #--- End: def
+#    
+#    def get_topology_array(self, name, *default):
+#        '''
+#        '''
+#        return self._get_component('topology_arrays', name, *default)
+#    #--- End: def
+#
+#    def get_topology_parameter(self, name, *default):
+#        '''
+#        '''
+#        return self._get_component('topology_parameters', name, *default)
+#    #--- End: def
 
     def has_bounds(self):
-        '''Insert cell bounds.
+        '''True if there are bounds.
+        
+.. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
-.. versionadded:: 1.6
+:Examples 1:
 
-.. seealso , `insert_data`, `remove_bounds`, `remove_data`
-
-:Parameters:
-
-    bounds: `Bounds`
-
-    copy: `bool`, optional
+>>> x = f.has_bounds()
 
 :Returns:
 
-    `None`
+    out: `bool`
+        True if there are bounds, otherwise False.
+
+:Examples 2:
+
+>>> if c.has_bounds():
+...     print 'Has bounds'
 
         '''
         return self._has_component('bounds')
     #--- End: def
 
     def set_bounds(self, bounds, copy=True):
-        '''Insert cell bounds.
+        '''Set the bounds.
 
-.. versionadded:: 1.6
+.. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 
-.. seealso , `insert_data`, `remove_bounds`, `remove_data`
+:Examples 1:
+
+>>> c.set_bounds(b)
 
 :Parameters:
 
-    bounds: `Bounds`
+    data: `Bounds`
+        The bounds to be inserted.
 
     copy: `bool`, optional
+        If False then do not copy the bounds prior to insertion. By
+        default the bounds are copied.
 
 :Returns:
 
     `None`
+
+:Examples 2:
+
+>>> c.set_data(b, copy=False)
 
         '''
         if copy:
@@ -386,55 +394,55 @@ define the coordinate system.
         self._set_component('bounds', None, bounds)
     #--- End: def
 
-    def set_extent_array(self, name, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = value.copy()
-
-        self._set_component('extent_arrays', name, value)
-    #--- End: def
-
-    def set_extent_parameter(self, parameter, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = deepcopy(value)
-
-        self._set_component('extent_parameters', parameter, value)
-    #--- End: def
-
-    def set_topology_array(self, name, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = value.copy()
-
-        return self._set_component('topology_arrays', name, value)
-    #--- End: def
-
-
-    def set_topology_parameter(self, name, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = deepcopy(value)
-
-        return self._set_component('topology_parameters', name, value)
-    #--- End: def
-
-    
-    def topology_arrays(self):
-        '''
-        '''
-        return self._get_component('topology_arrays', None, {}).copy()
-    #--- End: def
-    
-
-    def topology_parameters(self):
-        '''
-        '''
-        return self._get_component('topology_parameters', None, {}).copy()
-    #--- End: def
+#    def set_extent_array(self, name, value, copy=True):
+#        '''
+#        '''
+#        if copy:
+#            value = value.copy()
+#
+#        self._set_component('extent_arrays', name, value)
+#    #--- End: def
+#
+#    def set_extent_parameter(self, parameter, value, copy=True):
+#        '''
+#        '''
+#        if copy:
+#            value = deepcopy(value)
+#
+#        self._set_component('extent_parameters', parameter, value)
+#    #--- End: def
+#
+#    def set_topology_array(self, name, value, copy=True):
+#        '''
+#        '''
+#        if copy:
+#            value = value.copy()
+#
+#        return self._set_component('topology_arrays', name, value)
+#    #--- End: def
+#
+#
+#    def set_topology_parameter(self, name, value, copy=True):
+#        '''
+#        '''
+#        if copy:
+#            value = deepcopy(value)
+#
+#        return self._set_component('topology_parameters', name, value)
+#    #--- End: def
+#
+#    
+#    def topology_arrays(self):
+#        '''
+#        '''
+#        return self._get_component('topology_arrays', None, {}).copy()
+#    #--- End: def
+#    
+#
+#    def topology_parameters(self):
+#        '''
+#        '''
+#        return self._get_component('topology_parameters', None, {}).copy()
+#    #--- End: def
 
 #--- End: class
