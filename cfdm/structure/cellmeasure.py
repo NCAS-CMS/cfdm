@@ -46,27 +46,24 @@ correspond to cell measure constructs.
         array. Ignored if the *source* parameter is set.
 
           *Example:*
-             >>> c = CellMeasure(measure='area')
+             ``measure='area'``
         
         The measure may also be set after initialisation with the
         `set_measure` method.
 
     properties: `dict`, optional
-        Set properties to describe the data. The dictionary keys are
-        property names, with corresponding values. Ignored if the
-        *source* parameter is set.
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
 
           *Example:*
-             >>> c = CellMeasure(properties={'units': 'metres 2'})
+             ``properties={'units': 'metres 2'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
 
     data: `Data`, optional
         Set the data array. Ignored if the *source* parameter is set.
-        
-          *Example:*
-            >>> c = CellMeasure(data=d)
         
         The data array also may be set after initialisation with the
         `set_data` method.

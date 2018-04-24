@@ -33,8 +33,9 @@ class create_fieldTest(unittest.TestCase):
         
         dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
                                         bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
-        dim2.set_property('standard_name', 'atmosphere_hybrid_height_coordinate')
-        
+        dim2.set_property('standard_name'         , 'atmosphere_hybrid_height_coordinate')
+        dim2.set_property('computed_standard_name', 'altitude')
+                      
         # Auxiliary coordinates
         ak = cfdm.DomainAncillary(data=cfdm.Data([10.])) #, 'm'))
         ak.set_property('units', 'm')

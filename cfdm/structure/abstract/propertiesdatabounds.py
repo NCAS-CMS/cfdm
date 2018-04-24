@@ -5,15 +5,9 @@ from copy import deepcopy
 from .propertiesdata import PropertiesData
 
 
-# ====================================================================
-#
-# CFDM
-#
-# ====================================================================
-
 class PropertiesDataBounds(PropertiesData):
-    '''Base class for CFDM dimension coordinate, auxiliary coordinate and
-domain ancillary objects.
+    '''Base class for a data array with bounds and withdesciptive
+properties.
 
     '''
     __metaclass__ = abc.ABCMeta
@@ -29,25 +23,37 @@ domain ancillary objects.
 :Parameters:
 
     properties: `dict`, optional
-        Initialize a new instance with CF properties from a
-        dictionary's key/value pairs.
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
+
+          *Example:*
+             ``properties={'standard_name': 'longitude'}``
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
   
     data: `Data`, optional
-        Provide the new instance with an N-dimensional data array.
+        Set the data array. Ignored if the *source* parameter is set.
+        
+        The data array also may be set after initialisation with the
+        `set_data` method.
   
-    bounds: `Data` or `Bounds`, optional
-        Provide the new instance with cell bounds.
+    bounds: `Bounds`, optional
+        Set the bounds array. Ignored if the *source* parameter is
+        set.
+        
+        The bounds array also may be set after initialisation with the
+        `set_bounds` method.
   
-    source: `Variable`, optional
-        Take the attributes, CF properties and data array from the
-        source object. Any attributes, CF properties or data array
-        specified with other parameters are set after initialisation
-        from the source instance.
+    source: optional
+        Initialise the *properties*, *data* and *bounds* parameters
+        from the object given by *source*.
   
     copy: `bool`, optional
-        If False then do not copy arguments prior to
+        If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
-  
+
         '''
         # Set properties and data
         super(PropertiesDataBounds, self).__init__(
@@ -97,16 +103,65 @@ domain ancillary objects.
 #        self.extent_arrays(extent_arrays, copy=False)
     #--- End: def
 
-    def del_bounds(self):
-        '''Remove cell bounds.
+    def copy(self, data=True):
+        '''Return a deep copy.
+
+``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
 .. versionadded:: 1.6
 
-.. seealso , `insert_bounds`, `insert_data`, `remove_data`
+:Examples 1:
+
+>>> d = c.copy()
+
+:Parameters:
+
+    data: `bool`, optional
+        If False then do not copy the data nor bounds. By default the
+        data and bounds are copied.
 
 :Returns:
 
-    out: `None` or `Bounds`
+    out:
+        The deep copy.
+
+:Examples 2:
+
+>>> d = c.copy(data=False)
+
+        '''
+        return super(PropertiesDataBounds, self).copy(data=data)
+    #--- End: def
+
+    def del_bounds(self):
+        '''Delete the bounds.
+
+.. versionadded:: 1.6
+
+.. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
+
+:Examples 1:
+
+>>> c.del_bounds()
+
+:Returns: 
+
+    out: `Bounds` or `None`
+        The removed bounds, or `None` if the data was not set.
+
+:Examples 2:
+
+>>> c.has_bounds()
+True
+>>> print c.get_bounds()
+PPPPPPPPPPPPPPPPPPPPP
+>>> d = c.del_bounds()
+>>> print d
+PPPPPPPPPPPPPPPPPPPPP
+>>> c.has_bounds()
+False
+>>> print c.del_bounds()
+None
 
         '''
         return self._del_component('bounds')

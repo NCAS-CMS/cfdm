@@ -1,6 +1,6 @@
 import abc
 
-_NOT_IMPLEMENTED = 'This method must be implemented'
+_MUST_IMPLEMENT = 'This method must be implemented'
 
 # ====================================================================
 #
@@ -9,14 +9,7 @@ _NOT_IMPLEMENTED = 'This method must be implemented'
 # ====================================================================
 
 class Container(object):
-    '''
-
-Base class for storing a data array with metadata.
-
-A variable contains a data array and metadata comprising properties to
-describe the physical nature of the data.
-
-All components of a variable are optional.
+    '''Base class for storing object components.
 
 '''
     __metaclass__ = abc.ABCMeta
@@ -27,6 +20,8 @@ All components of a variable are optional.
 :Parameters:
 
     source: optional
+        Initialise the components from the object given by
+        *source*. Note that the components are not deep copied.
 
         '''
         if source is not None:
@@ -38,16 +33,12 @@ All components of a variable are optional.
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
-.. versionadded:: 1.6
-
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
     def __str__(self):
         '''x.__str__() <==> str(x)
-
-.. versionadded:: 1.6
 
         '''
         out = sorted(self._components)
@@ -110,10 +101,17 @@ All components of a variable are optional.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.6
+:Examples 1:
+
+>>> g = f.copy()
+
+:Returns:
+
+    out:
+        The deep copy.
 
         '''
-        raise NotImplementedError(NOT_IMPLEMENTED)
+        raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
     
 #--- End: class

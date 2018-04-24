@@ -11,16 +11,9 @@ from .container import Container
 # ====================================================================
 
 class Properties(Container):
+    '''Base class for descriptive properties.
+
     '''
-
-Base class for storing a data array with metadata.
-
-A variable contains a data array and metadata comprising properties to
-describe the physical nature of the data.
-
-All components of a variable are optional.
-
-'''
     __metaclass__ = abc.ABCMeta
 
     _special_properties = ()
@@ -31,10 +24,23 @@ All components of a variable are optional.
 :Parameters:
 
     properties: `dict`, optional
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
+
+          *Example:*
+             ``properties={'standard_name': 'altitude'}``
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
 
     source: optional
+        Initialise the *properties* parameter from the object given by
+        *source*.
 
     copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization By default parameters are deep copied.
 
         '''
         super(Properties, self).__init__(source=source)
@@ -55,8 +61,6 @@ All components of a variable are optional.
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
-.. versionadded:: 1.6
-
         '''
         return self.copy()
     #--- End: def
@@ -64,7 +68,6 @@ All components of a variable are optional.
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
-.. versionadded:: 1.6
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
@@ -74,8 +77,6 @@ All components of a variable are optional.
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
-
-.. versionadded:: 1.6
 
 :Examples 1:
 
@@ -100,8 +101,6 @@ A property may have any name and any value. Some properties correspond
 to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
-
-.. versionadded:: 1.6
 
 .. seealso:: `get_property`, `has_property`, `properties`, `set_property`
 
@@ -145,8 +144,6 @@ A property may have any name and any value. Some properties correspond
 to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
-
-.. versionadded:: 1.6
 
 .. seealso:: `del_property`, `has_property`, `properties`, `set_property`
 
@@ -201,8 +198,6 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
 
-.. versionadded:: 1.6
-
 .. seealso:: `del_property`, `get_property`, `properties`, `set_property`
 
 :Examples 1:
@@ -234,7 +229,13 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
     def properties(self, properties=None, copy=True):
         '''Inspect or change the CF properties.
 
-.. versionadded:: 1.6
+A property describes an aspect of the construct that is independent of
+the domain.
+
+A property may have any name and any value. Some properties correspond
+to netCDF attributes of variables (e.g. "units", "long_name", and
+"standard_name"), or netCDF global file attributes (e.g. "history" and
+"institution"),
 
 :Examples 1:
 
@@ -243,14 +244,13 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 :Parameters:
 
     props: `dict`, optional   
-        Set {+variable} attributes from the dictionary of values. If
-        the *copy* parameter is True then the values in the *attrs*
-        dictionary are deep copied
+        Replace all existing properties with those specified in the
+        *props* dictionary.
 
     copy: `bool`, optional
-        If False then any property values provided bythe *props*
-        parameter are not copied before insertion into the
-        {+variable}. By default they are deep copied.
+        If False then any property values provided by the *props*
+        parameter are not deep copied before insertion. By default
+        they are deep copied.
 
 :Returns:
 
@@ -302,8 +302,6 @@ A property may have any name and any value. Some properties correspond
 to netCDF attributes of variables (e.g. "units", "long_name", and
 "standard_name"), or netCDF global file attributes (e.g. "history" and
 "institution"),
-
-.. versionadded:: 1.6
 
 .. seealso:: `del_property`, `get_property`, `has_property`, `properties`
 

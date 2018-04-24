@@ -3,19 +3,8 @@ import abc
 from .properties import Properties
 
 
-# ====================================================================
-#
-# ArrayConstruct object
-#
-# ====================================================================
-
 class PropertiesData(Properties):
-    '''Base class for storing a data array with metadata.
-
-A variable contains a data array and metadata comprising properties to
-describe the physical nature of the data.
-
-All components of a variable are optional.
+    '''Base class for a data array with descriptive properties.
 
     '''
     __metaclass__ = abc.ABCMeta
@@ -27,16 +16,25 @@ All components of a variable are optional.
 :Parameters:
 
     properties: `dict`, optional
-        Initialize properties from the dictionary's key/value pairs.
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
+
+          *Example:*
+             ``properties={'standard_name': 'altitude'}``
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
 
     data: `Data`, optional
-        Provide a data array.
+        Set the data. Ignored if the *source* parameter is set.
         
-    source: `{+Variable}`, optional
-        Take the attributes, CF properties and data array from the
-        source {+variable}. Any attributes, CF properties or data
-        array specified with other parameters are set after
-        initialisation from the source {+variable}.
+        The data also may be set after initialisation with the
+        `set_data` method.
+        
+    source: optional  
+        Initialise the *properties* and *data* parameters from the
+        object given by *source*.
 
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
@@ -87,7 +85,7 @@ All components of a variable are optional.
     # ----------------------------------------------------------------
     @property
     def dtype(self):
-        '''Describes the format of the elements in the data array.
+        '''Describes the format of the elements in the data.
 
 :Examples:
 
@@ -103,7 +101,7 @@ dtype('float64')
     # ----------------------------------------------------------------
     @property
     def ndim(self):
-        '''The number of dimensions of the data array.
+        '''The number of dimensions of the data.
 
 :Examples:
 
@@ -137,7 +135,7 @@ dtype('float64')
     # ----------------------------------------------------------------
     @property
     def shape(self):
-        '''Shape of the data array.
+        '''Shape of the data.
 
 :Examples:
 
@@ -171,7 +169,7 @@ dtype('float64')
     # ----------------------------------------------------------------
     @property
     def size(self):
-        '''Number of elements in the data array.
+        '''Number of elements in the data.
 
 :Examples:
 
@@ -211,51 +209,51 @@ dtype('float64')
 
 >>> g = f.copy()
 
+:Parameters:
+
+    data: `bool`, optional
+        If False then do not copy the data. By default the data is
+        copied.
+
 :Returns:
 
-    out: `{+Variable}`
+    out:
         The deep copy.
 
 :Examples 2:
 
->>> g = f.copy()
->>> g is f
-False
->>> f.equals(g)
-True
->>> import copy
->>> h = copy.deepcopy(f)
->>> h is f
-False
->>> f.equals(g)
-True
+>>> g = f.copy(data=False)
 
         '''
         return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
     def del_data(self):
-        '''Remove and return the data array.
+        '''Delete the data.
 
 .. versionadded:: 1.6
 
 .. seealso:: `get_data`, `has_data`, `set_data`
 
+:Examples 1:
+
+>>> f.del_data()
+
 :Returns: 
 
     out: `Data` or `None`
-        The removed data array, or `None` if there isn't one.
+        The removed data, or `None` if the data was not set.
 
-:Examples:
+:Examples 2:
 
->>> f.hasdata
+>>> f.has_data()
 True
->>> print f.data
+>>> print f.get_data()
 [0, ..., 9] m
 >>> d = f.del_data()
 >>> print d
 [0, ..., 9] m
->>> f.hasdata
+>>> f.has_data()
 False
 >>> print f.del_data()
 None
@@ -264,104 +262,140 @@ None
         return self._del_component('data')
     #--- End: def
 
-    def fill_value(self, default=None):
-        '''Return the data array missing data value.
+#    def fill_value(self, default=None):
+#        '''Return the data missing data value.
+#
+#This is the value of the `missing_value` CF property, or if that is
+#not set, the value of the `_FillValue` CF property, else if that is
+#not set, ``None``. In the last case the default `numpy` missing data
+#value for the array's data type is assumed if a missing data value is
+#required.
+#
+#.. versionadded:: 1.6
+#
+#:Parameters:
+#
+#    default: optional
+#        If the missing value is unset then return this value. By
+#        default, *default* is `None`. If *default* is the special
+#        value ``'netCDF'`` then return the netCDF default value
+#        appropriate to the data array's data type is used. These may
+#        be found as follows:
+#
+#        >>> import netCDF4
+#        >>> print netCDF4.default_fillvals    
+#
+#:Returns:
+#
+#    out:
+#        The missing data value, or the value specified by *default* if
+#        one has not been set.
+#
+#:Examples:
+#
+#>>> f.{+name}()
+#None
+#>>> f._FillValue = -1e30
+#>>> f.{+name}()
+#-1e30
+#>>> f.missing_value = 1073741824
+#>>> f.{+name}()
+#1073741824
+#>>> del f.missing_value
+#>>> f.{+name}()
+#-1e30
+#>>> del f._FillValue
+#>>> f.{+name}()
+#None
+#>>> f,dtype
+#dtype('float64')
+#>>> f.{+name}(default='netCDF')
+#9.969209968386869e+36
+#>>> f._FillValue = -999
+#>>> f.{+name}(default='netCDF')
+#-999
+#
+#        '''
+#        fillval = self.get_property('_FillValue', None)
+#
+#        if fillval is None:
+#            if default == 'netCDF':
+#                d = self.get_data().dtype
+#                fillval = netCDF4.default_fillvals[d.kind + str(d.itemsize)]
+#            else:
+#                fillval = default 
+#        #--- End: if
+#
+#        return fillval
+#    #--- End: def
 
-This is the value of the `missing_value` CF property, or if that is
-not set, the value of the `_FillValue` CF property, else if that is
-not set, ``None``. In the last case the default `numpy` missing data
-value for the array's data type is assumed if a missing data value is
-required.
+    def get_array(self):
+        '''Return a numpy array copy the data.
 
-.. versionadded:: 1.6
+Use the `get_data` method to return the data as a ``Data` object.
 
-:Parameters:
+.. seealso:: `get_data`
 
-    default: optional
-        If the missing value is unset then return this value. By
-        default, *default* is `None`. If *default* is the special
-        value ``'netCDF'`` then return the netCDF default value
-        appropriate to the data array's data type is used. These may
-        be found as follows:
+:Examples 1:
 
-        >>> import netCDF4
-        >>> print netCDF4.default_fillvals    
+>>> a = f.get_array()
 
 :Returns:
 
-    out:
-        The missing data value, or the value specified by *default* if
-        one has not been set.
+    out: `numpy.ndarray`
+        An independent numpy array of the data.
 
-:Examples:
-
->>> f.{+name}()
-None
->>> f._FillValue = -1e30
->>> f.{+name}()
--1e30
->>> f.missing_value = 1073741824
->>> f.{+name}()
-1073741824
->>> del f.missing_value
->>> f.{+name}()
--1e30
->>> del f._FillValue
->>> f.{+name}()
-None
->>> f,dtype
-dtype('float64')
->>> f.{+name}(default='netCDF')
-9.969209968386869e+36
->>> f._FillValue = -999
->>> f.{+name}(default='netCDF')
--999
-
-        '''
-        fillval = self.get_property('_FillValue', None)
-
-        if fillval is None:
-            if default == 'netCDF':
-                d = self.get_data().dtype
-                fillval = netCDF4.default_fillvals[d.kind + str(d.itemsize)]
-            else:
-                fillval = default 
-        #--- End: if
-
-        return fillval
-    #--- End: def
-
-    def get_array(self):
-        '''A numpy array copy the data.
-
-:Examples:
+:Examples 2:
 
 >>> d = Data([1, 2, 3.0], 'km')
->>> a = d.array
->>> isinstance(a, numpy.ndarray)
+>>> array = d.get_array()
+>>> isinstance(array, numpy.ndarray)
 True
->>> print a
+>>> print array
 [ 1.  2.  3.]
 >>> d[0] = -99 
->>> print a[0] 
+>>> print array[0] 
 1.0
->>> a[0] = 88
+>>> array[0] = 88
 >>> print d[0]
 -99.0 km
 
         '''
         data = self.get_data(None)
         if data is None:
-            raise ValueError("{!r} has no data array".format(self.__class__.__name__))
+            raise ValueError("{!r} has no data".format(self.__class__.__name__))
         
         return data.get_array()
     #--- End: def
 
     def get_data(self, *default):
-        '''
+        '''Return the data.
+
+Note that the data are returned in a `Data` object. Use the `get_array`
+method to return the data as a `numpy` array.
+
+.. seealso:: `del_data`, `get_array`, `has_Data`, `set_data`
+
+:Examples 1:
+
+>>> d = f.get_data()
+
 :Parameters:
 
     default: optional
+        Return *default* if and only if the data has not been set.
+
+:Returns:
+
+    out:
+        The data. If the data has not been set, then return the value
+        of *default* parameter if provided.
+
+:Examples 2:
+
+>>> f.del_data()
+>>> f.get_data('No data')
+'No data'
 
         '''
         try:
@@ -369,8 +403,11 @@ True
         except AttributeError:
             raise AttributeError("There is no data")
 
-        if data is None and default:
-            return default[0]
+        if data is None:
+            if  default:
+                return default[0]
+
+            raise ValueError("{!r} has no data".format(self.__class__.__name__))
         
         units = self.get_property('units', None)
         if units is not None:
@@ -384,37 +421,61 @@ True
     #--- End: def
 
     def has_data(self):
-        '''True if there is a data array.
+        '''True if there is data.
         
-If present, the data array is stored in the `data` attribute.
-
 .. versionadded:: 1.6
 
-.. seealso:: `data`
+.. seealso:: `del_data`, `get_data`, `set_data`
 
-:Examples:
+:Examples 1:
+
+>>> x = f.has_data()
+
+:Returns:
+
+    out: `bool`
+        True if there is data, otherwise False.
+
+:Examples 2:
 
 >>> if f.has_data():
-...     print f.get_data()
+...     print 'Has data'
 
         '''     
         return self._has_component('data')
     #--- End: def
 
     def set_data(self, data, copy=True):
-        '''Insert a data array.
+        '''Set the data.
+
+If the data has units or calendar properties then they are removed
+prior to insertion.
 
 .. versionadded:: 1.6
+
+
+.. seealso:: `del_data`, `get_data`, `has_data`
+
+:Examples 1:
+
+>>> f.set_data(d)
 
 :Parameters:
 
     data: `Data`
+        The data to be inserted.
 
     copy: `bool`, optional
+        If False then do not copy the data prior to insertion. By
+        default the data are copied.
 
 :Returns:
 
     `None`
+
+:Examples 2:
+
+>>> f.set_data(d, copy=False)
 
         '''
         if copy:

@@ -2633,11 +2633,16 @@ Set the Data attribute of a variable.
     def _create_formula_terms_ref(self, f, key, coord, formula_terms):
         '''asdasdasdas
 
+If the coordinate object has properties 'standard_name' or
+'computed_standard_name' then they are copied to coordinate conversion
+parameters.
+
 :Parameters:
 
     f: `Field`
 
     key: `str`
+        The internal identifier of the coordinate.
 
     coord: `Coordinate`
 
@@ -2655,26 +2660,19 @@ Set the Data attribute of a variable.
         g = self.read_vars
 
         domain_ancillaries = {}
-    
+        parameters         = {}
+        
         for term, ncvar in formula_terms.iteritems():
             # The term's value is a domain ancillary of the field, so
             # we put its identifier into the coordinate reference.
-#            if ncvar in g['domain_ancillary_key']:
             domain_ancillaries[term] = g['domain_ancillary_key'].get(ncvar)
-#            else:
-#                domain_ancillaries[term] = None
-
-        parameters = {}
 
         for name in ('standard_name', 'computed_standard_name'):            
             value = self.get_property(coord, name, None)
             if value is not None:
                 parameters[name] = value
-            
-#        standard_name = self.get_property(coord, 'standard_name', None)
-#        if standard_name is not None:
-#            parameters['standard_name'] = standard_name
-            
+        #--- End: for
+        
         coordref = self.initialise('CoordinateReference',
                                    coordinates=[key],
                                    domain_ancillaries=domain_ancillaries,
