@@ -41,6 +41,7 @@ class PropertiesData(Properties):
         initialization. By default arguments are deep copied.
 
         '''
+        # Initialise properties
         super(PropertiesData, self).__init__(properties=properties,
                                              source=source, copy=copy)
 

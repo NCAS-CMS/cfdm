@@ -6,7 +6,7 @@ from .propertiesdata import PropertiesData
 
 
 class PropertiesDataBounds(PropertiesData):
-    '''Base class for a data array with bounds and with desciptive
+    '''Base class for a data array with bounds and with descriptive
 properties.
 
     '''
@@ -46,6 +46,8 @@ properties.
         The bounds array also may be set after initialisation with the
         `set_bounds` method.
   
+    extent_parameters: `dict`, optional
+
     source: optional
         Initialise the *properties*, *data* and *bounds* parameters
         from the object given by *source*.
@@ -55,7 +57,7 @@ properties.
         initialization. By default arguments are deep copied.
 
         '''
-        # Set properties and data
+        # Initialise properties and data
         super(PropertiesDataBounds, self).__init__(
             properties=properties,
             data=data,
@@ -80,26 +82,29 @@ properties.
 #                extent_arrays = None
         #--- End: if
 
+        # Initialise bounds
         if bounds is not None:
             if copy or not _use_data:
                 bounds = bounds.copy(data=_use_data)
                 
             self.set_bounds(bounds, copy=False)
 
+        # Initialise cell extent parameters
         if extent_parameters:
             if copy:
                 extent_parameters = deepcopy(extent_parameters)
         else:
             extent_parameters = {}
-            
+
+        self.extent_parameters(extent_parameters, copy=False)
+                    
+#        # Initialise cell extent arrays
 #        if extent_arrays:
 #            if copy or not _use_data:
 #                extent_arrays = extent_arrays.copy()
 #                for key, value in extent_arrays.iteritems():
 #                    extent_arrays[key] = value.copy(data=_use_data)
 
-
-        self.extent_parameters(extent_parameters, copy=False)
 #        self.extent_arrays(extent_arrays, copy=False)
     #--- End: def
 
@@ -172,7 +177,7 @@ None
 #        '''
 #        return self._component('extent_arrays', name)
 #    #--- End: def
-#
+
     def del_extent_parameter(self, name):
         '''
         '''
@@ -402,16 +407,16 @@ define the coordinate system.
 #
 #        self._set_component('extent_arrays', name, value)
 #    #--- End: def
-#
-#    def set_extent_parameter(self, parameter, value, copy=True):
-#        '''
-#        '''
-#        if copy:
-#            value = deepcopy(value)
-#
-#        self._set_component('extent_parameters', parameter, value)
-#    #--- End: def
-#
+
+    def set_extent_parameter(self, parameter, value, copy=True):
+        '''
+        '''
+        if copy:
+            value = deepcopy(value)
+
+        self._set_component('extent_parameters', parameter, value)
+    #--- End: def
+
 #    def set_topology_array(self, name, value, copy=True):
 #        '''
 #        '''

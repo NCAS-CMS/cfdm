@@ -9,32 +9,20 @@ from .properties import Properties
 # ====================================================================
 
 class PropertiesData(Properties):
+    '''Mixin class for a data array with descriptive properties.
+
     '''
-
-Base class for storing a data array with metadata.
-
-A variable contains a data array and metadata comprising properties to
-describe the physical nature of the data.
-
-All components of a variable are optional.
-
-'''
     __metaclass__ = abc.ABCMeta
 
     def __getitem__(self, indices):
+        '''x.__getitem__(indices) <==> x[indices]
+
         '''
-
-Called to implement evaluation of x[indices].
-
-x.__getitem__(indices) <==> x[indices]
-
-.. versionadded:: 1.6
-
-'''
         data = self.get_data(None)
         if data is None:
             raise ValueError(
-"Can't slice {} when there is no data".format(self.__class__.__name__))
+                "Can't slice {} when there is no data".format(
+                    self.__class__.__name__))
 
         new = self.copy(data=False)
         new.set_data(data[indices], copy=False)
@@ -43,15 +31,9 @@ x.__getitem__(indices) <==> x[indices]
     #--- End: def
 
     def __setitem__(self, indices, value):
+        '''x.__setitem__(indices, value) <==> x[indices]
+
         '''
-
-Called to implement assignment to x[indices]
-
-x.__setitem__(indices, value) <==> x[indices]
-
-.. versionadded:: 1.6
-
-'''
         data = self.get_data(None)
         if data is None:
             raise ValueError("Can't set elements when there is no data")    
@@ -567,7 +549,10 @@ The data type of the data array is unchanged.
         if axes is None:
             return axes
 
-        ndim = self.get_data().ndim
+        if isinstance(axes, (int, long)):
+            axes = (axes,)
+            
+        ndim = self.ndim
         return [(i + ndim if i < 0 else i) for i in axes]
     #--- End: def
     

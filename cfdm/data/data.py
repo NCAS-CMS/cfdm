@@ -552,7 +552,7 @@ data array shape.
             if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
                 array = array.view(numpy.ndarray)
         #--- End: if
-
+        
 #        calendar = self.get_calendar('standard')
 #        if calendar is None:
 #            calendar = 'standard'
@@ -561,8 +561,8 @@ data array shape.
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'))
 #        except OverflowError:
-            
-        if mask is None:
+
+        if not mask:
             # There is no missing data
             array = numpy.array(array, dtype=object)
         else:

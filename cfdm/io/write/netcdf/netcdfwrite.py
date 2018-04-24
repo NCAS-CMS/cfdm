@@ -632,16 +632,18 @@ then the input coordinate is not written.
         coord = self.squeeze(coord, axes=0, copy=True)
     
         if not self._already_in_file(coord, ()):
-            ncvar = self._write_netcdf_variable_name(coord,
-                                                     default='scalar',
-                                                     extra=extra)
+            ncvar = self._create_netcdf_variable_name(coord,
+                                                      default='scalar')                        
+#            ncvar = self._write_netcdf_variable_name(coord,
+#                                                     default='scalar',
+#                                                     extra=extra)
     
             # If this scalar coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
             # attribute to the dictionary of extra attributes
             bounds_extra = self._write_bounds(coord, (), ncvar)
     
-            # Create a new auxiliary coordinate variable
+            # Create a new scalar coordinate variable
             self._write_netcdf_variable(ncvar, (), coord, extra=bounds_extra)
     
         else:

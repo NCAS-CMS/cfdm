@@ -3,18 +3,11 @@ import abc
 from .propertiesdata import PropertiesData
 
 from ..functions import RTOL, ATOL
-#from ..functions import equals as cfdm_equals
 
-
-# ====================================================================
-#
-# CFDM Bounded variable mixin 
-#
-# ====================================================================
 
 class PropertiesDataBounds(PropertiesData):
-    '''Base class for CF dimension coordinate, auxiliary coordinate and
-domain ancillary objects.
+    '''Mixin class for a data array with bounds and with descriptive
+properties.
 
     '''
     __metaclass__ = abc.ABCMeta
@@ -81,7 +74,6 @@ domain ancillary objects.
 #-#        if ancillary_arrays:
 #-#            for name, array in ancillary_arrays.iteritems():
 #-#                if not array.has_data():
-#-##                    new.set_extent_array(name, array, copy=True)
 #-#                    continue
 #-#                
 #-#                ancillary_indices = list(indices)
@@ -175,7 +167,7 @@ domain ancillary objects.
 #    units = 'm'
 #    Data(catchement(10)) = [10.0, ..., 78.9]
 #    bounds.long_name = 'Why on earth do I have  long name?'
-#    bounds.Data(catchement(10), 2) = [[5.0, ..., 15.0]]
+#    bounds.Data(catchement(10), 17) = [[5.0, ..., 15.0]]
 #    extent.climatology = True
 #    extent.geometry_type = 'polygon'
 #    extent.part_node_count.long_name = 'this is a part node count'
@@ -295,8 +287,8 @@ domain ancillary objects.
         if bounds is not None:
             bounds.expand_dims(position, copy=False)
             
-        for array in c.extent_arrays().itervalues():                
-            array.expand_dims(position, copy=False)
+#-#        for array in c.extent_arrays().itervalues():                
+#-#            array.expand_dims(position, copy=False)
 
         return c
     #--- End: def        
@@ -312,8 +304,8 @@ domain ancillary objects.
         if bounds is not None:
             bounds.squeeze(axes, copy=False)
 
-        for array in c.extent_arrays().itervalues():                
-            array.squeeze(axes, copy=False)
+#-#        for array in c.extent_arrays().itervalues():                
+#-#            array.squeeze(axes, copy=False)
         
         return c
     #--- End: def
@@ -369,13 +361,12 @@ domain ancillary objects.
                 # Swap elements 1 and 3 of the trailing dimension so
                 # that the values are still contiguous (if they ever
                 # were). See section 7.1 of the CF conventions.
-#                data[..., [1, 3]] = data[..., [3, 1]]
                 data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
                 bounds.set_data(data, copy=False)
         #--- End: if
         
-        for array in c.extent_arrays().itervalues():                
-            array.transpose(axes, copy=False)
+#-#        for array in c.extent_arrays().itervalues():                
+#-#            array.transpose(axes, copy=False)
         
         return c
     #--- End: def
