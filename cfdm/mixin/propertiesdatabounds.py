@@ -148,27 +148,20 @@ properties.
         #-------------------------------------------------------------
         # Cell extent domain ancillary-valued terms
         # ------------------------------------------------------------
-        if field:
-            for term, key in sorted(cell_extent.domain_ancillaries().items()):
+        for term, key in sorted(cell_extent.domain_ancillaries().items()):
+            if field:
                 value = field.domain_ancillaries().get(key)
                 if value is not None:
                     value = 'Domain Ancillary: '+value.name(default=key)
                 else:
                     value = ''
-                string.append('{0}Cell:{1} = {2}'.format(
-                    indent1, term, str(value)))
-        else:
-            for term, value in sorted(coordinate_conversion.domain_ancillaries.items()):
-                string.append("{0}Cell:{1} = {2}".format(
-                    indent1, term, str(value)))
+            else:
+                value = key
 
+            string.append("{0}{1}Cell:{2} = {3}".format(
+                indent1, _prefix, term, str(value)))
+        #--- End: for
         
-        #for name, array in sorted(cell_extent.domain_ancillaries().items()):
-        #   string.append(
-        #       array.dump(display=False, field=field, key=key,
-        #                  _prefix=_prefix+x+'.'+name+'.',
-        #                  _create_title=False, _level=_level))
-
         string = '\n'.join(string)
         
         if display:
@@ -176,44 +169,6 @@ properties.
         else:
             return string
     #--- End: def
-
-#        #-------------------------------------------------------------
-#        # Extent and topology properties
-#        # ------------------------------------------------------------
-#        indent1 = '    ' * (_level + 1)
-#        for x in ['extent']: #-#, 'topology']:
-#            parameters = getattr(self, x+'_parameters')()
-#            for name, parameter in sorted(parameters.items()):
-#                string.append(
-#                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
-#
-##-#            arrays = getattr(self, x+'_arrays')()
-##-#            for name, array in sorted(arrays.items()):
-##-#                string.append(
-##-#                    array.dump(display=False, field=field, key=key,
-##-#                               _prefix=_prefix+x+'.'+name+'.',
-##-#                               _create_title=False, _level=_level))
-#        #--- End: for
-#            
-#        string = '\n'.join(string)
-#        
-#        if display:
-#            print string
-#        else:
-#            return string
-#    #--- End: def
-
-#Domain Ancillary: 
-#    Data = 'asdasdasdas'
-#    units = 'm'
-#    Data(catchement(10)) = [10.0, ..., 78.9]
-#    bounds.long_name = 'Why on earth do I have  long name?'
-#    bounds.Data(catchement(10), 17) = [[5.0, ..., 15.0]]
-#    extent.climatology = True
-#    extent.geometry_type = 'polygon'
-#    extent.part_node_count.long_name = 'this is a part node count'
-#    extent.part_node_count.Data(catchement(10), 4) = [[2, ..., 4]]
-#    extent.interior_ring.Data(catchement(10), 4) = [[1, ..., 0]]
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -240,59 +195,18 @@ properties.
         # ------------------------------------------------------------
         # Check the cell extent parameters
         # ------------------------------------------------------------
-        if ignore_fill_value:
-            ignore_properties += ('_FillValue', 'missing_value')
-            
-        self_parameters  = self.cell_extent.parameters()
-        other_parameters = other.cell_extent.parameters()
-        print self_parameters, other_parameters  
-        if set(self_parameters) != set(other_parameters):
-                if traceback:
-                    print("{0}: Different cell extent parameters: {1}, {2}".format( 
-                        self.__class__.__name__,
-                        set(self_parameters), set(other_parameters)))
-                return False
-            
-        for name, x in sorted(self_parameters.iteritems()):
-            y = other_parameters[name]
-            
-            if not self._equals(x, y, rtol=rtol, atol=atol,
-                                ignore_fill_value=ignore_fill_value,
-                                traceback=traceback):
-                if traceback:
-                    print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
-                        self.__class__.__name__, prop, x, y))
-                return False
-        #--- End: for
-
-        # ------------------------------------------------------------
-        # Check the ancillary parameters
-        # ------------------------------------------------------------
-        if ignore_fill_value:
-            ignore_properties += ('_FillValue', 'missing_value')
-            
-        for x in ['extent']: #-#, 'topology']:
-            self_parameters  = getattr(self, x+'_parameters')()
-            other_parameters = getattr(other, x+'_parameters')()
-            if set(self_parameters) != set(other_parameters):
-                if traceback:
-                    print("{0}: Different parameters: {1}, {2}".format( 
-                        self.__class__.__name__,
-                        set(self_parameters), set(other_parameters)))
-                return False
-            
-            for name, x in sorted(self_parameters.iteritems()):
-                y = other_parameters[name]
-                
-                if not self._equals(x, y, rtol=rtol, atol=atol,
-                                    ignore_fill_value=ignore_fill_value,
-                                    traceback=traceback):
-                    if traceback:
-                        print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
-                            self.__class__.__name__, prop, x, y))
-                    return False
-        #--- End: for
-
+        if not self.cell_extent.equals(
+                other.cell_extent,
+                rtol=rtol, atol=atol,
+                traceback=traceback,
+                ignore_data_type=ignore_data_type,
+                ignore_fill_value=ignore_fill_value,                
+                ignore_construct_type=ignore_construct_type):
+            if traceback:
+                print(
+"{}: Different cell extent".format(self.__class__.__name__))
+	    return False
+        
         # ------------------------------------------------------------
         # Check the bounds 
         # ------------------------------------------------------------
@@ -314,33 +228,6 @@ properties.
                 return False
         #--- End: if
 
-#-#        # ------------------------------------------------------------
-#-#        # Check the ancillary arrays
-#-#        # ------------------------------------------------------------
-#-#        for x in ['extent']: #-#, 'topology']:
-#-#            self_ancillary_arrays  = getattr(self, x+'_arrays')()
-#-#            other_ancillary_arrays = getattr(other, x+'_arrays')()
-#-#            if set(self_ancillary_arrays) != set(other_ancillary_arrays):
-#-#                if traceback:
-#-#                    print("{0}: Different ancillary arrays: {1}, {2}".format( 
-#-#                        self.__class__.__name__,
-#-#                        set(self_ancillary_arrays), set(other_ancillary_arrays)))
-#-#                return False
-#-#    
-#-#            for name, x in sorted(self_ancillary_arrays.items()):
-#-#                y = other_arrays[name]
-#-#                
-#-#                if not self._equals(x, y,
-#-#                                    rtol=rtol, atol=atol,
-#-#                                    traceback=traceback,
-#-#                                    ignore_data_type=ignore_data_type,
-#-#                                    ignore_construct_type=ignore_construct_type,
-#-#                                    ignore_fill_value=ignore_fill_value):
-#-#                    if traceback:
-#-#                        print("{0}: Different {1} {2}".format(self.__class__.__name__, x, name))
-#-#                    return False
-#-#        #--- End: for
-
         return True
     #--- End: def
     
@@ -356,9 +243,6 @@ properties.
         if bounds is not None:
             bounds.expand_dims(position, copy=False)
             
-#-#        for array in c.extent_arrays().itervalues():                
-#-#            array.expand_dims(position, copy=False)
-
         return c
     #--- End: def        
     
@@ -373,9 +257,6 @@ properties.
         if bounds is not None:
             bounds.squeeze(axes, copy=False)
 
-#-#        for array in c.extent_arrays().itervalues():                
-#-#            array.squeeze(axes, copy=False)
-        
         return c
     #--- End: def
     
@@ -433,9 +314,6 @@ properties.
                 data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
                 bounds.set_data(data, copy=False)
         #--- End: if
-        
-#-#        for array in c.extent_arrays().itervalues():                
-#-#            array.transpose(axes, copy=False)
         
         return c
     #--- End: def

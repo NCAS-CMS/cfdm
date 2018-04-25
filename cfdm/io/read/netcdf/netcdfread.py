@@ -2037,20 +2037,16 @@ ancillaries, field ancillaries).
         attribute = 'bounds'
         climatology = False
         if bounds is not None:
-            print 'arse 0'
             ncbounds = bounds
         else:
             ncbounds = properties.pop('bounds', None)
-            print 'arse 1'
             if ncbounds is None:
-                print 'arse 2'
                 ncbounds = properties.pop('climatology', None)
                 if ncbounds is not None:
                     climatology = True
                     attribute = 'climatology'
         #--- End: if
 
-        print 'PPPPPPPPPP', ncvar, climatology
         if dimension:
             properties.pop('compress', None) #??
             c = self.initialise('DimensionCoordinate')

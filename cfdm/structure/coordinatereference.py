@@ -7,11 +7,6 @@ import abstract
 from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
 
-# ====================================================================
-#
-# CoordinateReference object
-#
-# ====================================================================
 
 class CoordinateReference(abstract.Container):
     '''A coordinate reference construct of the CF data model. 

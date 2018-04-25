@@ -139,7 +139,8 @@ class Constructs(structure.Constructs):
         if not self._equals_domain_axis(other, rtol=rtol, atol=atol,
                                         traceback=traceback,
                                         axis1_to_axis0=axis1_to_axis0,
-                                        key1_to_key0=key1_to_key0, **kwargs):
+                                        key1_to_key0=key1_to_key0,
+                                        **kwargs):
             return False
         
         # ------------------------------------------------------------
@@ -244,6 +245,27 @@ class Constructs(structure.Constructs):
         #--- End: for
 
         # ------------------------------------------------------------
+        #
+        # ------------------------------------------------------------
+        for construct_type in ('dimension_coordinate',
+                               'auxiliary_coordinate', 'domain_ancillary'):
+            found_match = False
+            for key1, y in other.constructs(construct_type).iteritems():
+                x = self.get_construct(key1_to_key0[key1])                
+
+                terms0 = x.cell_extent.domain_ancillaries()
+                terms1 = {}
+                for term, key in y.cell_extent.domain_ancillaries().items():
+                    terms1[term] = key1_to_key0.get(key, key)
+                    
+                if terms0 != terms1:                    
+                    if traceback:
+                        print(
+"Traceback: No match for {0!r})".format('????'))
+                    return False
+        #--- End: for
+        
+        # ------------------------------------------------------------
         # Check non-array constructs
         # ------------------------------------------------------------
         for construct_type in self._non_array_constructs:
@@ -282,7 +304,7 @@ class Constructs(structure.Constructs):
                 found_match = False
                 for key1, ref1 in refs1.items():
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       traceback=True, **kwargs): ####
+                                       traceback=False, **kwargs): ####
                         continue
 
                     # Coordinates
@@ -295,18 +317,18 @@ class Constructs(structure.Constructs):
                         continue
     
                     # Domain ancillary-valued coordinate conversion terms
-                    terms0 = ref0.get_coordinate_conversion().domain_ancillaries()
+                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
                     terms1 = {}
-                    for term, key in ref1.get_coordinate_conversion().domain_ancillaries().items():
+                    for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:
                         continue
     
                     # Domain ancillary-valued datum terms
-                    terms0 = ref0.get_datum().domain_ancillaries()
+                    terms0 = ref0.datum.domain_ancillaries()
                     terms1 = {}
-                    for term, key in ref1.get_datum().domain_ancillaries().items():
+                    for term, key in ref1.datum.domain_ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:

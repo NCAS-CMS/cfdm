@@ -3,6 +3,8 @@ import abc
 import mixin
 import structure
 
+from .cellextent import CellExtent
+
 # ====================================================================
 #
 # DimensionCoordinate object
@@ -14,6 +16,12 @@ class DimensionCoordinate(mixin.Coordinate, structure.DimensionCoordinate):
 
     '''
     __metaclass__ = abc.ABCMeta
+
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        obj._CellExtent = CellExtent
+        return obj
+    #--- End: def
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None):

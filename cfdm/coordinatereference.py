@@ -39,12 +39,7 @@ for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
     
 _datum_parameters         = set(_datum_parameters)
 _datum_domain_ancillaries = set()
-    
-# ====================================================================
-#
-# CoordinateReference object
-#
-# ====================================================================
+
 
 class CoordinateReference(mixin.Container, structure.CoordinateReference):
     '''A CF coordinate reference construct.
@@ -64,22 +59,16 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
         return obj
     #--- End: def
 
-#    def __new__(cls, *args, **kwargs):
-#        obj = object.__new__(cls, *args, **kwargs)
-#        
-#        obj._Terms = Terms
-#
-#        return obj
-#    #--- End: def
-
     def __init__(self,
                  coordinates=None,
+                 datum=None,
+                 coordiante_conversion=None,
                  domain_ancillaries=None,
                  parameters=None,
-                 coordinate_conversion_domain_ancillaries=None,
-                 coordinate_conversion_parameters=None,
-                 datum_parameters=None,
-                 datum_domain_ancillaries=None,
+#                 coordinate_conversion_domain_ancillaries=None,
+#                 coordinate_conversion_parameters=None,
+#                 datum_parameters=None,
+#                 datum_domain_ancillaries=None,
                  source=None, copy=True):
         '''**Initialization**
 
@@ -192,49 +181,46 @@ There are three modes of initialization:
 
         '''
         if source is None:
-            if parameters is not None:
-                if datum_parameters is not None:
-                    raise ValueError(
-"Can't set both 'parameters' and 'datum_parameters' keywords")
+            if parameters is not None or coordinate_conversion is not None:
+                if datum is not None or coordinate_conversion is not None:
+                    raise ValueError(" xcawed we2q3 \a")
 
-                if coordinate_conversion_parameters is not None:
-                    raise ValueError(
-"Can't set both 'parameters' and 'coordinate_conversion_parameters' keywords")
-                
                 datum_parameters = {}
                 coordinate_conversion_parameters = {}
-                
-                for p, value in parameters.iteritems():
-                    if p in self._datum_parameters:
-                        datum_parameters[p] = value
-                    else:
-                        coordinate_conversion_parameters[p] = value
-            #-- End: if
-            
-            if domain_ancillaries is not None:
-                if datum_domain_ancillaries is not None:
-                    raise ValueError(
-"Can't set both 'domain_ancillaries' and 'datum_conversion_domain_ancillaries' keywords")
-                if coordinate_conversion_domain_ancillaries is not None:
-                    raise ValueError(
-"Can't set both 'domain_ancillaries' and 'coordinate_conversion_domain_ancillaries' keywords")
-                
+
                 datum_domain_ancillaries = {}
                 coordinate_conversion_domain_ancillaries = {}
-                
-                for p, value in domain_ancillaries.iteritems():
-                    if p in self._datum_domain_ancillaries:
-                        datum_domain_ancillaries[p] = value
-                    else:
-                        coordinate_conversion_domain_ancillaries[p] = value
-        #-- End: if
+
+                if parameters is not None:
+                    for p, value in parameters.iteritems():
+                        if p in self._datum_parameters:
+                            datum_parameters[p] = value
+                        else:
+                            coordinate_conversion_parameters[p] = value
+                #-- End: if
+            
+                if domain_ancillaries is not None:                 
+                    for p, value in domain_ancillaries.iteritems():
+                        if p in self._datum_domain_ancillaries:
+                            datum_domain_ancillaries[p] = value
+                        else:
+                            coordinate_conversion_domain_ancillaries[p] = value
+                #-- End: if
+
+                datum = self._Datum(parameters=datum_parameters,
+                                    domain_ancillaries=datum_domain_ancillaries)
         
+                coordinate_conversion = self._CoordinateConversion(
+                    parameters=coordinate_conversion_parameters,
+                    domain_ancillaries=coordinate_conversion_domain_ancillaries)
+        else:
+            datum = None
+            coordinate_conversion = None
+            
         super(CoordinateReference, self).__init__(
             coordinates=coordinates,
-            coordinate_conversion_domain_ancillaries=coordinate_conversion_domain_ancillaries,
-            coordinate_conversion_parameters=coordinate_conversion_parameters,
-            datum_domain_ancillaries=datum_domain_ancillaries,
-            datum_parameters=datum_parameters,
+            datum=datum,
+            coordinate_conversion=coordinate_conversion,
             source=source,
             copy=copy)
     #--- End: def
@@ -284,10 +270,6 @@ reference object.
         else:
             string = [indent0 + _title]
 
-#        string.append(
-#            super(CoordinateReference, self)._dump_properties(
-#                _level=_level+1))
-            
         # Coordinate conversion parameter-valued terms
         coordinate_conversion = self.get_coordinate_conversion()
         for term, value in sorted(coordinate_conversion.parameters().items()):
@@ -403,8 +385,8 @@ reference object.
     self.__class__.__name__, coords0, coords1))
             return False
 
-        if not self.get_coordinate_conversion().equals(
-                other.get_coordinate_conversion(),
+        if not self.coordinate_conversion.equals(
+                other.coordinate_conversion,
                 rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_construct_type=ignore_construct_type):
@@ -413,8 +395,8 @@ reference object.
 "{}: Different coordinate conversions".format(self.__class__.__name__))
 	    return False
         
-        if not self.get_datum().equals(
-                other.get_datum(),
+        if not self.datum.equals(
+                other.datum,
                 rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_construct_type=ignore_construct_type):

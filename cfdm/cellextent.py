@@ -1,9 +1,10 @@
 import abc
 
+import mixin
 import structure
 
 
-class CellExtent(structure.CellExtent):
+class CellExtent(mixin.Terms, structure.CellExtent):
     '''
 '''
     __metaclass__ = abc.ABCMeta

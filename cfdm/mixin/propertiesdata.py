@@ -2,11 +2,6 @@ import abc
 
 from .properties import Properties
 
-# ====================================================================
-#
-# Variable Mixin object
-#
-# ====================================================================
 
 class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.

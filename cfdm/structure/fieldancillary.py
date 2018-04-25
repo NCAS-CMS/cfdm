@@ -2,6 +2,7 @@ import abc
 
 import abstract
 
+
 class FieldAncillary(abstract.PropertiesData):
     '''A CF field ancillary construct of the CF data model.
 
