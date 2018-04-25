@@ -18,22 +18,25 @@ if not (StrictVersion('2.7.0')
         "Bad python version: cfdm requires 2.7 <= python < 3.0. Got {}".format(
         platform.python_version()))
 
-from .bounds              import Bounds
-from .constructs          import Constructs
+from .bounds               import Bounds
+from .constructs           import Constructs
 #from .coordinate          import Coordinate
-from .coordinateancillary import CoordinateAncillary
-from .data.data           import Data
-from .domain              import Domain
+from .coordinateancillary  import CoordinateAncillary
+from .coordinateconversion import CoordinateConversion
+from .data.data            import Data
+from .datum                import Datum
+from .domain               import Domain
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure
 from .cellmethod          import CellMethod
-from .coordinatereference import CoordinateReference, Terms
+from .coordinatereference import CoordinateReference #, Terms
 from .dimensioncoordinate import DimensionCoordinate
 from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
+from .terms               import Terms
 
 
 

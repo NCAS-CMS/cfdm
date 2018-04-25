@@ -3,6 +3,7 @@ import abc
 from copy import deepcopy
 
 from .propertiesdata import PropertiesData
+from .terms          import Terms
 
 
 class PropertiesDataBounds(PropertiesData):
@@ -12,6 +13,14 @@ properties.
     '''
     __metaclass__ = abc.ABCMeta
     
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        
+        obj._Terms = Terms
+
+        return obj
+    #--- End: def
+
     def __init__(self, properties={}, data=None, bounds=None,
                  extent_parameters=None,
 #                 extent_arrays=None,
@@ -72,6 +81,11 @@ properties.
                 bounds = None
                 
             try:
+                cell_extent = source.get_cell_extent()
+            except AttributeError:
+                cell_extent = None #self._Terms()
+
+            try:
                 extent_parameters = source.extent_parameters()
             except AttributeError:
                 extent_parameters = None
@@ -80,6 +94,13 @@ properties.
 #                extent_arrays = source.extent_arrays()
 #            except AttributeError:
 #                extent_arrays = None
+        else:
+            pass            
+#            if cell_extent is not None:
+#            cell_extent = self._Terms(
+#                domain_ancillaries=cell_extent_domain_ancillaries,
+#                parameters=cell_extent_parameters,
+#                copy=False)
         #--- End: if
 
         # Initialise bounds
@@ -97,7 +118,9 @@ properties.
             extent_parameters = {}
 
         self.extent_parameters(extent_parameters, copy=False)
-                    
+
+#        self.set_cell_extent(cell_extent, copy=copy)
+        
 #        # Initialise cell extent arrays
 #        if extent_arrays:
 #            if copy or not _use_data:
@@ -292,7 +315,7 @@ define the coordinate system.
     def get_bounds(self, *default):
         '''Return the bounds.
 
-.. seealso:: `get_array`, `get_data`, `has_buonds`, `set_bounds`
+.. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
 
 :Examples 1:
 
@@ -317,6 +340,31 @@ define the coordinate system.
 
         '''
         return self._get_component('bounds', None, *default)
+    #--- End: def
+
+    def get_cell_extent(self, *default):
+        '''???????
+
+.. seealso:: `cell_extent`, `del_cell_extent`, `set_cell_extent`
+
+:Examples 1:
+
+>>> e = c.get_cell_extent()
+
+:Parameters:
+
+    default: optional
+        Return *default* if and only if the bounds have not been set.
+
+:Returns:
+
+    out:
+
+
+:Examples 2:
+
+        '''
+        return self._get_component('cell_extent', None, *default)
     #--- End: def
 
 #    def get_extent_array(self, array, *default):
@@ -397,6 +445,31 @@ define the coordinate system.
             bounds = bounds.copy()
 
         self._set_component('bounds', None, bounds)
+    #--- End: def
+
+    def set_cell_extent(self, value):
+        '''???????
+
+.. seealso:: `cell_extent`, `del_cell_extent`, `get_cell_extent`
+
+:Examples 1:
+
+>>> e = c.get_cell_extent()
+
+:Parameters:
+
+    default: optional
+        Return *default* if and only if the bounds have not been set.
+
+:Returns:
+
+    out:
+
+
+:Examples 2:
+
+        '''
+        return self._set_component('cell_extent', None, value)
     #--- End: def
 
 #    def set_extent_array(self, name, value, copy=True):

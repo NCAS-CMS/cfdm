@@ -1,7 +1,7 @@
 import abc
 
 import abstract
-
+#from abstract import PropertiesData
 
 # ====================================================================
 #

@@ -3,9 +3,11 @@ import abc
 import csv
 import os
 
-from .                    import __file__
-from .dimensioncoordinate import DimensionCoordinate
-from .auxiliarycoordinate import AuxiliaryCoordinate
+from .                     import __file__
+from .auxiliarycoordinate  import AuxiliaryCoordinate
+from .coordinateconversion import CoordinateConversion
+from .datum                import Datum
+from .dimensioncoordinate  import DimensionCoordinate
 
 import mixin
 import structure
@@ -52,14 +54,23 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
     _name_to_coordinates      = _name_to_coordinates
     _datum_parameters         = _datum_parameters
     _datum_domain_ancillaries = _datum_domain_ancillaries
- 
+
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
         
-        obj._Terms = Terms
+        obj._CoordinateConversion = CoordinateConversion
+        obj._Datum                = Datum
 
         return obj
     #--- End: def
+
+#    def __new__(cls, *args, **kwargs):
+#        obj = object.__new__(cls, *args, **kwargs)
+#        
+#        obj._Terms = Terms
+#
+#        return obj
+#    #--- End: def
 
     def __init__(self,
                  coordinates=None,
@@ -185,6 +196,7 @@ There are three modes of initialization:
                 if datum_parameters is not None:
                     raise ValueError(
 "Can't set both 'parameters' and 'datum_parameters' keywords")
+
                 if coordinate_conversion_parameters is not None:
                     raise ValueError(
 "Can't set both 'parameters' and 'coordinate_conversion_parameters' keywords")
