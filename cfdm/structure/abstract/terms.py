@@ -35,11 +35,15 @@ class Terms(Container):
                 domain_ancillaries = None
         #--- End: if
         
-        if domain_ancillaries:
-            self.domain_ancillaries(domain_ancillaries, copy=copy)
+        if domain_ancillaries is None:
+            domain_ancillaries = {}
 
-        if parameters:
-            self.parameters(parameters, copy=copy)
+        self.domain_ancillaries(domain_ancillaries, copy=copy)
+
+        if parameters is None:
+            parameters = {}
+
+        self.parameters(parameters, copy=copy)
     #--- End: def
 
     def __str__(self):

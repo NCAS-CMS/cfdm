@@ -3,8 +3,8 @@ import abc
 import abstract
 
 
-class Bounds(abstract.PropertiesData):
+class CellExtent(abstract.Terms):
     '''
-    '''
+'''
     __metaclass__ = abc.ABCMeta
 #--- End: class

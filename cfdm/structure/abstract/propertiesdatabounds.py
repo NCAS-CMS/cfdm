@@ -3,8 +3,6 @@ import abc
 from copy import deepcopy
 
 from .propertiesdata import PropertiesData
-from .terms          import Terms
-
 
 class PropertiesDataBounds(PropertiesData):
     '''Base class for a data array with bounds and with descriptive
@@ -13,19 +11,12 @@ properties.
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-        obj._Terms = Terms
-
-        return obj
-    #--- End: def
-
     def __init__(self, properties={}, data=None, bounds=None,
                  extent_parameters=None,
 #                 extent_arrays=None,
 #                 topology_parameters=None,
 #                 topology_arrays=None,
+                 cell_extent=None,
                  source=None, copy=True, _use_data=True):
         '''**Initialization**
 
@@ -83,7 +74,7 @@ properties.
             try:
                 cell_extent = source.get_cell_extent()
             except AttributeError:
-                cell_extent = None #self._Terms()
+                cell_extent = None
 
             try:
                 extent_parameters = source.extent_parameters()
@@ -119,7 +110,8 @@ properties.
 
         self.extent_parameters(extent_parameters, copy=False)
 
-#        self.set_cell_extent(cell_extent, copy=copy)
+        if cell_extent is not None:
+            self.set_cell_extent(cell_extent, copy=copy)
         
 #        # Initialise cell extent arrays
 #        if extent_arrays:
@@ -129,6 +121,13 @@ properties.
 #                    extent_arrays[key] = value.copy(data=_use_data)
 
 #        self.extent_arrays(extent_arrays, copy=False)
+    #--- End: def
+
+    @property
+    def cell_extent(self):
+        '''
+        '''
+        return self.get_cell_extent()
     #--- End: def
 
     def copy(self, data=True):
@@ -447,7 +446,7 @@ define the coordinate system.
         self._set_component('bounds', None, bounds)
     #--- End: def
 
-    def set_cell_extent(self, value):
+    def set_cell_extent(self, value, copy=True):
         '''???????
 
 .. seealso:: `cell_extent`, `del_cell_extent`, `get_cell_extent`
@@ -469,6 +468,9 @@ define the coordinate system.
 :Examples 2:
 
         '''
+        if copy:
+            value = value.copy()
+            
         return self._set_component('cell_extent', None, value)
     #--- End: def
 

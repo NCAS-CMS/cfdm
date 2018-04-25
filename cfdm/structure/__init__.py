@@ -19,9 +19,8 @@ if not (StrictVersion('2.7.0')
         platform.python_version()))
 
 from .bounds               import Bounds
+from .cellextent           import CellExtent
 from .constructs           import Constructs
-#from .coordinate          import Coordinate
-from .coordinateancillary  import CoordinateAncillary
 from .coordinateconversion import CoordinateConversion
 from .data.data            import Data
 from .datum                import Datum
@@ -36,7 +35,6 @@ from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
-from .terms               import Terms
 
 
 

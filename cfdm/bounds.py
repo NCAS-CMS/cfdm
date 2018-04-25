@@ -1,8 +1,9 @@
 import abc
 
-from .coordinateancillary import CoordinateAncillary
+import mixin
+import structure
 
-class Bounds(CoordinateAncillary):
+class Bounds(mixin.PropertiesData, structure.Bounds):
     '''
     '''
     __metaclass__ = abc.ABCMeta
@@ -13,7 +14,7 @@ class Bounds(CoordinateAncillary):
         '''
         '''
         if _create_title and _title is None: 
-            _title = 'Cell bounds: ' + self.name(default='')
+            _title = 'Bounds: ' + self.name(default='')
 
         return super(Bounds, self).dump(
             display=display,

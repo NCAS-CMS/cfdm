@@ -590,7 +590,7 @@ dictionary.
                                         omit=omit)
         #--- End: if
     
-        if getattr(coord, 'climatology', None):
+        if self.get_climatology(coord):
             extra['climatology'] = ncvar
         else:
             extra['bounds'] = ncvar
@@ -1792,26 +1792,31 @@ write them to the netCDF4.Dataset.
         '''
         '''
         return data.get_array()
+    #--- End: def
 
     def get_auxiliary_coordinates(self, field):
         '''
         '''
         return field.auxiliary_coordinates()
+    #--- End: def
 
     def get_bounds(self, construct, *default):
         '''
         '''
         return construct.get_bounds(*default)
+    #--- End: def
 
     def get_cell_measures(self, field):
         '''
         '''
         return field.cell_measures()
+    #--- End: def
         
     def get_cell_methods(self, field):
         '''
         '''
         return field.cell_methods()
+    #--- End: def
         
 
     def get_cell_method_axes(self, cell_method, *default):
@@ -1826,6 +1831,17 @@ write them to the netCDF4.Dataset.
         return str(cell_method)
     #--- End: for
     
+    def get_climatology(self, coordinate):
+        ''':Returns:
+
+    out: `bool`
+        The value of the 'climatology' cell extent parameter, or False
+        if not set.
+
+        '''
+        return coordinate.cell_extent.get_parameter('climatology', False)
+    #--- End: def
+        
     def get_construct_axes(self, field, key):
         '''
         '''

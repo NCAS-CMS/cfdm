@@ -1,10 +1,10 @@
 import abc
 
-import abstract
+import structure
 
 
-class Bounds(abstract.PropertiesData):
+class CellExtent(structure.CellExtent):
     '''
-    '''
+'''
     __metaclass__ = abc.ABCMeta
 #--- End: class

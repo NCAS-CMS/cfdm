@@ -40,7 +40,7 @@ class create_fieldTest(unittest.TestCase):
         dim3.set_property('standard_name', 'time')
         dim3.set_property('units', 'days since 2004-6-1')
         dim3.set_bounds(cfdm.Bounds(data=cfdm.Data([[0, 30.]])))
-        dim3.set_extent_parameter('climatology', True)
+        dim3.cell_extent.set_parameter('climatology', True)
         
         # Auxiliary coordinates
         ak = cfdm.DomainAncillary(data=cfdm.Data([10.])) #, 'm'))
@@ -183,11 +183,14 @@ class create_fieldTest(unittest.TestCase):
         print f.construct_axes()
         
         f.dump()
+#        sys.exit(0)
         print "####################################################"
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 #        f.dump()
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
+#        g[0].dump()
+#        sys.exit(0)
         for x in g:
             x.print_read_report()
 
@@ -195,7 +198,7 @@ class create_fieldTest(unittest.TestCase):
 
         g = g[0].squeeze(copy=False)
         
-#        g.dump()
+
 #        print g
         self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
                         '\n\nf (created in memory)\n{}\n\n{}\n\ng (read from disk)\n{}\n\n{}'.format(
@@ -209,7 +212,8 @@ class create_fieldTest(unittest.TestCase):
         print 2
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
-
+#        print f.dump()
+    
 #        print'f'
 #        print f
 #        print 'g'
@@ -218,12 +222,15 @@ class create_fieldTest(unittest.TestCase):
 #        g.dump()
 
         print 3
-#        g.dump()
-#        f.dump()
+        f.dump()
+        g.dump()
+#        sys.exit(0)
+        
         self.assertTrue(g.equals(f, traceback=True),
                         "Field not equal to itself read back in")
+  
+#        sys.exit(0)
 
-        
         x = g.dump(display=False)
         x = f.dump(display=False)
 
@@ -233,6 +240,7 @@ class create_fieldTest(unittest.TestCase):
 
 
         print g
+        g[0].dump()
 #        for x in g:
 #            x.dump()
 #        h = g.field('domainancillary2')

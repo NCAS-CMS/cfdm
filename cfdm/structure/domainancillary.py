@@ -1,9 +1,12 @@
 import abc
 
 import abstract
+import mixin
+
+from .cellextent import CellExtent
 
 
-class DomainAncillary(abstract.PropertiesDataBounds):
+class DomainAncillary(mixin.CellAccess, abstract.PropertiesDataBounds):
     '''A domain ancillary construct of the CF data model.
 
 A domain ancillary construct provides information which is needed for
@@ -23,4 +26,12 @@ number of vertices of each cell.
 
     '''
     __metaclass__ = abc.ABCMeta
+    
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        
+        obj._CellExtent = CellExtent
+
+        return obj
+    #--- End: def
 #--- End: class

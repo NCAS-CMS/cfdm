@@ -133,27 +133,42 @@ properties.
         bounds = self.get_bounds(None)
         if bounds is not None:
             string.append(bounds.dump(display=False, field=field, key=key,
-                                      _prefix=_prefix+'bounds.',
+                                      _prefix=_prefix+'Bounds:',
                                       _create_title=False, _level=_level))
-        
+
         #-------------------------------------------------------------
-        # Extent and topology properties
+        # Cell extent parameter-valued terms
         # ------------------------------------------------------------
         indent1 = '    ' * (_level + 1)
-        for x in ['extent']: #-#, 'topology']:
-            parameters = getattr(self, x+'_parameters')()
-            for name, parameter in sorted(parameters.items()):
-                string.append(
-                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
+        cell_extent = self.cell_extent
+        for name, parameter in sorted(cell_extent.parameters().items()):
+            string.append(
+                '{0}{1}Cell:{2} = {3}'.format(indent1, _prefix, name, parameter))
 
-#-#            arrays = getattr(self, x+'_arrays')()
-#-#            for name, array in sorted(arrays.items()):
-#-#                string.append(
-#-#                    array.dump(display=False, field=field, key=key,
-#-#                               _prefix=_prefix+x+'.'+name+'.',
-#-#                               _create_title=False, _level=_level))
-        #--- End: for
-            
+        #-------------------------------------------------------------
+        # Cell extent domain ancillary-valued terms
+        # ------------------------------------------------------------
+        if field:
+            for term, key in sorted(cell_extent.domain_ancillaries().items()):
+                value = field.domain_ancillaries().get(key)
+                if value is not None:
+                    value = 'Domain Ancillary: '+value.name(default=key)
+                else:
+                    value = ''
+                string.append('{0}Cell:{1} = {2}'.format(
+                    indent1, term, str(value)))
+        else:
+            for term, value in sorted(coordinate_conversion.domain_ancillaries.items()):
+                string.append("{0}Cell:{1} = {2}".format(
+                    indent1, term, str(value)))
+
+        
+        #for name, array in sorted(cell_extent.domain_ancillaries().items()):
+        #   string.append(
+        #       array.dump(display=False, field=field, key=key,
+        #                  _prefix=_prefix+x+'.'+name+'.',
+        #                  _create_title=False, _level=_level))
+
         string = '\n'.join(string)
         
         if display:
@@ -161,6 +176,32 @@ properties.
         else:
             return string
     #--- End: def
+
+#        #-------------------------------------------------------------
+#        # Extent and topology properties
+#        # ------------------------------------------------------------
+#        indent1 = '    ' * (_level + 1)
+#        for x in ['extent']: #-#, 'topology']:
+#            parameters = getattr(self, x+'_parameters')()
+#            for name, parameter in sorted(parameters.items()):
+#                string.append(
+#                    '{0}{1}{2}.{3} = {4}'.format(indent1, _prefix, x, name, parameter))
+#
+##-#            arrays = getattr(self, x+'_arrays')()
+##-#            for name, array in sorted(arrays.items()):
+##-#                string.append(
+##-#                    array.dump(display=False, field=field, key=key,
+##-#                               _prefix=_prefix+x+'.'+name+'.',
+##-#                               _create_title=False, _level=_level))
+#        #--- End: for
+#            
+#        string = '\n'.join(string)
+#        
+#        if display:
+#            print string
+#        else:
+#            return string
+#    #--- End: def
 
 #Domain Ancillary: 
 #    Data = 'asdasdasdas'
@@ -195,6 +236,34 @@ properties.
                 print("???????/")
             return False
         #--- End: if
+
+        # ------------------------------------------------------------
+        # Check the cell extent parameters
+        # ------------------------------------------------------------
+        if ignore_fill_value:
+            ignore_properties += ('_FillValue', 'missing_value')
+            
+        self_parameters  = self.cell_extent.parameters()
+        other_parameters = other.cell_extent.parameters()
+        print self_parameters, other_parameters  
+        if set(self_parameters) != set(other_parameters):
+                if traceback:
+                    print("{0}: Different cell extent parameters: {1}, {2}".format( 
+                        self.__class__.__name__,
+                        set(self_parameters), set(other_parameters)))
+                return False
+            
+        for name, x in sorted(self_parameters.iteritems()):
+            y = other_parameters[name]
+            
+            if not self._equals(x, y, rtol=rtol, atol=atol,
+                                ignore_fill_value=ignore_fill_value,
+                                traceback=traceback):
+                if traceback:
+                    print("{0}: Different parameter {1!r}: {2!r}, {3!r}".format(
+                        self.__class__.__name__, prop, x, y))
+                return False
+        #--- End: for
 
         # ------------------------------------------------------------
         # Check the ancillary parameters

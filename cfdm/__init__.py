@@ -25,17 +25,16 @@ if not (StrictVersion('2.7.0')
         "Bad python version: cfdm requires 2.7 <= python < 3.0. Got {}".format(
         platform.python_version()))
 
-from .bounds              import Bounds
-#from .coordinate          import Coordinate
-from .coordinateancillary import CoordinateAncillary
-from .constants           import *
-from .functions           import *
-#from .read.read           import read, ReadNetCDF
-from .io.read             import read
-from .io.write            import write
-#from .write.write         import write, WriteNetCDF
-from .data.data           import Data
-from .data.netcdfarray    import NetCDF
+from .bounds               import Bounds
+from .cellextent           import CellExtent
+from .coordinateconversion import CoordinateConversion
+from .constants            import *
+from .data.data            import Data
+from .data.netcdfarray     import NetCDF
+from .datum                import Datum
+from .functions            import *
+from .io.read              import read
+from .io.write             import write
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure

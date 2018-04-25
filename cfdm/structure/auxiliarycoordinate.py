@@ -1,15 +1,12 @@
 import abc
 
-from .abstract import Coordinate
+import abstract
+import mixin
+
+from .cellextent import CellExtent
 
 
-# ====================================================================
-#
-#
-#
-# ====================================================================
-
-class AuxiliaryCoordinate(Coordinate):
+class AuxiliaryCoordinate(mixin.CellAccess, abstract.Coordinate):
     '''An auxiliary coordinate construct of the CF data model.
 
 Coordinate constructs provide information which locate the cells of
@@ -41,4 +38,12 @@ auxiliary coordinate variables and non-numeric scalar coordinate
 variables correspond to auxiliary coordinate constructs.
     '''
     __metaclass__ = abc.ABCMeta
+    
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        
+        obj._CellExtent = CellExtent
+
+        return obj
+    #--- End: def
 #--- End: class

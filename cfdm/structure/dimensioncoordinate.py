@@ -1,15 +1,12 @@
 import abc
 
-from .abstract import Coordinate
+import abstract
+import mixin
+
+from .cellextent import CellExtent
 
 
-# ====================================================================
-#
-# DimensionCoordinate object
-#
-# ====================================================================
-
-class DimensionCoordinate(Coordinate):
+class DimensionCoordinate(mixin.CellAccess, abstract.Coordinate):
     '''A dimension coordinate construct of the CF data model.
 
 Coordinate constructs provide information which locate the cells of
@@ -43,4 +40,12 @@ variables correspond to dimension coordinate constructs.
 
     '''
     __metaclass__ = abc.ABCMeta
+
+    def __new__(cls, *args, **kwargs):
+        obj = object.__new__(cls, *args, **kwargs)
+        
+        obj._CellExtent = CellExtent
+
+        return obj
+    #--- End: def
 #--- End: class
