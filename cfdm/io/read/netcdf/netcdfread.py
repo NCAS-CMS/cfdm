@@ -9,58 +9,59 @@ from collections import OrderedDict
 
 import numpy
 
-from ....functions import abspath, flat
+from ....functions import abspath
 
 from .. import IORead
 
-_z = {
-    # Physically meaningful and corresponding to constructs
-    'Cell measures variable' : 100,
-    'cell_measures attribute': 101,
-
-    'Bounds variable'        : 200,
-    'bounds attribute'       : 201,
-
-    'Ancillary variable': 120,
-    'ancillary_variables attribute': 121,
-
-    'Formula terms variable': 130,
-    'formula_terms attribute': 131,
-    'Bounds formula terms variable': 132,
-    'Bounds formula_terms attribute': 133,
-    
-    'Auxiliary/scalar coordinate variable': 140,
-    'coordinates attribute': 141,
-
-    'grid mapping variable': 150,
-    'grid_mapping attribute' : 151,
-    'Grid mapping coordinate variable': 152, 
-
-    'Cell method interval': 160,
-
-    # Purely structural
-    'Compressed dimension': 300,
-    'compress attribute': 301,
-    'Instance dimension':310,
-    'instance_dimension attribute':311,
-    'Count dimension': 320,
-    'count_dimension attribute': 321,
-}
-
-_yy = {
-    'is incorrectly formatted': 2,
-    'is not in file': 3,
-    'spans incorrect dimensions': 4,
-    'is not in file nor referenced by the external_variables global attribute': 5,
-    'has incompatible terms': 6,
-    'that spans the vertical dimension has no bounds': 7,
-    'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
-}
 
 class NetCDFRead(IORead):
     '''
     '''
+
+    _code0 = {
+        # Physically meaningful and corresponding to constructs
+        'Cell measures variable' : 100,
+        'cell_measures attribute': 101,
+        
+        'Bounds variable'        : 200,
+        'bounds attribute'       : 201,
+        
+        'Ancillary variable': 120,
+        'ancillary_variables attribute': 121,
+        
+        'Formula terms variable': 130,
+        'formula_terms attribute': 131,
+        'Bounds formula terms variable': 132,
+        'Bounds formula_terms attribute': 133,
+        
+        'Auxiliary/scalar coordinate variable': 140,
+        'coordinates attribute': 141,
+        
+        'grid mapping variable': 150,
+        'grid_mapping attribute' : 151,
+        'Grid mapping coordinate variable': 152, 
+        
+        'Cell method interval': 160,
+        
+        # Purely structural
+        'Compressed dimension': 300,
+        'compress attribute': 301,
+        'Instance dimension':310,
+        'instance_dimension attribute':311,
+        'Count dimension': 320,
+        'count_dimension attribute': 321,
+    }
     
+    _code1 = {
+        'is incorrectly formatted': 2,
+        'is not in file': 3,
+        'spans incorrect dimensions': 4,
+        'is not in file nor referenced by the external_variables global attribute': 5,
+        'has incompatible terms': 6,
+        'that spans the vertical dimension has no bounds': 7,
+    'that does not span the vertical dimension is inconsistent with the formula_terms of the parametric coordinate variable': 8,
+    }
+
     def _dereference(self, ncvar):
         '''
 
@@ -196,11 +197,21 @@ netCDF variable.
        return construct.get_ncvar(*default)
     #-- End: def
 
+    def get_max(self, data):
+        '''
+        '''
+        return int(data.max())
+
     def get_property(self, construct, prop, *default):
        '''
        '''
        return construct.get_property(prop, *default)
     #-- End: def
+
+    def get_size(self, x):
+        '''
+        '''
+        return x.size
 
     @classmethod    
     def is_netcdf_file(cls, filename):
@@ -208,6 +219,10 @@ netCDF variable.
     
 Note that the file type is determined by inspecting the file's
 contents and any file suffix is not not considered.
+
+:Examples 1:
+
+>>> x = n.is_netcdf_file(filename)
 
 :Parameters:
 
@@ -217,16 +232,13 @@ contents and any file suffix is not not considered.
 
     out: `bool`
 
-:Examples:
+:Examples 2:
 
->>> is_netcdf_file('myfile.nc')
-True
->>> is_netcdf_file('myfile.pp')
-False
->>> is_netcdf_file('myfile.pdf')
-False
->>> is_netcdf_file('myfile.txt')
-False
+>>> if n.is_netcdf_file(filename):
+...     return 'netCDF'
+
+>>> if NetCDFRead.is_netcdf_file(filename):
+...     return 'netCDF'
 
         '''
         # Assume that URLs are in netCDF format
@@ -560,6 +572,21 @@ ancillaries, field ancillaries).
         #--- End: if
 
         # ------------------------------------------------------------
+        # Geometry variables (>= CF-1.8)
+        # ------------------------------------------------------------
+#        for ncvar in attributes:
+#            geometry_ncvar = attributes[ncvar].get('geometry')
+#            if geometry_ncvar is None:
+#                continue
+#
+#            self._parse_geometry(ncvar, geometry_ncvar, attributes)
+#
+#            # Do not attempt to create a field from a geometry
+#            # container variable
+#            g['do_not_create_field'].add(geometry_ncvar)
+#        #--- End: for
+
+        # ------------------------------------------------------------
         # Convert every netCDF variable in the file to a field
         # ------------------------------------------------------------
         all_fields = OrderedDict()
@@ -652,6 +679,12 @@ ancillaries, field ancillaries).
         '''
         '''
         construct.set_bounds(bounds, copy=copy)
+    #--- End: def
+
+    def set_cell_extent_parameter(self, coordinate, parameter, value):
+        '''
+        '''
+        coordinate.cell_extent.set_parameter(parameter, value)
     #--- End: def
     
     def set_cell_measure(self, field, construct, axes, copy=True):
@@ -891,8 +924,10 @@ ancillaries, field ancillaries).
         
         elements_per_instance = self._create_data(ncvar, uncompress_override=True)
     
-        instance_dimension_size = elements_per_instance.size    
-        element_dimension_size  = int(elements_per_instance.max())
+        instance_dimension_size = self.get_size(elements_per_instance)
+#        instance_dimension_size = elements_per_instance.size    
+#        element_dimension_size  = int(elements_per_instance.max())
+        element_dimension_size  = self.get_max(elements_per_instance)
     
         if _debug:
             print '    DSG contiguous array implied shape:', (instance_dimension_size,element_dimension_size)
@@ -1094,6 +1129,148 @@ ancillaries, field ancillaries).
         del g['compression'][sample_dimension]['DSG_contiguous']
     #--- End: def
        
+    def _parse_geometry(self, field_ncvar, ncvar, attributes):
+        '''
+
+:Parameters:
+
+    field_ncvar: `str`
+        The netCDF variable name of the parent data variable.
+
+    ncvar: `str`
+        The netCDF variable name of the geometry container variable.
+
+    attributes: `dict`
+
+:Returns:
+
+    out: `str`
+        The made-up netCDF dimension name of the DSG element dimension.
+
+    '''
+        g = self.read_vars        
+
+        _debug = g['_debug']
+        if _debug:
+            print '    Geometry container =', ncvar
+
+        node_coordinates = attributes[ncvar],get('node_coordinates')
+        node_count       = attributes[ncvar].get('node_count')
+        coordinates      = attributes[ncvar].get('coordinates')
+        part_node_count  = attributes[ncvar].get('part_node_count')
+        interior_ring    = attributes[ncvar].get('interior_ring')
+        
+        parsed_node_coordinates = self._parse_y(ncvar, node_coordinates)
+        parsed_interior_ring    = self._parse_y(ncvar, interior_ring)
+        parsed_node_count       = self._parse_y(ncvar, node_count)
+        parsed_part_node_count  = self._parse_y(ncvar, part_node_count)
+        
+        cf_compliant = True
+
+        if interior_ring is not None and part_node_count is None:
+            attribute = {field_ncvar+':geometry': attributes[field_ncvar]['geometry']}
+            self._add_message(field_ncvar, ncvar,
+                              message=('Part node count attribute', 'is  missing'),
+                              attribute=attribute)
+            cf_compliant = False
+   
+        cf_compliant = cf_compliant & self._check_node_coordinates(ncvar,
+                                                                   node_coordinates,
+                                                                   parsed_node_coordinates)
+
+        cf_compliant = cf_compliant & self._check_node_count(ncvar,
+                                                             node_count,
+                                                             parsed_node_count)
+
+        cf_compliant = cf_compliant & self._check_part_node_count(ncvar,
+                                                                  part_node_count,
+                                                                  parsed_part_node_count)
+
+        cf_compliant = cf_compliant & self._check_interior_ring(ncvar,
+                                                                interior_ring,
+                                                                parsed_interior_ring)
+
+        if not cf_compliant:
+            return
+        
+        if node_count is not None:
+            instance_dimension = g['nc'].variables[node_count].dimensions[0]
+            nodes_per_geometry = self._create_data(node_count)
+            
+            self._zzz(nodes_per_geometry, 'node_count',
+                      element_dimension='nodes',
+                      instance_dimension=instance_dimension)
+
+            if part_node_count is not None:
+                parts = self._create_data(part_node_count)
+                total_number_of_parts = self.get_size(parts)
+                parts_per_geometry = nodes_per_geometry.copy()
+                
+                i = 0
+                for j in xrange(self.get_size(nodes_per_geometry)):
+                    nodes_in_this_geometry = nodes_per_geometry[j]
+                    parts_in_this_geometry = 0
+                    s = 0
+
+                    for k in xrange(i, total_number_of_parts):
+                        parts_in_this_geometry += 1
+                        s += parts[k]
+                        if s >= nodes_in_this_geometry:
+                            parts_per_geometry[j] = parts_in_this_geometry
+                            i += k + 1
+                            break                        
+                    #--- End: for
+
+                    i += 1
+                #--- End: for
+                
+                self._zzz(parts_per_geometry, 'part_node_count',
+                          element_dimension='node_parts',
+                          instance_dimension=instance_dimension)
+                
+                instance_dimension_size = self.get_size(elements_per_instance)
+                element_dimension_size  = self.get_max(elements_per_instance)
+        #--- End: if
+        
+        return 'Something' #element_dimension
+    #--- End: def
+
+    def _zzz(self, elements_per_instance, role, element_dimension,
+             instance_dimension=None):
+        '''
+        '''
+        g = self.read_vars
+        
+        instance_dimension_size = self.get_size(elements_per_instance)
+        element_dimension_size  = self.get_max(elements_per_instance)
+        
+        # Make up a netCDF dimension name for the part node count
+        # element dimension
+        base = element_dimension
+        n = 0
+        while (element_dimension in g['nc'].dimensions or
+               element_dimension in g['new_dimensions']):
+            n += 1
+            element_dimension = '{0}_{1}'.format(base, n)
+
+        g['new_dimensions'][element_dimension] = element_dimension_size
+                            
+        g['compression'].setdefault(sample_dimension, {})[role] = {
+            'elements_per_instance'  : part_nodes_per_geometry,
+            'implied_ncdimensions'   : (instance_dimension,
+                                        element_dimension),
+            'profile_dimension'      : instance_dimension,
+            'element_dimension'      : element_dimension,
+            'element_dimension_size' : element_dimension_size,
+            'instance_dimension_size': instance_dimension_size,
+        }
+        
+        if _debug:
+            print "    Creating g['compression'][{!r}]['geometry_node']".format(
+                sample_dimension)
+    #--- End: def
+            
+    
     def _check_formula_terms(self, field_ncvar, coord_ncvar,
                              formula_terms, z_ncdim=None):
         '''asdsdsa
@@ -1504,7 +1681,7 @@ ancillaries, field ancillaries).
                                                            verbose=verbose)
                     g['dimension_coordinate'][ncdim] = coord
                 
-                domain_axis = self._create_domain_axis(self.get_data_size(coord), ncdim)
+                domain_axis = self._create_domain_axis(self.get_size(coord), ncdim)
                 if _debug:
                     print '    [0] Inserting', repr(domain_axis)                    
                 axis = self.set_domain_axis(f, domain_axis, copy=False)
@@ -1525,10 +1702,8 @@ ancillaries, field ancillaries).
                 # so just create a domain axis with the correct size.
                 if ncdim in g['new_dimensions']:
                     size = g['new_dimensions'][ncdim]
-#                    domain_axis = self._create_domain_axis(size, None)
                 else:
                     size = len(nc.dimensions[ncdim])
-#                    domain_axis = self._create_domain_axis(size, ncdim)
 
                 domain_axis = self._create_domain_axis(size, ncdim)
                 if _debug:
@@ -1621,7 +1796,7 @@ ancillaries, field ancillaries).
                                              source=coord, copy=False)
                     coord = self.expand_dims(coord, position=0, copy=False)
                     
-                    domain_axis = self._create_domain_axis(self.get_data_size(coord))
+                    domain_axis = self._create_domain_axis(self.get_size(coord))
                     if _debug:
                         print '    [5] Inserting', repr(domain_axis)
                     axis = self.set_domain_axis(f, domain_axis, copy=False)
@@ -1923,7 +2098,7 @@ ancillaries, field ancillaries).
           *Example:*
             ``field_ncvar='rotated_latitude_longitude'``
 
-    message: `str`, optional
+    message: (`str`, `str`), optional
 
     attribute: `str`, optional
         The name and value of the netCDF attribute that has a problem.
@@ -1944,7 +2119,7 @@ ancillaries, field ancillaries).
         g = self.read_vars
 
         if message is not None:
-            code = _z[message[0]]*1000 + _yy[message[1]]
+            code = self._code0[message[0]]*1000 + self._code1[message[1]]
             message = ' '.join(message)
         else:
             code = None
@@ -2015,10 +2190,6 @@ ancillaries, field ancillaries).
         g['bounds'][field_ncvar] = {}
         g['coordinates'][field_ncvar] = []
         
-#        cf_compliant = self._check_zz(field_ncvar, ncvar, attribute)
-#        if not cf_compliant:
-#            pass
-        
         properties = attributes[ncvar].copy()
 
         properties.pop('formula_terms', None)
@@ -2034,18 +2205,18 @@ ancillaries, field ancillaries).
 #                        dimensions=nc.variables[ncvar].dimensions)
 #                    ok = False
 #                    break
+
         attribute = 'bounds'
         climatology = False
-        if bounds is not None:
-            ncbounds = bounds
-        else:
+        if bounds is None:
             ncbounds = properties.pop('bounds', None)
             if ncbounds is None:
                 ncbounds = properties.pop('climatology', None)
                 if ncbounds is not None:
-                    climatology = True
                     attribute = 'climatology'
-        #--- End: if
+                    climatology = True
+        else:
+            ncbounds = bounds
 
         if dimension:
             properties.pop('compress', None) #??
@@ -2065,7 +2236,7 @@ ancillaries, field ancillaries).
         self.set_properties(c, properties)
         
         if climatology:
-            c.cell_extent.set_parameter('climatology', True, copy=False)
+            self.set_cell_extent_parameter(c, 'climatology', True)
     
         data = self._create_data(ncvar, c)
         self._set_data(c, data, copy=False)
@@ -2113,6 +2284,10 @@ ancillaries, field ancillaries).
 
                 if not domain_ancillary:
                     g['bounds'][field_ncvar][ncvar] = ncbounds
+
+        elif 'geometry' in attributes[field_ncvar]:
+            # >= CF-1.8
+            pass
         #--- End: if
     
         # Store the netCDF variable name
@@ -2171,12 +2346,6 @@ also be provided.
        return f.cell_measures()
     #-- End: def
 
-    def get_data_size(self, construct):
-        '''
-        '''
-        return construct.get_data().size
-    #--- End: def
-    
     def get_dimension_coordinate(self, f):
        '''
        '''
@@ -2362,7 +2531,7 @@ Set the Data attribute of a variable.
                             [dimensions[dim].size
                              for dim in self._ncdimensions(ncvar)])
                         sample_axis = g['nc'].variables[ncvar].dimensions.index(c['sample_dimension'])
-                        data = self._create_data_DSG_gathered(
+                        data = self._create_data_gathered(
                             ncvar,
                             filearray,
                             uncompressed_shape=uncompressed_shape,
@@ -2755,25 +2924,9 @@ dimensions are returned.
         return map(str, ncdimensions)
     #--- End: def
 
-    def _create_gathered_array(self, array, uncompressed_ndim=None,
-                               uncompressed_shape=None,
-                               uncompressed_size=None,
-                               compression_type=None,
-                               compression_parameters=None):
-        '''
-        '''
-        return self.initialise('GatheredArray',
-            array=array,
-            ndim=uncompressed_ndim,
-            shape=uncompressed_shape,
-            size=uncompressed_size,
-            compression_type=compression_type,
-            compression_parameters=compression_parameters)
-    #--- End: def
-
-    def _create_data_DSG_gathered(self, ncvar, filearray,
-                                  uncompressed_shape=None,
-                                  sample_axis=None, list_indices=None):
+    def _create_data_gathered(self, ncvar, filearray,
+                              uncompressed_shape=None,
+                              sample_axis=None, list_indices=None):
         '''
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -2782,7 +2935,7 @@ dimensions are returned.
         compression_parameters = {'sample_axis': sample_axis,
                                   'indices'    : list_indices}
             
-        array = self._create_gathered_array(
+        array = self.create_compressed_array(
             filearray,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
@@ -2805,12 +2958,12 @@ dimensions are returned.
         compression_parameters = {
             'elements_per_instance': elements_per_instance} 
         
-        array = self._create_gathered_array(
+        array = self.create_compressed_array(
             filearray,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
             uncompressed_size=uncompressed_size,
-            compression_type='DSG_contiguous',
+            compression_type='ragged_contiguous',
             compression_parameters=compression_parameters
         )
         
@@ -2827,12 +2980,12 @@ dimensions are returned.
         
         compression_parameters = {'instances': instances}
 
-        array = self._create_gathered_array(
+        array = self.create_compressed_array(
             filearray,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
             uncompressed_size=uncompressed_size,
-            compression_type='DSG_indexed',
+            compression_type='ragged_indexed',
             compression_parameters=compression_parameters
         )
 
@@ -2852,12 +3005,12 @@ dimensions are returned.
             'profile_indices'     : profile_indices,
             'elements_per_profile': elements_per_profile}
         
-        array = self._create_gathered_array(
+        array = self.create_compressed_array(
             filearray,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
             uncompressed_size=uncompressed_size,
-            compression_type='DSG_indexed_contiguous',
+            compression_type='ragged_indexed_contiguous',
             compression_parameters=compression_parameters
         )
         
@@ -3283,6 +3436,175 @@ Checks that
         return ok
     #--- End: def
 
+    def _check_node_coordinates(self, field_ncvar, geometry_ncvar,
+                                node_coordinates,
+                                parsed_node_coordinates):
+        '''
+        '''
+
+        attribute = {geometry_ncvar+':node_coordinates': node_coordinates}
+
+        nc = self.read_vars['nc']
+
+                
+        incorrectly_formatted = ('node_coordinates attribute', 'is incorrectly formatted')
+        missing_attribute     = ('node_coordinates attribute', 'is missing')
+        missing_variable      = ('Node coordinate variable', 'is not in file')
+
+        if node_coordinates is None:
+            self._add_message(field_ncvar, geometry_ncvar,
+                              message=missing_attribute,
+                              attribute=attribute)
+            return False
+
+        if not parsed_node_coordinates:
+            self._add_message(field_ncvar, geometry_ncvar,
+                              message=incorrectly_formatted,
+                              attribute=attribute)
+            return False
+
+        ok = True
+        
+        for ncvar in parsed_node_coordinates:
+            # Check that the variable exists in the file
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=missing_variable,
+                                  attribute=attribute)
+                ok = False                
+                continue
+        #--- End: for
+
+        return ok
+    #--- End: def
+
+    def _check_node_count(self, field_ncvar, geometry_ncvar,
+                          node_count, parsed_node_count):
+        '''
+        '''
+        attribute = {geometry_ncvar+':node_count': node_count}
+
+        nc = self.read_vars['nc']
+
+        if node_node_count is None:
+            return True
+                
+        incorrectly_formatted = ('node_count attribute', 'is incorrectly formatted')
+        missing_variable      = ('Node count variable', 'is not in file')
+        
+        if not parsed_node_count:
+            self._add_message(field_ncvar, geometry_ncvar,
+                              message=incorrectly_formatted,
+                              attribute=attribute)
+            return False
+
+        ok = True
+
+        if len(parsed_node_count) != 1:
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=('??', '?? 0 a asdsadsdasdas'),
+                                  attribute=attribute)
+                return False
+            
+        for ncvar in parsed_node_count:
+            # Check that the variable exists in the file
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=missing_variable,
+                                  attribute=attribute)
+                ok = False                
+                continue
+        #--- End: for
+
+        return ok
+    #--- End: def
+
+    def _check_part_node_count(self, field_ncvar, geometry_ncvar,
+                          part_node_count, parsed_part_node_count):
+        '''
+        '''
+        if node_part_node_count is None:
+            return True
+                
+        attribute = {geometry_ncvar+':part_node_count': part_node_count}
+
+        nc = self.read_vars['nc']
+
+                
+        incorrectly_formatted = ('part_node_count attribute', 'is incorrectly formatted')
+        missing_variable      = ('Part node count variable', 'is not in file')
+        
+        if not parsed_part_node_count:
+            self._add_message(field_ncvar, geometry_ncvar,
+                              message=incorrectly_formatted,
+                              attribute=attribute)
+            return False
+
+        ok = True
+
+        if len(parsed_part_node_count) != 1:
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=('??', '?? 1 a asdsadsdasdas'),
+                                  attribute=attribute)
+                return False
+            
+        for ncvar in parsed_part_node_count:
+            # Check that the variable exists in the file
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=missing_variable,
+                                  attribute=attribute)
+                ok = False                
+                continue
+        #--- End: for
+
+        return ok
+    #--- End: def
+
+    def _check_interior_ring(self, field_ncvar, geometry_ncvar,
+                          interior_ring, parsed_interior_ring):
+        '''
+        '''
+        if node_interior_ring is None:
+            return True
+                
+        attribute = {geometry_ncvar+':interior_ring': interior_ring}
+
+        nc = self.read_vars['nc']
+                
+        incorrectly_formatted = ('interior_ring attribute', 'is incorrectly formatted')
+        missing_variable      = ('Interior ring variable', 'is not in file')
+        
+        if not parsed_interior_ring:
+            self._add_message(field_ncvar, geometry_ncvar,
+                              message=incorrectly_formatted,
+                              attribute=attribute)
+            return False
+
+        ok = True
+
+        if len(parsed_interior_ring) != 1:
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=('??', '?? 2 a asdsadsdasdas'),
+                                  attribute=attribute)
+                return False
+            
+        for ncvar in parsed_interior_ring:
+            # Check that the variable exists in the file
+            if ncvar not in nc.variables:
+                self._add_message(field_ncvar, ncvar,
+                                  message=missing_variable,
+                                  attribute=attribute)
+                ok = False                
+                continue
+        #--- End: for
+
+        return ok
+    #--- End: def
+
     def _check_instance_dimension(self, parent_ncvar, instance_dimension):
         '''asdasd
 
@@ -3327,6 +3649,9 @@ CF-1.7 Appendix A
     def _parse_y(self, parent_ncvar, string):
         '''
         '''
+        if string is None:
+            return []
+        
         return string.split()
     #--- End: def
 
@@ -3370,6 +3695,22 @@ CF-1.7 Appendix A
                 out.append({term: values})
 
         return out
+    #--- End: def
+
+    def create_compressed_array(self, array, uncompressed_ndim=None,
+                                uncompressed_shape=None,
+                                uncompressed_size=None,
+                                compression_type=None,
+                                compression_parameters=None):
+        '''
+        '''
+        return self.initialise('CompressedArray',
+            array=array,
+            ndim=uncompressed_ndim,
+            shape=uncompressed_shape,
+            size=uncompressed_size,
+            compression_type=compression_type,
+            compression_parameters=compression_parameters)
     #--- End: def
 
 #--- End: class

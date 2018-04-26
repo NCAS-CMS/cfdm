@@ -6,8 +6,9 @@ import numpy
 
 from .array import Array
 
-class GatheredArray(Array):
-    '''A numpy  array.
+
+class CompressedArray(Array):
+    '''
 
     '''
     def __init__(self, array=None, shape=None, size=None, ndim=None,
@@ -18,7 +19,7 @@ class GatheredArray(Array):
 
 :Parameters:
 
-    array: `numpy.ndarray`
+    array:
 
         '''
         self.array  = array
@@ -54,7 +55,8 @@ Returns an independent numpy array.
             sample_axis           = compression_parameters['sample_axis']
             uncompression_indices = compression_parameters['indices']
             
-            compressed_axes = range(sample_axis, self.ndim - (compressed_array.ndim - sample_axis - 1))
+            compressed_axes = range(sample_axis,
+                                    self.ndim - (compressed_array.ndim - sample_axis - 1))
             n_compressed_axes = len(compressed_axes)
 
             uncompressed_shape = self.shape
@@ -71,7 +73,7 @@ Returns an independent numpy array.
                 sample_indices[sample_axis] = ii
                 
                 u_indices[compressed_axes[0]:compressed_axes[-1]+1] = zeros
-                xxx = zeros[:]
+#                xxx = zeros[:]
                 for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
                     if b >= z:
                         (a, b) = divmod(b, z)
@@ -82,7 +84,7 @@ Returns an independent numpy array.
                 uarray[u_indices] = compressed_array[sample_indices]
             #--- End: for
 
-        elif compression_type == 'DSG_contiguous':
+        elif compression_type == 'ragged_contiguous':
             # --------------------------------------------------------
             # Compression by contiguous ragged array
             # --------------------------------------------------------
@@ -107,7 +109,7 @@ Returns an independent numpy array.
                 start += n
             #--- End: for
 
-        elif compression_type == 'DSG_indexed':
+        elif compression_type == 'ragged_indexed':
             # --------------------------------------------------------
             # Compression by indexed ragged array
             # --------------------------------------------------------
@@ -129,7 +131,7 @@ Returns an independent numpy array.
                 uarray[u_indices] = compressed_array[sample_dimension_indices]
             #--- End: for
 
-        elif compression_type == 'DSG_indexed_contiguous':
+        elif compression_type == 'ragged_indexed_contiguous':
             # --------------------------------------------------------
             # Compression by indexed contiguous ragged array
             # --------------------------------------------------------

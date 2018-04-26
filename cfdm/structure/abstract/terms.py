@@ -6,7 +6,7 @@ from .container import Container
 
 
 class Terms(Container):
-    '''
+    '''Base class for parameter- and domain ancillary-valued terms.
     '''
     __metaclass__ = abc.ABCMeta
 

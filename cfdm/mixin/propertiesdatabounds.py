@@ -69,25 +69,6 @@ properties.
                 bounds.set_data(data[tuple(bounds_indices)], copy=False)
         #--- End: if
 
-#-#        # Subspace the ancillary arrays
-#-#        ancillary_arrays = self.extent_arrays()
-#-#        if ancillary_arrays:
-#-#            for name, array in ancillary_arrays.iteritems():
-#-#                if not array.has_data():
-#-#                    continue
-#-#                
-#-#                ancillary_indices = list(indices)
-#-#                ancillary_indices.append(slice(None))
-#-#                if _debug:
-#-#                    print '{0}.__getitem__: indices for ancillary array {1!r}={2}'.format(
-#-#                        self.__class__.__name__, name, ancillary_indices)
-#-#
-#-#                data = array.get_data()
-#-#                array = array.copy(data=False)
-#-#                array.set_data(data[tuple(ancillary_indices)], copy=False)
-#-#                new.set_extent_array(name, array, copy=False)
-#-#        #--- End: if
-
         # Return the new bounded variable
         return new
     #--- End: def

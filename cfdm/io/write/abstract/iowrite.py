@@ -2,7 +2,7 @@ import abc
 
 from ... import IO
 
-NOT_IMPLEMENTED = 'This method must be implemented'
+_MUST_IMPLEMENT = 'This method must be implemented'
 
 class IOWrite(IO):
     '''
@@ -13,7 +13,6 @@ class IOWrite(IO):
     def write(self, *args, **kwargs):
         '''Write fields to a netCDF file.
         '''
-        raise NotImplementedError(NOT_IMPLEMENTED)
-
+        raise NotImplementedError(_MUST_IMPLEMENT)
 #--- End: class
 

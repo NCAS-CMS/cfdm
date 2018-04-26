@@ -2,16 +2,11 @@ import abc
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
-# ====================================================================
-#
-
-#
-# ====================================================================
 
 class Container(object):
     '''Base class for storing object components.
 
-'''
+    '''
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, source=None):

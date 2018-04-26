@@ -12,12 +12,8 @@ properties.
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, properties={}, data=None, bounds=None,
-                 extent_parameters=None,
-#                 extent_arrays=None,
-#                 topology_parameters=None,
-#                 topology_arrays=None,
-                 cell_extent=None,
-                 source=None, copy=True, _use_data=True):
+                 cell_extent=None, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -75,23 +71,6 @@ properties.
                 cell_extent = source.get_cell_extent()
             except AttributeError:
                 cell_extent = None
-
-            try:
-                extent_parameters = source.extent_parameters()
-            except AttributeError:
-                extent_parameters = None
-
-#            try:
-#                extent_arrays = source.extent_arrays()
-#            except AttributeError:
-#                extent_arrays = None
-        else:
-            pass            
-#            if cell_extent is not None:
-#            cell_extent = self._Terms(
-#                domain_ancillaries=cell_extent_domain_ancillaries,
-#                parameters=cell_extent_parameters,
-#                copy=False)
         #--- End: if
 
         # Initialise bounds
@@ -100,34 +79,29 @@ properties.
                 bounds = bounds.copy(data=_use_data)
                 
             self.set_bounds(bounds, copy=False)
-
-        # Initialise cell extent parameters
-        if extent_parameters:
-            if copy:
-                extent_parameters = deepcopy(extent_parameters)
-        else:
-            extent_parameters = {}
-
-        self.extent_parameters(extent_parameters, copy=False)
+        #--- End: if
 
         if cell_extent is not None:
             self.set_cell_extent(cell_extent, copy=copy)
-        
-#        # Initialise cell extent arrays
-#        if extent_arrays:
-#            if copy or not _use_data:
-#                extent_arrays = extent_arrays.copy()
-#                for key, value in extent_arrays.iteritems():
-#                    extent_arrays[key] = value.copy(data=_use_data)
+    #--- End: def
 
-#        self.extent_arrays(extent_arrays, copy=False)
+    @property
+    def bounds(self):
+        '''
+        '''
+        return self.get_bounds()
     #--- End: def
 
     @property
     def cell_extent(self):
         '''
         '''
-        return self.get_cell_extent()
+        cell_extent = self.get_cell_extent(None)
+        if cell_extent is None:
+            cell_extent = self._CellExtent()
+            self.set_cell_extent(cell_extent, copy=False)
+            
+        return cell_extent
     #--- End: def
 
     def copy(self, data=True):
@@ -194,123 +168,12 @@ None
         return self._del_component('bounds')
     #--- End: def
 
-#    def del_extent_array(self, name):
-#        '''
-#        '''
-#        return self._component('extent_arrays', name)
-#    #--- End: def
-
     def del_extent_parameter(self, name):
         '''
         '''
         return self._del_component('extent_parameters', name)
     #--- End: def
 
-#    def del_topology_parameter(self, name):
-#        '''
-#        '''
-#        return self._del_component('topology_parameters', name)
-#    #--- End: def
-#
-#    def del_topology_array(self, name):
-#        '''
-#        '''
-#        return self._del_component('topology_arrays', name)
-#    #--- End: def
-#
-#    def extent_arrays(self, extent_arrays=None, copy=True):
-#        '''Return or replace the identifiers of the coordinate objects that
-#define the coordinate system.
-#
-#.. versionadded:: 1.6
-#
-#.. seealso:: `del_coordinate`
-#
-#:Examples 1:
-#
-#>>> extent_arrays = c.extent_arrays()
-#
-#:Returns:
-#
-#    out: `set`
-#        The identifiers of the coordinate objects.
-#
-#:Examples 2:
-#
-#>>> c.extent_arrays()
-#{}
-#
-#        '''
-#        existing = self._get_component('extent_arrays', None, None)
-#
-#        if existing is None:
-#            existing = {}
-#            self._set_component('extent_arrays', None, existing)
-#
-#        out = existing.copy()
-#
-#        if not extent_arrays:
-#            return out
-#
-#        # Still here?
-#        if copy:
-#            extent_arrays = extent_arrays.copy()
-#            for key, value in extent_arrays.iteritems():                
-#                extent_arrays[key] = value.copy()
-#        #--- End: if
-#        
-#        # Still here?
-#        existing.clear()
-#        existing.update(extent_arrays)
-#
-#        return out
-#    #--- End: def
-            
-    def extent_parameters(self, extent_parameters=None, copy=True):
-        '''Return or replace the identifiers of the coordinate objects that
-define the coordinate system.
-
-.. versionadded:: 1.6
-
-.. seealso:: `del_coordinate`
-
-:Examples 1:
-
->>> extent_parameters = c.extent_parameters()
-
-:Returns:
-
-    out: `set`
-        The identifiers of the coordinate objects.
-
-:Examples 2:
-
->>> c.extent_parameters()
-{}
-
-        '''
-        existing = self._get_component('extent_parameters', None, None)
-
-        if existing is None:
-            existing = {}
-            self._set_component('extent_parameters', None, existing)
-
-        out = existing.copy()
-
-        if not extent_parameters:
-            return out
-
-        # Still here?
-        if copy:
-            extent_parameters = deepcopy(extent_parameters)
-
-        # Still here?
-        existing.clear()
-        existing.update(extent_parameters)
-
-        return out
-    #--- End: def
-            
     def get_bounds(self, *default):
         '''Return the bounds.
 
@@ -365,30 +228,6 @@ define the coordinate system.
         '''
         return self._get_component('cell_extent', None, *default)
     #--- End: def
-
-#    def get_extent_array(self, array, *default):
-#        '''
-#        '''
-#        return self._get_component('extent_arrays', array, *default)
-#    #--- End: def
-#
-#    def get_extent_parameter(self, parameter, *default):
-#        '''
-#        '''
-#        return self._get_component('extent_parameters', parameter, *default)
-#    #--- End: def
-#    
-#    def get_topology_array(self, name, *default):
-#        '''
-#        '''
-#        return self._get_component('topology_arrays', name, *default)
-#    #--- End: def
-#
-#    def get_topology_parameter(self, name, *default):
-#        '''
-#        '''
-#        return self._get_component('topology_parameters', name, *default)
-#    #--- End: def
 
     def has_bounds(self):
         '''True if there are bounds.
@@ -474,15 +313,6 @@ define the coordinate system.
         return self._set_component('cell_extent', None, value)
     #--- End: def
 
-#    def set_extent_array(self, name, value, copy=True):
-#        '''
-#        '''
-#        if copy:
-#            value = value.copy()
-#
-#        self._set_component('extent_arrays', name, value)
-#    #--- End: def
-
     def set_extent_parameter(self, parameter, value, copy=True):
         '''
         '''
@@ -491,38 +321,5 @@ define the coordinate system.
 
         self._set_component('extent_parameters', parameter, value)
     #--- End: def
-
-#    def set_topology_array(self, name, value, copy=True):
-#        '''
-#        '''
-#        if copy:
-#            value = value.copy()
-#
-#        return self._set_component('topology_arrays', name, value)
-#    #--- End: def
-#
-#
-#    def set_topology_parameter(self, name, value, copy=True):
-#        '''
-#        '''
-#        if copy:
-#            value = deepcopy(value)
-#
-#        return self._set_component('topology_parameters', name, value)
-#    #--- End: def
-#
-#    
-#    def topology_arrays(self):
-#        '''
-#        '''
-#        return self._get_component('topology_arrays', None, {}).copy()
-#    #--- End: def
-#    
-#
-#    def topology_parameters(self):
-#        '''
-#        '''
-#        return self._get_component('topology_parameters', None, {}).copy()
-#    #--- End: def
 
 #--- End: class

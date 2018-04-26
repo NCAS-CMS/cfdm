@@ -8,11 +8,6 @@ import netCDF4
 
 from .array import Array
 
-# ====================================================================
-#
-# NetCDFArray object
-#
-# ====================================================================
 
 class NetCDF(Array):
     '''A sub-array stored in a netCDF file.

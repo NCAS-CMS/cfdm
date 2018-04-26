@@ -5,11 +5,6 @@ import mixin
 
 from .constructs import Constructs
 
-# ====================================================================
-#
-# Field object
-#
-# ====================================================================
 
 class Field(mixin.ConstructAccess, abstract.PropertiesData):
     '''A CF field construct.

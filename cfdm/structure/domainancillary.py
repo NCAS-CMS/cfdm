@@ -3,10 +3,8 @@ import abc
 import abstract
 import mixin
 
-from .cellextent import CellExtent
 
-
-class DomainAncillary(mixin.CellAccess, abstract.PropertiesDataBounds):
+class DomainAncillary(abstract.PropertiesDataBounds):
     '''A domain ancillary construct of the CF data model.
 
 A domain ancillary construct provides information which is needed for

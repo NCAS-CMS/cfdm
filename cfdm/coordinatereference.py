@@ -59,33 +59,11 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
         return obj
     #--- End: def
 
-    def __init__(self,
-                 coordinates=None,
-                 datum=None,
-                 coordiante_conversion=None,
-                 domain_ancillaries=None,
-                 parameters=None,
-#                 coordinate_conversion_domain_ancillaries=None,
-#                 coordinate_conversion_parameters=None,
-#                 datum_parameters=None,
-#                 datum_domain_ancillaries=None,
-                 source=None, copy=True):
+    def __init__(self, coordinates=None, datum=None,
+                 coordinate_conversion=None, domain_ancillaries=None,
+                 parameters=None, source=None, copy=True):
         '''**Initialization**
 
-There are three modes of initialization:
-
-  1. Specifying the *source* keyword. All other keywords apart from
-     *copy* are ignored.
-
-  2. If mode 1 is not in use, specifying the any or all of the
-     *coordinates*, *parameters* and *domain_ancillaries* keywords.
-     All other keywords apart from *copy* are ignored.
-
-  3. If modes 1 and 2 are not in use, specifying any or all of the
-     *coordinates*, *coordinate_conversion_parameters*,
-     *coordinate_conversion_domain_ancillaries*, *datum_parameters* 
-     and *datum_domain_ancillaries* keywords. All other keywords apart
-     from *copy* are ignored.
 
 :Parameters:
 
@@ -144,36 +122,6 @@ There are three modes of initialization:
             >>> c.datum.domain_ancillaries()
             {}
 
-    coordinate_conversion_parameters: `dict`, optional
-        Define parameter-valued terms of the coordinate conversion
-        formula.
-
-          *Example:*
-              ``coordinate_conversion_parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-                                                  'grid_north_pole_latitude': 38.0,
-                                                  'grid_north_pole_longitude': 190.0}``
-
-    coordinate_conversion_domain_ancillaries: `dict`, optional
-        Define domain ancillary-valued terms of the coordinate
-        conversion formula.
-
-          *Example:*
-              ``coordinate_conversion_domain_ancillies={'a': 'domainancillary0',
-                                                        'b': 'domainancillary1',
-                                                        'orog': 'domainancillary2'}``
-
-    datum_parameters: `dict`, optional
-        Define parameter-valued terms of the datum.
-
-          *Example:*
-              ``datum_parameters={'geographic_crs_name': 'OSGB 1936,
-                                  'horizontal_datum_name': 'OSGB_1936',
-                                  'reference_ellipsoid_name': 'Airy 1830',
-                                  'prime_meridian_name': 'Greenwich'}``
-
-    datum_domain_ancillaries: `dict`, optional
-        Define domain ancillary-valued terms of the datum.
-
     source: optional
 
     copy: `bool`, optional
@@ -181,7 +129,7 @@ There are three modes of initialization:
 
         '''
         if source is None:
-            if parameters is not None or coordinate_conversion is not None:
+            if parameters is not None or domain_ancillaries is not None:
                 if datum is not None or coordinate_conversion is not None:
                     raise ValueError(" xcawed we2q3 \a")
 

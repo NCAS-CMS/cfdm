@@ -4,8 +4,7 @@ from collections import OrderedDict
 
 
 class Constructs(object):
-    '''
-Keys are item identifiers, values are item objects.
+    '''Keys are item identifiers, values are item objects.
     '''
 
     __metaclass__ = abc.ABCMeta

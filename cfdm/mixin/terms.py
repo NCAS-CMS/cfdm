@@ -4,7 +4,8 @@ from .container import Container
 
 
 class Terms(Container):
-    '''
+    '''Mixin class for parameter- and domain ancillary-valued terms.
+
     '''
     __metaclass__ = abc.ABCMeta
 

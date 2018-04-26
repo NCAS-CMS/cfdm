@@ -55,7 +55,7 @@ frame and consists of the following:
     a reference pressure value), or may be a descriptive string (such
     as the projection name "mercator"), or it can be a domain
     ancillary construct (such as one containing spatially varying
-    orography data) A coordinate reference construct relates the
+    orography data). A coordinate reference construct relates the
     field's coordinate values to locations in a planetary reference
     frame.
 
@@ -71,14 +71,8 @@ frame and consists of the following:
         return obj
     #--- End: def
 
-    def __init__(self,
-                 coordinates=None,
-                 coordinate_conversion_domain_ancillaries=None,
-                 coordinate_conversion_parameters=None,
-                 datum_domain_ancillaries=None,
-                 datum_parameters=None,
-                 source=None,
-                 copy=True):
+    def __init__(self, coordinates=None, datum=None,
+                 coordinate_conversion=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -101,41 +95,14 @@ frame and consists of the following:
                 coordinates = None
 
             try:
-                coordinate_conversion = source.get_coordinate_conversion()
+                coordinate_conversion = source.get_coordinate_conversion(None)
             except AttributeError:
-                coordinate_conversion = self._CoordinateConversion()
+                coordinate_conversion = None
 
             try:
-                datum = source.get_datum()
+                datum = source.get_datum(None)
             except AttributeError:
-                datum = self._Datum()
-        else:
-            if not coordinates:
-                coordinates = set()
-            else:
-                coordinates = set(coordinates)
-
-#            if coordinate_conversion_parameters is None:
-#                coordinate_conversion_parameters = {}
-#
-#            if coordinate_conversion_domain_ancillaries is None:
-#                coordinate_conversion_domain_ancillaries = {}
-
-            coordinate_conversion = self._CoordinateConversion(
-                domain_ancillaries=coordinate_conversion_domain_ancillaries,
-                parameters=coordinate_conversion_parameters,
-                copy=False)
-            
-#            if datum_parameters is None:
-#                datum_parameters = {}
-#                
-#            if datum_domain_ancillaries is None:
-#                datum_domain_ancillaries = {}
-
-            datum = self._Datum(
-                domain_ancillaries=datum_domain_ancillaries,
-                parameters=datum_parameters,
-                copy=False)
+                datum = None
         #--- End: if
               
         self.coordinates(coordinates)
@@ -154,14 +121,24 @@ frame and consists of the following:
     def coordinate_conversion(self):
         '''
         '''
-        return self.get_coordinate_conversion()
+        out = self.get_coordinate_conversion(None)
+        if out is None:
+            out = self._CoordinateConversion
+            self.set_coordinate_conversion(out)
+            
+        return out
     #--- End: def
         
     @property
     def datum(self):
         '''
         '''
-        return self.get_datum()
+        out = self.get_datum(None)
+        if out is None:
+            out = self._Datum()
+            self.set_datum(out)
+            
+        return out
     #--- End: def
 
     def coordinates(self, coordinates=None, copy=True):
@@ -276,24 +253,24 @@ coordinate system.
         return datum
     #--- End: def
 
-    def get_coordinate_conversion(self):
+    def get_coordinate_conversion(self, *default):
         '''Get the coordinate_conversion.
 
 :Returns:
 
     out: `Datum`
         '''
-        return self._get_component('coordinate_conversion', None)       
+        return self._get_component('coordinate_conversion', None, *default)
     #--- End: def
     
-    def get_datum(self):
+    def get_datum(self, *default):
         '''Get the datum.
 
 :Returns:
 
     out: `Datum`
         '''
-        return self._get_component('datum', None)       
+        return self._get_component('datum', None, *default)
     #--- End: def
     
     def has_datum(self):
@@ -395,7 +372,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
     def set_coordinate_conversion(self, value, copy=True):
         '''
         '''
-        if copy:
+        if copy and value is not None:
             value = value.copy()
             
         self._set_component('coordinate_conversion', None, value)
@@ -404,7 +381,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
     def set_datum(self, value, copy=True):
         '''
         '''
-        if copy:
+        if copy and value is not None:
             value = value.copy()
             
         self._set_component('datum', None, value)

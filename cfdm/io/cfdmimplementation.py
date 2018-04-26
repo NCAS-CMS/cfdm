@@ -9,26 +9,43 @@ class CFDMImplementation(Implementation):
                  CoordinateAncillary=None ,CoordinateReference=None,
                  DimensionCoordinate=None, DomainAncillary=None,
                  DomainAxis=None, Field=None, FieldAncillary=None,
-                 Bounds=None, Data=None, GatheredArray=None):
-#                 Conventions=None):
-        '''
+                 Bounds=None, Data=None, CompressedArray=None):
+        '''**Initialisation**
 
-        self.Bounds              = Bounds
-        self.CoordinateAncillary = CoordinateAncillary
-        self.Data                = Data
-        self.NetCDF              = NetCDF
-        self.GatheredArray       = GatheredArray
+:Parameters:
 
-        # CF data model constructs
-        self.AuxiliaryCoordinate = AuxiliaryCoordinate
-        self.CellMeasure         = CellMeasure
-        self.CellMethod          = CellMethod
-        self.CoordinateReference = CoordinateReference
-        self.DimensionCoordinate = DimensionCoordinate
-        self.DomainAncillary     = DomainAncillary
-        self.DomainAxis          = DomainAxis
-        self.Field               = Field         
-        self.FieldAncillary      = FieldAncillary
+    AuxiliaryCoordinate:
+        An auxiliary coordinate construct class.
+
+    CellMeasure:
+        A cell measure construct class.
+
+    CellMethod:
+        A cell method construct class.
+
+    CoordinateReference:
+        A coordinate reference construct class.
+
+    DimensionCoordinate:
+        A dimension coordinate construct class.
+
+    DomainAncillary:
+        A domain ancillary construct class.
+
+    DomainAxis:
+        A domain axis construct class.
+
+    Field:
+        A field construct class.
+
+    FieldAncillary:
+        A field ancillary construct class.
+
+    Bounds:              = Bounds
+    CoordinateAncillary = CoordinateAncillary
+    Data                = Data
+    NetCDF              = NetCDF
+    CompressedArray     = CompressedArray
 
         '''
         super(CFDMImplementation, self).__init__(
@@ -45,6 +62,8 @@ class CFDMImplementation(Implementation):
             FieldAncillary=FieldAncillary,
             Bounds=Bounds,
             Data=Data,
-            GatheredArray=GatheredArray)
-#            Conventions=Conventions)
+            CompressedArray=CompressedArray)
     #--- End: def
+
+#--- End: class
+

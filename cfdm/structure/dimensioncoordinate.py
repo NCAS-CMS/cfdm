@@ -3,10 +3,8 @@ import abc
 import abstract
 import mixin
 
-from .cellextent import CellExtent
 
-
-class DimensionCoordinate(mixin.CellAccess, abstract.Coordinate):
+class DimensionCoordinate(abstract.Coordinate):
     '''A dimension coordinate construct of the CF data model.
 
 Coordinate constructs provide information which locate the cells of

@@ -6,16 +6,9 @@ import sys
 
 
 class Container(object):
+    '''Mixin class for storing object components.
+
     '''
-
-Base class for storing a data array with metadata.
-
-A variable contains a data array and metadata comprising properties to
-describe the physical nature of the data.
-
-All components of a variable are optional.
-
-'''
     __metaclass__ = abc.ABCMeta
 
     @classmethod

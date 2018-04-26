@@ -2,12 +2,18 @@ import abc
 
 
 class Implementation(object):
-    '''
+    '''Store an implementation of the CF data model.
     '''
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, **kwargs):
-        '''
+        '''**Initialisation**
+
+:Parameters:
+
+    kwargs:
+        The concrete objects required to represent a Field.
+
         '''
         self._class = kwargs.copy()
     #--- End: def

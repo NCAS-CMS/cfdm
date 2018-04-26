@@ -82,8 +82,15 @@ class PropertiesData(Properties):
 #    #--- End: def
     
     # ----------------------------------------------------------------
-    # Attribute (read only)
+    # Attributes
     # ----------------------------------------------------------------
+    @property
+    def data(self):
+        '''
+        '''
+        return self.get_data()
+    #--- End: def
+
     @property
     def dtype(self):
         '''Describes the format of the elements in the data.

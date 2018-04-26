@@ -2,7 +2,8 @@ import abc
 
 from ... import IO
 
-NOT_IMPLEMENTED = 'This method must be implemented'
+_MUST_IMPLEMENT = 'This method must be implemented'
+
 
 class IORead(IO):
     '''
@@ -11,7 +12,6 @@ class IORead(IO):
 
     @abc.abstractmethod
     def read(self, *args, **kwargs):
-        raise NotImplementedError(NOT_IMPLEMENTED)
-
+        raise NotImplementedError(_MUST_IMPLEMENT)    
 #--- End: class
 

@@ -13,11 +13,6 @@ from .numpyarray import NumpyArray
 
 from ..structure import Data as structure_Data
 
-# ====================================================================
-#
-# Data object
-#
-# ====================================================================
 
 class Data(structure_Data):
     '''

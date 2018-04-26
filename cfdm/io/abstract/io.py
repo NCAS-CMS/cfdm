@@ -1,6 +1,7 @@
 import abc
 
-NOT_IMPLEMENTED = 'This method must be implemented'
+_MUST_IMPLEMENT = 'This method must be implemented'
+
 
 class IO(object):
     '''
@@ -14,21 +15,21 @@ class IO(object):
     def file_close(self, *args, **kwargs):
         '''Close the file.
         '''
-        raise NotImplementedError(NOT_IMPLEMENTED)
+        raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
     @abc.abstractmethod
     def file_open(self, *args, **kwargs):
         '''Open the file.
         '''
-        raise NotImplementedError(NOT_IMPLEMENTED)
+        raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
     @abc.abstractmethod
     def file_type(cls, *args, **kwargs):
         '''Return the format of a file.
         '''
-        raise NotImplementedError(NOT_IMPLEMENTED)
+        raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 #--- End: class
 

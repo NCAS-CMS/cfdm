@@ -1,3 +1,2 @@
-'''
-'''
+
 from netcdfwrite import NetCDFWrite

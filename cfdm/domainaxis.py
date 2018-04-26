@@ -4,12 +4,6 @@ import mixin
 import structure
 
 
-# ====================================================================
-#
-# Domain axis object
-#
-# ====================================================================
-
 class DomainAxis(mixin.Container, structure.DomainAxis):
     '''A CF domain axis construct.
 

@@ -3,10 +3,8 @@ import abc
 import abstract
 import mixin
 
-from .cellextent import CellExtent
 
-
-class AuxiliaryCoordinate(mixin.CellAccess, abstract.Coordinate):
+class AuxiliaryCoordinate(abstract.Coordinate):
     '''An auxiliary coordinate construct of the CF data model.
 
 Coordinate constructs provide information which locate the cells of

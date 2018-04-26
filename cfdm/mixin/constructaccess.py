@@ -2,7 +2,9 @@ import abc
 
 
 class ConstructAccess(object):
-    '''
+    '''Mixin class for manipulating constructs stored in a `Constructs`
+object.
+
     '''
     __metaclass__ = abc.ABCMeta
 

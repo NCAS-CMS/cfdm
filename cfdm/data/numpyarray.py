@@ -8,6 +8,7 @@ import netCDF4
 
 from .array import Array
 
+
 class NumpyArray(Array):
     '''A numpy  array.
 

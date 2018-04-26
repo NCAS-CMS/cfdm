@@ -10,12 +10,6 @@ from .domain      import Domain
 _debug = False
        
 
-# ====================================================================
-#
-# Field object
-#
-# ====================================================================
-
 class Field(mixin.ConstructAccess, mixin.PropertiesData, structure.Field):
     '''A CF field construct.
 

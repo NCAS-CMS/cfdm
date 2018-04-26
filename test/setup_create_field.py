@@ -94,11 +94,16 @@ class create_fieldTest(unittest.TestCase):
         bk = f.set_domain_ancillary(bk, axes=[axisZ])
 
         # Coordinate references
-        ref0 = cfdm.CoordinateReference(
+        coordinate_conversion = cfdm.CoordinateConversion(
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude': 38.0,
-                        'grid_north_pole_longitude': 190.0,
-                        'earth_radius': 6371007,},
+                        'grid_north_pole_longitude': 190.0})
+        
+        datum = cfdm.Datum(parameters={'earth_radius': 6371007})
+        
+        ref0 = cfdm.CoordinateReference(
+            coordinate_conversion=coordinate_conversion,
+            datum=datum,
             coordinates=[x, y, lat, lon]
         )
 
