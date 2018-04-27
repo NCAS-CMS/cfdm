@@ -4,8 +4,10 @@ from ... import IO
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
+
 class IOWrite(IO):
-    '''
+    '''Base class writing Field constructs to a dataset.
+
     '''
     __metaclass__ = abc.ABCMeta
 

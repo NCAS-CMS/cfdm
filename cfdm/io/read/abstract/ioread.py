@@ -6,7 +6,8 @@ _MUST_IMPLEMENT = 'This method must be implemented'
 
 
 class IORead(IO):
-    '''
+    '''Base class instantiating Field constructs from a dataset.
+
     '''
     __metaclass__ = abc.ABCMeta
 

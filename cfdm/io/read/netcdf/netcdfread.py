@@ -371,6 +371,8 @@ ancillaries, field ancillaries).
             'bounds': {},
 
             'vertical_crs': {},
+
+            'geometries': {},
             
             'do_not_create_field':  set(),
             'references': {},
@@ -533,7 +535,7 @@ ancillaries, field ancillaries).
                     if not cf_compliant:
                         sample_dimension = None
                     else:
-                        element_dimension_2 = self._parse_DSG_contiguous_compression(
+                        element_dimension_2 = self._parse_ragged_contiguous_compression(
                             ncvar,
                             attributes,
                             sample_dimension)
@@ -893,8 +895,8 @@ ancillaries, field ancillaries).
                          'sample_dimension'    : gathered_ncdimension}}
     #--- End: def
     
-    def _parse_DSG_contiguous_compression(self, ncvar, attributes,
-                                          sample_dimension):
+    def _parse_ragged_contiguous_compression(self, ncvar, attributes,
+                                             sample_dimension):
         '''
 
 :Parameters:
@@ -945,32 +947,36 @@ ancillaries, field ancillaries).
         if _debug:        
             print '    featureType =', g['featureType']
     
-        base = element_dimension
-        n = 0
-        while (element_dimension in g['nc'].dimensions or
-               element_dimension in g['new_dimensions']):
-            n += 1
-            element_dimension = '{0}_{1}'.format(base, n)
+        element_dimension = self._set_ragged_contiguous_parameters(
+                elements_per_instance=elements_per_instance,
+                sample_dimension=sample_dimension,
+                element_dimension=element_dimension,
+                instance_dimension=instance_dimension)
 
-        g['compression'].setdefault(sample_dimension, {})['DSG_contiguous'] = {
-            'elements_per_instance'  : elements_per_instance,
-            'implied_ncdimensions'   : (instance_dimension,
-                                        element_dimension),
-            'profile_dimension'      : instance_dimension,
-            'element_dimension'      : element_dimension,
-            'element_dimension_size' : element_dimension_size,
-            'instance_dimension_size': instance_dimension_size,
-#            'instance_axis'          : 0,
-#            'instance_index'         : 0,
-#            'c_element_axis'         : 1,
-        }
-    
-        g['new_dimensions'][element_dimension] = element_dimension_size
-        
-        if _debug:
-            print "    Creating g['compression'][{!r}]['DSG_contiguous']".format(
-                sample_dimension)
-    
+#        base = element_dimension
+#        n = 0
+#        while (element_dimension in g['nc'].dimensions or
+#               element_dimension in g['new_dimensions']):
+#            n += 1
+#            element_dimension = '{0}_{1}'.format(base, n)
+#
+#        g['compression'].setdefault(sample_dimension, {})['ragged_contiguous'] = {
+#            'elements_per_instance'  : elements_per_instance,
+#            'implied_ncdimensions'   : (instance_dimension,
+#                                        element_dimension),
+#            'profile_dimension'      : instance_dimension,
+#            'element_dimension'      : element_dimension,
+#            'element_dimension_size' : element_dimension_size,
+#            'instance_dimension_size': instance_dimension_size,
+#        }
+#    
+#        g['new_dimensions'][element_dimension] = element_dimension_size
+#        
+#        if _debug:
+#            print "    Creating g['compression'][{!r}]['ragged_contiguous']".format(
+#                sample_dimension)
+#    
+
         return element_dimension
     #--- End: def
     
@@ -1036,7 +1042,7 @@ ancillaries, field ancillaries).
             
         indexed_sample_dimension = g['nc'][ncvar].dimensions[0]
         
-        g['compression'].setdefault(indexed_sample_dimension, {})['DSG_indexed'] = {
+        g['compression'].setdefault(indexed_sample_dimension, {})['ragged_indexed'] = {
             'elements_per_instance'  : elements_per_instance,
             'instances'              : instances,
             'implied_ncdimensions'   : (instance_dimension,
@@ -1049,7 +1055,7 @@ ancillaries, field ancillaries).
         g['new_dimensions'][element_dimension] = element_dimension_size
         
         if _debug:
-            print "    Created g['compression'][{!r}]['DSG_indexed']".format(
+            print "    Created g['compression'][{!r}]['ragged_indexed']".format(
                 indexed_sample_dimension)
     
         return element_dimension
@@ -1079,16 +1085,16 @@ ancillaries, field ancillaries).
         _debug = g['_debug']
         if _debug:
             print 'Pre-processing DSG indexed and contiguous compression'
-    
-        profile_dimension = g['compression'][sample_dimension]['DSG_contiguous']['profile_dimension']
+        print g['compression']
+        profile_dimension = g['compression'][sample_dimension]['ragged_contiguous']['profile_dimension']
     
         if _debug:
             print '    sample_dimension  :', sample_dimension
             print '    instance_dimension:', instance_dimension
             print '    profile_dimension :', profile_dimension
             
-        contiguous = g['compression'][sample_dimension]['DSG_contiguous']
-        indexed    = g['compression'][profile_dimension]['DSG_indexed']
+        contiguous = g['compression'][sample_dimension]['ragged_contiguous']
+        indexed    = g['compression'][profile_dimension]['ragged_indexed']
     
         # The indices of the sample dimension which define the start
         # positions of each instances profiles
@@ -1102,10 +1108,10 @@ ancillaries, field ancillaries).
         element_dimension_2_size = int(elements_per_profile.max())
         
         if _debug:
-            print "    Creating g['compression'][{!r}]['DSG_indexed_contiguous']".format(
+            print "    Creating g['compression'][{!r}]['ragged_indexed_contiguous']".format(
                 sample_dimension)
             
-        g['compression'][sample_dimension]['DSG_indexed_contiguous'] = {
+        g['compression'][sample_dimension]['ragged_indexed_contiguous'] = {
             'profiles_per_instance'   : profiles_per_instance,
             'elements_per_profile'    : elements_per_profile,
             'profile_indices'         : profile_indices,
@@ -1120,13 +1126,13 @@ ancillaries, field ancillaries).
         if _debug:
             print '    Implied dimensions: {} -> {}'.format(
                 sample_dimension,
-                g['compression'][sample_dimension]['DSG_indexed_contiguous']['implied_ncdimensions'])
+                g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions'])
     
         if _debug:
-            print "    Removing g['compression'][{!r}]['DSG_contiguous']".format(
+            print "    Removing g['compression'][{!r}]['ragged_contiguous']".format(
                 sample_dimension)
             
-        del g['compression'][sample_dimension]['DSG_contiguous']
+        del g['compression'][sample_dimension]['ragged_contiguous']
     #--- End: def
        
     def _parse_geometry(self, field_ncvar, ncvar, attributes):
@@ -1145,7 +1151,7 @@ ancillaries, field ancillaries).
 :Returns:
 
     out: `str`
-        The made-up netCDF dimension name of the DSG element dimension.
+        The made-up netCDF dimension name of the element dimension.
 
     '''
         g = self.read_vars        
@@ -1153,8 +1159,10 @@ ancillaries, field ancillaries).
         _debug = g['_debug']
         if _debug:
             print '    Geometry container =', ncvar
-
-        node_coordinates = attributes[ncvar],get('node_coordinates')
+            
+        g['geometries'][ncvar] = {'geometry_type': attributes[ncvar].get('geometry_type')}
+ 
+        node_coordinates = attributes[ncvar].get('node_coordinates')
         node_count       = attributes[ncvar].get('node_count')
         coordinates      = attributes[ncvar].get('coordinates')
         part_node_count  = attributes[ncvar].get('part_node_count')
@@ -1164,13 +1172,13 @@ ancillaries, field ancillaries).
         parsed_interior_ring    = self._parse_y(ncvar, interior_ring)
         parsed_node_count       = self._parse_y(ncvar, node_count)
         parsed_part_node_count  = self._parse_y(ncvar, part_node_count)
-        
-        cf_compliant = True
 
+        cf_compliant = True
+        
         if interior_ring is not None and part_node_count is None:
             attribute = {field_ncvar+':geometry': attributes[field_ncvar]['geometry']}
             self._add_message(field_ncvar, ncvar,
-                              message=('Part node count attribute', 'is  missing'),
+                              message=('part_node_count attribute', 'is missing'),
                               attribute=attribute)
             cf_compliant = False
    
@@ -1193,15 +1201,35 @@ ancillaries, field ancillaries).
         if not cf_compliant:
             return
         
-        if node_count is not None:
+        if node_count is not None:            
+            # Do not attempt to create a field from a node count
+            # variable
+            g['do_not_create_field'].add(node_count)
+
+            # Find the sample size from one of the node coordinates
+            sample_dimension = g['nc'].variables[parsed_node_coordinates[0]].dimensions[0]
+                
             instance_dimension = g['nc'].variables[node_count].dimensions[0]
             nodes_per_geometry = self._create_data(node_count)
             
-            self._zzz(nodes_per_geometry, 'node_count',
-                      element_dimension='nodes',
-                      instance_dimension=instance_dimension)
-
+            element_dimension = self._set_ragged_contiguous_parameters(
+                elements_per_instance=nodes_per_geometry,
+                sample_dimension=sample_dimension,
+                element_dimension='node',
+                instance_dimension=instance_dimension)
+            
             if part_node_count is not None:
+                # Do not attempt to create a field from a part node
+                # count variable
+                g['do_not_create_field'].add(part_node_count)
+                
+                if interior_ring is not None:
+                    # Do not attempt to create a field from an
+                    # interior ring variable
+                    g['do_not_create_field'].add(interior_ring)
+                    
+                sample_dimension = g['nc'].variables[part_node_count].dimensions[0]
+                
                 parts = self._create_data(part_node_count)
                 total_number_of_parts = self.get_size(parts)
                 parts_per_geometry = nodes_per_geometry.copy()
@@ -1224,28 +1252,53 @@ ancillaries, field ancillaries).
                     i += 1
                 #--- End: for
                 
-                self._zzz(parts_per_geometry, 'part_node_count',
-                          element_dimension='node_parts',
-                          instance_dimension=instance_dimension)
-                
-                instance_dimension_size = self.get_size(elements_per_instance)
-                element_dimension_size  = self.get_max(elements_per_instance)
+                element_dimension = self._set_ragged_contiguous_parameters(
+                    elements_per_instance=parts_per_geometry,
+                    sample_dimension=sample_dimension,
+                    element_dimension='part',
+                    instance_dimension=instance_dimension)                  
         #--- End: if
         
-        return 'Something' #element_dimension
+        g['geometries'][geometry_ncvar].update(
+            {'parsed_node_coordinates': parsed_node_coordinates,
+             'parsed_interior_ring   ': parsed_interior_ring,
+             'parsed_node_count      ': parsed_node_count,   
+             'parsed_part_node_count ': parsed_part_node_count}
+        )
     #--- End: def
 
-    def _zzz(self, elements_per_instance, role, element_dimension,
-             instance_dimension=None):
-        '''
+    def _set_ragged_contiguous_parameters(self,
+                                          elements_per_instance=None,
+                                          sample_dimension=None,
+                                          element_dimension=None,
+                                          instance_dimension=None):
+        '''qwertyy
+
+:Parameters:
+
+    elements_per_instance: `Data`
+
+#    role: `str`
+
+    sample_dimension: `str`
+
+    element_dimension: `str`
+ 
+    instance_dimension: `str`
+
+:Returns:
+
+    out: `str`
+       The element dimension, possibly modified to make sure that it
+       is unique.
+
         '''
         g = self.read_vars
         
         instance_dimension_size = self.get_size(elements_per_instance)
         element_dimension_size  = self.get_max(elements_per_instance)
         
-        # Make up a netCDF dimension name for the part node count
-        # element dimension
+        # Make sure that the element dimension name is unique
         base = element_dimension
         n = 0
         while (element_dimension in g['nc'].dimensions or
@@ -1255,8 +1308,8 @@ ancillaries, field ancillaries).
 
         g['new_dimensions'][element_dimension] = element_dimension_size
                             
-        g['compression'].setdefault(sample_dimension, {})[role] = {
-            'elements_per_instance'  : part_nodes_per_geometry,
+        g['compression'].setdefault(sample_dimension, {})['ragged_contiguous'] = {
+            'elements_per_instance'  : elements_per_instance,
             'implied_ncdimensions'   : (instance_dimension,
                                         element_dimension),
             'profile_dimension'      : instance_dimension,
@@ -1265,9 +1318,11 @@ ancillaries, field ancillaries).
             'instance_dimension_size': instance_dimension_size,
         }
         
-        if _debug:
-            print "    Creating g['compression'][{!r}]['geometry_node']".format(
+        if g['_debug']:
+            print "    Creating g['compression'][{!r}]['ragged_contiguous']".format(
                 sample_dimension)
+
+        return element_dimension
     #--- End: def
             
     
@@ -1689,7 +1744,7 @@ ancillaries, field ancillaries).
                 if _debug:
                     print '    [1] Inserting', repr(coord)
                 dim = self.set_dimension_coordinate(f, coord,
-                                                     axes=[axis], copy=False)
+                                                    axes=[axis], copy=False)
                 
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
@@ -1717,7 +1772,7 @@ ancillaries, field ancillaries).
                 except KeyError:
                     # This dimension is not in the netCDF file (as might
                     # be the case for an element dimension implied by a
-                    # DSG ragged array).
+                    # ragged array).
                     pass            
             #--- End: if
     
@@ -2244,20 +2299,41 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         # Add any bounds
         # ------------------------------------------------------------
+        geometry = attributes[field_ncvar].get('geometry')
+        geometry = g['geometries'].get(geometry)
+        geometry_type = None
+        if geometry is not None and ncbounds is None:
+            # >= CF-1.8
+            geometry_type = geometry['geometry_type']
+            if geometry_type is not None:
+                # ------------------------------------------------
+                # Add the geometry type as a cell extent parameter
+                # ------------------------------------------------
+                self.set_cell_extent_parameter(c, 'geometry_type', geometry_type)
+                
+            c_axis = properties.get('axis')
+            if c_axis is not None:
+                for node_coord in geometry.get('parsed_node_coordinates', ()):
+                    if attributes[node_coord].get('axis') == c_axis:
+                        ncbounds = node_coord
+                        break                    
+        #--- End: if
+        
         if ncbounds is not None:
                        
-            cf_compliant = self._check_bounds(field_ncvar, ncvar,
-                                              attribute, ncbounds)
-            if not cf_compliant:
-                pass
-            else:
-                bounds = self.initialise('Bounds')
-
-                properties = attributes[ncbounds].copy()
-                properties.pop('formula_terms', None)                
-                self.set_properties(bounds, properties, copy=False)
-                    
-                bounds_data = self._create_data(ncbounds, bounds)
+            if geometry_type is None:
+                cf_compliant = self._check_bounds(field_ncvar, ncvar,
+                                                  attribute, ncbounds)
+                if not cf_compliant:
+                    pass
+                
+            bounds = self.initialise('Bounds')
+            
+            properties = attributes[ncbounds].copy()
+            properties.pop('formula_terms', None)                
+            self.set_properties(bounds, properties, copy=False)
+        
+            bounds_data = self._create_data(ncbounds, bounds)
     
 #                # Make sure that the bounds dimensions are in the same
 #                # order as its parent's dimensions. It is assumed that we
@@ -2275,21 +2351,48 @@ ancillaries, field ancillaries).
 #                                                       axes=axes, copy=False)
 #                #--- End: if
     
-                self._set_data(bounds, bounds_data, copy=False)
-                
-                # Store the netCDF variable name
-                self.set_ncvar(bounds, ncbounds)
-    
-                self.set_bounds(c, bounds, copy=False)
-
-                if not domain_ancillary:
-                    g['bounds'][field_ncvar][ncvar] = ncbounds
-
-        elif 'geometry' in attributes[field_ncvar]:
-            # >= CF-1.8
-            pass
+            self._set_data(bounds, bounds_data, copy=False)
+            
+            # Store the netCDF variable name
+            self.set_ncvar(bounds, ncbounds)
+            
+            self.set_bounds(c, bounds, copy=False)
+            
+            if not domain_ancillary:
+                g['bounds'][field_ncvar][ncvar] = ncbounds
         #--- End: if
-    
+
+        if geometry is not None:
+            # >= CF-1.8
+            part_node_count = geometry['parse_part_node_count'][0]
+            if part_node_count in g['domain_ancillary']:
+                domain_anc = self._copy_construct('domain_ancillary', field_ncvar, part_node_count)
+            else:
+                domain_anc = self._create_bounded_construct(
+                    field_ncvar, part_node_count,
+                    attributes, f,
+                    domain_ancillary=True,
+                    verbose=verbose)
+
+            da_key = self.set_domain_ancillary(f, domain_anc,
+                                               axes=axes, copy=False)
+
+            self.set_cell_extent_domain_ancillary(c, 'part_node_count', da_key)
+            
+            if ncvar not in ncvar_to_key:
+                ncvar_to_key[part_node_count] = da_key
+                    
+            g['domain_ancillary'][part_node_count]     = domain_anc
+            g['domain_ancillary_key'][part_node_count] = da_key
+                
+
+            
+            # cell extent domain ancillaries
+#            self.set_cell_extent_domain_ancillary(c, 'part_node_count', part_node_count)
+#            if interior_ring
+#                self.set_cell_extent_domain_ancillary(c, 'interior_ring', interior_ring)
+            pass
+        
         # Store the netCDF variable name
         self.set_ncvar(c, ncvar)
 
@@ -2537,37 +2640,37 @@ Set the Data attribute of a variable.
                             uncompressed_shape=uncompressed_shape,
                             sample_axis=sample_axis,
                             list_indices=c['indices'])
-                    elif 'DSG_indexed_contiguous' in c:
-                        # DSG contiguous indexed ragged array. Check
-                        # this before DSG_indexed and DSG_contiguous
+                    elif 'ragged_indexed_contiguous' in c:
+                        # Contiguous indexed ragged array. Check this
+                        # before ragged_indexed and ragged_contiguous
                         # because both of these will exist for an
                         # indexed and contiguous array.
-                        c = c['DSG_indexed_contiguous']
+                        c = c['ragged_indexed_contiguous']
                         uncompressed_shape = (c['instance_dimension_size'],
                                               c['element_dimension_1_size'],
                                               c['element_dimension_2_size'])
-                        data = self._create_data_DSG_indexed_contiguous(
+                        data = self._create_data_ragged_indexed_contiguous(
                             ncvar,
                             filearray,
                             uncompressed_shape=uncompressed_shape,
                             profile_indices=c['profile_indices'],
                             elements_per_profile=c['elements_per_profile'])
-                    elif 'DSG_contiguous' in c:                    
-                        # DSG contiguous ragged array
-                        c = c['DSG_contiguous']
+                    elif 'ragged_contiguous' in c:                    
+                        # Contiguous ragged array
+                        c = c['ragged_contiguous']
                         uncompressed_shape=(c['instance_dimension_size'],
                                             c['element_dimension_size'])
-                        data = self._create_data_DSG_contiguous(
+                        data = self._create_data_ragged_contiguous(
                             ncvar,
                             filearray,
                             uncompressed_shape=uncompressed_shape,
                             elements_per_instance=c['elements_per_instance'])
-                    elif 'DSG_indexed' in c:
-                        # DSG indexed ragged array
-                        c = c['DSG_indexed']
+                    elif 'ragged_indexed' in c:
+                        # Indexed ragged array
+                        c = c['ragged_indexed']
                         uncompressed_shape = (c['instance_dimension_size'],
                                               c['element_dimension_size'])
-                        data = self._create_data_DSG_indexed(
+                        data = self._create_data_ragged_indexed(
                             ncvar,
                             filearray,
                             uncompressed_shape=uncompressed_shape,
@@ -2903,20 +3006,21 @@ dimensions are returned.
                         # Compression by gathering
                         i = ncdimensions.index(ncdim)
                         ncdimensions[i:i+1] = c['gathered']['implied_ncdimensions']
-                    elif 'DSG_indexed_contiguous' in c:
-                        # DSG indexed contiguous ragged array.
+                    elif 'ragged_indexed_contiguous' in c:
+                        # Indexed contiguous ragged array.
                         #
-                        # Check this before DSG_indexed and DSG_contiguous
-                        # because both of these will exist for an array
-                        # that is both indexed and contiguous.
+                        # Check this before ragged_indexed and
+                        # ragged_contiguous because both of these will
+                        # exist for an array that is both indexed and
+                        # contiguous.
                         i = ncdimensions.index(ncdim)
-                        ncdimensions = c['DSG_indexed_contiguous']['implied_ncdimensions']
-                    elif 'DSG_contiguous' in c:
-                        # DSG contiguous ragged array
-                        ncdimensions = c['DSG_contiguous']['implied_ncdimensions']
-                    elif 'DSG_indexed' in c:
-                        # DSG indexed ragged array
-                        ncdimensions = c['DSG_indexed']['implied_ncdimensions']
+                        ncdimensions = c['ragged_indexed_contiguous']['implied_ncdimensions']
+                    elif 'ragged_contiguous' in c:
+                        # Contiguous ragged array
+                        ncdimensions = c['ragged_contiguous']['implied_ncdimensions']
+                    elif 'ragged_indexed' in c:
+                        # Indexed ragged array
+                        ncdimensions = c['ragged_indexed']['implied_ncdimensions']
     
                     break
         #--- End: if
@@ -2947,9 +3051,9 @@ dimensions are returned.
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _create_data_DSG_contiguous(self, ncvar, filearray,
-                                    uncompressed_shape=None,
-                                    elements_per_instance=None):
+    def _create_data_ragged_contiguous(self, ncvar, filearray,
+                                       uncompressed_shape=None,
+                                       elements_per_instance=None):
         '''
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -2970,9 +3074,9 @@ dimensions are returned.
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _create_data_DSG_indexed(self, ncvar, filearray,
-                                 uncompressed_shape=None,
-                                 instances=None):
+    def _create_data_ragged_indexed(self, ncvar, filearray,
+                                    uncompressed_shape=None,
+                                    instances=None):
         '''
         '''
         uncompressed_ndim  = len(uncompressed_shape)
@@ -2992,10 +3096,10 @@ dimensions are returned.
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _create_data_DSG_indexed_contiguous(self, ncvar, filearray,
-                                            uncompressed_shape=None,
-                                            profile_indices=None,
-                                            elements_per_profile=None):
+    def _create_data_ragged_indexed_contiguous(self, ncvar, filearray,
+                                               uncompressed_shape=None,
+                                               profile_indices=None,
+                                               elements_per_profile=None):
         '''
         '''
         uncompressed_ndim  = len(uncompressed_shape)
