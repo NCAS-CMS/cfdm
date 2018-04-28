@@ -363,7 +363,7 @@ ancillaries, field ancillaries).
             'cell_measure'         : {},
             'dimension_coordinate' : {},
             'domain_ancillary'     : {},
-            'domain_ancillary_key' : {},
+#            'domain_ancillary_key' : {},
             'field_ancillary'      : {},
             
             'coordinates' : {},
@@ -385,36 +385,11 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         if extra_read_vars:
             g.update(deepcopy(extra_read_vars))
-
-#        self.read_vars = self._reset_read_vars(extra_read_vars)
-#        g = self.read_vars
-
-#        g['references'] = {}
         
         if isinstance(filename, file):
             name = filename.name
             filename.close()
             filename = name
-
-#        g['uncompress']  = uncompress
-#        g['verbose']     = verbose
-#        g['_debug']      = _debug        
-#
-#        g['read_report']      = {None: {'components': {}}}
-#        g['component_report'] = {}
-#        
-#        g['auxiliary_coordinate'] = {}
-#        g['cell_measure']         = {}
-#        g['dimension_coordinate'] = {}
-#        g['domain_ancillary']     = {}
-#        g['domain_ancillary_key'] = {}
-#        g['field_ancillary']      = {}
-#
-#        g['coordinates'] = {}
-#
-#        g['bounds'] = {}
-#        
-#        g['do_not_create_field']   = set()
 
         compression = {}
         
@@ -683,10 +658,16 @@ ancillaries, field ancillaries).
         construct.set_bounds(bounds, copy=copy)
     #--- End: def
 
-    def set_cell_extent_parameter(self, coordinate, parameter, value):
+    def set_cell_extent_domain_ancillary(self, coordinate, prop, value):
         '''
         '''
-        coordinate.cell_extent.set_parameter(parameter, value)
+        coordinate.cell_extent.set_domain_ancillary(prop, value):
+    #--- End: def
+    
+    def set_cell_extent_parameter(self, coordinate, prop, value):
+        '''
+        '''
+        coordinate.cell_extent.set_parameter(prop, value)
     #--- End: def
     
     def set_cell_measure(self, field, construct, axes, copy=True):
@@ -1260,10 +1241,10 @@ ancillaries, field ancillaries).
         #--- End: if
         
         g['geometries'][geometry_ncvar].update(
-            {'parsed_node_coordinates': parsed_node_coordinates,
-             'parsed_interior_ring   ': parsed_interior_ring,
-             'parsed_node_count      ': parsed_node_count,   
-             'parsed_part_node_count ': parsed_part_node_count}
+            {'node_coordinates': parsed_node_coordinates,
+             'interior_ring   ': parsed_interior_ring[0],
+             'node_count      ': parsed_node_count[0],   
+             'part_node_count ': parsed_part_node_count[0]}
         )
     #--- End: def
 
@@ -1618,6 +1599,9 @@ ancillaries, field ancillaries).
         '''
         g = self.read_vars
 
+        # Reset 'domain_ancillary_key'
+        g['domain_ancillary_key'] = {}
+        
         nc = g['nc']
 
         dimensions =  nc.variables[field_ncvar].dimensions
@@ -1730,10 +1714,13 @@ ancillaries, field ancillaries).
                 if ncdim in g['dimension_coordinate']:
                     coord = self._copy_construct('dimension_coordinate', field_ncvar, ncdim)
                 else:
-                    coord = self._create_bounded_construct(field_ncvar, ncdim,
-                                                           attributes, f,
-                                                           dimension=True,
-                                                           verbose=verbose)
+#                    coord = self._create_bounded_construct(field_ncvar, ncdim,
+#                                                           attributes, f,
+#                                                           dimension=True,
+#                                                           verbose=verbose)
+                    coord = self._create_dimension_coordinate(field_ncvar, ncdim,
+                                                              attributes, f,
+                                                              verbose=verbose)
                     g['dimension_coordinate'][ncdim] = coord
                 
                 domain_axis = self._create_domain_axis(self.get_size(coord), ncdim)
@@ -1814,10 +1801,13 @@ ancillaries, field ancillaries).
                 if ncvar in g['auxiliary_coordinate']:
                     coord = g['auxiliary_coordinate'][ncvar].copy()
                 else:
-                    coord = self._create_bounded_construct(field_ncvar, ncvar,
-                                                           attributes, f,
-                                                           auxiliary=True,
-                                                           verbose=verbose)
+                    coord = self._create_auxiliary_coordinate(field_ncvar, ncvar,
+                                                              attributes, f,
+                                                              verbose=verbose)
+#                    coord = self._create_bounded_construct(field_ncvar, ncvar,
+#                                                           attributes, f,
+#                                                           auxiliary=True,
+#                                                           verbose=verbose)
                     g['auxiliary_coordinate'][ncvar] = coord
                 #--- End: if
      
@@ -1918,12 +1908,16 @@ ancillaries, field ancillaries).
                     if bounds == ncvar:
                         bounds = None
         
-                    domain_anc = self._create_bounded_construct(field_ncvar, ncvar,
-                                                                attributes,
-                                                                f,
-                                                                domain_ancillary=True,
-                                                                bounds=bounds,
-                                                                verbose=verbose)
+#                    domain_anc = self._create_bounded_construct(field_ncvar, ncvar,
+#                                                                attributes,
+#                                                                f,
+#                                                                domain_ancillary=True,
+#                                                                bounds=bounds,
+#                                                                verbose=verbose)
+                    domain_anc = self._create_domain_ancillary(field_ncvar, ncvar,
+                                                               attributes, f,
+                                                               bounds=bounds,
+                                                               verbose=verbose)
                 #--- End: if
                 
                 if len(axes) == len(ncdimensions):
@@ -2207,6 +2201,45 @@ ancillaries, field ancillaries).
         return d
     #--- End: def
     
+    def _create_auxiliary_coordinate(self, field_ncvar, ncvar, attributes,
+                                     f, bounds=None, verbose=False):
+        '''
+        '''
+        return self._create_bounded_construct(field_ncvar=field_ncvar,
+                                              ncvar=ncvar,
+                                              attributes=attributes,
+                                              f=f,
+                                              auxiliary=True,
+                                              bounds=bounds,
+                                              verbose=verbose)
+    #--- End: def
+
+    def _create_dimension_coordinate(self, field_ncvar, ncvar, attributes,
+                                     f, bounds=None, verbose=False):
+        '''
+        '''
+        return self._create_bounded_construct(field_ncvar=field_ncvar,
+                                              ncvar=ncvar,
+                                              attributes=attributes,
+                                              f=f,
+                                              dimension=True,
+                                              bounds=bounds,
+                                              verbose=verbose)
+    #--- End: def
+
+    def _create_domain_ancillary(self, field_ncvar, ncvar, attributes,
+                                 f, bounds=None, verbose=False):
+        '''
+        '''
+        return self._create_bounded_construct(field_ncvar=field_ncvar,
+                                              ncvar=ncvar,
+                                              attributes=attributes,
+                                              f=f,
+                                              domain_ancillary=True,
+                                              bounds=bounds,
+                                              verbose=verbose)
+    #--- End: def
+
     def _create_bounded_construct(self, field_ncvar, ncvar, attributes, f,
                                   dimension=False, auxiliary=False,
                                   domain_ancillary=False, bounds=None,
@@ -2363,35 +2396,30 @@ ancillaries, field ancillaries).
         #--- End: if
 
         if geometry is not None:
-            # >= CF-1.8
-            part_node_count = geometry['parse_part_node_count'][0]
-            if part_node_count in g['domain_ancillary']:
-                domain_anc = self._copy_construct('domain_ancillary', field_ncvar, part_node_count)
-            else:
-                domain_anc = self._create_bounded_construct(
-                    field_ncvar, part_node_count,
-                    attributes, f,
-                    domain_ancillary=True,
-                    verbose=verbose)
-
-            da_key = self.set_domain_ancillary(f, domain_anc,
-                                               axes=axes, copy=False)
-
-            self.set_cell_extent_domain_ancillary(c, 'part_node_count', da_key)
-            
-            if ncvar not in ncvar_to_key:
-                ncvar_to_key[part_node_count] = da_key
+            # --------------------------------------------------------
+            # Add cell extent domain ancillaries for simple geometries
+            # (CF >= 1.8)
+            # --------------------------------------------------------
+            for geometry_attribute in ('part_node_count', 'interior_ring'):                
+                g_ncvar = geometry[geometry_attribute]
+                if g_ncvar in g['domain_ancillary']:
+                    domain_anc = self._copy_construct('domain_ancillary', field_ncvar, g_ncvar)
+                else:
+                    domain_anc = self._create_domain_ancillary(field_ncvar, g_ncvar
+                                                               attributes, f,
+                                                               verbose=verbose)
                     
-            g['domain_ancillary'][part_node_count]     = domain_anc
-            g['domain_ancillary_key'][part_node_count] = da_key
+                da_key = self.set_domain_ancillary(f, domain_anc,
+                                                   axes=axes, copy=False)
                 
-
+                self.set_cell_extent_domain_ancillary(c, geometry_attribute, da_key)
             
-            # cell extent domain ancillaries
-#            self.set_cell_extent_domain_ancillary(c, 'part_node_count', part_node_count)
-#            if interior_ring
-#                self.set_cell_extent_domain_ancillary(c, 'interior_ring', interior_ring)
-            pass
+                if ncvar not in ncvar_to_key:
+                    ncvar_to_key[part_node_count] = da_key
+                    
+                g['domain_ancillary'][g_ncvar]     = domain_anc
+                g['domain_ancillary_key'][g_ncvar] = da_key                
+        #--- End: if
         
         # Store the netCDF variable name
         self.set_ncvar(c, ncvar)
@@ -3625,10 +3653,10 @@ Checks that
     #--- End: def
 
     def _check_part_node_count(self, field_ncvar, geometry_ncvar,
-                          part_node_count, parsed_part_node_count):
+                               part_node_count, parsed_part_node_count):
         '''
         '''
-        if node_part_node_count is None:
+        if part_node_count is None:
             return True
                 
         attribute = {geometry_ncvar+':part_node_count': part_node_count}
