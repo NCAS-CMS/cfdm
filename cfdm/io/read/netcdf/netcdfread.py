@@ -661,7 +661,7 @@ ancillaries, field ancillaries).
     def set_cell_extent_domain_ancillary(self, coordinate, prop, value):
         '''
         '''
-        coordinate.cell_extent.set_domain_ancillary(prop, value):
+        coordinate.cell_extent.set_domain_ancillary(prop, value)
     #--- End: def
     
     def set_cell_extent_parameter(self, coordinate, prop, value):
@@ -2402,13 +2402,22 @@ ancillaries, field ancillaries).
             # --------------------------------------------------------
             for geometry_attribute in ('part_node_count', 'interior_ring'):                
                 g_ncvar = geometry[geometry_attribute]
+
                 if g_ncvar in g['domain_ancillary']:
                     domain_anc = self._copy_construct('domain_ancillary', field_ncvar, g_ncvar)
                 else:
-                    domain_anc = self._create_domain_ancillary(field_ncvar, g_ncvar
+                    domain_anc = self._create_domain_ancillary(field_ncvar, g_ncvar,
                                                                attributes, f,
                                                                verbose=verbose)
-                    
+                                    
+                # Set axes
+
+                # NEED TO CODE UP DOMAIN ANCILLARY HAVE TRAILING DIMENSION
+                
+                axes = [ncdim_to_axis[ncdim]
+                        for ncdim in self._ncdimensions(g_ncvar)
+                        if ncdim in ncdim_to_axis]
+                
                 da_key = self.set_domain_ancillary(f, domain_anc,
                                                    axes=axes, copy=False)
                 
