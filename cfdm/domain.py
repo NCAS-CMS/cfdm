@@ -5,11 +5,6 @@ import structure
 
 from .constructs import Constructs
 
-# ====================================================================
-#
-# Domain object
-#
-# ====================================================================
 
 class Domain(mixin.ConstructAccess, mixin.Properties, structure.Domain):
     '''A CF Domain construct.

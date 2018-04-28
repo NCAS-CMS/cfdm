@@ -3,11 +3,6 @@ import abc
 import mixin
 import structure
 
-# ====================================================================
-#
-# Cell method object
-#
-# ====================================================================
 
 class CellMethod(mixin.Properties, structure.CellMethod):
     '''A cell method construct of the CF data model.

@@ -78,8 +78,6 @@ properties.
              _create_title=True, _level=0):
         '''Return a string containing a full description of the instance.
 
-.. versionadded:: 1.6
-
 :Parameters:
 
     display: `bool`, optional
@@ -225,7 +223,7 @@ properties.
             bounds.expand_dims(position, copy=False)
             
         return c
-    #--- End: def        
+    #--- End: def
     
     def squeeze(self, axes=None , copy=True):
         '''
@@ -243,8 +241,6 @@ properties.
     
     def transpose(self, axes=None, copy=True):
         '''Permute the dimensions of the data.
-
-.. versionadded:: 2.0 
 
 .. seealso:: `expand_dims`, `squeeze`
 

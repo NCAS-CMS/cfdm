@@ -5,11 +5,6 @@ import structure
 
 from .cellextent import CellExtent
 
-# ====================================================================
-#
-# DimensionCoordinate object
-#
-# ====================================================================
 
 class DimensionCoordinate(mixin.Coordinate, structure.DimensionCoordinate):
     '''A dimension coordinate construct of the CF data model.

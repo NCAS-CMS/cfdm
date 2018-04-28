@@ -5,11 +5,6 @@ import structure
 
 from .cellextent import CellExtent
 
-# ====================================================================
-#
-# AuxiliaryCoordinate object
-#
-# ====================================================================
 
 class AuxiliaryCoordinate(mixin.Coordinate, structure.AuxiliaryCoordinate):
     '''A CF auxiliary coordinate construct.

@@ -3,6 +3,7 @@ import abc
 import mixin
 import structure
 
+
 class Bounds(mixin.PropertiesData, structure.Bounds):
     '''
     '''

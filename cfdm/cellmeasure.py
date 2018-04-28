@@ -3,11 +3,6 @@ import abc
 import mixin
 import structure
 
-# ====================================================================
-#
-# CellMeasure object
-#
-# ====================================================================
 
 class CellMeasure(mixin.PropertiesData, structure.CellMeasure):
     '''A CF cell measure construct.

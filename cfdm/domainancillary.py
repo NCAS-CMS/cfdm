@@ -5,6 +5,7 @@ import structure
 
 from .cellextent import CellExtent
 
+
 class DomainAncillary(mixin.PropertiesDataBounds, structure.DomainAncillary):
     '''A CF domain ancillary construct.
 
