@@ -530,7 +530,7 @@ None
     #--- End: def
     
     def set_construct(self, construct_type, construct, key=None,
-                      axes=None, replace=True, copy=True):
+                      axes=None, trailing_axis=False, replace=True, copy=True):
         '''Insert a construct.
 
 :Parameters:

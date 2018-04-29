@@ -540,12 +540,12 @@ The data type of the data array is unchanged.
 #        return array
 #    #--- End: def
 
-    def _parse_axes(self, axes, ndim=None):
+    def _parse_axes(self, axes): #, ndim=None):
         if axes is None:
             return axes
 
-        if ndim is None:
-            ndim = self.ndim
+#        if ndim is None:
+        ndim = self.ndim
         
         if isinstance(axes, (int, long)):
             axes = (axes,)
