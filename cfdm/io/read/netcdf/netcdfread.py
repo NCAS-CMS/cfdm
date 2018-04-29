@@ -769,7 +769,8 @@ ancillaries, field ancillaries).
         return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
     #--- End: def
     
-    def set_domain_ancillary(self, field, construct, axes, copy=True):
+    def set_domain_ancillary(self, field, construct, axes,
+                             extra_axes=0, copy=True):
         '''Insert a domain ancillary object into a field.
 
 :Parameters:
@@ -790,7 +791,9 @@ ancillaries, field ancillaries).
         if construct.has_bounds():
             self._reference(self.get_ncvar(construct.get_bounds()))
 
-        return field.set_domain_ancillary(construct, axes=axes, copy=copy)
+        return field.set_domain_ancillary(construct, axes=axes,
+                                          extra_axes=extra_axes,
+                                          copy=copy)
     #--- End: def
     
     def set_domain_axis(self, field, construct, copy=True):
@@ -2151,7 +2154,7 @@ ancillaries, field ancillaries).
 
     attribute: `str`, optional
         The name and value of the netCDF attribute that has a problem.
-
+        
           *Example:*
             ``attribute={'tas:cell_measures': 'area: areacella'}``
 
@@ -2419,7 +2422,9 @@ ancillaries, field ancillaries).
                         if ncdim in ncdim_to_axis]
                 
                 da_key = self.set_domain_ancillary(f, domain_anc,
-                                                   axes=axes, copy=False)
+                                                   axes=axes,
+                                                   extra_axes=1,
+                                                   copy=False)
                 
                 self.set_cell_extent_domain_ancillary(c, geometry_attribute, da_key)
             

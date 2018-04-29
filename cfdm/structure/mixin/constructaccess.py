@@ -103,7 +103,7 @@ object.
     #--- End: def
 
     def set_domain_ancillary(self, item, key=None, axes=None,
-                                copy=True, replace=True):
+                             extra_axes=0, copy=True, replace=True):
         '''Insert a domain ancillary construct.
         '''       
         if not replace and key in self.domain_ancillaries():
@@ -111,18 +111,20 @@ object.
 "Can't insert domain ancillary construct: Identifier {0!r} already exists".format(key))
 
         return self.set_construct('domain_ancillary', item, key=key,
-                                  axes=axes,
+                                  axes=axes, extra_axes=extra_axes,
                                   copy=copy)
     #--- End: def
 
-    def set_construct(self, construct_type, construct, key=None, axes=None,
-                      replace=True, copy=True):
+    def set_construct(self, construct_type, construct, key=None,
+                      axes=None, extra_axes=0, replace=True,
+                      copy=True):
         '''Insert a construct.
         '''
         return self._get_constructs().set_construct(construct_type,
                                                     construct,
                                                     key=key,
                                                     axes=axes,
+                                                    extra_axes=extra_axes,
                                                     replace=replace,
                                                     copy=copy)
     #--- End: def

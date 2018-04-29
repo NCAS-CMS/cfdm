@@ -530,19 +530,22 @@ None
     #--- End: def
     
     def set_construct(self, construct_type, construct, key=None,
-                      axes=None, trailing_axis=False, replace=True, copy=True):
+                      axes=None, extra_axes=0, replace=True,
+                      copy=True):
         '''Insert a construct.
 
 :Parameters:
 
     construct_type: `str`
-        TODO
-
           *Example*:
             ``construct_type='auxiliary_coordinate'``
           
     construct: construct
         The construct to be inserted.
+
+    extra_axes: `int`, optional
+        The number of extra, trailing data array axes that do **not**
+        correspond to a domain axis specified by the *axes* parameter.
 
         '''
         construct_type = self._check_construct_type(construct_type)
@@ -575,7 +578,7 @@ None
             #--- End: for
             axes_shape = tuple(axes_shape)
                     
-            if construct.shape != axes_shape:
+            if construct.shape[:construct.ndim - extra_axes] != axes_shape:
                 raise ValueError(
 "Can't set {} construct: Data array shape {} does not match the axes shape {}".format(
     self._construct_type_description(construct_type),
