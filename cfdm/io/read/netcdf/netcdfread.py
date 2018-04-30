@@ -2337,32 +2337,38 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         geometry = attributes[field_ncvar].get('geometry')
         geometry = g['geometries'].get(geometry)
-        geometry_type = None
-        if geometry is not None and ncbounds is None:
-            # >= CF-1.8
-            geometry_type = geometry['geometry_type']
-            if geometry_type is not None:
-                # ------------------------------------------------
-                # Add the geometry type as a cell extent parameter
-                # ------------------------------------------------
-                self.set_cell_extent_parameter(c, 'geometry_type', geometry_type)
-                
-            c_axis = properties.get('axis')
-            if c_axis is not None:
-                for node_coord in geometry.get('parsed_node_coordinates', ()):
-                    if attributes[node_coord].get('axis') == c_axis:
-                        ncbounds = node_coord
-                        break                    
-        #--- End: if
+#        geometry_type = None
+#        if geometry is not None: # and ncbounds is None:
+#            # >= CF-1.8
+#            geometry_type = geometry['geometry_type']
+#            if geometry_type is not None:
+#                # ------------------------------------------------
+#                # Add the geometry type as a cell extent parameter
+#                # ------------------------------------------------
+#                self.set_cell_extent_parameter(c, 'geometry_type', geometry_type)
+#                
+#            c_axis = properties.get('axis')
+#            if c_axis is not None:
+#                for node_coord in geometry.get('parsed_node_coordinates', ()):
+#                    if attributes[node_coord].get('axis') == c_axis:
+#                        ncbounds = node_coord
+#                        break                    
+#        #--- End: if
         
         if ncbounds is not None:
                        
-            if geometry_type is None:
+            if geometry is None:
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
                                                   attribute, ncbounds)
                 if not cf_compliant:
                     pass
-                
+            else:
+                cf_compliant = self._check_node_coordinate(field_ncvar, ncvar,
+                                                           ncbounds)
+                if not cf_compliant:
+                    pass
+            #--- End: if
+            
             bounds = self.initialise('Bounds')
             
             properties = attributes[ncbounds].copy()
@@ -2403,20 +2409,31 @@ ancillaries, field ancillaries).
             # Add cell extent domain ancillaries for simple geometries
             # (CF >= 1.8)
             # --------------------------------------------------------
-            for geometry_attribute in ('part_node_count', 'interior_ring'):                
-                g_ncvar = geometry[geometry_attribute]
+
+            # --------------------------------------------------------
+            # Add the geometry type as a cell extent parameter
+            # --------------------------------------------------------
+            geometry_type = geometry.get('geometry_type')
+            if geometry_type is not None:
+                self.set_cell_extent_parameter(c, 'geometry_type',
+                                               geometry_type)
+               
+            for attribute in ('part_node_count', 'interior_ring'):                
+                g_ncvar = geometry.get(attribute)
+                if g_ncvar is None:
+                    # This geometry attribute has not been set
+                    continue
 
                 if g_ncvar in g['domain_ancillary']:
-                    domain_anc = self._copy_construct('domain_ancillary', field_ncvar, g_ncvar)
+                    domain_anc = self._copy_construct('domain_ancillary',
+                                                      field_ncvar, g_ncvar)
                 else:
-                    domain_anc = self._create_domain_ancillary(field_ncvar, g_ncvar,
+                    domain_anc = self._create_domain_ancillary(field_ncvar,
+                                                               g_ncvar,
                                                                attributes, f,
                                                                verbose=verbose)
                                     
                 # Set axes
-
-                # NEED TO CODE UP DOMAIN ANCILLARY HAVE TRAILING DIMENSION
-                
                 axes = [ncdim_to_axis[ncdim]
                         for ncdim in self._ncdimensions(g_ncvar)
                         if ncdim in ncdim_to_axis]
@@ -2426,7 +2443,7 @@ ancillaries, field ancillaries).
                                                    extra_axes=1,
                                                    copy=False)
                 
-                self.set_cell_extent_domain_ancillary(c, geometry_attribute, da_key)
+                self.set_cell_extent_domain_ancillary(c, attribute, da_key)
             
                 if ncvar not in ncvar_to_key:
                     ncvar_to_key[part_node_count] = da_key
@@ -3226,7 +3243,7 @@ dimensions are returned.
     # not grid mapping variable has a grid_mapping_name attribute).
     # ================================================================
     def _check_bounds(self, field_ncvar, parent_ncvar, attribute,
-                      bounds_ncvar):
+                      bounds_ncvar, geometry=False):
         '''asdasdasds
 
 Checks that
@@ -3270,27 +3287,37 @@ Checks that
             return False
 
         ok = True
-        
-        c_ncdims = self._ncdimensions(parent_ncvar)
-        b_ncdims = self._ncdimensions(bounds_ncvar)
-        
-        if len(b_ncdims) == len(c_ncdims) + 1:
-            if c_ncdims != b_ncdims[:-1]:
+
+        if geometry:
+            if bounds_ncvar not in geometry.get('node_coordinates', ()):
+                self._add_message(field_ncvar, bounds_ncvar,
+                                  message=('Node coordinate variable',
+                                           'not in node_coordinates ????'),
+                                  attribute=attribute,
+                                  variable=parent_ncvar)
+                ok = False
+        else:        
+            c_ncdims = self._ncdimensions(parent_ncvar)
+            b_ncdims = self._ncdimensions(bounds_ncvar)
+            
+            if len(b_ncdims) == len(c_ncdims) + 1:
+                if c_ncdims != b_ncdims[:-1]:
+                    self._add_message(field_ncvar, bounds_ncvar,
+                                      message=incorrect_dimensions,
+                                      attribute=attribute,
+                                      dimensions=nc.variables[bounds_ncvar].dimensions,
+                                      variable=parent_ncvar)
+                    ok = False
+    
+            else:
                 self._add_message(field_ncvar, bounds_ncvar,
                                   message=incorrect_dimensions,
                                   attribute=attribute,
                                   dimensions=nc.variables[bounds_ncvar].dimensions,
                                   variable=parent_ncvar)
                 ok = False
-
-        else:
-            self._add_message(field_ncvar, bounds_ncvar,
-                              message=incorrect_dimensions,
-                              attribute=attribute,
-                              dimensions=nc.variables[bounds_ncvar].dimensions,
-                              variable=parent_ncvar)
-            ok = False
-
+        #--- End: if
+        
         return ok
     #--- End: def
     
@@ -3582,6 +3609,32 @@ Checks that
         return ok
     #--- End: def
 
+#   def _check_node_coordinate(self, field_ncvar, coord_ncvar, node_coordinate):
+#       '''
+#       '''
+#       attribute = {coord_ncvar+':bounds': node_coordinate}
+#
+#       nc = self.read_vars['nc']
+#
+#               
+#       incorrectly_formatted = ('node_coordinates attribute', 'is incorrectly formatted')
+#       missing_attribute     = ('node_coordinates attribute', 'is missing')
+#       missing_variable      = ('Node coordinate variable', 'is not in file')
+#
+#       if node_coordinates is None:
+#           self._add_message(field_ncvar, geometry_ncvar,
+#                             message=missing_attribute,
+#                             attribute=attribute)
+#           return False
+#
+#       if not parsed_node_coordinates:
+#           self._add_message(field_ncvar, geometry_ncvar,
+#                             message=incorrectly_formatted,
+#                             attribute=attribute)
+#           return False
+#
+#       ok = True
+        
     def _check_node_coordinates(self, field_ncvar, geometry_ncvar,
                                 node_coordinates,
                                 parsed_node_coordinates):
