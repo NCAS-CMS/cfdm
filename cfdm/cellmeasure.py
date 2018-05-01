@@ -26,15 +26,6 @@ measure constructs.
 
     '''
     __metaclass__ = abc.ABCMeta
-#Coordinate Reference: atmosphere_hybrid_height_coordinate
-#    standard_name = 'atmosphere_hybrid_height_coordinate'
-#    term.a = Domain Ancillary: 
-#    term.b = Domain Ancillary: 
-#    term.orog = Domain Ancillary: surface_altitude
-#    coordinate = Dimension Coordinate: longitude
-#    coordinate = Dimension Coordinate: latitude
-#    Coordinate = Dimension Coordinate: atmosphere_hybrid_height_coordinate
-
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None):
@@ -60,7 +51,10 @@ Return a string containing a full description of the cell measure.
         if _title is None:
             name = self.name(default=self.get_property('units', ''))
             _title = 'Cell Measure: ' + name
-            
+
+        if self.get_external(False):
+            _title += ' (external variable: {0})'.format(self.get_ncvar(''))
+                
         return super(CellMeasure, self).dump(
             display=display,
             field=field, key=key,
@@ -82,18 +76,22 @@ Return a string containing a full description of the cell measure.
                 ignore_construct_type=ignore_construct_type):
 	    return False
 
-        self_measure = self.get_measure(None)
-        other_measure = self.get_measure(None)
-
-        if self_measure != other_measure:
+        measure0 = self.get_measure(None)
+        measure1 = other.get_measure(None)
+        if measure0 != measure1:
             if traceback:
                 print("{0}: Different measure ({1} != {2})".format(
-                    self.__class__.__name__, self_measure,
-                    other_measure))
+                    self.__class__.__name__, measure0, measure1))
             return False
         #--- End: if
 
         return True
+    #--- End: def
+
+    def get_external(self, *default):
+        '''
+        '''        
+        return self._get_component('external', None, *default)
     #--- End: def
 
     def name(self, default=None, ncvar=False):
@@ -165,6 +163,12 @@ None
 
         return super(CellMeasure, self).name(default=default,
                                              ncvar=ncvar)
+    #--- End: def
+
+    def set_external(self, value):
+        '''
+        '''
+        return self._set_component('external', None, bool(value))
     #--- End: def
 
 #--- End: class

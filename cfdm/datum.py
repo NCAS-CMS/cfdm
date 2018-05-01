@@ -7,7 +7,6 @@ import structure
 class Datum(mixin.Terms, structure.Datum):
     '''A datum of a coordinate reference construct of the CF data model.
 
-
 A datum is a complete or partial definition of the zeroes of the
 dimension and auxiliary coordinate constructs which define a
 coordinate system. The datum may be indicated via properties or domain

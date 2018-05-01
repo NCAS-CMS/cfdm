@@ -12,6 +12,6 @@ object.
         '''
         '''
         return self._get_constructs().domain_axis_name(axis)
-    #--- End: for
+    #--- End: def
     
 #--- End: class

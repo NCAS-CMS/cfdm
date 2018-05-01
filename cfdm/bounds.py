@@ -24,4 +24,5 @@ class Bounds(mixin.PropertiesData, structure.Bounds):
             _prefix=_prefix, _level=_level, _title=_title,
             _create_title=_create_title)
     #--- End: def
+    
 #--- End: class

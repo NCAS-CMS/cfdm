@@ -113,7 +113,6 @@ x.__str__() <==> str(x)
                 shape = shape.replace(',)', ')')
                 x = [variable.name(key)]
                 x.append(shape)
-            #--- End: if
                     
             if variable.hasdata:
 #                if variable.isreftime:

@@ -134,8 +134,7 @@ x.__str__() <==> str(x)
             for cm in cell_methods.values():
                 cm = cm.copy()
                 cm.set_axes(tuple([axis_names.get(axis, axis)
-                                   for axis in cm.get_axes(())]))
-                
+                                   for axis in cm.get_axes(())]))                
                 x.append(str(cm))
                 
             c = ' '.join(x)
@@ -171,7 +170,6 @@ x.__str__() <==> str(x)
                 shape = shape.replace(',)', ')')
                 x = [variable.name(ncvar=True, default=key)]
                 x.append(shape)
-            #--- End: if
                     
             if variable.has_data():
 #                if variable.isreftime:

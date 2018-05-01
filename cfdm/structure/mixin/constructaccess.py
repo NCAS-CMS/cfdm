@@ -1,20 +1,37 @@
 import abc
 
+_MUST_IMPLEMENT = 'This method must be implemented'
+
 
 class ConstructAccess(object):
-    '''Mixin class for manipulating constructs stored in a `Constructs`
-object.
+    '''Mixin class for manipulating a `Constructs` object.
 
     '''
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def _get_constructs(self, *default):
+        '''Return the `Constructs` object
+
+:Examples 1:
+
+>>> c = f._get_constructs()
+
+:Parameters:
+
+    default: optional
+        If set then return *default* if there is no `Constructs` object.
+:Returns:
+
+    out:
+        The `Constructs` object. If unset then return *default* if provided.
+
+:Examples 2:
+
+>>> c = f._get_constructs(None)
+
         '''
-.. versionadded:: 1.6
-        
-        '''
-        print 'method returns the Constructs instance'
+        raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
     
     def array_constructs(self, copy=False):

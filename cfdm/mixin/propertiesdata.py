@@ -104,7 +104,7 @@ standard_name = 'time'
         indent1 = '    ' * (_level+1)
 
         string = []
-        
+
         # ------------------------------------------------------------
         # Title
         # ------------------------------------------------------------
@@ -152,7 +152,8 @@ standard_name = 'time'
                                                          _prefix,
                                                          shape,
                                                          str(data)))
-
+        #--- End: if
+        
         string = '\n'.join(string)
        
         if display:
@@ -214,6 +215,29 @@ True
 
 '''
         # ------------------------------------------------------------
+        # Check external variables (returning True if both are
+        # external with the same netCDF variable name)
+        # ------------------------------------------------------------
+        external0 = self._get_component('external', None, False)
+        external1 = other._get_component('external', None, False)
+        if external0 != external1:
+            if traceback:
+                print("{0}: Only one external variable)".format(
+                    self.__class__.__name__))
+            return False
+        elif external0:
+            # Both variables are external
+            if self.get_ncvar(None) != other.get_ncvar(None):
+                if traceback:
+                    print(
+"{0}: External variable have different netCDF variable names: {} != {})".format(
+    self.__class__.__name__, self.get_ncvar(None), other.get_ncvar(None)))
+                return False
+
+            return True
+        #--- End: if
+                
+        # ------------------------------------------------------------
         # Check the properties
         # ------------------------------------------------------------
         if not super(PropertiesData, self).equals(
@@ -247,7 +271,7 @@ True
                     print(
 "{0}: Different data values".format(self.__class__.__name__))
                 return False
-        #--- End: for
+        #--- End: if
 
         return True
     #--- End: def

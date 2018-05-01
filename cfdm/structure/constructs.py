@@ -578,7 +578,8 @@ None
             #--- End: for
             axes_shape = tuple(axes_shape)
                     
-            if construct.shape[:construct.ndim - extra_axes] != axes_shape:
+            if (construct.has_data() and 
+                construct.shape[:construct.ndim - extra_axes] != axes_shape):
                 raise ValueError(
 "Can't set {} construct: Data array shape {} does not match the axes shape {}".format(
     self._construct_type_description(construct_type),

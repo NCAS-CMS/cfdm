@@ -219,8 +219,6 @@ term, use the `del_term` method.
 :Examples 2:
 
         '''
-#        return self._get_component('domain_ancillaries', None, {}).copy()
-
         existing = self._get_component('domain_ancillaries', None, None)
 
         if existing is None:
@@ -406,8 +404,6 @@ ERROR
 {}
 
         '''
-#        return self._get_component('parameters', None, {}).copy()
-
         existing = self._get_component('parameters', None, None)
 
         if existing is None:
