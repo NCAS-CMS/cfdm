@@ -50,7 +50,7 @@ Returns an independent numpy array.
             else:
                 array = array.copy()
         #--- End: if
-        
+
         return self.get_subspace(array, indices)
     #--- End: def
 

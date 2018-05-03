@@ -2618,7 +2618,7 @@ also be provided.
        return f.auxiliary_coordinates()
     #-- End: def
 
-    def get_cell_measures(self, f):
+    def get_cell_measure(self, f):
        '''
        '''
        return f.cell_measures()

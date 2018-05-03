@@ -390,49 +390,49 @@ None
     @fill_value.deleter
     def fill_value(self)       : self._fill_value = None
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def array(self):
-        '''A numpy array copy the data.
-
-.. note:: If the data array is stored as date-time objects then a
-          numpy array of numeric reference times will be returned. A
-          numpy array of date-time objects may be returned by the
-          `dtarray` attribute.
-
-.. seealso:: `dtarray`
-
-:Examples:
-
->>> d = Data([1, 2, 3.0], 'km')
->>> a = d.array
->>> isinstance(a, numpy.ndarray)
-True
->>> print a
-[ 1.  2.  3.]
->>> d[0] = -99 
->>> print a[0] 
-1.0
->>> a[0] = 88
->>> print d[0]
--99.0 km
-
-        '''
-        array = self.varray
-        
-        if numpy.ma.isMA(array) and not self.ndim:
-            # This is because numpy.ma.copy doesn't work for
-            # scalar arrays (at the moment, at least)
-            temp = numpy.ma.masked_all((), dtype=array.dtype)
-            temp[...] = array
-            array = temp
-        else:
-            array = array.copy()
-
-        return array
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Attribute (read only)
+#    # ----------------------------------------------------------------
+#    @property
+#    def array(self):
+#        '''A numpy array copy the data.
+#
+#.. note:: If the data array is stored as date-time objects then a
+#          numpy array of numeric reference times will be returned. A
+#          numpy array of date-time objects may be returned by the
+#          `dtarray` attribute.
+#
+#.. seealso:: `dtarray`
+#
+#:Examples:
+#
+#>>> d = Data([1, 2, 3.0], 'km')
+#>>> a = d.array
+#>>> isinstance(a, numpy.ndarray)
+#True
+#>>> print a
+#[ 1.  2.  3.]
+#>>> d[0] = -99 
+#>>> print a[0] 
+#1.0
+#>>> a[0] = 88
+#>>> print d[0]
+#-99.0 km
+#
+#        '''
+#        array = self.varray
+#        
+#        if numpy.ma.isMA(array) and not self.ndim:
+#            # This is because numpy.ma.copy doesn't work for
+#            # scalar arrays (at the moment, at least)
+#            temp = numpy.ma.masked_all((), dtype=array.dtype)
+#            temp[...] = array
+#            array = temp
+#        else:
+#            array = array.copy()
+#
+#        return array
+#    #--- End: def
 
     @classmethod
     def asdata(cls, d, copy=False):
@@ -1592,43 +1592,9 @@ False
         return numpy.ma.masked
     #--- End: def
     
-    def first_element(self):
+    def _element(self, index):
         '''
         '''
-        d = self[(slice(0, 1),)*self.ndim]
-        array = d.get_array()
-        
-        if not numpy.ma.isMA(array):
-            return array.item()
-
-        mask = array.mask
-        if mask is numpy.ma.nomask or not mask.item():
-            return array.item()
-
-        return numpy.ma.masked        
-    #--- End: def
-    
-    def last_element(self):
-        '''
-        '''
-        d = self[(slice(-1, None),)*self.ndim]
-        array = d.get_array()
-        
-        if not numpy.ma.isMA(array):
-            return array.item()
-
-        mask = array.mask
-        if mask is numpy.ma.nomask or not mask.item():
-            return array.item()
-
-        return numpy.ma.masked
-    #--- End: def
-    
-    def second_element(self):
-        '''
-        '''
-        index = (slice(0, 1),)*(self.ndim-1) + (slice(1, 2),)
-      
         array = self[index].get_array()
 
         if not numpy.ma.isMA(array):
@@ -1639,6 +1605,73 @@ False
             return array.item()
 
         return numpy.ma.masked
+    #--- End: def
+
+    def first_element(self):
+        '''
+        '''
+        return self._element((slice(0, 1),)*self.ndim)
+#        d = self[(slice(0, 1),)*self.ndim]
+#        array = d.get_array()
+#        
+#        if not numpy.ma.isMA(array):
+#            return array.item()
+#
+#        mask = array.mask
+#        if mask is numpy.ma.nomask or not mask.item():
+#            return array.item()
+#
+#
+#        return numpy.ma.masked        
+    #--- End: def
+    
+    def last_element(self):
+        '''
+        '''
+        
+        return self._element((slice(-1, None),)*self.ndim)
+#        d = self[(slice(-1, None),)*self.ndim]
+#        array = d.get_array()
+#        
+#        if not numpy.ma.isMA(array):
+#            return array.item()
+#
+#        mask = array.mask
+#        if mask is numpy.ma.nomask or not mask.item():
+#            return array.item()
+#
+#        return numpy.ma.masked
+    #--- End: def
+    
+    def list_indices(self):
+        '''
+        '''
+        ma = self._get_master_array()
+
+        if getattr(ma, 'compression_type', None) == 'gathered':
+            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
+        else:
+            list_indices = None
+            
+        return list_indices
+    #--- End: def
+    
+    def second_element(self):
+        '''
+        '''
+        return self._element((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
+#        index = (slice(0, 1),)*(self.ndim-1) + (slice(1, 2),)
+#      
+#        array = self[index].get_array()
+#
+#        if not numpy.ma.isMA(array):
+#            return array.item()
+#
+#        mask = array.mask
+#        if mask is numpy.ma.nomask or not mask.item():
+#            return array.item()
+#
+#        return numpy.ma.masked
     #--- End: def
 
     def set_dtype(self, value):

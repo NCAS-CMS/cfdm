@@ -60,20 +60,18 @@ Returns an independent numpy array.
             n_compressed_axes = len(compressed_axes)
 
             uncompressed_shape = self.shape
-            partial_uncompressed_shapes =  [
+            partial_uncompressed_shapes = [
                 reduce(mul, [uncompressed_shape[i] for i in compressed_axes[i:]], 1)
                 for i in range(1, n_compressed_axes)]
             
             sample_indices = [slice(None)] * compressed_array.ndim
             u_indices      = [slice(None)] * self.ndim        
         
-
             zeros = [0] * n_compressed_axes
-            for ii, b in enumerate(uncompression_indices):
-                sample_indices[sample_axis] = ii
+            for j, b in enumerate(uncompression_indices):
+                sample_indices[sample_axis] = j
                 
                 u_indices[compressed_axes[0]:compressed_axes[-1]+1] = zeros
-#                xxx = zeros[:]
                 for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
                     if b >= z:
                         (a, b) = divmod(b, z)
