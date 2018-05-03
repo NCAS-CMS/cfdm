@@ -243,12 +243,13 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 
 :Parameters:
 
-    props: `dict`, optional   
+    properties: `dict`, optional   
         Replace all existing properties with those specified in the
-        *props* dictionary.
+        *properties* dictionary. If the dictionary is empty then all
+        properties will be deleted.
 
     copy: `bool`, optional
-        If False then any property values provided by the *props*
+        If False then any property values provided by the *properties*
         parameter are not deep copied before insertion. By default
         they are deep copied.
 
@@ -274,7 +275,7 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
             if value is not None:
                 out[prop] = value
 
-        if not properties:
+        if properties is None:
             return out
 
         # Still here?

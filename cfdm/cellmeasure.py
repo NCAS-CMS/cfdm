@@ -52,8 +52,9 @@ Return a string containing a full description of the cell measure.
             name = self.name(default=self.get_property('units', ''))
             _title = 'Cell Measure: ' + name
 
-        if self.get_external(False):
-            _title += ' (external variable: {0})'.format(self.get_ncvar(''))
+        if self.get_external():
+            if not (self.has_data() or self.properties()):
+                _title += ' (external variable: {0})'.format(self.get_ncvar(''))
                 
         return super(CellMeasure, self).dump(
             display=display,
@@ -88,10 +89,30 @@ Return a string containing a full description of the cell measure.
         return True
     #--- End: def
 
-    def get_external(self, *default):
-        '''
+    def get_external(self):
+        '''Whether the cell measure construct is external.
+
+The cell measure construct is assumed to be internal unless
+sepcifically set to be external with the `set_external` method.
+
+.. seealso:: `set_external`
+
+:Examples 1:
+
+>>> x = c.get_external()
+
+:Returns:
+
+    out:
+        True if the cell measure is external, otherwise False.
+
+:Examples 2:
+
+>>> if c.get_external():
+...     print "Cell measure is external"
+
         '''        
-        return self._get_component('external', None, *default)
+        return self._get_component('external', None, False)
     #--- End: def
 
     def name(self, default=None, ncvar=False):
@@ -166,7 +187,35 @@ None
     #--- End: def
 
     def set_external(self, value):
-        '''
+        '''Set whether the cell measure construct is external.
+
+The cell measure construct is assumed to be internal unless
+sepcifically set to be external with the `set_external` method.
+
+.. seealso:: `get_external`
+
+:Examples 1:
+
+>>> f.set_external(True)
+
+:Parameters:
+
+    value: `bool`
+        Whether the cell measure construct is external or not.
+
+:Returns:
+
+     `None`
+
+:Examples 2:
+
+>>> c.set_external(True)
+>>> c.get_external()
+True
+>>> c.set_external(False)
+>>> c.get_external()
+False
+
         '''
         return self._set_component('external', None, bool(value))
     #--- End: def

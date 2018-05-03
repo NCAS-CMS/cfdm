@@ -437,13 +437,6 @@ ancillaries, field ancillaries).
             print 'Reading netCDF file:', filename
             print '    Input netCDF dataset =',nc
     
-#        # Set of all of the netCDF variable names in the file.
-#        #
-#        # For example:
-#        # >>> variables
-#        # set(['lon','lat','tas'])
-#        variables = set(map(str, nc.variables))
-    
         # ----------------------------------------------------------------
         # Put the file's global attributes into the global
         # 'global_attributes' dictionary
@@ -620,58 +613,8 @@ ancillaries, field ancillaries).
             return self.read_vars
 
         #
-        if external_files:
-            keys  = ('variable_attributes',
-                     'variable_dimensions',
-                     'variable_dataset',
-                     'variables')
-            found = []
-            
-            for external_file in external_files:
-                external_g = self.read(external_file, _scan_only=True,
-                                       _debug=_debug)
-
-                g['datasets'].append(external_g['nc'])
-                
-                for ncvar in g['external_variables'].copy():
-                    if ncvar not in external_g['internal_variables']:
-                        # The external variable name is not in this
-                        # external file
-                        continue
-                    
-                    if ncvar in found:
-                        # The external variable name is not in this
-                        # external file
-                        g['external_variables'].add(ncvar)
-                        for key in keys:
-                            g[key].pop(ncvar)
-                            
-                        print  "ADD MESSAGE HERE!!!!!!"
-                        continue
-
-                    found.append(ncvar)
-
-                    # Check that the variable dimensions exist in
-                    # parent file, with the same sizes.
-                    cf_compliant = True
-                    for d in external_g['variable_dimensions'][ncvar]:
-                        size = g['internal_dimension_sizes'].get(d)
-                        if size is None:
-                            cf_compliant = False
-                            print  "ADD MESSAGE HERE!!!!!!"
-                        elif external_g['internal_dimension_sizes'][d] != size:
-                            cf_compliant = False
-                            print  "ADD MESSAGE HERE!!!!!!"
-                        else:
-                            continue
-                    #--- End: for
-                    
-                    # Update the read parameters
-                    if cf_compliant:
-                        g['external_variables'].remove(ncvar)
-                        for key in keys:
-                            g[key][ncvar] = external_g[key][ncvar]                   
-        #--- End: if
+        if external_files and external_variables:
+            self._get_variables_from_external_files(external_files)
                 
         # ------------------------------------------------------------
         # Convert every netCDF variable in the file to a field
@@ -733,6 +676,94 @@ ancillaries, field ancillaries).
         self.file_close()
         
         return fields.values()
+    #--- End: def
+
+    def _get_variables_from_external_files(self, external_variables, external_files):
+        '''Get external variables from external files.
+
+:Parameters:
+
+    external_files: sequence of `str`
+        The external file names.
+
+:Returns:
+
+    `None`
+
+        '''
+        attribute = {'external_variables': external_variables}
+                
+        g = self.read_vars
+
+        external_variables       = g['external_variables']
+        datasets                 = g['datasets']
+        internal_dimension_sizes = g['internal_dimension_sizes']
+                                
+        keys  = ('variable_attributes',
+                 'variable_dimensions',
+                 'variable_dataset',
+                 'variables')
+        
+        found = []
+            
+        for external_file in external_files:
+            external_g = self.read(external_file, _scan_only=True,
+                                   _debug=_debug)
+            
+            datasets.append(external_g['nc'])
+            
+            for ncvar in external_variables.copy():
+                if ncvar not in external_g['internal_variables']:
+                    # The external variable name is not in this
+                    # external file
+                    continue
+                
+                if ncvar in found:
+                    # The external variable name exists in more than
+                    # one external file
+                    external_variables.add(ncvar)
+                    for key in keys:
+                        g[key].pop(ncvar)
+
+                    self._add_message(
+                        None, ncvar,
+                        message=('External variable',
+                                 'exists in multiple external files'),
+                        attribute=attribute)                    
+                    continue
+
+                # The external variable name exists in this external
+                # file
+                found.append(ncvar)
+
+                # Check that the variable dimensions exist in
+                # parent file, with the same sizes.
+                cf_compliant = True
+                for d in external_g['variable_dimensions'][ncvar]:
+                    size = internal_dimension_sizes.get(d)
+                    if size is None:
+                        cf_compliant = False
+                        self._add_message(
+                            None, ncvar,
+                            message=('External variable dimension',
+                                     'does not exist in file'),
+                            attribute=attribute)
+                    elif external_g['internal_dimension_sizes'][d] != size:
+                        cf_compliant = False
+                        self._add_message(
+                            None, ncvar,
+                            message=('External variable dimension',
+                                     'has incorrect size'),
+                            attribute=attribute)
+                    else:
+                        continue
+                #--- End: for
+                    
+                # Update the read parameters
+                if cf_compliant:
+                    external_variables.remove(ncvar)
+                    for key in keys:
+                        g[key][ncvar] = external_g[key][ncvar]                   
     #--- End: def
     
     def _set_auxiliary_coordinate(self, field, construct, axes, copy=True):
@@ -930,7 +961,7 @@ ancillaries, field ancillaries).
     def set_external(self, construct):
         '''
         '''
-        construct._set_component('external', None, True)
+        construct.set_external(True)
     #--- End: def
 
     def set_field_ancillary(self, field, construct, axes, copy=True):
@@ -1431,7 +1462,7 @@ ancillaries, field ancillaries).
         message = ('External variable', 'exists in the file')
         
         for ncvar in parsed_external_variables[:]:
-            if ncvar in g['internal_variables']:
+            if ncvar in g['internal_variables']:                
                 parsed_external_variables.remove(ncvar)
                 self._add_message(None, ncvar,
                                   message=message,
@@ -2658,7 +2689,7 @@ also be provided.
             self.set_external(cell_measure)
         else:
             # The cell measure variable is this file
-            self.set_properties(cell_measure, g['variable_attributes'][ncvar])        
+            self.set_properties(cell_measure, self.read_vars['variable_attributes'][ncvar])
             data = self._create_data(ncvar, cell_measure)            
             self._set_data(cell_measure, data, copy=False)
             
@@ -2881,7 +2912,9 @@ Set the Data attribute of a variable.
         field_ancillary = self.initialise('FieldAncillary')
 
         # Insert properties
-        self.set_properties(field_ancillary, g['variable_attributes'][ncvar], copy=True)
+        self.set_properties(field_ancillary,
+                            self.read_vars['variable_attributes'][ncvar],
+                            copy=True)
 
         # Insert data
         data = self._create_data(ncvar, field_ancillary)

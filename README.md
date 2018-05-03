@@ -1,23 +1,22 @@
 CFDM
 ====
 
+A reference implementationof the CF data model
+
 ----------------------------------------------------------------------
 
-Requirements
-============
+Functionality
+=============
 
-* read CF-netCDF datasets into field constructs
+* read netCDF datasets into field constructs
 
-* create new field constructs that do not exist in CF-netCDf datasets
+* create new field constructs in memory
 
-* modify field constructs' metadata and data
+* modify field construct metadata and data
 
 * create subspaces of field constructs
 
 * write field constructs to CF-netCDF datasets
-
-* allow field constructs and CF-netCDF datasets to be checked for
-  CF-compliance by third party libraries.
 
 ----------------------------------------------------------------------
 
@@ -53,23 +52,6 @@ The test scripts are in the ``test`` directory. To run all tests:
 
     python test/run_tests.py
 
-
-----------------------------------------------------------------------
-
-Command line utilities
-======================
-
-The ``cfdump`` tool generates text representations on standard output
-of the CF fields contained in the input files. 
-
-During the installation described above, these scripts will be copied
-automatically to a location given by the ``PATH`` environment
-variable.
-
-For usage instructions, use the ``-h`` option to display the manual
-pages:
-
-    cfdump -h
 
 ----------------------------------------------------------------------
 

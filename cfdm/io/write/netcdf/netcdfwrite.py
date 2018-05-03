@@ -842,7 +842,7 @@ measure will not be written.
         The field containing the cell measure.
 
     key: `str`
-        The identifier of the cell measure (e.g. 'msr0').
+        The identifier of the cell measure (e.g. 'cellmeasure0').
 
     cell_measure: `CellMeasure`
 
@@ -866,6 +866,12 @@ measure will not be written.
         if self._already_in_file(cell_measure, ncdimensions):
             # Use existing cell measure variable
             ncvar = g['seen'][id(cell_measure)]['ncvar']
+        elif self.get_external(cell_measure):
+            # The cell measure is external
+            ncvar = self.get_ncvar(cell_measure, None)
+            if ncvar is None:
+                raise ValueError(
+                    "External cell measure requires a netCDF variable name")
         else:
             # Create a new cell measure variable
             ncvar = self._create_netcdf_variable_name(cell_measure, default='cell_measure')
@@ -873,7 +879,7 @@ measure will not be written.
                 
         g['key_to_ncvar'][key] = ncvar
     
-        # Update the cell_measures list
+        # Update the field's cell_measures list
         return '{0}: {1}'.format(measure, ncvar)
     #--- End: def
       
@@ -1987,6 +1993,28 @@ datum.
         '''
         '''
         return field.dimension_coordinates()
+    #--- End: def
+
+    def get_external(self, parent):
+        '''Return whether a construct is external.
+
+:Examples 1:
+
+:Parameters:
+
+    parent: 
+        The object
+
+    default: optional
+
+:Returns:
+
+    out: `bool`
+        Whether the construct is external.
+
+:Examples 2:
+        '''
+        return parent.get_external()
     #--- End: def
 
     def get_field_ancillaries(self, field):
