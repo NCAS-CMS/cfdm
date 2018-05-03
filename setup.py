@@ -42,32 +42,20 @@ long_description = """
 Home page
 =========
 
-* `cf-python <http://cfpython.bitbucket.io>`_
+* `https://bitbucket.org/cfpython/cfdm`_
 
 Documentation
 =============
 
-* `Online documentation for the latest release
-  <http://cfpython.bitbucket.io/docs/latest/>`_
+* 
 
 Dependencies
 ============
 
-* The package runs on Linux and Mac OS operating systems.
-
 * Requires Python version 2.7.
  
-* See the `README.md
-  <https://bitbucket.org/cfpython/cf-python/src/master/README.md>`_
-  file for further dependencies
-
-Visualisation
-=============
-
-* The `cfplot package <https://pypi.python.org/pypi/cf-plot>`_ does
-  not currently work for versions 2.x of cf-python (it does work for
-  versions 1.x). This will be resolved soon.
-
+* See the `https://bitbucket.org/cfpython/cfdm`_ for further
+  dependencies.
 
 Code license
 ============
@@ -84,7 +72,7 @@ setup(name = "cfdm",
       author_email = "david.hassell@ncas.ac.uk",
       url          = "https://bitbucket.org/cfpython/cfdm",
       download_url = "",
-      platforms    = ["Linux", "MacOS"],
+      platforms    = ["Linux", "MacOS", "Windows"],
       keywords     = ['cf','netcdf','data','science',
                       'oceanography','meteorology','climate'],
       classifiers  = ["Development Status :: 5 - Production/Stable",
@@ -103,7 +91,7 @@ setup(name = "cfdm",
                       'cfdm.structure',
                       'cfdm.mixin'],
       package_data = {'cfdm': package_data},
-      requires     = ['netCDF4 (>=1.2.5)',
-                      'numpy (>=1.7)',
+      requires     = ['netCDF4 (>=1.3.1)',
+                      'numpy (>=1.13)',
                       ],
   )
