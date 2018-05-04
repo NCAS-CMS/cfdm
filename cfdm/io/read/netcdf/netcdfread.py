@@ -390,6 +390,9 @@ ancillaries, field ancillaries).
             'do_not_create_field':  set(),
             'references': {},
 
+            # The collection of external variables that are actually
+            # referenced from within the file
+            'referenced_external_variables': set(),
         }
         g = self.read_vars
 
@@ -643,7 +646,7 @@ ancillaries, field ancillaries).
                                  if not self._is_unreferenced(ncvar)])
 
             print 'Unreferenced netCDF variables:\n   ',
-            print '\n    '.join([ncvar for  ncvar in all_fields
+            print '\n    '.join([ncvar for ncvar in all_fields
                                  if self._is_unreferenced(ncvar)])
         
         # ------------------------------------------------------------
@@ -1456,20 +1459,41 @@ ancillaries, field ancillaries).
             
     def _check_external_variables(self, external_variables,
                                   parsed_external_variables):
+        '''asdsdsa
+
+:Parameters:
+
+    external_variables: `str`
+        The external_variables attribute as found in the file.
+ 
+    parsed_external_variables: `list`
+        The external_variables attribute parsed into a list of
+        external variable names.
+
+:Returns:
+
+    out: `list`
+        The external variable names, less those which are also netCDF
+        variables in the file.
+
         '''
-        '''
+        g = self.read_vars
+        
         attribute = {'external_variables': external_variables}
         message = ('External variable', 'exists in the file')
+
+        out = []
         
-        for ncvar in parsed_external_variables[:]:
-            if ncvar in g['internal_variables']:                
-                parsed_external_variables.remove(ncvar)
+        for ncvar in parsed_external_variables:
+            if ncvar not in g['internal_variables']:
+                out.append(ncvar)
+            else:
                 self._add_message(None, ncvar,
                                   message=message,
                                   attribute=attribute)
         #--- End: for
         
-        return parsed_external_variables
+        return out
     #--- End: def
         
                 
@@ -2162,10 +2186,7 @@ ancillaries, field ancillaries).
             cf_compliant = self._check_cell_measures(field_ncvar,
                                                      measures,
                                                      parsed_cell_measures)
-            if not cf_compliant:
-                if _debug:
-                    print '    Bad cell_measures:', measures
-            else:
+            if cf_compliant:
                 for x in parsed_cell_measures:
                     measure, ncvars = x.items()[0]
                     ncvar = ncvars[0]
@@ -2187,14 +2208,15 @@ ancillaries, field ancillaries).
                     key = self.set_cell_measure(f, cell, axes=axes, copy=False)
         
                     ncvar_to_key[ncvar] = key
-            #--- End: if
+
+                    if ncvar in g['external_variables']:
+                        g['referenced_external_variables'].add(ncvar)
         #--- End: if
     
         # ------------------------------------------------------------
         # Add cell methods to the field
         # ------------------------------------------------------------
         if cell_methods_string is not None:
-
             name_to_axis = ncdim_to_axis.copy()
             name_to_axis.update(ncscalar_to_axis)
 
@@ -2678,18 +2700,20 @@ also be provided.
         The new item.
 
         '''
+        g = self.read_vars
+        
         # Initialise the cell measure construct
         cell_measure = self.initialise('CellMeasure', measure=measure)
 
         # Store the netCDF variable name
         self.set_ncvar(cell_measure, ncvar)
     
-        if ncvar in self.read_vars['external_variables']:
+        if ncvar in g['external_variables']:
             # The cell measure variable is in a different file
             self.set_external(cell_measure)
         else:
             # The cell measure variable is this file
-            self.set_properties(cell_measure, self.read_vars['variable_attributes'][ncvar])
+            self.set_properties(cell_measure, g['variable_attributes'][ncvar])
             data = self._create_data(ncvar, cell_measure)            
             self._set_data(cell_measure, data, copy=False)
             
@@ -2713,7 +2737,8 @@ also be provided.
 
         '''
         cell_method = self.initialise('CellMethod',
-                                      axes=axes, properties=properties)
+                                      axes=axes,
+                                      properties=properties)
         return cell_method
     #--- End: def
 
@@ -3448,18 +3473,16 @@ Checks that
     #--- End: def
     
     def _check_cell_measures(self, field_ncvar, string, parsed_string):
-        '''
-:Parameters:
+        '''asasdads
 
-    nc: `netCDF4.Dataset`
-        The netCDF dataset object.
+:Parameters:
 
     field_ncvar: `str`
         
-    cell_measures: `str`
+    string: `str`
         The value of the netCDF cell_measures attribute.
 
-    parsed_cell_measures: `list`
+    parsed_string: `list`
 
 :Returns:
 
@@ -3470,7 +3493,8 @@ Checks that
 
         incorrectly_formatted = ('cell_measures attribute', 'is incorrectly formatted')
         incorrect_dimensions  = ('Cell measures variable', 'spans incorrect dimensions')
-        missing_variable      = ('Cell measures variable', 'is not in file nor referenced by the external_variables global attribute')
+        missing_variable      = ('Cell measures variable',
+                                 'is not in file nor referenced by the external_variables global attribute')
 
         g = self.read_vars
         
@@ -3506,11 +3530,11 @@ Checks that
                 ok = False
                 continue
                 
-            # Check that the variable's dimensions span a subset of
-            # the parent variable's dimensions.
             dimensions = self._ncdimensions(ncvar)
             if (not external and
                 not self._dimensions_are_subset(ncvar, dimensions, parent_dimensions)):
+                # The cell measure variable's dimensions do NOT span a
+                # subset of the parent variable's dimensions.
                 self._add_message(field_ncvar, ncvar,
                                   message=incorrect_dimensions,
                                   attribute=attribute,
@@ -3571,10 +3595,10 @@ Checks that
                                   attribute=attribute)
                 return False
             
-            # Check that the variable's dimensions span a subset of
-            # the parent variable's dimensions
             if not self._dimensions_are_subset(ncvar, self._ncdimensions(ncvar),
                                                parent_dimensions):
+                # The ancillary variable's dimensions do NOT span a
+                # subset of the parent variable's dimensions
                 self._add_message(field_ncvar, ncvar,
                                   message=incorrect_dimensions,
                                   attribute=attribute,
@@ -3602,7 +3626,8 @@ Checks that
 
         incorrectly_formatted = ('coordinate attribute', 'is incorrectly formatted')
         missing_variable      = ('Auxiliary/scalar coordinate variable', 'is not in file')
-        incorrect_dimensions  = ('Auxiliary/scalar coordinate variable', 'spans incorrect dimensions')
+        incorrect_dimensions  = ('Auxiliary/scalar coordinate variable',
+                                 'spans incorrect dimensions')
         
         g = self.read_vars
 
