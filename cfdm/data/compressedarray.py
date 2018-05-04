@@ -13,9 +13,7 @@ class CompressedArray(Array):
     '''
     def __init__(self, array=None, shape=None, size=None, ndim=None,
                  compression_type=None, compression_parameters=None):
-        '''
-        
-**Initialization**
+        '''**Initialization**
 
 :Parameters:
 
@@ -54,9 +52,12 @@ Returns an independent numpy array.
             
             sample_axis           = compression_parameters['sample_axis']
             uncompression_indices = compression_parameters['indices']
+
             
-            compressed_axes = range(sample_axis,
-                                    self.ndim - (compressed_array.ndim - sample_axis - 1))
+            compressed_axes = self.compressed_axes()
+            
+#           compressed_axes = range(sample_axis,
+#                                   self.ndim - (compressed_array.ndim - sample_axis - 1))
             n_compressed_axes = len(compressed_axes)
 
             uncompressed_shape = self.shape
@@ -202,10 +203,17 @@ Returns an independent numpy array.
         '''
         '''
         return sys.getrefcount(self.array) <= 2
-    
-    def open(self):
-        self.array.open()
 
     def close(self):
         self.array.close()
+            
+    def open(self):
+        self.array.open()
+
+    def compressed_axes(self):
+        '''
+        '''
+        sample_axis = self.compression_parameters.get('sample_axis', 0)
+
+        return range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1))
 #--- End: class

@@ -1338,40 +1338,70 @@ Missing data array elements are omitted from the calculation.
         return d
     #--- End: def
 
-    def unique(self):
-        '''The unique elements of the data.
+    def compressed_axes(self):
+        '''asd s
 
-The unique elements are sorted into a one dimensional array. with no
-missing values.
+.. seealso:: `compression_type`, `list_indices`
 
-.. versionadded:: 1.6
+:Examples 1:
+
+>>> a = d.compression_axes()
 
 :Returns:
 
-    out: `Data`
-        The unique elements.
+    out: `list`
+        The axes of the data that are compressed to a single axis in the internal array.
 
-:Examples:
+:Examples 2:
 
->>> d = Data([[4, 2, 1], [1, 2, 3]], 'metre')
->>> d.unique()
-<Data: [1, 2, 3, 4] metre>
->>> d[1, -1] = masked
->>> d.unique()
-<Data: [1, 2, 4] metre>
+>>> d.compression_axes()
+[0, 1]
+
+>>> d.compression_axes()
+[1, 2, 3]
+
+>>> d.compression_axes()
+[]
 
         '''
-        array = self.get_array()
-        array = numpy.unique(array)
+        ma = self._get_master_array()
 
-        if numpy.ma.is_masked(array):
-            array = array.compressed()
+        compressed_axes = getattr(ma, 'compressed_axes', None)
+        if compressed_axes is None:
+            return []
 
-        return type(self)(array, units=self.get_units(None),
-                          calendar=self.get_calendar(None),
-                          fill_value=self.get_fill_value(None))
+        return compressed_axes()
     #--- End: def
 
+    def compression_type(self):
+        '''Return the type of compression applied to the internal array.
+
+.. seealso:: `compression_axes`, `list_indices`
+
+:Examples 1:
+
+>>> t = d.compression_type()
+
+:Returns:
+
+    out: `str` or `None`
+        The type of compression, or `None` of there is none.
+
+:Examples 2:
+
+>>> d.compression_type()
+'gathered'
+
+>>> d.compression_type()
+'ragged_contiguous'
+
+>>> d.compression_type()
+None
+        '''
+        ma = self._get_master_array()
+        return getattr(ma, 'compression_type', None)
+    #--- End: def
+    
     def dump(self, display=True, prefix=None):
         '''
 
@@ -1642,9 +1672,14 @@ False
 #
 #        return numpy.ma.masked
     #--- End: def
-    
+
     def list_indices(self):
         '''
+
+:Returns:
+
+    out: `Data` or `None`
+
         '''
         ma = self._get_master_array()
 
@@ -1654,6 +1689,25 @@ False
             list_indices = None
             
         return list_indices
+    #--- End: def
+    
+    def profile_indices(self): # profile?
+        '''
+
+:Returns:
+
+    out: `Data` or `None`
+
+        '''
+        pass
+#        ma = self._get_master_array()
+#
+#        if getattr(ma, 'compression_type', None) == 'gathered':
+#            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
+#        else:
+#            list_indices = None
+#            
+#        return list_indices
     #--- End: def
     
     def second_element(self):
@@ -1681,6 +1735,40 @@ False
         if value != self.dtype:
             array = numpy.asanyarray(self.get_array(), dtype=value)
             self._set_master_array(NumpyArray(array))
+    #--- End: def
+
+    def unique(self):
+        '''The unique elements of the data.
+
+The unique elements are sorted into a one dimensional array. with no
+missing values.
+
+.. versionadded:: 1.6
+
+:Returns:
+
+    out: `Data`
+        The unique elements.
+
+:Examples:
+
+>>> d = Data([[4, 2, 1], [1, 2, 3]], 'metre')
+>>> d.unique()
+<Data: [1, 2, 3, 4] metre>
+>>> d[1, -1] = masked
+>>> d.unique()
+<Data: [1, 2, 4] metre>
+
+        '''
+        array = self.get_array()
+        array = numpy.unique(array)
+
+        if numpy.ma.is_masked(array):
+            array = array.compressed()
+
+        return type(self)(array, units=self.get_units(None),
+                          calendar=self.get_calendar(None),
+                          fill_value=self.get_fill_value(None))
     #--- End: def
 
 #--- End: class

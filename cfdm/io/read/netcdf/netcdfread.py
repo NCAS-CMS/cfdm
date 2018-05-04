@@ -494,15 +494,27 @@ ancillaries, field ancillaries).
             variables[ncvar] = variable
         #--- End: for
 
+        # The netCDF attributes for each variable
         g['variable_attributes'] = variable_attributes
+
+        # The netCDF dimensions for each variable
         g['variable_dimensions'] = variable_dimensions
-        g['variable_dataset']    = variable_dataset
-        g['variables']           = variables
-        g['datasets']            = [nc]
 
-        g['internal_variables']  = set(variable_attributes)
+        # The netCDF4 dataset object for each variable
+        g['variable_dataset'] = variable_dataset
 
-        # 
+        # The netCDF4 variable object for each variable
+        g['variables'] = variables
+
+        # The netCDF4 dataset objects that have been opened (i.e. the
+        # for parent file and any external files)
+        g['datasets'] = [nc]
+
+        # The names of the variable in the parent files
+        # (i.e. excluding any external variables)
+        g['internal_variables'] = set(variables)
+
+        # The netCDF dimensions of the parent file
         internal_dimension_sizes = {}
         for name, dimension in nc.dimensions.iteritems():
             internal_dimension_sizes[name] = dimension.size
@@ -510,13 +522,15 @@ ancillaries, field ancillaries).
         g['internal_dimension_sizes'] = internal_dimension_sizes
  
         if _debug:
-            print '    netCDF dimensions:', g['internal_dimension_sizes']
+            print '    netCDF dimensions:', internal_dimension_sizes
     
         # ------------------------------------------------------------
         # List variables
+        #
+        # Identify and parse all list variables
         # ------------------------------------------------------------
-        for ncvar in variable_attributes:
-            if variable_dimensions[ncvar] == (ncvar,):
+        for ncvar, dimensions in variable_dimensions.iteritems():
+            if dimensions == (ncvar,):
                 # This variable is a Unidata coordinate variable
                 compress = variable_attributes[ncvar].get('compress')
                 if compress is None:
@@ -532,75 +546,88 @@ ancillaries, field ancillaries).
         #--- End: for
 
         # ------------------------------------------------------------
-        # DSG variables
+        # DSG variables  (>= CF-1.6)
+        #
+        # Identify and parse all DSG count and DSG index variables
         # ------------------------------------------------------------
         featureType = g['global_attributes'].get('featureType')
         if featureType is not None:
             g['featureType'] = featureType
 
             sample_dimension = None
-            for ncvar in variable_attributes:
-                if variable_attributes[ncvar].get('sample_dimension') is not None:
-                    # This variable is a count variable for DSG contiguous
-                    # ragged arrays
-                    sample_dimension = variable_attributes[ncvar]['sample_dimension']
-                    cf_compliant = self._check_sample_dimension(ncvar,
-                                                                sample_dimension)
-                    if not cf_compliant:
-                        sample_dimension = None
-                    else:
-                        element_dimension_2 = self._parse_ragged_contiguous_compression(
-                            ncvar,
-                            variable_attributes,
-                            sample_dimension)
-                        # Do not attempt to create a field from a
-                        # count variable
-                        g['do_not_create_field'].add(ncvar)
+            for ncvar, attributes in variable_attributes.iteritems():
+                if 'sample_dimension' not in attributes:
+                    continue
+                
+                # ----------------------------------------------------
+                # This variable is a count variable for DSG
+                # contiguous ragged arrays
+                # ----------------------------------------------------
+                sample_dimension = attributes['sample_dimension']
+                cf_compliant = self._check_sample_dimension(ncvar,
+                                                            sample_dimension)
+                if not cf_compliant:
+                    sample_dimension = None
+                else:
+                    element_dimension_2 = self._parse_ragged_contiguous_compression(
+                        ncvar,
+                        sample_dimension)
+
+                    # Do not attempt to create a field from a
+                    # count variable
+                    g['do_not_create_field'].add(ncvar)
             #--- End: for
 
             instance_dimension = None
-            for ncvar in variable_attributes:
-                                
-                if variable_attributes[ncvar].get('instance_dimension') is not None:
-                    # This variable is an index variable for DSG indexed
-                    # ragged arrays
-                    instance_dimension = variable_attributes[ncvar]['instance_dimension']
-                    cf_compliant = self._check_instance_dimension(ncvar,
-                                                                  instance_dimension)
-                    if not cf_compliant:
-                        instance_dimension = None
-                    else:
-                        element_dimension_1 = self._parse_DSG_indexed_compression(
-                            ncvar,
-                            variable_attributes,
-                            instance_dimension)
-                        # Do not attempt to create a field from a
-                        # index variable
-                        g['do_not_create_field'].add(ncvar)
+            for ncvar, attributes in variable_attributes.iteritems():
+                if 'instance_dimension' not in attributes:
+                    continue
+
+                # ----------------------------------------------------
+                # This variable is an index variable for DSG
+                # indexed ragged arrays
+                # ----------------------------------------------------
+                instance_dimension = attributes['instance_dimension']
+                cf_compliant = self._check_instance_dimension(
+                    ncvar,
+                    instance_dimension)
+                if not cf_compliant:
+                    instance_dimension = None
+                else:
+                    element_dimension_1 = self._parse_indexed_compression(
+                        ncvar,
+                        instance_dimension)
+
+                    # Do not attempt to create a field from a
+                    # index variable
+                    g['do_not_create_field'].add(ncvar)
             #--- End: for
 
             if (sample_dimension   is not None and
                 instance_dimension is not None):
-                
-                self._parse_DSG_indexed_contiguous_compression(                
-                        sample_dimension,
-                        instance_dimension)
+                # ----------------------------------------------------
+                # There are DSG indexed contiguous ragged arrays
+                # ----------------------------------------------------
+                self._parse_indexed_contiguous_compression(sample_dimension,
+                                                           instance_dimension)
         #--- End: if
 
         # ------------------------------------------------------------
         # Geometry variables (>= CF-1.8)
+        #
+        # Identify and parse all geometry container variables
         # ------------------------------------------------------------
-#        for ncvar in variable_attributes:
-#            geometry_ncvar = variable_attributes[ncvar].get('geometry')
-#            if geometry_ncvar is None:
-#                continue
-#
-#            self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
-#
-#            # Do not attempt to create a field from a geometry
-#            # container variable
-#            g['do_not_create_field'].add(geometry_ncvar)
-#        #--- End: for
+        for ncvar, attributes in variable_attributes.iteritems():
+            if 'geometry' not in attributes:
+                continue
+            
+            geometry_ncvar = attributes['geometry']
+            self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
+
+            # Do not attempt to create a field from a geometry
+            # container variable
+            g['do_not_create_field'].add(geometry_ncvar)
+        #--- End: for
 
         # ------------------------------------------------------------
         # External variables
@@ -620,16 +647,27 @@ ancillaries, field ancillaries).
             self._get_variables_from_external_files(external_files)
                 
         # ------------------------------------------------------------
-        # Convert every netCDF variable in the file to a field
+        # Convert every netCDF variable to a field (apart from special
+        # variables that have already been identified as such)
         # ------------------------------------------------------------
         all_fields = OrderedDict()
         for ncvar in g['variables']:
-            if ncvar in g['do_not_create_field']:
-                continue
-
-            all_fields[ncvar] = self._create_field(ncvar, verbose=verbose)
+            if ncvar not in g['do_not_create_field']:
+                all_fields[ncvar] = self._create_field(ncvar, verbose=verbose)
         #--- End: for
         
+        # ------------------------------------------------------------
+        # Check for unreferenced external variables
+        # ------------------------------------------------------------
+        unreferenced_external_variables =  g['external_variables'].difference(
+            g['referenced_external_variables'])
+        for ncvar in unreferenced_external_variables:
+            self._add_message(
+                None, ncvar,
+                message=('External variable',
+                         'is not referenced in file'),
+                attribute={'external_variables': external_variables})
+            
         # ------------------------------------------------------------
         # Discard fields created from netCDF variables that are
         # referenced by other netCDF variables
@@ -665,19 +703,18 @@ ancillaries, field ancillaries).
                         
                         fields[ncvar] = all_fields[ncvar]
         #--- End: if
-                
-        if _debug:
-            for x in fields.values():
-                print x #repr(x)
-
+            
         for x in fields.values():
             x._set_component('component_report', None, g['component_report'])
 
-        # ------------------------------------------------------------        
+        # ------------------------------------------------------------
         # Close the netCDF file(s)
         # ------------------------------------------------------------
         self.file_close()
-        
+         
+        # ------------------------------------------------------------
+        # Return the fields
+        # ------------------------------------------------------------
         return fields.values()
     #--- End: def
 
@@ -741,18 +778,18 @@ ancillaries, field ancillaries).
 
                 # Check that the variable dimensions exist in
                 # parent file, with the same sizes.
-                cf_compliant = True
+                ok = True
                 for d in external_g['variable_dimensions'][ncvar]:
                     size = internal_dimension_sizes.get(d)
                     if size is None:
-                        cf_compliant = False
+                        ok = False
                         self._add_message(
                             None, ncvar,
                             message=('External variable dimension',
                                      'does not exist in file'),
                             attribute=attribute)
                     elif external_g['internal_dimension_sizes'][d] != size:
-                        cf_compliant = False
+                        ok = False
                         self._add_message(
                             None, ncvar,
                             message=('External variable dimension',
@@ -763,7 +800,7 @@ ancillaries, field ancillaries).
                 #--- End: for
                     
                 # Update the read parameters
-                if cf_compliant:
+                if ok:
                     external_variables.remove(ncvar)
                     for key in keys:
                         g[key][ncvar] = external_g[key][ncvar]                   
@@ -1032,31 +1069,29 @@ ancillaries, field ancillaries).
                          'sample_dimension'    : gathered_ncdimension}}
     #--- End: def
     
-    def _parse_ragged_contiguous_compression(self, ncvar, attributes,
+    def _parse_ragged_contiguous_compression(self, ncvar, 
                                              sample_dimension):
         '''
 
 :Parameters:
 
     ncvar: `str`
-        The netCDF variable name of the DSG count variable.
-
-    attributes: `dict`
+        The netCDF variable name of the count variable.
 
     sample_dimension: `str`
-        The netCDF dimension name of the DSG sample dimension.
+        The netCDF dimension name of the sample dimension.
 
 :Returns:
 
     out: `str`
-        The made-up netCDF dimension name of the DSG element dimension.
+        The made-up netCDF dimension name of the element dimension.
 
     '''
         g = self.read_vars        
 
         _debug = g['_debug']
         if _debug:
-            print '    DSG count variable: sample_dimension =', sample_dimension
+            print '    count variable: sample_dimension =', sample_dimension
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
@@ -1066,7 +1101,7 @@ ancillaries, field ancillaries).
         element_dimension_size  = self.get_max(elements_per_instance)
     
         if _debug:
-            print '    DSG contiguous array implied shape:', (instance_dimension_size,element_dimension_size)
+            print '    contiguous array implied shape:', (instance_dimension_size,element_dimension_size)
     
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
@@ -1114,23 +1149,20 @@ ancillaries, field ancillaries).
         return element_dimension
     #--- End: def
     
-    def _parse_DSG_indexed_compression(self, ncvar, attributes,
-                                       instance_dimension):
+    def _parse_indexed_compression(self, ncvar, instance_dimension):
         '''
         ncvar: `str`
-            The netCDF variable name of the DSG index variable.
-    
-        attributes: `dict`
+            The netCDF variable name of the index variable.
     
         instance_dimension: `str`
-            The netCDF variable name of the DSG instance dimension.
+            The netCDF variable name of the instance dimension.
     
         '''
         g = self.read_vars
                 
         _debug = g['_debug']
         if _debug:
-            print '    DSG index variable: instance_dimension =', instance_dimension
+            print '    index variable: instance_dimension =', instance_dimension
         
         index = self._create_data(ncvar, uncompress_override=True)
 
@@ -1193,15 +1225,14 @@ ancillaries, field ancillaries).
         return element_dimension
     #--- End: def
     
-    def _parse_DSG_indexed_contiguous_compression(self,
-                                                  sample_dimension,
-                                                  instance_dimension):
+    def _parse_indexed_contiguous_compression(self, sample_dimension,
+                                              instance_dimension):
         '''
 
 :Parameters:
     
     sample_dimension: `str`
-        The netCDF dimension name of the DSG sample dimension.
+        The netCDF dimension name of the sample dimension.
 
     element_dimension_1: `str`
         The name of the implied element dimension whose size is the
@@ -1216,7 +1247,7 @@ ancillaries, field ancillaries).
                 
         _debug = g['_debug']
         if _debug:
-            print 'Pre-processing DSG indexed and contiguous compression'
+            print 'Pre-processing indexed and contiguous compression'
         print g['compression']
         profile_dimension = g['compression'][sample_dimension]['ragged_contiguous']['profile_dimension']
     
