@@ -319,43 +319,38 @@ elements.
         return out
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
-    @property
-    def dtype(self):
-        '''The `numpy` data type of the data.
+    def _element(self, index):
+        '''Return an element of the data array.
 
-Setting the data type to a `numpy.dtype` object (or any object
-convertible to a `numpy.dtype` object, such as the string
-``'int32'``), will cause the data array elements to be recast to the
-specified type.
+It is assumed, but not checked, that the given index selects exactly
+one element.
 
-.. versionadded:: 1.6
+:Examples 1:
 
-:Examples:
+>>> x = d._element(8)
 
->>> d.dtype
-dtype('float64')
->>> type(d.dtype)
-<type 'numpy.dtype'>
+:Examples 2:
 
->>> d = Data([0.5, 1.5, 2.5])
->>> print d.array
-[0.5 1.5 2.5]
 >>> import numpy
->>> d.dtype = numpy.dtype(int)
->>> print d.array
-[0 1 2]
->>> d.dtype = bool
->>> print d.array
-[False  True  True]
->>> d.dtype = 'float64'
->>> print d.array
-[ 0.  1.  1.]
+>>> d = Data([[1, 2, 3]], 'km')
+>>> x = d._element((0, -1))
+>>> print x, type(x)
+3 <type 'int'>
+>>> d[0, 1] = numpy.ma.masked
+>>> d._element((slice(None), slice(1, 2)))
+masked
 
         '''
-        return self._get_master_array().dtype
+        array = self[index].get_array()
+
+        if not numpy.ma.isMA(array):
+            return array.item()
+
+        mask = array.mask
+        if mask is numpy.ma.nomask or not mask.item():
+            return array.item()
+
+        return numpy.ma.masked
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -389,50 +384,6 @@ None
     def fill_value(self, value): self._fill_value = value
     @fill_value.deleter
     def fill_value(self)       : self._fill_value = None
-
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def array(self):
-#        '''A numpy array copy the data.
-#
-#.. note:: If the data array is stored as date-time objects then a
-#          numpy array of numeric reference times will be returned. A
-#          numpy array of date-time objects may be returned by the
-#          `dtarray` attribute.
-#
-#.. seealso:: `dtarray`
-#
-#:Examples:
-#
-#>>> d = Data([1, 2, 3.0], 'km')
-#>>> a = d.array
-#>>> isinstance(a, numpy.ndarray)
-#True
-#>>> print a
-#[ 1.  2.  3.]
-#>>> d[0] = -99 
-#>>> print a[0] 
-#1.0
-#>>> a[0] = 88
-#>>> print d[0]
-#-99.0 km
-#
-#        '''
-#        array = self.varray
-#        
-#        if numpy.ma.isMA(array) and not self.ndim:
-#            # This is because numpy.ma.copy doesn't work for
-#            # scalar arrays (at the moment, at least)
-#            temp = numpy.ma.masked_all((), dtype=array.dtype)
-#            temp[...] = array
-#            array = temp
-#        else:
-#            array = array.copy()
-#
-#        return array
-#    #--- End: def
 
     @classmethod
     def asdata(cls, d, copy=False):
@@ -475,6 +426,26 @@ True
             return data.copy()
         else:
             return data
+    #--- End: def
+
+    def copy(self):
+        '''Return a deep copy.
+
+``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
+
+:Returns:
+
+    out: 
+        The deep copy.
+
+:Examples:
+
+>>> e = d.copy()
+
+        '''
+        new = super(Data, self).copy()
+#        new.HDF_chunks(self.HDF_chunks())
+        return new
     #--- End: def
 
     def expand_dims(self, position=0, copy=True):
@@ -673,143 +644,6 @@ data array shape.
         return parsed_indices
     #--- End: def
 
-    def allclose(self, y, rtol=None, atol=None):
-        '''Returns True if two broadcastable arrays have equal values, False
-otherwise.
-
-For numeric data arrays ``d.allclose(y, rtol, atol)`` is equivalent to
-``(abs(d - y) <= atol + rtol*abs(y)).all()``, otherwise it is
-equivalent to ``(d == y).all()``.
-
-.. seealso:: `all`, `any`, `isclose`
-
-:Parameters:
-
-    y: data_like
-
-    atol: `float`, optional
-        The absolute tolerance for all numerical comparisons. By
-        default the value returned by the `ATOL` function is used.
-
-    rtol: `float`, optional
-        The relative tolerance for all numerical comparisons. By
-        default the value returned by the `RTOL` function is used.
-
-:Returns:
-
-     out: `bool`
-
-:Examples:
-
->>> d = cf.Data([1000, 2500], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> d.allclose(e)
-True
-
->>> d = cf.Data(['ab', 'cdef'])
->>> d.allclose([[['ab', 'cdef']]])
-True
-
->>> d.allclose(e)
-True
-
->>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> d.allclose(e)
-True
-
->>> d = cf.Data([1, 1, 1], 's')
->>> d.allclose(1)
-True
-
-        '''  
-        return self.isclose(y, atol=atol, rtol=rtol).varray.all()
-    #--- End: def
-
-    def isclose(self, y, rtol=None, atol=None):
-        '''Return a boolean data array showing where two broadcastable arrays
-have equal values within a tolerance.
-
-For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
-``abs(d - y) <= ``atol + rtol*abs(y)``, otherwise it is equivalent to
-``d == y``.
-
-:Parameters:
-
-    y: data_like
-
-    atol: `float`, optional
-        The absolute tolerance for all numerical comparisons. By
-        default the value returned by the `ATOL` function is used.
-
-    rtol: `float`, optional
-        The relative tolerance for all numerical comparisons. By
-        default the value returned by the `RTOL` function is used.
-
-:Returns:
-
-     out: `Data`
-
-:Examples:
-
->>> d = cf.Data([1000, 2500], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> print d.isclose(e).array
-[ True  True]
-
->>> d = cf.Data(['ab', 'cdef'])
->>> print d.isclose([[['ab', 'cdef']]]).array
-[[[ True  True]]]
-
->>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> print d.isclose(e).array
-[[ True  True]
- [ True  True]]
-
->>> d = cf.Data([1, 1, 1], 's')
->>> print d.isclose(1).array
-[ True  True  True]
-
-        '''     
-#        if isinstance(y, self.__class__):
-#            if y.Units and y.Units != self.Units:
-#                array = numpy.zeros(self.shape, dtype=bool)
-#                return type(self)(array)
-#        #--- End: if
-
-        if atol is None:
-            atol = ATOL()        
-        if rtol is None:
-            rtol = RTOL()
-
-        y = numpy.asanyarray(y)
-
-        array = numpy.isclose(self.varray, y, atol=atol, rtol=rtol)
-
-        return type(self)(array)
-    #--- End: def
-
-    def copy(self):
-        '''Return a deep copy.
-
-``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
-
-:Returns:
-
-    out: 
-        The deep copy.
-
-:Examples:
-
->>> e = d.copy()
-
-        '''
-        new = super(Data, self).copy()
-#        new.HDF_chunks(self.HDF_chunks())
-        return new
-    #--- End: def
-
     def max(self, axes=None):
         '''Return the maximum of an array or the maximum along axes.
 
@@ -888,42 +722,6 @@ Missing data array elements are omitted from the calculation.
 #        #--- End: if
 
         return d
-    #--- End: def
-
-    def ndindex(self):
-        '''Return an iterator over the N-dimensional indices of the data.
-
-At each iteration a tuple of indices is returned, the last (left hand)
-dimension is iterated over first.
-
-:Returns:
-
-    out: iterator
-        An iterator over tuples of indices of the data array.
-
-:Examples:
-
->>> d.shape
-(2, 1, 3)
->>> for i in d.ndindex():
-...     print i
-...
-(0, 0, 0)
-(0, 0, 1)
-(0, 0, 2)
-(1, 0, 0)
-(1, 0, 1)
-(1, 0, 2)
-
-> d.shape
-()
->>> for i in d.ndindex():
-...     print i
-...
-()
-
-        '''
-        return itertools.product(*[range(0, r) for r in self.shape])  
     #--- End: def
 
 #    def get_HDF_chunks(self, dddd):
@@ -1443,6 +1241,7 @@ Return a string containing a full description of the instance.
 
     def equals(self, other, rtol=None, atol=None,
                ignore_data_type=False, ignore_fill_value=False,
+               ignore_construct_type=False,
                traceback=False, _check_values=True):
         '''True if two `Data` objects are equal.
 
@@ -1501,14 +1300,14 @@ False
         # Check each instance's id
         if self is other:
             return True
- 
-        # Check that each instance is the same type
-        if self.__class__ != other.__class__:
+
+        # Check that each instance is of the same type
+        if not ignore_construct_type and not isinstance(other, self.__class__):
             if traceback:
-                print("{0}: Different type: {1}".format(
-                    self.__class__.__name__, other.__class__.__name__))
-            return False
-        #--- End: if
+                print("{0}: Incompatible types: {0}, {1}".format(
+			self.__class__.__name__,
+			other.__class__.__name__))
+	    return False
 
         # Check that each instance has the same shape
         if self.shape != other.shape:
@@ -1572,69 +1371,6 @@ False
         # Still here? Then the two instances are equal.
         # ------------------------------------------------------------
         return True            
-    #--- End: def
-
-    def element(self, *index):
-        '''
-        '''
-        if index:
-            n_index = len(index)
-            if n_index == 1:
-                index = index[0]
-                if index == 0:
-                    # This also works for scalar arrays
-                    index = (slice(0, 1),) * self.ndim
-                elif index == -1:
-                    # This also works for scalar arrays
-                    index = (slice(-1, None),) * self.ndim
-                elif isinstance(index, (int, long)):
-                    if index < 0:
-                        index += self.size
-
-                    index = numpy.unravel_index(index, self.shape)
-                elif len(index) != self.ndim:
-                    raise ValueError(
-                        "Incorrect number of indices for %s array" %
-                        self.__class__.__name__)
-                #--- End: if
-            elif n_index != self.ndim:
-                raise ValueError(
-                    "Incorrect number of indices for %s array" %
-                    self.__class__.__name__)
-
-            array = self[index].get_array()
-
-        elif self.size == 1:
-            array = self.get_array()
-
-        else:
-            raise ValueError(
-"Can only convert a {} array of size 1 to a Python scalar".format(
-    self.__class__.__name__))
-
-        if not numpy.ma.isMA(array):
-            return array.item()
-        
-        mask = array.mask
-        if mask is numpy.ma.nomask or not mask.item():
-            return array.item()
-
-        return numpy.ma.masked
-    #--- End: def
-    
-    def _element(self, index):
-        '''
-        '''
-        array = self[index].get_array()
-
-        if not numpy.ma.isMA(array):
-            return array.item()
-
-        mask = array.mask
-        if mask is numpy.ma.nomask or not mask.item():
-            return array.item()
-
-        return numpy.ma.masked
     #--- End: def
 
     def first_element(self):

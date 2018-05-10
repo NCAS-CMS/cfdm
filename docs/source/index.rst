@@ -6,24 +6,20 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-cfdm |release| documentation
-============================
+.. cfdm |release| documentation
+   ============================
 
-----
+   ----
 
 .. toctree::
    :maxdepth: 3
    
    introduction
 
-----
-
 .. toctree::
    :maxdepth: 3
 
    getting_started
-
-----
 
 .. toctree::
    :maxdepth: 3

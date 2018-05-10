@@ -4,7 +4,7 @@ import abstract
 
 
 class FieldAncillary(abstract.PropertiesData):
-    '''A CF field ancillary construct of the CF data model.
+    '''A field ancillary construct of the CF data model.
 
 The field ancillary construct provides metadata which are distributed
 over the same sampling domain as the field itself. For example, if a

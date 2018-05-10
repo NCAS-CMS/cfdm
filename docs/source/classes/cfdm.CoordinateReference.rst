@@ -1,47 +1,48 @@
-cfdm\.CoordinateReference
-=========================
-
 .. currentmodule:: cfdm
+.. default-role:: obj
 
-.. autoclass:: CoordinateReference
+cfdm.CoordinateReference
+========================
 
+.. autoclass:: cfdm.CoordinateReference
+   :no-members:
+   :no-inherited-members:
+
+Attributes
+----------
+ 
+.. autosummary::
+   :toctree: ../generated/
+   :template: attribute.rst
+	      
+   ~CoordinateReference.coordinate_conversion
+   ~CoordinateReference.datum
    
-   .. automethod:: __init__
+Methods
+-------
 
-   
-   .. rubric:: Methods
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
 
-   .. autosummary::
-   
-      ~CoordinateReference.__init__
-      ~CoordinateReference.close
-      ~CoordinateReference.coordinates
-      ~CoordinateReference.copy
-      ~CoordinateReference.del_datum
-      ~CoordinateReference.del_ncvar
-      ~CoordinateReference.del_property
-      ~CoordinateReference.del_term
-      ~CoordinateReference.domain_ancillaries
-      ~CoordinateReference.dump
-      ~CoordinateReference.equals
-      ~CoordinateReference.get_datum
-      ~CoordinateReference.get_ncvar
-      ~CoordinateReference.get_property
-      ~CoordinateReference.get_term
-      ~CoordinateReference.has_datum
-      ~CoordinateReference.has_property
-      ~CoordinateReference.has_term
-      ~CoordinateReference.insert_coordinate
-      ~CoordinateReference.name
-      ~CoordinateReference.parameters
-      ~CoordinateReference.properties
-      ~CoordinateReference.remove_coordinate
-      ~CoordinateReference.set_datum
-      ~CoordinateReference.set_domain_ancillary
-      ~CoordinateReference.set_ncvar
-      ~CoordinateReference.set_parameter
-      ~CoordinateReference.set_property
-      ~CoordinateReference.terms
+   ~CoordinateReference.coordinates
+   ~CoordinateReference.copy
+   ~CoordinateReference.del_coordinate
+   ~CoordinateReference.del_coordinate_conversion
+   ~CoordinateReference.del_datum
+   ~CoordinateReference.del_ncvar
+   ~CoordinateReference.dump
+   ~CoordinateReference.equals
+   ~CoordinateReference.get_coordinate_conversion
+   ~CoordinateReference.get_datum
+   ~CoordinateReference.get_ncvar
+   ~CoordinateReference.has_coordinate_conversion
+   ~CoordinateReference.has_datum
+   ~CoordinateReference.name
+   ~CoordinateReference.set_coordinate
+   ~CoordinateReference.set_datum
+   ~CoordinateReference.set_ncvar
    
    
 

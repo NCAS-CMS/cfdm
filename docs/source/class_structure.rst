@@ -31,6 +31,9 @@ Field component classes
    cfdm.structure.DomainAxis
    cfdm.structure.FieldAncillary
 
+   cfdm.structure.Domain
+
+   
 Miscellaneous classes
 ---------------------
 

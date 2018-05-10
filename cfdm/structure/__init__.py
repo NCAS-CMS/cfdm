@@ -19,6 +19,7 @@ if not (StrictVersion('2.7.0')
         platform.python_version()))
 
 from .bounds               import Bounds
+from .boundsancillary      import BoundsAncillary
 from .cellextent           import CellExtent
 from .constructs           import Constructs
 from .coordinateconversion import CoordinateConversion

@@ -42,7 +42,55 @@ _datum_domain_ancillaries = set()
 
 
 class CoordinateReference(mixin.Container, structure.CoordinateReference):
-    '''A CF coordinate reference construct.
+    '''A coordinate reference construct of the CF data model. 
+
+A coordinate reference construct relates the coordinate values of the
+coordinate system to locations in a planetary reference frame.
+
+The domain of a field construct may contain various coordinate
+systems, each of which is constructed from a subset of the dimension
+and auxiliary coordinate constructs. For example, the domain of a
+four-dimensional field construct may contain horizontal (y-x),
+vertical (z), and temporal (t) coordinate systems. There may be more
+than one of each of these, if there is more than one coordinate
+construct applying to a particular spatiotemporal dimension (for
+example, there could be both latitude-longitude and y-x projection
+coordinate systems). In general, a coordinate system may be
+constructed implicitly from any subset of the coordinate constructs,
+yet a coordinate construct does not need to be explicitly or
+exclusively associated with any coordinate system.
+
+A coordinate system of the field construct can be explicitly defined
+by a coordinate reference construct which relates the coordinate
+values of the coordinate system to locations in a planetary reference
+frame and consists of the following:
+
+  * The dimension coordinate and auxiliary coordinate constructs that
+    define the coordinate system to which the coordinate reference
+    construct applies. Note that the coordinate values are not
+    relevant to the coordinate reference construct, only their
+    properties.
+
+  * A definition of a datum specifying the zeroes of the dimension and
+    auxiliary coordinate constructs which define the coordinate
+    system. The datum may be explicitly indicated via properties, or
+    it may be implied by the metadata of the contained dimension and
+    auxiliary coordinate constructs. Note that the datum may contain
+    the definition of a geophysical surface which corresponds to the
+    zero of a vertical coordinate construct, and this may be required
+    for both horizontal and vertical coordinate systems.
+
+  * A coordinate conversion, which defines a formula for converting
+    coordinate values taken from the dimension or auxiliary coordinate
+    constructs to a different coordinate system. A term of the
+    conversion formula can be a scalar or vector parameter which does
+    not depend on any domain axis constructs, may have units (such as
+    a reference pressure value), or may be a descriptive string (such
+    as the projection name "mercator"), or it can be a domain
+    ancillary construct (such as one containing spatially varying
+    orography data). A coordinate reference construct relates the
+    field's coordinate values to locations in a planetary reference
+    frame.
 
     '''
    
@@ -64,7 +112,6 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
                  parameters=None, source=None, copy=True):
         '''**Initialization**
 
-
 :Parameters:
 
     coordinates: sequence of `str`, optional
@@ -75,24 +122,25 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
             ``coordinates=['dimensioncoordinate2']``
 
           *Example:*
-            ``coordinates=['dimensioncoordinate0', 'dimensioncoordinate1',
-                           'auxiliarycoordinate0', 'auxiliarycoordinate1']``
+            ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1', 'auxiliarycoordinate0', 'auxiliarycoordinate1')``
 
     parameters: `dict`, optional
         Define parameter-valued terms of both the coordinate
         conversion formula and the datum. A term is assumed to apply
         to the coordinate conversion formula unless it is one of the
-        terms defined by `CoordinateReference._datum_parameters`.
+        terms defined by `CoordinateReference._datum_parameters`, in
+        which case the term applies to the datum.
 
           *Example:*
             In this case, the ``'earth_radius'`` term is applied to
             the datum and all of the other terms are applied to the
             coordinate conversion formula:
 
-            >>> c = CoordinateReference(parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-            ...                                     'grid_north_pole_latitude': 38.0,
-            ...                                     'grid_north_pole_longitude': 190.0,
-            ...                                     'earth_radius': 6371007})
+            >>> c = CoordinateReference(
+            ...         parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+            ...                     'grid_north_pole_latitude': 38.0,
+            ...                     'grid_north_pole_longitude': 190.0,
+            ...                     'earth_radius': 6371007})
             ...
             >>> c.coordinate_conversion.parameters()
             {'grid_mapping_name': 'rotated_latitude_longitude',
@@ -105,15 +153,18 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
         Define domain ancillary-valued terms of both the coordinate
         conversion formula and the datum. A term is assumed to apply
         to the coordinate conversion formula unless it is one of the
-        terms defined by `CoordinateReference._datum_domain_ancillaries`.
+        terms defined by
+        `CoordinateReference._datum_domain_ancillaries`, in which case
+        the term applies to the datum.
 
           *Example:*
             In this case, all terms are applied to the coordinate
             conversion formula:
 
-            >>> c = CoordinateReference(domain_ancillaries={'orog': 'domainancillary2',
-            ...                                             'a': 'domainancillary0',
-            ...                                             'b': 'domainancillary1'})
+            >>> c = CoordinateReference(
+            ...         domain_ancillaries={'orog': 'domainancillary2',
+            ...                             'a': 'domainancillary0',
+            ...                             'b': 'domainancillary1'})
             ...
             >>> c.coordinate_conversion.domain_ancillaries()
             {'a': 'domainancillary0',
@@ -122,10 +173,37 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
             >>> c.datum.domain_ancillaries()
             {}
 
+    datum: `Datum`, optional
+        Define the datum of the coordinate reference construct. Cannot
+        be used with the *parameters* nor *domain_ancillaries*
+        keywords.
+
+          *Example:*
+            >>> d = Datum(parameters={'earth_radius': 6371007})
+            >>> c = CoordinateReference(datum=d)
+
+    coordinate_conversion: `CoordinateConversion`, optional
+        Define the coordinate conversion formula of the coordinate
+        reference construct. Cannot be used with the *parameters* nor
+        *domain_ancillaries* keywords.
+
+          *Example:*
+            >>> f = CoordinateConversion(
+            ...         parameters={'standard_name': 'atmosphere_hybrid_height'},
+            ...         domain_ancillaries={'orog': 'domainancillary2',
+            ...                             'a': 'domainancillary0',
+            ...                             'b': 'domainancillary1'})
+            ...
+            >>> c = CoordinateReference(coordinate_conversion=f)
+
     source: optional
+        Initialise the *coordinates*, *datum* and
+        *coordinate_conversion* parameters from the object given by
+        *source*.
 
     copy: `bool`, optional
-
+        If False then do not deep copy arguments prior to
+        initialization. By default arguments are deep copied.
 
         '''
         if source is None:
@@ -161,9 +239,7 @@ class CoordinateReference(mixin.Container, structure.CoordinateReference):
                 coordinate_conversion = self._CoordinateConversion(
                     parameters=coordinate_conversion_parameters,
                     domain_ancillaries=coordinate_conversion_domain_ancillaries)
-        else:
-            datum = None
-            coordinate_conversion = None
+        #--- End: if
             
         super(CoordinateReference, self).__init__(
             coordinates=coordinates,

@@ -34,7 +34,7 @@ class Terms(Container):
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_construct_type=False):
+               ignore_construct_type=False, _blahdeblah=True):
         '''True if two instances are equal, False otherwise.
 
 :Parameters:
@@ -95,15 +95,30 @@ class Terms(Container):
     set(ancillaries0), set(ancillaries1)))
             return False
 
-        for term, value0 in ancillaries0.iteritems():            
+        for term, value0 in ancillaries0.iteritems():
             value1 = ancillaries1[term]  
-            if value0 is None or (value1 is None and value0 is not None):
+            if value0 is None and value1 is None:
+                continue
+
+            if value0 is None or value1 is None:
                 if traceback:
                     print(
 "{}: Unequal {!r} domain ancillary terms ({!r} != {!r})".format( 
     self.__class__.__name__, term, 
     value0, value1))
                 return False
+
+            if _blahdeblah:
+                if not self._equals(value0, value1, rtol=rtol, atol=atol,
+                                    traceback=traceback,
+                                    ignore_data_type=ignore_data_type,
+                                    ignore_fill_value=ignore_fill_value,
+                                    ignore_construct_type=ignore_construct_type):
+                    if traceback:
+                        print(
+"{}: Unequal {!r} terms ({!r} != {!r})".format( 
+    self.__class__.__name__, term, value0, value1))
+                    return False
         #--- End: for
      
         # Check that the coordinate conversion parameter term

@@ -1,5 +1,7 @@
 import abc
 
+import numpy
+
 import mixin
 import structure
 
@@ -36,8 +38,6 @@ corresponding dimension or dimensions.
         If False then return the description as a string. By default
         the description is printed, i.e. ``c.dump()`` is equivalent to
         ``print c.dump(display=False)``.
-
-#    field: `cf.Field`, optional
 
 :Returns:
 
@@ -441,7 +441,11 @@ The `!axes` attribute is ignored in the comparison.
 #    #--- End: def
 
     def sorted(self, indices=None):
-        '''Return a sorted cell method sorted by axis names.
+        '''Return a cell method with sorted domain axes.
+
+The domain axes are sorted by their internal identifiers and the
+intervals, if provided, are sorted accordingly.
+
 
 :Examples 1:
 
@@ -450,10 +454,28 @@ The `!axes` attribute is ignored in the comparison.
 :Parameters:
 
     indices: ordered sequence of `int`, optional
+        Sort the somain axes with the given indices. By default the
+        domain axes are sorted by their internal identifiers.
 
 :Returns:
 
     out: `CellMethod`
+        A new cell method object with sorted domain axes.
+
+:Examples 2:
+
+>>> cm = CellMethod(axes=['domainaxis1', 'domainaxis0'],
+...                 method='mean',
+...                 properties={'intervals': [Data(1, 'km'), 
+...                                           Data(2, 'km')]})
+>>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
+...                      properties={'method': 'mean',
+...                                  'intervals': [1, 2]})
+... 
+>>> cm
+<CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
+>>> cm.sorted()
+<CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
 
         '''
         new = self.copy()
@@ -463,7 +485,7 @@ The `!axes` attribute is ignored in the comparison.
             return new
 
         if indices is None:
-            indices = numpy_argsort(axes)
+            indices = numpy.argsort(axes)
         elif len(indices) != len(axes):
             raise ValueError(".sjdn ;siljdf vlkjndf jk")
 
@@ -478,7 +500,7 @@ The `!axes` attribute is ignored in the comparison.
             return new
 
         intervals2 = []
-        for i in argsort:
+        for i in indices:
             intervals2.append(intervals[i])
 
         new.set_property('intervals', tuple(intervals2))

@@ -1,7 +1,7 @@
 cfdm.Field.__deepcopy__
 =======================
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. automethod:: cfdm.Field.__deepcopy__

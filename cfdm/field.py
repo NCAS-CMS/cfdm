@@ -617,15 +617,6 @@ last values.
         data = self.get_data(None)
         if data is not None:
             x = [axis_to_name[axis] for axis in self.get_data_axes(())]
-#            axis_names = ', '.join(x)
-#            if axis_names:
-#                axis_names = '({0})'.format(axis_names)
-
-            
-#            axes = self.domain_axes()
-#            axis_name = self.domain_axis_name
-#            x = ['{0}({1})'.format(axis_name(axis), axes[axis].get_size(''))
-#                 for axis in self.get_data_axes(())]
             if self.isreftime:
                 data = data.asdata(data.dtarray)
                 

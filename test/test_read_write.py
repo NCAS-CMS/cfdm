@@ -97,8 +97,8 @@ class read_writeTest(unittest.TestCase):
             for no_shuffle in (True, False):
                 for compress in range(10):
                     cfdm.write(f, tmpfile, fmt=fmt,
-                             compress=compress,
-                             no_shuffle=no_shuffle)
+                               compress=compress,
+                               no_shuffle=no_shuffle)
                     g = cfdm.read(tmpfile)[0]
                     self.assertTrue(
                         f.equals(g, traceback=True),

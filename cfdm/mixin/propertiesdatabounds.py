@@ -40,10 +40,11 @@ properties.
         # Subspace the bounds, if there are any
         self_bounds = self.get_bounds(None)
         if self_bounds is not None:
-            data = self_bounds.get_data(None)
-            if data is not None:
+            bounds_data = self_bounds.get_data(None)
+            if bounds_data is not None:
+                # There is a bounds array
                 bounds_indices = list(indices)
-                if data.ndim <= 1:
+                if data.ndim <= 1: # and not self.is_geometry():
                     index = bounds_indices[0]
                     if isinstance(index, slice):
                         if index.step < 0:
@@ -59,14 +60,14 @@ properties.
                     else:
                         bounds_indices.append(slice(None))
                 else:
-                    bounds_indices.append(slice(None))
+                    bounds_indices.append(Ellipsis)
     
                 if _debug:
                     print '{}.__getitem__: indices for bounds ='.format(
                         self.__class__.__name__, bounds_indices)
 
                 bounds = new.get_bounds()
-                bounds.set_data(data[tuple(bounds_indices)], copy=False)
+                bounds.set_data(bounds_data[tuple(bounds_indices)], copy=False)
         #--- End: if
 
         # Return the new bounded variable
@@ -99,6 +100,9 @@ properties.
 :Examples:
 
         '''
+        # ------------------------------------------------------------
+        # Properties and Data
+        # ------------------------------------------------------------
         string = super(PropertiesDataBounds, self).dump(
             display=False, field=field, key=key,
             _omit_properties=_omit_properties, _prefix=_prefix,

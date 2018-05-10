@@ -38,12 +38,23 @@ Miscellaneous classes
    :nosignatures:
    :toctree: classes/
 
-   cfdm.CellMethods
+   cfdm.CellExtent
+   cfdm.CoordinateConversion
+   cfdm.Datum
+   cfdm.Domain
+
+Data classes
+------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
    cfdm.Data
-   cfdm.Datetime
-   cfdm.FieldList	              
-   cfdm.Flags
-   cfdm.Units
+   cfdm.Array
+   cfdm.CompressedArray
+   cfdm.NetCDFArray
+   cfdm.NumpyArray
 
 Base classes
 ------------
@@ -51,8 +62,12 @@ Base classes
 .. autosummary::
    :nosignatures:
    :toctree: classes/
-         
+
+   cfdm.Container
+   cfdm.Properties
+   cfdm.PropertiesData
+   cfdm.PropertiesDataBounds
    cfdm.Coordinate
-   cfdm.Variable       
-   cfdm.BoundedVariable       
+   cfdm.Terms
+   cfdm.ConstructAccess
   

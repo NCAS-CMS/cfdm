@@ -7,6 +7,7 @@ from .container import Container
 
 class Terms(Container):
     '''Base class for parameter- and domain ancillary-valued terms.
+
     '''
     __metaclass__ = abc.ABCMeta
 
@@ -81,109 +82,30 @@ class Terms(Container):
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_term(self, term):
-        '''Delete a term.
+    def del_parameter(self, parameter):
+        '''Delete a parameter
 
-To retain term as a placeholder but delete its value, use the
-`del_term_value` method.
-
-.. seealso:: `del_term_value`, `get_term`, `terms`
+.. seealso:: `get_parameter`, `has_parameter`, `parameters`, `set_parameter`
 
 :Examples 1:
 
->>> v = c.del_term('orog')
+>>> f.del_parameter('grid_mapping_name')
 
 :Parameters:
 
-    term: `str`
-        The name of the term to be deleted.
+    parmtaeter: `str`
+        The name of the parameter to be deleted.
 
 :Returns:
 
-    out:
-        The value of the deleted term, or `None` if the term did not
-        exist.
+     out:
+        The value of the deleted parameter, or `None` if the parameter
+        was not set.
 
 :Examples 2:
 
->>> c.terms()
-{'standard_parallel': 25.0;
- 'longitude_of_central_meridian': 265.0,
- 'latitude_of_projection_origin': 25.0}
->>> v = c.del_term('standard_parallel')
->>> c.terms()
-{'longitude_of_central_meridian': 265.0,
- 'latitude_of_projection_origin': 25.0}
-
->>> c.terms()
-{'a': 'domainancillary0',
- 'b': 'domainancillary2',
- 'orog': 'domainancillary1'}
->>> c.del_term('b')
->>> c.terms()
-{'a': 'domainancillary0',
- 'orog': 'domainancillary1'}
-
         '''
-        value = self._get_component('domain_ancillaries', None).pop(term, None)
-        if value is None:
-            value = self._get_component('parameters', None).pop(term, None)
-
-        return value
-    #--- End: def
-
-    def del_term_value(self, term):
-        '''Delete the value of a term.
-
-This method retains the term as a placeholder. To completely remove a
-term, use the `del_term` method.
-
-.. versionadded:: 1.6
-
-.. seealso:: `del_term`, `get_term`, `terms`
-
-:Examples 1:
-
->>> v = c.del_term_value('orog')
-
-:Parameters:
-
-    term: `str`
-        The name of the term whose value is to be deleted.
-
-:Returns:
-
-    out:
-        The deleted value, or `None` if the term did not exist.
-
-:Examples 2:
-
->>> c.terms()
-{'standard_parallel': 25.0;
- 'longitude_of_central_meridian': 265.0,
- 'latitude_of_projection_origin': 25.0}
->>> v = c.del_term_value('standard_parallel')
->>> c.terms()
-{'standard_parallel': None,
- 'longitude_of_central_meridian': 265.0,
- 'latitude_of_projection_origin': 25.0}
-
->>> c.terms()
-{'a': 'domainancillary0',
- 'b': 'domainancillary2',
- 'orog': 'domainancillary1'}
->>> c.del_term_value('b')
->>> c.terms()
-{'a': 'domainancillary0',
- 'b': None,
- 'orog': 'domainancillary1'}
-
-        '''
-        value = self._get_component('domain_ancillaries', None).pop(term, None)
-        if value is None:
-            value = self._get_component('parameters', None).pop(term, None)
-
-        return value
+        return self._del_component('parameters', parameter)
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
@@ -240,57 +162,6 @@ term, use the `del_term` method.
         return out
     #--- End: def
 
-    def get_term(self, term, *default):
-        '''Get the value of a term.
-
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> v = c.get_term('false_northing')
-
-:Parameters:
-
-    term: `str`
-        The name of the term.
-
-    default: optional
-
-:Returns:
-
-    out:
-        The value of the term <SOMETING BAOUT DEFAULT>
-
-:Examples 2:
-
->>> c.get_term('b')
-'domainancillary2'
-
->>> c.get_term('grid_north_pole_latitude')
-70.0
-
->>> c.get_term('foo')
-ERROR
->>> c.get_term('foo', 'nonexistent term')
-'nonexistent term'
-
-
-        '''
-        d = self._get_component('domain_ancillaries', None)
-        if term in d:
-            return d[term]
-        
-        d = self._get_component('parameters', None)
-        if term in d:
-            return d[term]
-        
-        if default:
-            return default[0]
-
-        raise AttributeError("{} doesn't have formula term {!r}".format(
-                self.__class__.__name__, term))
-    #--- End: def
-    
     def get_parameter(self, term, *default):
         '''Get the value of a term.
 

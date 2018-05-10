@@ -83,6 +83,35 @@ frame and consists of the following:
         names of those expected by the CF conventions are used. For
         example:
 
+    datum: `Datum`, optional
+        Define the datum of the coordinate reference construct.
+
+          *Example:*
+            >>> d = Datum(parameters={'earth_radius': 6371007})
+            >>> c = CoordinateReference(datum=d)
+
+    coordinate_conversion: `CoordinateConversion`, optional
+        Define the coordinate conversion formula of the coordinate
+        reference construct.
+
+          *Example:*
+            >>> f = CoordinateConversion(
+                        parameters={'standard_name': 'atmosphere_hybrid_height'},
+                        domain_ancillaries={'orog': 'domainancillary2',
+            ...                             'a': 'domainancillary0',
+            ...                             'b': 'domainancillary1'}))
+            ...
+            >>> c = CoordinateReference(coordinate_conversion=f)
+
+    source: optional
+        Initialise the *coordinates*, *datum* and
+        *coordinate_conversion* parameters from the object given by
+        *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy arguments prior to
+        initialization. By default arguments are deep copied.
+
         '''
         super(CoordinateReference, self).__init__(source=source)
 
@@ -120,6 +149,7 @@ frame and consists of the following:
     @property
     def coordinate_conversion(self):
         '''
+blah de balh
         '''
         out = self.get_coordinate_conversion(None)
         if out is None:
@@ -132,6 +162,7 @@ frame and consists of the following:
     @property
     def datum(self):
         '''
+blah de balh 2
         '''
         out = self.get_datum(None)
         if out is None:
@@ -145,9 +176,7 @@ frame and consists of the following:
         '''Return or replace the identifiers of the coordinate objects that
 define the coordinate system.
 
-.. versionadded:: 1.6
-
-.. seealso:: `del_coordinate`
+.. seealso:: `del_coordinate`, `set_coordinate`
 
 :Examples 1:
 

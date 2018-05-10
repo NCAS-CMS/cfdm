@@ -12,8 +12,8 @@ properties.
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, properties={}, data=None, bounds=None,
-                 cell_extent=None, source=None, copy=True,
-                 _use_data=True):
+                 bounds_mapping=None, cell_extent=None, source=None,
+                 copy=True, _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -42,7 +42,7 @@ properties.
         The bounds array also may be set after initialisation with the
         `set_bounds` method.
   
-    extent_parameters: `dict`, optional
+    bounds_mapping: `BoundsMapping`, optional
 
     source: optional
         Initialise the *properties*, *data* and *bounds* parameters
@@ -71,6 +71,11 @@ properties.
                 cell_extent = source.get_cell_extent()
             except AttributeError:
                 cell_extent = None
+
+            try:
+                bounds_mapping = source.get_bounds_mapping()
+            except AttributeError:
+                bounds_mapping = None
         #--- End: if
 
         # Initialise bounds
@@ -83,6 +88,12 @@ properties.
 
         if cell_extent is not None:
             self.set_cell_extent(cell_extent, copy=copy)
+
+        if bounds_mapping is not None:            
+            if copy or not _use_data:
+                bounds_mapping = bounds_mapping.copy(data=_use_data)
+                
+            self.set_bounds_mapping(bounds_mapping, copy=False)
     #--- End: def
 
     @property
@@ -109,8 +120,6 @@ properties.
 
 ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
-.. versionadded:: 1.6
-
 :Examples 1:
 
 >>> d = c.copy()
@@ -136,8 +145,6 @@ properties.
 
     def del_bounds(self):
         '''Delete the bounds.
-
-.. versionadded:: 1.6
 
 .. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
 
@@ -168,12 +175,6 @@ None
         return self._del_component('bounds')
     #--- End: def
 
-    def del_extent_parameter(self, name):
-        '''
-        '''
-        return self._del_component('extent_parameters', name)
-    #--- End: def
-
     def get_bounds(self, *default):
         '''Return the bounds.
 
@@ -196,8 +197,8 @@ None
 
 :Examples 2:
 
->>> f.del_bounds()
->>> fprint .get_bounds('No bounds')
+>>> b = c.del_bounds()
+>>> c.get_bounds('No bounds')
 'No bounds'
 
         '''
@@ -311,15 +312,6 @@ None
             value = value.copy()
             
         return self._set_component('cell_extent', None, value)
-    #--- End: def
-
-    def set_extent_parameter(self, parameter, value, copy=True):
-        '''
-        '''
-        if copy:
-            value = deepcopy(value)
-
-        self._set_component('extent_parameters', parameter, value)
     #--- End: def
 
 #--- End: class
