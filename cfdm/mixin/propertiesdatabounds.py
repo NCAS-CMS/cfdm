@@ -120,28 +120,32 @@ properties.
                                       _create_title=False, _level=_level))
 
         #-------------------------------------------------------------
-        # Cell extent parameter-valued terms
+        # Bounds mapping parameter-valued terms
         # ------------------------------------------------------------
         indent1 = '    ' * (_level + 1)
-        cell_extent = self.cell_extent
-        for name, parameter in sorted(cell_extent.parameters().items()):
+        bounds_mapping = self.bounds_mapping
+        for name, parameter in sorted(bounds_mapping.parameters().items()):
             string.append(
-                '{0}{1}Cell:{2} = {3}'.format(indent1, _prefix, name, parameter))
+                '{0}{1}Bounds mapping:{2} = {3}'.format(indent1, _prefix, name, parameter))
 
         #-------------------------------------------------------------
-        # Cell extent domain ancillary-valued terms
+        # Bounds mapping ancillary-valued terms
         # ------------------------------------------------------------
-        for term, key in sorted(cell_extent.domain_ancillaries().items()):
-            if field:
-                value = field.domain_ancillaries().get(key)
-                if value is not None:
-                    value = 'Domain Ancillary: '+value.name(default=key)
-                else:
-                    value = ''
-            else:
-                value = key
+        for term, value in sorted(bounds_mapping.ancillaries().items()):
+            string.append(value.dump(display=False, 
+                                     _prefix=_prefix+'Bounds mapping:',
+                                     _create_title=False, _level=_level))
+#            
+#            if field:
+#                value = field.domain_ancillaries().get(key)
+#                if value is not None:
+#                    value = 'Domain Ancillary: '+value.name(default=key)
+#                else:
+#                    value = ''
+#            else:
+#                value = key
 
-            string.append("{0}{1}Cell:{2} = {3}".format(
+            string.append("{0}{1}Bounds mapping:{2} = {3}".format(
                 indent1, _prefix, term, str(value)))
         #--- End: for
         
@@ -176,10 +180,10 @@ properties.
         #--- End: if
 
         # ------------------------------------------------------------
-        # Check the cell extent parameters
+        # Check the bounds mapping parameters terms
         # ------------------------------------------------------------
-        if not self.cell_extent.equals(
-                other.cell_extent,
+        if not self.bounds_mapping.equals(
+                other.bounds_mapping,
                 rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_data_type=ignore_data_type,
@@ -187,7 +191,7 @@ properties.
                 ignore_construct_type=ignore_construct_type):
             if traceback:
                 print(
-"{}: Different cell extent".format(self.__class__.__name__))
+"{}: Different bounds mapping".format(self.__class__.__name__))
 	    return False
         
         # ------------------------------------------------------------
@@ -226,6 +230,9 @@ properties.
         if bounds is not None:
             bounds.expand_dims(position, copy=False)
             
+        for ancillary in c.bounds_mapping.ancillaries().itervalues():
+            ancillary.expand_dims(position, copy=False)
+            
         return c
     #--- End: def
     
@@ -240,6 +247,9 @@ properties.
         if bounds is not None:
             bounds.squeeze(axes, copy=False)
 
+        for ancillary in c.bounds_mapping.ancillaries().itervalues():
+            ancillary.squeeze(axes, copy=False)
+            
         return c
     #--- End: def
     
@@ -278,24 +288,32 @@ properties.
 
         c = super(PropertiesDataBounds, self).transpose(axes,
                                                         copy=copy)
-
-        axes.append(-1)
         
         bounds = c.get_bounds(None)
         if bounds is not None:
-            bounds.transpose(axes, copy=False)
-            
             data = bounds.get_data(None)
-            if (data is not None and
-                data.ndim == 3 and data.shape[-1] == 4 and 
-                axes[0:2] == [1, 0]):
-                # Swap elements 1 and 3 of the trailing dimension so
-                # that the values are still contiguous (if they ever
-                # were). See section 7.1 of the CF conventions.
-                data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
-                bounds.set_data(data, copy=False)
+            if data is not None:            
+                b_axes = axes[:]
+                b_axes.extend([-1]*data.ndim-c.ndim)
+                
+                bounds.transpose(b_axes, copy=False)
+                
+                if (c.ndim == 2 and data.ndim == 3 and data.shape[-1] == 4 and 
+                    b_axes[0:2] == [1, 0]):
+                    # Swap elements 1 and 3 of the trailing dimension
+                    # so that the values are still contiguous (if they
+                    # ever were). See section 7.1 of the CF
+                    # conventions.
+                    data[:, :, slice(1, 4, 2)] = data[:, :, slice(3, 0, -2)]
+                    bounds.set_data(data, copy=False)
         #--- End: if
-        
+
+        a_axes = axes
+        a_axes.append(-1)
+
+        for ancillary in c.bounds_mapping.ancillaries().itervalues():
+            ancillary.transpose(a_axes, copy=False)
+            
         return c
     #--- End: def
 

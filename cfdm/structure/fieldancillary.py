@@ -27,4 +27,5 @@ construct.
 
     '''
     __metaclass__ = abc.ABCMeta
+
 #--- End: class

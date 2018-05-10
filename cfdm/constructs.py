@@ -244,14 +244,17 @@ class Constructs(structure.Constructs):
         #
         # ------------------------------------------------------------
         for construct_type in ('dimension_coordinate',
-                               'auxiliary_coordinate', 'domain_ancillary'):
+                               'auxiliary_coordinate',
+                               'domain_ancillary'):
             found_match = False
             for key1, y in other.constructs(construct_type).iteritems():
                 x = self.get_construct(key1_to_key0[key1])                
 
-                terms0 = x.cell_extent.domain_ancillaries()
+#                terms0 = x.cell_extent.domain_ancillaries()
+                terms0 = x.bounds_mapping.ancillaries()
                 terms1 = {}
-                for term, key in y.cell_extent.domain_ancillaries().items():
+#                for term, key in y.cell_extent.domain_ancillaries().items():
+                for term, key in y.bounds_mapping.ancillaries().items():
                     terms1[term] = key1_to_key0.get(key, key)
                     
                 if terms0 != terms1:                    
@@ -313,18 +316,22 @@ class Constructs(structure.Constructs):
                         continue
     
                     # Domain ancillary-valued coordinate conversion terms
-                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
+#                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
+                    terms0 = ref0.coordinate_conversion.ancillaries()
                     terms1 = {}
-                    for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
+ #                   for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
+                    for term, key in ref1.coordinate_conversion.ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:
                         continue
     
                     # Domain ancillary-valued datum terms
-                    terms0 = ref0.datum.domain_ancillaries()
+#                    terms0 = ref0.datum.domain_ancillaries()
+                    terms0 = ref0.datum.ancillaries()
                     terms1 = {}
-                    for term, key in ref1.datum.domain_ancillaries().items():
+#                    for term, key in ref1.datum.domain_ancillaries().items():
+                    for term, key in ref1.datum.ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:

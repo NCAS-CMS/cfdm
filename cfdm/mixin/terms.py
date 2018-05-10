@@ -4,7 +4,7 @@ from .container import Container
 
 
 class Terms(Container):
-    '''Mixin class for parameter- and domain ancillary-valued terms.
+    '''Mixin class for parameter- and ancillary-valued terms.
 
     '''
     __metaclass__ = abc.ABCMeta
@@ -12,7 +12,7 @@ class Terms(Container):
     def __nonzero__(self):
         '''
         '''
-        return bool(self.parameters()) or bool(self.domain_ancillaries())
+        return bool(self.parameters()) or bool(self.ancillaries())
         
         
     def __str__(self):
@@ -25,16 +25,16 @@ class Terms(Container):
         if parameters:
             out.append('Parameters: {0}'.format(', '.join(sorted(parameters))))
             
-        domain_ancillaries = self.domain_ancillaries()
-        if domain_ancillaries:
-            out.append('Domain ancillaries: {0}'.format(', '.join(sorted(domain_ancillaries))))
+        ancillaries = self.ancillaries()
+        if ancillaries:
+            out.append('Ancillaries: {0}'.format(', '.join(sorted(ancillaries))))
             
         return '; '.join(out)
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_construct_type=False, _blahdeblah=True):
+               ignore_construct_type=False):
         '''True if two instances are equal, False otherwise.
 
 :Parameters:
@@ -83,14 +83,16 @@ class Terms(Container):
     set(parameters0), set(parameters1)))
             return False
 
-        # Check that the coordinate conversion domain ancillary terms
+        # Check that the coordinate conversion ancillary terms
         # match
-        ancillaries0 = self.domain_ancillaries()
-        ancillaries1 = other.domain_ancillaries()
+        internal_ancillaries = self._internal_ancillaries
+        
+        ancillaries0 = self.ancillaries()
+        ancillaries1 = other.ancillaries()
         if set(ancillaries0) != set(ancillaries1):
             if traceback:
                 print(
-"{0}: Different domain ancillary-valued terms ({1} != {2})".format(
+"{0}: Different ancillary terms ({1} != {2})".format(
     self.__class__.__name__,
     set(ancillaries0), set(ancillaries1)))
             return False
@@ -103,13 +105,14 @@ class Terms(Container):
             if value0 is None or value1 is None:
                 if traceback:
                     print(
-"{}: Unequal {!r} domain ancillary terms ({!r} != {!r})".format( 
+"{}: Unequal {!r} ancillary terms ({!r} != {!r})".format( 
     self.__class__.__name__, term, 
     value0, value1))
                 return False
 
-            if _blahdeblah:
-                if not self._equals(value0, value1, rtol=rtol, atol=atol,
+            if internal_ancillaries:
+                if not self._equals(value0, value1,
+                                    rtol=rtol, atol=atol,
                                     traceback=traceback,
                                     ignore_data_type=ignore_data_type,
                                     ignore_fill_value=ignore_fill_value,

@@ -1,9 +1,9 @@
 import abc
 
 import abstract
-import mixin
 
 from .cellextent import CellExtent
+from .boundsmapping import BoundsMapping
 
 
 class DomainAncillary(abstract.PropertiesDataBounds):
@@ -31,7 +31,9 @@ number of vertices of each cell.
         obj = object.__new__(cls, *args, **kwargs)
         
         obj._CellExtent = CellExtent
+        obj._BoundsMapping = BoundsMapping
 
         return obj
     #--- End: def
+
 #--- End: class

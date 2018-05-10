@@ -889,7 +889,8 @@ by the data array may be selected.
         for rkey, ref in self.coordinate_references().iteritems():
             ok = True
             for ckey in (tuple(ref.coordinates()) +
-                         tuple(ref.domain_ancillaries().values())):
+                         tuple(ref.datum.ancillaries().values()),
+                         tuple(ref.coordinate_conversion.ancillaries().values())):
                 axes = self.construct_axes()[ckey]
                 if not set(axes).issubset(data_axes):
                     ok = False

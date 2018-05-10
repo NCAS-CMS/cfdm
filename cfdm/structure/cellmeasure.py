@@ -3,12 +3,6 @@ import abc
 import abstract
 
 
-# ====================================================================
-#
-# CellMeasure object
-#
-# ====================================================================
-
 class CellMeasure(abstract.PropertiesData):
     '''A cell measure construct of the CF data model.
 

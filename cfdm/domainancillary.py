@@ -4,6 +4,7 @@ import mixin
 import structure
 
 from .cellextent import CellExtent
+from .boundsmapping import BoundsMapping
 
 
 class DomainAncillary(mixin.PropertiesDataBounds, structure.DomainAncillary):
@@ -29,7 +30,7 @@ number of vertices of each cell.
     
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
-        obj._CellExtent = CellExtent
+        obj._BoundsMapping = BoundsMapping
         return obj
     #--- End: def
     

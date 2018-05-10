@@ -6,12 +6,6 @@ import mixin
 from .constructs import Constructs
 
 
-# ====================================================================
-#
-# Domain object
-#
-# ====================================================================
-
 class Domain(mixin.ConstructAccess, abstract.Properties):
     '''A CF Domain construct.
 
@@ -133,9 +127,9 @@ Cell measure          Domain cell size or shape stored in
             # reference constructs
             for ref in self.coordinate_references().itervalues():
                 coordinate_conversion = ref.coordinate_conversion
-                for term, value in coordinate_conversion.domain_ancillaries().iteritems():
+                for term, value in coordinate_conversion.ancillaries().iteritems():
                     if key == value:
-                        coordinate_conversion.set_domain_ancillary(term, None)
+                        coordinate_conversion.set_ancillary(term, None)
                     
                 for coord_key in ref.coordinates():
                     if key == coord_key:

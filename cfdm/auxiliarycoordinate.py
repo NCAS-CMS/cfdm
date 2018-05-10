@@ -3,7 +3,8 @@ import abc
 import mixin
 import structure
 
-from .cellextent import CellExtent
+#from .cellextent import CellExtent
+from .boundsmapping import BoundsMapping
 
 
 class AuxiliaryCoordinate(mixin.Coordinate, structure.AuxiliaryCoordinate):
@@ -14,7 +15,7 @@ class AuxiliaryCoordinate(mixin.Coordinate, structure.AuxiliaryCoordinate):
       
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
-        obj._CellExtent = CellExtent
+        obj._BoundsMapping = BoundsMapping  
         return obj
     #--- End: def
     

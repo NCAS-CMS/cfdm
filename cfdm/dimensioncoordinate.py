@@ -3,8 +3,8 @@ import abc
 import mixin
 import structure
 
-from .cellextent import CellExtent
-
+#from .cellextent import CellExtent
+from .boundsmapping import BoundsMapping
 
 class DimensionCoordinate(mixin.Coordinate, structure.DimensionCoordinate):
     '''A dimension coordinate construct of the CF data model.
@@ -14,7 +14,7 @@ class DimensionCoordinate(mixin.Coordinate, structure.DimensionCoordinate):
 
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
-        obj._CellExtent = CellExtent
+        obj._BoundsMapping = BoundsMapping
         return obj
     #--- End: def
 

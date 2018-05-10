@@ -3,7 +3,8 @@ import abc
 import abstract
 import mixin
 
-from .cellextent import CellExtent
+#from .cellextent import CellExtent
+from .boundsmapping import BoundsMapping
 
 
 class DimensionCoordinate(abstract.Coordinate):
@@ -44,7 +45,8 @@ variables correspond to dimension coordinate constructs.
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
         
-        obj._CellExtent = CellExtent
+#        obj._CellExtent = CellExtent
+        obj._BoundsMapping = BoundsMapping
 
         return obj
     #--- End: def

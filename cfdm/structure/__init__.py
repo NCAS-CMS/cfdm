@@ -20,6 +20,7 @@ if not (StrictVersion('2.7.0')
 
 from .bounds               import Bounds
 from .boundsancillary      import BoundsAncillary
+from .boundsmapping        import BoundsMapping
 from .cellextent           import CellExtent
 from .constructs           import Constructs
 from .coordinateconversion import CoordinateConversion

@@ -4,11 +4,6 @@ from copy import deepcopy
 
 import abstract
 
-# ====================================================================
-#
-# Cell method object
-#
-# ====================================================================
 
 class CellMethod(abstract.Properties):
     '''A cell method construct of the CF data model.

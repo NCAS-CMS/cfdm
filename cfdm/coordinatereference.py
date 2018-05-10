@@ -37,8 +37,8 @@ for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
         continue
     _datum_parameters.append(x[0])
     
-_datum_parameters         = set(_datum_parameters)
-_datum_domain_ancillaries = set()
+_datum_parameters  = set(_datum_parameters)
+_datum_ancillaries = set()
 
 
 class CoordinateReference(mixin.Container, structure.CoordinateReference):
@@ -94,9 +94,9 @@ frame and consists of the following:
 
     '''
    
-    _name_to_coordinates      = _name_to_coordinates
-    _datum_parameters         = _datum_parameters
-    _datum_domain_ancillaries = _datum_domain_ancillaries
+    _name_to_coordinates = _name_to_coordinates
+    _datum_parameters    = _datum_parameters
+    _datum_ancillaries   = _datum_ancillaries
 
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
@@ -154,7 +154,7 @@ frame and consists of the following:
         conversion formula and the datum. A term is assumed to apply
         to the coordinate conversion formula unless it is one of the
         terms defined by
-        `CoordinateReference._datum_domain_ancillaries`, in which case
+        `CoordinateReference._datum_ancillaries`, in which case
         the term applies to the datum.
 
           *Example:*
@@ -227,18 +227,18 @@ frame and consists of the following:
             
                 if domain_ancillaries is not None:                 
                     for p, value in domain_ancillaries.iteritems():
-                        if p in self._datum_domain_ancillaries:
+                        if p in self._datum_ancillaries:
                             datum_domain_ancillaries[p] = value
                         else:
                             coordinate_conversion_domain_ancillaries[p] = value
                 #-- End: if
 
                 datum = self._Datum(parameters=datum_parameters,
-                                    domain_ancillaries=datum_domain_ancillaries)
+                                    ancillaries=datum_domain_ancillaries)
         
                 coordinate_conversion = self._CoordinateConversion(
                     parameters=coordinate_conversion_parameters,
-                    domain_ancillaries=coordinate_conversion_domain_ancillaries)
+                    ancillaries=coordinate_conversion_domain_ancillaries)
         #--- End: if
             
         super(CoordinateReference, self).__init__(
@@ -302,7 +302,7 @@ reference object.
 
         # Coordinate conversion domain ancillary-valued terms
         if field:
-            for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
+            for term, key in sorted(coordinate_conversion.ancillaries().items()):
                 value = field.domain_ancillaries().get(key)
                 if value is not None:
                     value = 'Domain Ancillary: '+value.name(default=key)
@@ -311,7 +311,7 @@ reference object.
                 string.append('{0}Coordinate conversion:{1} = {2}'.format(
                     indent1, term, str(value)))
         else:
-            for term, value in sorted(coordinate_conversion.domain_ancillaries.items()):
+            for term, value in sorted(coordinate_conversion.ancillaries.items()):
                 string.append("{0}Coordinate conversion:{1} = {2}".format(
                     indent1, term, str(value)))
 
@@ -322,7 +322,7 @@ reference object.
 
         # Datum domain ancillary-valued terms
         if field:
-            for term, key in sorted(datum.domain_ancillaries().items()):
+            for term, key in sorted(datum.ancillaries().items()):
                 value = field.domain_ancillaries().get(key)
                 if value is not None:
                     value = 'Domain Ancillary: '+value.name(default=key)
@@ -330,7 +330,7 @@ reference object.
                     value = ''
                 string.append('{0}Datum:{1} = {2}'.format(indent1, term, str(value)))
         else:
-            for term, value in sorted(datum.domain_ancillaries().items()):
+            for term, value in sorted(datum.ancillaries().items()):
                 string.append("{0}Datum:{1} = {2}".format(indent1, term, str(value)))
 
         # Coordinates 

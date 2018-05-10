@@ -6,13 +6,13 @@ from .container import Container
 
 
 class Terms(Container):
-    '''Base class for parameter- and domain ancillary-valued terms.
+    '''Base class for parameter- and ancillary array-valued terms.
 
     '''
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, domain_ancillaries=None, parameters=None,
-                 source=None, copy=True):
+    def __init__(self, parameters=None, ancillaries=None, source=None,
+                 copy=True, _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -29,63 +29,150 @@ class Terms(Container):
                 parameters = source.parameters()
             except AttributeError:
                 parameters = None
-                
+
             try:
-                domain_ancillaries = source.domain_ancillaries()
+                ancillaries = source.ancillaries()
             except AttributeError:
-                domain_ancillaries = None
+                ancillaries = None
         #--- End: if
         
-        if domain_ancillaries is None:
-            domain_ancillaries = {}
-
-        self.domain_ancillaries(domain_ancillaries, copy=copy)
-
         if parameters is None:
             parameters = {}
-
+            copy = False
+            
         self.parameters(parameters, copy=copy)
+        
+        if ancillaries is None:
+            ancillaries = {}
+        elif copy or not _use_data:
+            for key, value in ancillaries.items():
+                try:
+                    ancillaries[key] = value.copy(data=_use_data)
+                except AttributeError:
+                    pass
+        #--- End: if
+            
+        self.ancillaries(ancillaries, copy=False)
     #--- End: def
 
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''
-        out = []
+        out = [super(ParametersAncillaries, self).__str__()]
 
-        parameters = self.parameters()
-        if parameters:
-            out.append('Parameters: {0}'.format(', '.join(sorted(parameters))))
-            
-        domain_ancillaries = self.domain_ancillaries()
-        if domain_ancillaries:
-            out.append('Domain ancillaries: {0}'.format(', '.join(sorted(domain_ancillaries))))
+        ancillaries = self.ancillaries()
+        if ancillaries:
+            out.append('Ancillaries: {0}'.format(', '.join(sorted(ancillaries))))
             
         return '; '.join(out)
     #--- End: def
 
-    def copy(self):
-        '''Return a deep copy.
+    def ancillaries(self, ancillaries=None, copy=True):
+        '''Return or replace the parameter-valued terms.
 
-``t.copy()`` is equivalent to ``copy.deepcopy(t)``.
+.. versionadded:: 1.6
+
+.. seealso:: `parameters`
 
 :Examples 1:
 
->>> u = t.copy()
+>>> d = c.parameters()
+
+:Parameters:
+
+    parameters: `dict`, optional
+        Replace all parameter-valued terms with those provided.
+
+          *Example:*
+            ``parameters={'earth_radius': 6371007}``
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+        The parameter-valued terms and their values. If the
+        *parameters* keyword has been set then the parameter-valued
+        terms prior to replacement are returned.
+
+:Examples 2:
+
+>>> c.parameters()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
+
+>>> c.parameters()
+{}
+
+        '''
+        return self._dict_component('ancillaries',
+                                    replacement=ancillaries, copy=copy)
+    #--- End: def
+
+    def copy(self, data=True):
+        '''Return a deep copy.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> g = f.copy()
+
+:Parameters:
+
+    data: `bool`, optional
+        If False then do not copy the ancillary data arrays. By
+        default the data arrays are copied.
 
 :Returns:
 
     out:
         The deep copy.
 
+:Examples 2:
+
+>>> g = f.copy(data=False)
+
         '''
-        return type(self)(source=self, copy=True)
+        return type(self)(source=self, copy=True, _use_data=data)
+    #--- End: def
+    
+    def del_ancillary(self, ancillary):
+        '''Delete an ancillary.
+
+.. seealso:: `ancillaries`, `del_parameter`, `get_ancillary`,
+             `has_ancillary`, `set_ancillary`
+
+:Examples 1:
+
+>>> f.del_ancillary('orog')
+
+:Parameters:
+
+    parmtaeter: `str`
+        The name of the parameter to be deleted.
+
+:Returns:
+
+     out:
+        The value of the deleted parameter, or `None` if the parameter
+        was not set.
+
+:Examples 2:
+
+        '''
+        return self._del_component('ancillaries', ancillary)
     #--- End: def
 
     def del_parameter(self, parameter):
-        '''Delete a parameter
+        '''Delete a parameter.
 
-.. seealso:: `get_parameter`, `has_parameter`, `parameters`, `set_parameter`
+.. seealso:: `get_parameter`, `has_parameter`, `parameters`,
+             `set_parameter`
 
 :Examples 1:
 
@@ -108,62 +195,52 @@ class Terms(Container):
         return self._del_component('parameters', parameter)
     #--- End: def
 
-    def domain_ancillaries(self, domain_ancillaries=None, copy=True):
-        '''Return or replace the domain_ancillary-valued terms.
+    def get_ancillary(self, ancillary, *default):
+        '''Get a parameter value.
 
 .. versionadded:: 1.6
 
-.. seealso:: `parameters`
-
 :Examples 1:
 
->>> d = c.domain_ancillaries()
+>>> v = c.get_parameter('false_northing')
 
 :Parameters:
 
-    domain_ancillaries: `dict`, optional
-        Replace all domain ancillary-valued terms with those provided.
+    term: `str`
+        The name of the term.
 
-          *Example:*
-            ``domain_ancillies={'a': 'domainancillary0',
-                                'b': 'domainancillary1',
-                                'orog': 'domainancillary2'}``
-
-    copy: `bool`, optional
+    default: optional
 
 :Returns:
 
-    out: `dict`
-        The domain ancillary-valued terms and their values. If the
-        *domain_ancillaries* keyword has been set then the domain
-        ancillary-valued terms prior to replacement are returned.
+    out:
+        The value of the term <SOMETING BAOUT DEFAULT>
 
 :Examples 2:
 
+>>> c.get_parameter('grid_north_pole_latitude')
+70.0
+
+>>> c.get_parameter('foo')
+ERROR
+>>> c.get_parameter('foo', 'nonexistent term')
+'nonexistent term'
+
+
         '''
-        existing = self._get_component('domain_ancillaries', None, None)
+        d = self._get_component('ancillaries', None)
+        if term in d:
+            return d[term]
+        
+        if default:
+            return default[0]
 
-        if existing is None:
-            existing = {}
-            self._set_component('domain_ancillaries', None, existing)
-
-        out = existing.copy()
-
-        if not domain_ancillaries:
-            return out
-
-        # Still here?
-        if copy:
-            parameters = deepcopy(domain_ancillaries)
-
-        existing.clear()
-        existing.update(domain_ancillaries)
-
-        return out
+        raise AttributeError("{} doesn't have ancillary-valued term {!r}".format(
+                self.__class__.__name__, term))
     #--- End: def
-
+    
     def get_parameter(self, term, *default):
-        '''Get the value of a term.
+        '''Get a parameter value.
 
 .. versionadded:: 1.6
 
@@ -206,42 +283,12 @@ ERROR
                 self.__class__.__name__, term))
     #--- End: def
     
-    def has_term(self, term):
-        '''Return whether a term has been set.
-
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> v = c.has_term('orog')
-
-:Parameters:
-
-    term: `str`
-        The name of the term.
-
-:Returns:
-
-    out: `bool`
-        True if the term exists , False otherwise.
-
-:Examples 2:
-
->>> v = c.has_term('a')
-
->>> v = c.has_term('false_northing')
-
-        '''
-        return (self._has_component('domain_ancillaries', term) or
-                self._has_component('parameters', term))
-    #--- End: def
-
     def parameters(self, parameters=None, copy=True):
         '''Return or replace the parameter-valued terms.
 
 .. versionadded:: 1.6
 
-.. seealso:: `domain_ancillaries`
+.. seealso:: `ancillaries`
 
 :Examples 1:
 
@@ -275,37 +322,21 @@ ERROR
 {}
 
         '''
-        existing = self._get_component('parameters', None, None)
-
-        if existing is None:
-            existing = {}
-            self._set_component('parameters', None, existing)
-
-        out = existing.copy()
-
-        if not parameters:
-            return out
-
-        # Still here?
-        if copy:
-            parameters = deepcopy(parameters)
-
-        existing.clear()
-        existing.update(parameters)
-
-        return out
+        return self._dict_component('parameters',
+                                    replacement=parameters, copy=copy)
     #--- End: def
 
-    def set_domain_ancillary(self, term, value, copy=True):
-        '''Set a domain ancillary-valued term.
+    def set_ancillary(self, term, value, copy=True):
+        '''Set an ancillary-valued term.
 
 .. versionadded:: 1.6
 
-.. seealso:: `domain_ancillaries`
+.. seealso:: `ancillaries`, `del_ancillary`, `get_ancillary`,
+             `set_ancillary`, `set_parameter`
 
 :Examples 1:
 
->>> c.set_domain_ancillary('orog', 'domainancillary1')
+>>> c.set_ancillary('longitude_of_central_meridian', 265.0)
 
 :Returns:
 
@@ -313,17 +344,20 @@ ERROR
 
 :Examples 2:
 
->>> c.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary2'}
->>> c.set_domain_ancillary('orog', 'domainancillary1')
->>> c.domain_ancillaries()
-{'a': 'domainancillary0',
- 'b': 'domainancillary2',
- 'orog': 'domainancillary1'}
+>>> c.parameters()
+{'standard_parallel': 25.0;
+ 'latitude_of_projection_origin': 25.0}
+>>> c.set_parameter('longitude_of_central_meridian', 265.0)
+>>> c.parameters()
+{'standard_parallel': 25.0;
+ 'longitude_of_central_meridian': 265.0,
+ 'latitude_of_projection_origin': 25.0}
 
         '''
-        self._set_component('domain_ancillaries', term, value)
+        if copy:
+            value = deepcopy(value)
+            
+        self._set_component('ancillaries', term, value)
     #--- End: def
     
     def set_parameter(self, term, value, copy=True):
@@ -331,7 +365,7 @@ ERROR
 
 .. versionadded:: 1.6
 
-.. seealso:: `domain_ancillaries`
+.. seealso:: `parameters`
 
 :Examples 1:
 
@@ -358,95 +392,4 @@ ERROR
         self._set_component('parameters', term, value)
     #--- End: def
     
-    def terms(self):
-        '''Return the terms.
-
-Both parameter-valued and domain_ancillary-valued terms are returned.
-
-Note that ``c.terms()`` is equivalent to
-``c.parameters().update(c.domain_ancillaries())``.
-
-.. versionadded:: 1.6
-
-.. seealso:: `domain_ancillaries`, `parameters`
-
-:Examples 1:
-
->>> d = c.terms()
-
-:Returns:
-
-    out: `dict`
-        The terms and their values.
-
-:Examples 2:
-
->>> c.terms()
-{'a': 'domainancillary0',
- 'b': 'domainancillary2',
- 'orog': 'domainancillary1'}
-
->>> c.terms()
-{'standard_parallel': 25.0;
- 'longitude_of_central_meridian': 265.0,
- 'latitude_of_projection_origin': 25.0}
-
->>> c.terms()
-{}
-
-        '''
-        out = self.parameters()
-        out.update(self.domain_ancillaries())
-        return out
-    #--- End: def
-    
-    def name(self, default=None, identity=False, ncvar=False):
-        '''Return a name.
-
-By default the name is the first found of the following:
-
-  1. The `standard_name` CF property.
-  
-  2. The `!id` attribute.
-  
-  3. The `long_name` CF property, preceeded by the string
-     ``'long_name:'``.
-  
-  4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
-  
-  5. The value of the *default* parameter.
-
-Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
-
-.. seealso:: `identity`
-
-:Examples 1:
-
->>> n = r.name()
->>> n = r.name(default='NO NAME'))
-'''
-        if not ncvar:
-            parameter_terms = self.parameters
-
-            n = parameter_terms.get('standard_name', None)
-            if n is not None:
-                return n
-                
-            n = parameter_terms.get('grid_mapping_name', None)
-            if n is not None:
-                return n
-                
-            if identity:
-                return default
-
-        elif identity:
-            raise ValueError("Can't set identity=True and ncvar=True")
-
-        n = self.ncvar()
-        if n is not None:
-            return 'ncvar%{0}'.format(n)
-            
-        return default
-    #--- End: def
-
 #--- End: class

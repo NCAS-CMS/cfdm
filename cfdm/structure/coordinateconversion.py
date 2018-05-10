@@ -20,4 +20,5 @@ reference frame.
 
     '''
     __metaclass__ = abc.ABCMeta
+
 #--- End: class

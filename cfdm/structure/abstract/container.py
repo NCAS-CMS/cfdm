@@ -1,5 +1,7 @@
 import abc
 
+from copy import deepcopy
+
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
@@ -47,6 +49,41 @@ class Container(object):
             return self._components.pop(component, None)
         else:
             return self._components[component].pop(key, None)
+    #--- End: def
+
+    def _dict_component(self, component, replacement=None, copy=True):
+        '''
+
+:Examples 1:
+
+:Parameters:
+
+:Returns:
+
+    out: `dict`
+
+:Examples 2:
+
+        '''
+        existing = self._get_component(component, None, None)
+
+        if existing is None:
+            existing = {}
+            self._set_component(component, None, existing)
+
+        out = existing.copy()
+
+        if not replacement:
+            return out
+
+        # Still here?
+        if copy:
+            replacement = deepcopy(replacement)
+
+        existing.clear()
+        existing.update(replacement)
+
+        return out
     #--- End: def
 
     def _get_component(self, component, key, *default):

@@ -8,4 +8,5 @@ class BoundsAncillary(abstract.PropertiesData):
 
     '''
     __metaclass__ = abc.ABCMeta
+
 #--- End: class

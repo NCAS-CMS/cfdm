@@ -114,17 +114,7 @@ Field objects are picklable.
             data_axes = source.get_data_axes(None)
             data      = source.get_data(None) 
         else:
-#            key_base = self._construct_key_base
             constructs = self._Constructs(**self._construct_key_base)
-#                auxiliary_coordinate = key_base['auxiliary_coordinate'],
-#                dimension_coordinate = key_base['dimension_coordinate'],
-#                cell_measure         = key_base['cell_measure'],
-#                domain_ancillary     = key_base['domain_ancillary'],
-#                field_ancillary      = key_base['field_ancillary'],
-#                coordinate_reference = key_base['coordinate_reference'],
-#                domain_axis          = key_base['domain_axis'],
-#                cell_method          = key_base['cell_method'],
-#           )
 
         self._set_component('constructs', None, constructs)
 
