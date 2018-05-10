@@ -762,7 +762,7 @@ it is not re-written.
             # its formula_terms term
             default = None
             for ref in self.get_coordinate_references(f).itervalues():
-                for term, da_key in ref.coordinate_conversion.domain_ancillaries().iteritems():
+                for term, da_key in ref.coordinate_conversion.ancillaries().iteritems():
                     if da_key == key:
                         default = term
                         break
@@ -1411,7 +1411,7 @@ extra trailing dimension.
                     bounds_formula_terms.append('{0}: {1}'.format(term, ncvar))
                 #--- End: for
             
-                for term, key in ref.coordinate_conversion.domain_ancillaries().iteritems():
+                for term, key in ref.coordinate_conversion.ancillaries().iteritems():
                     if key is None:
                         continue
     
@@ -1576,7 +1576,7 @@ extra trailing dimension.
         if g['_debug']:
             print '    Datum =', datum
             
-        domain_ancillaries = self.get_datum_domain_ancillaries(ref)
+        domain_ancillaries = self.get_datum_ancillaries(ref)
 
         count = [0, None]
         for grid_mapping in g['grid_mapping_refs']:
@@ -1584,7 +1584,7 @@ extra trailing dimension.
             if not datum1:
                 continue
 
-            domain_ancillaries1 = self.get_datum_domain_ancillaries(
+            domain_ancillaries1 = self.get_datum_ancillaries(
                 grid_mapping)
                  
             if (datum.equals(datum1) and
@@ -1846,7 +1846,7 @@ write them to the netCDF4.Dataset.
         if not set.
 
         '''
-        return coordinate.cell_extent.get_parameter('climatology', False)
+        return coordinate.bounds_mapping.get_parameter('climatology', False)
     #--- End: def
         
     def get_construct_axes(self, field, key):
@@ -1959,7 +1959,7 @@ write them to the netCDF4.Dataset.
         return coordinate_reference.get_datum()
     #--- End: def
 
-    def get_datum_domain_ancillaries(self, coordinate_reference):
+    def get_datum_ancillaries(self, coordinate_reference):
         '''Return the domain ancillary-valued terms of a coordinate reference
 datum.
 
@@ -1971,7 +1971,7 @@ datum.
 
     out: `dict`
         '''        
-        return self.get_datum(coordinate_reference).domain_ancillaries()
+        return self.get_datum(coordinate_reference).ancillaries()
     #--- End: def
         
     def get_datum_parameters(self, coordinate_reference):
