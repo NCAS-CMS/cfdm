@@ -251,10 +251,10 @@ class Constructs(structure.Constructs):
                 x = self.get_construct(key1_to_key0[key1])                
 
 #                terms0 = x.cell_extent.domain_ancillaries()
-                terms0 = x.bounds_mapping.ancillaries()
+                terms0 = x.ancillaries()
                 terms1 = {}
 #                for term, key in y.cell_extent.domain_ancillaries().items():
-                for term, key in y.bounds_mapping.ancillaries().items():
+                for term, key in y.ancillaries().items():
                     terms1[term] = key1_to_key0.get(key, key)
                     
                 if terms0 != terms1:                    

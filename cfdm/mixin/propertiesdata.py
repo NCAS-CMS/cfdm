@@ -13,14 +13,11 @@ class PropertiesData(Properties):
         '''x.__getitem__(indices) <==> x[indices]
 
         '''
-        data = self.get_data(None)
-        if data is None:
-            raise ValueError(
-                "Can't slice {} when there is no data".format(
-                    self.__class__.__name__))
-
         new = self.copy(data=False)
-        new.set_data(data[indices], copy=False)
+        
+        data = self.get_data(None)
+        if data is not None:
+            new.set_data(data[indices], copy=False)
         
         return new
     #--- End: def

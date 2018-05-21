@@ -6,8 +6,8 @@ from ..functions import RTOL, ATOL
 
 
 class PropertiesDataBounds(PropertiesData):
-    '''Mixin class for a data array with bounds and with descriptive
-properties.
+    '''Mixin class for a data array with descriptive properties and cell
+bounds.
 
     '''
     __metaclass__ = abc.ABCMeta
@@ -29,22 +29,17 @@ properties.
         
         data = self.get_data(None)
 
-        if _debug:
-            cname = self.__class__.__name__
-            print '{}.__getitem__: shape    = {}'.format(cname, self.shape)
-            print '{}.__getitem__: indices  = {}'.format(cname, indices)
-
         if data is not None:
             new.set_data(data[tuple(indices)], copy=False)
 
-        # Subspace the bounds, if there are any
+        # Subspace the bounds, if there are any.
         self_bounds = self.get_bounds(None)
         if self_bounds is not None:
-            bounds_data = self_bounds.get_data(None)
-            if bounds_data is not None:
+            data = self_bounds.get_data(None)
+            if data is not None:
                 # There is a bounds array
                 bounds_indices = list(indices)
-                if data.ndim <= 1: # and not self.is_geometry():
+                if data.ndim <= 1 and not self.has_cell_type():
                     index = bounds_indices[0]
                     if isinstance(index, slice):
                         if index.step < 0:
@@ -62,12 +57,22 @@ properties.
                 else:
                     bounds_indices.append(Ellipsis)
     
-                if _debug:
-                    print '{}.__getitem__: indices for bounds ='.format(
-                        self.__class__.__name__, bounds_indices)
+                new_bounds = new.get_bounds()
+                new_bounds.set_data(data[tuple(bounds_indices)], copy=False)
+        #--- End: if
 
-                bounds = new.get_bounds()
-                bounds.set_data(bounds_data[tuple(bounds_indices)], copy=False)
+        # Subspace the ancillary arrays, if there are any.
+        new_ancillaries = new.ancillaries()
+        if new_ancillaries:
+            ancillary_indices = tuple(indices) + (Ellipsis,)
+            
+            for name, ancillary in self.ancillaries.iteritems():
+                data = ancillary.get_data(None)
+                if data is None:
+                    continue
+
+                new_ancillary = new_ancillaries[name]
+                new_ancillary.set_data(data[ancillary_indices], copy=False)
         #--- End: if
 
         # Return the new bounded variable
@@ -116,38 +121,26 @@ properties.
         bounds = self.get_bounds(None)
         if bounds is not None:
             string.append(bounds.dump(display=False, field=field, key=key,
-                                      _prefix=_prefix+'Bounds:',
+                                      _prefix=_prefix+'Bounds ',
                                       _create_title=False, _level=_level))
 
-        #-------------------------------------------------------------
-        # Bounds mapping parameter-valued terms
         # ------------------------------------------------------------
-        indent1 = '    ' * (_level + 1)
-        bounds_mapping = self.bounds_mapping
-        for name, parameter in sorted(bounds_mapping.parameters().items()):
+        # Cell type
+        # ------------------------------------------------------------
+        cell_type = self.get_cell_type(None)
+        if cell_type is not None:
+            indent1 = '    ' * (_level + 1)
             string.append(
-                '{0}{1}Bounds mapping:{2} = {3}'.format(indent1, _prefix, name, parameter))
+                '{0}{1}Cell type = {2}'.format(indent1, _prefix, cell_type))
 
         #-------------------------------------------------------------
         # Bounds mapping ancillary-valued terms
         # ------------------------------------------------------------
-        for term, value in sorted(bounds_mapping.ancillaries().items()):
+        for name, value in sorted(self.ancillaries().items()):
             string.append(value.dump(display=False, 
-                                     _prefix=_prefix+'Bounds mapping:',
-                                     _create_title=False, _level=_level))
-#            
-#            if field:
-#                value = field.domain_ancillaries().get(key)
-#                if value is not None:
-#                    value = 'Domain Ancillary: '+value.name(default=key)
-#                else:
-#                    value = ''
-#            else:
-#                value = key
-
-            string.append("{0}{1}Bounds mapping:{2} = {3}".format(
-                indent1, _prefix, term, str(value)))
-        #--- End: for
+                                     _prefix=_prefix+'Ancillary '+name+' ',
+                                     _create_title=False,
+                                     _level=_level))
         
         string = '\n'.join(string)
         
@@ -167,6 +160,9 @@ properties.
         if atol is None:
             atol = ATOL()
 
+        # ------------------------------------------------------------
+        # Check the properties and data
+        # ------------------------------------------------------------
         if not super(PropertiesDataBounds, self).equals(
                 other,
                 rtol=rtol, atol=atol, traceback=traceback,
@@ -180,20 +176,15 @@ properties.
         #--- End: if
 
         # ------------------------------------------------------------
-        # Check the bounds mapping parameters terms
+        # Check the cell type
         # ------------------------------------------------------------
-        if not self.bounds_mapping.equals(
-                other.bounds_mapping,
-                rtol=rtol, atol=atol,
-                traceback=traceback,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,                
-                ignore_construct_type=ignore_construct_type):
+        if self.get_cell_type(None) != other.get_cell_type(None):
             if traceback:
                 print(
-"{}: Different bounds mapping".format(self.__class__.__name__))
+"{0}: Different cell types: {1}, {2}".format(
+    self.__class__.__name__, self.get_cell_type(None), other.get_cell_type(None)))
 	    return False
-        
+
         # ------------------------------------------------------------
         # Check the bounds 
         # ------------------------------------------------------------
@@ -215,6 +206,33 @@ properties.
                 return False
         #--- End: if
 
+        # ------------------------------------------------------------
+        # Check the coordinate ancillaries
+        # ------------------------------------------------------------
+        ancillaries0 = self.ancillaries()
+        ancillaries1 = other.ancillaries()
+        if set(ancillaries0) != set(ancillaries1):
+            if traceback:
+                print(
+"{0}: Different coordinate ancillaries ({1} != {2})".format(
+    self.__class__.__name__,
+    set(ancillaries0). set(ancillaries1)))
+            return False
+
+        for name, value0 in ancillaries0.iteritems():            
+            value1 = ancillaries1[term]                
+            if not self._equals(value0, value1, rtol=rtol, atol=atol,
+                                traceback=traceback,
+                                ignore_data_type=ignore_data_type,
+                                ignore_fill_value=ignore_fill_value,
+                                ignore_construct_type=ignore_construct_type):
+                if traceback:
+                    print(
+"{}: Unequal {!r} ancillaries ({!r} != {!r})".format( 
+    self.__class__.__name__, name, value0, value1))
+                return False
+        #--- End: for
+        
         return True
     #--- End: def
     
@@ -226,11 +244,17 @@ properties.
         c = super(PropertiesDataBounds, self).expand_dims(position,
                                                           copy=copy)
         
+        # ------------------------------------------------------------
+        # Expand the dims of the bounds
+        # ------------------------------------------------------------
         bounds = c.get_bounds(None)
         if bounds is not None:
             bounds.expand_dims(position, copy=False)
-            
-        for ancillary in c.bounds_mapping.ancillaries().itervalues():
+
+        # ------------------------------------------------------------
+        # Expand the dims of the ancillaries
+        # ------------------------------------------------------------
+        for ancillary in c.ancillaries().itervalues():
             ancillary.expand_dims(position, copy=False)
             
         return c
@@ -243,11 +267,18 @@ properties.
 
         c = super(PropertiesDataBounds, self).squeeze(axes, copy=copy)
         
+
+        # ------------------------------------------------------------
+        # Squeeze the bounds
+        # ------------------------------------------------------------
         bounds = c.get_bounds(None)
         if bounds is not None:
             bounds.squeeze(axes, copy=False)
 
-        for ancillary in c.bounds_mapping.ancillaries().itervalues():
+        # ------------------------------------------------------------
+        # Squeeze the ancillaries
+        # ------------------------------------------------------------
+        for ancillary in c.ancillaries().itervalues():
             ancillary.squeeze(axes, copy=False)
             
         return c
@@ -289,6 +320,9 @@ properties.
         c = super(PropertiesDataBounds, self).transpose(axes,
                                                         copy=copy)
         
+        # ------------------------------------------------------------
+        # Transpose the bounds
+        # ------------------------------------------------------------        
         bounds = c.get_bounds(None)
         if bounds is not None:
             data = bounds.get_data(None)
@@ -311,7 +345,10 @@ properties.
         a_axes = axes
         a_axes.append(-1)
 
-        for ancillary in c.bounds_mapping.ancillaries().itervalues():
+        # ------------------------------------------------------------
+        # Transpose the ancillaries
+        # ------------------------------------------------------------        
+        for ancillary in c.ancillaries().itervalues():
             ancillary.transpose(a_axes, copy=False)
             
         return c

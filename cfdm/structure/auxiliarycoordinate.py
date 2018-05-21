@@ -4,7 +4,7 @@ import abstract
 import mixin
 
 #from .cellextent import CellExtent
-from .boundsmapping import BoundsMapping
+#from .boundsmapping import BoundsMapping
 
 
 class AuxiliaryCoordinate(abstract.Coordinate):
@@ -40,12 +40,12 @@ variables correspond to auxiliary coordinate constructs.
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-#        obj._CellExtent = CellExtent
-        obj._BoundsMapping = BoundsMapping
-
-        return obj
-    #--- End: def
+#    def __new__(cls, *args, **kwargs):
+#        obj = object.__new__(cls, *args, **kwargs)
+#        
+##        obj._CellExtent = CellExtent
+#        obj._BoundsMapping = BoundsMapping
+#
+#        return obj
+#    #--- End: def
 #--- End: class

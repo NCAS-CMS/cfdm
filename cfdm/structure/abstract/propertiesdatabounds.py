@@ -2,10 +2,11 @@ import abc
 
 from copy import deepcopy
 
+import mixin
 from .propertiesdata import PropertiesData
 
 
-class PropertiesDataBounds(PropertiesData):
+class PropertiesDataBounds(mixin.Ancillaries, PropertiesData):
     '''Base class for a data array with bounds and with descriptive
 properties.
 
@@ -13,7 +14,7 @@ properties.
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, properties={}, data=None, bounds=None,
-                 bounds_mapping=None, cell_extent=None, source=None,
+                 cell_type=None, ancillaries=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 
@@ -43,8 +44,6 @@ properties.
         The bounds array also may be set after initialisation with the
         `set_bounds` method.
   
-    bounds_mapping: `BoundsMapping`, optional
-
     source: optional
         Initialise the *properties*, *data* and *bounds* parameters
         from the object given by *source*.
@@ -68,15 +67,15 @@ properties.
             except AttributeError:
                 bounds = None
                 
-#            try:
-#                cell_extent = source.get_cell_extent()
-#            except AttributeError:
-#                cell_extent = None
-
             try:
-                bounds_mapping = source.get_bounds_mapping()
+                cell_type = source.get_cell_type(None)
             except AttributeError:
-                bounds_mapping = None
+                cell_type = None
+                
+            try:
+                ancillaries = source.get_ancillaries()
+            except AttributeError:
+                ancillaries = None
         #--- End: if
 
         # Initialise bounds
@@ -87,14 +86,21 @@ properties.
             self.set_bounds(bounds, copy=False)
         #--- End: if
 
-#        if cell_extent is not None:
-#            self.set_cell_extent(cell_extent, copy=copy)
+        if cell_type is not None:
+            self.set_cell_type(cell_type)
 
-        if bounds_mapping is not None:            
-            if copy or not _use_data:
-                bounds_mapping = bounds_mapping.copy(data=_use_data)
-                
-            self.set_bounds_mapping(bounds_mapping, copy=False)
+        if ancillaries is None:
+            ancillaries = {}
+        elif copy or not _use_data:
+            ancillaries = ancillaries.copy()
+            for key, value in ancillaries.items():
+                try:
+                    ancillaries[key] = value.copy(data=_use_data)
+                except AttributeError:
+                    ancillaries[key] = deepcopy(value)
+        #--- End: if
+            
+        self.ancillaries(ancillaries, copy=False)
     #--- End: def
 
     @property
@@ -102,30 +108,6 @@ properties.
         '''
         '''
         return self.get_bounds()
-    #--- End: def
-
-#    @property
-#    def cell_extent(self):
-#        '''
-#        '''
-#        cell_extent = self.get_cell_extent(None)
-#        if cell_extent is None:
-#            cell_extent = self._CellExtent()
-#            self.set_cell_extent(cell_extent, copy=False)
-#            
-#        return cell_extent
-#    #--- End: def
-
-    @property
-    def bounds_mapping(self):
-        '''
-        '''
-        bounds_mapping = self.get_bounds_mapping(None)
-        if bounds_mapping is None:
-            bounds_mapping = self._BoundsMapping()
-            self.set_bounds_mapping(bounds_mapping, copy=False)
-            
-        return bounds_mapping
     #--- End: def
 
     def copy(self, data=True):
@@ -188,6 +170,23 @@ None
         return self._del_component('bounds')
     #--- End: def
 
+    def del_bounds(self):
+        '''Delete the bounds type.
+
+.. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
+
+:Examples 1:
+
+:Returns: 
+
+    out: `str` or `None`
+
+:Examples 2:
+
+        '''
+        return self._del_component('cell_type')
+    #--- End: def
+
     def get_bounds(self, *default):
         '''Return the bounds.
 
@@ -218,14 +217,12 @@ None
         return self._get_component('bounds', None, *default)
     #--- End: def
 
-    def get_bounds_mapping(self, *default):
-        '''???????
+    def get_cell_type(self, *default):
+        '''Return the bounds type.
 
-.. seealso:: `bounds_mapping`, `del_bounds_mapping`, `set_bounds_mapping`
+.. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
 
 :Examples 1:
-
->>> bm = c.get_bounds_mapping()
 
 :Parameters:
 
@@ -236,13 +233,37 @@ None
 
     out:
 
-
 :Examples 2:
 
         '''
-        return self._get_component('bounds_mapping', None, *default)
+        return self._get_component('cell_type', None, *default)
     #--- End: def
 
+#    def get_bounds_mapping(self, *default):
+#        '''???????
+#
+#.. seealso:: `bounds_mapping`, `del_bounds_mapping`, `set_bounds_mapping`
+#
+#:Examples 1:
+#
+#>>> bm = c.get_bounds_mapping()
+#
+#:Parameters:
+#
+#    default: optional
+#        Return *default* if and only if the bounds have not been set.
+#
+#:Returns:
+#
+#    out:
+#
+#
+#:Examples 2:
+#
+#        '''
+#        return self._get_component('bounds_mapping', None, *default)
+#    #--- End: def
+#
 #    def get_cell_extent(self, *default):
 #        '''???????
 #
@@ -291,6 +312,25 @@ None
         return self._has_component('bounds')
     #--- End: def
 
+    def has_cell_type(self):
+        '''True if there is a bounds type.
+        
+.. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
+
+:Examples 1:
+
+>>> x = f.has_cell_type()
+
+:Returns:
+
+    out: `bool`
+
+:Examples 2:
+
+        '''
+        return self._has_component('cell_type')
+    #--- End: def
+
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
 
@@ -324,57 +364,24 @@ None
         self._set_component('bounds', None, bounds)
     #--- End: def
 
-    def set_bounds_mapping(self, value, copy=True):
-        '''???????
+    def set_cell_type(self, value):
+        '''Set the bounds type.
 
-.. seealso:: `bounds_mapping`, `del_bounds_mapping`, `get_bounds_mapping`
+.. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 
 :Examples 1:
 
->>> c.set_bounds_mapping(bm)
-
 :Parameters:
+
+    value: `str`
 
 :Returns:
 
-    out:
-
+    `None`
 
 :Examples 2:
-
         '''
-        if copy:
-            value = value.copy()
-            
-        return self._set_component('bounds_mapping', None, value)
+        self._set_component('cell_type', None, value)
     #--- End: def
-
-#    def set_cell_extent(self, value, copy=True):
-#        '''???????
-#
-#.. seealso:: `cell_extent`, `del_cell_extent`, `get_cell_extent`
-#
-#:Examples 1:
-#
-#>>> e = c.get_cell_extent()
-#
-#:Parameters:
-#
-#    default: optional
-#        Return *default* if and only if the bounds have not been set.
-#
-#:Returns:
-#
-#    out:
-#
-#
-#:Examples 2:
-#
-#        '''
-#        if copy:
-#            value = value.copy()
-#            
-#        return self._set_component('cell_extent', None, value)
-#    #--- End: def
 
 #--- End: class

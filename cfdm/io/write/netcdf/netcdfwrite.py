@@ -591,7 +591,7 @@ dictionary.
                                         omit=omit)
         #--- End: if
     
-        if self.get_climatology(coord):
+        if self.is_climatology(coord):
             extra['climatology'] = ncvar
         else:
             extra['bounds'] = ncvar
@@ -1838,7 +1838,7 @@ write them to the netCDF4.Dataset.
         return str(cell_method)
     #--- End: for
     
-    def get_climatology(self, coordinate):
+    def is_climatology(self, coordinate):
         ''':Returns:
 
     out: `bool`
@@ -1846,7 +1846,8 @@ write them to the netCDF4.Dataset.
         if not set.
 
         '''
-        return coordinate.bounds_mapping.get_parameter('climatology', False)
+#        return coordinate.bounds_mapping.get_parameter('climatology', False)
+        return bool(coordinate.get_cell_type(False) == 'climatology')
     #--- End: def
         
     def get_construct_axes(self, field, key):

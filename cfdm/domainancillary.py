@@ -3,8 +3,8 @@ import abc
 import mixin
 import structure
 
-from .cellextent import CellExtent
-from .boundsmapping import BoundsMapping
+#from .cellextent import CellExtent
+#from .boundsmapping import BoundsMapping
 
 
 class DomainAncillary(mixin.PropertiesDataBounds, structure.DomainAncillary):
@@ -28,11 +28,11 @@ number of vertices of each cell.
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        obj._BoundsMapping = BoundsMapping
-        return obj
-    #--- End: def
+#    def __new__(cls, *args, **kwargs):
+#        obj = object.__new__(cls, *args, **kwargs)
+#        obj._BoundsMapping = BoundsMapping
+#        return obj
+#    #--- End: def
     
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None):

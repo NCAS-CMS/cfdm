@@ -42,7 +42,7 @@ class create_fieldTest(unittest.TestCase):
 
         dim3.set_bounds(cfdm.Bounds(data=cfdm.Data([[0, 30.]])))
 
-        dim3.cell_extent.set_parameter('climatology', True)
+        dim3.set_cell_type('climatology')
         
         # Auxiliary coordinates
         ak = cfdm.DomainAncillary(data=cfdm.Data([10.])) #, 'm'))

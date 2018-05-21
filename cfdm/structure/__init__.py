@@ -19,10 +19,8 @@ if not (StrictVersion('2.7.0')
         platform.python_version()))
 
 from .bounds               import Bounds
-from .boundsancillary      import BoundsAncillary
-from .boundsmapping        import BoundsMapping
-from .cellextent           import CellExtent
 from .constructs           import Constructs
+from .coordinateancillary  import CoordinateAncillary
 from .coordinateconversion import CoordinateConversion
 from .data.data            import Data
 from .datum                import Datum

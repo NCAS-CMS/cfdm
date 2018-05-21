@@ -836,16 +836,16 @@ ancillaries, field ancillaries).
         construct.set_bounds(bounds, copy=copy)
     #--- End: def
 
-    def set_cell_extent_domain_ancillary(self, coordinate, prop, value):
+    def set_coordinate_ancillary(self, coordinate, prop, value):
         '''
         '''
-        coordinate.cell_extent.set_domain_ancillary(prop, value)
+        coordinate.set_ancillary(prop, value)
     #--- End: def
     
-    def set_cell_extent_parameter(self, coordinate, prop, value):
+    def set_cell_type(self, coordinate, value):
         '''
         '''
-        coordinate.cell_extent.set_parameter(prop, value)
+        coordinate.set_cell_type(value)
     #--- End: def
     
     def set_cell_measure(self, field, construct, axes, copy=True):
@@ -2507,7 +2507,7 @@ ancillaries, field ancillaries).
         self.set_properties(c, properties)
         
         if climatology:
-            self.set_cell_extent_parameter(c, 'climatology', True)
+            self.set_cell_type(c, 'climatology')
     
         data = self._create_data(ncvar, c)
         self._set_data(c, data, copy=False)
@@ -2577,8 +2577,7 @@ ancillaries, field ancillaries).
             # Add the geometry type as a cell extent parameter
             geometry_type = geometry.get('geometry_type')
             if geometry_type is not None:
-                self.set_cell_extent_parameter(c, 'geometry_type',
-                                               geometry_type)
+                self.set_cell_type(c, geometry_type)
                
             for attribute in ('part_node_count', 'interior_ring'):                
                 g_ncvar = geometry.get(attribute)
@@ -2588,7 +2587,7 @@ ancillaries, field ancillaries).
 
                 if g_ncvar in g['domain_ancillary_key']:
                     # The domain ancillary has already been set for this field 
-                    self.set_cell_extent_domain_ancillary(
+                    self.set_coordinate_ancillary(
                         c, attribute,
                         g['domain_ancillary_key'][g_ncvar])
                 else:
@@ -2612,7 +2611,7 @@ ancillaries, field ancillaries).
                                                        extra_axes=1,
                                                        copy=False)
                     
-                    self.set_cell_extent_domain_ancillary(c, attribute, da_key)
+                    self.set_coordinate_ancillary(c, attribute, da_key)
             
                     if ncvar not in ncvar_to_key:
                         ncvar_to_key[part_node_count] = da_key
