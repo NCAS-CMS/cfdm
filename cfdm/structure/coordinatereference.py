@@ -96,8 +96,8 @@ frame and consists of the following:
 
           *Example:*
             >>> f = CoordinateConversion(
-                        parameters={'standard_name': 'atmosphere_hybrid_height'},
-                        domain_ancillaries={'orog': 'domainancillary2',
+            ...         parameters={'standard_name': 'atmosphere_hybrid_height'},
+            ...         domain_ancillaries={'orog': 'domainancillary2',
             ...                             'a': 'domainancillary0',
             ...                             'b': 'domainancillary1'}))
             ...
@@ -105,8 +105,7 @@ frame and consists of the following:
 
     source: optional
         Initialise the *coordinates*, *datum* and
-        *coordinate_conversion* parameters from the object given by
-        *source*.
+        *coordinate_conversion* parameters from the *source* object.
 
     copy: `bool`, optional
         If False then do not deep copy arguments prior to

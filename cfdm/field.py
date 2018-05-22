@@ -151,10 +151,6 @@ x.__str__() <==> str(x)
                 name = variable.name(ncvar=True, default=key)
                 name += '({0})'.format(variable.get_data().size)
 
-#                axis_to_name[key] = name
-                
-                #variable = self.constructs().get(key, None)
-                
                 if variable is None:
                     return name
                           
@@ -172,25 +168,11 @@ x.__str__() <==> str(x)
                 x.append(shape)
                     
             if variable.has_data():
-#                if variable.isreftime:
-#                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
-#                else:
                 x.append(' = {0}'.format(variable.get_data()))
                 
             return ''.join(x)
         #--- End: def
                           
-        # Axes and dimension coordinates
-#        data_axes = self.get_data_axes()
-#        if data_axes is None:
-#            data_axes = ()
-#        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
-#
-#        x = ['{0}({1})'.format(self.domain_axis_name(axis),
-#                               self.domain_axes()[axis].get_size(''))
-#            for axis in list(non_spanning_axes) + data_axes]
-#        string.append('Domain axes: {}'.format(', '.join(x)))
-
         # Field ancillary variables
         x = [_print_item(self, key, anc, False)
              for key, anc in sorted(self.field_ancillaries().items())]
@@ -213,16 +195,6 @@ x.__str__() <==> str(x)
         #--- End: for
         string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
-        
-#        x1 = [_print_item(self, dim, None, True)
-#              for dim in sorted(non_spanning_axes)]
-#        x2 = [_print_item(self, dim, None, True)
-#              for dim in data_axes]
-#        x = x1 + x2
-#        if x:
-#            string.append('Axes           : {}'.format(
-#                '\n               : '.join(x)))
-                          
         # Auxiliary coordinates
         x = [_print_item(self, aux, v, False) 
              for aux, v in sorted(self.auxiliary_coordinates().items())]
@@ -343,17 +315,16 @@ functionality:
         new.set_data(data[tuple(indices)], data_axes)
 
         # ------------------------------------------------------------
-        # Subspace constructs
+        # Subspace constructs that contain arrays
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
 
         for key, construct in new.array_constructs().iteritems():
             data = self.get_construct(key).get_data(None)
             if data is None:
-                # This construct has no data array
+                # This construct has no data
                 continue
 
-            # Still here?
             needs_slicing = False
             dice = []
             for axis in new.construct_axes(key):
@@ -364,11 +335,6 @@ functionality:
                     dice.append(slice(None))
             #--- End: for
 
-            if _debug:
-                print '    item:', repr(item)
-                print '    dice = ', dice
-
-            # Set construct data
             if needs_slicing:
                 new_data = data[tuple(dice)]
             else:
@@ -390,25 +356,24 @@ functionality:
 
     def _unique_construct_names(self, constructs):
         '''
+
         '''    
         key_to_name = {}
         name_to_keys = {}
 
-#        domain_axes = (constructs == 'domain_axes')
-        
-        for key, value in getattr(self, constructs)().iteritems():
-#            if domain_axes:
-#                name = '{0}({1})'.format(self.domain_axis_name(key), # DCH FIX UP DEFAULT?
-#                                         value.get_size(''))
-#            else:
-            name = value.name(default=key)
+        for key, construct in getattr(self, constructs)().iteritems():
+            name = construct.name(default='key%'+key)
             name_to_keys.setdefault(name, []).append(key)
             key_to_name[key] = name
 
         for name, keys in name_to_keys.iteritems():
-            if len(keys) > 1:
-                for key in keys:
-                    key_to_name[key] = '{0}{{{1}}}'.format(name, re.findall('\d+$', key)[0])
+            if len(keys) <= 1:
+                continue
+            
+            for key in keys:
+                key_to_name[key] = '{0}{{{1}}}'.format(
+                    name,
+                    re.findall('\d+$', key)[0])
         #--- End: for
         
         return key_to_name
@@ -421,17 +386,19 @@ functionality:
         name_to_keys = {}
 
         for key, value in self.domain_axes().iteritems():
-            name = (self.domain_axis_name(key), value.get_size(''))
-            name_to_keys.setdefault(name, []).append(key)
-            key_to_name[key] = name
+            name_size = (self.domain_axis_name(key), value.get_size(''))
+            name_to_keys.setdefault(name_size, []).append(key)
+            key_to_name[key] = name_size
 
-        for name, keys in name_to_keys.iteritems():
+        for (name, size), keys in name_to_keys.iteritems():
             if len(keys) == 1:
-                key_to_name[keys[0]] = '{0}({1})'.format(*name)
+                key_to_name[keys[0]] = '{0}({1})'.format(name, size)
             else:
                 for key in keys:                    
                     key_to_name[key] = '{0}{{{1}}}({2})'.format(
-                        name[0], re.findall('\d+$', key)[0], name[1])
+                        name,
+                        re.findall('\d+$', key)[0],
+                        size)
         #--- End: for
         
         return key_to_name
@@ -660,7 +627,7 @@ last values.
                            key=key, _level=_level,
                            _title='Auxiliary coordinate: {0}'.format(name[key])))
 
-            # Domain ancillaries
+        # Domain ancillaries
         name = self._unique_construct_names('domain_ancillaries')
         for key, value in sorted(self.domain_ancillaries().iteritems()):
             string.append('') 

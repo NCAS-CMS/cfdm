@@ -289,8 +289,8 @@ reference object.
         indent2 = '    ' * (_level+2)
 
         if _title is None:
-            string = ['{0}Coordinate Reference: {1}'.format(indent0,
-                                                            self.name(default=key))]
+            string = ['{0}Coordinate Reference: {1}'.format(
+                indent0, self.name(default=''))]
         else:
             string = [indent0 + _title]
 
@@ -339,17 +339,15 @@ reference object.
                 coord = field.coordinates().get(key)
                 if coord is not None:
                     if isinstance(coord, DimensionCoordinate):
-                        coord = 'Dimension Coordinate: '+coord.name(default=key)
+                        coord = 'Dimension Coordinate: '+coord.name(default='key%'+key)
                     elif isinstance(coord, AuxiliaryCoordinate):
-                        coord = 'Auxiliary Coordinate: '+coord.name(default=key)
+                        coord = 'Auxiliary Coordinate: '+coord.name(default='key%'+key)
                     else:
                         coord = coord.name(default=key)
 
-#                    string.append('{0}Coordinate = {1}'.format(indent1, coord))
                     string.append('{0}{1}'.format(indent1, coord))
         else:
             for identifier in sorted(self.coordinates()):
-#                string.append('{0}Coordinate = {1}'.format(indent1, identifier))
                 string.append('{0}{1}'.format(indent1, identifier))
             
         string = '\n'.join(string)
