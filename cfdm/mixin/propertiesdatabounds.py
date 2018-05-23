@@ -134,13 +134,14 @@ bounds.
                 '{0}{1}Cell type = {2}'.format(indent1, _prefix, cell_type))
 
         #-------------------------------------------------------------
-        # Bounds mapping ancillary-valued terms
+        # ancillary-valued terms
         # ------------------------------------------------------------
         for name, value in sorted(self.ancillaries().items()):
             string.append(value.dump(display=False, 
                                      _prefix=_prefix+'Ancillary '+name+' ',
                                      _create_title=False,
                                      _level=_level))
+        
         
         string = '\n'.join(string)
         
