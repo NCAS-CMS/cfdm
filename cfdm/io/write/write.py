@@ -1,11 +1,13 @@
 from ...                    import __Conventions__
 from ...coordinatereference import CoordinateReference
+from ...field               import Field
 
 from .. import CFDMImplementation
 
 from .netcdf import NetCDFWrite
 
-implementation = CFDMImplementation(CoordinateReference=CoordinateReference)
+implementation = CFDMImplementation(CoordinateReference=CoordinateReference,
+                                    Field=Field)
 
 netcdf = NetCDFWrite(implementation)
 

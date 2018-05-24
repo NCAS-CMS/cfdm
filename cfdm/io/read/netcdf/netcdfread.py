@@ -9,7 +9,7 @@ from collections import OrderedDict
 
 import numpy
 
-from ....functions import abspath
+#from ....functions import abspath
 
 from .. import IORead
 
@@ -427,7 +427,7 @@ ancillaries, field ancillaries).
     
         g['fields'] = field
         
-        filename = abspath(filename)
+#        filename = abspath(filename)
         g['filename'] = filename
 
         # ------------------------------------------------------------

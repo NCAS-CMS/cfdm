@@ -400,216 +400,141 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
     return old
 #--- End: def
 
-def equals(x, y, rtol=None, atol=None, **kwargs): #ignore_data_type=False,
-#           ignore_fill_value=False, ignore_type=False,
-#           traceback=False):
-    '''True if and only if two objects are logically equal.
+#def equals(x, y, rtol=None, atol=None, **kwargs): #ignore_data_type=False,
+##           ignore_fill_value=False, ignore_type=False,
+##           traceback=False):
+#    '''True if and only if two objects are logically equal.
+#
+#If the first argument, *x*, has an :meth:`equals` method then it is
+#used, and in this case ``equals(x, y)`` is equivalent to
+#``x.equals(y)``. Else if the second argument, *y*, has an
+#:meth:`equals` method then it is used, and in this case ``equals(x,
+#y)`` is equivalent to ``y.equals(x)``.
+#
+#:Parameters:
+#
+#    x, y :
+#        The objects to compare for equality.
+#
+#    atol : float, optional
+#        The absolute tolerance for all numerical comparisons, By
+#        default the value returned by the `ATOL` function is used.
+#
+#    rtol : float, optional
+#        The relative tolerance for all numerical comparisons, By
+#        default the value returned by the `RTOL` function is used.
+#
+#    ignore_fill_value : bool, optional
+#        If True then `Data` arrays with different fill values are
+#        considered equal. By default they are considered unequal.
+#
+#    traceback : bool, optional
+#        If True then print a traceback highlighting where the two
+#        objects differ.
+#
+#:Returns:
+#
+#    out: `bool`
+#        Whether or not the two objects are equal.
+#
+#:Examples:
+#
+#>>> f
+#<CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
+#>>> cfdm.equals(f, f)
+#True
+#
+#>>> cfdm.equals(1.0, 1.0)
+#True
+#>>> cfdm.equals(1.0, 33)
+#False
+#
+#>>> cfdm.equals('a', 'a')
+#True
+#>>> cfdm.equals('a', 'b')
+#False
+#
+#>>> type(x), x.dtype
+#(<type 'numpy.ndarray'>, dtype('int64'))
+#>>> y = x.copy()
+#>>> cfdm.equals(x, y)
+#True
+#>>> cfdm.equals(x, x+1)
+#False
+#
+#>>> class A(object):
+#...     pass
+#...
+#>>> a = A()
+#>>> b = A()
+#>>> cfdm.equals(a, a)
+#True
+#>>> cfdm.equals(a, b)
+#False
+#
+#    '''
+#    eq = getattr(x, 'equals', None)
+#
+#    if callable(eq):
+#        # x has a callable equals method
+#        return eq(y, rtol=rtol, atol=atol, **kwargs)
+#
+#    eq = getattr(y, 'equals', None)
+#    if callable(eq):
+#        # y has a callable equals method
+#        return eq(x, rtol=rtol, atol=atol, **kwargs)
+# 
+#    if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
+#        if numpy.shape(x) != numpy.shape(y):
+#            return False
+#
+#        if rtol is None:
+#            rtol = RTOL()
+#        if atol is None:
+#            atol = ATOL()
+#                
+#        return _numpy_allclose(x, y, rtol=rtol, atol=atol)
+#
+#    else:
+#        return x == y
+##--- End: def
 
-If the first argument, *x*, has an :meth:`equals` method then it is
-used, and in this case ``equals(x, y)`` is equivalent to
-``x.equals(y)``. Else if the second argument, *y*, has an
-:meth:`equals` method then it is used, and in this case ``equals(x,
-y)`` is equivalent to ``y.equals(x)``.
-
-:Parameters:
-
-    x, y :
-        The objects to compare for equality.
-
-    atol : float, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
-
-    rtol : float, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
-
-    ignore_fill_value : bool, optional
-        If True then `Data` arrays with different fill values are
-        considered equal. By default they are considered unequal.
-
-    traceback : bool, optional
-        If True then print a traceback highlighting where the two
-        objects differ.
-
-:Returns:
-
-    out: `bool`
-        Whether or not the two objects are equal.
-
-:Examples:
-
->>> f
-<CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
->>> cfdm.equals(f, f)
-True
-
->>> cfdm.equals(1.0, 1.0)
-True
->>> cfdm.equals(1.0, 33)
-False
-
->>> cfdm.equals('a', 'a')
-True
->>> cfdm.equals('a', 'b')
-False
-
->>> type(x), x.dtype
-(<type 'numpy.ndarray'>, dtype('int64'))
->>> y = x.copy()
->>> cfdm.equals(x, y)
-True
->>> cfdm.equals(x, x+1)
-False
-
->>> class A(object):
-...     pass
-...
->>> a = A()
->>> b = A()
->>> cfdm.equals(a, a)
-True
->>> cfdm.equals(a, b)
-False
-
-    '''
-    eq = getattr(x, 'equals', None)
-
-    if callable(eq):
-        # x has a callable equals method
-        return eq(y, rtol=rtol, atol=atol, **kwargs)
-
-    eq = getattr(y, 'equals', None)
-    if callable(eq):
-        # y has a callable equals method
-        return eq(x, rtol=rtol, atol=atol, **kwargs)
- 
-    if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
-        if numpy.shape(x) != numpy.shape(y):
-            return False
-
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
-                
-        return _numpy_allclose(x, y, rtol=rtol, atol=atol)
-
-    else:
-        return x == y
-#--- End: def
-
-def flat(x):
-    '''Return an iterator over an arbitrarily nested sequence.
-
-:Parameters:
-
-    x : scalar or arbitrarily nested sequence
-        The arbitrarily nested sequence to be flattened. Note that a
-        If *x* is a string or a scalar then this is equivalent to
-        passing a single element sequence containing *x*.
-
-:Returns:
-
-    out: generator
-        An iterator over flattened sequence.
-
-:Examples:
-
->>> print cfdm.flat([1, [2, [3, 4]]])
-<generator object flat at 0x3649cd0>
-
->>> print list(cfdm.flat([1, (2, [3, 4])]))
-[1, 2, 3, 4]
-
->>> import numpy
->>> print list(cfdm.flat((1, [2, numpy.array([[3, 4], [5, 6]])]))
-[1, 2, 3, 4, 5, 6]
-
->>> for a in cfdm.flat([1, [2, [3, 4]]]):
-...     print a,
-1 2 3 4
-
->>> for a in cfdm.flat(['a', ['bc', ['def', 'ghij']]]):
-...     print a, ' ',
-a bc def ghij
-
->>> for a in cfdm.flat(2004):
-...     print a
-2004
-
->>> for a in cfdm.flat('abcdefghij'):
-...     print a
-abcdefghij
-
->>> f
-<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
->>> for a in cfdm.flat(f):
-...     print repr(a)
-<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
-
->>> for a in cfdm.flat([f, [f, [f, f]]]):
-...     print repr(a)
-<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
-<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
-<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
-<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
-
->>> fl = cfdm.FieldList(cfdm.flat([f, [f, [f, f]]])
->>> fl
-[<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
- <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
- <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
- <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>]
-
-    '''
-    if not isinstance(x, Iterable) or isinstance(x, basestring):
-        x = (x,)
-
-    for a in x:
-        if not isinstance(a, basestring) and isinstance(a, Iterable):
-            for sub in flat(a):
-                yield sub
-        else:
-            yield a
-#--- End: def
-
-def abspath(filename):
-    '''
-
-Return a normalized absolute version of a file name.
-
-If a string containing URL is provided then it is returned unchanged.
-
-:Parameters:
-
-    filename: `str`
-        The name of the file.
-
-:Returns:
-
-    out: `str`
-        The normalized absolutized version of *filename*.
- 
-:Examples:
-
->>> import os
->>> os.getcwd()
-'/data/archive'
->>> abspath('file.nc')
-'/data/archive/file.nc'
->>> abspath('..//archive///file.nc')
-'/data/archive/file.nc'
->>> abspath('http://data/archive/file.nc')
-'http://data/archive/file.nc'
-
-'''
-    u = urlparse_urlparse(filename)
-    if u.scheme != '':
-        return filename
-
-    return os.path.abspath(filename)
-#--- End: def
+#def abspath(filename):
+#    '''
+#
+#Return a normalized absolute version of a file name.
+#
+#If a string containing URL is provided then it is returned unchanged.
+#
+#:Parameters:
+#
+#    filename: `str`
+#        The name of the file.
+#
+#:Returns:
+#
+#    out: `str`
+#        The normalized absolutized version of *filename*.
+# 
+#:Examples:
+#
+#>>> import os
+#>>> os.getcwd()
+#'/data/archive'
+#>>> abspath('file.nc')
+#'/data/archive/file.nc'
+#>>> abspath('..//archive///file.nc')
+#'/data/archive/file.nc'
+#>>> abspath('http://data/archive/file.nc')
+#'http://data/archive/file.nc'
+#
+#'''
+#    u = urlparse_urlparse(filename)
+#    if u.scheme != '':
+#        return filename
+#
+#    return os.path.abspath(filename)
+##--- End: def
 
 def allclose(x, y, rtol=None, atol=None):
     '''

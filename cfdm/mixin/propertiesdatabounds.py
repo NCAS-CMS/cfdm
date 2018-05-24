@@ -19,18 +19,18 @@ bounds.
         if indices is Ellipsis:
             return self.copy()
 
-        # Parse the index
+#        # Parse the index
         if not isinstance(indices, tuple):
             indices = (indices,)
 
-        indices = parse_indices(self.shape, indices)
+#        indices = parse_indices(self.shape, indices)
 
         new = super(PropertiesDataBounds, self).__getitem__(indices)
         
         data = self.get_data(None)
 
         if data is not None:
-            new.set_data(data[tuple(indices)], copy=False)
+            new.set_data(data[indices], copy=False)
 
         # Subspace the bounds, if there are any.
         self_bounds = self.get_bounds(None)
@@ -39,6 +39,7 @@ bounds.
             if data is not None:
                 # There is a bounds array
                 bounds_indices = list(indices)
+                bounds_indices.append(Ellipsis)
                 if data.ndim <= 1 and not self.has_cell_type():
                     index = bounds_indices[0]
                     if isinstance(index, slice):
@@ -52,10 +53,11 @@ bounds.
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
                         bounds_indices.append(slice(None, None, -1))
-                    else:
-                        bounds_indices.append(slice(None))
-                else:
-                    bounds_indices.append(Ellipsis)
+                #-- End: if
+#                    else:
+#                        bounds_indices.append(slice(None))
+#                else:
+#                    bounds_indices.append(Ellipsis)
     
                 new_bounds = new.get_bounds()
                 new_bounds.set_data(data[tuple(bounds_indices)], copy=False)
@@ -66,9 +68,8 @@ bounds.
         if interior_ring is not None:
             data = interior_ring.get_data(None)
             if data is not None:
-                data = data[tuple(indices) + (Ellipsis,)]                
                 new_interior_ring = new.get_interior_ring()
-                new_interior_ring.set_data(data, copy=False)
+                new_interior_ring.set_data(data[indices], copy=False)
         #--- End: if
 
 #       # Subspace the ancillary arrays, if there are any.

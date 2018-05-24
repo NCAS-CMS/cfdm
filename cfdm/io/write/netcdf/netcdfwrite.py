@@ -7,7 +7,7 @@ import sys
 import numpy
 import netCDF4
 
-from ....functions import abspath, flat
+#from ....functions import abspath, flat
 
 from .. import IOWrite
 
@@ -2528,11 +2528,14 @@ and auxiliary coordinate roles for different data variables.
         g['_debug']  = _debug        
         
         g['fmt'] = fmt
-    
-        # ---------------------------------------------------------------
-        # Flatten the sequence of intput fields
-        # ---------------------------------------------------------------
-        fields = list(flat(fields))
+
+        if isinstance(fields, self.implementation.get_class('Field')):
+            fields = (fields,)
+        else:
+            try:
+                fields = tuple(fields)
+            except TypeError:
+                raise TypeError("'fields' parameter must be a (sequence of) Field")
     
         # ---------------------------------------------------------------
         # Still here? Open the output netCDF file.
@@ -2546,12 +2549,12 @@ and auxiliary coordinate roles for different data variables.
             if not overwrite:
                 raise IOError(
                     "Can't write to an existing file unless overwrite=True: {}".format(
-                        abspath(filename)))
+                        os.path.abspath(filename)))
                     
             if not os.access(filename, os.W_OK):
                 raise IOError(
                     "Can't overwrite an existing file without permission: {}".format(
-                        abspath(filename)))
+                        os.path.abspath(filename)))
                 
             os.remove(filename)
         #--- End: if          
