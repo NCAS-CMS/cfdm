@@ -3,6 +3,7 @@ import abc
 from copy import deepcopy
 
 import mixin
+
 from .propertiesdata import PropertiesData
 
 
@@ -72,10 +73,15 @@ properties.
             except AttributeError:
                 cell_type = None
                 
+#            try:
+#                ancillaries = source.get_ancillaries()
+#            except AttributeError:
+#                ancillaries = None
+
             try:
-                ancillaries = source.get_ancillaries()
+                interior_ring = source.get_interior_ring()
             except AttributeError:
-                ancillaries = None
+                interior_ring = None
         #--- End: if
 
         # Initialise bounds
@@ -89,18 +95,26 @@ properties.
         if cell_type is not None:
             self.set_cell_type(cell_type)
 
-        if ancillaries is None:
-            ancillaries = {}
-        elif copy or not _use_data:
-            ancillaries = ancillaries.copy()
-            for key, value in ancillaries.items():
-                try:
-                    ancillaries[key] = value.copy(data=_use_data)
-                except AttributeError:
-                    ancillaries[key] = deepcopy(value)
+        # Initialise interior ring
+        if interior_ring is not None:
+            if copy or not _use_data:
+                interior_ring = interior_ring.copy(data=_use_data)
+                
+            self.set_interior_ring(interior_ring, copy=False)
         #--- End: if
-            
-        self.ancillaries(ancillaries, copy=False)
+
+#        if ancillaries is None:
+#            ancillaries = {}
+#        elif copy or not _use_data:
+#            ancillaries = ancillaries.copy()
+#            for key, value in ancillaries.items():
+#                try:
+#                    ancillaries[key] = value.copy(data=_use_data)
+#                except AttributeError:
+#                    ancillaries[key] = deepcopy(value)
+#        #--- End: if
+#            
+#        self.ancillaries(ancillaries, copy=False)
     #--- End: def
 
     @property

@@ -25,6 +25,7 @@ from .coordinateconversion import CoordinateConversion
 from .data.data            import Data
 from .datum                import Datum
 from .domain               import Domain
+from .interiorring         import InteriorRing
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure

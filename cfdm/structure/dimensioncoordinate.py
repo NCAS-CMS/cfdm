@@ -3,9 +3,6 @@ import abc
 import abstract
 import mixin
 
-#from .cellextent import CellExtent
-from .boundsmapping import BoundsMapping
-
 
 class DimensionCoordinate(abstract.Coordinate):
     '''A dimension coordinate construct of the CF data model.
@@ -42,12 +39,4 @@ variables correspond to dimension coordinate constructs.
     '''
     __metaclass__ = abc.ABCMeta
 
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-#        obj._CellExtent = CellExtent
-        obj._BoundsMapping = BoundsMapping
-
-        return obj
-    #--- End: def
 #--- End: class

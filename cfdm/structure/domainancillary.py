@@ -2,9 +2,6 @@ import abc
 
 import abstract
 
-from .cellextent import CellExtent
-from .boundsmapping import BoundsMapping
-
 
 class DomainAncillary(abstract.PropertiesDataBounds):
     '''A domain ancillary construct of the CF data model.
@@ -27,13 +24,4 @@ number of vertices of each cell.
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-        obj._CellExtent = CellExtent
-        obj._BoundsMapping = BoundsMapping
-
-        return obj
-    #--- End: def
-
 #--- End: class
