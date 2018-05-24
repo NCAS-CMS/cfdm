@@ -61,19 +61,29 @@ bounds.
                 new_bounds.set_data(data[tuple(bounds_indices)], copy=False)
         #--- End: if
 
-        # Subspace the ancillary arrays, if there are any.
-        new_ancillaries = new.ancillaries()
-        if new_ancillaries:
-            ancillary_indices = tuple(indices) + (Ellipsis,)
-            
-            for name, ancillary in self.ancillaries.iteritems():
-                data = ancillary.get_data(None)
-                if data is None:
-                    continue
-
-                new_ancillary = new_ancillaries[name]
-                new_ancillary.set_data(data[ancillary_indices], copy=False)
+        # Subspace the interior ring array, if there are one.
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            data = interior_ring.get_data(None)
+            if data is not None:
+                data = data[tuple(indices) + (Ellipsis,)]                
+                new_interior_ring = new.get_interior_ring()
+                new_interior_ring.set_data(data, copy=False)
         #--- End: if
+
+#       # Subspace the ancillary arrays, if there are any.
+#       new_ancillaries = new.ancillaries()
+#       if new_ancillaries:
+#           ancillary_indices = tuple(indices) + (Ellipsis,)
+#           
+#           for name, ancillary in self.ancillaries.iteritems():
+#               data = ancillary.get_data(None)
+#               if data is None:
+#                   continue
+#
+#               new_ancillary = new_ancillaries[name]
+#               new_ancillary.set_data(data[ancillary_indices], copy=False)
+#       #--- End: if
 
         # Return the new bounded variable
         return new
@@ -133,14 +143,30 @@ bounds.
             string.append(
                 '{0}{1}Cell type = {2}'.format(indent1, _prefix, cell_type))
 
+#        #-------------------------------------------------------------
+#        # ancillary-valued terms
+#        # ------------------------------------------------------------
+#        for name, value in sorted(self.ancillaries().items()):
+#            string.append(value.dump(display=False, 
+#                                     _prefix=_prefix+'Ancillary '+name+' ',
+#                                     _create_title=False,
+#                                     _level=_level))
+#        
+        
         #-------------------------------------------------------------
-        # ancillary-valued terms
+        # Interior ring
         # ------------------------------------------------------------
-        for name, value in sorted(self.ancillaries().items()):
-            string.append(value.dump(display=False, 
-                                     _prefix=_prefix+'Ancillary '+name+' ',
-                                     _create_title=False,
-                                     _level=_level))
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            string.append(interior_ring.dump(display=False, field=field, key=key,
+                                             _prefix=_prefix+'Interior ring:',
+                                             _create_title=False, _level=_level))
+            
+   #     for name, value in sorted(self.ancillaries().items()):
+   #         string.append(value.dump(display=False, 
+   #                                  _prefix=_prefix+'Ancillary '+name+' ',
+    #                                 _create_title=False,
+    #                                 _level=_level))
         
         
         string = '\n'.join(string)
@@ -160,7 +186,7 @@ bounds.
             rtol = RTOL()
         if atol is None:
             atol = ATOL()
-
+    
         # ------------------------------------------------------------
         # Check the properties and data
         # ------------------------------------------------------------
@@ -175,7 +201,7 @@ bounds.
                 print("???????/")
             return False
         #--- End: if
-
+    
         # ------------------------------------------------------------
         # Check the cell type
         # ------------------------------------------------------------
@@ -208,34 +234,55 @@ bounds.
         #--- End: if
 
         # ------------------------------------------------------------
-        # Check the coordinate ancillaries
+        # Check the interior ring
         # ------------------------------------------------------------
-        ancillaries0 = self.ancillaries()
-        ancillaries1 = other.ancillaries()
-        if set(ancillaries0) != set(ancillaries1):
+        self_has_interior_ring = self.has_interior_ring()
+        if self_has_interior_ring != other.has_interior_ring():
             if traceback:
-                print(
-"{0}: Different coordinate ancillaries ({1} != {2})".format(
-    self.__class__.__name__,
-    set(ancillaries0). set(ancillaries1)))
+                print("{0}: Different {1}".format(self.__class__.__name__, attr))
             return False
-
-        for name, value0 in ancillaries0.iteritems():            
-            value1 = ancillaries1[term]                
-            if not self._equals(value0, value1, rtol=rtol, atol=atol,
+                
+        if self_has_interior_ring:            
+            if not self._equals(self.get_interior_ring(), other.get_interior_ring(),
+                                rtol=rtol, atol=atol,
                                 traceback=traceback,
                                 ignore_data_type=ignore_data_type,
-                                ignore_fill_value=ignore_fill_value,
-                                ignore_construct_type=ignore_construct_type):
+                                ignore_construct_type=ignore_construct_type,
+                                ignore_fill_value=ignore_fill_value):
                 if traceback:
-                    print(
-"{}: Unequal {!r} ancillaries ({!r} != {!r})".format( 
-    self.__class__.__name__, name, value0, value1))
+                    print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False
-        #--- End: for
+        #--- End: if
+
+#        # ------------------------------------------------------------
+#        # Check the coordinate ancillaries
+#        # ------------------------------------------------------------
+#        ancillaries0 = self.ancillaries()
+#        ancillaries1 = other.ancillaries()
+#        if set(ancillaries0) != set(ancillaries1):
+#            if traceback:
+#                print(
+#"{0}: Different coordinate ancillaries ({1} != {2})".format(
+#    self.__class__.__name__,
+#    set(ancillaries0). set(ancillaries1)))
+#            return False
+#
+#        for name, value0 in ancillaries0.iteritems():            
+#            value1 = ancillaries1[term]                
+#            if not self._equals(value0, value1, rtol=rtol, atol=atol,
+#                                traceback=traceback,
+#                                ignore_data_type=ignore_data_type,
+#                                ignore_fill_value=ignore_fill_value,
+#                                ignore_construct_type=ignore_construct_type):
+#                if traceback:
+#                    print(
+#"{}: Unequal {!r} ancillaries ({!r} != {!r})".format( 
+#    self.__class__.__name__, name, value0, value1))
+#                return False
+#        #--- End: for
         
         return True
-    #--- End: def
+#    #--- End: def
     
     def expand_dims(self, position , copy=True):
         '''
@@ -253,11 +300,18 @@ bounds.
             bounds.expand_dims(position, copy=False)
 
         # ------------------------------------------------------------
-        # Expand the dims of the ancillaries
+        # Expand the dims of the interior_ring
         # ------------------------------------------------------------
-        for ancillary in c.ancillaries().itervalues():
-            ancillary.expand_dims(position, copy=False)
-            
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.expand_dims(position, copy=False)
+
+#        # ------------------------------------------------------------
+#        # Expand the dims of the ancillaries
+#        # ------------------------------------------------------------
+#        for ancillary in c.ancillaries().itervalues():
+#            ancillary.expand_dims(position, copy=False)
+#            
         return c
     #--- End: def
     
@@ -277,10 +331,17 @@ bounds.
             bounds.squeeze(axes, copy=False)
 
         # ------------------------------------------------------------
-        # Squeeze the ancillaries
+        # Squeeze the interior_ring
         # ------------------------------------------------------------
-        for ancillary in c.ancillaries().itervalues():
-            ancillary.squeeze(axes, copy=False)
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.squeeze(axes, copy=False)
+
+#        # ------------------------------------------------------------
+#        # Squeeze the ancillaries
+#        # ------------------------------------------------------------
+#        for ancillary in c.ancillaries().itervalues():
+#            ancillary.squeeze(axes, copy=False)
             
         return c
     #--- End: def
@@ -318,9 +379,8 @@ bounds.
         else:
             axes = self._parse_axes(axes)
 
-        c = super(PropertiesDataBounds, self).transpose(axes,
-                                                        copy=copy)
-        
+        c = super(PropertiesDataBounds, self).transpose(axes, copy=copy)
+
         # ------------------------------------------------------------
         # Transpose the bounds
         # ------------------------------------------------------------        
@@ -329,7 +389,7 @@ bounds.
             data = bounds.get_data(None)
             if data is not None:            
                 b_axes = axes[:]
-                b_axes.extend([-1]*data.ndim-c.ndim)
+                b_axes.extend.extend(range(c.ndim, data.ndim))
                 
                 bounds.transpose(b_axes, copy=False)
                 
@@ -346,12 +406,21 @@ bounds.
         a_axes = axes
         a_axes.append(-1)
 
-        # ------------------------------------------------------------
-        # Transpose the ancillaries
-        # ------------------------------------------------------------        
-        for ancillary in c.ancillaries().itervalues():
-            ancillary.transpose(a_axes, copy=False)
+#        # ------------------------------------------------------------
+#        # Transpose the ancillaries
+#        # ------------------------------------------------------------        
+#        for ancillary in c.ancillaries().itervalues():
+#            ancillary.transpose(a_axes, copy=False)
             
+        # ------------------------------------------------------------
+        # Transpose the interior_ring
+        # ------------------------------------------------------------
+        interior_ring = c.get_interior_ring(None)
+        if interior_ring is not None:
+            ir_axes = axes[:]
+            ir_axes.extend(range(c.ndim, interior_ring.ndim))
+            interior_ring.transpose(ir_axes, copy=False)
+
         return c
     #--- End: def
 

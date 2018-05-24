@@ -2,12 +2,12 @@ import abc
 
 from copy import deepcopy
 
-import mixin
+#import mixin
 
 from .propertiesdata import PropertiesData
 
 
-class PropertiesDataBounds(mixin.Ancillaries, PropertiesData):
+class PropertiesDataBounds(PropertiesData):
     '''Base class for a data array with bounds and with descriptive
 properties.
 
@@ -15,7 +15,7 @@ properties.
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, properties={}, data=None, bounds=None,
-                 cell_type=None, ancillaries=None, source=None,
+                 cell_type=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 
@@ -253,6 +253,31 @@ None
         return self._get_component('cell_type', None, *default)
     #--- End: def
 
+    def get_interior_ring(self, *default):
+        '''Return the interior_ring.
+
+.. seealso:: `del_interior_ring`, `get_bounds`, `has_interior_ring`,
+             `set_interior_ring`
+
+:Examples 1:
+
+>>> i = c.get_interior_ring()
+
+:Parameters:
+
+    default: optional
+        Return *default* if and only if the HHHh have not been set.
+
+:Returns:
+
+    out:
+    
+:Examples 2:
+
+        '''
+        return self._get_component('interior_ring', None, *default)
+    #--- End: def
+
 #    def get_bounds_mapping(self, *default):
 #        '''???????
 #
@@ -345,6 +370,29 @@ None
         return self._has_component('cell_type')
     #--- End: def
 
+    def has_interior_ring(self):
+        '''True if there are interior_ring.
+        
+.. seealso:: `del_interior_ring`, `get_interior_ring`, `has_data`, `set_interior_ring`
+
+:Examples 1:
+
+>>> x = f.has_interior_ring()
+
+:Returns:
+
+    out: `bool`
+        True if there are interior_ring, otherwise False.
+
+:Examples 2:
+
+>>> if c.has_interior_ring():
+...     print 'Has interior_ring'
+
+        '''
+        return self._has_component('interior_ring')
+    #--- End: def
+
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
 
@@ -396,6 +444,38 @@ None
 :Examples 2:
         '''
         self._set_component('cell_type', None, value)
+    #--- End: def
+
+    def set_interior_ring(self, interior_ring, copy=True):
+        '''Set the interior_ring.
+
+.. seealso: `del_interior_ring`, `get_interior_ring`,
+            `has_interior_ring`
+
+:Examples 1:
+
+>>> c.set_interior_ring(b)
+
+:Parameters:
+
+    interior_ring: `InteriorRing`
+        The interior_ring to be inserted.
+
+    copy: `bool`, optional
+        If False then do not copy the interior_ring prior to insertion. By
+        default the interior_ring are copied.
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+        '''
+        if copy:
+            interior_ring = interior_ring.copy()
+
+        self._set_component('interior_ring', None, interior_ring)
     #--- End: def
 
 #--- End: class

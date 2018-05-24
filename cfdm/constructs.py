@@ -148,12 +148,16 @@ class Constructs(structure.Constructs):
 #        print '\naxes_to_constructs1 =', axes_to_constructs1
         for axes0, constructs0 in axes_to_constructs0.iteritems():
 #            print '\n\naxes0 = ', axes0
+#            print 'constructs0 = ', constructs0
             matched_all_constructs_with_these_axes = False
 
+            log = []
+            
             len_axes0 = len(axes0) 
             for axes1, constructs1 in axes_to_constructs1.items():
+                log = []
                 constructs1 = constructs1.copy()
-#                print '    axes1 = ', axes1
+#                print '\n    axes1 = ', axes1
 #                print '    constructs1 = ', constructs1
                 matched_roles = False
 
@@ -161,7 +165,7 @@ class Constructs(structure.Constructs):
                     # axes1 and axes0 contain differents number of
                     # domain axes.
                     continue
-            
+
                 for construct_type in self._array_constructs:
 #                    print '        construct_type =', construct_type
                     matched_role = False
@@ -172,6 +176,7 @@ class Constructs(structure.Constructs):
                         # There are the different numbers of
                         # constructs of this type
                         matched_all_constructs_with_these_axes = False
+                        log.append('Different numbers of '+construct_type)
                         break
 
                     # Check that there are matching pairs of equal
@@ -189,12 +194,13 @@ class Constructs(structure.Constructs):
                         #--- End: for
 
                         if not matched_construct:
+                            log.append("Can't match "+construct_type+" "+repr(item0))
                             break
                     #--- End: for
 
                     if role_constructs1:
                         # At least one construct in other is not equal
-                        # to a construct in self                        
+                        # to a construct in self
                         break
 
                     # Still here? Then all constructs of this type
@@ -213,6 +219,11 @@ class Constructs(structure.Constructs):
                 if traceback:
                     names = [self.domain_axis_name(axis0) for axis0 in axes0]
                     print("Can't match constructs spanning axes {0}".format(names))
+                    print '\n'.join(log)
+                    print
+                    print axes_to_constructs0
+                    print
+                    print axes_to_constructs1
                 return False
 
             # Map item axes in the two instances
@@ -240,29 +251,29 @@ class Constructs(structure.Constructs):
                 axis1_to_axis0[axis1] = axis0
         #--- End: for
 
-        # ------------------------------------------------------------
-        #
-        # ------------------------------------------------------------
-        for construct_type in ('dimension_coordinate',
-                               'auxiliary_coordinate',
-                               'domain_ancillary'):
-            found_match = False
-            for key1, y in other.constructs(construct_type).iteritems():
-                x = self.get_construct(key1_to_key0[key1])                
-
-#                terms0 = x.cell_extent.domain_ancillaries()
-                terms0 = x.ancillaries()
-                terms1 = {}
-#                for term, key in y.cell_extent.domain_ancillaries().items():
-                for term, key in y.ancillaries().items():
-                    terms1[term] = key1_to_key0.get(key, key)
-                    
-                if terms0 != terms1:                    
-                    if traceback:
-                        print(
-"Traceback: No match for {0!r})".format('????'))
-                    return False
-        #--- End: for
+#        # ------------------------------------------------------------
+#        #
+#        # ------------------------------------------------------------
+#        for construct_type in ('dimension_coordinate',
+#                               'auxiliary_coordinate',
+#                               'domain_ancillary'):
+#            found_match = False
+#            for key1, y in other.constructs(construct_type).iteritems():
+#                x = self.get_construct(key1_to_key0[key1])                
+#
+##                terms0 = x.cell_extent.domain_ancillaries()
+#                terms0 = x.ancillaries()
+#                terms1 = {}
+##                for term, key in y.cell_extent.domain_ancillaries().items():
+#                for term, key in y.ancillaries().items():
+#                    terms1[term] = key1_to_key0.get(key, key)
+#                    
+#                if terms0 != terms1:                    
+#                    if traceback:
+#                        print(
+#"Traceback: No match for {0!r})".format('????'))
+#                    return False
+#        #--- End: for
         
         # ------------------------------------------------------------
         # Check non-array constructs
