@@ -16,6 +16,10 @@ class Properties(Container):
     '''
     __metaclass__ = abc.ABCMeta
 
+    # ----------------------------------------------------------------
+    # Properties with special [set|get|has|del]_property methods
+    # defined by @property decorated methods
+    # ----------------------------------------------------------------
     _special_properties = ()
 
     def __init__(self, properties=None, source=None, copy=True):
@@ -183,8 +187,9 @@ UNSET
             else:
                 return getattr(self, prop, *default)
         except AttributeError:
-            raise AttributeError("{!r} object has no CF property {!r}".format(
-                self.__class__.__name__, prop))
+            raise AttributeError(
+                "{} doesn't have CF property {!r}".format(
+                    self.__class__.__name__, prop))
     #--- End: def
 
     def has_property(self, prop):
@@ -262,35 +267,57 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 :Examples 2:
 
         '''
-        existing = self._get_component('properties', None, None)
-
-        if existing is None:
-            existing = {}
-            self._set_component('properties', None, existing)
-
-        out = existing.copy()
-
-        for prop in self._special_properties:
-            value = getattr(self, prop, None)
-            if value is not None:
-                out[prop] = value
+        out = self._dict_component('properties', replacement=properties,
+                                   copy=copy)
 
         if properties is None:
-            return out
+            for prop in self._special_properties:
+                value = get_property(prop, None)
+                if value is not None:
+                    out[prop] = value
+        else:
+            for prop in self._special_properties:
+                if prop not in properties:
+                    continue
 
-        # Still here?
-        if copy:
-            properties = deepcopy(properties)
-
-        existing.clear()
-        existing.update(properties)
-
-        for prop in self._special_properties:
-            if prop in properties:
-                self.set_property(prop, properties[prop])
-        #--- End: for
+                value = properties[prop]
+                if copy:
+                    value = deepcopy(value)
+                    
+                self.set_property(prop, value)
+        #--- End: if
 
         return out
+        
+#       existing = self._get_component('properties', None, None)
+#
+#       if existing is None:
+#           existing = {}
+#           self._set_component('properties', None, existing)
+#
+#       out = existing.copy()
+#
+#       for prop in self._special_properties:
+#           value = getattr(self, prop, None)
+#           if value is not None:
+#               out[prop] = value
+#
+#       if properties is None:
+#           return out
+#
+#       # Still here?
+#       if copy:
+#           properties = deepcopy(properties)
+#
+#       existing.clear()
+#       existing.update(properties)
+#
+#       for prop in self._special_properties:
+#           if prop in properties:
+#               self.set_property(prop, properties[prop])
+#       #--- End: for
+#
+#       return out
     #--- End: def
 
     def set_property(self, prop, value):

@@ -35,14 +35,14 @@ properties.
     data: `Data`, optional
         Set the data array. Ignored if the *source* parameter is set.
         
-        The data array also may be set after initialisation with the
+        The data array may also be set after initialisation with the
         `set_data` method.
   
     bounds: `Bounds`, optional
         Set the bounds array. Ignored if the *source* parameter is
         set.
         
-        The bounds array also may be set after initialisation with the
+        The bounds array may also be set after initialisation with the
         `set_bounds` method.
   
     source: optional
@@ -90,8 +90,8 @@ properties.
                 bounds = bounds.copy(data=_use_data)
                 
             self.set_bounds(bounds, copy=False)
-        #--- End: if
 
+        # Initialise the cell type
         if cell_type is not None:
             self.set_cell_type(cell_type)
 
@@ -101,7 +101,6 @@ properties.
                 interior_ring = interior_ring.copy(data=_use_data)
                 
             self.set_interior_ring(interior_ring, copy=False)
-        #--- End: if
 
 #        if ancillaries is None:
 #            ancillaries = {}
