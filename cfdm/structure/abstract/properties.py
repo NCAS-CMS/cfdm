@@ -4,11 +4,6 @@ from copy import deepcopy
 
 from .container import Container
 
-# ====================================================================
-#
-
-#
-# ====================================================================
 
 class Properties(Container):
     '''Base class for descriptive properties.
@@ -17,8 +12,8 @@ class Properties(Container):
     __metaclass__ = abc.ABCMeta
 
     # ----------------------------------------------------------------
-    # Properties with special [set|get|has|del]_property methods
-    # defined by @property decorated methods
+    # Properties with special [set|get|has|del]_property methods that
+    # are defined by @property decorated methods
     # ----------------------------------------------------------------
     _special_properties = ()
 
@@ -141,19 +136,11 @@ None
     def get_property(self, prop, *default):
         '''Return a property.
 
-A property describes an aspect of the construct that is independent of
-the domain.
-
-A property may have any name and any value. Some properties correspond
-to netCDF attributes of variables (e.g. "units", "long_name", and
-"standard_name"), or netCDF global file attributes (e.g. "history" and
-"institution"),
-
 .. seealso:: `del_property`, `has_property`, `properties`, `set_property`
 
 :Examples 1:
 
->>> x = f.get_property('standard_name')
+>>> x = f.get_property('method')
 
 :Parameters:
 
@@ -161,23 +148,23 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
         The name of the property to be retrieved.
 
     default: optional
-        Return *default* if and only if the property has not been set.
+        Return *default* if the property has not been set.
 
 :Returns:
 
     out:
-        The value of the property. If the property has not been set,
-        then return the value of *default* parameter if provided.
+        The value of the property. If the property has not been set
+        then return the value of *default* parameter, if provided.
 
 :Examples 2:
 
->>> f.set_property('standard_name', 'air_temperature')
->>> print f.get_property('standard_name')
-'air_temperature'
->>> f.del_property('standard_name')
->>> print f.get_property('standard_name')
-AttributeError: Field doesn't have property 'standard_name'
->>> print f.get_property('standard_name', 'UNSET')
+>>> f.set_property('foo', 'bar')
+>>> print f.get_property('foo')
+bar
+>>> f.del_property('foo')
+>>> print f.get_property('foo')
+AttributeError: Field doesn't have property 'foo'
+>>> print f.get_property('foo', 'UNSET')
 UNSET
 
         '''
@@ -188,20 +175,12 @@ UNSET
                 return getattr(self, prop, *default)
         except AttributeError:
             raise AttributeError(
-                "{} doesn't have CF property {!r}".format(
+                "{} doesn't have property {!r}".format(
                     self.__class__.__name__, prop))
     #--- End: def
 
     def has_property(self, prop):
-        '''Whether a CF property has been set.
-
-A property describes an aspect of the construct that is independent
-of the domain.
-
-A property may have any name and any value. Some properties correspond
-to netCDF attributes of variables (e.g. "units", "long_name", and
-"standard_name"), or netCDF global file attributes (e.g. "history" and
-"institution"),
+        '''Whether a property has been set.
 
 .. seealso:: `del_property`, `get_property`, `properties`, `set_property`
 
@@ -232,15 +211,7 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
     #--- End: def
 
     def properties(self, properties=None, copy=True):
-        '''Inspect or change the CF properties.
-
-A property describes an aspect of the construct that is independent of
-the domain.
-
-A property may have any name and any value. Some properties correspond
-to netCDF attributes of variables (e.g. "units", "long_name", and
-"standard_name"), or netCDF global file attributes (e.g. "history" and
-"institution"),
+        '''Inspect or change the properties.
 
 :Examples 1:
 
@@ -270,6 +241,7 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
         out = self._dict_component('properties', replacement=properties,
                                    copy=copy)
 
+        # Deal with special properties
         if properties is None:
             for prop in self._special_properties:
                 value = get_property(prop, None)
@@ -288,48 +260,10 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
         #--- End: if
 
         return out
-        
-#       existing = self._get_component('properties', None, None)
-#
-#       if existing is None:
-#           existing = {}
-#           self._set_component('properties', None, existing)
-#
-#       out = existing.copy()
-#
-#       for prop in self._special_properties:
-#           value = getattr(self, prop, None)
-#           if value is not None:
-#               out[prop] = value
-#
-#       if properties is None:
-#           return out
-#
-#       # Still here?
-#       if copy:
-#           properties = deepcopy(properties)
-#
-#       existing.clear()
-#       existing.update(properties)
-#
-#       for prop in self._special_properties:
-#           if prop in properties:
-#               self.set_property(prop, properties[prop])
-#       #--- End: for
-#
-#       return out
     #--- End: def
 
     def set_property(self, prop, value):
         '''Set a property.
-
-A property describes an aspect of the construct that is independent of
-the domain.
-
-A property may have any name and any value. Some properties correspond
-to netCDF attributes of variables (e.g. "units", "long_name", and
-"standard_name"), or netCDF global file attributes (e.g. "history" and
-"institution"),
 
 .. seealso:: `del_property`, `get_property`, `has_property`, `properties`
 

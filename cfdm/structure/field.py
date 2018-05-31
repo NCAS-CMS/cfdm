@@ -100,28 +100,34 @@ Field objects are picklable.
                                     source=source, copy=copy,
                                     _use_data=False)
 
-#        self._set_copy_method('constructs', self.CUSTOMCOPY)
-        
-        data_axes  = None
-        data       = None
-        constructs = None
-  
-        if source is not None and isinstance(source, Field):
-            constructs = source._get_constructs(None)
+        if source is not None:
+            try:
+                constructs = source._get_constructs(None)
+            except AttributeError:
+                constructs = None
+                
+            try:
+                data_axes = source.get_data_axes(None)
+            except AttributeError:
+                data_axes = None
+                
+            try:
+                data = source.get_data(None) 
+            except AttributeError:
+                data = None
+
+            if data is not None:
+                if _use_data:
+                    self.set_data(data, data_axes, copy=copy)
+            elif data_axes is not None:
+                self.set_data_axes(data_axes)
+                
             if constructs is not None and (copy or not _use_data):
                 constructs = constructs.copy(data=_use_data)
-
-            data_axes = source.get_data_axes(None)
-            data      = source.get_data(None) 
         else:
             constructs = self._Constructs(**self._construct_key_base)
 
         self._set_component('constructs', None, constructs)
-
-        if data is not None:
-            self.set_data(data, data_axes, copy=copy)
-        elif data_axes is not None:
-            self.set_data_axes(data_axes)
     #--- End: def
     
     def _get_constructs(self, *default):
@@ -155,34 +161,39 @@ Field objects are picklable.
     #--- End: def
 
     def get_data_axes(self, *default):
-        '''Return the domain axes for the data array dimensions.
+        '''Return the domain axes corresponding to the data array dimensions.
         
-.. seealso:: `axes`, `axis`, `item_axes`
+.. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
 
 :Examples 1:
 
->>> d = f.{+name}()
+>>> d = f.get_data_axes()
+
+:Parameters:
+
+    default: optional
+        Return *default* if data axes have not been set.
 
 :Returns:
 
-    out: list or None
-        The ordered axes of the data array. If there is no data array
-        then `None` is returned.
+    out: `tuple` 
+        The ordered axes of the data array. If there are no data axes
+        then return the value of *default* parameter, if provided.
 
 :Examples 2:
 
 >>> f.ndim
 3
->>> f.{+name}()
-['dim2', 'dim0', 'dim1']
->>> f.del_data()
->>> print f.{+name}()
+>>> f.get_data_axes()
+('dim2', 'dim0', 'dim1')
+>>> d = f.del_data()
+>>> print f.get_data_axes(None)
 None
 
 >>> f.ndim
 0
->>> f.{+name}()
-[]
+>>> f.get_data_axes()
+()
 
         '''    
         return self._get_component('data_axes', None, *default)

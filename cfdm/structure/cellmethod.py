@@ -178,13 +178,13 @@ None
 :Parameters:
 
     default: optional
-        Return *default* if and only if the axes have not been set.
+        Return *default* if and only if axes have not been set.
 
 :Returns:
 
-    out:
-        The value of the property. If the axes have not been set, then
-        return the value of *default* parameter if provided.
+    out: `tuple`
+        The axes. If axes have not been set then return the value
+        of *default* parameter, if provided.
 
 :Examples 2:
 
@@ -196,7 +196,6 @@ None
 AttributeError: 'CellMethod' object has no component 'axes'
 >>> c.get_axes('NO AXES')
 'NO AXES'
-
 
         '''
         return self._get_component('axes', None, *default)

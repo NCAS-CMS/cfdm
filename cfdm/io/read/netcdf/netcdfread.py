@@ -458,6 +458,7 @@ ancillaries, field ancillaries).
             except UnicodeDecodeError:
                 pass
         #--- End: for
+        
         g['global_attributes'] = global_attributes
         if _debug:
             print '    global attributes:', g['global_attributes']
@@ -530,20 +531,21 @@ ancillaries, field ancillaries).
         # Identify and parse all list variables
         # ------------------------------------------------------------
         for ncvar, dimensions in variable_dimensions.iteritems():
-            if dimensions == (ncvar,):
-                # This variable is a Unidata coordinate variable
-                compress = variable_attributes[ncvar].get('compress')
-                if compress is None:
-                    continue
-                
-                # This variable is a list variable for gathering
-                # arrays
-                self._parse_compression_gathered(ncvar, compress)
+            if dimensions != (ncvar,):
+                continue
 
-                # Do not attempt to create a field from a list
-                # variable
-                g['do_not_create_field'].add(ncvar)
-        #--- End: for
+            # This variable is a Unidata coordinate variable
+            compress = variable_attributes[ncvar].get('compress')
+            if compress is None:
+                continue
+            
+            # This variable is a list variable for gathering
+            # arrays
+            self._parse_compression_gathered(ncvar, compress)
+            
+            # Do not attempt to create a field from a list
+            # variable
+            g['do_not_create_field'].add(ncvar)
 
         # ------------------------------------------------------------
         # DSG variables  (>= CF-1.6)
@@ -627,7 +629,6 @@ ancillaries, field ancillaries).
             # Do not attempt to create a field from a geometry
             # container variable
             g['do_not_create_field'].add(geometry_ncvar)
-        #--- End: for
 
         # ------------------------------------------------------------
         # External variables
@@ -2992,7 +2993,7 @@ Set the Data attribute of a variable.
 
 :Examples 1:
 
->>> cell_methods = c.parse_cell_methods('t: mean')
+>>> cell_methods = c.parse_cell_methods('time: mean')
 
 :Parameters:
 
@@ -3005,7 +3006,7 @@ Set the Data attribute of a variable.
 
 :Examples 2:
 
->>> c = parse_cell_methods('time: minimum within years time: mean over years (ENSO years)')
+>>> c = parse_cell_methods('t: minimum within years t: mean over ENSO years)')
 >>> print c
 [
 ]
@@ -3123,8 +3124,6 @@ Set the Data attribute of a variable.
                             comment.append(cell_methods.pop(0))
                         #--- End: while
                         cm['comment'] = ' '.join(comment)
-                    #--- End: if
-
                 #--- End: while 
 
                 if cell_methods[0].endswith(')'):
