@@ -1,0 +1,76 @@
+Coordinates: dimension coordinate and auxiliary constructs
+----------------------------------------------------------
+
+Coordinate constructs provide information which locate the cells of
+the domain and which depend on a subset of the domain axis
+constructs. As previously discussed, there are two distinct types of
+coordinate construct: a dimension coordinate construct provides
+monotonic numeric coordinates for a single domain axis, and an
+auxiliary coordinate construct provides any type of coordinate
+information for one or more of the domain axes. In both cases, the
+coordinate construct consists of a data array of the coordinate values
+which spans a subset of the domain axis constructs, an optional array
+of cell bounds recording the extents of each cell, and properties to
+describe the coordinates (in the same sense as for the field
+construct). The bounds array spans the same domain axes as the
+coordinate array, with the addition of one or more trailing dimensions
+to index the vertices that define the extent of each cell.
+
+The dimension coordinate construct is able to unambiguously describe
+cell locations because a domain axis can be associated with at most
+one dimension coordinate construct, whose data array values must all
+be non-missing and strictly monotonically increasing or
+decreasing. They must also all be of the same numeric data type. If
+cell bounds are provided then each cell must have exactly two
+vertices, i.e. the extent of each cell can be described as a line
+along the domain axis. CF-netCDF coordinate variables and numeric
+scalar coordinate variables correspond to dimension coordinate
+constructs. Note that, for climatological time axes, the bounds are
+interpreted in a special way indicated by the cell method constructs.
+
+If a domain axis construct does not correspond to a continuous
+physical quantity, then it is not necessary for it to be associated
+with a dimension coordinate construct. For example, this is the case
+for an axis that runs over ocean basins or area types, or for a domain
+axis that indexes a time series at scattered points. In such cases,
+one-dimensional auxiliary coordinate constructs could be used to store
+coordinate values. These axes are discrete axes in CF-netCDF.
+
+Auxiliary coordinate constructs have to be used, instead of dimension
+coordinate constructs, when a single domain axis requires more then
+one set of coordinate values, when coordinate values are not numeric,
+strictly monotonic, or contain missing values, or when they vary along
+more than one domain axis construct simultaneously. CF-netCDF
+auxiliary coordinate variables and non-numeric scalar coordinate
+variables correspond to auxiliary coordinate constructs.
+
+If cell bounds are provided, they describe the extent of each cell as
+one or more polygons or lines (each defined by two or more vertices)
+or points. If every cell is a single polygon or, for one-dimensionsal
+coordinates, a single line defined by two vertices, the vertices are
+contained in an array that spans the same domain axes as the
+coordinate array, with the addition of an extra ragged dimension that
+indexes the vertices of each cell. If the cells describe geographical
+features consisting of one or more unconnected points (such as a
+collection of weather stations); one or more lines (such as the course
+of a river with tributaries); or more than one polygons (such as a
+land area comprising several islands), the construct must have a
+"geometry type" property which describes how cell vertices relate to
+each other. A geometry_type attribute of a CF-netCDF geometry
+container variable corresponds to a geometry type property. In this
+case, the bounds array spans the same domain axes as its coordinate
+array, with the addition of two trailing ragged dimensions. The first
+extra dimension indexes the distinct parts of each cell and the second
+indexes the vertices that describe each part. In CF-netCDF, the
+geometry node coordinate variables contain the cell vertices.
+
+Furthermore, for polygon geometries, an individual part may define an
+"interior ring", i.e.  a hole that is to be omitted from the cell
+extent (as would occur, for example, for a cell describing the land
+area of a region containing a lake). In this case an interior ring
+array is required that records whether each part is to be included or
+excluded from the cell, supplied by an interior ring variable in
+CF-netCDF. This interior ring array spans the same domain axes as its
+coordinate array, with the addition of an extra ragged dimension that
+indexes the cell parts for each cell.
+
