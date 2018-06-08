@@ -23,8 +23,8 @@ be non-missing and strictly monotonically increasing or
 decreasing. They must also all be of the same numeric data type. If
 cell bounds are provided then each cell must have exactly two
 vertices, i.e. the extent of each cell can be described as a line
-along the domain axis. CF-netCDF coordinate variables and numeric
-scalar coordinate variables correspond to dimension coordinate
+segment along the domain axis. CF-netCDF coordinate variables and
+numeric scalar coordinate variables correspond to dimension coordinate
 constructs. Note that, for climatological time axes, the bounds are
 interpreted in a special way indicated by the cell method constructs.
 
@@ -45,32 +45,28 @@ auxiliary coordinate variables and non-numeric scalar coordinate
 variables correspond to auxiliary coordinate constructs.
 
 If cell bounds are provided, they describe the extent of each cell as
-one or more polygons or lines (each defined by two or more vertices)
-or points. If every cell is a single polygon or, for one-dimensionsal
-coordinates, a single line defined by two vertices, the vertices are
-contained in an array that spans the same domain axes as the
-coordinate array, with the addition of an extra ragged dimension that
-indexes the vertices of each cell. If the cells describe geographical
-features consisting of one or more unconnected points (such as a
-collection of weather stations); one or more lines (such as the course
-of a river with tributaries); or more than one polygons (such as a
-land area comprising several islands), the construct must have a
-"geometry type" property which describes how cell vertices relate to
-each other. A geometry_type attribute of a CF-netCDF geometry
-container variable corresponds to a geometry type property. In this
-case, the bounds array spans the same domain axes as its coordinate
-array, with the addition of two trailing ragged dimensions. The first
-extra dimension indexes the distinct parts of each cell and the second
-indexes the vertices that describe each part. In CF-netCDF, the
-geometry node coordinate variables contain the cell vertices.
-
-Furthermore, for polygon geometries, an individual part may define an
-"interior ring", i.e.  a hole that is to be omitted from the cell
-extent (as would occur, for example, for a cell describing the land
-area of a region containing a lake). In this case an interior ring
-array is required that records whether each part is to be included or
-excluded from the cell, supplied by an interior ring variable in
-CF-netCDF. This interior ring array spans the same domain axes as its
-coordinate array, with the addition of an extra ragged dimension that
-indexes the cell parts for each cell.
+one or more geometries of the same type, where a single geometry is
+either a polygon, a line (i.e. a connected series of line segments) or
+a collection of points. In general the bounds array spans the same
+domain axes as its coordinate array, with the addition of two trailing
+ragged dimensions. The first extra dimension indexes the geometry
+parts of each cell and the second indexes the vertices that describe
+each part. If, however, every cell contains only one geometry part,
+the vertices may be contained in an array that spans the same domain
+axes as the coordinate array, with the addition of only one extra
+ragged dimension that indexes the vertices of each cell. If the cell
+bounds are not single polygons nor, for one-dimensionsal coordinates,
+single line segments, the construct must have a "geometry type"
+property which describes how cell vertices relate to each other---as
+polygons, lines or points. A geometry_type attribute of a CF-netCDF
+geometry container variable corresponds to a geometry type
+property. For polygon geometries, an individual geometry part may
+define an "interior ring", i.e. a hole that is to be omitted from the
+cell extent (as would occur, for example, for a cell describing the
+land area of a region containing a lake). In this case an interior
+ring array is required that records whether each part is to be
+included or excluded from the cell, supplied by an interior ring
+variable in CF-netCDF. The interior ring array spans the same domain
+axes as its coordinate array, with the addition of an extra ragged
+dimension that indexes the geometry parts for each cell.
 
