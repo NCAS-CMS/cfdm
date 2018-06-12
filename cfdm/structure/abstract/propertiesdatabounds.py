@@ -15,7 +15,7 @@ properties.
     __metaclass__ = abc.ABCMeta
     
     def __init__(self, properties={}, data=None, bounds=None,
-                 cell_type=None, interior_ring=None, source=None,
+                 geometry_type=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 
@@ -69,15 +69,10 @@ properties.
                 bounds = None
                 
             try:
-                cell_type = source.get_cell_type(None)
+                geometry_type = source.get_geometry_type(None)
             except AttributeError:
-                cell_type = None
+                geometry_type = None
                 
-#            try:
-#                ancillaries = source.get_ancillaries()
-#            except AttributeError:
-#                ancillaries = None
-
             try:
                 interior_ring = source.get_interior_ring()
             except AttributeError:
@@ -91,9 +86,9 @@ properties.
                 
             self.set_bounds(bounds, copy=False)
 
-        # Initialise the cell type
-        if cell_type is not None:
-            self.set_cell_type(cell_type)
+        # Initialise the geometry type
+        if geometry_type is not None:
+            self.set_geometry_type(geometry_type)
 
         # Initialise interior ring
         if interior_ring is not None:
@@ -101,19 +96,6 @@ properties.
                 interior_ring = interior_ring.copy(data=_use_data)
                 
             self.set_interior_ring(interior_ring, copy=False)
-
-#        if ancillaries is None:
-#            ancillaries = {}
-#        elif copy or not _use_data:
-#            ancillaries = ancillaries.copy()
-#            for key, value in ancillaries.items():
-#                try:
-#                    ancillaries[key] = value.copy(data=_use_data)
-#                except AttributeError:
-#                    ancillaries[key] = deepcopy(value)
-#        #--- End: if
-#            
-#        self.ancillaries(ancillaries, copy=False)
     #--- End: def
 
     @property
@@ -197,7 +179,7 @@ None
 :Examples 2:
 
         '''
-        return self._del_component('cell_type')
+        return self._del_component('geometry_type')
     #--- End: def
 
     def get_bounds(self, *default):
@@ -230,7 +212,7 @@ None
         return self._get_component('bounds', None, *default)
     #--- End: def
 
-    def get_cell_type(self, *default):
+    def get_geometry_type(self, *default):
         '''Return the bounds type.
 
 .. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
@@ -249,7 +231,7 @@ None
 :Examples 2:
 
         '''
-        return self._get_component('cell_type', None, *default)
+        return self._get_component('geometry_type', None, *default)
     #--- End: def
 
     def get_interior_ring(self, *default):
@@ -350,14 +332,14 @@ None
         return self._has_component('bounds')
     #--- End: def
 
-    def has_cell_type(self):
+    def has_geometry_type(self):
         '''True if there is a bounds type.
         
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
 :Examples 1:
 
->>> x = f.has_cell_type()
+>>> x = f.has_geometry_type()
 
 :Returns:
 
@@ -366,7 +348,7 @@ None
 :Examples 2:
 
         '''
-        return self._has_component('cell_type')
+        return self._has_component('geometry_type')
     #--- End: def
 
     def has_interior_ring(self):
@@ -425,7 +407,7 @@ None
         self._set_component('bounds', None, bounds)
     #--- End: def
 
-    def set_cell_type(self, value):
+    def set_geometry_type(self, value):
         '''Set the bounds type.
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
@@ -442,7 +424,7 @@ None
 
 :Examples 2:
         '''
-        self._set_component('cell_type', None, value)
+        self._set_component('geometry_type', None, value)
     #--- End: def
 
     def set_interior_ring(self, interior_ring, copy=True):

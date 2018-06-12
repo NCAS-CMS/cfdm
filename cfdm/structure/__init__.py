@@ -20,7 +20,6 @@ if not (StrictVersion('2.7.0')
 
 from .bounds               import Bounds
 from .constructs           import Constructs
-from .coordinateancillary  import CoordinateAncillary
 from .coordinateconversion import CoordinateConversion
 from .data.data            import Data
 from .datum                import Datum
@@ -30,7 +29,7 @@ from .interiorring         import InteriorRing
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure
 from .cellmethod          import CellMethod
-from .coordinatereference import CoordinateReference #, Terms
+from .coordinatereference import CoordinateReference
 from .dimensioncoordinate import DimensionCoordinate
 from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
