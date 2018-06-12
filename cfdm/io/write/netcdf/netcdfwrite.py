@@ -1346,7 +1346,11 @@ extra trailing dimension.
                 
                     use_existing_dimension = False
 
-                    if spanning_constructs :
+                    if spanning_constructs:
+                        for key, construct in spanning_constructs.items():
+                            axes = self.get_construct_axes(f, key)
+                            spanning_constructs[key] = (construct, axes.index(axis))
+                        
                         for b1 in g['xxx']:
                             (ncdim1,  axis_size1),  constructs1 = b1.items()[0]
                             if axis_size0 != axis_size1:
@@ -1354,15 +1358,13 @@ extra trailing dimension.
     
                             if not constructs1:
                                 continue
-# Use ncdim name, scan axes all first
-                                    
-                            
+
                             constructs1 = constructs1.copy()
                             
-                            for key0, construct0 in spanning_constructs.iteritems():
+                            for key0, (construct0, index0) in spanning_constructs.iteritems():
                                 matched_construct = False
-                                for key1, construct1 in constructs1.iteritems():
-                                    if construct0.equals(construct1):
+                                for key1, (construct1, index1) in constructs1.iteritems():
+                                    if index0 == index1 and construct0.equals(construct1):
                                         del constructs1[key1]
                                         matched_construct = True
                                         break
