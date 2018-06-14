@@ -1,0 +1,343 @@
+# --------------------------------------------------------------------
+# 68
+# --------------------------------------------------------------------
+
+In this ticket we do not propose any change to the CF standard. This
+ticket concerns an abstract model for data and metadata corresponding
+to the existing standard (version 1.5). As a netCDF convention, up to
+now the CF standard has not included a data model. However, the design
+of CF implies a data model to some extent. Following the discussion at
+the GO-ESSP meeting, we now propose that the data model should be made
+explicit, as an independent element of CF, separate from the CF
+standards and conformance documents, to be updated for successive CF
+versions in line with those documents. We consider that defining an
+explicit data model will contribute to the CF goal to help in
+"building applications with powerful extraction, regridding, and
+display capabilities."
+
+We have drafted a ​document that describes the data model, with an
+associated ​UML diagram to illustrate it. The description follows from
+the one discussed earlier this year on the CF email list, which
+pointed out the need for a diagram. The proposed data model avoids
+prescribing more than is needed for interpreting CF as it stands, in
+order to avoid inconsistency with future developments of CF.
+
+The document describes both the proposed CF data model and how it is
+implemented in netCDF. These are distinct purposes. The same data
+model could be implemented in other non-netCDF-like file formats, and
+that would require the description of the model and implementation to
+be separated. We have not done that in this version of the document
+because we think that it would make it harder to understand at this
+stage.
+
+Following discussions on the email list and at GO-ESSP, we are aware
+that this attempt to describe the CF data model overlaps with other
+work on data models, especially the Unidata CDM. It will be useful to
+discuss the relationship between these. The proposed CF data model
+corresponds less closely to netCDF storage concepts than the CDM does,
+and in that sense it is more abstract.
+
+We have also developed a minimal ​implementation of the data model in
+Python, including documentation. (Note: since putting this up, we've
+discovered that there is an existing package called cfpython, which is
+not related to CF. That is confusing, so we might have to change the
+name of ours.) The software reads and writes CF-netCDF files, and
+contains the data and metadata in memory in objects called spaces in a
+way which is consistent with the data model. It is possible to select
+a subset of the spaces according to their properties, to extract
+subspaces by specifying ranges of coordinates or indices along the
+dimensions, and to modify the metadata. We describe this
+implementation as "minimal" because it doesn't provide any processing
+or graphical functions, and it doesn't extend to the level of the
+scientific feature types of the CDM, for instance. This software might
+be useful:
+
+    To illustrate the data model.
+
+    As a reference implementation of CF. In all versions of CF so far
+    published, all changes have been introduced and are marked as
+    provisional, because of the requirement of two demonstrated
+    implementations of new features before changes are accepted as
+    permanent. This software could provide one implementation. The CF
+    checker could be another. (The cf-python software attempts to
+    interpret netCDF files by reference to the CF convention, but does
+    not require or check complete compliance.)
+
+    As a basis for data processing and graphical software in Python
+    based on CF concepts. For this purpose, the API is the
+    essence. Other code could be written which offered the same API to
+    the CF data model. All Python code using the same API to the
+    minimal CF data model would be interoperable at that level.
+
+To be clear, we are not proposing this Python code as an element of
+CF. It could be useful to people dealing with CF-netCDF data, but this
+proposal is really about the CF data model, which we are proposing as
+an element of CF. The first of the above points is therefore the most
+important to this proposal.
+
+We hope that people will consider this proposal. We will welcome
+comments on this ticket on both the data model and the Python
+API. (However, comments on the code itself would probably be better
+made by email, unless they are matters of principle.)
+
+We are grateful to Bryan Lawrence and Dominic Lowe for very thoughtful discussions.
+
+
+# --------------------------------------------------------------------
+# 88
+# --------------------------------------------------------------------
+
+Objective
+
+The purpose of this ticket is to agree the scope and terms of reference for the CF data model.
+Proposal
+Scope, Terms and Conditions
+
+    The CF community will adopt a data model as part of the CF Metadata Project.
+    The data model will be a complementary resource to the:
+        CF Conventions Document
+        CF Standard Name Table
+        CF Conformance Requirements & Recommendations
+        Guidelines for Construction of CF Standard Names
+    The data model will be maintained by the community, using the same mechanisms as are used for the conventions, conformance and standard_name documents.
+        ​http://cf-pcmdi.llnl.gov/governance/governance-rules
+        ​http://cf-pcmdi.llnl.gov/governance/governance-rules-correcting-errors
+    The data model, once it has reached v1.0, will be consistent with the CF Conventions Document.
+        This consistency will be maintained.
+            Changes to the specification should be evaluated to determine whether they are consistent with the data model: if inconsistencies exist, these should be addressed, either by altering the specification change proposal or by proposing a change to the data model.
+    The scope of the data model is to define the concepts of CF and the relationships that exist between these concepts.
+    The data model provides a logical abstraction of the concepts defined by CF, independent of implementation details.
+    The data model does not define the interface to CF.
+
+Benefits
+
+The data model is believed to offer the following benefits providing:
+
+    an orientation guide to the CF Conventions Document
+    a guide to the development of software compatible with CF
+    a reference point for gap analysis and conflict analysis of the CF specification
+    a communication tool for discussing CF concepts and proposals for changes to the CF specification
+
+
+# --------------------------------------------------------------------
+# 95
+# --------------------------------------------------------------------
+
+This ticket follows on from the agreement of terms of reference #88
+for an implementation neutral model for CF. The agreed terms of
+reference are restated here.  Scope, Terms and Conditions
+
+    The CF community will adopt a data model as part of the CF Metadata Project.
+    The data model will be a complementary resource to the:
+        CF Conventions Document
+        CF Standard Name Table
+        CF Conformance Requirements & Recommendations
+        Guidelines for Construction of CF Standard Names
+    The data model will be maintained by the community, using the same mechanisms as are used for the conventions, conformance and standard_name documents.
+        ​http://cf-pcmdi.llnl.gov/governance/governance-rules
+        ​http://cf-pcmdi.llnl.gov/governance/governance-rules-correcting-errors
+    A version of the data model will be published at the same time as or as soon as possible after each version of the CF conventions, consistent with that version and having the same version number, beginning from version 1.5.
+    Discussions of proposed changes to the CF conventions should consider consistency with the data model. If inconsistencies exist, these should be addressed, either by altering the proposal or by proposing a change to the data model.
+    Equally, consideration of the data model may motivate changes to the CF conventions. In this case proposed changes to the conventions will be discussed and agreed using the current mechanisms.
+    The responsibility for maintaining the data model and for its consistency with the CF conventions will belong to a new committee, but anyone may propose changes to the data model in the same way as changes to the CF conventions.
+    The scope of the data model is to define the concepts of CF and the relationships that exist between these concepts.
+    The data model provides a logical, implementation neutral, abstraction of the concepts defined by CF.
+    The data model does not define the interface to CF.
+
+Benefits
+
+The data model is believed to offer the following benefits:
+
+    Providing an orientation guide to the CF Conventions Document
+    Guiding the development of software compatible with CF
+    Facilitating the creation of an Application Programming Interface which 'behaves/feels like CF' and is intuitive to use.
+    Providing a reference point for gap analysis and conflict analysis of the CF specification
+    Providing a communication tool for discussing CF concepts and proposals for changes to the CF specification
+    Setting the ground work to expand CF beyond netCDF files.
+
+Activity
+
+The discussions in #68 have developed many of the ideas for this
+work. The objective of this ticket is to build on the work of #68 to
+agree the details of the CF data model consistent with version 1.5 of
+the CF Conventions for NetCDF.
+
+The draft data model is being worked on by the community on the CF Trac wiki:
+
+The draft CF Data Model v1.5
+
+The final data model details will be placed in:
+
+The CF Data Model v1.5
+
+upon agreement to this ticket pending publication by the CF community.
+
+
+# --------------------------------------------------------------------
+# 107
+# --------------------------------------------------------------------
+
+The latest draft of the data model is:
+
+    Draft of the data model for CF1.7
+
+The Terms of Reference for the model are agreed.
+
+This ticket is a follow up activity to #95 and #68 which both focussed
+on CF1.5 but did not reach a conclusion.
+
+
+#########################
+
+A CF data model could guide the development of CF by providing a
+framework for ensuring that proposed changes fit into CF in a logical,
+rather than just a pragmatic, way. A proposed enhancement would be
+assessed to see if its new features map onto the existing data
+model. If they do, then the enhancement may be incorporated in the CF
+conventions with no change to the existing data model.
+
+As an example, it is instructive to consider one of the enhancements
+accepted into CF at version 1.7, namely the ability to store a cell
+measure variable (Sect.  3.5) in a different netCDF file to that of
+its data variable (http://cf-trac.llnl.gov/trac/ticket/145). This is
+the first occurrence in CF of an atomic dataset not being identical to
+a single file and poses important questions on how software might be
+expected to link multiple files and on the consequences of one of the
+files going missing, thereby losing information from the dataset.
+From a CF data model perspective, however, this is clearly just an
+artefact of the dataset encoding, from which the data model is
+independent by design. Whether a dataset is in one file, or spread
+across many files, the logical relationships between a field construct
+and its various metadata constructs, such as the cell measure
+construct, remain unchanged.
+
+If a change does not map onto the existing data model and cannot be
+modified to do so, the data model will need to be modified to
+accommodate the new features. This modification will be either
+backwards compatible or backwards incompatible. The former
+(preferable) case occurs if the data model may be extended or
+generalised in some way that allows the new features but does not
+affect its existing constructs and relationships. The latter case
+occurs if a change is required that would affect the interpretation of
+existing datasets and the design of software built around the data
+model. Much effort has been already been put into avoiding backward
+incompatibilities in CF, so that older datasets are still parsable by
+newer software, but doing so is not a rule but a “best practice” that
+could be overridden if the community consensus were that the benefits
+in doing so outweighed any inconvenience
+
+
+149    Correction of standard name in example 7.3
+    No action required (clarification of text)
+
+148    New cell_methods: mabs/mibs/mebs
+        No action required (extension of controlled vocabulary)
+
+145    Subconvention for associated files, proposed for use in CMIP6
+    No action required (only affects dataset encoding)
+
+143    Supplement the definitions of dimensionless vertical coordinates
+    No action required (extension of controlled vocabulary; it the coordinate reference constructs already has the ability to store a datum)  
+
+140    Clarifying the role of attributes on boundary variables
+    No action required (Doman ancillary constructs already support bounds arrays)
+
+139    Update to conformance document: standard_names of area_type & region
+    No action required (clarification to conformance document)
+
+138    Clarification of false_easting / false_northing
+    No action required (clarification of text)
+
+123    Clarification of "difference sources" in Section 3.3
+    No action required (clarification of text)
+
+118    Add an attribute in Appendix F to identify the geoid
+    No action required (extension of controlled vocabulary)
+
+109    Resolve inconsistency of positive and standard_name attributes
+    No action required (clarification of text)
+
+104    Clarify the interpretation of scalar coordinate variables
+    No action required (The resulting conventions are the same as the logical relationships already present in the data model)
+
+103    Corrections to Appendices A and H
+    No action required (clarification of text)
+
+102    Request for two additional cell_methods
+    No action required (extension of controlled vocabulary)
+
+100    Clarifications to the preamble of sections 4 and 5
+    No action required (clarification of text)
+
+92    Add 'oblique_mercator' grid_mapping
+    No action required (extension of controlled vocabulary)
+
+89    Reinterpretation of current standard names for vector components
+    No action required (extension of controlled vocabulary)
+
+87    Allow coordinate variables to have the "comment" attribute
+    No action required (extension of controlled vocabulary)
+
+86    Allow coordinate variables to have the "add_offset" and "scale_factor" attributes
+    No action required (only affects dataset encoding)
+
+85    Link Appendix H from section 9, and clarify missing data requirements
+    No action required (clarification of text)
+
+80    Add missing CF parameters to translate Coordinate Reference System properties to/from OGC Well-Known Text format
+        No action required (extension of controlled vocabulary)
+
+77    New grid mapping of "sinusoidal"
+        No action required (extension of controlled vocabulary)
+
+76    More than one value in the "Conventions" attribute
+    No action required (only affects dataset encoding)
+
+75    Fix documentation and definitions of 3 grid mappings: "lambert_conformal_conic", "lambert_cylindrical_equal_area" and "polar_stereographic"
+    No action required (extension of controlled vocabulary)
+
+74    Allow sharing of ancillary variables among multiple data variables
+    No action required (only affects dataset encoding)
+
+73    Rename Appendix G as Appendix Z
+    No action required (clarification of text)
+
+72    New grid mapping of "Geostationary projection"
+    No action required (extension of controlled vocabulary)
+
+71    Correction to the "Vertical perspective" grid mapping
+    No action required (clarification of text)
+
+70    Multiple grid mappings in a data variable's grid_mapping attribute
+    No action required (The data model already supports any multiple of coordinate reference constructs horizontal coordinate systems)
+
+
+* Scalar ancillary variables - OK. Clarify in conventions and CFDM . JMG to ticket.
+
+* ancillary variables on non-data variables ??
+
+* datum non-parametric . Clarification. Use extended syntax to be
+  clear. and fix example in CROSGB.
+
+  geoid_name, reference_ellipsoid_name out of terms and into datum?
+
+* Location of data model in conventions. Seperate document
+  (instantiate in grib - better to have to have it separate from the
+  netCDF stuff). Goverance. UML source code in github . Say 1.7 stuff is ok (no reasons). 
+
+* workshop. String examples? What is the recommendation? data variables with no standard name. Can data is ALWAYS STRING!!!!! byte type and interp as chars?
+
+* external_variables - same dims, etc? propose domain and all metadata
+
+* ugrid
+
+* nca SLOW. JSON? READING string. redirection. Compuation of hashes?
+
+* Alan Iwi. Chase.
+
+* github tickets. Jeff has to enable distrubtuntg github to email
+  list. Get best pratice grom Tim and Dave. Jonathan to write a message
+
+* conformance numbering
+
+
