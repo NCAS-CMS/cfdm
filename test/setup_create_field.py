@@ -217,8 +217,8 @@ class create_fieldTest(unittest.TestCase):
 #        g.dump()
 
         print 3
-#        g.dump()
-#        f.dump()
+        g.dump()
+        f.dump()
         self.assertTrue(g.equals(f, traceback=True),
                         "Field not equal to itself read back in")
 

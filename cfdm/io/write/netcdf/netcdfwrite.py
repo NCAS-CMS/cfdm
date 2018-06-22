@@ -1609,6 +1609,9 @@ extra trailing dimension.
             seen[id_f] = {'variable': org_f,
                           'ncvar'   : ncvar,
                           'ncdims'  : ncdimensions}
+
+        if xxx:
+            g['xxx'].extend(xxx)
     #--- End: def
 
     def _create_vertical_datum(self, ref, coord_key):
@@ -1658,9 +1661,6 @@ extra trailing dimension.
                 datum_domain_ancillaries=domain_ancillaries)
             
             g['grid_mapping_refs'].append(new_grid_mapping)
-
-        if xxx:
-            g['xxx'].extend(xxx)
     #--- End: def
                             
     def unlimited(self, field, axis):
@@ -1908,7 +1908,7 @@ write them to the netCDF4.Dataset.
 
         '''
 #        return coordinate.bounds_mapping.get_parameter('climatology', False)
-        return bool(coordinate.get_cell_type(False) == 'climatology')
+        return bool(coordinate.get_geometry_type(None) == 'climatology')
     #--- End: def
         
     def get_construct_axes(self, field, key):
@@ -2552,7 +2552,7 @@ and auxiliary coordinate roles for different data variables.
             'verbose': False,
             '_debug' : False,
 
-            'xxx' [],
+            'xxx': [],
         }
         g = self.write_vars
         

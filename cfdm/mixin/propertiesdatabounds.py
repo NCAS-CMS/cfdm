@@ -40,7 +40,7 @@ bounds.
                 # There is a bounds array
                 bounds_indices = list(indices)
                 bounds_indices.append(Ellipsis)
-                if data.ndim <= 1 and not self.has_cell_type():
+                if data.ndim <= 1 and not self.has_geometry_type():
                     index = bounds_indices[0]
                     if isinstance(index, slice):
                         if index.step < 0:
@@ -136,13 +136,13 @@ bounds.
                                       _create_title=False, _level=_level))
 
         # ------------------------------------------------------------
-        # Cell type
+        # Geometry type
         # ------------------------------------------------------------
-        cell_type = self.get_cell_type(None)
-        if cell_type is not None:
+        geometry_type = self.get_geometry_type(None)
+        if geometry_type is not None:
             indent1 = '    ' * (_level + 1)
             string.append(
-                '{0}{1}Cell type = {2}'.format(indent1, _prefix, cell_type))
+                '{0}{1}Geometry type = {2}'.format(indent1, _prefix, geometry_type))
 
 #        #-------------------------------------------------------------
 #        # ancillary-valued terms
@@ -204,13 +204,13 @@ bounds.
         #--- End: if
     
         # ------------------------------------------------------------
-        # Check the cell type
+        # Check the geometry type
         # ------------------------------------------------------------
-        if self.get_cell_type(None) != other.get_cell_type(None):
+        if self.get_geometry_type(None) != other.get_geometry_type(None):
             if traceback:
                 print(
-"{0}: Different cell types: {1}, {2}".format(
-    self.__class__.__name__, self.get_cell_type(None), other.get_cell_type(None)))
+"{0}: Different geometry types: {1}, {2}".format(
+    self.__class__.__name__, self.get_geometry_type(None), other.get_geometry_type(None)))
 	    return False
 
         # ------------------------------------------------------------

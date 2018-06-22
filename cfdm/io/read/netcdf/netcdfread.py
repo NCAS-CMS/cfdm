@@ -843,10 +843,10 @@ ancillaries, field ancillaries).
         coordinate.set_ancillary(prop, value)
     #--- End: def
     
-    def set_cell_type(self, coordinate, value):
+    def set_geometry_type(self, coordinate, value):
         '''
         '''
-        coordinate.set_cell_type(value)
+        coordinate.set_geometry_type(value)
     #--- End: def
     
     def set_cell_measure(self, field, construct, axes, copy=True):
@@ -2508,7 +2508,7 @@ ancillaries, field ancillaries).
         self.set_properties(c, properties)
         
         if climatology:
-            self.set_cell_type(c, 'climatology')
+            self.set_geometry_type(c, 'climatology')
     
         data = self._create_data(ncvar, c)
         self._set_data(c, data, copy=False)
@@ -2578,7 +2578,7 @@ ancillaries, field ancillaries).
             # Add the geometry type as a cell extent parameter
             geometry_type = geometry.get('geometry_type')
             if geometry_type is not None:
-                self.set_cell_type(c, geometry_type)
+                self.set_geometry_type(c, geometry_type)
                
             for attribute in ('part_node_count', 'interior_ring'):                
                 g_ncvar = geometry.get(attribute)

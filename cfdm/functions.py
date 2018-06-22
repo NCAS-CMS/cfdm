@@ -67,7 +67,7 @@ True
     
     a_is_masked = numpy.ma.isMA(a)
     b_is_masked = numpy.ma.isMA(b)
-#    print a_is_masked   , b_is_masked    
+#    print 'a_is_masked   , b_is_masked ', a_is_masked   , b_is_masked    
     if not (a_is_masked or b_is_masked):
         try:            
             return numpy.allclose(a, b, rtol=rtol, atol=atol)
@@ -78,9 +78,8 @@ True
             # a and b are both masked arrays
             if (a.mask != b.mask).any():
                 return False
-        elif not ((a_is_masked and a.mask.any()) or 
-                  (b_is_masked and b.mask.any())):
-            # a (b) is masked but b (a) is not
+        elif not ((a_is_masked and not a.mask.any()) or
+                  (b_is_masked and not b.mask.any())):
             return False
 
         try:

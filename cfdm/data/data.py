@@ -1363,8 +1363,10 @@ False
         if not _numpy_allclose(self.get_array(), other.get_array(),
                                rtol=rtol, atol=atol):
             if traceback:
-                print("{0}: Different data array values".format(
+                print("{0}: S Different data values".format(
                     self.__class__.__name__))
+                print repr(self.get_array())
+                print repr(other.get_array())
             return False
 
         # ------------------------------------------------------------

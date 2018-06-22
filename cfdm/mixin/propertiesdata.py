@@ -266,7 +266,7 @@ True
                                 ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print(
-"{0}: Different data values".format(self.__class__.__name__))
+"{0}: Different data".format(self.__class__.__name__))
                 return False
         #--- End: if
 

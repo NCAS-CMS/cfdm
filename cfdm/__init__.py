@@ -29,13 +29,14 @@ from .bounds               import Bounds
 #from .boundsancillary      import BoundsAncillary
 #from .boundsmapping        import BoundsMapping
 #from .cellextent           import CellExtent
-from .coordinateancillary  import CoordinateAncillary
+#from .coordinateancillary  import CoordinateAncillary
 from .coordinateconversion import CoordinateConversion
 from .constants            import *
 from .data.data            import Data
 from .data.netcdfarray     import NetCDF
 from .datum                import Datum
 from .functions            import *
+from .interiorring         import InteriorRing
 from .io.read              import read
 from .io.write             import write
 
