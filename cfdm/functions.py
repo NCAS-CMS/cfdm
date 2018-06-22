@@ -75,9 +75,12 @@ True
             return numpy.all(a == b)
     else:
         if a_is_masked and b_is_masked:
+            # a and b are both masked arrays
             if (a.mask != b.mask).any():
                 return False
-        else:
+        elif not ((a_is_masked and a.mask.any()) or 
+                  (b_is_masked and b.mask.any())):
+            # a (b) is masked but b (a) is not
             return False
 
         try:
