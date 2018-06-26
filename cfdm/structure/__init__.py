@@ -2,10 +2,10 @@
 
 '''
 
-__Conventions__  = 'CF-1.7'
+__Conventions__  = 'CF-1.6'
 __author__       = 'David Hassell'
-__date__         = '2018-02-01'
-__version__      = '1.7'
+__date__         = '2018-06-26'
+__version__      = '1.6beta'
 
 from distutils.version import StrictVersion
 import platform

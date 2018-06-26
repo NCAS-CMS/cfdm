@@ -6,7 +6,7 @@ import abstract
 class InteriorRing(abstract.PropertiesData):
     '''An interior ring array with properties.
 
-For polygon geometries, an individual geometry may define an "interior
+For polygon geometries, an individual part may define an "interior
 ring", i.e. a hole that is to be omitted from the cell extent (as
 would occur, for example, for a cell describing the land area of a
 region containing a lake). In this case an interior ring array is

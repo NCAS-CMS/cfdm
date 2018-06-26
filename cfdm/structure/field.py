@@ -11,10 +11,10 @@ class Field(mixin.ConstructAccess, abstract.PropertiesData):
 
 The field construct is central to the CF data model, and includes all
 the other constructs. A field corresponds to a CF-netCDF data variable
-with all of its metadata. All CF-netCDF elements are mapped to some
-element of the CF field construct and the field constructs completely
-contain all the data and metadata which can be extracted from the file
-using the CF conventions.
+with all of its metadata. All CF-netCDF elements are mapped to a field
+construct or some element of the CF field construct. The field
+construct contains all the data and metadata which can be extracted
+from the file using the CF conventions.
 
 The field construct consists of a data array (stored in a `Data`
 object) and the definition of its domain, ancillary metadata fields
@@ -23,8 +23,8 @@ cell methods constructs to describe how the cell values represent the
 variation of the physical quantity within the cells of the domain
 (stored in `CellMethod` objects).
 
-The domain is defined collectively by various other constructs
-included in the field:
+The domain is implied by other types of construct included in the
+field:
 
 ====================  ================================================
 Domain construct      Description
@@ -55,10 +55,6 @@ of the data that are independent of the domain. These correspond to
 some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).
-
-**Miscellaneous**
-
-Field objects are picklable.
 
     '''
     __metaclass__ = abc.ABCMeta

@@ -11,8 +11,8 @@ This package is an implementation of the CF data model
 
 __Conventions__  = 'CF-1.6'
 __author__       = 'David Hassell'
-__date__         = '2018-03-01'
-__version__      = '1.6'
+__date__         = '2018-06-26'
+__version__      = '1.6dev1'
 
 from distutils.version import StrictVersion
 import platform

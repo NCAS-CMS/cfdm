@@ -2,7 +2,6 @@ import abc
 
 import abstract
 
-
 class DomainAxis(abstract.Container):
     '''A domain axis construct of the CF data model. 
 
