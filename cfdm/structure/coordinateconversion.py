@@ -2,8 +2,7 @@ import abc
 
 import abstract
 
-
-class CoordinateConversion(abstract.Terms):
+class CoordinateConversion(abstract.ParametersDomainAncillaries):
     '''A coordinate conversion formula of a coordinate reference construct
 of the CF data model.
 

@@ -72,20 +72,29 @@ frame and consists of the following:
     coordinates: sequence of `str`, optional
         Identify the dimension and auxiliary coordinate objects which
         apply to this coordinate reference. By default the standard
-        names of those expected by the CF conventions are used. For
-        example:
+        names of those expected by the CF conventions are
+        used. Ignored if the *source* parameter is set.
 
+        Coordinates may also be set after initialisation with the
+        `coordinates` and `set_coordinate` methods.
+  
     datum: `Datum`, optional
-        Define the datum of the coordinate reference construct.
+        Set the datum. Ignored if the *source* parameter is set.
 
+        The datum may also be set after initialisation with the
+        `set_datum` method.
+  
           *Example:*
             >>> d = Datum(parameters={'earth_radius': 6371007})
             >>> c = CoordinateReference(datum=d)
 
     coordinate_conversion: `CoordinateConversion`, optional
-        Define the coordinate conversion formula of the coordinate
-        reference construct.
+        Set the coordinate conversion formula. Ignored if the *source*
+        parameter is set.
 
+        The coordinate conversion formula may also be set after
+        initialisation with the `set_coordinate conversion` method.
+  
           *Example:*
             >>> f = CoordinateConversion(
             ...         parameters={'standard_name': 'atmosphere_hybrid_height'},
@@ -96,9 +105,14 @@ frame and consists of the following:
             >>> c = CoordinateReference(coordinate_conversion=f)
 
     source: optional
-        Initialise the *coordinates*, *datum* and
-        *coordinate_conversion* parameters from the *source* object.
+         Override the *coordinates*, *datum* and
+         *coordinate_conversion* parameters with
+         ``source.coordinates()``, ``source.get_datum()`` and
+         ``source.get_coordinate_conversion()`` respectively.
 
+        If *source* does not have one of these methods, or it can not
+        return anything, then that parameter is not set.
+        
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
@@ -144,7 +158,7 @@ blah de balh
         '''
         out = self.get_coordinate_conversion(None)
         if out is None:
-            out = self._CoordinateConversion
+            out = self._CoordinateConversion()
             self.set_coordinate_conversion(out)
             
         return out

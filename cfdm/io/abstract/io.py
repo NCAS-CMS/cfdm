@@ -10,6 +10,7 @@ class IO(object):
 
     def __init__(self, implementation):
         self.implementation = implementation
+    #--- End: def
 
     @abc.abstractmethod
     def file_close(self, *args, **kwargs):

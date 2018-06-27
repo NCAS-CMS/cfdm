@@ -14,18 +14,18 @@ within its cells, i.e. the structure of the data at a higher
 resolution.
 
 A single cell method construct consists of a set of axes, a "method"
-which describes how a value of the field construct's data array
-describes the variation of the quantity within a cell over those axes
-(e.g. a value might represent the cell area average), and properties
-serving to indicate more precisely how the method was applied
-(e.g. recording the spacing of the original data, or the fact the
-method was applied only over El Nino years).
+property which describes how a value of the field construct's data
+array describes the variation of the quantity within a cell over those
+axes (e.g. a value might represent the cell area average), and
+properties serving to indicate more precisely how the method was
+applied (e.g. recording the spacing of the original data, or the fact
+that the method was applied only over El Nino years).
 
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, axes=None, method=None, properties=None,
-                 source=None, copy=True):
+    def __init__(self, axes=None, properties=None, source=None,
+                 copy=True):
         '''**Initialisation**
 
     axes: (sequence of) `str`, optional
@@ -100,9 +100,9 @@ method was applied only over El Nino years).
 
 Return a CF-netCDF-like string of the cell method.
 
-Note that if the intention use this string in a CF-netCDF cell_methods
-attribute then, unless they are standard names, the axes names will
-need to be modified to be netCDF dimension names.
+Note that if the intention is to use this string in a CF-netCDF
+cell_methods attribute then, unless they are standard names, the axes
+names will need to be modified to be netCDF dimension names.
 
         '''     
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]

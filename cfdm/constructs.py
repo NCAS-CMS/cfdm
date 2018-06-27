@@ -327,26 +327,22 @@ class Constructs(structure.Constructs):
                         continue
     
                     # Domain ancillary-valued coordinate conversion terms
-#                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
-                    terms0 = ref0.coordinate_conversion.ancillaries()
+                    terms0 = ref0.coordinate_conversion.domain_ancillaries()
                     terms1 = {}
- #                   for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
-                    for term, key in ref1.coordinate_conversion.ancillaries().items():
+                    for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:
                         continue
     
-                    # Domain ancillary-valued datum terms
+#                    # Domain ancillary-valued datum terms
 #                    terms0 = ref0.datum.domain_ancillaries()
-                    terms0 = ref0.datum.ancillaries()
-                    terms1 = {}
+#                    terms1 = {}
 #                    for term, key in ref1.datum.domain_ancillaries().items():
-                    for term, key in ref1.datum.ancillaries().items():
-                        terms1[term] = key1_to_key0.get(key, key)
-    
-                    if terms0 != terms1:
-                        continue
+#                        terms1[term] = key1_to_key0.get(key, key)
+#    
+#                    if terms0 != terms1:
+#                        continue
     
                     found_match = True
                     del refs1[key1]                                       

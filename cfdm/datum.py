@@ -3,8 +3,7 @@ import abc
 import mixin
 import structure
 
-
-class Datum(mixin.Terms, structure.Datum):
+class Datum(mixin.Parameters, structure.Datum):
     '''A datum of a coordinate reference construct of the CF data model.
 
 A datum is a complete or partial definition of the zeroes of the
@@ -21,9 +20,5 @@ coordinate systems.
 
     '''
     __metaclass__ = abc.ABCMeta
-
-    # Ancillary-valued terms are stored as references to external
-    # objects
-    _internal_ancillaries = False
 
 #--- End: class

@@ -2,7 +2,7 @@ import abc
 
 import abstract
 
-class Datum(abstract.Terms):
+class Datum(abstract.Parameters):
     '''A datum of a coordinate reference construct of the CF data model.
 
 A datum is a complete or partial definition of the zeroes of the

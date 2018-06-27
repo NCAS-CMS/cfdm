@@ -46,9 +46,13 @@ properties.
         `set_bounds` method.
   
     source: optional
-        Initialise the *properties*, *data* and *bounds* parameters
-        from the object given by *source*.
-  
+        Override the *properties*, *data* and *bounds* parameters with
+        ``source.properties()``, ``source.get_data()`` and
+        ``source.get_bounds()`` respectively.
+
+        If *source* does not have one of these methods, or it can not
+        return anything, then that parameter is not set.
+        
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
@@ -258,56 +262,6 @@ None
         '''
         return self._get_component('interior_ring', None, *default)
     #--- End: def
-
-#    def get_bounds_mapping(self, *default):
-#        '''???????
-#
-#.. seealso:: `bounds_mapping`, `del_bounds_mapping`, `set_bounds_mapping`
-#
-#:Examples 1:
-#
-#>>> bm = c.get_bounds_mapping()
-#
-#:Parameters:
-#
-#    default: optional
-#        Return *default* if and only if the bounds have not been set.
-#
-#:Returns:
-#
-#    out:
-#
-#
-#:Examples 2:
-#
-#        '''
-#        return self._get_component('bounds_mapping', None, *default)
-#    #--- End: def
-#
-#    def get_cell_extent(self, *default):
-#        '''???????
-#
-#.. seealso:: `cell_extent`, `del_cell_extent`, `set_cell_extent`
-#
-#:Examples 1:
-#
-#>>> e = c.get_cell_extent()
-#
-#:Parameters:
-#
-#    default: optional
-#        Return *default* if and only if the bounds have not been set.
-#
-#:Returns:
-#
-#    out:
-#
-#
-#:Examples 2:
-#
-#        '''
-#        return self._get_component('cell_extent', None, *default)
-#    #--- End: def
 
     def has_bounds(self):
         '''True if there are bounds.

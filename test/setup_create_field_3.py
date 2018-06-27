@@ -209,7 +209,7 @@ class create_fieldTest(unittest.TestCase):
         for x in g:
             x.print_read_report()
 
-        self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
+        self.assertTrue(len(g) == 1, 'Read produced too many fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze(copy=False)
         

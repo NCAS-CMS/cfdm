@@ -32,10 +32,14 @@ class PropertiesData(Properties):
         The data also may be set after initialisation with the
         `set_data` method.
         
-    source: optional  
-        Initialise the *properties* and *data* parameters from the
-        object given by *source*.
+    source: optional
+        Override the *properties* and *data* parameters with
+        ``source.properties()`` and ``source.get_data()``
+        respectively.
 
+        If *source* does not have one of these methods, or it can not
+        return anything, then that parameter is not set.
+        
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
@@ -71,16 +75,6 @@ class PropertiesData(Properties):
         return self.get_array()
     #--- End: def
 
-#    def __data__(self):
-#        '''
-#        '''
-#        data = self.get_data(None)
-#        if data is None:
-#            raise ValueError("sdif n;ujnr42[ 4890yh 8u;jkb")
-#
-#        return data
-#    #--- End: def
-    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------

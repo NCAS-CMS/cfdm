@@ -2,18 +2,17 @@ import abc
 
 from copy import deepcopy
 
-import mixin
 from .container import Container
 
-
-class Terms(mixin.Ancillaries, Container):
-    '''Base class for named parameters and names ancillary arrays.
+class Parameters(Container):
+    '''Base class for a collection of named parameters and named domain
+ancillary constructs.
 
     '''
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, parameters=None, ancillaries=None, source=None,
-                 copy=True, _use_data=True):
+    def __init__(self, parameters=None, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -23,18 +22,13 @@ class Terms(mixin.Ancillaries, Container):
     copy: `bool`, optional
 
         '''
-        super(Terms, self).__init__(source=source)
+        super(Parameters, self).__init__(source=source)
 
         if source:
             try:
                 parameters = source.parameters()
             except AttributeError:
                 parameters = None
-
-            try:
-                ancillaries = source.ancillaries()
-            except AttributeError:
-                ancillaries = None
         #--- End: if
         
         if parameters is None:
@@ -42,19 +36,6 @@ class Terms(mixin.Ancillaries, Container):
             copy = False
             
         self.parameters(parameters, copy=copy)
-        
-        if ancillaries is None:
-            ancillaries = {}
-        elif copy or not _use_data:
-            ancillaries = ancillaries.copy()
-            for key, value in ancillaries.items():
-                try:
-                    ancillaries[key] = value.copy(data=_use_data)
-                except AttributeError:
-                    ancillaries[key] = deepcopy(value)
-        #--- End: if
-            
-        self.ancillaries(ancillaries, copy=False)
     #--- End: def
 
     def __str__(self):
@@ -66,10 +47,6 @@ class Terms(mixin.Ancillaries, Container):
         parameters = self.parameters()
         if parameters:
             out.append('Parameters: {0}'.format(', '.join(sorted(parameters))))
-            
-        ancillaries = self.ancillaries()
-        if ancillaries:
-            out.append('Ancillaries: {0}'.format(', '.join(sorted(ancillaries))))
             
         return '; '.join(out)
     #--- End: def

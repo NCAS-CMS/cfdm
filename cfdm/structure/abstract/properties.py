@@ -34,9 +34,12 @@ class Properties(Container):
         `properties` and `set_property` methods.
 
     source: optional
-        Initialise the *properties* parameter from the object given by
-        *source*.
+        Override the *properties* parameter with
+        ``source.properties()``.
 
+        If *source* does not have this method, or it can not return
+        anything, then the *properties* parameter is not set.
+        
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
         initialization By default parameters are deep copied.

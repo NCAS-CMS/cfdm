@@ -762,7 +762,7 @@ it is not re-written.
             # its formula_terms term
             default = None
             for ref in self.get_coordinate_references(f).itervalues():
-                for term, da_key in ref.coordinate_conversion.ancillaries().iteritems():
+                for term, da_key in ref.coordinate_conversion.domain_ancillaries().iteritems(): # DCH ALERT
                     if da_key == key:
                         default = term
                         break
@@ -1425,7 +1425,7 @@ extra trailing dimension.
             formula_terms = []
             bounds_formula_terms = []
             owning_coord = None
-            
+
             standard_name = self.get_coordinate_conversion_parameters(ref).get('standard_name')
             if standard_name is not None:
 #                c = [(key, coord) for key, coord in self.get_coordinates(f).items()
@@ -1459,7 +1459,7 @@ extra trailing dimension.
                     bounds_formula_terms.append('{0}: {1}'.format(term, ncvar))
                 #--- End: for
             
-                for term, key in ref.coordinate_conversion.ancillaries().iteritems():
+                for term, key in ref.coordinate_conversion.domain_ancillaries().iteritems(): # DCH ALERT
                     if key is None:
                         continue
     
@@ -1587,7 +1587,7 @@ extra trailing dimension.
             axis_map.update(g['axis_to_ncscalar'])
 
             cell_methods_strings = []
-            for cm in cell_methods.values():                
+            for cm in cell_methods.values():
                 axes = [axis_map.get(axis, axis)
                         for axis in self.get_cell_method_axes(cm, ())]
                 self.set_cell_method_axes(cm, axes)
@@ -1627,7 +1627,7 @@ extra trailing dimension.
         if g['_debug']:
             print '    Datum =', datum
             
-        domain_ancillaries = self.get_datum_ancillaries(ref)
+#        domain_ancillaries = self.get_datum_ancillaries(ref)
 
         count = [0, None]
         for grid_mapping in g['grid_mapping_refs']:
@@ -1635,14 +1635,19 @@ extra trailing dimension.
             if not datum1:
                 continue
 
-            domain_ancillaries1 = self.get_datum_ancillaries(
-                grid_mapping)
+#            domain_ancillaries1 = self.get_datum_ancillaries(
+#                grid_mapping)
                  
-            if (datum.equals(datum1) and
-                domain_ancillaries == domain_ancillaries1):
+            if datum.equals(datum1):
                 count = [count[0] + 1, grid_mapping]
                 if count[0] > 1:
                     break
+                
+#            if (datum.equals(datum1) and
+#                domain_ancillaries == domain_ancillaries1):
+#                count = [count[0] + 1, grid_mapping]
+#                if count[0] > 1:
+#                    break
         #--- End: for
 
         if count[0] == 1:
@@ -1654,11 +1659,12 @@ extra trailing dimension.
         else:
             # Create a new horizontal coordinate reference for
             # the vertical datum
-            new_grid_mapping = self.initialise(
+            new_grid_mapping = self.initialise( # DCH ALERT
                 'CoordinateReference',
                 coordinates=[coord_key],
                 datum_parameters=self.get_datum_parameters(ref),
-                datum_domain_ancillaries=domain_ancillaries)
+#                datum_domain_ancillaries=domain_ancillaries)
+                )
             
             g['grid_mapping_refs'].append(new_grid_mapping)
     #--- End: def
@@ -1889,18 +1895,27 @@ write them to the netCDF4.Dataset.
 
     def get_cell_method_axes(self, cell_method, *default):
         '''
+
+:Returns:
+
+    out: `tuple`
 '''
         return cell_method.get_axes(*default)
     #--- End: for
     
     def get_cell_method_string(self, cell_method):
         '''
+:Returns:
+
+    out: `str`
 '''
         return str(cell_method)
     #--- End: for
     
     def is_climatology(self, coordinate):
-        ''':Returns:
+        '''
+
+:Returns:
 
     out: `bool`
         The value of the 'climatology' cell extent parameter, or False
@@ -2021,20 +2036,20 @@ write them to the netCDF4.Dataset.
         return coordinate_reference.get_datum()
     #--- End: def
 
-    def get_datum_ancillaries(self, coordinate_reference):
-        '''Return the domain ancillary-valued terms of a coordinate reference
-datum.
-
-:Parameters:
-
-    coordinate_reference: `CoordinateReference`
-
-:Returns:
-
-    out: `dict`
-        '''        
-        return self.get_datum(coordinate_reference).ancillaries()
-    #--- End: def
+#    def get_datum_ancillaries(self, coordinate_reference):
+#        '''Return the domain ancillary-valued terms of a coordinate reference
+#datum.
+#
+#:Parameters:
+#
+#    coordinate_reference: `CoordinateReference`
+#
+#:Returns:
+#
+#    out: `dict`
+#        '''        
+#        return self.get_datum(coordinate_reference).ancillaries()
+#    #--- End: def
         
     def get_datum_parameters(self, coordinate_reference):
         '''Return the parameter-valued terms of a coordinate reference datum.

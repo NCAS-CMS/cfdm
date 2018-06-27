@@ -185,12 +185,14 @@ class create_fieldTest(unittest.TestCase):
         print "####################################################"
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 #        f.dump()
+#        sys.exit(0)
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
-        for x in g:
-            x.print_read_report()
-
-        self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
+#        for x in g:
+#            x.print_read_report()
+        g[0].dump()
+        print g
+        self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze(copy=False)
         

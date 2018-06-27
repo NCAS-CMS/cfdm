@@ -3,8 +3,7 @@ import abc
 import mixin
 import structure
 
-
-class CoordinateConversion(mixin.Terms, structure.CoordinateConversion):
+class CoordinateConversion(mixin.ParametersDomainAncillaries, structure.CoordinateConversion):
     '''
 '''
     __metaclass__ = abc.ABCMeta

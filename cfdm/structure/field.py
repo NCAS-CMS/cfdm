@@ -80,16 +80,51 @@ and institution).
                  _use_data=True):
         '''**Initialization**
 
+If the source parameter contains a data array then it will be copied
+into the new field, otherwise the data must be set after
+initialisation with the `set_data` method.
+        
 :Parameters:
 
     properties: `dict`, optional
-        Provide the new field with descriptive properties.
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
 
-    source: 
+          *Example:*
+             ``properties={'standard_name': 'altitude'}``
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
+
+    source: optional 
+        Override the *properties* parameter with
+        ``source.properties()``.
+
+        If *source* does not have this method, or it can not return
+        anything, then the *properties* parameter is not set.
+
+        In addition, if *source* has any of a data array, data array
+        axes, and metadata constructs then these are copied to the new
+        field.
+
+          *Example:*
+            If ``g`` is a `Field` object then ``f = Field(source=g)``
+            is equivalent to ``f = g.copy()``.
+
+          *Example:*
+            If ``dc`` is a `DimensionCoordinate` object then
+
+              >>> f = Field(source=dc)``
+
+            is equivalent to
+
+              >>> f = Field(properties=dc.properties())
+              >>> f.set_data(dc.get_data(None))
 
     copy: `bool`, optional
-        If False then do not deep copy arguments prior to
-        initialization. By default arguments are deep copied.
+        If False then do not deep copy input parameters prior to
+        initialization By default parameters are deep copied.
 
         '''
         super(Field, self).__init__(properties=properties,
@@ -97,6 +132,7 @@ and institution).
                                     _use_data=False)
 
         if source is not None:
+            # Initialise from the source parameter
             try:
                 constructs = source._get_constructs(None)
             except AttributeError:
@@ -121,6 +157,7 @@ and institution).
             if constructs is not None and (copy or not _use_data):
                 constructs = constructs.copy(data=_use_data)
         else:
+            # Initialise from the properties parameter
             constructs = self._Constructs(**self._construct_key_base)
 
         self._set_component('constructs', None, constructs)
