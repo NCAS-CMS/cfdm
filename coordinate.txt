@@ -44,36 +44,77 @@ more than one domain axis construct simultaneously. CF-netCDF
 auxiliary coordinate variables and non-numeric scalar coordinate
 variables correspond to auxiliary coordinate constructs.
 
-If cell bounds are provided, they describe the extent of each cell
-with one or more geometries of the same type. An individual geometry
-is either a collection of unconnected points; a line defined by a
-connected series of line segments (i.e. a polygonal chain); or a
-polygon (i.e. the region enclosed by a closed polygonal chain). The
-cell bounds array comprises the vertices of lines or polygons, or the
-locations of points. In general, the bounds array spans the same
-domain axes as its coordinate array, with the addition of two trailing
-ragged dimensions. The first extra dimension indexes the geometries of
-each cell and the second indexes the vertices that describe each
-geometry. If every cell contains only one geometry then the vertices
-may be contained in an array that spans the same domain axes as the
-coordinate array, but with the addition of only one extra ragged
-dimension that indexes the vertices of each cell. Unless the bounds
-for each cell are a single polygon or, for one-dimensional
-coordinates, a single line segment (in which cases the nature of the
-geometry is indicated by the conventions), the construct must have a
-"geometry type" property which describes how cell vertices relate to
-each other---as either point, line or polygon geometries. A
-geometry_type attribute of a CF-netCDF geometry container variable
-corresponds to a geometry type property. When a cell is composed of
-multiple polygon geometries, an individual polygon may define an
-"interior ring", i.e. a region that is to be omitted from, as opposed
-to included in, the cell extent. In this case an interior ring array
-is required that records whether each polygon is to be included or
-excluded from the cell, supplied by an interior ring variable in
-CF-netCDF. The interior ring array spans the same domain axes as its
-coordinate array, with the addition of an extra ragged dimension that
-indexes the geometries for each cell. For example, a cell describing
-the land area surrounding a lake would require two polygon
-geometries---one that encompasses the both the land and the water; and
-one, recorded as an interior ring, that defines the lake area to be
-omitted.
+If cell bounds are provided, they describe the extents of the cells.
+Each cell comprises one or more parts, and each part is a collection
+of points, or a line defined by a connected series of points, or a
+polygonal area (i.e. the region enclosed by a connected series of
+points, where the first and last points are connected as well). For a
+given coordinate construct, all the parts of all the cells must be of
+the same one of these three kinds, which are called "geometry types".
+
+A fourth "climatology", geometry type is required for the cells of
+climatological time coordinates. These are composed logically of
+multiple line parts, but only the earliest and latest points defining
+each cell are stored in the cell bounds array. The required points in
+between are defined in a special way indicated by the cell method
+constructs. Consequently
+
+
+
+by can be described
+algorithmical for which the defining points are implicitly defined by
+the relevant cell method constructs, instead of being explicitly
+defined by the cell bounds array.
+
+There is a fourth type used by climatologocal time axes
+
+The construct has a geometry type property to specify which of the
+kinds it is; in CF-netCDF this is stored in the geometry_type
+attribute of the geometry container variable. The bounds array spans
+the same domain axes as its coordinate array, with the addition of two
+trailing ragged dimensions. The first extra dimension indexes the
+parts of each cell and the second indexes the points that describe
+each part.
+
+When a cell is composed of multiple polygon parts, an individual
+polygon may define an "interior ring", i.e. a region that is to be
+omitted from, as opposed to included in, the cell extent. In this case
+an interior ring array is required that records whether each polygon
+is to be included or excluded from the cell, and is supplied by an
+interior ring variable in CF-netCDF. The interior ring array spans the
+same domain axes as its coordinate array, with the addition of an
+extra ragged dimension that indexes the parts for each cell. For
+example, a cell describing the land area surrounding a lake would
+require two polygon parts - one that encompasses the both the land and
+the water; and one, recorded as an interior ring, that defines the
+lake area to be omitted.
+
+In CF-netCDF, if a geometry variable is not present then it is assumed
+that, for all coordinate cells, there is only one part per geometry
+and the geometry type is implied by convention: multidimensional
+auxiliary coordinate variables are of the polygon geometry type and
+all other type of coordinates are of the line goemetry type, and each
+line is defined by exactly two points). Furthermore
+
+In CF-netCDF, if a geometry variable is not present then all
+corodinate cell bounds contain exactly one part and their geometry
+type is implied by convention: bounds for multidimensional auxiliary
+coordinate variables have the polygon geometry type and all other
+coordinate bounds variable have the line goemetry type (and each line
+is defined by two points). In this case, the bounds are stored with a
+orthogonal array representation that has just one trailing dimension to its corodinates, i.e. the first 
+
+zero or one-dimensional coordinate variableswhen the construct has only one domain
+axis and every cell is a single line defned by two points; and when
+the construct has multiple domain axes and every cell is a single
+polygon.
+
+If every cell contains only one part, the bounds array may omit the
+first extra trailing dimension, i.e. the bounds array spans the same
+domain axes as the coordinate array, with the addition of only one
+extra ragged dimension that indexes the points of each cell. In this
+case, the geometry type property can be omitted when the geometry
+conforms to one of two cases, namely: when the construct has only one
+domain axis and every cell is a single line defned by two points; and
+when the construct has multiple domain axes and every cell is a single
+polygon.
