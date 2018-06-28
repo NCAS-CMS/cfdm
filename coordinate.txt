@@ -12,66 +12,16 @@ coordinate construct consists of a data array of the coordinate values
 which spans a subset of the domain axis constructs, an optional array
 of cell bounds recording the extents of each cell, and properties to
 describe the coordinates (in the same sense as for the field
-construct). The bounds array spans the same domain axes as the
-coordinate array, with the addition of one or more trailing dimensions
-to index the vertices that define the extent of each cell.
+construct).
 
-The dimension coordinate construct is able to unambiguously describe
-cell locations because a domain axis can be associated with at most
-one dimension coordinate construct, whose data array values must all
-be non-missing and strictly monotonically increasing or
-decreasing. They must also all be of the same numeric data type. If
-cell bounds are provided then each cell must have exactly two
-vertices, i.e. the extent of each cell can be described as a line
-segment along the domain axis. CF-netCDF coordinate variables and
-numeric scalar coordinate variables correspond to dimension coordinate
-constructs. Note that, for climatological time axes, the bounds are
-interpreted in a special way indicated by the cell method constructs.
-
-If a domain axis construct does not correspond to a continuous
-physical quantity, then it is not necessary for it to be associated
-with a dimension coordinate construct. For example, this is the case
-for an axis that runs over ocean basins or area types, or for a domain
-axis that indexes a time series at scattered points. In such cases,
-one-dimensional auxiliary coordinate constructs could be used to store
-coordinate values. These axes are discrete axes in CF-netCDF.
-
-Auxiliary coordinate constructs have to be used, instead of dimension
-coordinate constructs, when a single domain axis requires more then
-one set of coordinate values, when coordinate values are not numeric,
-strictly monotonic, or contain missing values, or when they vary along
-more than one domain axis construct simultaneously. CF-netCDF
-auxiliary coordinate variables and non-numeric scalar coordinate
-variables correspond to auxiliary coordinate constructs.
-
-If cell bounds are provided, they describe the extents of the cells.
-Each cell comprises one or more parts, and each part is a collection
-of points, or a line defined by a connected series of points, or a
-polygonal area (i.e. the region enclosed by a connected series of
-points, where the first and last points are connected as well). For a
-given coordinate construct, all the parts of all the cells must be of
-the same one of these three kinds, which are called "geometry types".
-
-A fourth "climatology", geometry type is required for the cells of
-climatological time coordinates. These are composed logically of
-multiple line parts, but only the earliest and latest points defining
-each cell are stored in the cell bounds array. The required points in
-between are defined in a special way indicated by the cell method
-constructs. Consequently
-
-
-
-by can be described
-algorithmical for which the defining points are implicitly defined by
-the relevant cell method constructs, instead of being explicitly
-defined by the cell bounds array.
-
-There is a fourth type used by climatologocal time axes
-
-The construct has a geometry type property to specify which of the
-kinds it is; in CF-netCDF this is stored in the geometry_type
-attribute of the geometry container variable. The bounds array spans
-the same domain axes as its coordinate array, with the addition of two
+When cell bounds are provided, each cell comprises one or more parts,
+and each part is either a collection of points, a line defined by a
+connected series of points, or a polygonal area (i.e. the region
+enclosed by a connected series of points, where the first and last
+points are connected as well). For a given coordinate construct, all
+the parts of all the cells must be of the same one of these three
+kinds, which are called "geometry types". The bounds array spans the
+same domain axes as its coordinate array, with the addition of two
 trailing ragged dimensions. The first extra dimension indexes the
 parts of each cell and the second indexes the points that describe
 each part.
@@ -89,32 +39,45 @@ require two polygon parts - one that encompasses the both the land and
 the water; and one, recorded as an interior ring, that defines the
 lake area to be omitted.
 
-In CF-netCDF, if a geometry variable is not present then it is assumed
-that, for all coordinate cells, there is only one part per geometry
-and the geometry type is implied by convention: multidimensional
-auxiliary coordinate variables are of the polygon geometry type and
-all other type of coordinates are of the line goemetry type, and each
-line is defined by exactly two points). Furthermore
+The dimension coordinate construct is able to unambiguously describe
+cell locations because a domain axis can be associated with at most
+one dimension coordinate construct, whose data array values must all
+be non-missing and strictly monotonically increasing or
+decreasing. They must also all be of the same numeric data type. If
+cell bounds are provided then each cell must have exactly two
+vertices. Note that for climatological time coordinates, the cell
+bounds are composed logically of multiple line parts, but only two of
+the points that define each cell---the earliest and latest---are
+stored by the bounds array, the other points being indicated
+implicitly by the cell method constructs. CF-netCDF coordinate
+variables and numeric scalar coordinate variables correspond to
+dimension coordinate constructs.
 
-In CF-netCDF, if a geometry variable is not present then all
-corodinate cell bounds contain exactly one part and their geometry
-type is implied by convention: bounds for multidimensional auxiliary
-coordinate variables have the polygon geometry type and all other
-coordinate bounds variable have the line goemetry type (and each line
-is defined by two points). In this case, the bounds are stored with a
-orthogonal array representation that has just one trailing dimension to its corodinates, i.e. the first 
+If a domain axis construct does not correspond to a continuous
+physical quantity, then it is not necessary for it to be associated
+with a dimension coordinate construct. For example, this is the case
+for an axis that runs over ocean basins or area types, or for a domain
+axis that indexes a time series at scattered points. In such cases,
+one-dimensional auxiliary coordinate constructs could be used to store
+coordinate values. These axes are discrete axes in CF-netCDF.
 
-zero or one-dimensional coordinate variableswhen the construct has only one domain
-axis and every cell is a single line defned by two points; and when
-the construct has multiple domain axes and every cell is a single
-polygon.
+Auxiliary coordinate constructs have to be used, instead of dimension
+coordinate constructs, when a single domain axis requires more then
+one set of coordinate values, when coordinate values are not numeric,
+strictly monotonic, or contain missing values, or when they vary along
+more than one domain axis construct simultaneously. CF-netCDF
+auxiliary coordinate variables and non-numeric scalar coordinate
+variables correspond to auxiliary coordinate constructs.
 
-If every cell contains only one part, the bounds array may omit the
-first extra trailing dimension, i.e. the bounds array spans the same
-domain axes as the coordinate array, with the addition of only one
-extra ragged dimension that indexes the points of each cell. In this
-case, the geometry type property can be omitted when the geometry
-conforms to one of two cases, namely: when the construct has only one
-domain axis and every cell is a single line defned by two points; and
-when the construct has multiple domain axes and every cell is a single
-polygon.
+In CF-netCDF, when a CF-netCDF geometry variable is present, it
+explictly describes the geometry type and the number of parts per cell
+for the coordinate variables that it references. In this case, the
+node coordinate variables store the cell vertices in a contiguous
+ragged array representation, in order to save space. When a geometry
+variable is not present then coordinate bounds contain exactly one
+part and their geometry type is implied by convention: a bounds
+variable for multidimensional auxiliary coordinates has the polygon
+geometry type and all other bounds variables have the line geometry
+type, with each line being defined by two points. Climatological time
+bounds are an exception as each cell's bounds define, in conjunction
+with the cell methods, multiple line parts.
