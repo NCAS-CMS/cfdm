@@ -26,11 +26,11 @@ trailing ragged dimensions. The first extra dimension indexes the
 parts of each cell and the second indexes the points that describe
 each part.
 
-When a cell is composed of multiple polygon parts, an individual
-polygon may define an "interior ring", i.e. a region that is to be
-omitted from, as opposed to included in, the cell extent. In this case
-an interior ring array is required that records whether each polygon
-is to be included or excluded from the cell, and is supplied by an
+If a cell is composed of multiple polygon parts, an individual polygon
+may define an "interior ring", i.e. a region that is to be omitted
+from, as opposed to included in, the cell extent. In this case an
+interior ring array is required that records whether each polygon is
+to be included or excluded from the cell, and is supplied by an
 interior ring variable in CF-netCDF. The interior ring array spans the
 same domain axes as its coordinate array, with the addition of an
 extra ragged dimension that indexes the parts for each cell. For
@@ -49,9 +49,14 @@ vertices. Note that for climatological time coordinates, the cell
 bounds are composed logically of multiple line parts, but only two of
 the points that define each cell---the earliest and latest---are
 stored by the bounds array, the other points being indicated
-implicitly by the cell method constructs. CF-netCDF coordinate
-variables and numeric scalar coordinate variables correspond to
-dimension coordinate constructs.
+implicitly by the cell method constructs. Deferring the exact cell
+specification to the cell methods in this case allows for different
+methods to have been applied over different cell parts, as well as
+over different subsets of the cell parts (for example, the physical
+quantity may have been averaged over each cell part, but all of the
+parts taken together could represent the minumum of these
+averages). CF-netCDF coordinate variables and numeric scalar
+coordinate variables correspond to dimension coordinate constructs.
 
 If a domain axis construct does not correspond to a continuous
 physical quantity, then it is not necessary for it to be associated
@@ -71,13 +76,11 @@ variables correspond to auxiliary coordinate constructs.
 
 In CF-netCDF, when a CF-netCDF geometry variable is present, it
 explictly describes the geometry type and the number of parts per cell
-for the coordinate variables that it references. In this case, the
-node coordinate variables store the cell vertices in a contiguous
-ragged array representation, in order to save space. When a geometry
-variable is not present then coordinate bounds contain exactly one
-part and their geometry type is implied by convention: a bounds
-variable for multidimensional auxiliary coordinates has the polygon
-geometry type and all other bounds variables have the line geometry
-type, with each line being defined by two points. Climatological time
-bounds are an exception as each cell's bounds define, in conjunction
-with the cell methods, multiple line parts.
+for the coordinate variables that it references. In this case, a node
+coordinate variable stores the cell vertices in a contiguous ragged
+array representation in order to save space. When a geometry variable
+is not present then coordinate bounds contain exactly one part and
+their geometry type is implied by convention: bounds for
+multidimensional auxiliary coordinates have the polygon geometry type
+and bounds for all other type of coordinate have the line geometry
+type, with each cell being defined by two points.

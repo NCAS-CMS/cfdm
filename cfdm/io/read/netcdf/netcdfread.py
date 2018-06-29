@@ -63,7 +63,7 @@ class NetCDFRead(IORead):
     }
 
     def _dereference(self, ncvar):
-        '''
+        '''Decrement by one the reference count to a netCDF variable.
 
 :Examples 1:
 
@@ -76,7 +76,9 @@ class NetCDFRead(IORead):
 
 :Returns:
 
-    `None`
+    out: `int`
+        The new reference count.
+
         '''
         r = self.read_vars['references'].get(ncvar, 0)
         r -= 1
@@ -88,7 +90,7 @@ class NetCDFRead(IORead):
     #--- End: def 
 
     def _is_unreferenced(self, ncvar):
-        '''Return True if the netCDF variable is unfeferenced by any other
+        '''Return True if the netCDF variable is not referenced by any other
 netCDF variable.
 
 :Examples 1:
@@ -103,13 +105,13 @@ netCDF variable.
 :Returns:
 
     out: `bool`
+
         '''
         return self.read_vars['references'].get(ncvar, 0) <= 0
     #--- End: def
 
     def _reference(self, ncvar):
-        '''Mark the netCDF variable as being referenced by at least one other
-netCDF variable.
+        '''Increment by one the reference count to a netCDF variable.
 
 :Examples 1:
 
@@ -122,7 +124,10 @@ netCDF variable.
 
 :Returns:
 
-    `None`
+    out: `int`
+        The new reference count.
+
+
         '''
         r = self.read_vars['references'].setdefault(ncvar, 0)
         r += 1
