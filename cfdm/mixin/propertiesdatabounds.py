@@ -132,7 +132,7 @@ bounds.
         bounds = self.get_bounds(None)
         if bounds is not None:
             string.append(bounds.dump(display=False, field=field, key=key,
-                                      _prefix=_prefix+'Bounds ',
+                                      _prefix=_prefix+'Bounds:',
                                       _create_title=False, _level=_level))
 
         # ------------------------------------------------------------
@@ -144,16 +144,6 @@ bounds.
             string.append(
                 '{0}{1}Geometry type = {2}'.format(indent1, _prefix, geometry_type))
 
-#        #-------------------------------------------------------------
-#        # ancillary-valued terms
-#        # ------------------------------------------------------------
-#        for name, value in sorted(self.ancillaries().items()):
-#            string.append(value.dump(display=False, 
-#                                     _prefix=_prefix+'Ancillary '+name+' ',
-#                                     _create_title=False,
-#                                     _level=_level))
-#        
-        
         #-------------------------------------------------------------
         # Interior ring
         # ------------------------------------------------------------
@@ -163,13 +153,6 @@ bounds.
                                              _prefix=_prefix+'Interior ring:',
                                              _create_title=False, _level=_level))
             
-   #     for name, value in sorted(self.ancillaries().items()):
-   #         string.append(value.dump(display=False, 
-   #                                  _prefix=_prefix+'Ancillary '+name+' ',
-    #                                 _create_title=False,
-    #                                 _level=_level))
-        
-        
         string = '\n'.join(string)
         
         if display:
@@ -201,7 +184,6 @@ bounds.
             if traceback:
                 print("???????/")
             return False
-        #--- End: if
     
         # ------------------------------------------------------------
         # Check the geometry type
@@ -307,12 +289,6 @@ bounds.
         if interior_ring is not None:
             interior_ring.expand_dims(position, copy=False)
 
-#        # ------------------------------------------------------------
-#        # Expand the dims of the ancillaries
-#        # ------------------------------------------------------------
-#        for ancillary in c.ancillaries().itervalues():
-#            ancillary.expand_dims(position, copy=False)
-#            
         return c
     #--- End: def
     
@@ -338,12 +314,6 @@ bounds.
         if interior_ring is not None:
             interior_ring.squeeze(axes, copy=False)
 
-#        # ------------------------------------------------------------
-#        # Squeeze the ancillaries
-#        # ------------------------------------------------------------
-#        for ancillary in c.ancillaries().itervalues():
-#            ancillary.squeeze(axes, copy=False)
-            
         return c
     #--- End: def
     
@@ -407,20 +377,14 @@ bounds.
         a_axes = axes
         a_axes.append(-1)
 
-#        # ------------------------------------------------------------
-#        # Transpose the ancillaries
-#        # ------------------------------------------------------------        
-#        for ancillary in c.ancillaries().itervalues():
-#            ancillary.transpose(a_axes, copy=False)
-            
         # ------------------------------------------------------------
         # Transpose the interior_ring
         # ------------------------------------------------------------
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:
-            ir_axes = axes[:]
-            ir_axes.extend(range(c.ndim, interior_ring.ndim))
-            interior_ring.transpose(ir_axes, copy=False)
+            interior_ring_axes = axes[:]
+            interior_ring_axes.extend(range(c.ndim, interior_ring.ndim))
+            interior_ring.transpose(interior_ring_axes, copy=False)
 
         return c
     #--- End: def
