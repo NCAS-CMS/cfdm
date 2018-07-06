@@ -66,6 +66,7 @@ properties.
             copy=copy,
             _use_data=_use_data)
 
+        # Get bounds, geometry type and interior ring from source
         if source is not None:
             try:
                 bounds = source.get_bounds(None)
@@ -78,7 +79,7 @@ properties.
                 geometry_type = None
                 
             try:
-                interior_ring = source.get_interior_ring()
+                interior_ring = source.get_interior_ring(None)
             except AttributeError:
                 interior_ring = None
         #--- End: if

@@ -639,7 +639,7 @@ ancillaries, field ancillaries).
         # External variables
         # ------------------------------------------------------------
         external_variables = global_attributes.pop('external_variables', None)
-        parsed_external_variables = self._parse_y(None, external_variables)
+        parsed_external_variables = self._split_by_white_space(None, external_variables)
         parsed_external_variables = self._check_external_variables(
             external_variables, parsed_external_variables)
         g['external_variables'] = set(parsed_external_variables)
@@ -753,20 +753,20 @@ ancillaries, field ancillaries).
         found = []
             
         for external_file in external_files:
-            external_g = self.read(external_file, _scan_only=True,
+            external_read_vars = self.read(external_file, _scan_only=True,
                                    _debug=_debug)
             
-            datasets.append(external_g['nc'])
+            datasets.append(external_read_vars['nc'])
             
             for ncvar in external_variables.copy():
-                if ncvar not in external_g['internal_variables']:
+                if ncvar not in external_read_vars['internal_variables']:
                     # The external variable name is not in this
                     # external file
                     continue
                 
                 if ncvar in found:
-                    # The external variable name exists in more than
-                    # one external file
+                    # The external variable exists in more than one
+                    # external file
                     external_variables.add(ncvar)
                     for key in keys:
                         g[key].pop(ncvar)
@@ -778,14 +778,13 @@ ancillaries, field ancillaries).
                         attribute=attribute)                    
                     continue
 
-                # The external variable name exists in this external
-                # file
+                # The external variable exists in this external file
                 found.append(ncvar)
 
-                # Check that the variable dimensions exist in
+                # Check that the external variable dimensions exist in
                 # parent file, with the same sizes.
                 ok = True
-                for d in external_g['variable_dimensions'][ncvar]:
+                for d in external_read_vars['variable_dimensions'][ncvar]:
                     size = internal_dimension_sizes.get(d)
                     if size is None:
                         ok = False
@@ -794,7 +793,7 @@ ancillaries, field ancillaries).
                             message=('External variable dimension',
                                      'does not exist in file'),
                             attribute=attribute)
-                    elif external_g['internal_dimension_sizes'][d] != size:
+                    elif external_read_vars['internal_dimension_sizes'][d] != size:
                         ok = False
                         self._add_message(
                             None, ncvar,
@@ -809,7 +808,7 @@ ancillaries, field ancillaries).
                 if ok:
                     external_variables.remove(ncvar)
                     for key in keys:
-                        g[key][ncvar] = external_g[key][ncvar]                   
+                        g[key][ncvar] = external_read_vars[key][ncvar]                   
     #--- End: def
     
     def _set_auxiliary_coordinate(self, field, construct, axes, copy=True):
@@ -1061,7 +1060,7 @@ ancillaries, field ancillaries).
     
         gathered_ncdimension = g['variable_dimensions'][ncvar][0]
 
-        parsed_compress = self._parse_y(ncvar, compress)
+        parsed_compress = self._split_by_white_space(ncvar, compress)
         cf_compliant = self._check_compress(ncvar, compress, parsed_compress)
         if not cf_compliant:
             return
@@ -1337,10 +1336,10 @@ ancillaries, field ancillaries).
         part_node_count  = attributes[ncvar].get('part_node_count')
         interior_ring    = attributes[ncvar].get('interior_ring')
         
-        parsed_node_coordinates = self._parse_y(ncvar, node_coordinates)
-        parsed_interior_ring    = self._parse_y(ncvar, interior_ring)
-        parsed_node_count       = self._parse_y(ncvar, node_count)
-        parsed_part_node_count  = self._parse_y(ncvar, part_node_count)
+        parsed_node_coordinates = self._split_by_white_space(ncvar, node_coordinates)
+        parsed_interior_ring    = self._split_by_white_space(ncvar, interior_ring)
+        parsed_node_count       = self._split_by_white_space(ncvar, node_count)
+        parsed_part_node_count  = self._split_by_white_space(ncvar, part_node_count)
 
         cf_compliant = True
         
@@ -1369,7 +1368,19 @@ ancillaries, field ancillaries).
 
         if not cf_compliant:
             return
-        
+
+# data:
+#  x = 20, 10, 0,  5, 10, 15,  20, 10,  0,   50, 40, 30 ;
+#  y =  0, 15, 0,  5, 10, 5,   20, 35, 20,    0, 15,  0 ;
+#  lat             = 25,       7 ;
+#  lon             = 10,      40 ;
+#  node_count      =  9,       3 ;
+#  part_node_count =  3, 3, 3, 3 ;
+#  interior_ring   =  0, 1, 0, 0 ;
+
+#  row_size        =  3, 3, 3, 3 ;
+#  part_index      =  0, 0, 0, 1 ;
+
         if node_count is not None:
             # Do not attempt to create a field from a node count
             # variable
@@ -1987,7 +1998,7 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         coordinates = self.del_property(f, 'coordinates')
         if coordinates is not None:
-            parsed_coordinates = self._parse_y(field_ncvar, coordinates)
+            parsed_coordinates = self._split_by_white_space(field_ncvar, coordinates)
             for ncvar in parsed_coordinates:
 
                 # Skip dimension coordinates which are in the list
@@ -2275,7 +2286,7 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         ancillary_variables = f.del_property('ancillary_variables')
         if ancillary_variables is not None:
-            parsed_ancillary_variables = self._parse_y(field_ncvar, ancillary_variables)
+            parsed_ancillary_variables = self._split_by_white_space(field_ncvar, ancillary_variables)
             cf_compliant = self._check_ancillary_variables(field_ncvar,
                                                            ancillary_variables,
                                                            parsed_ancillary_variables)
@@ -2521,8 +2532,8 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         # Look for a geometry container (CF >= 1.8)
         # ------------------------------------------------------------
-        geometry = g['variable_attributes'][field_ncvar].get('geometry')
-        geometry = g['geometries'].get(geometry)
+        geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
+        geometry = g['geometries'].get(geometry_ncvar)
 
         # ------------------------------------------------------------
         # Add any bounds
@@ -2578,7 +2589,7 @@ ancillaries, field ancillaries).
 
         # ------------------------------------------------------------
         # Add cell extent parameters for geometries (CF >= 1.8)
-        # ------------------------------------------------------------
+        # ------------------------------------------------------------ ppp
         if geometry is not None:
             # Add the geometry type as a cell extent parameter
             geometry_type = geometry.get('geometry_type')
@@ -4004,8 +4015,8 @@ CF-1.7 Appendix A
         return sample_dimension in self.read_vars['internal_dimension_sizes']
     #--- End: def
         
-    def _parse_y(self, parent_ncvar, string):
-        '''
+    def _split_by_white_space(self, parent_ncvar, string):
+        '''Split a string by white space.
         '''
         if string is None:
             return []
