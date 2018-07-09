@@ -1155,40 +1155,39 @@ ancillaries, field ancillaries).
     #--- End: def
     
     def _parse_indexed_compression(self, ncvar, instance_dimension):
-        '''
-        ncvar: `str`
-            The netCDF variable name of the index variable.
+        '''dfdfd
+
+The CF-netCDF index variable contains the zero-based index of the
+feature to which each element belongs. It is identifiable by the
+presence of an attribute, "instance_dimension", which names the
+dimension of the instance variables. For those indices of the sample
+dimension into which data have not yet been written, the index
+variable should be pre-filled with missing values.
+
+:Parameters:
+
+    ncvar: `str`
+        The netCDF variable name of the index variable.
     
-        instance_dimension: `str`
-            The netCDF variable name of the instance dimension.
-    
+    instance_dimension: `str`
+        The netCDF variable name of the instance dimension.
+
+:Returns:
+
+    out: `str`
+        An invented netCDF name for the element dimension,
+        e.g. ``'timeseriesprofile'``.
+
         '''
         g = self.read_vars
                 
         _debug = g['_debug']
         if _debug:
             print '    index variable: instance_dimension =', instance_dimension
-        
+
+        # Read the data of the index variable
         index = self._create_data(ncvar, uncompress_override=True)
 
-        (instance, inverse, count) = numpy.unique(index.get_array(),
-                                                  return_inverse=True,
-                                                  return_counts=True)
-
-        # The indices of the sample dimension which apply to each
-        # instance. For example, if the sample dimension has size 20
-        # and there are 3 instances then the instances array might
-        # look like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1, 2, 2, 1, 0,
-        # 0, 0, 2, 0].
-        instances = self._create_Data(array=inverse)
-
-        # The number of elements per instance. For the instances array
-        # example above, the elements_per_instance array is [7, 5, 7].
-        elements_per_instance = self._create_Data(array=count)
-    
-        instance_dimension_size = g['internal_dimension_sizes'][instance_dimension]
-        element_dimension_size  = int(elements_per_instance.max())
-    
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
         if featureType in ('timeseries', 'trajectory', 'profile'):
@@ -1202,30 +1201,66 @@ ancillaries, field ancillaries).
         if _debug:        
             print '    featureType =', g['featureType']
     
-        base = element_dimension
-        n = 0
-        while (element_dimension in g['internal_dimension_sizes'] or
-               element_dimension in g['new_dimensions']):
-            n += 1
-            element_dimension = '{0}_{1}'.format(base, n)
-            
-        indexed_sample_dimension = g['variable_dimensions'][ncvar][0]
+        element_dimension = self._set_ragged_indexed_parameters(
+            index=index,
+            element_dimension=element_dimension,
+            instance_dimension=instance_dimension)
         
-        g['compression'].setdefault(indexed_sample_dimension, {})['ragged_indexed'] = {
-            'elements_per_instance'  : elements_per_instance,
-            'instances'              : instances,
-            'implied_ncdimensions'   : (instance_dimension,
-                                        element_dimension),
-            'element_dimension'      : element_dimension,
-            'instance_dimension_size': instance_dimension_size,
-            'element_dimension_size' : element_dimension_size,
-        }
-    
-        g['new_dimensions'][element_dimension] = element_dimension_size
-        
-        if _debug:
-            print "    Created g['compression'][{!r}]['ragged_indexed']".format(
-                indexed_sample_dimension)
+#        (instance, inverse, count) = numpy.unique(index.get_array(),
+#                                                  return_inverse=True,
+#                                                  return_counts=True)
+#
+#        # Get the zero-based indices of the sample dimension that
+#        # apply to each instance. For example, if the sample dimension
+#        # has size 20 and there are 3 instances then the instances
+#        # array might look like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1,
+#        # 2, 2, 1, 0, 0, 0, 2, 0].
+#        instances = self._create_Data(array=inverse)
+#
+#        # The number of elements per instance. For the instances array
+#        # example above, the elements_per_instance array is [7, 5, 7].
+#        elements_per_instance = self._create_Data(array=count)
+#    
+#        instance_dimension_size = g['internal_dimension_sizes'][instance_dimension]
+#        element_dimension_size  = int(elements_per_instance.max())
+#    
+#        # Make up a netCDF dimension name for the element dimension
+#        featureType = g['featureType'].lower()
+#        if featureType in ('timeseries', 'trajectory', 'profile'):
+#            element_dimension = featureType.lower()
+#        elif featureType == 'timeseriesprofile':
+#            element_dimension = 'timeseries'
+#        elif featureType == 'trajectoryprofile':
+#            element_dimension = 'trajectory'
+#        else:
+#            element_dimension = 'element'
+#        if _debug:        
+#            print '    featureType =', g['featureType']
+#    
+#        base = element_dimension
+#        n = 0
+#        while (element_dimension in g['internal_dimension_sizes'] or
+#               element_dimension in g['new_dimensions']):
+#            n += 1
+#            element_dimension = '{0}_{1}'.format(base, n)
+#            
+#        indexed_sample_dimension = g['variable_dimensions'][ncvar][0]
+#        
+#        g['compression'].setdefault(indexed_sample_dimension, {})['ragged_indexed'] = {
+#            'elements_per_instance'  : elements_per_instance,
+#            'instances'              : instances,
+#            'implied_ncdimensions'   : (instance_dimension,
+#                                        element_dimension),
+#            'element_dimension'      : element_dimension,
+#            'instance_dimension_size': instance_dimension_size,
+#            'element_dimension_size' : element_dimension_size,
+#        }
+#    
+#        g['new_dimensions'][element_dimension] = element_dimension_size
+#        
+#        if _debug:
+#            print "    Created g['compression'][{!r}]['ragged_indexed']".format(
+#                indexed_sample_dimension)
     
         return element_dimension
     #--- End: def
@@ -1295,8 +1330,6 @@ ancillaries, field ancillaries).
             print '    Implied dimensions: {} -> {}'.format(
                 sample_dimension,
                 g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions'])
-    
-        if _debug:
             print "    Removing g['compression'][{!r}]['ragged_contiguous']".format(
                 sample_dimension)
             
@@ -1350,19 +1383,19 @@ ancillaries, field ancillaries).
                               attribute=attribute)
             cf_compliant = False
    
-        cf_compliant = cf_compliant & self._check_node_coordinates(ncvar,
+        cf_compliant = cf_compliant & self._check_node_coordinates(field_ncvar, ncvar,
                                                                    node_coordinates,
                                                                    parsed_node_coordinates)
 
-        cf_compliant = cf_compliant & self._check_node_count(ncvar,
+        cf_compliant = cf_compliant & self._check_node_count(field_ncvar, ncvar,
                                                              node_count,
                                                              parsed_node_count)
 
-        cf_compliant = cf_compliant & self._check_part_node_count(ncvar,
+        cf_compliant = cf_compliant & self._check_part_node_count(field_ncvar, ncvar,
                                                                   part_node_count,
                                                                   parsed_part_node_count)
 
-        cf_compliant = cf_compliant & self._check_interior_ring(ncvar,
+        cf_compliant = cf_compliant & self._check_interior_ring(field_ncvar, ncvar,
                                                                 interior_ring,
                                                                 parsed_interior_ring)
 
@@ -1386,19 +1419,24 @@ ancillaries, field ancillaries).
             # variable
             g['do_not_create_field'].add(node_count)
 
-            # Find the sample size from one of the node coordinates
-            sample_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
+            # Find the dimension for the total number of cells
+            cell_dimension = g['variable_dimensions'][node_count][0]
+            
+            # Find the dimension for the total number of nodes
+            node_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
                 
-            instance_dimension = g['variable_dimensions'][node_count][0]
+            
             nodes_per_geometry = self._create_data(node_count)
+
+            if part_node_count is None:
+                
+                element_dimension = self._set_ragged_contiguous_parameters(
+                    elements_per_instance=nodes_per_geometry,
+                    sample_dimension=node_dimension,
+                    element_dimension='node',
+                    instance_dimension=cell_dimension)
             
-            element_dimension = self._set_ragged_contiguous_parameters(
-                elements_per_instance=nodes_per_geometry,
-                sample_dimension=sample_dimension,
-                element_dimension='node',
-                instance_dimension=instance_dimension)
-            
-            if part_node_count is not None:
+            else:
                 # Do not attempt to create a field from a part node
                 # count variable
                 g['do_not_create_field'].add(part_node_count)
@@ -1407,13 +1445,19 @@ ancillaries, field ancillaries).
                     # Do not attempt to create a field from an
                     # interior ring variable
                     g['do_not_create_field'].add(interior_ring)
+
+
+                
                     
-                sample_dimension = g['variable_dimensions'][part_node_count][0]
+                part_node_count_dimension = g['variable_dimensions'][part_node_count][0]
                 
                 parts = self._create_data(part_node_count)
                 total_number_of_parts = self.get_size(parts)
                 parts_per_geometry = nodes_per_geometry.copy()
-                
+
+                index = parts.copy()
+
+                p = 0
                 i = 0
                 for j in xrange(self.get_size(nodes_per_geometry)):
                     nodes_in_this_geometry = nodes_per_geometry[j]
@@ -1421,25 +1465,36 @@ ancillaries, field ancillaries).
                     s = 0
 
                     for k in xrange(i, total_number_of_parts):
-                        parts_in_this_geometry += 1
+                        parts_in_this_geometry += 1                        
+                        index[k] = p
                         s += parts[k]
                         if s >= nodes_in_this_geometry:
                             parts_per_geometry[j] = parts_in_this_geometry
                             i += k + 1
+                            p += 1
                             break                        
                     #--- End: for
 
                     i += 1
                 #--- End: for
                 
-                element_dimension = self._set_ragged_contiguous_parameters(
-                    elements_per_instance=parts_per_geometry,
-                    sample_dimension=sample_dimension,
+                element_dimension_1 = self._set_ragged_contiguous_parameters(
+                    elements_per_instance=part_node_count,
+                    sample_dimension=node_dimension,
+                    element_dimension='node',
+                    instance_dimension=part_node_count_dimension)
+
+                element_dimension_2 = self._set_ragged_indexed_parameters(
+                    index=index,
                     element_dimension='part',
-                    instance_dimension=instance_dimension)                  
+                    instance_dimension=cell_dimension)
+
+                _parse_indexed_contiguous_compression(
+                    sample_dimension=node_dimension,
+                    instance_dimension=cell_dimension)
         #--- End: if
         
-        g['geometries'][geometry_ncvar].update(
+        g['geometries'][ncvar].update(
             {'node_coordinates': parsed_node_coordinates,
              'interior_ring   ': interior_ring,
              'node_count      ': node_count,
@@ -1505,6 +1560,75 @@ ancillaries, field ancillaries).
         return element_dimension
     #--- End: def
             
+    def _set_ragged_indexed_parameters(self,
+                                       index=None,                                       
+                                       element_dimension=None,
+                                       instance_dimension=None):
+        '''qwertyy
+
+:Parameters:
+
+    index: `Data`
+
+    element_dimension: `str`
+ 
+    instance_dimension: `str`
+
+:Returns:
+
+    out: `str`
+       The element dimension, possibly modified to make sure that it
+       is unique.
+
+        '''
+        g = self.read_vars
+
+        (instance, inverse, count) = numpy.unique(index.get_array(),
+                                                  return_inverse=True,
+                                                  return_counts=True)
+
+        # Get the zero-based indices of the sample dimension that
+        # apply to each instance. For example, if the sample dimension
+        # has size 20 and there are 3 instances then the instances
+        # array might look like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1,
+        # 2, 2, 1, 0, 0, 0, 2, 0].
+        instances = self._create_Data(array=inverse)
+
+        # The number of elements per instance. For the instances array
+        # example above, the elements_per_instance array is [7, 5, 7].
+        elements_per_instance = self._create_Data(array=count)
+    
+        instance_dimension_size = g['internal_dimension_sizes'][instance_dimension]
+        element_dimension_size  = int(elements_per_instance.max())
+    
+        base = element_dimension
+        n = 0
+        while (element_dimension in g['internal_dimension_sizes'] or
+               element_dimension in g['new_dimensions']):
+            n += 1
+            element_dimension = '{0}_{1}'.format(base, n)
+            
+        indexed_sample_dimension = g['variable_dimensions'][ncvar][0]
+        
+        g['compression'].setdefault(indexed_sample_dimension, {})['ragged_indexed'] = {
+            'elements_per_instance'  : elements_per_instance,
+            'instances'              : instances,
+            'implied_ncdimensions'   : (instance_dimension,
+                                        element_dimension),
+            'element_dimension'      : element_dimension,
+            'instance_dimension_size': instance_dimension_size,
+            'element_dimension_size' : element_dimension_size,
+        }
+    
+        g['new_dimensions'][element_dimension] = element_dimension_size
+        
+        if _debug:
+            print "    Created g['compression'][{!r}]['ragged_indexed']".format(
+                indexed_sample_dimension)
+    
+        return element_dimension
+    #--- End: def
+    
     def _check_external_variables(self, external_variables,
                                   parsed_external_variables):
         '''asdsdsa
@@ -3871,7 +3995,7 @@ Checks that
 
         g = self.read_vars
 
-        if node_node_count is None:
+        if node_count is None:
             return True
                 
         incorrectly_formatted = ('node_count attribute', 'is incorrectly formatted')
@@ -3937,7 +4061,7 @@ Checks that
                           interior_ring, parsed_interior_ring):
         '''
         '''
-        if node_interior_ring is None:
+        if interior_ring is None:
             return True
                 
         attribute = {geometry_ncvar+':interior_ring': interior_ring}
