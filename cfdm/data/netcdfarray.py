@@ -181,7 +181,7 @@ Returns a numpy array.
 x.__repr__() <==> repr(x)
 
 '''      
-        return "<{0}>".format(self.__class__.__name__, str(self))
+        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
     #--- End: def
      
     def __str__(self):
@@ -192,9 +192,11 @@ x.__str__() <==> str(x)
 '''      
         name = getattr(self, 'ncvar', None)
         if name is None:
-            name = self.varid
+            name = "varid={0}".format(self.varid)
+        else:
+            name = "variable={0}".format(name)
 
-        return "%s%s in %s" % (name, self.shape, self.filename)
+        return "file={0} {1} shape={2}".format(self.filename, name, self.shape)
     #--- End: def
 
     @property

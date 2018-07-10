@@ -359,8 +359,11 @@ By default the name is the first found of the following:
   2. The `long_name` CF property, preceeded by the string
      ``'long_name:'``.
 
-  3. If the *ncvar* parameter is True, the netCDF variable name as
-     returned by the `ncvar` method, preceeded by the string
+  2. The `cf_role` CF property, preceeded by the string
+     ``'cf_role:'``.
+
+  3. If the *ncvar* parameter is True, the netCDF variable name (as
+     returned by the `get_ncvar` method), preceeded by the string
      ``'ncvar%'``.
   
   4. The value of the *default* parameter.
@@ -415,6 +418,10 @@ None
         n = self.get_property('long_name', None)
         if n is not None:
             return 'long_name:{0}'.format(n)
+
+        n = self.get_property('cf_role', None)
+        if n is not None:
+            return 'cf_role:{0}'.format(n)
 
         if ncvar:
             n = self.get_ncvar(None)

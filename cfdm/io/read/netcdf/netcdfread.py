@@ -1362,7 +1362,7 @@ variable should be pre-filled with missing values.
             print '    Geometry container =', ncvar
             
         g['geometries'][ncvar] = {'geometry_type': attributes[ncvar].get('geometry_type')}
- 
+        print attributes[ncvar]
         node_coordinates = attributes[ncvar].get('node_coordinates')
         node_count       = attributes[ncvar].get('node_count')
         coordinates      = attributes[ncvar].get('coordinates')
@@ -1373,6 +1373,16 @@ variable should be pre-filled with missing values.
         parsed_interior_ring    = self._split_by_white_space(ncvar, interior_ring)
         parsed_node_count       = self._split_by_white_space(ncvar, node_count)
         parsed_part_node_count  = self._split_by_white_space(ncvar, part_node_count)
+
+        if _debug:
+            print '    node_coordinates =', node_coordinates
+            print '    interior_ring    =', interior_ring
+            print '    node_count       =', node_count
+            print '    part_node_count  =', part_node_count
+            print '    parsed_node_coordinates =', parsed_node_coordinates
+            print '    parsed_interior_ring    =', parsed_interior_ring
+            print '    parsed_node_count       =', parsed_node_count
+            print '    parsed_part_node_count  =', parsed_part_node_count
 
         cf_compliant = True
         
@@ -1429,7 +1439,7 @@ variable should be pre-filled with missing values.
             nodes_per_geometry = self._create_data(node_count)
 
             if part_node_count is None:
-                
+                # There is exactly one part per cell
                 element_dimension = self._set_ragged_contiguous_parameters(
                     elements_per_instance=nodes_per_geometry,
                     sample_dimension=node_dimension,
@@ -1488,7 +1498,7 @@ variable should be pre-filled with missing values.
                     index=index,
                     element_dimension='part',
                     instance_dimension=cell_dimension)
-
+                print 'ARSe'
                 _parse_indexed_contiguous_compression(
                     sample_dimension=node_dimension,
                     instance_dimension=cell_dimension)
@@ -2602,6 +2612,12 @@ variable should be pre-filled with missing values.
         g['bounds'][field_ncvar] = {}
         g['coordinates'][field_ncvar] = []
         
+        # ------------------------------------------------------------
+        # Look for a geometry container (CF >= 1.8)
+        # ------------------------------------------------------------
+        geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
+        geometry = g['geometries'].get(geometry_ncvar)
+
         properties = g['variable_attributes'][ncvar].copy()
 
         properties.pop('formula_terms', None)
@@ -2618,18 +2634,34 @@ variable should be pre-filled with missing values.
 #                    ok = False
 #                    break
 
-        attribute = 'bounds'
         climatology = False
+        has_bounds = False
+        attribute = 'bounds'
+
+            
         if bounds is None:
             ncbounds = properties.pop('bounds', None)
+            if ncbounds is not None:
+                has_bounds = True
+                
+            if geometry:
+                ncnodes = properties.pop('nodes', None)
+                if ncnodes is not None:
+                    has_bounds = True
+                    attribute = 'nodes'
+                    ncbounds = ncnodes
+            #--- End: if
+            
             if ncbounds is None:
                 ncbounds = properties.pop('climatology', None)
                 if ncbounds is not None:
+                    has_bounds = True
                     attribute = 'climatology'
                     climatology = True
         else:
             ncbounds = bounds
-
+            has_bounds = True
+            
         if dimension:
             properties.pop('compress', None) #??
             c = self.initialise('DimensionCoordinate')
@@ -2654,26 +2686,20 @@ variable should be pre-filled with missing values.
         self._set_data(c, data, copy=False)
 
         # ------------------------------------------------------------
-        # Look for a geometry container (CF >= 1.8)
-        # ------------------------------------------------------------
-        geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
-        geometry = g['geometries'].get(geometry_ncvar)
-
-        # ------------------------------------------------------------
         # Add any bounds
         # ------------------------------------------------------------
-        if ncbounds is not None:
+        if has_bounds:
                        
             if geometry is None:
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
                                                   attribute, ncbounds)
                 if not cf_compliant:
                     pass
-            else:
-                cf_compliant = self._check_node_coordinate(field_ncvar, ncvar,
-                                                           ncbounds)
-                if not cf_compliant:
-                    pass
+#            else:
+#                cf_compliant = self._check_node_coordinate(field_ncvar, ncvar,
+#                                                           ncbounds)
+#                if not cf_compliant:
+#                    pass
             #--- End: if
             
             bounds = self.initialise('Bounds')
@@ -3920,32 +3946,6 @@ Checks that
         return ok
     #--- End: def
 
-#   def _check_node_coordinate(self, field_ncvar, coord_ncvar, node_coordinate):
-#       '''
-#       '''
-#       attribute = {coord_ncvar+':bounds': node_coordinate}
-#
-#       nc = self.read_vars['nc']
-#
-#               
-#       incorrectly_formatted = ('node_coordinates attribute', 'is incorrectly formatted')
-#       missing_attribute     = ('node_coordinates attribute', 'is missing')
-#       missing_variable      = ('Node coordinate variable', 'is not in file')
-#
-#       if node_coordinates is None:
-#           self._add_message(field_ncvar, geometry_ncvar,
-#                             message=missing_attribute,
-#                             attribute=attribute)
-#           return False
-#
-#       if not parsed_node_coordinates:
-#           self._add_message(field_ncvar, geometry_ncvar,
-#                             message=incorrectly_formatted,
-#                             attribute=attribute)
-#           return False
-#
-#       ok = True
-        
     def _check_node_coordinates(self, field_ncvar, geometry_ncvar,
                                 node_coordinates,
                                 parsed_node_coordinates):

@@ -142,7 +142,7 @@ bounds.
         if geometry_type is not None:
             indent1 = '    ' * (_level + 1)
             string.append(
-                '{0}{1}Geometry type = {2}'.format(indent1, _prefix, geometry_type))
+                '{0}{1}Geometry type: {2}'.format(indent1, _prefix, geometry_type))
 
         #-------------------------------------------------------------
         # Interior ring
