@@ -9,8 +9,6 @@ from collections import OrderedDict
 
 import numpy
 
-#from ....functions import abspath
-
 from .. import IORead
 
 
@@ -72,7 +70,7 @@ class NetCDFRead(IORead):
 :Parameters:
 
     ncvar: `str`
-        The netCDf variable name.
+        The netCDF variable name.
 
 :Returns:
 
@@ -100,7 +98,7 @@ netCDF variable.
 :Parameters:
 
     ncvar: `str`
-        The netCDf variable name.
+        The netCDF variable name.
 
 :Returns:
 
@@ -120,7 +118,7 @@ netCDF variable.
 :Parameters:
 
     ncvar: `str`
-        The netCDf variable name.
+        The netCDF variable name.
 
 :Returns:
 
@@ -147,38 +145,6 @@ netCDF variable.
             nc.close()
     #--- End: def
         
-    @staticmethod
-    def file_type(filename):
-        '''Find the format of a file.
-    
-:Parameters:
-    
-    filename: `str`
-        The file name.
-    
-:Returns:
- 
-    out: `str`
-        The format type of the file.
-    
-:Examples:
-
->>> filetype = n.file_type(filename)
-    
-    '''
-        # ----------------------------------------------------------------
-        # Assume that URLs are in netCDF format
-        # ----------------------------------------------------------------
-        if filename.startswith('http://'):
-           return 'netCDF'
-    
-        # ----------------------------------------------------------------
-        # netCDF
-        # ----------------------------------------------------------------
-        if netcdf.is_netcdf_file(filename):
-            return 'netCDF'
-    #--- End: def
-    
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
@@ -187,7 +153,7 @@ netCDF variable.
     out: `netCDF.Dataset`
 
         '''
-        return self.implementation.get_class('NetCDF').file_open(filename, 'r')
+        return self.implementation.get_class('NetCDFArray').file_open(filename, 'r')
     #--- End: def        
 
     def get_coordinates(self, f):
@@ -227,7 +193,7 @@ contents and any file suffix is not not considered.
 
 :Examples 1:
 
->>> x = n.is_netcdf_file(filename)
+>>> x = NetCDFRead.is_netcdf_file(filename)
 
 :Parameters:
 
@@ -238,9 +204,6 @@ contents and any file suffix is not not considered.
     out: `bool`
 
 :Examples 2:
-
->>> if n.is_netcdf_file(filename):
-...     return 'netCDF'
 
 >>> if NetCDFRead.is_netcdf_file(filename):
 ...     return 'netCDF'
@@ -432,7 +395,6 @@ ancillaries, field ancillaries).
     
         g['fields'] = field
         
-#        filename = abspath(filename)
         g['filename'] = filename
 
         # ------------------------------------------------------------
@@ -1362,7 +1324,7 @@ variable should be pre-filled with missing values.
             print '    Geometry container =', ncvar
             
         g['geometries'][ncvar] = {'geometry_type': attributes[ncvar].get('geometry_type')}
-        print attributes[ncvar]
+
         node_coordinates = attributes[ncvar].get('node_coordinates')
         node_count       = attributes[ncvar].get('node_count')
         coordinates      = attributes[ncvar].get('coordinates')
@@ -2525,6 +2487,27 @@ variable should be pre-filled with missing values.
         return d
     #--- End: def
 
+#    def _get_bounds_ncvar(self, coord_ncvar):
+#        '''
+#        '''
+#        attribute = None
+#        
+#        bounds = self.read_vars['variable_attributes'][coord_ncvar].get('bounds')
+#        if bounds is not None:
+#            attribute = 'bounds'
+#        else:
+#            bounds = self.read_vars['variable_attributes'][coord_ncvar].get('climatology')
+#            if bounds is not None:
+#                attribute = 'bounds'
+#            else:
+#                bounds = self.read_vars['variable_attributes'][coord_ncvar].get('nodes')
+#                if bounds is not None:
+#                    attribute = 'bounds'
+#        #--- End: if
+#
+#        return (bounds, attribute)
+#    #--- End: def
+                          
     def _get_domain_axes(self, ncvar, allow_external=False):
         '''
         '''
@@ -2612,15 +2595,17 @@ variable should be pre-filled with missing values.
         g['bounds'][field_ncvar] = {}
         g['coordinates'][field_ncvar] = []
         
+
+        properties = g['variable_attributes'][ncvar].copy()
+        properties.pop('formula_terms', None)
+        
         # ------------------------------------------------------------
         # Look for a geometry container (CF >= 1.8)
         # ------------------------------------------------------------
-        geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
-        geometry = g['geometries'].get(geometry_ncvar)
-
-        properties = g['variable_attributes'][ncvar].copy()
-
-        properties.pop('formula_terms', None)
+        if properties.get('nodes') is not None:        
+            geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
+            geometry = g['geometries'].get(geometry_ncvar)
+        
 #if len(axes) == len(ncdimensions):
 #                    domain_ancillaries.append((ncvar, domain_anc, axes))
 #                else:
@@ -2637,30 +2622,27 @@ variable should be pre-filled with missing values.
         climatology = False
         has_bounds = False
         attribute = 'bounds'
+        ncbounds = None
 
-            
         if bounds is None:
             ncbounds = properties.pop('bounds', None)
-            if ncbounds is not None:
-                has_bounds = True
                 
             if geometry:
                 ncnodes = properties.pop('nodes', None)
                 if ncnodes is not None:
-                    has_bounds = True
                     attribute = 'nodes'
                     ncbounds = ncnodes
+                else:
+                    geometry = None
             #--- End: if
             
             if ncbounds is None:
                 ncbounds = properties.pop('climatology', None)
                 if ncbounds is not None:
-                    has_bounds = True
                     attribute = 'climatology'
                     climatology = True
         else:
             ncbounds = bounds
-            has_bounds = True
             
         if dimension:
             properties.pop('compress', None) #??
@@ -2688,18 +2670,13 @@ variable should be pre-filled with missing values.
         # ------------------------------------------------------------
         # Add any bounds
         # ------------------------------------------------------------
-        if has_bounds:
+        if ncbounds:
                        
-            if geometry is None:
+            if attribute != 'nodes':
                 cf_compliant = self._check_bounds(field_ncvar, ncvar,
                                                   attribute, ncbounds)
                 if not cf_compliant:
                     pass
-#            else:
-#                cf_compliant = self._check_node_coordinate(field_ncvar, ncvar,
-#                                                           ncbounds)
-#                if not cf_compliant:
-#                    pass
             #--- End: if
             
             bounds = self.initialise('Bounds')
@@ -2987,9 +2964,10 @@ Set the Data attribute of a variable.
             dtype = numpy.dtype('S{0}'.format(strlen))
         #--- End: if
 
-        filearray = self._create_NetCDF(filename=g['filename'], ncvar=ncvar,
-                                        dtype=dtype, ndim=ndim, shape=shape,
-                                        size=size)
+        filearray = self._create_NetCDFArray(filename=g['filename'],
+                                             ncvar=ncvar, dtype=dtype,
+                                             ndim=ndim, shape=shape,
+                                             size=size)
         
         # Find the units for the data
         if units is None:
@@ -3096,11 +3074,12 @@ Set the Data attribute of a variable.
         return data
     #--- End: def
 
-    def _create_NetCDF(self,filename=None, ncvar=None, dtype=None,
-                       ndim=None, shape=None, size=None):
+    def _create_NetCDFArray(self,filename=None, ncvar=None,
+                            dtype=None, ndim=None, shape=None,
+                            size=None):
         '''
         '''
-        return self.initialise('NetCDF', filename=filename,
+        return self.initialise('NetCDFArray', filename=filename,
                                 ncvar=ncvar, dtype=dtype,
                                 ndim=ndim, shape=shape,
                                 size=size)

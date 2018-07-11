@@ -9,7 +9,7 @@ import netCDF4
 from .array import Array
 
 
-class NetCDF(Array):
+class NetCDFArray(Array):
     '''A sub-array stored in a netCDF file.
     
 **Initialization**

@@ -13,7 +13,7 @@ from ...fieldancillary      import FieldAncillary
 from ...bounds    import Bounds
 
 from ...data.data            import Data
-from ...data.netcdfarray     import NetCDF
+from ...data.netcdfarray     import NetCDFArray
 from ...data.compressedarray import CompressedArray
 
 from ..cfdmimplementation import CFDMImplementation
@@ -33,7 +33,7 @@ implementation = CFDMImplementation(AuxiliaryCoordinate = AuxiliaryCoordinate,
                                     Bounds    = Bounds,
                                     Data      = Data,
                                     
-                                    NetCDF          = NetCDF,
+                                    NetCDFArray     = NetCDFArray,
                                     CompressedArray = CompressedArray)
 
 netcdf = NetCDFRead(implementation)
