@@ -353,7 +353,8 @@ ancillaries, field ancillaries).
             #           'part_node_count  : "part_node_count",
             #           'interior_ring'   : "interior_ring"}
             #      }
-            'geometries': {},
+            'geometries'    : {},
+            'interior_ring' : {},
             
             'do_not_create_field':  set(),
             'references': {},
@@ -1418,9 +1419,6 @@ variable should be pre-filled with missing values.
                     # interior ring variable
                     g['do_not_create_field'].add(interior_ring)
 
-
-                
-                    
                 part_node_count_dimension = g['variable_dimensions'][part_node_count][0]
                 
                 parts = self._create_data(part_node_count)
@@ -1460,8 +1458,8 @@ variable should be pre-filled with missing values.
                     index=index,
                     element_dimension='part',
                     instance_dimension=cell_dimension)
-                print 'ARSe'
-                _parse_indexed_contiguous_compression(
+
+                self._parse_indexed_contiguous_compression(
                     sample_dimension=node_dimension,
                     instance_dimension=cell_dimension)
         #--- End: if
@@ -1484,8 +1482,6 @@ variable should be pre-filled with missing values.
 :Parameters:
 
     elements_per_instance: `Data`
-
-#    role: `str`
 
     sample_dimension: `str`
 
@@ -2417,14 +2413,17 @@ variable should be pre-filled with missing values.
     #--- End: def
 
     def _add_message(self, field_ncvar, ncvar, message=None,
-                     attribute=None, dimensions=None, variable=None):
-        ''':Parameters:
+                     attribute=None, dimensions=None, variable=None,
+                     conformance=None):
+        '''aaaaaa
 
-    field_ncvar: `str`a
+:Parameters:
+
+    field_ncvar: `str`
         The netCDF variable name of the field.
 
           *Example:*
-            ``field_ncvar='pr'``
+            ``field_ncvar='tas'``
 
 
     ncvar: `str`
@@ -2459,9 +2458,10 @@ variable should be pre-filled with missing values.
         else:
             code = None
             
-        d = {'code'     : code,
-             'attribute': attribute,
-             'message'  : message}
+        d = {'code'       : code,
+             'attribute'  : attribute,
+             'message'    : message,
+             'conformance': conformance}
 
         if dimensions is not None:
             d['dimensions'] = dimensions
@@ -2563,7 +2563,7 @@ variable should be pre-filled with missing values.
     def _create_bounded_construct(self, field_ncvar, ncvar, f,
                                   dimension=False, auxiliary=False,
                                   domain_ancillary=False, bounds=None,
-                                  verbose=False):
+                                  has_coordinates=True, verbose=False):
         '''Create a variable which might have bounds.
     
 :Parameters:
@@ -2598,14 +2598,24 @@ variable should be pre-filled with missing values.
 
         properties = g['variable_attributes'][ncvar].copy()
         properties.pop('formula_terms', None)
+
+        has_bounds = False
+        attribute = 'bounds'
+        ncbounds = None
+        geometry = None
         
         # ------------------------------------------------------------
         # Look for a geometry container (CF >= 1.8)
         # ------------------------------------------------------------
-        if properties.get('nodes') is not None:        
+        ncnodes = properties.get('nodes')
+        if ncnodes is not None:        
             geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
             geometry = g['geometries'].get(geometry_ncvar)
-        
+            if geometry is not None:
+                attribute = 'nodes'
+                ncbounds = ncnodes
+        #--- End: if
+
 #if len(axes) == len(ncdimensions):
 #                    domain_ancillaries.append((ncvar, domain_anc, axes))
 #                else:
@@ -2619,28 +2629,14 @@ variable should be pre-filled with missing values.
 #                    ok = False
 #                    break
 
-        climatology = False
-        has_bounds = False
-        attribute = 'bounds'
-        ncbounds = None
-
+ 
         if bounds is None:
-            ncbounds = properties.pop('bounds', None)
-                
-            if geometry:
-                ncnodes = properties.pop('nodes', None)
-                if ncnodes is not None:
-                    attribute = 'nodes'
-                    ncbounds = ncnodes
-                else:
-                    geometry = None
-            #--- End: if
-            
             if ncbounds is None:
-                ncbounds = properties.pop('climatology', None)
-                if ncbounds is not None:
-                    attribute = 'climatology'
-                    climatology = True
+                ncbounds = properties.pop('bounds', None)
+                if ncbounds is None:
+                    ncbounds = properties.pop('climatology', None)
+                    if ncbounds is not None:
+                        attribute = 'climatology'                        
         else:
             ncbounds = bounds
             
@@ -2661,11 +2657,12 @@ variable should be pre-filled with missing values.
 
         self.set_properties(c, properties)
         
-        if climatology:
+        if attribute == 'climatology':
             self.set_geometry_type(c, 'climatology')
-    
-        data = self._create_data(ncvar, c)
-        self._set_data(c, data, copy=False)
+
+        if has_coordinates:
+            data = self._create_data(ncvar, c)
+            self._set_data(c, data, copy=False)
 
         # ------------------------------------------------------------
         # Add any bounds
@@ -2677,6 +2674,8 @@ variable should be pre-filled with missing values.
                                                   attribute, ncbounds)
                 if not cf_compliant:
                     pass
+            else:
+                pass
             #--- End: if
             
             bounds = self.initialise('Bounds')
@@ -2715,53 +2714,23 @@ variable should be pre-filled with missing values.
         #--- End: if
 
         # ------------------------------------------------------------
-        # Add cell extent parameters for geometries (CF >= 1.8)
-        # ------------------------------------------------------------ ppp
+        # Add geometry type and interior ring array (CF >= 1.8)
+        # ------------------------------------------------------------
         if geometry is not None:
-            # Add the geometry type as a cell extent parameter
             geometry_type = geometry.get('geometry_type')
             if geometry_type is not None:
                 self.set_geometry_type(c, geometry_type)
                
-            for attribute in ('part_node_count', 'interior_ring'):                
-                g_ncvar = geometry.get(attribute)
-                if g_ncvar is None:
-                    # This attribute has not been set
-                    continue
-
-                if g_ncvar in g['domain_ancillary_key']:
-                    # The domain ancillary has already been set for this field 
-                    self.set_coordinate_ancillary(
-                        c, attribute,
-                        g['domain_ancillary_key'][g_ncvar])
+            interior_ring_ncvar = geometry.get('interior_ring')
+            if interior_ring_ncvar is not None:
+                interior_ring = g['interior_ring'].get('interior_ring_ncvar')
+                if interior_ring is not None:
+                    # The interior ring array already exists
+                    c.set_interior_ring(interior_ring.copy())
                 else:
-                    # The domain ancillary has NOT already been set on this field 
-                    if g_ncvar in g['domain_ancillary']:
-                        # The domain ancillary has been created for another field
-                        domain_anc = self._copy_construct('domain_ancillary',
-                                                          field_ncvar, g_ncvar)
-                    else:
-                        # Create the domain ancillary
-                        domain_anc = self._create_domain_ancillary(field_ncvar,
-                                                                   g_ncvar,
-                                                                   f,
-                                                                   verbose=verbose)
-                                    
-                    # Set domain ancillary axes
-                    axes = self._get_domain_axes(g_ncvar)
-                    
-                    da_key = self.set_domain_ancillary(f, domain_anc,
-                                                       axes=axes,
-                                                       extra_axes=1,
-                                                       copy=False)
-                    
-                    self.set_coordinate_ancillary(c, attribute, da_key)
-            
-                    if ncvar not in ncvar_to_key:
-                        ncvar_to_key[part_node_count] = da_key
-                        
-                    g['domain_ancillary'][g_ncvar]     = domain_anc
-                    g['domain_ancillary_key'][g_ncvar] = da_key                
+                    # Create the interior ring array
+                    interior_ring = self._create_data(interior_ring_ncvar)
+                    g['interior_ring']['interior_ring_ncvar'] = interior_ring           
         #--- End: if
         
         # Store the netCDF variable name
@@ -3005,8 +2974,8 @@ Set the Data attribute of a variable.
             # appear in the netCDF file
             for ncdim in dimensions:
                 if ncdim in compression:
-                    # This dimension is a sample dimension
-                    # representing two or more compressed dimensions
+                    # This dimension represents two or more compressed
+                    # dimensions
                     c = compression[ncdim]
                     if 'gathered' in c:
                         # --------------------------------------------
@@ -3647,7 +3616,11 @@ Checks that
     #--- End: def
     
     def _check_cell_measures(self, field_ncvar, string, parsed_string):
-        '''asasdads
+        '''Checks requirements
+
+  * 7.2.requirement.1
+  * 7.2.requirement.3
+  * 7.2.requirement.4
 
 :Parameters:
 
@@ -3671,11 +3644,12 @@ Checks that
                                  'is not in file nor referenced by the external_variables global attribute')
 
         g = self.read_vars
-        
+        #ppp
         if not parsed_string:
             self._add_message(field_ncvar, field_ncvar,
                               message=incorrectly_formatted,
-                              attribute=attribute)
+                              attribute=attribute,
+                              conformance='7.2.requirement.1')
             return False
 
         parent_dimensions  = self._ncdimensions(field_ncvar)
@@ -3687,7 +3661,8 @@ Checks that
             if len(values) != 1:
                 self._add_message(field_ncvar, field_ncvar,
                                   message=incorrectly_formatted,
-                                  attribute=attribute)
+                                  attribute=attribute,
+                                  conformance='7.2.requirement.1')
                 ok = False
                 continue
 
@@ -3700,7 +3675,8 @@ Checks that
             if (not external and ncvar not in g['internal_variables']):
                 self._add_message(field_ncvar, ncvar,
                                   message=missing_variable,
-                                  attribute=attribute)
+                                  attribute=attribute,
+                                  conformance='7.2.requirement.3')
                 ok = False
                 continue
                 
@@ -3712,7 +3688,8 @@ Checks that
                 self._add_message(field_ncvar, ncvar,
                                   message=incorrect_dimensions,
                                   attribute=attribute,
-                                  dimensions=g['dimensons'][ncvar])
+                                  dimensions=g['dimensons'][ncvar],
+                                  conformance='7.2.requirement.4')
                 ok = False
                 continue
         #--- End: for
@@ -3722,7 +3699,12 @@ Checks that
 
     def _check_ancillary_variables(self, field_ncvar, string,
                                    parsed_string):
-        '''
+        '''Checks requirements
+
+  * 7.2.requirement.1
+  * 7.2.requirement.3
+  * 7.2.requirement.4
+
 :Parameters:
 
     field_ncvar: `str`
@@ -3786,7 +3768,11 @@ Checks that
 
     def _check_auxiliary_scalar_coordinate(self, field_ncvar,
                                            coord_ncvar, string):
-        '''
+        '''Checks requirements
+
+  * 5.requirement.5
+  * 5.requirement.6
+
 :Parameters:
 
     field_ncvar: `str`
@@ -3808,7 +3794,8 @@ Checks that
         if coord_ncvar not in g['internal_variables']:
             self._add_message(field_ncvar, coord_ncvar,
                               message=missing_variable,
-                              attribute=attribute)
+                              attribute=attribute,
+                              conformance='5.requirement.5')
             return False
             
         # Check that the variable's dimensions span a subset of the
@@ -3822,7 +3809,8 @@ Checks that
             d = self._add_message(field_ncvar, coord_ncvar,
                                   message=incorrect_dimensions,
                                   attribute=attribute,
-                                  dimensions=g['variable_dimensions'][coord_ncvar])
+                                  dimensions=g['variable_dimensions'][coord_ncvar],
+                                  conformance='5.requirement.6')
             return False
 
         return True
@@ -3841,7 +3829,11 @@ Checks that
     
     def _check_grid_mapping(self, field_ncvar, grid_mapping,
                             parsed_grid_mapping):
-        '''
+        '''Checks requirements
+
+  * 5.6.requirement.1
+  * 5.6.requirement.2
+  * 5.6.requirement.3
 
 :Parameters:
 
@@ -3869,7 +3861,8 @@ Checks that
         if not parsed_grid_mapping:
             self._add_message(field_ncvar, field_ncvar,
                               message=incorrectly_formatted,
-                              attribute=attribute)
+                              attribute=attribute,
+                              conformance='5.6.requirement.1')
             return False
 
         ok = True
@@ -3879,14 +3872,16 @@ Checks that
                 ok = False
                 self._add_message(field_ncvar, grid_mapping_ncvar,
                                   message=missing_variable,
-                                  attribute=attribute)
+                                  attribute=attribute,
+                                  conformance='5.6.requirement.2')
             
             for coord_ncvar in values:
                 if coord_ncvar not in g['internal_variables']:
                     ok = False
                     self._add_message(field_ncvar, coord_ncvar,
                                       message=coordinate_not_in_file,
-                                      attribute=attribute)
+                                      attribute=attribute,
+                                      conformance='5.6.requirement.3')
         #--- End: for
         
         if not ok:

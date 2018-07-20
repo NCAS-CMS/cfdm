@@ -4,7 +4,7 @@ from abstract import Implementation
 class CFDMImplementation(Implementation):
     '''
     '''
-    def __init__(self, NetCDF=None, AuxiliaryCoordinate=None,
+    def __init__(self, NetCDFArray=None, AuxiliaryCoordinate=None,
                  CellMeasure=None, CellMethod=None,
                  CoordinateAncillary=None ,CoordinateReference=None,
                  DimensionCoordinate=None, DomainAncillary=None,
@@ -49,7 +49,7 @@ class CFDMImplementation(Implementation):
 
         '''
         super(CFDMImplementation, self).__init__(
-            NetCDF=NetCDF,
+            NetCDFArray=NetCDFArray,
             AuxiliaryCoordinate=AuxiliaryCoordinate,
             CellMeasure=CellMeasure,
             CellMethod=CellMethod,

@@ -35,11 +35,11 @@ class IO(object):
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
-    @abc.abstractmethod
-    def file_type(cls, *args, **kwargs):
-        '''Return the format of a file.
-        '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
-    #--- End: def
+#    @abc.abstractmethod
+#    def file_type(cls, *args, **kwargs):
+#        '''Return the format of a file.
+#        '''
+#        raise NotImplementedError(_MUST_IMPLEMENT)
+#    #--- End: def
 #--- End: class
 

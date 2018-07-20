@@ -33,7 +33,7 @@ from .bounds               import Bounds
 from .coordinateconversion import CoordinateConversion
 from .constants            import *
 from .data.data            import Data
-from .data.netcdfarray     import NetCDF
+from .data.netcdfarray     import NetCDFArray
 from .datum                import Datum
 from .functions            import *
 from .interiorring         import InteriorRing
