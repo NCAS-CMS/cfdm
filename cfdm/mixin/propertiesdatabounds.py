@@ -267,6 +267,12 @@ bounds.
         return True
 #    #--- End: def
     
+    def del_part_ncdim(self):
+        '''
+        '''        
+        return self._del_component('part_ncdim')
+    #--- End: def
+
     def expand_dims(self, position , copy=True):
         '''
         '''
@@ -292,6 +298,24 @@ bounds.
         return c
     #--- End: def
     
+    def get_part_ncdim(self, *default):
+        '''ttttttttt
+        '''        
+        return self._get_component('part_ncdim', None, *default)
+    #--- End: def
+
+    def has_part_ncdim(self):
+        '''
+        '''        
+        return self._has_component('part_ncdim')
+    #--- End: def
+
+    def set_part_ncdim(self, value):
+        '''
+        '''
+        return self._set_component('part_ncdim', None, value)
+    #--- End: def
+
     def squeeze(self, axes=None , copy=True):
         '''
         '''

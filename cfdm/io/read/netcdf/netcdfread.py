@@ -4,6 +4,7 @@ import struct
 
 from ast import literal_eval
 from copy import deepcopy
+from distutils.version import LooseVersion
 
 from collections import OrderedDict
 
@@ -362,6 +363,9 @@ ancillaries, field ancillaries).
             # The collection of external variables that are actually
             # referenced from within the file
             'referenced_external_variables': set(),
+
+            'version': {'1.6': LooseVersion('1.6'),
+                        '1.8': LooseVersion('1.8'),
         }
         g = self.read_vars
 
@@ -430,6 +434,18 @@ ancillaries, field ancillaries).
         g['global_attributes'] = global_attributes
         if _debug:
             print '    global attributes:', g['global_attributes']
+
+
+        # ------------------------------------------------------------
+        # Find the file conventions
+        # ------------------------------------------------------------
+        # DCH ALERT: haven't yet dealt with multiple conventions!
+        Conventions = g['global_attributes'].get('Conventions', '').replace('CF-', '', 1)
+        if not Conventions:
+            # Assume the conventions of the CFDM imlementation 
+            Conventions = self.implementation.get_class('Conventions')))
+
+        g['file_version'] = LooseVersion(Conventions)
 
         # ------------------------------------------------------------
         # Create a dictionary keyed by netCDF variable names where
@@ -520,66 +536,67 @@ ancillaries, field ancillaries).
         #
         # Identify and parse all DSG count and DSG index variables
         # ------------------------------------------------------------
-        featureType = g['global_attributes'].get('featureType')
-        if featureType is not None:
-            g['featureType'] = featureType
-
-            sample_dimension = None
-            for ncvar, attributes in variable_attributes.iteritems():
-                if 'sample_dimension' not in attributes:
-                    continue
-                
-                # ----------------------------------------------------
-                # This variable is a count variable for DSG
-                # contiguous ragged arrays
-                # ----------------------------------------------------
-                sample_dimension = attributes['sample_dimension']
-                cf_compliant = self._check_sample_dimension(ncvar,
-                                                            sample_dimension)
-                if not cf_compliant:
-                    sample_dimension = None
-                else:
-                    element_dimension_2 = self._parse_ragged_contiguous_compression(
-                        ncvar,
-                        sample_dimension)
-
-                    # Do not attempt to create a field from a
-                    # count variable
-                    g['do_not_create_field'].add(ncvar)
-            #--- End: for
-
-            instance_dimension = None
-            for ncvar, attributes in variable_attributes.iteritems():
-                if 'instance_dimension' not in attributes:
-                    continue
-
-                # ----------------------------------------------------
-                # This variable is an index variable for DSG
-                # indexed ragged arrays
-                # ----------------------------------------------------
-                instance_dimension = attributes['instance_dimension']
-                cf_compliant = self._check_instance_dimension(
-                    ncvar,
-                    instance_dimension)
-                if not cf_compliant:
-                    instance_dimension = None
-                else:
-                    element_dimension_1 = self._parse_indexed_compression(
+        if g['file_version'] >= g['version']['1.6']:
+            featureType = g['global_attributes'].get('featureType')
+            if featureType is not None:
+                g['featureType'] = featureType
+    
+                sample_dimension = None
+                for ncvar, attributes in variable_attributes.iteritems():
+                    if 'sample_dimension' not in attributes:
+                        continue
+                    
+                    # ------------------------------------------------
+                    # This variable is a count variable for DSG
+                    # contiguous ragged arrays
+                    # ------------------------------------------------
+                    sample_dimension = attributes['sample_dimension']
+                    cf_compliant = self._check_sample_dimension(ncvar,
+                                                                sample_dimension)
+                    if not cf_compliant:
+                        sample_dimension = None
+                    else:
+                        element_dimension_2 = self._parse_ragged_contiguous_compression(
+                            ncvar,
+                            sample_dimension)
+    
+                        # Do not attempt to create a field from a
+                        # count variable
+                        g['do_not_create_field'].add(ncvar)
+                #--- End: for
+    
+                instance_dimension = None
+                for ncvar, attributes in variable_attributes.iteritems():
+                    if 'instance_dimension' not in attributes:
+                        continue
+    
+                    # ------------------------------------------------
+                    # This variable is an index variable for DSG
+                    # indexed ragged arrays
+                    # ------------------------------------------------
+                    instance_dimension = attributes['instance_dimension']
+                    cf_compliant = self._check_instance_dimension(
                         ncvar,
                         instance_dimension)
-
-                    # Do not attempt to create a field from a
-                    # index variable
-                    g['do_not_create_field'].add(ncvar)
-            #--- End: for
-
-            if (sample_dimension   is not None and
-                instance_dimension is not None):
-                # ----------------------------------------------------
-                # There are DSG indexed contiguous ragged arrays
-                # ----------------------------------------------------
-                self._parse_indexed_contiguous_compression(sample_dimension,
-                                                           instance_dimension)
+                    if not cf_compliant:
+                        instance_dimension = None
+                    else:
+                        element_dimension_1 = self._parse_indexed_compression(
+                            ncvar,
+                            instance_dimension)
+    
+                        # Do not attempt to create a field from a
+                        # index variable
+                        g['do_not_create_field'].add(ncvar)
+                #--- End: for
+    
+                if (sample_dimension   is not None and
+                    instance_dimension is not None):
+                    # ------------------------------------------------
+                    # There are DSG indexed contiguous ragged arrays
+                    # ------------------------------------------------
+                    self._parse_indexed_contiguous_compression(sample_dimension,
+                                                               instance_dimension)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -587,17 +604,19 @@ ancillaries, field ancillaries).
         #
         # Identify and parse all geometry container variables
         # ------------------------------------------------------------
-        for ncvar, attributes in variable_attributes.iteritems():
-            if 'geometry' not in attributes:
-                continue
+        if g['file_version'] >= g['version']['1.8']:
+            for ncvar, attributes in variable_attributes.iteritems():
+                if 'geometry' not in attributes:
+                    continue
             
-            geometry_ncvar = attributes['geometry']
-            self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
-
-            # Do not attempt to create a field from a geometry
-            # container variable
-            g['do_not_create_field'].add(geometry_ncvar)
-
+                geometry_ncvar = attributes['geometry']
+                self._parse_geometry(ncvar, geometry_ncvar, variable_attributes)
+                
+                # Do not attempt to create a field from a geometry
+                # container variable
+                g['do_not_create_field'].add(geometry_ncvar)
+        #--- End: if
+        
         # ------------------------------------------------------------
         # External variables
         # ------------------------------------------------------------
@@ -994,17 +1013,42 @@ ancillaries, field ancillaries).
         return field.set_field_ancillary(construct, axes=axes, copy=copy)
     #--- End: def
 
+    def set_interior_ring(self, parent, interior_ring, copy=True):
+        '''Insert an interior ring array into a coordiante.
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+        return parent.set_interior_ring(interior_ring, copy=copy)
+    #--- End: def
+    
     def set_ncdim(self, construct, ncdim):
         '''
         '''
         construct.set_ncdim(ncdim)
     #-- End: def
 
-
     def set_ncvar(self, parent, ncvar):
         '''
         '''
         parent.set_ncvar(ncvar)
+    #-- End: def
+
+    def set_node_ncdim(self, parent, ncdim):
+        '''
+        '''
+        parent.set_node_ncdim(ncdim)
+    #-- End: def
+
+    def set_part_ncdim(self, parent, ncdim):
+        '''
+        '''
+        parent.set_part_ncdim(ncdim)
     #-- End: def
 
     def set_properties(self, construct, properties, copy=True):
@@ -1387,6 +1431,9 @@ variable should be pre-filled with missing values.
 #  row_size        =  3, 3, 3, 3 ;
 #  part_index      =  0, 0, 0, 1 ;
 
+        part_dimension = None
+        node_dimension = None
+
         if node_count is not None:
             # Do not attempt to create a field from a node count
             # variable
@@ -1397,8 +1444,7 @@ variable should be pre-filled with missing values.
             
             # Find the dimension for the total number of nodes
             node_dimension = g['variable_dimensions'][parsed_node_coordinates[0]][0]
-                
-            
+
             nodes_per_geometry = self._create_data(node_count)
 
             if part_node_count is None:
@@ -1419,7 +1465,7 @@ variable should be pre-filled with missing values.
                     # interior ring variable
                     g['do_not_create_field'].add(interior_ring)
 
-                part_node_count_dimension = g['variable_dimensions'][part_node_count][0]
+                part_dimension = g['variable_dimensions'][part_node_count][0]
                 
                 parts = self._create_data(part_node_count)
                 total_number_of_parts = self.get_size(parts)
@@ -1452,7 +1498,7 @@ variable should be pre-filled with missing values.
                     elements_per_instance=part_node_count,
                     sample_dimension=node_dimension,
                     element_dimension='node',
-                    instance_dimension=part_node_count_dimension)
+                    instance_dimension=part_dimension)
 
                 element_dimension_2 = self._set_ragged_indexed_parameters(
                     index=index,
@@ -1468,7 +1514,9 @@ variable should be pre-filled with missing values.
             {'node_coordinates': parsed_node_coordinates,
              'interior_ring   ': interior_ring,
              'node_count      ': node_count,
-             'part_node_count ': part_node_count}
+             'part_node_count ': part_node_count,
+             'node_dimension'  : node_dimension,
+             'part_dimension'  : part_dimension,}
         )
     #--- End: def
 
@@ -2262,7 +2310,8 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         grid_mapping = f.del_property('grid_mapping')
         if grid_mapping is not None:
-            parsed_grid_mapping = self._parse_x(field_ncvar, grid_mapping)
+            parsed_grid_mapping = self._parse_grid_mapping(field_ncvar, grid_mapping)
+                 
             cf_compliant = self._check_grid_mapping(field_ncvar,
                                                     grid_mapping,
                                                     parsed_grid_mapping)
@@ -2607,13 +2656,14 @@ variable should be pre-filled with missing values.
         # ------------------------------------------------------------
         # Look for a geometry container (CF >= 1.8)
         # ------------------------------------------------------------
-        ncnodes = properties.get('nodes')
-        if ncnodes is not None:        
-            geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
-            geometry = g['geometries'].get(geometry_ncvar)
-            if geometry is not None:
-                attribute = 'nodes'
-                ncbounds = ncnodes
+        if g['file_version'] >= g['version']['1.8']:
+            ncnodes = properties.get('nodes')
+            if ncnodes is not None:        
+                geometry_ncvar = g['variable_attributes'][field_ncvar].get('geometry')
+                geometry = g['geometries'].get(geometry_ncvar)
+                if geometry is not None:
+                    attribute = 'nodes'
+                    ncbounds = ncnodes
         #--- End: if
 
 #if len(axes) == len(ncdimensions):
@@ -2676,7 +2726,6 @@ variable should be pre-filled with missing values.
                     pass
             else:
                 pass
-            #--- End: if
             
             bounds = self.initialise('Bounds')
             
@@ -2720,17 +2769,24 @@ variable should be pre-filled with missing values.
             geometry_type = geometry.get('geometry_type')
             if geometry_type is not None:
                 self.set_geometry_type(c, geometry_type)
-               
+
+            node_dimension = geometry.get('node_dimension')
+            if node_dimension is not None:
+                self.set_node_ncdim(c, node_dimension)
+                
+            part_dimension = geometry.get('part_dimension')
+            if part_dimension is not None:
+                self.set_part_ncdim(c, part_dimension)
+                
             interior_ring_ncvar = geometry.get('interior_ring')
             if interior_ring_ncvar is not None:
                 interior_ring = g['interior_ring'].get('interior_ring_ncvar')
-                if interior_ring is not None:
-                    # The interior ring array already exists
-                    c.set_interior_ring(interior_ring.copy())
-                else:
+                if interior_ring is None:
                     # Create the interior ring array
                     interior_ring = self._create_data(interior_ring_ncvar)
                     g['interior_ring']['interior_ring_ncvar'] = interior_ring           
+
+                self.set_interior_ring(c, interior_ring)
         #--- End: if
         
         # Store the netCDF variable name
@@ -4119,9 +4175,26 @@ CF-1.7 Appendix A
         if string is None:
             return []
         
-        return string.split()
+        try:
+            return string.split()
+        except AttributeError:
+            return []         
     #--- End: def
 
+    def _parse_grid_mapping(parent_ncvar, string):
+        '''
+        '''
+        g = self.read_vars
+        if g['file_version'] >= g['version']['1.6']:
+            return self._parse_x(parent_ncvar, string)
+        else:
+            z = self._split_by_white_space(parent_ncvar, string)
+            if len(z) == 1:
+                return [{z[0]: []}]
+
+            return []
+    #--- End: def
+    
     def _parse_x(self, parent_ncvar, string):
         '''
 

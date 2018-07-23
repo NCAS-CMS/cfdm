@@ -9,6 +9,9 @@ import netCDF4
 
 #from ....functions import abspath, flat
 
+### numpy.count_nonzero(numpy.ma.count(coordinates, axis=-1))
+
+
 from .. import IOWrite
 
 
@@ -223,7 +226,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
     
     def _netcdf_dimensions(self, field, key):
         '''Return a tuple of the netCDF dimension names for the axes of a
-coordinate or cell measures objects.
+metadata construct.
     
 :Parameters:
 
@@ -302,7 +305,6 @@ coordinate or cell measures objects.
             try:
                 g['netcdf'].createDimension(ncdim, None)
             except RuntimeError as error:
-    
                 message = "Can't create unlimited dimension in {} file ({}).".format(
                     g['netcdf'].file_format, error)
     
@@ -509,31 +511,31 @@ dictionary.
     
     def _write_bounds(self, coord, coord_ncdimensions, coord_ncvar):
         '''Create a bounds netCDF variable, creating a new bounds netCDF
-    dimension if required. Return the bounds variable's netCDF variable
-    name.
+dimension if required. Return the bounds variable's netCDF variable
+name.
     
-    .. note:: This function updates ``g['netcdf']``.
+.. note:: This function updates ``g['netcdf']``.
     
-    :Parameters:
-    
-        coord: `BoundedVariable`
-    
-        coord_ncdimensions: `tuple`
-            The ordered netCDF dimension names of the coordinate's
-            dimensions (which do not include the bounds dimension).
-    
-        coord_ncvar: `str`
-            The netCDF variable name of the parent variable
-    
-    :Returns:
-    
-        out: `dict`
-    
-    :Examples:
-    
-    >>> extra = _write_bounds(c, ('dim2',))
-    
-        '''
+:Parameters:
+
+    coord: `BoundedVariable`
+
+    coord_ncdimensions: `tuple`
+        The ordered netCDF dimension names of the coordinate's
+        dimensions (which do not include the bounds dimension).
+
+    coord_ncvar: `str`
+        The netCDF variable name of the parent variable
+
+:Returns:
+
+    out: `dict`
+
+:Examples:
+
+>>> extra = _write_bounds(c, ('dim2',))
+
+    '''
         g = self.write_vars
 
 #        bounds = coord.get_bounds(None)
@@ -660,46 +662,41 @@ then the input coordinate is not written.
     
         return coordinates
     #--- End: def
-    
 
     def _write_auxiliary_coordinate(self, f, key, coord, coordinates):
-        '''
+        '''Write auxiliary coordinates and bounds to the netCDF file.
     
-    Write an auxiliary coordinate and its bounds to the netCDF file.
+If an equal auxiliary coordinate has already been written to the file
+then the input coordinate is not written.
     
-    If an equal auxiliary coordinate has already been written to the file
-    then the input coordinate is not written.
-    
-    :Parameters:
-    
-        f : `Field`
-       
-        key : str
-    
-        coord : `Coordinate`
-    
-        coordinates : list
-    
-    :Returns:
-    
-        coordinates : list
-            The list of netCDF auxiliary coordinate names updated in
-            place.
-    
-    :Examples:
-    
-    >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
-    
+:Parameters:
+
+    f: `Field`
+   
+    key: `str`
+
+    coord: `Coordinate`
+
+    coordinates: `list`
+
+:Returns:
+
+    coordinates: `list`
+        The list of netCDF auxiliary coordinate names updated in
+        place.
+
+:Examples:
+
+>>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
+
         '''
         g = self.write_vars
 
 #        coord = self._change_reference_datetime(coord)
-    
         ncdimensions = self._netcdf_dimensions(f, key)
-    
+
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
-        
         else:
             ncvar = self._create_netcdf_variable_name(coord,
                                                       default='auxiliary')
@@ -708,15 +705,15 @@ then the input coordinate is not written.
             # bounds netCDF variable and add the bounds or climatology
             # attribute to the dictionary of extra attributes
             extra = self._write_bounds(coord, ncdimensions, ncvar)
-    
+            
             # Create a new auxiliary coordinate variable
             self._write_netcdf_variable(ncvar, ncdimensions, coord,
                                         extra=extra)
-    
-        g['key_to_ncvar'][key] = ncvar
-    
-        coordinates.append(ncvar)
-    
+        
+            g['key_to_ncvar'][key] = ncvar
+        
+        coordinates.append(ncvar)        
+
         return coordinates
     #--- End: def
       
@@ -1274,7 +1271,7 @@ extra trailing dimension.
             
             x = self.get_property(coord, 'computed_standard_name', None)
             if x is None:
-                field_coordinates[key].set_property('computed_standard_name', csn)
+                self.set_property(field_coordinates[key], 'computed_standard_name', csn)
             elif x != csn:
                 raise ValueError(";sdm p8whw=0[")
         #--- End: for
@@ -2385,6 +2382,12 @@ False
         cell_method.set_axes(axes)
     #--- End: for
     
+    def set_property(self, construct, name, value):
+        '''
+        '''
+        construct.set_property(name, value)
+    #--- End: def
+
     def set_coordinate_reference_coordinate(self, coordinate_reference,
                                             coordinate):
         '''
