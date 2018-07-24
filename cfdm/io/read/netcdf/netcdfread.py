@@ -365,7 +365,7 @@ ancillaries, field ancillaries).
             'referenced_external_variables': set(),
 
             'version': {'1.6': LooseVersion('1.6'),
-                        '1.8': LooseVersion('1.8'),
+                        '1.8': LooseVersion('1.8')},
         }
         g = self.read_vars
 
@@ -443,7 +443,7 @@ ancillaries, field ancillaries).
         Conventions = g['global_attributes'].get('Conventions', '').replace('CF-', '', 1)
         if not Conventions:
             # Assume the conventions of the CFDM imlementation 
-            Conventions = self.implementation.get_class('Conventions')))
+            Conventions = self.implementation.get_class('Conventions')
 
         g['file_version'] = LooseVersion(Conventions)
 
@@ -1127,7 +1127,7 @@ ancillaries, field ancillaries).
             element_dimension = 'element'
         if _debug:        
             print '    featureType =', g['featureType']
-    
+            
         element_dimension = self._set_ragged_contiguous_parameters(
                 elements_per_instance=elements_per_instance,
                 sample_dimension=sample_dimension,
@@ -1207,9 +1207,10 @@ variable should be pre-filled with missing values.
             element_dimension = 'element'
         if _debug:        
             print '    featureType =', g['featureType']
-    
+
         element_dimension = self._set_ragged_indexed_parameters(
             index=index,
+            indexed_sample_dimension=g['variable_dimensions'][ncvar][0],
             element_dimension=element_dimension,
             instance_dimension=instance_dimension)
         
@@ -1468,24 +1469,31 @@ variable should be pre-filled with missing values.
                 part_dimension = g['variable_dimensions'][part_node_count][0]
                 
                 parts = self._create_data(part_node_count)
+                print 'parts=', parts.get_array()
                 total_number_of_parts = self.get_size(parts)
-                parts_per_geometry = nodes_per_geometry.copy()
-
+#                parts_per_geometry = nodes_per_geometry.copy()
+                print 'total_number_of_parts=',total_number_of_parts
                 index = parts.copy()
 
                 p = 0
                 i = 0
                 for j in xrange(self.get_size(nodes_per_geometry)):
-                    nodes_in_this_geometry = nodes_per_geometry[j]
-                    parts_in_this_geometry = 0
+                    print 'i=', i
+                    print 'j=', j
+                    n_nodes_in_this_geometry = int(nodes_per_geometry[j])
+                    print 'n_nodes_in_this_geometry=',n_nodes_in_this_geometry
+                    n_parts_in_this_geometry = 0
                     s = 0
 
                     for k in xrange(i, total_number_of_parts):
-                        parts_in_this_geometry += 1                        
+                        print '  k=', k
+                        print '  p=', p
+                        n_parts_in_this_geometry += 1                        
                         index[k] = p
-                        s += parts[k]
-                        if s >= nodes_in_this_geometry:
-                            parts_per_geometry[j] = parts_in_this_geometry
+                        s += int(parts[k])
+                        print  '  s=', s
+                        if s >= n_nodes_in_this_geometry:
+#                           parts_per_geometry[j] = n_parts_in_this_geometry
                             i += k + 1
                             p += 1
                             break                        
@@ -1494,14 +1502,19 @@ variable should be pre-filled with missing values.
                     i += 1
                 #--- End: for
                 
+
+                print 'index=', index.get_array()
+                print 'part_node_count=',part_node_count
+                
                 element_dimension_1 = self._set_ragged_contiguous_parameters(
-                    elements_per_instance=part_node_count,
+                    elements_per_instance=parts,
                     sample_dimension=node_dimension,
                     element_dimension='node',
                     instance_dimension=part_dimension)
 
                 element_dimension_2 = self._set_ragged_indexed_parameters(
                     index=index,
+                    indexed_sample_dimension=g['variable_dimensions'][part_node_count][0],
                     element_dimension='part',
                     instance_dimension=cell_dimension)
 
@@ -1577,13 +1590,15 @@ variable should be pre-filled with missing values.
     #--- End: def
             
     def _set_ragged_indexed_parameters(self,
-                                       index=None,                                       
+                                       index=None,
+                                       indexed_sample_dimension=None,
                                        element_dimension=None,
                                        instance_dimension=None):
         '''qwertyy
 
 :Parameters:
 
+   
     index: `Data`
 
     element_dimension: `str`
@@ -1624,7 +1639,7 @@ variable should be pre-filled with missing values.
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
             
-        indexed_sample_dimension = g['variable_dimensions'][ncvar][0]
+#        indexed_sample_dimension = g['variable_dimensions'][ncvar][0]
         
         g['compression'].setdefault(indexed_sample_dimension, {})['ragged_indexed'] = {
             'elements_per_instance'  : elements_per_instance,
@@ -1638,7 +1653,7 @@ variable should be pre-filled with missing values.
     
         g['new_dimensions'][element_dimension] = element_dimension_size
         
-        if _debug:
+        if g['_debug']:
             print "    Created g['compression'][{!r}]['ragged_indexed']".format(
                 indexed_sample_dimension)
     
@@ -4181,16 +4196,18 @@ CF-1.7 Appendix A
             return []         
     #--- End: def
 
-    def _parse_grid_mapping(parent_ncvar, string):
+    def _parse_grid_mapping(self, parent_ncvar, string):
         '''
         '''
         g = self.read_vars
         if g['file_version'] >= g['version']['1.6']:
             return self._parse_x(parent_ncvar, string)
         else:
-            z = self._split_by_white_space(parent_ncvar, string)
-            if len(z) == 1:
-                return [{z[0]: []}]
+            # Pre v1.6, the grid mapping attribute may only point to a
+            # single netCDF variable
+            out = self._split_by_white_space(parent_ncvar, string)
+            if len(out) == 1:
+                return [{out[0]: []}]
 
             return []
     #--- End: def

@@ -298,6 +298,12 @@ bounds.
         return c
     #--- End: def
     
+    def get_node_ncdim(self, *default):
+        '''ttttttttt
+        '''        
+        return self._get_component('node_ncdim', None, *default)
+    #--- End: def
+
     def get_part_ncdim(self, *default):
         '''ttttttttt
         '''        
@@ -308,6 +314,12 @@ bounds.
         '''
         '''        
         return self._has_component('part_ncdim')
+    #--- End: def
+
+    def set_node_ncdim(self, value):
+        '''
+        '''
+        return self._set_component('node_ncdim', None, value)
     #--- End: def
 
     def set_part_ncdim(self, value):

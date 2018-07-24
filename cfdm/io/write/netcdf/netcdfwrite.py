@@ -538,7 +538,6 @@ name.
     '''
         g = self.write_vars
 
-#        bounds = coord.get_bounds(None)
         bounds = self.get_bounds(coord, None)
         if bounds is None:
             return {}
@@ -547,6 +546,9 @@ name.
         if data is None:
             return {}
 
+#        if self.is_geometry(coord):
+#            return {'nodes': 999}
+        
         # Still here? Then this coordinate has a bounds attribute
         # which contains data.
         extra = {}
@@ -716,7 +718,7 @@ then the input coordinate is not written.
 
         return coordinates
     #--- End: def
-      
+
     def _write_domain_ancillary(self, f, key, anc):
         '''Write a domain ancillary and its bounds to the netCDF file.
     
@@ -1397,6 +1399,10 @@ extra trailing dimension.
         # Initialize the list of 'coordinates' attribute variable values
         # (each of the form 'name')
         for key, aux_coord in sorted(self.get_auxiliary_coordinates(f).iteritems()):
+#            if self.is_geometry(aux_coord):
+#                coordinates = self._write_geometry_coordinate(f, key, aux_coord,
+#                                                              coordinates)
+
             coordinates = self._write_auxiliary_coordinate(f, key, aux_coord,
                                                            coordinates)
     
