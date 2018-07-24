@@ -485,12 +485,12 @@ field.
                                                  axes=axes, copy=copy)
     #--- End: def
 
-    def constructs(self, construct_type=None, axes=None, copy=False):
-        '''
-        '''
-        return self._get_constructs().constructs(construct_type=construct_type,
-                                                 axes=axes, copy=copy)
-    #--- End: def
+#    def constructs(self, construct_type=None, axes=None, copy=False):
+#        '''
+#        '''
+#        return self._get_constructs().constructs(construct_type=construct_type,
+#                                                 axes=axes, copy=copy)
+#    #--- End: def
     
     def dimension_coordinates(self, axes=None, copy=False):
         '''

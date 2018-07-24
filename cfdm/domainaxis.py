@@ -110,6 +110,47 @@ to the order of the elements.
         self._has_component('ncdim')
     #--- End: def
 
+    def name(self, default=None):
+        '''Return a name for the {+variable}.
+
+By default the name is the first found of the following:
+
+  3. If the *ncdim* parameter is True, the netCDF variable name (as
+     returned by the `get_ncvar` method), preceeded by the string
+     ``'ncvar%'``.
+  
+  4. The value of the *default* parameter.
+
+.. versionadded:: 1.6
+
+:Examples 1:
+
+>>> n = f.{+name}()
+>>> n = f.{+name}(default='NO NAME')
+
+:Parameters:
+
+    default: optional
+        If no name can be found then return the value of the *default*
+        parameter. By default the default is `None`.
+
+    ncvar: `bool`, optional
+
+:Returns:
+
+    out:
+        The name.
+
+:Examples 2:
+
+        '''
+        n = self.get_ncdim(None)
+        if n is not None:
+            return 'ncdim%{0}'.format(n)
+
+        return default
+    #--- End: def
+
     def set_ncdim(self, ncdim):
         '''
         '''

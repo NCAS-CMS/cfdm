@@ -14,13 +14,14 @@ class Constructs(structure.Constructs):
         return self.constructs('auxiliary_coordinate', axes=axes, copy=copy)
     #--- End: def
 
-    def constructs(self, construct_type=None, axes=None, copy=False):
+    def constructs(self, construct_type=None, name=None, axes=None,
+                   copy=False):
         '''
         '''
         out = super(Constructs, self).constructs(construct_type=construct_type,
                                                  copy=copy)
 
-        if axes:
+        if axes is not None:
             spans_axes = set(axes)
             construct_axes = self.construct_axes()
             for key, construct in out.items():
@@ -29,6 +30,12 @@ class Constructs(structure.Constructs):
                     del out[key]
         #--- End: if
 
+        if name is not None:
+            for key, construct in out.items():
+                if construct.name() != name:
+                    del out[key]
+        #--- End: if
+            
         return out
     #--- End: def
 

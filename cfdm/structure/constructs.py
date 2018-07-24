@@ -176,8 +176,6 @@ class Constructs(object):
         '''
         return 'SOMETHING BETTER NEEDED'
     #--- End: def
-
-    
     
     def construct_type(self, key):
         '''
@@ -290,6 +288,7 @@ class Constructs(object):
         if copy:
             for key, construct in out.items():
                 out[key] = construct.copy()
+        #--- End: if
 
         return out
     #--- End: def
