@@ -58,9 +58,6 @@ class NetCDFArray(Array):
     '''
     __metaclass__ = abc.ABCMeta
 
-    # Always close the netCDF file after access
-    _close = True
-
     def __init__(self, filename=None, ncvar=None, dtype=None,
                  ndim=None, shape=None, size=None, varid=None):
         '''
@@ -85,6 +82,11 @@ class NetCDFArray(Array):
         Number of elements in the data array.
 
 '''
+        self._nc = None
+        
+        # By default, close the netCDF file after data array access
+        self._close = True
+
         if filename is not None:
             u = urlparse.urlparse(filename)
             if u.scheme == '':
@@ -93,12 +95,12 @@ class NetCDFArray(Array):
             self.filename = filename
         #--- End: def
         
-        if ncvar is not None:
-            self._ncvar = ncvar
-
+        self._ncvar = ncvar
+        self._varid = varid
+        
         if ndim is not None:
             self._ndim = ndim
-
+        
         if size is not None:
             self._size = size
 
@@ -107,9 +109,6 @@ class NetCDFArray(Array):
 
         if dtype is not None:
             self._dtype = dtype
-
-        if varid is not None:
-            self._varid = varid
     #--- End: def
             
     def __getitem__(self, indices):
@@ -124,13 +123,13 @@ Returns a numpy array.
         
 #        indices = tuple(self.parse_indices(indices))
         
-        ncvar = getattr(self, 'ncvar', None)
+        ncvar = self.ncvar
         if ncvar is not None:
             # Get the variable by name
             array = nc.variables[ncvar][indices]
         else:
             # Get the variable by netCDF ID
-            varid = getattr(self, 'varid', None)
+            varid = self.varid
             for value in nc.variables.itervalues():
                 if value._varid == varid:
                     array = value[indices]
@@ -168,8 +167,8 @@ Returns a numpy array.
             array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
 
-        # Close the netCDF file
         if self._close:
+            # Close the netCDF file
             self.close()
         
         return array
@@ -190,7 +189,7 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
 '''      
-        name = getattr(self, 'ncvar', None)
+        name = self.ncvar
         if name is None:
             name = "varid={0}".format(self.varid)
         else:
@@ -234,7 +233,7 @@ x.__str__() <==> str(x)
 
 :Returns:
 
-    out: `netCDF4.Dataset`
+    `None`
 
 :Examples:
 
@@ -242,26 +241,26 @@ x.__str__() <==> str(x)
 
         '''
         self._nc.close()    
-        del self._nc
+        self._nc = None
     #--- End: def
 
-    @classmethod
-    def file_close(self, file):
-        '''Close the `netCDF4.Dataset` for the file containing the data.
-
-:Returns:
-
-    out: `netCDF4.Dataset`
-
-:Examples:
-
->>> f.close()
-
-        '''
-        nc = self._nc        
-        del self._nc
-        nc.close()
-    #--- End: def
+#    @classmethod
+#    def file_close(self, file):
+#        '''Close the `netCDF4.Dataset` for the given file.
+#
+#:Returns:
+#
+#    `None`
+#
+#:Examples:
+#
+#>>> f.close('file.nc')
+#
+#        '''
+#        nc = self._nc        
+#        del self._nc
+#        nc.close()
+#    #--- End: def
 
     @classmethod
     def file_open(cls, filename, mode, fmt=None):
@@ -301,8 +300,11 @@ x.__str__() <==> str(x)
 <netCDF4.Dataset at 0x115a4d0>
 
         '''
-        nc = self.file_open(self.filename, 'r')
-        self._nc = nc
+        nc = self._nc
+        if nc is None:
+            nc = self.file_open(self.filename, 'r')            
+            self._nc = nc
+            
         return nc
     #--- End: def
 

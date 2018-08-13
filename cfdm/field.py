@@ -311,11 +311,10 @@ functionality:
         # ------------------------------------------------------------
         # Subspace the field's data
         # ------------------------------------------------------------
-
         new.set_data(data[tuple(indices)], data_axes)
 
         # ------------------------------------------------------------
-        # Subspace constructs that contain arrays
+        # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
 

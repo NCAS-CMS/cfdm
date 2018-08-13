@@ -293,7 +293,7 @@ class Constructs(object):
         return out
     #--- End: def
     
-    def construct_axes(self, key=None, *default):
+    def construct_axes(self, key=None): #, *default):
         '''
 :Examples 1:
 
@@ -335,22 +335,27 @@ None
             else:
                 ignore = self._ignore
                 out = {}
-                for construct_type, keys in self._constructs:
+                for construct_type, keys in self._constructs.iteritems():
                     if construct_type not in ignore:
                         for key in keys:
-                            out[key] = self._construct_axes[key]
+                            _ = self._construct_axes.get(key)
+                            if _ is not None:
+                                out[key] = _
+                #--- End: for
+                return out
 
         # Return a particular construct's axes
         if self._ignore:
             if self.construct_type(key) is None:
                 key = None
-            
-        out = self._construct_axes.get(key)
-        if out is None:
-            if default:
-                return default[0]
 
-            raise ValueError("ascdscj w0hdpiqund s")
+        return self._construct_axes.get(key)
+#        out = self._construct_axes.get(key)
+#        if out is None:
+#            if default:
+#                return default[0]#
+#
+#            raise ValueError("ascdscj w0hdpiqund s")
             
         return out
         

@@ -14,6 +14,23 @@ class Constructs(structure.Constructs):
         return self.constructs('auxiliary_coordinate', axes=axes, copy=copy)
     #--- End: def
 
+    def construct(self, construct_type=None, name=None, axes=None,
+                  copy=False):
+        '''
+        '''
+        out = self.constructs(construct_type=construct_type,
+                              name=name, axes=axes, copy=copy)
+
+        if not out:
+            raise ValueError("No such construct")
+        
+        key, construct = out.popitem()
+        if out:
+            raise ValueError("More than one construct meets criteria")
+            
+        return construct
+    #--- End: def
+
     def constructs(self, construct_type=None, name=None, axes=None,
                    copy=False):
         '''
@@ -32,7 +49,7 @@ class Constructs(structure.Constructs):
 
         if name is not None:
             for key, construct in out.items():
-                if construct.name() != name:
+                if name not in construct.name(all_names=True):
                     del out[key]
         #--- End: if
             
