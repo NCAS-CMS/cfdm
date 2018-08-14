@@ -361,7 +361,7 @@ functionality:
         name_to_keys = {}
 
         for key, construct in getattr(self, constructs)().iteritems():
-            name = construct.name(default='key%'+key)
+            name = construct.name(default='cfdm%'+key)
             name_to_keys.setdefault(name, []).append(key)
             key_to_name[key] = name
 

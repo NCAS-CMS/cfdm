@@ -240,27 +240,13 @@ x.__str__() <==> str(x)
 >>> f.close()
 
         '''
-        self._nc.close()    
+        nc = self._nc
+        if nc is None:
+            return
+        
+        nc.close()    
         self._nc = None
     #--- End: def
-
-#    @classmethod
-#    def file_close(self, file):
-#        '''Close the `netCDF4.Dataset` for the given file.
-#
-#:Returns:
-#
-#    `None`
-#
-#:Examples:
-#
-#>>> f.close('file.nc')
-#
-#        '''
-#        nc = self._nc        
-#        del self._nc
-#        nc.close()
-#    #--- End: def
 
     @classmethod
     def file_open(cls, filename, mode, fmt=None):

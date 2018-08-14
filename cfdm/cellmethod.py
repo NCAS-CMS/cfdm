@@ -440,7 +440,7 @@ The `!axes` attribute is ignored in the comparison.
 #        return True
 #    #--- End: def
 
-    def name(self, default=None):
+    def name(self, default=None, all_names=False):
         '''Return a name for the {+variable}.
 
 By default the name is the first found of the following:
@@ -474,6 +474,13 @@ By default the name is the first found of the following:
 :Examples 2:
 
         '''
+        if all_names:
+            n = self.get_property('method', None)
+            if n is not None:
+                return [n]
+            else:
+                return []
+            
         return self.get_property('method', default)
     #--- End: def
 
