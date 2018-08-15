@@ -272,6 +272,11 @@ class Constructs(object):
         
     def constructs(self, construct_type=None, copy=False):
         '''
+
+:Returns:
+
+    out: `dict`
+
         '''
         construct_type = self._check_construct_type(construct_type)
 

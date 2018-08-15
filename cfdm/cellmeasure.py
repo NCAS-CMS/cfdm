@@ -115,7 +115,8 @@ sepcifically set to be external with the `set_external` method.
         return self._get_component('external', None, False)
     #--- End: def
 
-    def name(self, default=None, ncvar=False):
+    def name(self, default=None, ncvar=False, custom=None,
+             all_names=False):
         '''Return a name for the cell measure.
 
 By default the name is the first found of the following:
@@ -178,12 +179,26 @@ None
 'air_temperature'
 
         '''
-        n = self.get_measure(None)
-        if n is not None:
-            return n
+        out = []
+        
+        if custom is None:
+            n = self.get_measure(None)
+            if n is not None:
+                out.append(n)
 
-        return super(CellMeasure, self).name(default=default,
-                                             ncvar=ncvar)
+            custom = ()
+        
+        if all_names:    
+            out += super(CellMeasure, self).name(default=default,
+                                                 ncvar=ncvar,
+                                                 custom=custom,
+                                                 all_names=all_names)
+            return out
+        
+        if out:
+            return out[-1]
+
+        return default    
     #--- End: def
 
     def set_external(self, value):

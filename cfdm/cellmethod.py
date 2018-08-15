@@ -440,7 +440,8 @@ The `!axes` attribute is ignored in the comparison.
 #        return True
 #    #--- End: def
 
-    def name(self, default=None, all_names=False):
+    def name(self, default=None, ncvar=False, custom=None,
+             all_names=False):
         '''Return a name for the {+variable}.
 
 By default the name is the first found of the following:
@@ -474,14 +475,38 @@ By default the name is the first found of the following:
 :Examples 2:
 
         '''
-        if all_names:
-            n = self.get_property('method', None)
-            if n is not None:
-                return [n]
-            else:
-                return []
+        out = []
+
+        if custom is None:
+            custom = ('method',)
             
-        return self.get_property('method', default)
+        for prop in custom:
+            n = self.get_property(prop, None)
+            if n is not None:
+                out.append('{0}:{1}'.format(prop, n))
+                if not all_names:
+                    break
+        #--- End: if
+        
+        if all_names:
+            if default is not None:
+                out.append(default)
+                
+            return out
+        
+        if out:
+            return out[-1]
+
+        return default
+    
+#        if all_names:
+#            n = self.get_property('method', None)
+#            if n is not None:
+#                return [n]
+#            else:
+#                return []
+#            
+#        return self.get_property('method', default)
     #--- End: def
 
     def sorted(self, indices=None):

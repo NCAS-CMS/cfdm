@@ -110,7 +110,8 @@ to the order of the elements.
         self._has_component('ncdim')
     #--- End: def
 
-    def name(self, default=None, all_names=False):
+    def name(self, default=None, ncvar=True, custom=None,
+             all_names=False):
         '''Return a name for the {+variable}.
 
 By default the name is the first found of the following:
@@ -144,13 +145,17 @@ By default the name is the first found of the following:
 :Examples 2:
 
         '''
-        if all_names:            
+        if all_names:
+            out = []
             n = self.get_ncdim(None)
             if n is not None:
-                return ['ncdim%{0}'.format(n)]
-            else:
-                return []
-        
+                out.append(['ncdim%{0}'.format(n)])
+                
+            if default is not None:
+                out.append(default)
+
+            return out
+       
         n = self.get_ncdim(None)
         if n is not None:
             return 'ncdim%{0}'.format(n)

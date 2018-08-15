@@ -48,9 +48,21 @@ class Constructs(structure.Constructs):
         #--- End: if
 
         if name is not None:
-            for key, construct in out.items():
-                if name not in construct.name(all_names=True):
-                    del out[key]
+            (prefix, _, key) = name.partition('%')
+            if prefix == 'cfdm':
+                key = name[len(prefix):]
+                construct = out.get(key)
+                if construct is not None:
+                    out = {key: construct}
+                else:
+                    out = {}
+            else:
+                (prefix, _, value) = name.partition(':')
+                custom = prefix if value else None
+                
+                for key, construct in out.items():
+                    if name not in construct.name(custom=custom, all_names=True):
+                        del out[key]
         #--- End: if
             
         return out

@@ -349,7 +349,7 @@ first axis which is to have a chunk size of 12:
         return old_chunks
     #--- End: def
 
-    def name(self, default=None, ncvar=True, property=None,
+    def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
         '''Return a name for the {+variable}.
 
@@ -412,25 +412,25 @@ None
 'air_temperature'
 
         '''
-        if all_names:
-            out = []
-            n = self.get_property('standard_name', None)
-            if n is not None:
-                out.append(n)
-        
-            n = self.get_property('long_name', None)
-            if n is not None:
-                out.append('long_name:{0}'.format(n))
-        
-            n = self.get_property('cf_role', None)
-            if n is not None:
-                out.append('cf_role:{0}'.format(n))
-        
-            n = self.get_ncvar(None)
-            if n is not None:
-                out.append('ncvar%{0}'.format(n))
-        
-            return out
+#        if all_names:
+#            out = []
+#            n = self.get_property('standard_name', None)
+#            if n is not None:
+#                out.append(n)
+#        
+#            n = self.get_property('long_name', None)
+#            if n is not None:
+#                out.append('long_name:{0}'.format(n))
+#        
+#            n = self.get_property('cf_role', None)
+#            if n is not None:
+#                out.append('cf_role:{0}'.format(n))
+#        
+#            n = self.get_ncvar(None)
+#            if n is not None:
+#                out.append('ncvar%{0}'.format(n))
+#        
+#            return out
 #yyyyyy
 #        properties = ['standard_name', 'long_name', 'cf_role']
 #        if property is not None:
@@ -443,25 +443,80 @@ None
 #                    return n
 #                else:
 #                    return '{0}:{1}'.format(prop, n)
+
+        out = []
+
+        if custom is None:
+            n = self.get_property('standard_name', None)
+            if n is not None:
+                out.append(n)
+
+            custom = ('long_name', 'cf_role')
+#        elif isinstance(custom, basestring):
+#            custom = (custom,)
+            
+        if all_names or not out:
+            for prop in custom:
+                n = self.get_property(prop, None)
+                if n is not None:
+                    out.append('{0}:{1}'.format(prop, n))
+                    if not all_names:
+                        break
+        #--- End: if
         
-        n = self.get_property('standard_name', None)
-        if n is not None:
-            return n
-
-        n = self.get_property('long_name', None)
-        if n is not None:
-            return 'long_name:{0}'.format(n)
-
-        n = self.get_property('cf_role', None)
-        if n is not None:
-            return 'cf_role:{0}'.format(n)
-
-        if ncvar:
+        if ncvar and (all_names or not out):
             n = self.get_ncvar(None)
             if n is not None:
-                return 'ncvar%{0}'.format(n)
-            
+                out.append('ncvar%{0}'.format(n))
+        #--- End: if
+
+        if all_names:
+            if default is not None:
+                out.append(default)
+                
+            return out
+        
+        if out:
+            return out[-1]
+
         return default
+    
+#        n = self.get_property('standard_name', None)
+#        if n is not None:
+#            return n
+#
+#        properties = ['long_name', 'cf_role']
+#        if property is not None:
+#            properties.append(property)
+#            
+#        for prop in properites:
+#            n = self.get_property(prop, None)
+#            if n is not None:
+#                return '{0}:{1}'.format(prop, n)
+#        
+#        if ncvar:
+#            n = self.get_ncvar(None)
+#            if n is not None:
+#                return 'ncvar%{0}'.format(n)
+#            
+#        n = self.get_property('standard_name', None)
+#        if n is not None:
+#            return n
+#
+#        n = self.get_property('long_name', None)
+#        if n is not None:
+#            return 'long_name:{0}'.format(n)
+#
+#        n = self.get_property('cf_role', None)
+#        if n is not None:
+#            return 'cf_role:{0}'.format(n)
+#
+#        if ncvar:
+#            n = self.get_ncvar(None)
+#            if n is not None:
+#                return 'ncvar%{0}'.format(n)
+#            
+#        return default
     #--- End: def
 
     def open(self):

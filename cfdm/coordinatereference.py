@@ -431,7 +431,8 @@ reference object.
         return True
     #--- End: def
 
-    def name(self, default=None):
+    def name(self, default=None, ncvar=True, custom=None,
+             all_names=False):
         '''Return a name.
 
 By default the name is the first found of the following:
@@ -456,15 +457,47 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 >>> n = r.name()
 >>> n = r.name(default='NO NAME'))
 '''
-        n = self.coordinate_conversion.get_parameter('standard_name', None)
-        if n is not None:
-            return n
+#        n = self.coordinate_conversion.get_parameter('standard_name', None)
+#        if n is not None:
+#            return n
+#        
+#        n = self.coordinate_conversion.get_parameter('grid_mapping_name', None)
+#        if n is not None:
+#            return n
+#        
+#        return default
+
+
+        out = []
+
+        if custom is None:
+            custom = ('standard_name', 'grid_mapping_name')
+        elif isinstance(custom, basestring):
+            custom = (custom,)
+            
+        for prop in custom:
+            n = self.coordinate_conversion.get_parameter(prop, None)
+            if n is not None:
+                out.append(str(n))
+                if not all_names:
+                    break
+        #--- End: if
         
-        n = self.coordinate_conversion.get_parameter('grid_mapping_name', None)
-        if n is not None:
-            return n
+        if ncvar and (all_names or not out):
+            n = self.get_ncvar(None)
+            if n is not None:
+                out.append('ncvar%{0}'.format(n))
+        #--- End: if
+
+        if all_names:
+            return out
         
+        if out:
+            return out[-1]
+
         return default
+
+    
     #--- End: def
 
 #    def _parse_match(self, match):
