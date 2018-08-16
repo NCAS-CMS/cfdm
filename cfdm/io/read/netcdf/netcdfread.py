@@ -9,6 +9,9 @@ from distutils.version import LooseVersion
 from collections import OrderedDict
 
 import numpy
+import netCDF4
+
+from .custom import Custom
 
 from .. import IORead
 
@@ -128,10 +131,10 @@ netCDF variable.
 
 
         '''
-        r = self.read_vars['references'].setdefault(ncvar, 0)
-        r += 1
-        self.read_vars['references'][ncvar] = r
-        return r
+        count = self.read_vars['references'].setdefault(ncvar, 0)
+        count += 1
+        self.read_vars['references'][ncvar] = count
+        return count
     #--- End: def 
 
     def file_close(self):
@@ -149,41 +152,52 @@ netCDF variable.
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
+:Paramters:
+
+    filename: `str`
+        The netCDF file to be read.
+
 :Returns:
 
-    out: `netCDF.Dataset`
+    out: `netCDF4.Dataset`
+        A `netCDF4.Dataset` object for the file.
 
         '''
-        return self.implementation.get_class('NetCDFArray').file_open(filename, 'r')
+        try:        
+            return netCDF4.Dataset(filename, 'r')
+        except RuntimeError as error:
+            raise RuntimeError("{}: {}".format(error, filename))        
+
+#        return self.implementation.get_class('NetCDFArray').file_open(filename, 'r')
     #--- End: def        
 
-    def get_coordinates(self, f):
-       '''
-       '''
-       return f.coordinates()
-    #-- End: def
-
-    def get_ncvar(self, construct, *default):
-       '''
-       '''
-       return construct.get_ncvar(*default)
-    #-- End: def
-
-    def get_max(self, data):
-        '''
-        '''
-        return int(data.max())
-
-    def get_property(self, construct, prop, *default):
-       '''
-       '''
-       return construct.get_property(prop, *default)
-    #-- End: def
-
-    def get_size(self, x):
-        '''
-        '''
-        return x.size
+#    def get_coordinates(self, f):
+#       '''
+#       '''
+#       return f.coordinates()
+#    #-- End: def
+#
+#    def get_ncvar(self, construct, *default):
+#       '''
+#       '''
+#       return construct.get_ncvar(*default)
+#    #-- End: def
+#
+#    def get_int_max(self, data):
+#        '''
+#        '''
+#        return int(data.max())
+#
+#    def get_property(self, construct, prop, *default):
+#       '''
+#       '''
+#       return construct.get_property(prop, *default)
+#    #-- End: def
+#
+#    def get_size(self, x):
+#        '''
+#        '''
+#        return x.size
 
     @classmethod    
     def is_netcdf_file(cls, filename):
@@ -232,8 +246,8 @@ contents and any file suffix is not not considered.
             return False
     #--- End: def
 
-    def read(self, filename, field=(), verbose=False, uncompress=True,
-             external_files=(), extra_read_vars=None,
+    def read(self, filename, field=(), default_version=None, verbose=False,
+             uncompress=True, external_files=(), extra_read_vars=None,
              _scan_only=False, _debug=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
@@ -365,6 +379,7 @@ ancillaries, field ancillaries).
             'referenced_external_variables': set(),
 
             'version': {'1.6': LooseVersion('1.6'),
+                        '1.7': LooseVersion('1.7'),
                         '1.8': LooseVersion('1.8')},
         }
         g = self.read_vars
@@ -437,15 +452,19 @@ ancillaries, field ancillaries).
 
 
         # ------------------------------------------------------------
-        # Find the file conventions
+        # Find the CF version for the file
         # ------------------------------------------------------------
         # DCH ALERT: haven't yet dealt with multiple conventions!
-        Conventions = g['global_attributes'].get('Conventions', '').replace('CF-', '', 1)
-        if not Conventions:
-            # Assume the conventions of the CFDM imlementation 
-            Conventions = self.implementation.get_class('Conventions')
-
-        g['file_version'] = LooseVersion(Conventions)
+        file_version = g['global_attributes'].get('Conventions', '').replace('CF-', '', 1)
+        if not file_version:
+            if default_version is not None:
+                file_version = default_version
+            else:
+                # Assume the version of the CFDM imlementation
+                file_version = self.implementation.get_version()
+        #--- End: if
+        
+        g['file_version'] = LooseVersion(file_version)
 
         # ------------------------------------------------------------
         # Create a dictionary keyed by netCDF variable names where
@@ -683,9 +702,10 @@ ancillaries, field ancillaries).
             fields0 = fields.values()
             for construct_type in g['fields']:
                 for f in fields0:
-                    constructs = getattr(self, 'get_'+construct_type)(f).itervalues()
+                    get_constructs = getattr(Custom, 'get_'+construct_type)
+                    constructs = get_constructs(f).itervalues()
                     for construct in constructs:
-                        ncvar = self.get_ncvar(construct)
+                        ncvar = Custom.get_ncvar(construct)
                         if ncvar not in all_fields:
                             continue
                         
@@ -793,269 +813,263 @@ ancillaries, field ancillaries).
                         g[key][ncvar] = external_read_vars[key][ncvar]                   
     #--- End: def
     
-    def _set_auxiliary_coordinate(self, field, construct, axes, copy=True):
-        '''Insert a auxiliary coordinate object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `AuxiliaryCoordinate`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self.get_ncvar(construct))
-        if construct.has_bounds():
-            self._reference(self.get_ncvar(construct.get_bounds()))
-            
-        return field.set_auxiliary_coordinate(construct, axes=axes, copy=copy)
-    #--- End: def
-
-    def set_bounds(self, construct, bounds, copy=True):
-        '''
-        '''
-        construct.set_bounds(bounds, copy=copy)
-    #--- End: def
-
-    def set_coordinate_ancillary(self, coordinate, prop, value):
-        '''
-        '''
-        coordinate.set_ancillary(prop, value)
-    #--- End: def
-    
-    def set_geometry_type(self, coordinate, value):
-        '''
-        '''
-        coordinate.set_geometry_type(value)
-    #--- End: def
-    
-    def set_cell_measure(self, field, construct, axes, copy=True):
-        '''Insert a cell_measure object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `CellMeasure`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self.get_ncvar(construct))
-
-        return field.set_cell_measure(construct, axes=axes, copy=copy)
-    #--- End: def
-    
-    def set_cell_method(self, field, construct, copy=True):
-        '''Insert a cell_method object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `cell_method`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        return field.set_cell_method(construct, copy=copy)
-    #--- End: def
-
-    def set_coordinate_reference(self, field, construct, copy=True):
-        '''Insert a coordinate reference object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `CoordinateReference`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        ncvar = self.get_ncvar(construct, None)
-        if ncvar is not None:
-            self._reference(ncvar)
-                    
-        return field.set_coordinate_reference(construct, copy=copy)
-    #--- End: def
-
-    def set_coordinate_reference_coordinates(self, coordinate_reference,
-                                             coordinates):
-        '''
-
-:Parameters:
-
-:Returns:
-
-    `None`
-        '''
-        coordinate_reference.coordinates(coordinates)
-    #--- End: de
-
-    def set_datum(self, coordinate_reference, datum):
-        '''
-        '''
-        coordinate_reference.set_datum(datum)
-    #--- End: def
-    
-    def set_dimension_coordinate(self, field, construct, axes, copy=True):
-        '''Insert a dimension coordinate object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `DimensionCoordinate`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self.get_ncvar(construct))
-        if construct.has_bounds():
-            self._reference(self.get_ncvar(construct.get_bounds()))
-            
-        return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
-    #--- End: def
-    
-    def set_domain_ancillary(self, field, construct, axes,
-                             extra_axes=0, copy=True):
-        '''Insert a domain ancillary object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `DomainAncillary`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self.get_ncvar(construct))
-        if construct.has_bounds():
-            self._reference(self.get_ncvar(construct.get_bounds()))
-
-        return field.set_domain_ancillary(construct, axes=axes,
-                                          extra_axes=extra_axes,
-                                          copy=copy)
-    #--- End: def
-    
-    def set_domain_axis(self, field, construct, copy=True):
-        '''Insert a domain_axis object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `domain_axis`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        return field.set_domain_axis(construct, copy=copy)
-    #--- End: def
-    
-    def set_external(self, construct):
-        '''
-        '''
-        construct.set_external(True)
-    #--- End: def
-
-    def set_field_ancillary(self, field, construct, axes, copy=True):
-        '''Insert a field ancillary object into a field.
-
-:Parameters:
-
-    field: `Field`
-
-    construct: `FieldAncillary`
-
-    axes: `tuple`
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        self._reference(self.get_ncvar(construct))
-
-        return field.set_field_ancillary(construct, axes=axes, copy=copy)
-    #--- End: def
-
-    def set_interior_ring(self, parent, interior_ring, copy=True):
-        '''Insert an interior ring array into a coordiante.
-
-:Parameters:
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `str`
-        '''
-        return parent.set_interior_ring(interior_ring, copy=copy)
-    #--- End: def
-    
-    def set_ncdim(self, construct, ncdim):
-        '''
-        '''
-        construct.set_ncdim(ncdim)
-    #-- End: def
-
-    def set_ncvar(self, parent, ncvar):
-        '''
-        '''
-        parent.set_ncvar(ncvar)
-    #-- End: def
-
-    def set_node_ncdim(self, parent, ncdim):
-        '''
-        '''
-        parent.set_node_ncdim(ncdim)
-    #-- End: def
-
-    def set_part_ncdim(self, parent, ncdim):
-        '''
-        '''
-        parent.set_part_ncdim(ncdim)
-    #-- End: def
-
-    def set_properties(self, construct, properties, copy=True):
-        '''
-        '''
-        return construct.properties(properties, copy=copy)
-    #--- End: def
+#    def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
+#        '''Insert a auxiliary coordinate object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `AuxiliaryCoordinate`
+#
+#    axes: `tuple`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        self._reference(self.get_ncvar(construct))
+#        if construct.has_bounds():
+#            self._reference(self.get_ncvar(construct.get_bounds()))
+#            
+#        return field.set_auxiliary_coordinate(construct, axes=axes, copy=copy)
+#    #--- End: def
+#
+#    def set_bounds(self, construct, bounds, copy=True):
+#        '''
+#        '''
+#        construct.set_bounds(bounds, copy=copy)
+#    #--- End: def
+#
+#    def set_geometry_type(self, coordinate, value):
+#        '''
+#        '''
+#        coordinate.set_geometry_type(value)
+#    #--- End: def
+#    
+#    def set_cell_measure(self, field, construct, axes, copy=True):
+#        '''Insert a cell_measure object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `CellMeasure`
+#
+#    axes: `tuple`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        self._reference(self.get_ncvar(construct))
+#
+#        return field.set_cell_measure(construct, axes=axes, copy=copy)
+#    #--- End: def
+#    
+#    def set_cell_method(self, field, construct, copy=True):
+#        '''Insert a cell_method object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `cell_method`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        return field.set_cell_method(construct, copy=copy)
+#    #--- End: def
+#
+#    def set_coordinate_reference(self, field, construct, copy=True):
+#        '''Insert a coordinate reference object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `CoordinateReference`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        ncvar = self.get_ncvar(construct, None)
+#        if ncvar is not None:
+#            self._reference(ncvar)
+#                    
+#        return field.set_coordinate_reference(construct, copy=copy)
+#    #--- End: def
+#
+#    def set_coordinate_reference_coordinates(self, coordinate_reference,
+#                                             coordinates):
+#        '''
+#
+#:Parameters:
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        coordinate_reference.coordinates(coordinates)
+#    #--- End: de
+#
+#    def set_datum(self, coordinate_reference, datum):
+#        '''
+#        '''
+#        coordinate_reference.set_datum(datum)
+#    #--- End: def
+#    
+#    def set_dimension_coordinate(self, field, construct, axes, copy=True):
+#        '''Insert a dimension coordinate object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `DimensionCoordinate`
+#
+#    axes: `tuple`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        self._reference(self.get_ncvar(construct))
+#        if construct.has_bounds():
+#            self._reference(self.get_ncvar(construct.get_bounds()))
+#            
+#        return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
+#    #--- End: def
+#    
+#    def set_domain_ancillary(self, field, construct, axes,
+#                             extra_axes=0, copy=True):
+#        '''Insert a domain ancillary object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `DomainAncillary`
+#
+#    axes: `tuple`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        self._reference(self.get_ncvar(construct))
+#        if construct.has_bounds():
+#            self._reference(self.get_ncvar(construct.get_bounds()))
+#
+#        return field.set_domain_ancillary(construct, axes=axes,
+#                                          extra_axes=extra_axes,
+#                                          copy=copy)
+#    #--- End: def
+#    
+#    def set_domain_axis(self, field, construct, copy=True):
+#        '''Insert a domain_axis object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `domain_axis`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        return field.set_domain_axis(construct, copy=copy)
+#    #--- End: def
+#    
+#    def set_external(self, construct):
+#        '''
+#        '''
+#        construct.set_external(True)
+#    #--- End: def
+#
+#    def set_field_ancillary(self, field, construct, axes, copy=True):
+#        '''Insert a field ancillary object into a field.
+#
+#:Parameters:
+#
+#    field: `Field`
+#
+#    construct: `FieldAncillary`
+#
+#    axes: `tuple`
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        self._reference(self.get_ncvar(construct))
+#
+#        return field.set_field_ancillary(construct, axes=axes, copy=copy)
+#    #--- End: def
+#
+#    def set_interior_ring(self, parent, interior_ring, copy=True):
+#        '''Insert an interior ring array into a coordiante.
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    out: `str`
+#        '''
+#        return parent.set_interior_ring(interior_ring, copy=copy)
+#    #--- End: def
+#    
+#    def set_ncdim(self, construct, ncdim):
+#        '''
+#        '''
+#        construct.set_ncdim(ncdim)
+#    #-- End: def
+#
+#    def set_ncvar(self, parent, ncvar):
+#        '''
+#        '''
+#        parent.set_ncvar(ncvar)
+#    #-- End: def
+#
+#    def set_node_ncdim(self, parent, ncdim):
+#        '''
+#        '''
+#        parent.set_node_ncdim(ncdim)
+#    #-- End: def
+#
+#    def set_part_ncdim(self, parent, ncdim):
+#        '''
+#        '''
+#        parent.set_part_ncdim(ncdim)
+#    #-- End: def
+#
+#    def set_properties(self, construct, properties, copy=True):
+#        '''
+#        '''
+#        return construct.properties(properties, copy=copy)
+#    #--- End: def
 
     def _parse_compression_gathered(self, ncvar, compress):
         '''
@@ -1109,8 +1123,8 @@ ancillaries, field ancillaries).
         
         elements_per_instance = self._create_data(ncvar, uncompress_override=True)
     
-        instance_dimension_size = self.get_size(elements_per_instance)
-        element_dimension_size  = self.get_max(elements_per_instance)
+        instance_dimension_size = Custom.get_size(elements_per_instance)
+        element_dimension_size  = Custom.get_int_max(elements_per_instance)
     
         if _debug:
             print '    contiguous array implied shape:', (instance_dimension_size,element_dimension_size)
@@ -1470,14 +1484,14 @@ variable should be pre-filled with missing values.
                 
                 parts = self._create_data(part_node_count)
                 print 'parts=', parts.get_array()
-                total_number_of_parts = self.get_size(parts)
+                total_number_of_parts = Custom.get_size(parts)
 #                parts_per_geometry = nodes_per_geometry.copy()
                 print 'total_number_of_parts=',total_number_of_parts
                 index = parts.copy()
 
                 p = 0
                 i = 0
-                for j in xrange(self.get_size(nodes_per_geometry)):
+                for j in xrange(Custom.get_size(nodes_per_geometry)):
                     print 'i=', i
                     print 'j=', j
                     n_nodes_in_this_geometry = int(nodes_per_geometry[j])
@@ -1505,7 +1519,7 @@ variable should be pre-filled with missing values.
 
                 print 'index=', index.get_array()
                 print 'part_node_count=',part_node_count
-                
+                o
                 element_dimension_1 = self._set_ragged_contiguous_parameters(
                     elements_per_instance=parts,
                     sample_dimension=node_dimension,
@@ -1559,8 +1573,8 @@ variable should be pre-filled with missing values.
         '''
         g = self.read_vars
         
-        instance_dimension_size = self.get_size(elements_per_instance)
-        element_dimension_size  = self.get_max(elements_per_instance)
+        instance_dimension_size = Custom.get_size(elements_per_instance)
+        element_dimension_size  = Custom.get_int_max(elements_per_instance)
         
         # Make sure that the element dimension name is unique
         base = element_dimension
@@ -2036,7 +2050,8 @@ variable should be pre-filled with missing values.
         # properties since they will be dealt with by the variable's Data
         # object. Makes sure we note that they were there so we can adjust
         # the field's dtype accordingly
-        values = [properties.pop(k, None) for k in ('add_offset', 'scale_factor')]
+        values = [properties.pop(k, None)
+                  for k in ('add_offset', 'scale_factor')]
         unpacked_dtype = (values != [None, None])
         if unpacked_dtype:
             try:
@@ -2051,10 +2066,10 @@ variable should be pre-filled with missing values.
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
         f = self.initialise('Field')
-        self.set_properties(f, properties, copy=False)
+        Custom.set_properties(f, properties, copy=False)
 
         # Store the field's netCDF variable name
-        self.set_ncvar(f, field_ncvar)
+        Custom.set_ncvar(f, field_ncvar)
    
         f.set_global_attributes(g['global_attributes'])
 
@@ -2095,16 +2110,22 @@ variable should be pre-filled with missing values.
                                                               verbose=verbose)
                     g['dimension_coordinate'][ncdim] = coord
                 
-                domain_axis = self._create_domain_axis(self.get_size(coord), ncdim)
+                domain_axis = self._create_domain_axis(Custom.get_size(coord),
+                                                       ncdim)
                 if _debug:
-                    print '    [0] Inserting', repr(domain_axis)                    
-                axis = self.set_domain_axis(f, domain_axis, copy=False)
+                    print '    [0] Inserting', repr(domain_axis)
+                axis = Custom.set_domain_axis(field=f, construct=domain_axis,
+                                              copy=False)
 
                 if _debug:
                     print '    [1] Inserting', repr(coord)
-                dim = self.set_dimension_coordinate(f, coord,
-                                                    axes=[axis], copy=False)
+                dim = Custom.set_dimension_coordinate(field=f, construct=coord,
+                                                      axes=[axis], copy=False)
                 
+                self._reference(ncdim)
+                if coord.has_bounds():
+                    self._reference(Custom.get_ncvar(coord.get_bounds()))
+                    
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
                     f.unlimited({axis: True})
@@ -2122,7 +2143,8 @@ variable should be pre-filled with missing values.
                 domain_axis = self._create_domain_axis(size, ncdim)
                 if _debug:
                     print '    [2] Inserting', repr(domain_axis)
-                axis = self.set_domain_axis(f, domain_axis, copy=False)
+                axis = Custom.set_domain_axis(field=f, construct=domain_axis,
+                                              copy=False)
                 
                 # Set unlimited status of axis
                 try:
@@ -2151,7 +2173,7 @@ variable should be pre-filled with missing values.
         # Add scalar dimension coordinates and auxiliary coordinates to
         # the field
         # ----------------------------------------------------------------
-        coordinates = self.del_property(f, 'coordinates')
+        coordinates = Custom.del_property(f, 'coordinates')
         if coordinates is not None:
             parsed_coordinates = self._split_by_white_space(field_ncvar, coordinates)
             for ncvar in parsed_coordinates:
@@ -2205,18 +2227,26 @@ variable should be pre-filled with missing values.
                     # coordinate
                     coord = self.initialise('DimensionCoordinate',
                                              source=coord, copy=False)
-                    coord = self.expand_dims(coord, position=0, copy=False)
+                    coord = Custom.expand_dims(construct=coord, position=0,
+                                               copy=False)
                     
-                    domain_axis = self._create_domain_axis(self.get_size(coord))
+                    domain_axis = self._create_domain_axis(
+                        Custom.get_size(coord))
                     if _debug:
                         print '    [5] Inserting', repr(domain_axis)
-                    axis = self.set_domain_axis(f, domain_axis, copy=False)
+                    axis = Custom.set_domain_axis(field=f,
+                                                  construct=domain_axis,
+                                                  copy=False)
                     
                     if _debug:
                         print '    [5] Inserting', repr(coord)
                     dim = self.set_dimension_coordinate(f, coord,
                                                         axes=[axis], copy=False)
-                    
+
+                    self._reference(ncvar)
+                    if Custom.has_bounds(coord):
+                        self._reference(Custom.get_ncvar(coord.get_bounds()))
+                                        
                     dimensions = [axis]
                     ncvar_to_key[ncvar] = dim
                                         
@@ -2226,9 +2256,14 @@ variable should be pre-filled with missing values.
                     # Insert auxiliary coordinate
                     if _debug:
                         print '    [6] Inserting', repr(coord)
-                    aux = self._set_auxiliary_coordinate(f, coord,
-                                                         axes=dimensions,
-                                                         copy=False)
+                    aux = Custom.set_auxiliary_coordinate(f, coord,
+                                                          axes=dimensions,
+                                                          copy=False)
+
+                    self._reference(ncvar)
+                    if Custom.has_bounds(coord):
+                        self._reference(Custom.get_ncvar(coord.get_bounds()))
+
                     ncvar_to_key[ncvar] = aux
 
                 if scalar:
@@ -2239,8 +2274,8 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Add coordinate references from formula_terms properties
         # ----------------------------------------------------------------
-        for key, coord in self.get_coordinates(f).iteritems():
-            coord_ncvar = self.get_ncvar(coord)
+        for key, coord in Custom.get_coordinates(field=f).iteritems():
+            coord_ncvar = Custom.get_ncvar(coord)
 
             formula_terms = g['variable_attributes'][coord_ncvar].get('formula_terms')        
             if formula_terms is None:
@@ -2271,7 +2306,8 @@ variable should be pre-filled with missing values.
                     if bounds == ncvar:
                         bounds = None
         
-                    domain_anc = self._create_domain_ancillary(field_ncvar, ncvar,
+                    domain_anc = self._create_domain_ancillary(field_ncvar,
+                                                               ncvar,
                                                                f,
                                                                bounds=bounds,
                                                                verbose=verbose)
@@ -2301,8 +2337,14 @@ variable should be pre-filled with missing values.
                 if _debug:
                     print '    [7] Inserting', repr(domain_anc)
                     
-                da_key = self.set_domain_ancillary(f, domain_anc,
-                                                   axes=axes, copy=False)
+                da_key = Custom.set_domain_ancillary(field=f,
+                                                     construct=domain_anc,
+                                                     axes=axes, copy=False)
+
+                self._reference(ncvar)
+                if Custom.has_bounds(domain_anc):
+                    self._reference(Custom.get_ncvar(domain_anc.get_bounds()))
+
                 if ncvar not in ncvar_to_key:
                     ncvar_to_key[ncvar] = da_key
                     
@@ -2314,7 +2356,9 @@ variable should be pre-filled with missing values.
                 f, key, coord,
                 g['formula_terms'][coord_ncvar]['coord'])
             
-            self.set_coordinate_reference(f, coordinate_reference, copy=False)
+            Custom.set_coordinate_reference(field=f,
+                                            construct=coordinate_reference,
+                                            copy=False)
 
             g['vertical_crs'][coord_ncvar] = coordinate_reference
         #--- End: for
@@ -2323,7 +2367,7 @@ variable should be pre-filled with missing values.
         # Add grid mapping coordinate references (do this after
         # formula terms)
         # ----------------------------------------------------------------
-        grid_mapping = f.del_property('grid_mapping')
+        grid_mapping = Custom.del_property(f, 'grid_mapping')
         if grid_mapping is not None:
             parsed_grid_mapping = self._parse_grid_mapping(field_ncvar, grid_mapping)
                  
@@ -2346,37 +2390,42 @@ variable should be pre-filled with missing values.
                     coordref = self.initialise('CoordinateReference',
                                                 parameters=parameters)
                     
-                    datum = self.get_datum(coordref)
+                    datum = Custom.get_datum(coordinate_reference=coordref)
                     
                     create_new = True
                     
                     if not coordinates:
                         name = parameters.get('grid_mapping_name', None)
                         for n in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
-                            for key, coord in self.get_coordinates(f).iteritems():
-                                if n == self.get_property(coord, 'standard_name', None):
+                            for key, coord in Custom.get_coordinates(field=f).iteritems():
+                                if n == Custom.get_property(coord, 'standard_name', None):
                                     coordinates.append(key)
                         #--- End: for
 
                         # Add the datum to already existing vertical
                         # coordinate references
                         for vcr in g['vertical_crs'].itervalues():
-                            self.set_datum(vcr, datum)
+                            Custom.set_datum(coordinate_reference=vcr,
+                                             datum=datum)
                     else:
                         for vcoord, vcr in g['vertical_crs'].iteritems():
                             if vcoord in coordinates:
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
-                                self.set_datum(vcr, datum)
+                                Custom.set_datum(coordinate_reference=vcr,
+                                                 datum=datum)
                                 coordinates.remove(vcoord)
                                 create_new = bool(coordinates)
                     #--- End: if
 
                     if create_new:
-                        self.set_ncvar(coordref, grid_mapping_ncvar)
-                        key = self.set_coordinate_reference_coordinates(coordref,
-                                                                        coordinates)
-                        self.set_coordinate_reference(f, coordref, copy=False)
+                        Custom.set_ncvar(coordref, grid_mapping_ncvar)
+                        Custom.set_coordinate_reference_coordinates(coordref,
+                                                                  coordinates)
+                        key = Custom.set_coordinate_reference(field=f,
+                                                              construct=coordref,
+                                                              copy=False)
+                        self._reference(grid_mapping_ncvar)
                         ncvar_to_key[grid_mapping_ncvar] = key
                 #--- End: for
         #--- End: if
@@ -2384,7 +2433,7 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Add cell measures to the field
         # ----------------------------------------------------------------
-        measures = f.del_property('cell_measures')
+        measures = Custom.del_property(f, 'cell_measures')
         if measures is not None:
             parsed_cell_measures = self._parse_x(field_ncvar, measures)
             cf_compliant = self._check_cell_measures(field_ncvar,
@@ -2395,7 +2444,7 @@ variable should be pre-filled with missing values.
                     measure, ncvars = x.items()[0]
                     ncvar = ncvars[0]
                         
-                    # Set the cell measures domain axes
+                    # Set the domain axes for the cell measure
                     axes = self._get_domain_axes(ncvar, allow_external=True)
         
                     if ncvar in g['cell_measure']:
@@ -2409,7 +2458,12 @@ variable should be pre-filled with missing values.
                     if _debug:
                         print '    [8] Inserting', repr(cell)
 
-                    key = self.set_cell_measure(f, cell, axes=axes, copy=False)
+#                    key = self.set_cell_measure(f, cell, axes=axes, copy=False)
+
+                    key = Custom.set_cell_measure(field=f, construct=cell,
+                                                  axes=axes, copy=False)
+
+                    self._reference(ncvar)
         
                     ncvar_to_key[ncvar] = key
 
@@ -2434,13 +2488,14 @@ variable should be pre-filled with missing values.
                 if _debug:
                     print '    [ ] Inserting', repr(cell_method)
                         
-                self.set_cell_method(f, cell_method, copy=False)
+                Custom.set_cell_method(field=f, construct=cell_method,
+                                       copy=False)
         #--- End: if
 
         # ----------------------------------------------------------------
         # Add field ancillaries to the field
         # ----------------------------------------------------------------
-        ancillary_variables = f.del_property('ancillary_variables')
+        ancillary_variables = Custom.del_property(f, 'ancillary_variables')
         if ancillary_variables is not None:
             parsed_ancillary_variables = self._split_by_white_space(field_ncvar, ancillary_variables)
             cf_compliant = self._check_ancillary_variables(field_ncvar,
@@ -2461,8 +2516,12 @@ variable should be pre-filled with missing values.
                         
                     # Insert the field ancillary
                     if _debug:
-                        print '    [9] Inserting', repr(field_anc)                  
-                    key = self.set_field_ancillary(f, field_anc, axes=axes, copy=False)
+                        print '    [9] Inserting', repr(field_anc)
+                    key = Custom.set_field_ancillary(field=f,
+                                                     construct=field_anc,
+                                                     axes=axes, copy=False)
+                    self._reference(ncvar)
+                     
                     ncvar_to_key[ncvar] = key
         #--- End: if
 
@@ -2720,10 +2779,10 @@ variable should be pre-filled with missing values.
             raise ValueError(
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
 
-        self.set_properties(c, properties)
+        Custom.set_properties(c, properties)
         
         if attribute == 'climatology':
-            self.set_geometry_type(c, 'climatology')
+            Custom.set_geometry_type(coordinate=c, value='climatology')
 
         if has_coordinates:
             data = self._create_data(ncvar, c)
@@ -2746,7 +2805,7 @@ variable should be pre-filled with missing values.
             
             properties = g['variable_attributes'][ncbounds].copy()
             properties.pop('formula_terms', None)                
-            self.set_properties(bounds, properties, copy=False)
+            Custom.set_properties(bounds, properties, copy=False)
         
             bounds_data = self._create_data(ncbounds, bounds)
     
@@ -2769,9 +2828,10 @@ variable should be pre-filled with missing values.
             self._set_data(bounds, bounds_data, copy=False)
             
             # Store the netCDF variable name
-            self.set_ncvar(bounds, ncbounds)
+            Custom.set_ncvar(bounds, ncbounds)
             
-            self.set_bounds(c, bounds, copy=False)
+#            self.set_bounds(c, bounds, copy=False)
+            Custom.set_bounds(c, bounds, copy=False)
             
             if not domain_ancillary:
                 g['bounds'][field_ncvar][ncvar] = ncbounds
@@ -2783,15 +2843,15 @@ variable should be pre-filled with missing values.
         if geometry is not None:
             geometry_type = geometry.get('geometry_type')
             if geometry_type is not None:
-                self.set_geometry_type(c, geometry_type)
+                Custom.set_geometry_type(coordinate=c, value=geometry_type)
 
             node_dimension = geometry.get('node_dimension')
             if node_dimension is not None:
-                self.set_node_ncdim(c, node_dimension)
+                Custom.set_node_ncdim(parent=c, ncdim=node_dimension)
                 
             part_dimension = geometry.get('part_dimension')
             if part_dimension is not None:
-                self.set_part_ncdim(c, part_dimension)
+                Custom.set_part_ncdim(parent=c, ncdim=part_dimension)
                 
             interior_ring_ncvar = geometry.get('interior_ring')
             if interior_ring_ncvar is not None:
@@ -2799,13 +2859,13 @@ variable should be pre-filled with missing values.
                 if interior_ring is None:
                     # Create the interior ring array
                     interior_ring = self._create_data(interior_ring_ncvar)
-                    g['interior_ring']['interior_ring_ncvar'] = interior_ring           
+                    g['interior_ring']['interior_ring_ncvar'] = interior_ring
 
-                self.set_interior_ring(c, interior_ring)
+                Custom.set_interior_ring(parent=c, interior_ring=interior_ring)
         #--- End: if
         
         # Store the netCDF variable name
-        self.set_ncvar(c, ncvar)
+        Custom.set_ncvar(c, ncvar)
 
         if not domain_ancillary:
             g['coordinates'][field_ncvar].append(ncvar)
@@ -2842,48 +2902,48 @@ also be provided.
             construct.set_data(data, axes, copy=copy)
     #--- End: def
 
-    def expand_dims(self, construct, position, copy=True):
-        '''
-        '''
-        return construct.expand_dims(position=position, copy=copy)
-    #--- End: def
-    
-    def get_auxiliary_coordinate(self, f):
-       '''
-       '''
-       return f.auxiliary_coordinates()
-    #-- End: def
-
-    def get_cell_measure(self, f):
-       '''
-       '''
-       return f.cell_measures()
-    #-- End: def
-
-    def get_datum(self, coordinate_reference):
-        '''
-        '''
-        return coordinate_reference.datum
-    #--- End: def
-    
-    def get_dimension_coordinate(self, f):
-       '''
-       '''
-       return f.dimension_coordinates()
-    #-- End: def
-
-    def get_domain_ancillary(self, f):
-       '''
-       '''
-       return f.domain_ancillaries()
-    #-- End: def
- 
-    def get_field_ancillary(self, f):
-       '''
-       '''
-       return f.field_ancillaries()
-    #-- End: def
-                                   
+#    def expand_dims(self, construct, position, copy=True):
+#        '''
+#        '''
+#        return construct.expand_dims(position=position, copy=copy)
+#    #--- End: def
+#    
+#    def get_auxiliary_coordinate(self, f):
+#       '''
+#       '''
+#       return f.auxiliary_coordinates()
+#    #-- End: def
+#
+#    def get_cell_measure(self, f):
+#       '''
+#       '''
+#       return f.cell_measures()
+#    #-- End: def
+#
+#    def get_datum(self, coordinate_reference):
+#        '''
+#        '''
+#        return coordinate_reference.datum
+#    #--- End: def
+#    
+#    def get_dimension_coordinate(self, f):
+#       '''
+#       '''
+#       return f.dimension_coordinates()
+#    #-- End: def
+#
+#    def get_domain_ancillary(self, f):
+#       '''
+#       '''
+#       return f.domain_ancillaries()
+#    #-- End: def
+# 
+#    def get_field_ancillary(self, f):
+#       '''
+#       '''
+#       return f.field_ancillaries()
+#    #-- End: def
+#                                  
 #    def _transpose_data(self, data, axes=None, copy=True):
 #        '''
 #        '''
@@ -2920,14 +2980,14 @@ also be provided.
         cell_measure = self.initialise('CellMeasure', measure=measure)
 
         # Store the netCDF variable name
-        self.set_ncvar(cell_measure, ncvar)
+        Custom.set_ncvar(cell_measure, ncvar)
     
         if ncvar in g['external_variables']:
             # The cell measure variable is in a different file
-            self.set_external(cell_measure)
+            Custom.set_external(construct=cell_measure)
         else:
             # The cell measure variable is this file
-            self.set_properties(cell_measure, g['variable_attributes'][ncvar])
+            Custom.set_properties(cell_measure, g['variable_attributes'][ncvar])
             data = self._create_data(ncvar, cell_measure)            
             self._set_data(cell_measure, data, copy=False)
             
@@ -3128,9 +3188,10 @@ Set the Data attribute of a variable.
     def _create_domain_axis(self, size, ncdim=None):
         '''
         '''
-        domain_axis = self.initialise('DomainAxis', size=size)
+        domain_axis = self.initialise('DomainAxis')
+        Custom.set_size(domain_axis, size)
         if ncdim is not None:
-            self.set_ncdim(domain_axis, ncdim)
+            Custom.set_ncdim(construct=domain_axis, ncdim=ncdim)
 
         return domain_axis
     #-- End: def
@@ -3153,16 +3214,16 @@ Set the Data attribute of a variable.
         field_ancillary = self.initialise('FieldAncillary')
 
         # Insert properties
-        self.set_properties(field_ancillary,
-                            self.read_vars['variable_attributes'][ncvar],
-                            copy=True)
+        Custom.set_properties(field_ancillary,
+                              self.read_vars['variable_attributes'][ncvar],
+                              copy=True)
 
         # Insert data
         data = self._create_data(ncvar, field_ancillary)
         self._set_data(field_ancillary, data, copy=False)
 
         # Store the netCDF variable name
-        self.set_ncvar(field_ancillary, ncvar)
+        Custom.set_ncvar(field_ancillary, ncvar)
     
         return field_ancillary
     #--- End: def
@@ -3370,7 +3431,7 @@ parameters.
             domain_ancillaries[term] = g['domain_ancillary_key'].get(ncvar)
 
         for name in ('standard_name', 'computed_standard_name'):            
-            value = self.get_property(coord, name, None)
+            value = Custom.get_property(coord, name, None)
             if value is not None:
                 parameters[name] = value
         #--- End: for
@@ -4271,11 +4332,11 @@ CF-1.7 Appendix A
             compression_parameters=compression_parameters)
     #--- End: def
 
-    def del_property(self, construct, prop):
-        '''
-        '''
-        return construct.del_property(prop)
-    #--- End: def
+#    def del_property(self, construct, prop):
+#        '''
+#        '''
+#        return construct.del_property(prop)
+#    #--- End: def
     
 #--- End: class
 

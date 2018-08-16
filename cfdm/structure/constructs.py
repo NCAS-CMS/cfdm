@@ -513,7 +513,7 @@ None
 
      
         '''
-        return self.constructs('domain_axis', copy=copy)
+        return self.constructs(construct_type='domain_axis', copy=copy)
     #--- End: def
     
     def get_construct(self, key, *default):
@@ -564,14 +564,16 @@ None
             key = self.new_identifier(construct_type)
         elif not replace and key in self._constructs[construct_type]:
             raise ValueError(
-"Can't set {} construct: Identifier already exisits".format(
-    self._construct_type_description(construct_type)))
+"Can't set {} construct: Identifier {!r} already exists".format(
+    self._construct_type_description(construct_type), key))
     
         if construct_type in self._array_constructs:
-            # The construct has a data array
+            #---------------------------------------------------------
+            # The construct could have a data array
+            #---------------------------------------------------------
             if axes is None:
                 raise ValueError(
-"Can't set {} construct: Must specify the data array axes".format(
+"Can't set {} construct: Must specify the domain axes for the data array".format(
     self._construct_type_description(construct_type)))
 
             domain_axes = self.domain_axes()
@@ -590,7 +592,7 @@ None
             if (construct.has_data() and 
                 construct.shape[:construct.ndim - extra_axes] != axes_shape):
                 raise ValueError(
-"Can't set {} construct: Data array shape {} does not match the axes shape {}".format(
+"Can't set {} construct: Data array shape {} does not match the axis sizes {}".format(
     self._construct_type_description(construct_type),
     construct.shape, axes_shape))
 
@@ -607,7 +609,7 @@ None
         # Insert (a copy of) the construct
         self._constructs[construct_type][key] = construct
 
-        # Return the construct's identifier
+        # Return the identifier of the construct
         return key
     #--- End: def
 

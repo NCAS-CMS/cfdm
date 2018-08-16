@@ -6,7 +6,7 @@ class Implementation(object):
     '''
     __metaclass__ = abc.ABCMeta
     
-    def __init__(self, **kwargs):
+    def __init__(self, version=None, **kwargs):
         '''**Initialisation**
 
 :Parameters:
@@ -15,6 +15,7 @@ class Implementation(object):
         The concrete objects required to represent a Field.
 
         '''
+        self._version = version
         self._class = kwargs.copy()
     #--- End: def
 
@@ -30,3 +31,11 @@ class Implementation(object):
         '''
         return self._class[classname]
     #--- End: def
+
+    def get_version(self):
+        '''Return the version of the implementation.
+        '''
+        return self._version
+    #--- End: def
+
+#--- End: class

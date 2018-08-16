@@ -1,6 +1,6 @@
 import os
 
-from ... import __Conventions__
+from ... import __version__
 
 from ...auxiliarycoordinate import AuxiliaryCoordinate
 from ...cellmethod          import CellMethod
@@ -22,7 +22,7 @@ from ..cfdmimplementation import CFDMImplementation
 
 from .netcdf import NetCDFRead
 
-implementation = CFDMImplementation(Conventions = __Conventions__,
+implementation = CFDMImplementation(version = __version__,
 
                                     AuxiliaryCoordinate = AuxiliaryCoordinate,
                                     CellMeasure         = CellMeasure,

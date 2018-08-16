@@ -1777,7 +1777,8 @@ write them to the netCDF4.Dataset.
         #--- End: for
     
         # Write the global properties to the file
-        g['netcdf'].setncattr('Conventions', g['Conventions'])
+#        g['netcdf'].setncattr('Conventions', g['Conventions'])
+        g['netcdf'].setncattr('Conventions', self.implementation.get_version())
         
         for attr in global_properties - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self.get_property(f0, attr)) 
@@ -2412,7 +2413,7 @@ False
               endian='native', compress=0, fletcher32=False,
               no_shuffle=False, datatype=None,
               variable_attributes=None, HDF_chunks=None,
-              unlimited=None, extra_write_vars=None, Conventions=None,
+              unlimited=None, extra_write_vars=None, #Conventions=None,
               _debug=False):
         '''Write fields to a netCDF file.
         
@@ -2539,7 +2540,7 @@ and auxiliary coordinate roles for different data variables.
         # ------------------------------------------------------------
         self.write_vars = {
             # CF conventions for output file
-            'Conventions': Conventions,
+#            'Conventions': Conventions,
             # Format of output file
             'fmt': None,
             # netCDF4.Dataset instance

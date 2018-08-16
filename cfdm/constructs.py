@@ -11,7 +11,7 @@ class Constructs(structure.Constructs):
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''
         '''
-        return self.constructs('auxiliary_coordinate', axes=axes, copy=copy)
+        return self.constructs(construct_type='auxiliary_coordinate', axes=axes, copy=copy)
     #--- End: def
 
     def construct(self, construct_type=None, name=None, axes=None,
@@ -31,7 +31,7 @@ class Constructs(structure.Constructs):
         return construct
     #--- End: def
 
-    def constructs(self, construct_type=None, name=None, axes=None,
+    def constructs(self, name=None, axes=None, construct_type=None,
                    copy=False):
         '''
         '''
@@ -50,7 +50,6 @@ class Constructs(structure.Constructs):
         if name is not None:
             (prefix, _, key) = name.partition('%')
             if prefix == 'cfdm':
-                key = name[len(prefix):]
                 construct = out.get(key)
                 if construct is not None:
                     out = {key: construct}
@@ -58,7 +57,7 @@ class Constructs(structure.Constructs):
                     out = {}
             else:
                 (prefix, _, value) = name.partition(':')
-                custom = prefix if value else None
+                custom = (prefix,) if value else None
                 
                 for key, construct in out.items():
                     if name not in construct.name(custom=custom, all_names=True):
@@ -69,15 +68,15 @@ class Constructs(structure.Constructs):
     #--- End: def
 
     def cell_methods(self, copy=False):
-        return self.constructs('cell_method', copy=copy)
+        return self.constructs(construct_type='cell_method', copy=copy)
     #--- End: def
     
     def coordinate_references(self, copy=False):
-        return self.constructs('coordinate_reference', copy=copy)
+        return self.constructs(construct_type='coordinate_reference', copy=copy)
     #--- End: def
 
     def dimension_coordinates(self, axes=None, copy=False):
-        return self.constructs('dimension_coordinate', axes=axes, copy=copy)
+        return self.constructs(construct_type='dimension_coordinate', axes=axes, copy=copy)
     #--- End: def
 
     def domain_axis_name(self, axis):

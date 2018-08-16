@@ -179,7 +179,11 @@ initialisation with the `set_data` method.
     #--- End:: def
     
     def cell_methods(self, copy=False):
-        return self._get_constructs().constructs('cell_method', copy=copy)
+        '''
+        '''
+        return self._get_constructs().constructs(
+            construct_type='cell_method', copy=copy)
+    #--- End: def
     
     def del_data_axes(self):
         '''
@@ -235,7 +239,8 @@ None
     def field_ancillaries(self, copy=False):
         '''
         '''
-        return self._get_constructs().constructs('field_ancillary', copy=copy)
+        return self._get_constructs().constructs(
+            construct_type='field_ancillary', copy=copy)
 
     def del_construct(self, key):
         '''

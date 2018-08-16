@@ -470,47 +470,12 @@ field.
             return string
     #--- End: def
 
-    def auxiliary_coordinates(self, axes=None, copy=False):
-        '''Return the auxiliary coordinate 
-        '''    
-        return self._get_constructs().constructs('auxiliary_coordinate',
-                                                 axes=axes, copy=copy)
-    #--- End: def
-
-    def cell_measures(self, axes=None, copy=False):
-        '''
-        '''    
-        return self._get_constructs().constructs('cell_measure',
-                                                 axes=axes, copy=copy)
-    #--- End: def
-
-#    def constructs(self, construct_type=None, axes=None, copy=False):
+#    def domain_axis_name(self, key):
 #        '''
 #        '''
-#        return self._get_constructs().constructs(construct_type=construct_type,
-#                                                 axes=axes, copy=copy)
+#        constructs = self._get_constructs()
+#        return constructs.domain_axis_name(key)
 #    #--- End: def
-    
-    def dimension_coordinates(self, axes=None, copy=False):
-        '''
-        '''    
-        return self._get_constructs().constructs('dimension_coordinate',
-                                                 axes=axes, copy=copy)
-    #--- End: def
-
-    def domain_ancillaries(self, axes=None, copy=False):
-        '''
-        '''    
-        return self._get_constructs().constructs('domain_ancillary',
-                                                 axes=axes, copy=copy)
-    #--- End: def
-
-    def domain_axis_name(self, key):
-        '''
-        '''
-        constructs = self._get_constructs()
-        return constructs.domain_axis_name(key)
-    #--- End: def
     
     def dump(self, display=True, _level=0, _title='Field'):
         '''A full description of the field.
@@ -873,9 +838,11 @@ by the data array may be selected.
     def field_ancillaries(self, axes=None, copy=False):
         '''
         '''
-        return self._get_constructs().constructs('field_ancillary',
-                                                 axes=axes, copy=copy)
-
+        return self._get_constructs().constructs(
+            construct_type='field_ancillary',
+            axes=axes, copy=copy)
+    #--- End: def
+    
     def get_global_attributes(self, *default):
         '''
         '''

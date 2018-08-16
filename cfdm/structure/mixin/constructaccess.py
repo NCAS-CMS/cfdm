@@ -38,10 +38,12 @@ class ConstructAccess(object):
         return self._get_constructs().array_constructs(copy=copy)
     
     def auxiliary_coordinates(self, copy=False):
-        return self._get_constructs().constructs('auxiliary_coordinate', copy=copy)
+        return self._get_constructs().constructs(construct_type='auxiliary_coordinate',
+                                                 copy=copy)
     
     def cell_measures(self, copy=False):
-        return self._get_constructs().constructs('cell_measure', copy=copy)
+        return self._get_constructs().constructs(construct_type='cell_measure',
+                                                 copy=copy)
     
     def construct_axes(self, key=None):
         return self._get_constructs().construct_axes(key=key)
@@ -56,7 +58,8 @@ class ConstructAccess(object):
     #--- End: def
     
     def coordinate_references(self, copy=False):
-        return self._get_constructs().constructs('coordinate_reference', copy=copy)
+        return self._get_constructs().constructs(construct_type='coordinate_reference',
+                                                 copy=copy)
     
     def coordinates(self, copy=False):
         '''
@@ -73,13 +76,16 @@ class ConstructAccess(object):
     #--- End: def
 
     def dimension_coordinates(self, copy=False):
-        return self._get_constructs().constructs('dimension_coordinate', copy=copy)
+        return self._get_constructs().constructs(construct_type='dimension_coordinate',
+                                                 copy=copy)
     
     def domain_ancillaries(self, copy=False):
-        return self._get_constructs().constructs('domain_ancillary', copy=copy)
+        return self._get_constructs().constructs(construct_type='domain_ancillary',
+                                                 copy=copy)
     
     def domain_axes(self, copy=False):
-        return self._get_constructs().domain_axes(copy=copy)
+        return self._get_constructs().constructs(construct_type='domain_axis',
+                                                 copy=copy)
     
     def domain_axis_name(self, axis):
         '''

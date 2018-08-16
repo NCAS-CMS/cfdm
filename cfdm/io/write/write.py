@@ -1,4 +1,4 @@
-from ...                    import __Conventions__
+from ...                    import __version__
 from ...coordinatereference import CoordinateReference
 from ...field               import Field
 
@@ -6,7 +6,8 @@ from .. import CFDMImplementation
 
 from .netcdf import NetCDFWrite
 
-implementation = CFDMImplementation(CoordinateReference=CoordinateReference,
+implementation = CFDMImplementation(version=__version__,
+                                    CoordinateReference=CoordinateReference,
                                     Field=Field)
 
 netcdf = NetCDFWrite(implementation)
@@ -16,7 +17,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           endian='native', compress=0, fletcher32=False,
           no_shuffle=False, variable_attributes=None, datatype=None,
           HDF_chunksizes=None, unlimited=None,
-          Conventions=__Conventions__, _debug=False):
+#          Conventions=__version__,
+          _debug=False):
     '''Write fields to a netCDF file.
     
 NetCDF dimension and variable names will be taken, if present, from
@@ -273,6 +275,6 @@ which have equal values across all input fields.
                      no_shuffle=no_shuffle, fletcher32=fletcher32,
                      variable_attributes=variable_attributes,
                      datatype=datatype, HDF_chunks=HDF_chunksizes,
-                     unlimited=unlimited, Conventions=Conventions,
+                     unlimited=unlimited, #Conventions=Conventions,
                      _debug=_debug)
 #--- End: def
