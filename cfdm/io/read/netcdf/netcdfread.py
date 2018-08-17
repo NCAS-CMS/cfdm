@@ -460,7 +460,7 @@ ancillaries, field ancillaries).
             if default_version is not None:
                 file_version = default_version
             else:
-                # Assume the version of the CFDM imlementation
+                # Assume the version of the CFDM implementation
                 file_version = self.implementation.get_version()
         #--- End: if
         
@@ -2065,7 +2065,10 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
-        f = self.initialise('Field')
+        klass = self.implementation.get_class('Field')
+        f = Custom.initialise_Field(klass)
+#        f = self.initialise('Field')
+
         Custom.set_properties(f, properties, copy=False)
 
         # Store the field's netCDF variable name
@@ -2167,7 +2170,7 @@ variable should be pre-filled with missing values.
         if _debug:
             print '    [3] Inserting', repr(data)
 
-        self._set_data(f, data, axes=data_axes, copy=False)
+        Custom.set_data(f, data, axes=data_axes, copy=False)
           
         # ----------------------------------------------------------------
         # Add scalar dimension coordinates and auxiliary coordinates to
@@ -2214,7 +2217,7 @@ variable should be pre-filled with missing values.
                         domain_axis = self._create_domain_axis(1)
                         if _debug:
                             print '    [4] Inserting', repr(domain_axis)
-                        dim = self.set_domain_axis(f, domain_axis)
+                        dim = Custom.set_domain_axis(f, domain_axis)
                         dimensions = [dim]
                     else:  
                         # Numeric valued scalar coordinate
@@ -2225,13 +2228,17 @@ variable should be pre-filled with missing values.
                     # Insert a domain axis and dimension coordinate
                     # derived from a numeric scalar auxiliary
                     # coordinate
-                    coord = self.initialise('DimensionCoordinate',
-                                             source=coord, copy=False)
+                    klass = self.implementation.get_class('DimensionCoordinate')
+                    coord = Custom.initialise_DimensionCoordinate(klass,
+                                                                  source=coord,
+                                                                  copy=False)
+                
+#                    coord = self.initialise('DimensionCoordinate',
+#                                             source=coord, copy=False)
                     coord = Custom.expand_dims(construct=coord, position=0,
                                                copy=False)
                     
-                    domain_axis = self._create_domain_axis(
-                        Custom.get_size(coord))
+                    domain_axis = self._create_domain_axis(Custom.get_size(coord))
                     if _debug:
                         print '    [5] Inserting', repr(domain_axis)
                     axis = Custom.set_domain_axis(field=f,
@@ -2240,8 +2247,8 @@ variable should be pre-filled with missing values.
                     
                     if _debug:
                         print '    [5] Inserting', repr(coord)
-                    dim = self.set_dimension_coordinate(f, coord,
-                                                        axes=[axis], copy=False)
+                    dim = Custom.set_dimension_coordinate(f, coord,
+                                                          axes=[axis], copy=False)
 
                     self._reference(ncvar)
                     if Custom.has_bounds(coord):
@@ -2262,7 +2269,7 @@ variable should be pre-filled with missing values.
 
                     self._reference(ncvar)
                     if Custom.has_bounds(coord):
-                        self._reference(Custom.get_ncvar(coord.get_bounds()))
+                        self._reference(Custom.get_ncvar(coord.get_bounds())) # Custom ALERT!!
 
                     ncvar_to_key[ncvar] = aux
 
@@ -2387,8 +2394,13 @@ variable should be pre-filled with missing values.
                     coordinates = [ncvar_to_key[ncvar] for ncvar in coordinates
                                    if ncvar in ncvar_to_key]
                     
-                    coordref = self.initialise('CoordinateReference',
-                                                parameters=parameters)
+                    klass = self.implementation.get_class('CoordinateReference')
+                    coordref = Custom.initialise_CoordinateReference(
+                        klass,
+                        parameters=parameters)
+                    
+#                    coordref = self.initialise('CoordinateReference',
+#                                                parameters=parameters)
                     
                     datum = Custom.get_datum(coordinate_reference=coordref)
                     
@@ -2457,8 +2469,6 @@ variable should be pre-filled with missing values.
         
                     if _debug:
                         print '    [8] Inserting', repr(cell)
-
-#                    key = self.set_cell_measure(f, cell, axes=axes, copy=False)
 
                     key = Custom.set_cell_measure(field=f, construct=cell,
                                                   axes=axes, copy=False)
@@ -2766,15 +2776,21 @@ variable should be pre-filled with missing values.
             
         if dimension:
             properties.pop('compress', None) #??
-            c = self.initialise('DimensionCoordinate')
+            klass = self.implementation.get_class('DimensionCoordinate')
+            c = Custom.initialise_DimensionCoordinate(klass)
+#            c = self.initialise('DimensionCoordinate')
         elif auxiliary:
-            c = self.initialise('AuxiliaryCoordinate')
+            klass = self.implementation.get_class('AuxiliaryCoordinate')
+            c = Custom.initialise_AuxiliaryCoordinate(klass)
+#            c = self.initialise('AuxiliaryCoordinate')
         elif domain_ancillary:
 #            properties.pop('coordinates', None)
 #            properties.pop('grid_mapping', None)
 #            properties.pop('cell_measures', None)
 #            properties.pop('positive', None)
-            c = self.initialise('DomainAncillary')
+            klass = self.implementation.get_class('DomainAncillary')
+            c = Custom.initialise_DomainAncillary(klass)
+#            c = self.initialise('DomainAncillary')
         else:
             raise ValueError(
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
@@ -2786,7 +2802,7 @@ variable should be pre-filled with missing values.
 
         if has_coordinates:
             data = self._create_data(ncvar, c)
-            self._set_data(c, data, copy=False)
+            Custom.set_data(c, data, copy=False)
 
         # ------------------------------------------------------------
         # Add any bounds
@@ -2800,8 +2816,10 @@ variable should be pre-filled with missing values.
                     pass
             else:
                 pass
-            
-            bounds = self.initialise('Bounds')
+
+            klass = self.implementation.get_class('Bounds')
+            bounds = Custom.initialise_Bounds(klass)
+#            bounds = self.initialise('Bounds')
             
             properties = g['variable_attributes'][ncbounds].copy()
             properties.pop('formula_terms', None)                
@@ -2825,12 +2843,11 @@ variable should be pre-filled with missing values.
 #                                                       axes=axes, copy=False)
 #                #--- End: if
     
-            self._set_data(bounds, bounds_data, copy=False)
+            Custom.set_data(bounds, bounds_data, copy=False)
             
             # Store the netCDF variable name
             Custom.set_ncvar(bounds, ncbounds)
             
-#            self.set_bounds(c, bounds, copy=False)
             Custom.set_bounds(c, bounds, copy=False)
             
             if not domain_ancillary:
@@ -2847,10 +2864,14 @@ variable should be pre-filled with missing values.
 
             node_dimension = geometry.get('node_dimension')
             if node_dimension is not None:
+                # Set the netCDF name of the dimension of node
+                # coordinate variables
                 Custom.set_node_ncdim(parent=c, ncdim=node_dimension)
                 
             part_dimension = geometry.get('part_dimension')
             if part_dimension is not None:
+                # Set the netCDF name of the dimension of the part_node_count
+                # variable
                 Custom.set_part_ncdim(parent=c, ncdim=part_dimension)
                 
             interior_ring_ncvar = geometry.get('interior_ring')
@@ -2876,32 +2897,32 @@ variable should be pre-filled with missing values.
         return c
     #--- End: def
     
-    def _set_data(self, construct, data, axes=None, copy=True):
-        '''Insert a data object into construct. 
-
-If the construct is a Field then the corresponding domain axes must
-also be provided.
-
-:Parameters:
-
-    construct:
-
-    data: `Data`
-
-    axes: `tuple`, optional
-
-    copy: `bool`, optional
-
-:Returns:
-
-    `None`
-        '''
-        if axes is None:
-            construct.set_data(data, copy=copy)
-        else:
-            construct.set_data(data, axes, copy=copy)
-    #--- End: def
-
+#    def _set_data(self, construct, data, axes=None, copy=True):
+#        '''Insert a data object into construct. 
+#
+#If the construct is a Field then the corresponding domain axes must
+#also be provided.
+#
+#:Parameters:
+#
+#    construct:
+#
+#    data: `Data`
+#
+#    axes: `tuple`, optional
+#
+#    copy: `bool`, optional
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        if axes is None:
+#            construct.set_data(data, copy=copy)
+#        else:
+#            construct.set_data(data, axes, copy=copy)
+#    #--- End: def
+#
 #    def expand_dims(self, construct, position, copy=True):
 #        '''
 #        '''
@@ -2977,7 +2998,9 @@ also be provided.
         g = self.read_vars
         
         # Initialise the cell measure construct
-        cell_measure = self.initialise('CellMeasure', measure=measure)
+        klass = self.implementation.get_class('CellMeasure')
+        cell_measure = Custom.initialise_CellMeasure(klass, measure=measure)
+#        cell_measure = self.initialise('CellMeasure', measure=measure)
 
         # Store the netCDF variable name
         Custom.set_ncvar(cell_measure, ncvar)
@@ -2989,7 +3012,7 @@ also be provided.
             # The cell measure variable is this file
             Custom.set_properties(cell_measure, g['variable_attributes'][ncvar])
             data = self._create_data(ncvar, cell_measure)            
-            self._set_data(cell_measure, data, copy=False)
+            Custom.set_data(cell_measure, data, copy=False)
             
         return cell_measure
     #--- End: def
@@ -3010,18 +3033,20 @@ also be provided.
     out: `CellMethod`
 
         '''
-        cell_method = self.initialise('CellMethod',
-                                      axes=axes,
-                                      properties=properties)
-        return cell_method
+        klass = self.implementation.get_class('CellMethod')
+        return Custom.initialise_CellMethod(klass, axes=axes,
+                                            properties=properties)
+    
+#        cell_method = self.initialise('CellMethod',
+#                                      axes=axes,
+#                                      properties=properties)
+#        return cell_method
     #--- End: def
 
     def _create_data(self, ncvar, construct=None,
-                     unpacked_dtype=False, uncompress_override=None,
-                     units=None, calendar=None, fill_value=None):
-        '''
-    
-Set the Data attribute of a variable.
+                     unpacked_dtype=False, uncompress_override=None): 
+#                     units=None, calendar=None): #, fill_value=None):
+        '''Set the Data attribute of a variable.
 
 :Parameters:
 
@@ -3035,9 +3060,9 @@ Set the Data attribute of a variable.
 
     out: `Data`
 
-:Examples: 
-    
-    '''
+:Examples:
+
+        '''
         g = self.read_vars
         nc = g['nc']
         
@@ -3069,19 +3094,16 @@ Set the Data attribute of a variable.
                                              ndim=ndim, shape=shape,
                                              size=size)
         
-        # Find the units for the data
-        if units is None:
-            units = g['variable_attributes'][ncvar].get('units')
-            
-        if calendar is None:
-            calendar = g['variable_attributes'][ncvar].get('calendar')
-            
-        # Find the fill_value for the data
-        if fill_value is None:
-            try:
-                fill_value = construct.fill_value()
-            except AttributeError:
-                fill_value = None
+#        # Find the units for the data
+#        if units is None:
+#            units = g['variable_attributes'][ncvar].get('units')
+#            
+#        if calendar is None:
+#            calendar = g['variable_attributes'][ncvar].get('calendar')
+#            
+#        # Find the fill value for the data
+#        if fill_value is None:
+#            fill_value = Custom.get_fill_value(construct)
                 
         compression = g['compression']
 
@@ -3184,12 +3206,14 @@ Set the Data attribute of a variable.
                                 ndim=ndim, shape=shape,
                                 size=size)
     #--- End: def
-    
+
     def _create_domain_axis(self, size, ncdim=None):
         '''
         '''
-        domain_axis = self.initialise('DomainAxis')
-        Custom.set_size(domain_axis, size)
+#        domain_axis = self.initialise('DomainAxis')
+        klass = self.implementation.get_class('DomainAxis')
+        domain_axis = Custom.initialise_DomainAxis(klass, size=size)
+#        Custom.set_size(domain_axis, size)
         if ncdim is not None:
             Custom.set_ncdim(construct=domain_axis, ncdim=ncdim)
 
@@ -3211,7 +3235,9 @@ Set the Data attribute of a variable.
 
         '''
         # Create a field ancillary object
-        field_ancillary = self.initialise('FieldAncillary')
+        klass = self.implementation.get_class('FieldAncillary')
+        field_ancillary = Custom.initialise_FieldAncillary(klass)
+#        field_ancillary = self.initialise('FieldAncillary')
 
         # Insert properties
         Custom.set_properties(field_ancillary,
@@ -3220,7 +3246,7 @@ Set the Data attribute of a variable.
 
         # Insert data
         data = self._create_data(ncvar, field_ancillary)
-        self._set_data(field_ancillary, data, copy=False)
+        Custom.set_data(field_ancillary, data, copy=False)
 
         # Store the netCDF variable name
         Custom.set_ncvar(field_ancillary, ncvar)
@@ -3228,10 +3254,10 @@ Set the Data attribute of a variable.
         return field_ancillary
     #--- End: def
 
-    def initialise(self, object_type, **kwargs):
+    def initialise(self, class_name, **kwargs):
         '''
         '''
-        return self.implementation.get_class(object_type)(**kwargs)
+        return self.implementation.get_class(class_name)(**kwargs)
     #--- End: def
 
     def _parse_cell_methods(self, field_ncvar, cell_methods_string):
@@ -3254,8 +3280,6 @@ Set the Data attribute of a variable.
 
 >>> c = parse_cell_methods('t: minimum within years t: mean over ENSO years)')
 >>> print c
-[
-]
 
         '''
         attribute = {field_ncvar+':cell_methods': cell_methods_string}
@@ -3346,9 +3370,12 @@ Set the Data attribute of a variable.
                             return []
 
                         try:
-                            data = self.initialise('Data',
-                                                   data=parsed_interval,
-                                                   units=units)
+                            klass = self.implementation.get_class('Data')
+                            data = Custom.initialise_Data(klass, data=parsed_interval,
+                                                          units=units)
+#                            data = self.initialise('Data',
+#                                                   data=parsed_interval,
+#                                                   units=units)
                         except:
                             self._add_message(
                                 field_ncvar, field_ncvar,
@@ -3436,10 +3463,17 @@ parameters.
                 parameters[name] = value
         #--- End: for
         
-        coordref = self.initialise('CoordinateReference',
-                                   coordinates=[key],
-                                   domain_ancillaries=domain_ancillaries,
-                                   parameters=parameters)
+        klass = self.implementation.get_class('CoordinateReference')
+        coordref = Custom.initialise_CoordinateReference(
+            klass,
+            coordinates=[key],
+            domain_ancillaries=domain_ancillaries,
+            parameters=parameters)
+
+#        coordref = self.initialise('CoordinateReference',
+#                                   coordinates=[key],
+#                                   domain_ancillaries=domain_ancillaries,
+#                                   parameters=parameters)
 
         return coordref
     #--- End: def
@@ -3516,7 +3550,13 @@ dimensions are returned.
     def _create_data_gathered(self, ncvar, filearray,
                               uncompressed_shape=None,
                               sample_axis=None, list_indices=None):
-        '''
+        '''Create a `Data` object for a compressed-by-gathering netCDF
+variable.
+
+:Returns:
+
+    out: `Data`
+
         '''
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
@@ -3539,7 +3579,13 @@ dimensions are returned.
     def _create_data_ragged_contiguous(self, ncvar, filearray,
                                        uncompressed_shape=None,
                                        elements_per_instance=None):
-        '''
+        '''Create a `Data` object for a compressed-by-contiguous-ragged-array
+netCDF variable.
+
+:Returns:
+
+    out: `Data`
+
         '''
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
@@ -3562,7 +3608,13 @@ dimensions are returned.
     def _create_data_ragged_indexed(self, ncvar, filearray,
                                     uncompressed_shape=None,
                                     instances=None):
-        '''
+        '''Create a `Data` object for a compressed-by-indexed-ragged-array
+netCDF variable.
+
+:Returns:
+
+    out: `Data`
+
         '''
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
@@ -3585,7 +3637,13 @@ dimensions are returned.
                                                uncompressed_shape=None,
                                                profile_indices=None,
                                                elements_per_profile=None):
-        '''
+        '''Create a `Data` object for a
+compressed-by-indexed-contiguous-ragged-array netCDF variable.
+
+:Returns:
+
+    out: `Data`
+
         '''
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
@@ -3609,17 +3667,18 @@ dimensions are returned.
     def _create_Data(self, array=None, ncvar=None, **kwargs):
         '''
         '''
-        units    = None
-        calendar = None
-
         g = self.read_vars
         
         if ncvar is not None:
             units    = g['variable_attributes'][ncvar].get('units', None)
             calendar = g['variable_attributes'][ncvar].get('calendar', None)
+        else:
+            units    = None
+            calendar = None
 
-        return self.initialise('Data', data=array, units=units,
-                                calendar=calendar, **kwargs)
+        klass = self.implementation.get_class('Data')
+        return Custom.initialise_Data(klass, data=array, units=units,
+                                      calendar=calendar, **kwargs)
     #--- End: def
 
     def _copy_construct(self, construct_type, field_ncvar, ncvar):
@@ -3657,7 +3716,8 @@ dimensions are returned.
                     report)
         #--- End: if
 
-        return g[construct_type][ncvar].copy()    
+#        return g[construct_type][ncvar].copy()
+        return Custom.copy_construct(g[construct_type][ncvar])
     #--- End: def
     
     # ================================================================

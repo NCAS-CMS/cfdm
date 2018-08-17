@@ -317,13 +317,16 @@ bounds.
     #--- End: def
 
     def set_node_ncdim(self, value):
-        '''
+        '''Set the netCDF name of the dimension of a node coordinate variable.
+
         '''
         return self._set_component('node_ncdim', None, value)
     #--- End: def
 
     def set_part_ncdim(self, value):
-        '''
+        '''Set the netCDF name of the dimension of the part_node_count
+variable.
+
         '''
         return self._set_component('part_ncdim', None, value)
     #--- End: def

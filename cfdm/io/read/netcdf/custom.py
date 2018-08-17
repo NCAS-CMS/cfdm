@@ -6,6 +6,31 @@ class Custom(object):
     '''
 
     @staticmethod
+    def create_compressed_array(self, array=None,
+                                uncompressed_ndim=None,
+                                uncompressed_shape=None,
+                                uncompressed_size=None,
+                                compression_type=None,
+                                compression_parameters=None):
+        '''
+        '''
+        return self.initialise('CompressedArray',
+            array=array,
+            ndim=uncompressed_ndim,
+            shape=uncompressed_shape,
+            size=uncompressed_size,
+            compression_type=compression_type,
+            compression_parameters=compression_parameters)
+    #--- End: def
+
+    @staticmethod
+    def copy_construct(construct):
+        '''
+        '''
+        return construct.copy()
+    #--- End: def
+    
+    @staticmethod
     def del_property(construct, prop):
         '''
 
@@ -112,6 +137,23 @@ AttributeError: Field doesn't have property 'standard_name'
        '''
        return field.field_ancillaries()
     #--- End: def
+                                  
+#    @staticmethod
+#    def get_fill_value(construct):
+#       '''
+#:Parameters:
+#
+#:Returns:
+#
+#    out: 
+#       The fill value, or `None` if there is no fill value.
+#
+#       '''
+#       try:
+#           return construct.fill_value()
+#       except AttributeError:
+#           return
+#    #--- End: def
                                   
     @staticmethod
     def get_int_max(data):
@@ -275,6 +317,33 @@ AttributeError: Field doesn't have property 'standard_name'
     #--- End: def
 
     @staticmethod
+    def set_data(construct, data, axes=None, copy=True):
+        '''
+
+If the construct is a Field then the corresponding domain axes must
+also be provided.
+
+:Parameters:
+
+    construct: construct
+
+    data: `Data`
+
+    axes: `tuple`, optional
+
+    copy: `bool`, optional
+
+:Returns:
+
+    `None`
+        '''
+        if axes is None:
+            construct.set_data(data, copy=copy)
+        else:
+            construct.set_data(data, axes, copy=copy)
+    #--- End: def
+
+    @staticmethod
     def set_datum(coordinate_reference, datum):
         '''
 
@@ -291,7 +360,7 @@ AttributeError: Field doesn't have property 'standard_name'
     @staticmethod
     def set_dimension_coordinate(field, construct, axes, copy=True):
         '''Insert a dimension coordinate object into a field.
-
+        
 :Parameters:
 
     field: `Field`
@@ -308,7 +377,7 @@ AttributeError: Field doesn't have property 'standard_name'
         '''
         return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
     #--- End: def
-    
+
     @staticmethod
     def set_domain_ancillary(field, construct, axes, extra_axes=0,
                              copy=True):
@@ -410,6 +479,7 @@ AttributeError: Field doesn't have property 'standard_name'
 :Returns:
 
     `None`
+
         '''
         construct.set_ncdim(ncdim)
     #--- End: def
@@ -429,19 +499,23 @@ AttributeError: Field doesn't have property 'standard_name'
 
     @staticmethod
     def set_node_ncdim(parent, ncdim):
-        '''
+        '''Set the netCDF name of the dimension of a node coordinate variable.
+
 :Parameters:
 
 :Returns:
 
     `None`
+
         '''
         parent.set_node_ncdim(ncdim)
     #--- End: def
 
     @staticmethod
     def set_part_ncdim(parent, ncdim):
-        '''
+        '''Set the netCDF name of the dimension of the part_node_count
+variable.
+
 :Parameters:
 
 :Returns:
@@ -464,17 +538,17 @@ AttributeError: Field doesn't have property 'standard_name'
         construct.properties(properties, copy=copy)
     #--- End: def
  
-    @staticmethod
-    def set_size(domain_axis, size):
-        '''
-:Parameters:
-
-:Returns:
-
-    `None`
-        '''
-        domain_axis.set_size(size)
-    #--- End: def
+#    @staticmethod
+#    def set_size(domain_axis, size):
+#        '''
+#:Parameters:
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        domain_axis.set_size(size)
+#    #--- End: def
  
     @staticmethod
     def has_bounds(construct):
@@ -495,10 +569,87 @@ AttributeError: Field doesn't have property 'standard_name'
 #        return data
 #    #--- End: def
     
-    def initialise(self, object_type, **kwargs):
+    @staticmethod
+    def initialise_AuxiliaryCoordinate(klass, **kwargs):
         '''
         '''
-        return self.implementation.get_class(object_type)(**kwargs)
+        return klass(**kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_Bounds(klass, **kwargs):
+        '''
+        '''
+        return klass(**kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_CellMeasure(klass, measure=None, **kwargs):
+        '''
+        '''
+        return klass(measure=measure, **kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_CellMethod(klass, axes=None, properties=None, **kwargs):
+        '''
+        '''
+        return klass(axes=axes, properties=properties, **kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_CoordinateReference(klass, coordinates=None,
+                                       domain_ancillaries=None,
+                                       parameters=None, **kwargs):
+        '''
+        '''
+        return klass(coordinates=coordinates,
+                     domain_ancillaries=domain_ancillaries,
+                     parameters=parameters, **kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_Data(klass, data=None, units=None, calendar=None,
+                        **kwargs):
+        '''
+        '''
+        return klass(data=data, units=units, calendar=calendar, **kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_DimensionCoordinate(klass, source=None, copy=True,
+                                       **kwargs):
+        '''
+        '''
+        return klass(source=source, copy=copy, **kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_DomainAncillary(klass, **kwargs):
+        '''
+        '''
+        return klass(**kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_DomainAxis(klass, size=None, **kwargs):
+        '''
+        '''
+        return klass(size=size, **kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_Field(klass, **kwargs):
+        '''
+        '''
+        return klass(**kwargs)
+    #--- End: def
+
+    @staticmethod
+    def initialise_FieldAncillary(klass, **kwargs):
+        '''
+        '''
+        return klass(**kwargs)
     #--- End: def
 
     def create_compressed_array(self, array=None,
