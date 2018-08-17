@@ -2111,6 +2111,7 @@ variable should be pre-filled with missing values.
                     coord = self._create_dimension_coordinate(field_ncvar, ncdim,
                                                               f,
                                                               verbose=verbose)
+                    print 'LLLLLLLLLLLLL 4', repr(coord.get_data())
                     g['dimension_coordinate'][ncdim] = coord
                 
                 domain_axis = self._create_domain_axis(Custom.get_size(coord),
@@ -2121,7 +2122,7 @@ variable should be pre-filled with missing values.
                                               copy=False)
 
                 if _debug:
-                    print '    [1] Inserting', repr(coord)
+                    print '    [1] Inserting', repr(coord), coord.shape, repr(coord.get_data())
                 dim = Custom.set_dimension_coordinate(field=f, construct=coord,
                                                       axes=[axis], copy=False)
                 
@@ -3201,10 +3202,10 @@ variable should be pre-filled with missing values.
                             size=None):
         '''
         '''
-        return self.initialise('NetCDFArray', filename=filename,
-                                ncvar=ncvar, dtype=dtype,
-                                ndim=ndim, shape=shape,
-                                size=size)
+        klass = self.implementation.get_class('NetCDFArray')
+        return Custom.initialise_NetCDFArray(
+            klass, filename=filename, ncvar=ncvar, dtype=dtype, ndim=ndim,
+            shape=shape, size=size)
     #--- End: def
 
     def _create_domain_axis(self, size, ncdim=None):

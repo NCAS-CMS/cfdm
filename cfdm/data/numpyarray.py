@@ -1,16 +1,14 @@
 import abc
-
-import operator
 import sys
 
 import numpy
-import netCDF4
 
-from .array import Array
+#from .array import Array
+import abstract
 
 
-class NumpyArray(Array):
-    '''A numpy  array.
+class NumpyArray(abstract.Array):
+    '''A numpy array.
 
     '''
     def __init__(self, array=None):

@@ -7,10 +7,11 @@ import numpy
 import netCDF4
 
 from .array import Array
+#import abstract
 
-
+#class NetCDFArray(abstract.Array):
 class NetCDFArray(Array):
-    '''A sub-array stored in a netCDF file.
+    '''An array stored in a netCDF file.
     
 **Initialization**
 
@@ -170,7 +171,7 @@ Returns a numpy array.
         if self._close:
             # Close the netCDF file
             self.close()
-        
+
         return array
     #--- End: def
 

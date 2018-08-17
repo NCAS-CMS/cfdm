@@ -652,6 +652,17 @@ variable.
         return klass(**kwargs)
     #--- End: def
 
+    @staticmethod
+    def initialise_NetCDFArray(klass, filename=None, ncvar=None,
+                               dtype=None, ndim=None, shape=None,
+                               size=None, **kwargs):
+        '''
+        '''
+        print 'shape=', shape
+        return klass(filename=filename, ncvar=ncvar, dtype=dtype,
+                     ndim=ndim, shape=shape, size=size, **kwargs)
+    #--- End: def
+
     def create_compressed_array(self, array=None,
                                 uncompressed_ndim=None,
                                 uncompressed_shape=None,
