@@ -1,9 +1,16 @@
-#import struct
-
-
 class Custom(object):
     '''
     '''
+    @staticmethod
+    def copy_construct(construct):
+        '''
+:Returns:
+
+    out:
+        The deep copy.
+        '''
+        return construct.copy()
+    #--- End: def
 
     @staticmethod
     def create_compressed_array(self, array=None,
@@ -23,13 +30,6 @@ class Custom(object):
             compression_parameters=compression_parameters)
     #--- End: def
 
-    @staticmethod
-    def copy_construct(construct):
-        '''
-        '''
-        return construct.copy()
-    #--- End: def
-    
     @staticmethod
     def del_property(construct, prop):
         '''

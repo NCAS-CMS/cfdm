@@ -3089,10 +3089,10 @@ variable should be pre-filled with missing values.
             dtype = numpy.dtype('S{0}'.format(strlen))
         #--- End: if
 
-        filearray = self._create_NetCDFArray(filename=g['filename'],
-                                             ncvar=ncvar, dtype=dtype,
-                                             ndim=ndim, shape=shape,
-                                             size=size)
+        array = self._create_NetCDFArray(filename=g['filename'],
+                                         ncvar=ncvar, dtype=dtype,
+                                         ndim=ndim, shape=shape,
+                                         size=size)
         
 #        # Find the units for the data
 #        if units is None:
@@ -3116,7 +3116,7 @@ variable should be pre-filled with missing values.
             # --------------------------------------------------------
             # The array is not compressed (or not to be uncompressed)
             # --------------------------------------------------------
-            data = self._create_Data(filearray, ncvar=ncvar)
+            data = self._create_Data(array, ncvar=ncvar)
             
         else:
             # --------------------------------------------------------
@@ -3144,7 +3144,7 @@ variable should be pre-filled with missing values.
                         sample_axis = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
                         data = self._create_data_gathered(
                             ncvar,
-                            filearray,
+                            array,
                             uncompressed_shape=uncompressed_shape,
                             sample_axis=sample_axis,
                             list_indices=c['indices'])
@@ -3161,7 +3161,7 @@ variable should be pre-filled with missing values.
                                               c['element_dimension_2_size'])
                         data = self._create_data_ragged_indexed_contiguous(
                             ncvar,
-                            filearray,
+                            array,
                             uncompressed_shape=uncompressed_shape,
                             profile_indices=c['profile_indices'],
                             elements_per_profile=c['elements_per_profile'])
@@ -3174,7 +3174,7 @@ variable should be pre-filled with missing values.
                                             c['element_dimension_size'])
                         data = self._create_data_ragged_contiguous(
                             ncvar,
-                            filearray,
+                            array,
                             uncompressed_shape=uncompressed_shape,
                             elements_per_instance=c['elements_per_instance'])
                     elif 'ragged_indexed' in c:
@@ -3186,7 +3186,7 @@ variable should be pre-filled with missing values.
                                               c['element_dimension_size'])
                         data = self._create_data_ragged_indexed(
                             ncvar,
-                            filearray,
+                            array,
                             uncompressed_shape=uncompressed_shape,
                             instances=c['instances'])
                     else:
@@ -3547,7 +3547,7 @@ dimensions are returned.
         return map(str, ncdimensions)
     #--- End: def
 
-    def _create_data_gathered(self, ncvar, filearray,
+    def _create_data_gathered(self, ncvar, gathered_array,
                               uncompressed_shape=None,
                               sample_axis=None, list_indices=None):
         '''Create a `Data` object for a compressed-by-gathering netCDF
@@ -3565,7 +3565,7 @@ variable.
                                   'indices'    : list_indices}
             
         array = self.create_compressed_array(
-            filearray,
+            gathered_array,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
             uncompressed_size=uncompressed_size,
@@ -3576,7 +3576,7 @@ variable.
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _create_data_ragged_contiguous(self, ncvar, filearray,
+    def _create_data_ragged_contiguous(self, ncvar, contiguous_ragged_array,
                                        uncompressed_shape=None,
                                        elements_per_instance=None):
         '''Create a `Data` object for a compressed-by-contiguous-ragged-array
@@ -3594,7 +3594,7 @@ netCDF variable.
             'elements_per_instance': elements_per_instance} 
         
         array = self.create_compressed_array(
-            filearray,
+            contiguous_ragged_array,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
             uncompressed_size=uncompressed_size,
@@ -3605,7 +3605,7 @@ netCDF variable.
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _create_data_ragged_indexed(self, ncvar, filearray,
+    def _create_data_ragged_indexed(self, ncvar, indexed_ragged_array,
                                     uncompressed_shape=None,
                                     instances=None):
         '''Create a `Data` object for a compressed-by-indexed-ragged-array
@@ -3622,7 +3622,7 @@ netCDF variable.
         compression_parameters = {'instances': instances}
 
         array = self.create_compressed_array(
-            filearray,
+            indexed_ragged_array,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
             uncompressed_size=uncompressed_size,
@@ -3633,7 +3633,8 @@ netCDF variable.
         return self._create_Data(array, ncvar=ncvar)
     #--- End: def
     
-    def _create_data_ragged_indexed_contiguous(self, ncvar, filearray,
+    def _create_data_ragged_indexed_contiguous(self, ncvar,
+                                               indexed_contiguous_ragged_array,
                                                uncompressed_shape=None,
                                                profile_indices=None,
                                                elements_per_profile=None):
@@ -3653,7 +3654,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             'elements_per_profile': elements_per_profile}
         
         array = self.create_compressed_array(
-            filearray,
+            indexed_contiguous_ragged_array,
             uncompressed_ndim=uncompressed_ndim,
             uncompressed_shape=uncompressed_shape,
             uncompressed_size=uncompressed_size,
