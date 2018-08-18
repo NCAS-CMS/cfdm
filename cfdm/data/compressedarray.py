@@ -5,9 +5,10 @@ from operator import mul
 import numpy
 
 from .array import Array
-
+import abstract
 
 class CompressedArray(Array):
+#class CompressedArray(abstract.Array):
     '''
 
     '''
@@ -20,14 +21,23 @@ class CompressedArray(Array):
     array:
 
         '''
-        self.array  = array
-
-        self._shape = shape
-        self._size  = size
-        self._ndim  = ndim
-
-        self.compression_type       = compression_type
-        self.compression_parameters = compression_parameters
+        super(CompressedArray, self).__init__(
+            array=array,
+            compression_type=compression_type,
+            compression_parameters=compression_parameters,
+            _shape=shape,
+            _size=size,
+            _ndim=ndim,
+        )
+        
+#        self.array  = array
+#
+#        self._shape = shape
+#        self._size  = size
+#        self._ndim  = ndim
+#
+#        self.compression_type       = compression_type
+#        self.compression_parameters = compression_parameters
     #--- End: def
 
     def __getitem__(self, indices):
@@ -47,7 +57,8 @@ Returns an independent numpy array.
             # Compression by gathering
             # --------------------------------------------------------
             compressed_array = self.array
-                        
+
+            # Initialise the uncomprssed array
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
             
             sample_axis           = compression_parameters['sample_axis']
@@ -91,6 +102,7 @@ Returns an independent numpy array.
             # dimension, element dimension).
             compressed_array = self.array
 
+            # Initialise the uncomprssed array
             uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
             elements_per_instance = compression_parameters['elements_per_instance']
@@ -179,7 +191,7 @@ Returns an independent numpy array.
                     uarray[u_indices] = compressed_array[sample_indices]
         #--- End: if
 
-        return uarray[indices]
+        return self.get_subspace(uarray, indices) #uarray[indices]
     #--- End: def
 
     @property
@@ -198,11 +210,11 @@ Returns an independent numpy array.
     def dtype(self):
         return self.array.dtype
 
-    @property
-    def isunique(self):
-        '''
-        '''
-        return sys.getrefcount(self.array) <= 2
+#    @property
+#    def isunique(self):
+#        '''
+#        '''
+#        return sys.getrefcount(self.array) <= 2
 
     def close(self):
         self.array.close()

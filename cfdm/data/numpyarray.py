@@ -34,7 +34,7 @@ Returns an independent numpy array.
         '''
         # Must ascertain uniqueness *before* we create another
         # reference to self.array!
-        isunique = self.isunique
+        isunique = sys.getrefcount(self.array) <= 2 #self.isunique
         
         array = self.array
 
@@ -68,11 +68,11 @@ Returns an independent numpy array.
     def dtype(self):
         return self.array.dtype
 
-    @property
-    def isunique(self):
-        '''
-        '''
-        return sys.getrefcount(self.array) <= 2
+#    @property
+#    def isunique(self):
+#        '''
+#        '''
+#        return sys.getrefcount(self.array) <= 2
     
     def open(self):
         pass

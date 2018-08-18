@@ -90,7 +90,7 @@ x.__str__() <==> str(x)
     def dtype(self):
         pass
     
-    @abc.abstractproperty
+#    @abc.abstractproperty
     def isunique(self):
         pass
     
