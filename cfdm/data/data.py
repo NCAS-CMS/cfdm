@@ -8,11 +8,12 @@ from ..constants  import masked
 
 from ..functions  import RTOL, ATOL, _numpy_allclose
 
-from .array      import Array
+#from .array      import Array
+import abstract
+
 from .numpyarray import NumpyArray
 
 from ..structure import Data as structure_Data
-
 
 class Data(structure_Data):
     '''
@@ -97,7 +98,7 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''
-        if data is not None and not isinstance(data, Array):
+        if data is not None and not isinstance(data, abstract.Array):
             if not isinstance(data, numpy.ndarray):
                 data = numpy.asanyarray(data)
                 

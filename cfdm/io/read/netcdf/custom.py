@@ -658,7 +658,6 @@ variable.
                                size=None, **kwargs):
         '''
         '''
-        print 'shape=', shape
         return klass(filename=filename, ncvar=ncvar, dtype=dtype,
                      ndim=ndim, shape=shape, size=size, **kwargs)
     #--- End: def

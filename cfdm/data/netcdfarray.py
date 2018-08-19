@@ -6,11 +6,11 @@ import urlparse
 import numpy
 import netCDF4
 
-from .array import Array
-#import abstract
+#from .array import Array
+import abstract
 
-#class NetCDFArray(abstract.Array):
-class NetCDFArray(Array):
+class NetCDFArray(abstract.Array):
+#class NetCDFArray(Array):
     '''An array stored in a netCDF file.
     
 **Initialization**
@@ -172,6 +172,7 @@ Returns a numpy array.
             # Close the netCDF file
             self.close()
 
+        print 'ALERT _ not keep dims', self.ndim, array.ndim 
         return array
     #--- End: def
 

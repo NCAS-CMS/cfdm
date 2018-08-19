@@ -592,9 +592,10 @@ None
             if (construct.has_data() and 
                 construct.shape[:construct.ndim - extra_axes] != axes_shape):
                 raise ValueError(
-"Can't set {} construct: Data array shape {} does not match the axis sizes {}".format(
-    self._construct_type_description(construct_type),
-    construct.shape, axes_shape))
+"Can't set {!r}: Data array shape of {} does not match the shape required by domain axes {}: {}".format(
+    construct,
+#    self._construct_type_description(construct_type),
+    construct.shape, tuple(axes), axes_shape))
 
             self._set_construct_axes(key, axes)
         #--- End: if

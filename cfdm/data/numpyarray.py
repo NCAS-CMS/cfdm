@@ -21,7 +21,8 @@ class NumpyArray(abstract.Array):
     array: `numpy.ndarray`
 
         '''
-        super(NumpyArray, self).__init__(array=array)
+        if array is not None:
+            super(NumpyArray, self).__init__(array=array)
     #--- End: def
 
     def __getitem__(self, indices):

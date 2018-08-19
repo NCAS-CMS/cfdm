@@ -4,11 +4,11 @@ from operator import mul
 
 import numpy
 
-from .array import Array
+#from .array import Array
 import abstract
 
-class CompressedArray(Array):
-#class CompressedArray(abstract.Array):
+#class CompressedArray(Array):
+class CompressedArray(abstract.Array):
     '''
 
     '''
@@ -18,7 +18,7 @@ class CompressedArray(Array):
 
 :Parameters:
 
-    array:
+    array: `abstract.Array`
 
         '''
         super(CompressedArray, self).__init__(
@@ -90,7 +90,7 @@ Returns an independent numpy array.
                         u_indices[i] = a
                 #--- End: for                    
                 u_indices[compressed_axes[-1]] = b
-
+                print repr(compressed_array), uarray.shape, u_indices, sample_indices, compressed_array[sample_indices].shape
                 uarray[u_indices] = compressed_array[sample_indices]
             #--- End: for
 
