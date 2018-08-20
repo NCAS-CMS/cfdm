@@ -26,31 +26,53 @@ class NumpyArray(abstract.Array):
     #--- End: def
 
     def __getitem__(self, indices):
+        '''x.__getitem__(indices) <==> x[indices]
+
+Returns a numpy array that might share memory with the un-indexed
+numpy array.
+
         '''
-
-x.__getitem__(indices) <==> x[indices]
-
-Returns an independent numpy array.
-
-        '''
-        # Must ascertain uniqueness *before* we create another
-        # reference to self.array!
-        isunique = sys.getrefcount(self.array) <= 2 #self.isunique
+#        # Must ascertain uniqueness *before* we create another
+#        # reference to self.array!
+#        isunique = sys.getrefcount(self.array) <= 2 #self.isunique
+#        unique_base = sys.getrefcount(self.array.base) <= 2 #self.isunique            
+#        base = self.array.base
+#        if base is None:
+#            unique_base = True
+#        
+#        array = self.array
+#
+#        if not unique_base:
+#            
+#            
+#        
+#        if 
+#        
+#        if not isunique:
+#            if numpy.ma.isMA(array) and not self.ndim:
+#                # This is because numpy.ma.copy doesn't work for
+#                # scalar arrays (at the moment, at least)
+#                ma_array = numpy.ma.empty((), dtype=array.dtype)
+#                ma_array[...] = array
+#                array = ma_array
+#            else:
+#                array = array.copy()
+#        #--- End: if
+#        array = self.array
         
-        array = self.array
+        return self.get_subspace(self.array, indices)
 
-        if not isunique:
-            if numpy.ma.isMA(array) and not self.ndim:
-                # This is because numpy.ma.copy doesn't work for
-                # scalar arrays (at the moment, at least)
-                ma_array = numpy.ma.empty((), dtype=array.dtype)
-                ma_array[...] = array
-                array = ma_array
-            else:
-                array = array.copy()
-        #--- End: if
-
-        return self.get_subspace(array, indices)
+#        if not isunique:
+#        if numpy.ma.isMA(out) and not out.ndim:
+#            # This is because numpy.ma.copy doesn't work for
+#            # scalar arrays (at the moment, at least)
+#            ma_out = numpy.ma.empty((), dtype=array.dtype)
+#            ma_out[...] = out
+#            out = ma_out
+#        else:
+#            out = out.copy()                
+#        
+#        return out
     #--- End: def
 
     @property

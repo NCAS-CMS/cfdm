@@ -11,6 +11,7 @@ import netCDF4
 
 ### numpy.count_nonzero(numpy.ma.count(coordinates, axis=-1))
 
+from .implementation_interface import API
 
 from .. import IOWrite
 
@@ -174,7 +175,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
         '''
         g = self.write_vars
 
-        data = self.get_data(variable, None)
+        data = API.get_data(variable, None)
         if data is None:
             return 'S1'
 
@@ -499,7 +500,8 @@ dictionary.
                 continue
     
             # Still here?
-            if variable.equals(value['variable'], ignore_construct_type=ignore_type):
+#            if variable.equals(value['variable'], ignore_construct_type=ignore_type):
+            if API.equal_constructs(variable, value['variable'], ignore_construct_type=ignore_type):
                 seen[id(variable)] = {'variable': variable,
                                       'ncvar'   : value['ncvar'],
                                       'ncdims'  : value['ncdims']}
@@ -542,7 +544,7 @@ name.
         if bounds is None:
             return {}
 
-        data = self.get_data(bounds, None) 
+        data = API.get_data(bounds, None) 
         if data is None:
             return {}
 
@@ -1010,7 +1012,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         datatype = self._datatype(cfvar)
     
-        data = self.get_data(cfvar, None)
+        data = API.get_data(cfvar, None)
 
         if data is not None and datatype == 'S1':
             # --------------------------------------------------------
@@ -1206,7 +1208,7 @@ extra trailing dimension.
             
         f = self.copy_field(f)
     
-        data_axes = self.get_data_axes(f)
+        data_axes = API.get_data_axes(f)
     
         # Mapping of domain axis identifiers to netCDF dimension
         # names. This gets reset for each new field that is written to
@@ -1534,7 +1536,7 @@ extra trailing dimension.
         # ----------------------------------------------------------------
         ncvar = self._create_netcdf_variable_name(f, default='data')
     
-        ncdimensions = tuple([g['axis_to_ncdim'][axis] for axis in self.get_data_axes(f)])
+        ncdimensions = tuple([g['axis_to_ncdim'][axis] for axis in API.get_data_axes(f)])
     
         extra = {}
 

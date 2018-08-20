@@ -29,21 +29,13 @@ class CompressedArray(abstract.Array):
             _size=size,
             _ndim=ndim,
         )
-        
-#        self.array  = array
-#
-#        self._shape = shape
-#        self._size  = size
-#        self._ndim  = ndim
-#
-#        self.compression_type       = compression_type
-#        self.compression_parameters = compression_parameters
     #--- End: def
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns an independent numpy array.
+Returns a numpy array that does not share memory with the compressed
+array.
 
         '''
 #        print 'self.compression_type =',self.compression_type
@@ -51,15 +43,20 @@ Returns an independent numpy array.
 
         compression_type       = self.compression_type
         compression_parameters = self.compression_parameters
-        
+
+        compressed_array = self.array
+
+        # Initialise the un-sliced uncompressed array
+        uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
+
         if compression_type == 'gathered':
             # --------------------------------------------------------
             # Compression by gathering
             # --------------------------------------------------------
-            compressed_array = self.array
+#            compressed_array = self.array
 
             # Initialise the uncomprssed array
-            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
+#            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
             
             sample_axis           = compression_parameters['sample_axis']
             uncompression_indices = compression_parameters['indices']
@@ -82,6 +79,10 @@ Returns an independent numpy array.
             zeros = [0] * n_compressed_axes
             for j, b in enumerate(uncompression_indices):
                 sample_indices[sample_axis] = j
+                # Note that it is important for this index to be an
+                # integer (rather than the slice j:j+1) so that this
+                # dimension is dropped from
+                # compressed_array[sample_indices]
                 
                 u_indices[compressed_axes[0]:compressed_axes[-1]+1] = zeros
                 for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
@@ -90,20 +91,28 @@ Returns an independent numpy array.
                         u_indices[i] = a
                 #--- End: for                    
                 u_indices[compressed_axes[-1]] = b
-                print repr(compressed_array), uarray.shape, u_indices, sample_indices, compressed_array[sample_indices].shape
+                # Note that it is important for indices a and b to be
+                # integers (rather than the slices a:a+1 and b:b+1) so
+                # that these dimensions are dropped from
+                # uarray[u_indices]
+                
                 uarray[u_indices] = compressed_array[sample_indices]
             #--- End: for
 
         elif compression_type == 'ragged_contiguous':
             # --------------------------------------------------------
             # Compression by contiguous ragged array
+            #
+            # The uncompressed array has dimensions (instance
+            # dimension, element dimension).
             # --------------------------------------------------------
+            
             # Create an empty Data array which has dimensions (instance
             # dimension, element dimension).
-            compressed_array = self.array
+#            compressed_array = self.array
 
             # Initialise the uncomprssed array
-            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
+#            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
             elements_per_instance = compression_parameters['elements_per_instance']
             
@@ -112,7 +121,7 @@ Returns an independent numpy array.
                 n = int(n)
                 sample_indices = slice(start, start + n)
                 
-                u_indices = (slice(i, i+1),
+                u_indices = (i, #slice(i, i+1),
                              slice(0, sample_indices.stop - sample_indices.start))
                 
                 uarray[u_indices] = compressed_array[sample_indices]
@@ -122,13 +131,14 @@ Returns an independent numpy array.
 
         elif compression_type == 'ragged_indexed':
             # --------------------------------------------------------
-            # Compression by indexed ragged array
-            # --------------------------------------------------------
-            # Create an empty Data array which has dimensions (instance
+            # Compression by indexed ragged array.
+            #
+            # The uncompressed array has dimensions (instance
             # dimension, element dimension).
-            compressed_array = self.array
+            # --------------------------------------------------------
+            # compressed_array = self.array
 
-            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
+#            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
             instances = compression_parameters['instances']
             instances = instances.get_array()
@@ -136,7 +146,7 @@ Returns an independent numpy array.
             for i in range(uarray.shape[0]):
                 sample_dimension_indices = numpy.where(instances == i)[0]
 
-                u_indices = (slice(i, i+1),
+                u_indices = (i, #slice(i, i+1),
                              slice(0, len(sample_dimension_indices)))
 
                 uarray[u_indices] = compressed_array[sample_dimension_indices]
@@ -146,9 +156,9 @@ Returns an independent numpy array.
             # --------------------------------------------------------
             # Compression by indexed contiguous ragged array
             # --------------------------------------------------------
-            compressed_array = self.array
+#            compressed_array = self.array
 
-            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
+#            uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
             elements_per_profile = compression_parameters['elements_per_profile']
 
@@ -184,9 +194,9 @@ Returns an independent numpy array.
                     
                     sample_indices = slice(start, stop)
                     
-                    u_indices = (slice(i, i+1),
-                                 slice(j, j+1), 
-                                 slice(0, sample_indices.stop - sample_indices.start))
+                    u_indices = (i, #slice(i, i+1),
+                                 j, #slice(j, j+1), 
+                                 slice(0, stop-start)) #slice(0, sample_indices.stop - sample_indices.start))
 
                     uarray[u_indices] = compressed_array[sample_indices]
         #--- End: if
@@ -210,22 +220,18 @@ Returns an independent numpy array.
     def dtype(self):
         return self.array.dtype
 
-#    @property
-#    def isunique(self):
-#        '''
-#        '''
-#        return sys.getrefcount(self.array) <= 2
-
     def close(self):
         self.array.close()
-            
-    def open(self):
-        self.array.open()
-
+    
     def compressed_axes(self):
         '''
         '''
         sample_axis = self.compression_parameters.get('sample_axis', 0)
 
         return range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1))
+    #--- End: def
+
+    def open(self):
+        self.array.open()
+
 #--- End: class

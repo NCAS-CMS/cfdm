@@ -133,6 +133,15 @@ There are three extensions to the numpy indexing functionality:
 
         array = array[indices]
         
+        if numpy.ma.isMA(array) and not self.ndim:
+            # This is because numpy.ma.copy doesn't work for
+            # scalar arrays (at the moment, at least)
+            ma_array = numpy.ma.empty((), dtype=array.dtype)
+            ma_array[...] = array
+            array = ma_array
+        else:
+            array = array.copy()
+
         return type(self)(array, units=self.get_units(None),
                           calendar=self.get_calendar(None),
                           fill_value=self.get_fill_value(None))

@@ -86,10 +86,6 @@ x.__str__() <==> str(x)
     def dtype(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
     
-#    @abc.abstractproperty
-#    def isunique(self):
-#        pass
-    
     @abc.abstractmethod
     def close(self):
         '''
@@ -112,8 +108,8 @@ x.__str__() <==> str(x)
 >>> g = f.copy()
 
         '''
-        C = self.__class__
-        new = C.__new__(C)
+        klass = self.__class__
+        new = klass.__new__(klass)
         new.__dict__ = self.__dict__.copy()
         return new
     #--- End: def

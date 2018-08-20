@@ -113,13 +113,12 @@ class NetCDFArray(abstract.Array):
     #--- End: def
             
     def __getitem__(self, indices):
+        '''x.__getitem__(indices) <==> x[indices]
+
+Returns a numpy array that does not share memory with the un-indexed
+array on disk.
+
         '''
-
-x.__getitem__(indices) <==> x[indices]
-
-Returns a numpy array.
-
-'''
         nc = self.open()
         
 #        indices = tuple(self.parse_indices(indices))
@@ -172,7 +171,6 @@ Returns a numpy array.
             # Close the netCDF file
             self.close()
 
-        print 'ALERT _ not keep dims', self.ndim, array.ndim 
         return array
     #--- End: def
 
