@@ -214,26 +214,27 @@ frame and consists of the following:
                 datum_parameters = {}
                 coordinate_conversion_parameters = {}
 
-                datum_domain_ancillaries = {}
+#                datum_domain_ancillaries = {}
                 coordinate_conversion_domain_ancillaries = {}
 
                 if parameters is not None:
-                    for p, value in parameters.iteritems():
-                        if p in self._datum_parameters:
-                            datum_parameters[p] = value
+                    for x, value in parameters.iteritems():
+                        if x in self._datum_parameters:
+                            datum_parameters[x] = value
                         else:
-                            coordinate_conversion_parameters[p] = value
+                            coordinate_conversion_parameters[x] = value
                 #-- End: if
             
                 if domain_ancillaries is not None:                 
-                    for p, value in domain_ancillaries.iteritems():
-#                        if p in self._datum_ancillaries:
-#                            datum_domain_ancillaries[p] = value
+                    for x, value in domain_ancillaries.iteritems():
+#                        if x in self._datum_ancillaries:
+#                            datum_domain_ancillaries[x] = value
 #                        else:
-                        coordinate_conversion_domain_ancillaries[p] = value
+                        coordinate_conversion_domain_ancillaries[x] = value
                 #-- End: if
 
-                datum = self._Datum(parameters=datum_parameters)
+                datum = self._Datum(
+                    parameters=datum_parameters)
         
                 coordinate_conversion = self._CoordinateConversion(
                     parameters=coordinate_conversion_parameters,

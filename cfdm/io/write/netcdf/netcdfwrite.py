@@ -1524,9 +1524,10 @@ extra trailing dimension.
         
         # ----------------------------------------------------------------
         # Field ancillary variables
+        #
+        # Create the 'ancillary_variables' CF-netCDF attribute and
+        # create the referenced CF-netCDF ancillary variables
         # ----------------------------------------------------------------
-        # Create the 'ancillary_variables' CF-netCDF attribute and create
-        # the referenced CF-netCDF ancillary variables
         ancillary_variables = [self._write_field_ancillary(f, key, anc)
                                for key, anc in API.get_field_ancillaries(f).iteritems()]
     
@@ -1619,31 +1620,29 @@ extra trailing dimension.
     #--- End: def
 
     def _create_vertical_datum(self, ref, coord_key):
+        '''Deal with a vertical datum
         '''
-        '''
-        # Deal with a vertical datum
         g = self.write_vars
 
-        datum = API.get_datum(ref)
-        if API.empty_datum(datum):
+        if not API.has_datum(ref):
             return
-            
+
         if g['_debug']:
-            print '    Datum =', datum
+            print '    Datum =', API.get_datum(ref)
             
 #        domain_ancillaries = API.get_datum_ancillaries(ref)
 
         count = [0, None]
         for grid_mapping in g['grid_mapping_refs']:
-            datum1 = API.get_datum(grid_mapping)
+#            datum1 = API.get_datum(grid_mapping)
 #            if not datum1:
-            if API.empty_datum(datum1):
-                continue
+#            if API.empty_coordinate_reference_datum(grid_mapping):
+#                continue
 
 #            domain_ancillaries1 = API.get_datum_ancillaries(
 #                grid_mapping)
                  
-            if API.equal_datums(datum, datum1):
+            if API.equal_datums(ref, grid_mapping):
                 count = [count[0] + 1, grid_mapping]
                 if count[0] > 1:
                     break
@@ -1664,12 +1663,15 @@ extra trailing dimension.
         else:
             # Create a new horizontal coordinate reference for
             # the vertical datum
-            new_grid_mapping = self.initialise( # DCH ALERT
-                'CoordinateReference',
+            klass = self.implementation.get_class('CoordinateReference')
+            new_grid_mapping = API.initialise_CoordinateReference(
+                klass,
                 coordinates=[coord_key],
-                datum_parameters=API.get_datum_parameters(ref),
-#                datum_domain_ancillaries=domain_ancillaries)
-                )
+                datum=API.get_datum(ref))
+#            new_grid_mapping = self.initialise( # DCH ALERT
+#                'CoordinateReference',
+#                coordinates=[coord_key],
+#                datum=API.get_datum(ref))
             
             g['grid_mapping_refs'].append(new_grid_mapping)
     #--- End: def
@@ -1780,7 +1782,7 @@ write them to the netCDF4.Dataset.
     
         # Write the global properties to the file
 #        g['netcdf'].setncattr('Conventions', g['Conventions'])
-        g['netcdf'].setncattr('Conventions', self.implementation.get_version()) # ALERT
+        g['netcdf'].setncattr('Conventions', self.implementation.get_version())
         
         for attr in global_properties - set(('Conventions',)):
             g['netcdf'].setncattr(attr, API.get_property(f0, attr)) 
@@ -1836,38 +1838,38 @@ write them to the netCDF4.Dataset.
             return nc
     #--- End: def
 
-    @classmethod
-    def file_type(cls, filename):
-        '''Find the format of a file.
-    
-:Parameters:
-    
-    filename: `str`
-        The file name.
-    
-:Returns:
- 
-    out: `str`
-        The format type of the file.
-    
-:Examples:
-
->>> filetype = n.file_type(filename)
-    
-    '''
-        # ----------------------------------------------------------------
-        # Assume that URLs are in netCDF format
-        # ----------------------------------------------------------------
-        if filename.startswith('http://'):
-           return 'netCDF'
-    
-        # ----------------------------------------------------------------
-        # netCDF
-        # ----------------------------------------------------------------
-        if netcdf.is_netcdf_file(filename):
-            return 'netCDF'
-    #--- End: def
-
+#    @classmethod
+#    def file_type(cls, filename):
+#        '''Find the format of a file.
+#    
+#:Parameters:
+#    
+#    filename: `str`
+#        The file name.
+#    
+#:Returns:
+# 
+#    out: `str`
+#        The format type of the file.
+#    
+#:Examples:
+#
+#>>> filetype = n.file_type(filename)
+#    
+#    '''
+#        # ----------------------------------------------------------------
+#        # Assume that URLs are in netCDF format
+#        # ----------------------------------------------------------------
+#        if filename.startswith('http://'):
+#           return 'netCDF'
+#    
+#        # ----------------------------------------------------------------
+#        # netCDF
+#        # ----------------------------------------------------------------
+#        if netcdf.is_netcdf_file(filename):
+#            return 'netCDF'
+#    #--- End: def
+#
 #    def get_array(self, data):
 #        '''
 #        '''
@@ -2378,13 +2380,13 @@ write them to the netCDF4.Dataset.
 #        '''
 #        return parent.has_property(prop)
 #    #--- End: def
-
-    def initialise(self, class_name, **kwargs):
-        '''
-        '''
-        return self.implementation.get_class(class_name)(**kwargs)
-    #--- End: def
-
+#
+#    def initialise(self, class_name, **kwargs):
+ #       '''
+ #       '''
+#        return self.implementation.get_class(class_name)(**kwargs)
+#    #--- End: def
+#
 #    def set_cell_method_axes(self, cell_method, axes):
 #        '''
 #'''

@@ -193,7 +193,10 @@ class create_fieldTest_2(unittest.TestCase):
 
         g = g[0].squeeze(copy=False)
         
-#        g.dump()
+#        g.dump
+        print 'f'
+        print f
+        print  'g'
         print g
         self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
                         '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(

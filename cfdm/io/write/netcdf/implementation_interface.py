@@ -19,23 +19,28 @@ class API(object):
     #--- End: def
 
     @staticmethod
-    def empty_datum(datum):
-        '''
-        '''
-        return bool(datum)
-    #--- End: def
-    
-    @staticmethod
     def equal_constructs(construct0, construct1, ignore_construct_type=False):
         '''
+
         '''    
         return construct0.equals(construct1, ignore_construct_type=ignore_construct_type)
     #--- End: def
 
     @staticmethod
-    def equal_datums(datum0, datum1):
+    def equal_datums(coordinate_reference0, coordinate_reference1):
         '''
+:Parameters:
+
+    coordinate_reference0: coordinate reference construct
+
+    coordinate_reference1: coordinate reference construct
+
+:Returns:
+
+    out: `bool`
         '''
+        datum0 = coordinate_reference0.datum
+        datum1 = coordinate_reference1.datum
         return datum0.equals(datum1)
     #--- End: def
 
@@ -44,65 +49,6 @@ class API(object):
         '''
         '''
         return construct.expand_dims(position=position, axis=axis, copy=copy)
-    #--- End: def
-
-    def file_close(self, filename):
-        '''Close the netCDF file that has been written.
-
-:Returns:
-
-    `None`
-
-        '''
-        self.write_vars['netcdf'].close()
-    #--- End: def
-
-    def file_open(self, filename, mode, fmt):
-        '''Open the netCDF file for writing.
-        
-:Returns:
-        
-    out: `netCDF.Dataset`
-        
-        '''
-        try:        
-            nc = netCDF4.Dataset(filename, mode, format=fmt)
-        except RuntimeError as error:
-            raise RuntimeError("{}: {}".format(error, filename))        
-        else:
-            return nc
-    #--- End: def
-
-    @classmethod
-    def file_type(cls, filename):
-        '''Find the format of a file.
-    
-:Parameters:
-    
-    filename: `str`
-        The file name.
-    
-:Returns:
- 
-    out: `str`
-        The format type of the file.
-    
-:Examples:
-
->>> filetype = n.file_type(filename)
-    
-    '''
-        # ----------------------------------------------------------------
-        # Assume that URLs are in netCDF format
-        # ----------------------------------------------------------------
-        if filename.startswith('http://'):
-           return 'netCDF'
-    
-        # ----------------------------------------------------------------
-        # netCDF
-        # ----------------------------------------------------------------
-        if netcdf.is_netcdf_file(filename):
-            return 'netCDF'
     #--- End: def
 
     @staticmethod
@@ -162,20 +108,6 @@ class API(object):
     #--- End: for
 
     @staticmethod
-    def is_climatology(coordinate):
-        '''
-
-:Returns:
-
-    out: `bool`
-        The value of the 'climatology' cell extent parameter, or False
-        if not set.
-
-        '''
-        return bool(coordinate.get_geometry_type(None) == 'climatology')
-    #--- End: def
-
-    @staticmethod
     def get_construct_axes(field, key):
         '''
         '''
@@ -183,6 +115,8 @@ class API(object):
     
     @staticmethod
     def get_constructs(field, axes=None):
+        '''
+        '''
         return field.constructs(axes=axes)
 
     @staticmethod
@@ -200,9 +134,9 @@ class API(object):
         '''
         return coordinate_reference.coordinates()
     #--- End: def
-    
+
     @staticmethod
-    def get_coordinate_conversion_parameters(ref):
+    def get_coordinate_conversion_parameters(coordinate_reference):
         '''
 
 :Returns:
@@ -210,7 +144,7 @@ class API(object):
     out: `dict`
 
         '''
-        return ref.get_coordinate_conversion().parameters()
+        return coordinate_reference.coordinate_conversion.parameters()
     #--- End: def
 
     @staticmethod
@@ -294,25 +228,9 @@ class API(object):
     out: `dict`
 
         '''
-        return coordinate_reference.get_datum()
+        return coordinate_reference.datum
     #--- End: def
 
-#    @staticmethod
-#    def get_datum_ancillaries(coordinate_reference):
-#        '''Return the domain ancillary-valued terms of a coordinate reference
-#datum.
-#
-#:Parameters:
-#
-#    coordinate_reference: `CoordinateReference`
-#
-#:Returns:
-#
-#    out: `dict`
-#        '''        
-#        return coordinate_reference.get_datum().ancillaries()
-#    #--- End: def
-        
     @staticmethod
     def get_datum_parameters(ref):
         '''Return the parameter-valued terms of a coordinate reference datum.
@@ -326,7 +244,7 @@ class API(object):
     out: `dict`
 
         '''        
-        return ref.get_datum().parameters()
+        return ref.datum.parameters()
     #--- End: def
 
     @staticmethod
@@ -615,6 +533,29 @@ AttributeError: Can't get non-existent property 'foo'
     #--- End: def
 
     @staticmethod
+    def has_datum(coordinate_reference):
+        '''Return True if a coordinate reference has a datum.
+
+:Parameters:
+
+    coordinate_reference: coordinate reference construct
+
+:Returns:
+
+    out: `bool`
+
+:Examples:
+
+>>> if API.has_datum(ref):
+...     print ref, 'has a datum'
+... else:
+...     print ref, 'does not have a datum'
+
+        '''
+        return bool(coordinate_reference.datum)
+    #--- End: def
+    
+    @staticmethod
     def has_property(parent, prop):
         '''Return True if a property exists.
 
@@ -646,11 +587,28 @@ False
         '''
         return parent.has_property(prop)
     #--- End: def
+    
+    @staticmethod
+    def initialise_CoordinateReference(klass, coordinates=None, datum=None,
+                                       coordinate_conversion=None, **kwargs):
+        '''
+        '''
+        return klass(coordinates=coordinates,
+                     datum=datum, coordinate_conversion=coordinate_conversion)
+    #--- End: def
 
-    def initialise(self, class_name, **kwargs):
+    @staticmethod
+    def is_climatology(coordinate):
         '''
+
+:Returns:
+
+    out: `bool`
+        The value of the 'climatology' cell extent parameter, or False
+        if not set.
+
         '''
-        return self.implementation.get_class(class_name)(**kwargs)
+        return bool(coordinate.get_geometry_type(None) == 'climatology')
     #--- End: def
 
     @staticmethod

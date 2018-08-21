@@ -12,7 +12,7 @@ class Parameters(Container):
         '''
         '''
         return bool(self.parameters())
-        
+    #--- End: def
         
     def __str__(self):
         '''x.__str__() <==> str(x)
