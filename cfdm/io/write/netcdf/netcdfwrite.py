@@ -85,7 +85,7 @@ class NetCDFWrite(IOWrite):
 :Examples 2:
     
         '''
-        netcdf_attrs = self.get_properties(parent)
+        netcdf_attrs = API.get_properties(parent)
 
         netcdf_attrs.update(extra)
         netcdf_attrs.pop('_FillValue', None)
@@ -244,7 +244,7 @@ metadata construct.
         g = self.write_vars
                 
         return tuple([g['axis_to_ncdim'][axis]
-                      for axis in self.get_construct_axes(field, key)])
+                      for axis in API.get_construct_axes(field, key)])
     #--- End: def
         
     def _create_netcdf_variable_name(self, parent, default):
@@ -257,10 +257,10 @@ metadata construct.
     default: `str`
     
         '''
-        ncvar = self.get_ncvar(parent, None)
+        ncvar = API.get_ncvar(parent, None)
         if ncvar is None:
             try:
-                ncvar = self.get_property(parent, 'standard_name', default)
+                ncvar = API.get_property(parent, 'standard_name', default)
             except AttributeError:
                 ncvar = default
                 
@@ -293,10 +293,10 @@ metadata construct.
         _debug = g['_debug']
         
         if g['verbose'] or _debug:
-            domain_axis = self.get_domain_axes(f)[axis]
+            domain_axis = API.get_domain_axes(f)[axis]
             print '    Writing', repr(domain_axis), 'to netCDF dimension:', ncdim
 
-        size = self.get_domain_axis_size(f, axis)
+        size = API.get_domain_axis_size(f, axis)
         
         g['ncdim_to_size'][ncdim] = size
         g['axis_to_ncdim'][axis] = ncdim
@@ -382,7 +382,7 @@ a new netCDF dimension for the bounds.
     
 #        coord = self._change_reference_datetime(coord)
 
-        axis = self.get_construct_axes(f, key)[0]
+        axis = API.get_construct_axes(f, key)[0]
 
         create = False
         if not self._already_in_file(coord):
@@ -400,7 +400,7 @@ a new netCDF dimension for the bounds.
                                                       default='coordinate')
             
             # Create a new dimension, if it is not a scalar coordinate
-            if self.get_ndim(coord) > 0:
+            if API.get_ndim(coord) > 0:
                 unlimited = self.unlimited(f, axis)
                 self._write_dimension(ncvar, f, axis, unlimited=unlimited)
     
@@ -540,7 +540,7 @@ name.
     '''
         g = self.write_vars
 
-        bounds = self.get_bounds(coord, None)
+        bounds = API.get_bounds(coord, None)
         if bounds is None:
             return {}
 
@@ -548,7 +548,7 @@ name.
         if data is None:
             return {}
 
-#        if self.is_geometry(coord):
+#        if API.is_geometry(coord):
 #            return {'nodes': 999}
         
         # Still here? Then this coordinate has a bounds attribute
@@ -579,7 +579,7 @@ name.
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
              
-            ncvar = self.get_ncvar(bounds, coord_ncvar+'_bounds')                
+            ncvar = API.get_ncvar(bounds, coord_ncvar+'_bounds')                
             ncvar = self._netcdf_name(ncvar)
             
             # Note that, in a field, bounds always have equal units to
@@ -588,7 +588,7 @@ name.
             # Select properties to omit
             omit = []
             for prop in g['omit_bounds_properties']:
-                if self.has_property(coord, prop):
+                if API.has_property(coord, prop):
                     omit.append(prop)
             #--- End: for
     
@@ -597,7 +597,7 @@ name.
                                         omit=omit)
         #--- End: if
     
-        if self.is_climatology(coord):
+        if API.is_climatology(coord):
             extra['climatology'] = ncvar
         else:
             extra['bounds'] = ncvar
@@ -636,7 +636,7 @@ then the input coordinate is not written.
 
 #        coord = self._change_reference_datetime(coord)
             
-        coord = self.squeeze(coord, axes=0, copy=True)
+        coord = API.squeeze(coord, axes=0, copy=True)
     
         if not self._already_in_file(coord, ()):
             ncvar = self._create_netcdf_variable_name(coord,
@@ -751,7 +751,7 @@ it is not re-written.
         g = self.write_vars
 
         ncdimensions = tuple([g['axis_to_ncdim'][axis]
-                              for axis in self.get_construct_axes(f, key)])
+                              for axis in API.get_construct_axes(f, key)])
     
         create = not self._already_in_file(anc, ncdimensions, ignore_type=True)
     
@@ -762,7 +762,7 @@ it is not re-written.
             # See if we can set the default netCDF variable name to
             # its formula_terms term
             default = None
-            for ref in self.get_coordinate_references(f).itervalues():
+            for ref in API.get_coordinate_references(f).itervalues():
                 for term, da_key in ref.coordinate_conversion.domain_ancillaries().iteritems(): # DCH ALERT
                     if da_key == key:
                         default = term
@@ -816,7 +816,7 @@ it is not re-written.
         g = self.write_vars
 
         ncdimensions = tuple([g['axis_to_ncdim'][axis]
-                              for axis in self.get_construct_axes(f, key)])
+                              for axis in API.get_construct_axes(f, key)])
     
         create = not self._already_in_file(anc, ncdimensions)
     
@@ -857,7 +857,7 @@ measure will not be written.
         '''
         g = self.write_vars
 
-        measure = self.get_measure(cell_measure)
+        measure = API.get_measure(cell_measure)
         if measure is None:
             raise ValueError(
 "Can't create a netCDF cell measure variable without a 'measure' property")
@@ -867,9 +867,9 @@ measure will not be written.
         if self._already_in_file(cell_measure, ncdimensions):
             # Use existing cell measure variable
             ncvar = g['seen'][id(cell_measure)]['ncvar']
-        elif self.get_external(cell_measure):
+        elif API.get_external(cell_measure):
             # The cell measure is external
-            ncvar = self.get_ncvar(cell_measure, None)
+            ncvar = API.get_ncvar(cell_measure, None)
             if ncvar is None:
                 raise ValueError(
                     "External cell measure requires a netCDF variable name")
@@ -915,8 +915,8 @@ measure will not be written.
     
         else:
             # Create a new grid mapping variable
-            default = self.get_coordinate_conversion_parameters(ref).get(
-                'grid_mapping_name', 'grid_mapping')
+            cc_parameters = API.get_coordinate_conversion_parameters(ref)
+            default = cc_parameters.get('grid_mapping_name', 'grid_mapping')
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
             if g['verbose'] or _debug:
@@ -930,8 +930,8 @@ measure will not be written.
 #            cref = ref.canonical(f) # NOTE: NOT converting units
     
             # Add named parameters
-            parameters = self.get_coordinate_conversion_parameters(ref)
-            parameters.update(self.get_datum_parameters(ref))
+            parameters = API.get_datum_parameters(ref)
+            parameters.update(cc_parameters)
             
             for term, value in parameters.items():
                 if value is None:
@@ -947,10 +947,9 @@ measure will not be written.
             #--- End: for
 
             # Add the grid mapping name property
-            grid_mapping_name = self.get_coordinate_conversion_parameters(ref).get(
-                'grid_mapping_name', None)
-            if grid_mapping_name is not None:
-                parameters['grid_mapping_name'] = grid_mapping_name
+#            grid_mapping_name = cc_parameters.get('grid_mapping_name', None)
+#            if grid_mapping_name is not None:
+#                parameters['grid_mapping_name'] = grid_mapping_name
                 
             g['nc'][ncvar].setncatts(parameters)
             
@@ -966,7 +965,7 @@ measure will not be written.
                 ncvar,
                 ' '.join(
                     sorted([g['key_to_ncvar'][key]
-                            for key in self.get_coordinate_reference_coordinates(ref)])))
+                            for key in API.get_coordinate_reference_coordinates(ref)])))
         else:
             return ncvar
     #--- End: def
@@ -1099,8 +1098,8 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         # ------------------------------------------------------------
         if data is not None:  
             # Find the missing data values, if any.
-            _FillValue    = self.get_property(cfvar, '_FillValue', None) 
-            missing_value = self.get_property(cfvar, 'missing_value', None)
+            _FillValue    = API.get_property(cfvar, '_FillValue', None) 
+            missing_value = API.get_property(cfvar, 'missing_value', None)
             unset_values = [value for value in (_FillValue, missing_value)
                             if value is not None]
             self._write_data(data, ncvar, unset_values)
@@ -1128,7 +1127,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         convert_dtype = g['datatype']
 
         # Get the data as a numpy array
-        array = self.get_array(data)
+        array = API.get_array(data)
 
         # Convert data type
         new_dtype = convert_dtype.get(array.dtype, None)
@@ -1169,7 +1168,7 @@ extra trailing dimension.
         '''
         strlen = data.dtype.itemsize
         if strlen > 1:
-            char_array = self._character_array(self.get_array(data))
+            char_array = self._character_array(API.get_array(data))
             data = type(data)(char_array, source=data, copy=False)
     
         return data
@@ -1206,7 +1205,7 @@ extra trailing dimension.
             id_f = id(f)
             org_f = f
             
-        f = self.copy_field(f)
+        f = API.copy_field(f)
     
         data_axes = API.get_data_axes(f)
     
@@ -1229,14 +1228,14 @@ extra trailing dimension.
         coordinates = []
 
         g['formula_terms_refs'] = [
-            ref for ref in self.get_coordinate_references(f).values()
-            if self.get_coordinate_conversion_parameters(ref).get('standard_name', False)]
+            ref for ref in API.get_coordinate_references(f).values()
+            if API.get_coordinate_conversion_parameters(ref).get('standard_name', False)] 
 
         g['grid_mapping_refs'] = [
-            ref for ref in self.get_coordinate_references(f).values()
-            if self.get_coordinate_conversion_parameters(ref).get('grid_mapping_name', False)]
+            ref for ref in API.get_coordinate_references(f).values()
+            if API.get_coordinate_conversion_parameters(ref).get('grid_mapping_name', False)]
 
-        field_coordinates = self.get_coordinates(f)
+        field_coordinates = API.get_coordinates(f)
                         
         owning_coordinates = []
         standard_names = []
@@ -1244,17 +1243,17 @@ extra trailing dimension.
         for ref in g['formula_terms_refs']:
             coord_key = None
 
-            standard_name = self.get_coordinate_conversion_parameters(ref).get(
+            standard_name = API.get_coordinate_conversion_parameters(ref).get(
                 'standard_name')
-            computed_standard_name = self.get_coordinate_conversion_parameters(ref).get(
+            computed_standard_name = API.get_coordinate_conversion_parameters(ref).get(
                 'computed_standard_name')
             
             if standard_name is not None and computed_standard_name is not None:
-                for key in self.get_coordinate_reference_coordinates(ref):
+                for key in API.get_coordinate_reference_coordinates(ref):
                     coord = field_coordinates[key]
 
-                    if not (self.get_ndim(coord) == 1 and                        
-                            self.get_property(coord, 'standard_name', None) == standard_name):
+                    if not (API.get_ndim(coord) == 1 and                        
+                            API.get_property(coord, 'standard_name', None) == standard_name):
                         continue
                     
                     if coord_key is not None:
@@ -1273,20 +1272,20 @@ extra trailing dimension.
             if key is None:
                 continue
             
-            x = self.get_property(coord, 'computed_standard_name', None)
+            x = API.get_property(coord, 'computed_standard_name', None)
             if x is None:
-                self.set_property(field_coordinates[key], 'computed_standard_name', csn)
+                API.set_property(field_coordinates[key], 'computed_standard_name', csn)
             elif x != csn:
                 raise ValueError(";sdm p8whw=0[")
         #--- End: for
         
-        dimension_coordinates = self.get_dimension_coordinates(f)
+        dimension_coordinates = API.get_dimension_coordinates(f)
         
         # For each of the field's axes ...
-        for axis in sorted(self.get_domain_axes(f)):
+        for axis in sorted(API.get_domain_axes(f)):
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.iteritems():
-                if self.get_construct_axes(f, key) != (axis,):
+                if API.get_construct_axes(f, key) != (axis,):
                     continue
 
                 # --------------------------------------------------------
@@ -1301,7 +1300,7 @@ extra trailing dimension.
                 else:
                     # The data array does not span this axis (and
                     # therefore it must have size 1).
-                    if len(self.get_constructs(f, axes=[axis])) >= 2:
+                    if len(API.get_constructs(f, axes=[axis])) >= 2:
                         # There ARE auxiliary coordinates, cell
                         # measures, domain ancillaries or field
                         # ancillaries which span this domain axis, so
@@ -1311,7 +1310,7 @@ extra trailing dimension.
     
                         # Expand the field's data array to include
                         # this domain axis
-                        f = self.expand_dims(f, position=0, axis=axis, copy=False) 
+                        f = API.expand_dims(f, position=0, axis=axis, copy=False) 
                     else:
                         # There are NO auxiliary coordinates, cell
                         # measures, domain ancillaries or field
@@ -1330,26 +1329,26 @@ extra trailing dimension.
                 # --------------------------------------------------------
                 # There is no dimension coordinate for this axis
                 # --------------------------------------------------------
-                spanning_constructs = self.get_constructs(f, axes=[axis])
+                spanning_constructs = API.get_constructs(f, axes=[axis])
                 
                 if axis not in data_axes and spanning_constructs:
                     # The data array doesn't span the domain axis but
                     # an auxiliary coordinate, cell measure, domain
                     # ancillary or field ancillary does, so expand the
                     # data array to include it.
-                    f = self.expand_dims(f, position=0, axis=axis, copy=False)
+                    f = API.expand_dims(f, position=0, axis=axis, copy=False)
                     data_axes.append(axis)
     
                 # If the data array (now) spans this domain axis then create a
                 # netCDF dimension for it
                 if axis in data_axes:
-                    axis_size0 = self.get_domain_axis_size(f, axis)
+                    axis_size0 = API.get_domain_axis_size(f, axis)
                 
                     use_existing_dimension = False
 
                     if spanning_constructs:
                         for key, construct in spanning_constructs.items():
-                            axes = self.get_construct_axes(f, key)
+                            axes = API.get_construct_axes(f, key)
                             spanning_constructs[key] = (construct, axes.index(axis))
                         
                         for b1 in g['xxx']:
@@ -1384,7 +1383,7 @@ extra trailing dimension.
                     if use_existing_dimension:
                         g['axis_to_ncdim'][axis] = ncdim1
                     else:
-                        ncdim = self.get_ncdim(f, axis, 'dim')
+                        ncdim = API.get_ncdim(f, axis, 'dim')
                         ncdim = self._netcdf_name(ncdim)
     
                         unlimited = self.unlimited(f, axis)
@@ -1400,8 +1399,8 @@ extra trailing dimension.
         # ----------------------------------------------------------------
         # Initialize the list of 'coordinates' attribute variable values
         # (each of the form 'name')
-        for key, aux_coord in sorted(self.get_auxiliary_coordinates(f).iteritems()):
-#            if self.is_geometry(aux_coord):
+        for key, aux_coord in sorted(API.get_auxiliary_coordinates(f).iteritems()):
+#            if API.is_geometry(aux_coord):
 #                coordinates = self._write_geometry_coordinate(f, key, aux_coord,
 #                                                              coordinates)
 
@@ -1411,7 +1410,7 @@ extra trailing dimension.
         # ------------------------------------------------------------
         # Create netCDF variables from domain ancillaries
         # ------------------------------------------------------------
-        for key, anc in sorted(self.get_domain_ancillaries(f).iteritems()):
+        for key, anc in sorted(API.get_domain_ancillaries(f).iteritems()):
             self._write_domain_ancillary(f, key, anc)
     
         # ------------------------------------------------------------
@@ -1420,7 +1419,7 @@ extra trailing dimension.
         # Set the list of 'cell_measures' attribute values (each of
         # the form 'measure: name')
         cell_measures = [self._write_cell_measure(f, key, msr)
-                         for key, msr in sorted(self.get_cell_measures(f).iteritems())]
+                         for key, msr in sorted(API.get_cell_measures(f).iteritems())]
         
         # ------------------------------------------------------------
         # Create netCDF formula_terms attributes from vertical
@@ -1431,27 +1430,27 @@ extra trailing dimension.
             bounds_formula_terms = []
             owning_coord = None
 
-            standard_name = self.get_coordinate_conversion_parameters(ref).get('standard_name')
+            standard_name = API.get_coordinate_conversion_parameters(ref).get('standard_name')
             if standard_name is not None:
-#                c = [(key, coord) for key, coord in self.get_coordinates(f).items()
-#                     if self.get_property(coord, 'standard_name', None) == standard_name]
+#                c = [(key, coord) for key, coord in API.get_coordinates(f).items()
+#                     if API.get_property(coord, 'standard_name', None) == standard_name]
                 c = []
-                for key in self.get_coordinate_reference_coordinates(ref):
-                    coord = self.get_coordinates(f)[key]
-                    if self.get_property(coord, 'standard_name', None) == standard_name:
+                for key in API.get_coordinate_reference_coordinates(ref):
+                    coord = API.get_coordinates(f)[key]
+                    if API.get_property(coord, 'standard_name', None) == standard_name:
                         c.append((key, coord))
 
                 if len(c) == 1:
                     owning_coord_key, owning_coord = c[0]
             #--- End: if
     
-            z_axis = self.get_construct_axes(f, owning_coord_key)[0]
+            z_axis = API.get_construct_axes(f, owning_coord_key)[0]
                 
             if owning_coord is not None:
                 # This formula_terms coordinate reference matches up with
                 # an existing coordinate
     
-                for term, value in self.get_coordinate_conversion_parameters(ref).iteritems():
+                for term, value in API.get_coordinate_conversion_parameters(ref).iteritems():
                     if value is None:
                         continue
     
@@ -1468,7 +1467,7 @@ extra trailing dimension.
                     if key is None:
                         continue
     
-                    domain_anc = self.get_domain_ancillaries(f)[key]
+                    domain_anc = API.get_domain_ancillaries(f)[key]
                     if domain_anc is None:
                         continue
     
@@ -1482,7 +1481,7 @@ extra trailing dimension.
     
                     bounds = g['bounds'].get(ncvar, None)
                     if bounds is not None:
-                        if z_axis not in self.get_construct_axes(f, key):
+                        if z_axis not in API.get_construct_axes(f, key):
                             bounds = None
     
                     if bounds is None:        
@@ -1529,7 +1528,7 @@ extra trailing dimension.
         # Create the 'ancillary_variables' CF-netCDF attribute and create
         # the referenced CF-netCDF ancillary variables
         ancillary_variables = [self._write_field_ancillary(f, key, anc)
-                               for key, anc in self.get_field_ancillaries(f).iteritems()]
+                               for key, anc in API.get_field_ancillaries(f).iteritems()]
     
         # ----------------------------------------------------------------
         # Create the CF-netCDF data variable
@@ -1586,7 +1585,7 @@ extra trailing dimension.
     
         # name can be a dimension of the variable, a scalar coordinate
         # variable, a valid standard name, or the word 'area'
-        cell_methods = self.get_cell_methods(f)
+        cell_methods = API.get_cell_methods(f)
         if cell_methods:
             axis_map = g['axis_to_ncdim'].copy()
             axis_map.update(g['axis_to_ncscalar'])
@@ -1594,9 +1593,9 @@ extra trailing dimension.
             cell_methods_strings = []
             for cm in cell_methods.values():
                 axes = [axis_map.get(axis, axis)
-                        for axis in self.get_cell_method_axes(cm, ())]
-                self.set_cell_method_axes(cm, axes)
-                cell_methods_strings.append(self.get_cell_method_string(cm))
+                        for axis in API.get_cell_method_axes(cm, ())]
+                API.set_cell_method_axes(cm, axes)
+                cell_methods_strings.append(API.get_cell_method_string(cm))
 
             cell_methods = ' '.join(cell_methods_strings)
             if _debug:
@@ -1625,25 +1624,26 @@ extra trailing dimension.
         # Deal with a vertical datum
         g = self.write_vars
 
-        datum = self.get_datum(ref)
-        if not datum:
+        datum = API.get_datum(ref)
+        if API.empty_datum(datum):
             return
             
         if g['_debug']:
             print '    Datum =', datum
             
-#        domain_ancillaries = self.get_datum_ancillaries(ref)
+#        domain_ancillaries = API.get_datum_ancillaries(ref)
 
         count = [0, None]
         for grid_mapping in g['grid_mapping_refs']:
-            datum1 = self.get_datum(grid_mapping)
-            if not datum1:
+            datum1 = API.get_datum(grid_mapping)
+#            if not datum1:
+            if API.empty_datum(datum1):
                 continue
 
-#            domain_ancillaries1 = self.get_datum_ancillaries(
+#            domain_ancillaries1 = API.get_datum_ancillaries(
 #                grid_mapping)
                  
-            if datum.equals(datum1):
+            if API.equal_datums(datum, datum1):
                 count = [count[0] + 1, grid_mapping]
                 if count[0] > 1:
                     break
@@ -1659,15 +1659,15 @@ extra trailing dimension.
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
             grid_mapping = count[1]
-            self.set_coordinate_reference_coordinate(grid_mapping,
-                                                     coord_key)
+            API.set_coordinate_reference_coordinate(grid_mapping,
+                                                    coord_key)
         else:
             # Create a new horizontal coordinate reference for
             # the vertical datum
             new_grid_mapping = self.initialise( # DCH ALERT
                 'CoordinateReference',
                 coordinates=[coord_key],
-                datum_parameters=self.get_datum_parameters(ref),
+                datum_parameters=API.get_datum_parameters(ref),
 #                datum_domain_ancillaries=domain_ancillaries)
                 )
             
@@ -1764,50 +1764,50 @@ write them to the netCDF4.Dataset.
         # have different values in different fields
         f0 = fields[0]
         for prop in tuple(global_properties):
-            if not self.has_property(f0, prop):
+            if not API.has_property(f0, prop):
                 global_properties.remove(prop)
                 continue
                 
-            prop0 = self.get_property(f0, prop)
+            prop0 = API.get_property(f0, prop)
     
             if len(fields) > 1:
                 for f in fields[1:]:
-                    if (not self.has_property(f, prop) or 
-                        not equals(self.get_property(f, prop), prop0, traceback=False)):
+                    if (not API.has_property(f, prop) or 
+                        not equals(API.get_property(f, prop), prop0, traceback=False)):
                         global_properties.remove(prop)
                         break
         #--- End: for
     
         # Write the global properties to the file
 #        g['netcdf'].setncattr('Conventions', g['Conventions'])
-        g['netcdf'].setncattr('Conventions', self.implementation.get_version())
+        g['netcdf'].setncattr('Conventions', self.implementation.get_version()) # ALERT
         
         for attr in global_properties - set(('Conventions',)):
-            g['netcdf'].setncattr(attr, self.get_property(f0, attr)) 
+            g['netcdf'].setncattr(attr, API.get_property(f0, attr)) 
     
         g['global_properties'] = global_properties
     #--- End: def
 
-    def copy_field(self, field):
-        '''
-
-:Parameters:
-
-    field: 
-
-:Returns:
-
-    out:
-
-        '''
-        return field.copy()
-    #--- End: def
-
-    def expand_dims(self, construct, position=0, axis=None, copy=True):
-        '''
-        '''
-        return construct.expand_dims(position=position, axis=axis, copy=copy)
-    #--- End: def
+#    def copy_field(self, field):
+#        '''
+#
+#:Parameters:
+#
+#    field: 
+#
+#:Returns:
+#
+#    out:
+#
+#        '''
+#        return field.copy()
+#    #--- End: def
+#
+#    def expand_dims(self, construct, position=0, axis=None, copy=True):
+#        '''
+#        '''
+#        return construct.expand_dims(position=position, axis=axis, copy=copy)
+#    #--- End: def
 
     def file_close(self, filename):
         '''Close the netCDF file that has been written.
@@ -1868,183 +1868,197 @@ write them to the netCDF4.Dataset.
             return 'netCDF'
     #--- End: def
 
-    def get_array(self, data):
-        '''
-        '''
-        return data.get_array()
-    #--- End: def
-
-    def get_auxiliary_coordinates(self, field):
-        '''
-        '''
-        return field.auxiliary_coordinates()
-    #--- End: def
-
-    def get_bounds(self, construct, *default):
-        '''
-        '''
-        return construct.get_bounds(*default)
-    #--- End: def
-
-    def get_cell_measures(self, field):
-        '''
-        '''
-        return field.cell_measures()
-    #--- End: def
-        
-    def get_cell_methods(self, field):
-        '''
-        '''
-        return field.cell_methods()
-    #--- End: def
-        
-
-    def get_cell_method_axes(self, cell_method, *default):
-        '''
-
-:Returns:
-
-    out: `tuple`
-'''
-        return cell_method.get_axes(*default)
-    #--- End: for
-    
-    def get_cell_method_string(self, cell_method):
-        '''
-:Returns:
-
-    out: `str`
-'''
-        return str(cell_method)
-    #--- End: for
-    
-    def is_climatology(self, coordinate):
-        '''
-
-:Returns:
-
-    out: `bool`
-        The value of the 'climatology' cell extent parameter, or False
-        if not set.
-
-        '''
-#        return coordinate.bounds_mapping.get_parameter('climatology', False)
-        return bool(coordinate.get_geometry_type(None) == 'climatology')
-    #--- End: def
-        
-    def get_construct_axes(self, field, key):
-        '''
-        '''
-        return field.construct_axes(key)
-    
-    def get_constructs(self, field, axes=None):
-        return field.constructs(axes=axes)
-
-    def get_coordinate_reference_coordinates(self, coordinate_reference):
-        '''Return the coordinates of a coordinate reference object.
-
-:Parameters:
-
-    coordinate_reference: `CoordinateReference`
-
-:Returns:
-
-    out: `set`
-
-        '''
-        return coordinate_reference.coordinates()
-    #--- End: def
-
-    def get_coordinate_conversion_parameters(self, coordinate_reference):
-        '''
-
-:Returns:
-
-    out: `dict`
-
-        '''
-        return coordinate_reference.get_coordinate_conversion().parameters()
-    #--- End: def
-
-    def get_coordinate_references(self, field):
-        '''
-        '''
-        return field.coordinate_references()
-    #--- End: def
-
-    def get_coordinates(self, field):
-        '''
-        '''
-        return field.coordinates()
-    #--- End: def
-
-    def get_data(self, parent, *default):
-        '''Return the data array.
-
-:Examples 1:
-
->>> data = w.get_data(x)
-
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-:Returns:
-
-    out: 
-        The data array.
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_data(d)
-<Data: [-89.5, ..., 89.5] degrees_north>
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_data(b)
-<Data: [[-90, ..., 90]] degrees_north>
-        '''
-        return parent.get_data(*default)
-    #--- End: def
-
-    def get_data_axes(self, field):
-        '''
-        '''
-        return field.get_data_axes()
-    #--- End: def
-
-    def get_domain_ancillaries(self, field):
-        '''
-        '''
-        return field.domain_ancillaries()
-
-    def get_domain_axes(self, field):
-        '''
-        '''
-        return field.domain_axes()
-        
-    def get_domain_axis_size(self, field, axis):
-        '''
-        '''
-        return self.get_domain_axes(field)[axis].get_size()
-
-    def get_datum(self, coordinate_reference):
-        '''
-
-:Returns:
-
-    out: `dict`
-
-        '''
-        return coordinate_reference.get_datum()
-    #--- End: def
-
-#    def get_datum_ancillaries(self, coordinate_reference):
-#        '''Return the domain ancillary-valued terms of a coordinate reference
-#datum.
+#    def get_array(self, data):
+#        '''
+#        '''
+#        return data.get_array()
+#    #--- End: def
+#
+#    def get_auxiliary_coordinates(self, field):
+#        '''
+#        '''
+#        return field.auxiliary_coordinates()
+#    #--- End: def
+#
+#    def get_bounds(self, construct, *default):
+#        '''
+#        '''
+#        return construct.get_bounds(*default)
+#    #--- End: def
+#
+#    def get_cell_measures(self, field):
+#        '''
+#        '''
+#        return field.cell_measures()
+#    #--- End: def
+#        
+#    def get_cell_methods(self, field):
+#        '''
+#        '''
+#        return field.cell_methods()
+#    #--- End: def
+#        
+#
+#    def get_cell_method_axes(self, cell_method, *default):
+#        '''
+#
+#:Returns:
+#
+#    out: `tuple`
+#'''
+#        return cell_method.get_axes(*default)
+#    #--- End: for
+#    
+#    def get_cell_method_string(self, cell_method):
+#        '''
+#:Returns:
+#
+#    out: `str`
+#'''
+#        return str(cell_method)
+#    #--- End: for
+#    
+#    def is_climatology(self, coordinate):
+#        '''
+#
+#:Returns:
+#
+#    out: `bool`
+#        The value of the 'climatology' cell extent parameter, or False
+#        if not set.
+#
+#        '''
+##        return coordinate.bounds_mapping.get_parameter('climatology', False)
+#        return bool(coordinate.get_geometry_type(None) == 'climatology')
+#    #--- End: def
+#        
+#    def get_construct_axes(self, field, key):
+#        '''
+#        '''
+#        return field.construct_axes(key)
+#    
+#    def get_constructs(self, field, axes=None):
+#        return field.constructs(axes=axes)
+#
+#    def get_coordinate_reference_coordinates(self, coordinate_reference):
+#        '''Return the coordinates of a coordinate reference object.
+#
+#:Parameters:
+#
+#    coordinate_reference: `CoordinateReference`
+#
+#:Returns:
+#
+#    out: `set`
+#
+#        '''
+#        return coordinate_reference.coordinates()
+#    #--- End: def
+#
+#    def get_coordinate_conversion_parameters(self, coordinate_reference):
+#        '''
+#
+#:Returns:
+#
+#    out: `dict`
+#
+#        '''
+#        return coordinate_reference.get_coordinate_conversion().parameters()
+#    #--- End: def
+#
+#    def get_coordinate_references(self, field):
+#        '''
+#        '''
+#        return field.coordinate_references()
+#    #--- End: def
+#
+#    def get_coordinates(self, field):
+#        '''
+#        '''
+#        return field.coordinates()
+#    #--- End: def
+#
+#    def get_data(self, parent, *default):
+#        '''Return the data array.
+#
+#:Examples 1:
+#
+#>>> data = w.get_data(x)
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the data array.
+#
+#:Returns:
+#
+#    out: 
+#        The data array.
+#
+#:Examples 2:
+#
+#>>> d
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.get_data(d)
+#<Data: [-89.5, ..., 89.5] degrees_north>
+#
+#>>> b
+#<Bounds: latitude(180, 2) degrees_north>
+#>>> w.get_data(b)
+#<Data: [[-90, ..., 90]] degrees_north>
+#        '''
+#        return parent.get_data(*default)
+#    #--- End: def
+#
+#    def get_data_axes(self, field):
+#        '''
+#        '''
+#        return field.get_data_axes()
+#    #--- End: def
+#
+#    def get_domain_ancillaries(self, field):
+#        '''
+#        '''
+#        return field.domain_ancillaries()
+#
+#    def get_domain_axes(self, field):
+#        '''
+#        '''
+#        return field.domain_axes()
+#        
+#    def get_domain_axis_size(self, field, axis):
+#        '''
+#        '''
+#        return self.get_domain_axes(field)[axis].get_size()
+#
+#    def get_datum(self, coordinate_reference):
+#        '''
+#
+#:Returns:
+#
+#    out: `dict`
+#
+#        '''
+#        return coordinate_reference.get_datum()
+#    #--- End: def
+#
+##    def get_datum_ancillaries(self, coordinate_reference):
+##        '''Return the domain ancillary-valued terms of a coordinate reference
+##datum.
+##
+##:Parameters:
+##
+##    coordinate_reference: `CoordinateReference`
+##
+##:Returns:
+##
+##    out: `dict`
+##        '''        
+##        return self.get_datum(coordinate_reference).ancillaries()
+##    #--- End: def
+#        
+#    def get_datum_parameters(self, coordinate_reference):
+#        '''Return the parameter-valued terms of a coordinate reference datum.
 #
 #:Parameters:
 #
@@ -2053,331 +2067,317 @@ write them to the netCDF4.Dataset.
 #:Returns:
 #
 #    out: `dict`
+#
 #        '''        
-#        return self.get_datum(coordinate_reference).ancillaries()
+#        return self.get_datum(coordinate_reference).parameters()
 #    #--- End: def
-        
-    def get_datum_parameters(self, coordinate_reference):
-        '''Return the parameter-valued terms of a coordinate reference datum.
-
-:Parameters:
-
-    coordinate_reference: `CoordinateReference`
-
-:Returns:
-
-    out: `dict`
-
-        '''        
-        return self.get_datum(coordinate_reference).parameters()
-    #--- End: def
-
-    def get_dimension_coordinates(self, field):
-        '''
-        '''
-        return field.dimension_coordinates()
-    #--- End: def
-
-    def get_external(self, parent):
-        '''Return whether a construct is external.
-
-:Examples 1:
-
-:Parameters:
-
-    parent: 
-        The object
-
-    default: optional
-
-:Returns:
-
-    out: `bool`
-        Whether the construct is external.
-
-:Examples 2:
-        '''
-        return parent.get_external()
-    #--- End: def
-
-    def get_field_ancillaries(self, field):
-        '''Return the field ancillaries of a field.
-
-:Examples 1:
-
->>> field_ancillaries = w.get_field_ancillaries(f)
-
-:Parameters:
-
-    field: 
-        The field object.
-
-:Returns:
-
-    out: `dict`
-        The field ancillary objects, keyed by their internal identifiers.
-
-:Examples 2:
-
->>> w.get_field_ancillaries(f)
-{'fieldancillary0': <FieldAncillary: >,
- 'fieldancillary1': <FieldAncillary: >}
-        '''
-        return field.field_ancillaries()
-    #--- End: def
-    
-    def get_measure(self, cell_measure):
-        '''Return the measure property of a cell measure contruct.
-
-:Examples 1:
-
->>> measure = w.get_measure(c)
-
-:Parameters:
-
-    cell_measure:
-        The cell measure object.
-
-:Returns:
-
-    out: `str` or `None`
-        The measure property, or `None` if it has not been set.
-
-:Examples 2:
-
->>> c
-<CellMeasure: area(73, 96) km2>
->>> w.get_measure(c)
-'area'
-        '''
-        return cell_measure.get_measure(None)
-    #--- End: def
-    
-    def get_ncvar(self, parent, *default):
-        '''Return the netCDF variable name.
-
-:Examples 1:
-
->>> ncvar = w.get_ncvar(x)
-
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-    default: `str`, optional
-
-:Returns:
-
-    out: 
-        The netCDF variable name.
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_ncvar(d)
-'lat'
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_ncvar(b)
-'lat_bnds'
-
->>> w.get_ncvar(x)
-AttributeError: Can't get non-existent 'ncvar'
->>> w.get_ncvar(x, 'newname')
-'newname'
-        '''
-        return parent.get_ncvar(*default)
-    #--- End: def
-
-    def get_ncdim(self, field, axis, *default):
-        '''Return the netCDF variable name.
-
-:Examples 1:
-
->>> ncdim = w.get_ncdim(x)
-
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-    default: `str`, optional
-
-:Returns:
-
-    out: 
-        The netCDF dimension name.
-
-:Examples 2:
-        '''
-        return field.get_domain_axis()[axis].get_ncdim(*default)
-    #--- End: def
-
-    def get_ndim(self, parent):
-        '''Return the number of dimensions spanned by the data array.
-
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-:Returns:
-
-    out: int
-        The number of dimensions spanned by the data array.
-
-:Examples 1:
-
->>> ndim = w.get_ndim(x)
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_ndim(d)
-1
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_ndim(b)
-2
-        '''
-        return parent.ndim
-    #--- End: def
-
-    def get_properties(self, parent):
-        '''Return all properties.
-
-:Parameters:
-
-    parent: 
-        The object containing the properties.
-
-:Returns:
-
-    out: `dict`
-        The property names and their values
-
-:Examples 1:
-
->>> properties = w.get_properties(x)
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_properties(d)
-{'units: 'degrees_north'}
- 'standard_name: 'latitude',
- 'foo': 'bar'}
-        '''
-        return parent.properties()
-    #--- End: def
-    
-    def get_property(self, parent, prop, *default):
-        '''Return a property value.
-
-:Parameters:
-
-    parent: 
-        The object containing the property.
-
-:Returns:
-
-    out: 
-        The value of the property.
-
-:Examples 1:
-
->>> value = w.get_property(x, 'standard_name')
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_property(d, 'units')
-'degees_north'
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_property(b, 'long_name')
-'Latitude Bounds'
-
->>> w.get_property(x, 'foo')
-AttributeError: Can't get non-existent property 'foo'
->>> w.get_property(x, 'foo', 'bar')
-'bar'
-        '''
-        return parent.get_property(prop, *default)
-    #--- End: def
-    
-    def get_shape(self, parent):
-        '''Return the shape of the data array.
-
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-:Returns:
-
-    out: tuple
-        The shape of the data array.
-
-:Examples 1:
-
->>> shape = w.get_shape(x)
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_shape(d)
-(180,)
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_shape(b)
-(180, 2)
-
-        '''
-        return parent.shape
-    #--- End: def
-
-    def has_property(self, parent, prop):
-        '''Return True if a property exists.
-
-:Examples 1:
-
->>> has_standard_name = w.has_property(x, 'standard_name')
-
-:Parameters:
-
-    parent: 
-        The object containing the property.
-
-:Returns:
-
-    out: `bool`
-        `True` if the property exists, otherwise `False`.
-
-:Examples 2:
-
->>> coord
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.has_property(coord, 'units')
-True
-
->>> bounds
-<Bounds: latitude(180, 2) degrees_north>
->>> w.has_property(bounds, 'long_name')
-False
-        '''
-        return parent.has_property(prop)
-    #--- End: def
+#
+#    def get_dimension_coordinates(self, field):
+#        '''
+#        '''
+#        return field.dimension_coordinates()
+#    #--- End: def
+#
+#    def get_external(self, parent):
+#        '''Return whether a construct is external.
+#
+#:Examples 1:
+#
+#:Parameters:
+#
+#    parent: 
+#        The object
+#
+#    default: optional
+#
+#:Returns:
+#
+#    out: `bool`
+#        Whether the construct is external.
+#
+#:Examples 2:
+#        '''
+#        return parent.get_external()
+#    #--- End: def
+#
+#    def get_field_ancillaries(self, field):
+#        '''Return the field ancillaries of a field.
+#
+#:Examples 1:
+#
+#>>> field_ancillaries = w.get_field_ancillaries(f)
+#
+#:Parameters:
+#
+#    field: 
+#        The field object.
+#
+#:Returns:
+#
+#    out: `dict`
+#        The field ancillary objects, keyed by their internal identifiers.
+#
+#:Examples 2:
+#
+#>>> w.get_field_ancillaries(f)
+#{'fieldancillary0': <FieldAncillary: >,
+# 'fieldancillary1': <FieldAncillary: >}
+#        '''
+#        return field.field_ancillaries()
+#    #--- End: def
+#    
+#    def get_measure(self, cell_measure):
+#        '''Return the measure property of a cell measure contruct.
+#
+#:Examples 1:
+#
+#>>> measure = w.get_measure(c)
+#
+#:Parameters:
+#
+#    cell_measure:
+#        The cell measure object.
+#
+#:Returns:
+#
+#    out: `str` or `None`
+#        The measure property, or `None` if it has not been set.
+#
+#:Examples 2:
+#
+#>>> c
+#<CellMeasure: area(73, 96) km2>
+#>>> w.get_measure(c)
+#'area'
+#        '''
+#        return cell_measure.get_measure(None)
+#    #--- End: def
+#    
+#    def get_ncvar(self, parent, *default):
+#        '''Return the netCDF variable name.
+#
+#:Examples 1:
+#
+#>>> ncvar = w.get_ncvar(x)
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the data array.
+#
+#    default: `str`, optional
+#
+#:Returns:
+#
+#    out: 
+#        The netCDF variable name.
+#
+#:Examples 2:
+#
+#>>> d
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.get_ncvar(d)
+#'lat'
+#
+#>>> b
+#<Bounds: latitude(180, 2) degrees_north>
+#>>> w.get_ncvar(b)
+#'lat_bnds'
+#
+#>>> w.get_ncvar(x)
+#AttributeError: Can't get non-existent 'ncvar'
+#>>> w.get_ncvar(x, 'newname')
+#'newname'
+#        '''
+#        return parent.get_ncvar(*default)
+#    #--- End: def
+#
+#    def get_ncdim(self, field, axis, *default):
+#        '''Return the netCDF variable name.
+#
+#:Examples 1:
+#
+#>>> ncdim = w.get_ncdim(x)
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the data array.
+#
+#    default: `str`, optional
+#
+#:Returns:
+#
+#    out: 
+#        The netCDF dimension name.
+#
+#:Examples 2:
+#        '''
+#        return field.get_domain_axis()[axis].get_ncdim(*default)
+#    #--- End: def
+#
+#    def get_ndim(self, parent):
+#        '''Return the number of dimensions spanned by the data array.
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the data array.
+#
+#:Returns:
+#
+#    out: int
+#        The number of dimensions spanned by the data array.
+#
+#:Examples 1:
+#
+#>>> ndim = w.get_ndim(x)
+#
+#:Examples 2:
+#
+#>>> d
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.get_ndim(d)
+#1
+#
+#>>> b
+#<Bounds: latitude(180, 2) degrees_north>
+#>>> w.get_ndim(b)
+#2
+#        '''
+#        return parent.ndim
+#    #--- End: def
+#
+#    def get_properties(self, parent):
+#        '''Return all properties.
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the properties.
+#
+#:Returns:
+#
+#    out: `dict`
+#        The property names and their values
+#
+#:Examples 1:
+#
+#>>> properties = w.get_properties(x)
+#
+#:Examples 2:
+#
+#>>> d
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.get_properties(d)
+#{'units: 'degrees_north'}
+# 'standard_name: 'latitude',
+# 'foo': 'bar'}
+#        '''
+#        return parent.properties()
+#    #--- End: def
+#    
+#    def get_property(self, parent, prop, *default):
+#        '''Return a property value.
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the property.
+#
+#:Returns:
+#
+#    out: 
+#        The value of the property.
+#
+#:Examples 1:
+#
+#>>> value = w.get_property(x, 'standard_name')
+#
+#:Examples 2:
+#
+#>>> d
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.get_property(d, 'units')
+#'degees_north'
+#
+#>>> b
+#<Bounds: latitude(180, 2) degrees_north>
+#>>> w.get_property(b, 'long_name')
+#'Latitude Bounds'
+#
+#>>> w.get_property(x, 'foo')
+#AttributeError: Can't get non-existent property 'foo'
+#>>> w.get_property(x, 'foo', 'bar')
+#'bar'
+#        '''
+#        return parent.get_property(prop, *default)
+#    #--- End: def
+#    
+#    def get_shape(self, parent):
+#        '''Return the shape of the data array.
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the data array.
+#
+#:Returns:
+#
+#    out: tuple
+#        The shape of the data array.
+#
+#:Examples 1:
+#
+#>>> shape = w.get_shape(x)
+#
+#:Examples 2:
+#
+#>>> d
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.get_shape(d)
+#(180,)
+#
+#>>> b
+#<Bounds: latitude(180, 2) degrees_north>
+#>>> w.get_shape(b)
+#(180, 2)
+#
+#        '''
+#        return parent.shape
+#    #--- End: def
+#
+#    def has_property(self, parent, prop):
+#        '''Return True if a property exists.
+#
+#:Examples 1:
+#
+#>>> has_standard_name = w.has_property(x, 'standard_name')
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the property.
+#
+#:Returns:
+#
+#    out: `bool`
+#        `True` if the property exists, otherwise `False`.
+#
+#:Examples 2:
+#
+#>>> coord
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.has_property(coord, 'units')
+#True
+#
+#>>> bounds
+#<Bounds: latitude(180, 2) degrees_north>
+#>>> w.has_property(bounds, 'long_name')
+#False
+#        '''
+#        return parent.has_property(prop)
+#    #--- End: def
 
     def initialise(self, class_name, **kwargs):
         '''
@@ -2385,30 +2385,30 @@ False
         return self.implementation.get_class(class_name)(**kwargs)
     #--- End: def
 
-    def set_cell_method_axes(self, cell_method, axes):
-        '''
-'''
-        cell_method.set_axes(axes)
-    #--- End: for
-    
-    def set_property(self, construct, name, value):
-        '''
-        '''
-        construct.set_property(name, value)
-    #--- End: def
-
-    def set_coordinate_reference_coordinate(self, coordinate_reference,
-                                            coordinate):
-        '''
-        '''
-        coordinate_reference.set_coordinate(coordinate)
-    #--- End: def
-
-    def squeeze(self, construct, axes=None, copy=True):
-        '''
-        '''
-        return construct.squeeze(axes=axes, copy=copy)
-    #--- End: def
+#    def set_cell_method_axes(self, cell_method, axes):
+#        '''
+#'''
+#        cell_method.set_axes(axes)
+#    #--- End: for
+#    
+#    def set_property(self, construct, name, value):
+#        '''
+#        '''
+#        construct.set_property(name, value)
+#    #--- End: def
+#
+#    def set_coordinate_reference_coordinate(self, coordinate_reference,
+#                                            coordinate):
+#        '''
+#        '''
+#        coordinate_reference.set_coordinate(coordinate)
+#    #--- End: def
+#
+#    def squeeze(self, construct, axes=None, copy=True):
+#        '''
+#        '''
+#        return construct.squeeze(axes=axes, copy=copy)
+#    #--- End: def
         
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               verbose=False, mode='w', least_significant_digit=None,
