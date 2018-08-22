@@ -1,8 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
-from builtins import zip
-from builtins import next
-from builtins import range
+from builtins import (next, range, zip)
+
 import itertools
 import operator
 

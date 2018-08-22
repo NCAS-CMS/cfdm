@@ -145,7 +145,7 @@ extra trailing dimension.
             # Convert unicode to string
             array = array.astype('S')
             
-        new = netCDF4.stringtochar(array)
+        new = netCDF4.stringtochar(array, encoding='none')
 
         if masked:
             new = numpy.ma.masked_where(new=='', new)
@@ -162,7 +162,8 @@ extra trailing dimension.
 #            else:
 #                new[index] = tuple(value.ljust(strlen, ' ')) 
 #        #--- End: for
-    
+
+        print('new=', repr(new))
         return new
     #--- End: def
     
@@ -202,7 +203,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
             return 'S1'
 
         dtype = getattr(data, 'dtype', None)
-        
+        print('dtype=', dtype)
 #        if not hasattr(variable, 'dtype'):
 #            dtype = numpy.asanyarray(variable).dtype
         if dtype is None or dtype.char == 'S':
@@ -1031,17 +1032,19 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
         # ------------------------------------------------------------
+        print(cfvar.get_data().dtype)
         datatype = self._datatype(cfvar)
-    
+        print('datatype=', datatype)
         data = API.get_data(cfvar, None)
 
-        if data is not None and datatype == 'S1':
+        if data is not None and datatype == 'S':
             # --------------------------------------------------------
             # Convert a string data type numpy array into a
             # character data type ('S1') numpy array with an extra
             # trailing dimension.
             # --------------------------------------------------------
             strlen = data.dtype.itemsize
+            print('strlen=', strlen)
             if strlen > 1:
                 data = self._convert_to_char(data)
                 ncdim = self._string_length_dimension(strlen)            

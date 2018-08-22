@@ -49,7 +49,7 @@ class create_fieldTest_2(unittest.TestCase):
         aux3.set_property('units', 'degreeE')
 
         array = numpy.ma.array(['alpha','beta','gamma','delta','epsilon',
-                               'zeta','eta','theta','iota','kappa'])
+                                'zeta','eta','theta','iota','kappa'], dtype='S')
         array[0] = numpy.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
         aux4.set_property('standard_name', 'greek_letters')
