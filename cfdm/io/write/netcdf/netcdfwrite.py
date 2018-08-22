@@ -1076,6 +1076,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # Create a new netCDF variable
         # ------------------------------------------------------------ 
         try:
+            print('ZZZZZZZZZ datatype=', datatype)
             g['nc'][ncvar] = g['netcdf'].createVariable(
                 ncvar,
                 datatype, 
@@ -2559,7 +2560,7 @@ and auxiliary coordinate roles for different data variables.
  <CF Field: potential_temperature(19, 30, 24)>]
         '''    
         if _debug:
-            print('Writing to netCDF:')
+            print('Writing to', fmt)
 
         # ------------------------------------------------------------
         # Initialise netCDF write parameters

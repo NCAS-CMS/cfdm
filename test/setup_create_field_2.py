@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import datetime
 import os
 import sys
@@ -183,7 +184,11 @@ class create_fieldTest_2(unittest.TestCase):
         
 #        f.dump()
         print("####################################################")
-        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
+        for fmt in ('NETCDF3_CLASSIC',
+                    'NETCDF3_64BIT',
+                    'NETCDF4',
+                    'NETCDF4_CLASSIC'):
+            cfdm.write(f, self.filename, fmt=fmt,_debug=True)
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
         for x in g:

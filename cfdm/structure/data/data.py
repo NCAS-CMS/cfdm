@@ -1,14 +1,9 @@
-from builtins import str
-from builtins import object
+from builtins import (object, str)
+
 import abc
 
 import numpy
 
-# ====================================================================
-#
-# Data object
-#
-# ====================================================================
 
 class Data(object):
     '''

@@ -83,8 +83,7 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF3_64BIT',
                     'NETCDF4',
                     'NETCDF4_CLASSIC'):
-            print ('fmt=', fmt)
-            cfdm.write(f, tmpfile, fmt=fmt, _debug=1)
+            cfdm.write(f, tmpfile, fmt=fmt)
             g = cfdm.read(tmpfile)[0]
             self.assertTrue(f.equals(g, traceback=True),
                             'Bad read/write of format: {}'.format(fmt))
