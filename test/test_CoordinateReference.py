@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import os
 import unittest
@@ -71,7 +72,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 #--- End: class
 
 if __name__ == '__main__':
-    print 'Run date:', datetime.datetime.now()
-    print cfdm.environment()
-    print ''
+    print('Run date:', datetime.datetime.now())
+    print(cfdm.environment())
+    print('')
     unittest.main(verbosity=2)

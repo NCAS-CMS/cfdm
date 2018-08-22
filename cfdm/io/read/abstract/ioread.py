@@ -1,15 +1,15 @@
 import abc
 
 from ... import IO
+from future.utils import with_metaclass
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class IORead(IO):
+class IORead(with_metaclass(abc.ABCMeta, IO)):
     '''Base class for instantiating Field constructs from a dataset.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def read(self, *args, **kwargs):

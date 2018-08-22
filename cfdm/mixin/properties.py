@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import super
+
 import abc
 import textwrap
 
@@ -5,13 +8,13 @@ import numpy
 import sys
 
 from .container import Container
+from future.utils import with_metaclass
 
 
-class Properties(Container):
+class Properties(with_metaclass(abc.ABCMeta, Container)):
     '''Mixin class for descriptive properties.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
@@ -43,7 +46,7 @@ class Properties(Container):
                  properties.pop(prop, None)
         #--- End: if
  
-        for prop, value in sorted(properties.iteritems()):
+        for prop, value in sorted(properties.items()):
             name   = '{0}{1}{2} = '.format(indent0, _prefix, prop)
             value  = repr(value)
             subsequent_indent = ' ' * len(name)
@@ -62,14 +65,15 @@ class Properties(Container):
                ignore_properties=(), ignore_construct_type=False):
         '''
         '''
-        if not super(Properties, self).equals(
+#        if not super(Properties, self).equals(
+        if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_construct_type=ignore_construct_type):
             if traceback:
                 print(
 "{0}: Different ??/".format(self.__class__.__name__))
-	    return False
+            return False
 
         # ------------------------------------------------------------
         # Check the properties
@@ -93,7 +97,7 @@ class Properties(Container):
                     sorted(self_properties), sorted(other_properties)))
             return False
 
-        for prop, x in self_properties.iteritems():
+        for prop, x in self_properties.items():
             y = other_properties[prop]
 
             if not self._equals(x, y,

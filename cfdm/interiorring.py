@@ -1,10 +1,12 @@
+from __future__ import absolute_import
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class InteriorRing(mixin.PropertiesData, structure.InteriorRing):
+class InteriorRing(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.PropertiesData, structure.InteriorRing), {}))):
     '''An interior ring array with properties.
 
 For polygon geometries, an individual geometry may define an "interior
@@ -18,7 +20,6 @@ coordinate array, with the addition of an extra ragged dimension that
 indexes the geometries for each cell.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def dump(self, display=True, field=None, key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,

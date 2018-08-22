@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import os
 import time 
@@ -162,8 +163,8 @@ class DSGTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    print 'Run date:', datetime.datetime.utcnow()
+    print('Run date:', datetime.datetime.utcnow())
     cfdm.environment()
-    print
+    print()
     unittest.main(verbosity=2)
 

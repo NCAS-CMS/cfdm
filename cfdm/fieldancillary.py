@@ -1,10 +1,12 @@
+from __future__ import absolute_import
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class FieldAncillary(mixin.PropertiesData, structure.FieldAncillary):
+class FieldAncillary(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.PropertiesData, structure.FieldAncillary), {}))):
     '''A field ancillary construct of the CF data model.
 
 The field ancillary construct provides metadata which are distributed
@@ -27,7 +29,6 @@ for instance, an auxiliary coordinate construct or domain ancillary
 construct.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None):

@@ -1,3 +1,8 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import (str, super)
+from past.builtins import basestring
+
 import abc
 
 import csv
@@ -9,8 +14,8 @@ from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
 from .dimensioncoordinate  import DimensionCoordinate
 
-import mixin
-import structure
+from . import mixin
+from . import structure
 
 
 # --------------------------------------------------------------------
@@ -93,18 +98,20 @@ frame and consists of the following:
     frame.
 
     '''
-   
+
     _name_to_coordinates = _name_to_coordinates
     _datum_parameters    = _datum_parameters
 #    _datum_ancillaries   = _datum_ancillaries
 
     def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-        obj._CoordinateConversion = CoordinateConversion
-        obj._Datum                = Datum
-
-        return obj
+        instance = super().__new__(cls)
+        instance._CoordinateConversion = CoordinateConversion
+        instance._Datum                = Datum
+        return instance
+#        obj = object.__new__(cls, *args, **kwargs)        
+#        obj._CoordinateConversion = CoordinateConversion
+#        obj._Datum                = Datum
+#        return obj
     #--- End: def
 
     def __init__(self, coordinates=None, datum=None,
@@ -218,7 +225,7 @@ frame and consists of the following:
                 coordinate_conversion_domain_ancillaries = {}
 
                 if parameters is not None:
-                    for x, value in parameters.iteritems():
+                    for x, value in parameters.items():
                         if x in self._datum_parameters:
                             datum_parameters[x] = value
                         else:
@@ -226,7 +233,7 @@ frame and consists of the following:
                 #-- End: if
             
                 if domain_ancillaries is not None:                 
-                    for x, value in domain_ancillaries.iteritems():
+                    for x, value in domain_ancillaries.items():
 #                        if x in self._datum_ancillaries:
 #                            datum_domain_ancillaries[x] = value
 #                        else:
@@ -241,7 +248,8 @@ frame and consists of the following:
                     domain_ancillaries=coordinate_conversion_domain_ancillaries)
         #--- End: if
             
-        super(CoordinateReference, self).__init__(
+#        super(CoordinateReference, self).__init__(
+        super().__init__(
             coordinates=coordinates,
             datum=datum,
             coordinate_conversion=coordinate_conversion,
@@ -353,7 +361,7 @@ reference object.
         string = '\n'.join(string)
        
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def
@@ -392,11 +400,12 @@ reference object.
 :Examples:
 
         '''
-        if not super(CoordinateReference, self).equals(
+#        if not super(CoordinateReference, self).equals(
+        if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_construct_type=ignore_construct_type):
-	    return False
+            return False
 
         coords0 = self.coordinates()
         coords1 = other.coordinates()
@@ -415,7 +424,7 @@ reference object.
             if traceback:
                 print(
 "{}: Different coordinate conversions".format(self.__class__.__name__))
-	    return False
+            return False
         
         if not self.datum.equals(
                 other.datum,
@@ -425,7 +434,7 @@ reference object.
             if traceback:
                 print(
 "{}: Different datums".format(self.__class__.__name__))
-	    return False
+            return False
 
         # Still here? Then the two coordinate references are as equal
         # as can be ascertained in the absence of domains.

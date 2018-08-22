@@ -1,12 +1,13 @@
+from builtins import object
 import abc
+from future.utils import with_metaclass
 
 
-class ConstructAccess(object):
+class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     '''Mixin class for manipulating constructs stored in a `Constructs`
 object.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''Return the auxiliary coordinates 

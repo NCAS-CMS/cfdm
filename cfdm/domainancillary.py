@@ -1,10 +1,12 @@
+from __future__ import absolute_import
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class DomainAncillary(mixin.PropertiesDataBounds, structure.DomainAncillary):
+class DomainAncillary(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.PropertiesDataBounds, structure.DomainAncillary), {}))):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for
@@ -23,7 +25,6 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
-    __metaclass__ = abc.ABCMeta
     
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None):

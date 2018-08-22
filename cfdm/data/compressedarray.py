@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from builtins import zip
+from builtins import range
 import sys
 
 from operator import mul
@@ -5,7 +8,8 @@ from operator import mul
 import numpy
 
 #from .array import Array
-import abstract
+from . import abstract
+from functools import reduce
 
 #class CompressedArray(Array):
 class CompressedArray(abstract.Array):
@@ -228,7 +232,7 @@ array.
         '''
         sample_axis = self.compression_parameters.get('sample_axis', 0)
 
-        return range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1))
+        return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
     #--- End: def
 
     def open(self):

@@ -1,14 +1,15 @@
+from __future__ import absolute_import
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class AuxiliaryCoordinate(mixin.Coordinate, structure.AuxiliaryCoordinate):
+class AuxiliaryCoordinate(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Coordinate, structure.AuxiliaryCoordinate), {}))):
     '''A CF auxiliary coordinate construct.
 
     '''
-    __metaclass__ = abc.ABCMeta
       
     
     def dump(self, display=True, _omit_properties=None, field=None,

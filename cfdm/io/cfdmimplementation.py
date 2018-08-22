@@ -1,4 +1,5 @@
-from abstract import Implementation
+from __future__ import absolute_import
+from .abstract import Implementation
 
 
 class CFDMImplementation(Implementation):

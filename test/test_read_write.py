@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import str
+from builtins import range
 import datetime
 import tempfile
 import os
@@ -80,7 +83,8 @@ class read_writeTest(unittest.TestCase):
                     'NETCDF3_64BIT',
                     'NETCDF4',
                     'NETCDF4_CLASSIC'):
-            cfdm.write(f, tmpfile, fmt=fmt)
+            print ('fmt=', fmt)
+            cfdm.write(f, tmpfile, fmt=fmt, _debug=1)
             g = cfdm.read(tmpfile)[0]
             self.assertTrue(f.equals(g, traceback=True),
                             'Bad read/write of format: {}'.format(fmt))
@@ -230,7 +234,7 @@ class read_writeTest(unittest.TestCase):
 #--- End: class
 
 if __name__ == "__main__":
-    print 'Run date:', datetime.datetime.now()
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
-    print''
+    print('')
     unittest.main(verbosity=2)

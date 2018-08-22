@@ -1,13 +1,14 @@
+from builtins import object
 import abc
+from future.utils import with_metaclass
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class ConstructAccess(object):
+class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     '''Mixin class for manipulating a `Constructs` object.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def _get_constructs(self, *default):

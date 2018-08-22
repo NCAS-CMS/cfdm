@@ -3,13 +3,13 @@ import abc
 from copy import deepcopy
 
 from .parameters import Parameters
+from future.utils import with_metaclass
 
-class ParametersDomainAncillaries(Parameters):
+class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
     '''Base class for a collection of named parameters and named domain
 ancillary constructs.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, parameters=None, domain_ancillaries=None,
                  source=None, copy=True, _use_data=True):
@@ -38,7 +38,7 @@ ancillary constructs.
             domain_ancillaries = {}
         elif copy or not _use_data:
             domain_ancillaries = domain_ancillaries.copy()
-            for key, value in domain_ancillaries.items():
+            for key, value in list(domain_ancillaries.items()):
                 try:
                     domain_ancillaries[key] = value.copy(data=_use_data)
                 except AttributeError:

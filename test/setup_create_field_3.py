@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import os
 import sys
@@ -192,14 +193,14 @@ class create_fieldTest(unittest.TestCase):
 #        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment:# ok) '+axisY+': max where sea'):
 #            f.set_cell_method(cm)
 
-        print repr(f)
-        print f
-        print f.constructs()
-        print f.construct_axes()
+        print(repr(f))
+        print(f)
+        print(f.constructs())
+        print(f.construct_axes())
         
         f.dump()
 #        sys.exit(0)
-        print "####################################################"
+        print("####################################################")
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 #        f.dump()
 
@@ -224,7 +225,7 @@ class create_fieldTest(unittest.TestCase):
 
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")
-        print 2
+        print(2)
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 #        print f.dump()
@@ -236,7 +237,7 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
 #        g.dump()
 
-        print 3
+        print(3)
         f.dump()
         g.dump()
 #        sys.exit(0)
@@ -254,7 +255,7 @@ class create_fieldTest(unittest.TestCase):
             x.print_read_report()
 
 
-        print g
+        print(g)
         g[0].dump()
 #        for x in g:
 #            x.dump()
@@ -278,7 +279,7 @@ class create_fieldTest(unittest.TestCase):
 #--- End: class
 
 if __name__ == "__main__":
-    print 'Run date:', datetime.datetime.now()
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
-    print ''
+    print('')
     unittest.main(verbosity=2)

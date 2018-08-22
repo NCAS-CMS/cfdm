@@ -1,13 +1,22 @@
+from __future__ import print_function
+from builtins import super
+
 import abc
 
 from .container import Container
+from future.utils import with_metaclass
 
-class Parameters(Container):
+class Parameters(with_metaclass(abc.ABCMeta, Container)):
     '''Mixin class for parameters.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
+    def __bool__(self):
+        '''
+        '''
+        return bool(self.parameters())
+    #--- End: def
+        
     def __nonzero__(self):
         '''
         '''
@@ -55,11 +64,12 @@ class Parameters(Container):
 :Examples:
 
         '''
-        if not super(Parameters, self).equals(
+#        if not super(Parameters, self).equals(
+        if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_construct_type=ignore_construct_type):
-	    return False
+            return False
         
         # Check that the coordinate conversion parameter terms match
         parameters0 = self.parameters()
@@ -73,7 +83,7 @@ class Parameters(Container):
             return False
 
         # Check that the parameter values are equal
-        for term, value0 in parameters0.iteritems():            
+        for term, value0 in parameters0.items():            
             value1 = parameters1[term]  
 
             if value0 is None and value1 is None:

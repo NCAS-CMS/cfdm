@@ -1,12 +1,16 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
 
 from .constructs import Constructs
+from future.utils import with_metaclass
 
 
-class Domain(mixin.ConstructAccess, mixin.Properties, structure.Domain):
+class Domain(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.ConstructAccess, mixin.Properties, structure.Domain), {}))):
     '''A CF Domain construct.
 
 The domain is defined collectively by the following constructs, all of
@@ -35,7 +39,6 @@ Cell measure          Domain cell size or shape stored in
 ====================  ================================================
 
     '''
-    __metaclass__ = abc.ABCMeta
     
     def __new__(cls, *args, **kwargs):
         obj = object.__new__(cls, *args, **kwargs)
@@ -51,7 +54,7 @@ Cell measure          Domain cell size or shape stored in
 x.__repr__() <==> repr(x)
 
         '''
-        shape = sorted([domain_axis.get_size() for domain_axis in self.domain_axes().values()])
+        shape = sorted([domain_axis.get_size() for domain_axis in list(self.domain_axes().values())])
 
         return '<{0}: {1}>'.format(self.__class__.__name__, shape)
     #--- End: def
@@ -83,7 +86,7 @@ x.__str__() <==> str(x)
 #        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
 
         axis_names = {}
-        for key, domain_axis in self.domain_axes().iteritems():
+        for key, domain_axis in self.domain_axes().items():
             axis_names[key] = '{0}({1})'.format(axis_name(key),
                                                 domain_axis.get_size())
         
@@ -126,7 +129,7 @@ x.__str__() <==> str(x)
         # Dimension coordinates
         x = []
         for key in self.domain_axes():
-            for k, dim in self.dimension_coordinates().items():
+            for k, dim in list(self.dimension_coordinates().items()):
                 if self.construct_axes()[k] == (key,):
                     name = dim.name(default='id%{0}'.format(k))
                     y = '{0}({1})'.format(name, dim.size)
@@ -163,7 +166,7 @@ x.__str__() <==> str(x)
             
         # Coordinate references
         x = sorted([ref.name(default='')
-                    for ref in self.coordinate_references().values()])
+                    for ref in list(self.coordinate_references().values())])
         if x:
             string.append('Coord references: {}'.format(
                 '\n                : '.join(x)))
@@ -220,7 +223,7 @@ field.
         string = '\n'.join(w+x)
 
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def
@@ -305,30 +308,30 @@ last values.
             string.extend(('', axes))
            
         # Dimension coordinates
-        for key, value in sorted(self.dimension_coordinates().iteritems()):
+        for key, value in sorted(self.dimension_coordinates().items()):
             string.append('')
             string.append(value.dump(display=False, 
                                      field=self, key=key, _level=_level))
              
         # Auxiliary coordinates
-        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
+        for key, value in sorted(self.auxiliary_coordinates().items()):
             string.append('')
             string.append(value.dump(display=False, field=self, 
                                      key=key, _level=_level))
         # Domain ancillaries
-        for key, value in sorted(self.domain_ancillaries().iteritems()):
+        for key, value in sorted(self.domain_ancillaries().items()):
             string.append('') 
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
             
         # Coordinate references
-        for key, value in sorted(self.coordinate_references().iteritems()):
+        for key, value in sorted(self.coordinate_references().items()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
 
         # Cell measures
-        for key, value in sorted(self.cell_measures().iteritems()):
+        for key, value in sorted(self.cell_measures().items()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
@@ -338,7 +341,7 @@ last values.
         string = '\n'.join(string)
        
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def

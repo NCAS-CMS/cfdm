@@ -1,13 +1,15 @@
+from __future__ import print_function
+from builtins import (str, super)
 import abc
 
 from .properties import Properties
+from future.utils import with_metaclass
 
 
-class PropertiesData(Properties):
+class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     '''Mixin class for a data array with descriptive properties.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -154,7 +156,7 @@ standard_name = 'time'
         string = '\n'.join(string)
        
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def
@@ -237,7 +239,8 @@ True
         # ------------------------------------------------------------
         # Check the properties
         # ------------------------------------------------------------
-        if not super(PropertiesData, self).equals(
+#        if not super(PropertiesData, self).equals(
+        if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_data_type=ignore_data_type,
@@ -247,7 +250,7 @@ True
             if traceback:
                 print(
 "{0}: Different properties".format(self.__class__.__name__))
-	    return False
+            return False
 
         # ------------------------------------------------------------
         # Check the data
@@ -663,7 +666,7 @@ The data type of the data array is unchanged.
 #        if ndim is None:
         ndim = self.ndim
         
-        if isinstance(axes, (int, long)):
+        if isinstance(axes, (int, int)):
             axes = (axes,)
             
         return [(i + ndim if i < 0 else i) for i in axes]

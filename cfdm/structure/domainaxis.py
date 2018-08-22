@@ -1,8 +1,11 @@
+from __future__ import absolute_import
+from builtins import str
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
-class DomainAxis(abstract.Container):
+class DomainAxis(with_metaclass(abc.ABCMeta, abstract.Container)):
     '''A domain axis construct of the CF data model. 
 
 A domain axis construct specifies the number of points along an
@@ -15,7 +18,6 @@ exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
     '''
-    __metaclass__ = abc.ABCMeta
     
     def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**

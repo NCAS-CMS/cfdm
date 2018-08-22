@@ -3,13 +3,13 @@ import abc
 from copy import deepcopy
 
 from .container import Container
+from future.utils import with_metaclass
 
-class Parameters(Container):
+class Parameters(with_metaclass(abc.ABCMeta, Container)):
     '''Base class for a collection of named parameters and named domain
 ancillary constructs.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, parameters=None, source=None, copy=True,
                  _use_data=True):

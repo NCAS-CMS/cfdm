@@ -1,11 +1,15 @@
+from __future__ import absolute_import
+from builtins import str
+from past.builtins import basestring
 import abc
 
 from copy import deepcopy
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
 
-class CellMethod(abstract.Properties):
+class CellMethod(with_metaclass(abc.ABCMeta, abstract.Properties)):
     '''A cell method construct of the CF data model.
 
 One or more cell method constructs describe how the cell values of the
@@ -22,7 +26,6 @@ applied (e.g. recording the spacing of the original data, or the fact
 that the method was applied only over El Nino years).
 
     '''
-    __metaclass__ = abc.ABCMeta
     
     def __init__(self, axes=None, properties=None, source=None,
                  copy=True):

@@ -1,14 +1,18 @@
+from __future__ import absolute_import
+from builtins import super
+
 import abc
 
 from copy import deepcopy
 
-import abstract
+from . import abstract
 
 from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
+from future.utils import with_metaclass
 
 
-class CoordinateReference(abstract.Container):
+class CoordinateReference(with_metaclass(abc.ABCMeta, abstract.Container)):
     '''A coordinate reference construct of the CF data model. 
 
 A coordinate reference construct relates the coordinate values of the
@@ -52,15 +56,16 @@ frame and consists of the following:
     conversion formula is stored in a `CoordinateConversion` object.
 
     '''
-    __metaclass__ = abc.ABCMeta
     
     def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-        obj._CoordinateConversion = CoordinateConversion
-        obj._Datum                = Datum
-
-        return obj
+#        obj = object.__new__(cls, *args, **kwargs)
+#        obj._CoordinateConversion = CoordinateConversion
+#        obj._Datum                = Datum
+#        return obj
+        instance = super().__new__(cls)
+        instance._CoordinateConversion = CoordinateConversion
+        instance._Datum                = Datum
+        return instance
     #--- End: def
 
     def __init__(self, coordinates=None, datum=None,
@@ -118,7 +123,8 @@ frame and consists of the following:
         initialization. By default arguments are deep copied.
 
         '''
-        super(CoordinateReference, self).__init__(source=source)
+#        super(CoordinateReference, self).__init__(source=source)
+        super().__init__(source=source)
 
         self._set_component('coordinates', None, set())
         

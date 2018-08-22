@@ -1,12 +1,15 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import zip
 import abc
 
-import structure
+from . import structure
+from future.utils import with_metaclass
 
 
-class Constructs(structure.Constructs):
+class Constructs(with_metaclass(abc.ABCMeta, structure.Constructs)):
     '''
     '''    
-    __metaclass__ = abc.ABCMeta
     
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''
@@ -41,7 +44,7 @@ class Constructs(structure.Constructs):
         if axes is not None:
             spans_axes = set(axes)
             construct_axes = self.construct_axes()
-            for key, construct in out.items():
+            for key, construct in list(out.items()):
                 x = construct_axes.get(key)
                 if x is None or not spans_axes.intersection(x):
                     del out[key]
@@ -59,7 +62,7 @@ class Constructs(structure.Constructs):
                 (prefix, _, value) = name.partition(':')
                 custom = (prefix,) if value else None
                 
-                for key, construct in out.items():
+                for key, construct in list(out.items()):
                     if name not in construct.name(custom=custom, all_names=True):
                         del out[key]
         #--- End: if
@@ -112,7 +115,7 @@ class Constructs(structure.Constructs):
 
         name = None
         
-        for key, dim in self.dimension_coordinates().iteritems():
+        for key, dim in self.dimension_coordinates().items():
             if construct_axes[key] == (axis,):
                 # Get the name from a dimension coordinate
                 name = dim.name(ncvar=False, default=None)
@@ -122,7 +125,7 @@ class Constructs(structure.Constructs):
             return name
 
         found = False
-        for key, aux in self.auxiliary_coordinates().iteritems():
+        for key, aux in self.auxiliary_coordinates().items():
             if construct_axes[key] == (axis,):
                 if found:
                     name = None
@@ -181,7 +184,7 @@ class Constructs(structure.Constructs):
         axes_to_constructs1 = other.axes_to_constructs()
 #        print 'axes_to_constructs0 =', axes_to_constructs0
 #        print '\naxes_to_constructs1 =', axes_to_constructs1
-        for axes0, constructs0 in axes_to_constructs0.iteritems():
+        for axes0, constructs0 in axes_to_constructs0.items():
 #            print '\n\naxes0 = ', axes0
 #            print 'constructs0 = ', constructs0
             matched_all_constructs_with_these_axes = False
@@ -189,7 +192,7 @@ class Constructs(structure.Constructs):
             log = []
             
             len_axes0 = len(axes0) 
-            for axes1, constructs1 in axes_to_constructs1.items():
+            for axes1, constructs1 in list(axes_to_constructs1.items()):
                 log = []
                 constructs1 = constructs1.copy()
 #                print '\n    axes1 = ', axes1
@@ -216,9 +219,9 @@ class Constructs(structure.Constructs):
 
                     # Check that there are matching pairs of equal
                     # constructs
-                    for key0, item0 in role_constructs0.iteritems():
+                    for key0, item0 in role_constructs0.items():
                         matched_construct = False
-                        for key1, item1 in role_constructs1.items():
+                        for key1, item1 in list(role_constructs1.items()):
                             if item0.equals(item1, rtol=rtol,
                                             atol=atol,
                                             traceback=False, **kwargs):
@@ -254,18 +257,18 @@ class Constructs(structure.Constructs):
                 if traceback:
                     names = [self.domain_axis_name(axis0) for axis0 in axes0]
                     print("Can't match constructs spanning axes {0}".format(names))
-                    print '\n'.join(log)
-                    print
-                    print axes_to_constructs0
-                    print
-                    print axes_to_constructs1
+                    print('\n'.join(log))
+                    print()
+                    print(axes_to_constructs0)
+                    print()
+                    print(axes_to_constructs1)
                 return False
 
             # Map item axes in the two instances
             axes0_to_axes1[axes0] = axes1
         #--- End: for
 
-        for axes0, axes1 in axes0_to_axes1.iteritems():
+        for axes0, axes1 in axes0_to_axes1.items():
             for axis0, axis1 in zip(axes0, axes1):
                 if axis0 in axis0_to_axis1 and axis1 != axis0_to_axis1[axis0]:
                     if traceback:
@@ -341,13 +344,13 @@ class Constructs(structure.Constructs):
             if traceback:
                 print(
 "Traceback: Different coordinate references: {0!r}, {1!r}".format(
-    refs0.values(), refs1.values()))
+    list(refs0.values()), list(refs1.values())))
             return False
 
         if refs0:
-            for ref0 in refs0.values():
+            for ref0 in list(refs0.values()):
                 found_match = False
-                for key1, ref1 in refs1.items():
+                for key1, ref1 in list(refs1.items()):
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
                                        traceback=False, **kwargs): ####
                         continue
@@ -364,7 +367,7 @@ class Constructs(structure.Constructs):
                     # Domain ancillary-valued coordinate conversion terms
                     terms0 = ref0.coordinate_conversion.domain_ancillaries()
                     terms1 = {}
-                    for term, key in ref1.coordinate_conversion.domain_ancillaries().items():
+                    for term, key in list(ref1.coordinate_conversion.domain_ancillaries().items()):
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:
@@ -412,11 +415,11 @@ class Constructs(structure.Constructs):
             return False
         
         axis0_to_axis1 = {}
-        for axis0, axis1 in axis1_to_axis0.iteritems():
+        for axis0, axis1 in axis1_to_axis0.items():
             axis0_to_axis1[axis0] = axis1
             
-        for cm0, cm1 in zip(cell_methods0.values(),
-                            cell_methods1.values()):
+        for cm0, cm1 in zip(list(cell_methods0.values()),
+                            list(cell_methods1.values())):
             # Check that there are the same number of axes
             axes0 = cm0.get_axes(())
             axes1 = list(cm1.get_axes(()))
@@ -484,8 +487,8 @@ class Constructs(structure.Constructs):
         # ------------------------------------------------------------
         # Domain axes
         # ------------------------------------------------------------
-        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
-        other_sizes = [d.get_size() for d in other.domain_axes().values()]
+        self_sizes  = [d.get_size() for d in list(self.domain_axes().values())]
+        other_sizes = [d.get_size() for d in list(other.domain_axes().values())]
         
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes

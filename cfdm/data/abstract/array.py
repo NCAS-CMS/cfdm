@@ -1,15 +1,17 @@
+from builtins import str
+from builtins import object
 import abc
 
 import numpy
+from future.utils import with_metaclass
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class Array(object):
+class Array(with_metaclass(abc.ABCMeta, object)):
     '''A container for an array.
     
     '''
-    __metaclass__ = abc.ABCMeta
            
     def __init__(self, **kwargs):
         '''

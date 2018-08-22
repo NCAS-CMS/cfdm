@@ -1,10 +1,11 @@
+from __future__ import absolute_import
 import abc
 import sys
 
 import numpy
 
 #from .array import Array
-import abstract
+from . import abstract
 
 
 class NumpyArray(abstract.Array):

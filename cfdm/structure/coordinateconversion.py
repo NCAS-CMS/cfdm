@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
-class CoordinateConversion(abstract.ParametersDomainAncillaries):
+class CoordinateConversion(with_metaclass(abc.ABCMeta, abstract.ParametersDomainAncillaries)):
     '''A coordinate conversion formula of a coordinate reference construct
 of the CF data model.
 
@@ -17,6 +19,5 @@ coordinate reference construct relates the coordinate values of the
 field to locations in a planetary reference frame.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
 #--- End: class

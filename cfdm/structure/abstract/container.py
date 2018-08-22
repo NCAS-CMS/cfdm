@@ -1,15 +1,17 @@
+from builtins import str
+from builtins import object
 import abc
 
 from copy import deepcopy
+from future.utils import with_metaclass
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class Container(object):
+class Container(with_metaclass(abc.ABCMeta, object)):
     '''Base class for storing object components.
 
     '''
-    __metaclass__ = abc.ABCMeta
     
     def __init__(self, source=None):
         '''**Initialization**

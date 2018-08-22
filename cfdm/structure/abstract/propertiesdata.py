@@ -1,13 +1,13 @@
 import abc
 
 from .properties import Properties
+from future.utils import with_metaclass
 
 
-class PropertiesData(Properties):
+class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     '''Base class for a data array with descriptive properties.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, properties={}, data=None, source=None,
                  copy=True, _use_data=True):

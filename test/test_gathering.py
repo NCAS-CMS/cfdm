@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import os
 import time 
@@ -117,11 +118,11 @@ class DSGTest(unittest.TestCase):
             if g.get_property('long_name') == 'temp3':
                 break
 
-        print g.get_array()
-        print g.data.list_indices().get_array()
-        print g.data.compression_type()
-        print g.data.compressed_axes()
-        print  g.shape
+        print(g.get_array())
+        print(g.data.list_indices().get_array())
+        print(g.data.compression_type())
+        print(g.data.compressed_axes())
+        print(g.shape)
         
         # Select the specific humidity field
         q = [g for g in f
@@ -134,8 +135,8 @@ class DSGTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    print 'Run date:', datetime.datetime.utcnow()
+    print('Run date:', datetime.datetime.utcnow())
     cfdm.environment()
-    print
+    print()
     unittest.main(verbosity=2)
 

@@ -1,3 +1,7 @@
+from __future__ import print_function
+from builtins import (str, zip)
+from past.builtins import basestring
+
 import copy
 import re
 import os
@@ -128,18 +132,36 @@ extra trailing dimension.
  ['b' 'a' 'r']] (2, 3) 1
 
         '''
-        strlen = array.dtype.itemsize
-        shape  = array.shape
+#        strlen = array.dtype.itemsize
+#        shape  = array.shape
 
-        new = numpy.ma.masked_all(shape + (strlen,), dtype='S1')
-        
-        for index in numpy.ndindex(shape):
-            value = array[index]
-            if value is numpy.ma.masked:
-                new[index] = numpy.ma.masked
-            else:
-                new[index] = tuple(value.ljust(strlen, ' ')) 
-        #--- End: for
+        masked = numpy.ma.isMA(array)
+        if masked:
+            fill_value = array.fill_value
+#            mask = array.mask
+            array = numpy.ma.filled(array, fill_value='')
+
+        if array.dtype.kind == 'U':
+            # Convert unicode to string
+            array = array.astype('S')
+            
+        new = netCDF4.stringtochar(array)
+
+        if masked:
+            new = numpy.ma.masked_where(new=='', new)
+            new.set_fill_value(fill_value)
+            
+#            new = numpy.ma.array(new, mask=mask, fill_value=fill_value)
+
+#        new = numpy.ma.masked_all(shape + (strlen,), dtype='S1')
+#        
+#        for index in numpy.ndindex(shape):
+#            value = array[index]
+#            if value is numpy.ma.masked:
+#                new[index] = numpy.ma.masked
+#            else:
+#                new[index] = tuple(value.ljust(strlen, ' ')) 
+#        #--- End: for
     
         return new
     #--- End: def
@@ -294,7 +316,7 @@ metadata construct.
         
         if g['verbose'] or _debug:
             domain_axis = API.get_domain_axes(f)[axis]
-            print '    Writing', repr(domain_axis), 'to netCDF dimension:', ncdim
+            print('    Writing', repr(domain_axis), 'to netCDF dimension:', ncdim)
 
         size = API.get_domain_axis_size(f, axis)
         
@@ -492,7 +514,7 @@ dictionary.
 
         seen = g['seen']
     
-        for value in seen.itervalues():
+        for value in seen.values():
             if ncdims is not None and ncdims != value['ncdims']:
                 # The netCDF dimensions (names and order) of the input
                 # variable are different to those of this variable in
@@ -574,7 +596,7 @@ name.
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
                 if g['verbose'] or g['_debug']:
-                    print '    Writing size', size, 'netCDF dimension for bounds:', ncdim
+                    print('    Writing size', size, 'netCDF dimension for bounds:', ncdim)
                     
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
@@ -762,8 +784,8 @@ it is not re-written.
             # See if we can set the default netCDF variable name to
             # its formula_terms term
             default = None
-            for ref in API.get_coordinate_references(f).itervalues():
-                for term, da_key in ref.coordinate_conversion.domain_ancillaries().iteritems(): # DCH ALERT
+            for ref in API.get_coordinate_references(f).values():
+                for term, da_key in ref.coordinate_conversion.domain_ancillaries().items(): # DCH ALERT
                     if da_key == key:
                         default = term
                         break
@@ -920,7 +942,7 @@ measure will not be written.
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
             if g['verbose'] or _debug:
-                print '    Writing', repr(ref), 'to netCDF variable:', ncvar
+                print('    Writing', repr(ref), 'to netCDF variable:', ncvar)
 
             g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
                                                         endian=g['endian'],
@@ -933,7 +955,7 @@ measure will not be written.
             parameters = API.get_datum_parameters(ref)
             parameters.update(cc_parameters)
             
-            for term, value in parameters.items():
+            for term, value in list(parameters.items()):
                 if value is None:
                     del parameters[term]
                     continue
@@ -1004,7 +1026,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         _debug = g['_debug']
         
         if g['verbose'] or _debug:
-            print '    Writing', repr(cfvar), 'to netCDF variable:', ncvar
+            print('    Writing', repr(cfvar), 'to netCDF variable:', ncvar)
      
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
@@ -1195,7 +1217,7 @@ extra trailing dimension.
         
         _debug = g['_debug']
         if _debug:
-            print '  Writing', repr(f)+':'
+            print('  Writing', repr(f)+':')
 
         xxx = []
             
@@ -1228,11 +1250,11 @@ extra trailing dimension.
         coordinates = []
 
         g['formula_terms_refs'] = [
-            ref for ref in API.get_coordinate_references(f).values()
+            ref for ref in list(API.get_coordinate_references(f).values())
             if API.get_coordinate_conversion_parameters(ref).get('standard_name', False)] 
 
         g['grid_mapping_refs'] = [
-            ref for ref in API.get_coordinate_references(f).values()
+            ref for ref in list(API.get_coordinate_references(f).values())
             if API.get_coordinate_conversion_parameters(ref).get('grid_mapping_name', False)]
 
         field_coordinates = API.get_coordinates(f)
@@ -1284,7 +1306,7 @@ extra trailing dimension.
         # For each of the field's axes ...
         for axis in sorted(API.get_domain_axes(f)):
             found_dimension_coordinate = False
-            for key, dim_coord in dimension_coordinates.iteritems():
+            for key, dim_coord in dimension_coordinates.items():
                 if API.get_construct_axes(f, key) != (axis,):
                     continue
 
@@ -1347,12 +1369,12 @@ extra trailing dimension.
                     use_existing_dimension = False
 
                     if spanning_constructs:
-                        for key, construct in spanning_constructs.items():
+                        for key, construct in list(spanning_constructs.items()):
                             axes = API.get_construct_axes(f, key)
                             spanning_constructs[key] = (construct, axes.index(axis))
                         
                         for b1 in g['xxx']:
-                            (ncdim1,  axis_size1),  constructs1 = b1.items()[0]
+                            (ncdim1,  axis_size1),  constructs1 = list(b1.items())[0]
                             if axis_size0 != axis_size1:
                                 continue
     
@@ -1361,9 +1383,9 @@ extra trailing dimension.
 
                             constructs1 = constructs1.copy()
                             
-                            for key0, (construct0, index0) in spanning_constructs.iteritems():
+                            for key0, (construct0, index0) in spanning_constructs.items():
                                 matched_construct = False
-                                for key1, (construct1, index1) in constructs1.iteritems():
+                                for key1, (construct1, index1) in constructs1.items():
                                     if index0 == index1 and construct0.equals(construct1):
                                         del constructs1[key1]
                                         matched_construct = True
@@ -1399,7 +1421,7 @@ extra trailing dimension.
         # ----------------------------------------------------------------
         # Initialize the list of 'coordinates' attribute variable values
         # (each of the form 'name')
-        for key, aux_coord in sorted(API.get_auxiliary_coordinates(f).iteritems()):
+        for key, aux_coord in sorted(API.get_auxiliary_coordinates(f).items()):
 #            if API.is_geometry(aux_coord):
 #                coordinates = self._write_geometry_coordinate(f, key, aux_coord,
 #                                                              coordinates)
@@ -1410,7 +1432,7 @@ extra trailing dimension.
         # ------------------------------------------------------------
         # Create netCDF variables from domain ancillaries
         # ------------------------------------------------------------
-        for key, anc in sorted(API.get_domain_ancillaries(f).iteritems()):
+        for key, anc in sorted(API.get_domain_ancillaries(f).items()):
             self._write_domain_ancillary(f, key, anc)
     
         # ------------------------------------------------------------
@@ -1419,7 +1441,7 @@ extra trailing dimension.
         # Set the list of 'cell_measures' attribute values (each of
         # the form 'measure: name')
         cell_measures = [self._write_cell_measure(f, key, msr)
-                         for key, msr in sorted(API.get_cell_measures(f).iteritems())]
+                         for key, msr in sorted(API.get_cell_measures(f).items())]
         
         # ------------------------------------------------------------
         # Create netCDF formula_terms attributes from vertical
@@ -1450,7 +1472,7 @@ extra trailing dimension.
                 # This formula_terms coordinate reference matches up with
                 # an existing coordinate
     
-                for term, value in API.get_coordinate_conversion_parameters(ref).iteritems():
+                for term, value in API.get_coordinate_conversion_parameters(ref).items():
                     if value is None:
                         continue
     
@@ -1463,7 +1485,7 @@ extra trailing dimension.
                     bounds_formula_terms.append('{0}: {1}'.format(term, ncvar))
                 #--- End: for
             
-                for term, key in ref.coordinate_conversion.domain_ancillaries().iteritems(): # DCH ALERT
+                for term, key in ref.coordinate_conversion.domain_ancillaries().items(): # DCH ALERT
                     if key is None:
                         continue
     
@@ -1497,7 +1519,7 @@ extra trailing dimension.
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
                 if g['_debug']:
-                    print '    Writing formula_terms to netCDF variable', ncvar+':', repr(formula_terms)
+                    print('    Writing formula_terms to netCDF variable', ncvar+':', repr(formula_terms))
     
                 # Add the formula_terms attribute to the parent
                 # coordinate bounds variable
@@ -1506,7 +1528,7 @@ extra trailing dimension.
                     bounds_formula_terms = ' '.join(bounds_formula_terms)
                     g['nc'][bounds_ncvar].setncattr('formula_terms', bounds_formula_terms)
                     if g['_debug']:
-                        print '    Writing formula_terms to netCDF bounds variable', bounds_ncvar+':', repr(bounds_formula_terms)
+                        print('    Writing formula_terms to netCDF bounds variable', bounds_ncvar+':', repr(bounds_formula_terms))
             #--- End: if
                         
             # Deal with a vertical datum
@@ -1529,7 +1551,7 @@ extra trailing dimension.
         # create the referenced CF-netCDF ancillary variables
         # ----------------------------------------------------------------
         ancillary_variables = [self._write_field_ancillary(f, key, anc)
-                               for key, anc in API.get_field_ancillaries(f).iteritems()]
+                               for key, anc in API.get_field_ancillaries(f).items()]
     
         # ----------------------------------------------------------------
         # Create the CF-netCDF data variable
@@ -1544,7 +1566,7 @@ extra trailing dimension.
         if cell_measures:
             cell_measures = ' '.join(cell_measures)
             if _debug:
-                print '    Writing cell_measures to netCDF variable', ncvar+':', cell_measures
+                print('    Writing cell_measures to netCDF variable', ncvar+':', cell_measures)
                 
             extra['cell_measures'] = cell_measures
             
@@ -1552,7 +1574,7 @@ extra trailing dimension.
         if coordinates:
             coordinates = ' '.join(coordinates)
             if _debug:
-                print '    Writing coordinates to netCDF variable', ncvar+':', coordinates
+                print('    Writing coordinates to netCDF variable', ncvar+':', coordinates)
                 
             extra['coordinates'] = coordinates
     
@@ -1560,7 +1582,7 @@ extra trailing dimension.
         if grid_mapping:
             grid_mapping = ' '.join(grid_mapping)
             if _debug:
-                print '    Writing grid_mapping to netCDF variable', ncvar+':', grid_mapping
+                print('    Writing grid_mapping to netCDF variable', ncvar+':', grid_mapping)
                 
             extra['grid_mapping'] = grid_mapping
     
@@ -1568,7 +1590,7 @@ extra trailing dimension.
         if ancillary_variables:
             ancillary_variables = ' '.join(ancillary_variables)
             if _debug:
-                print '    Writing ancillary_variables to netCDF variable', ncvar+':', ancillary_variables
+                print('    Writing ancillary_variables to netCDF variable', ncvar+':', ancillary_variables)
 
             extra['ancillary_variables'] = ancillary_variables
             
@@ -1592,7 +1614,7 @@ extra trailing dimension.
             axis_map.update(g['axis_to_ncscalar'])
 
             cell_methods_strings = []
-            for cm in cell_methods.values():
+            for cm in list(cell_methods.values()):
                 axes = [axis_map.get(axis, axis)
                         for axis in API.get_cell_method_axes(cm, ())]
                 API.set_cell_method_axes(cm, axes)
@@ -1600,7 +1622,7 @@ extra trailing dimension.
 
             cell_methods = ' '.join(cell_methods_strings)
             if _debug:
-                print '    Writing cell_methods to netCDF variable', ncvar+':', cell_methods
+                print('    Writing cell_methods to netCDF variable', ncvar+':', cell_methods)
 
             extra['cell_methods'] = cell_methods
             
@@ -1628,7 +1650,7 @@ extra trailing dimension.
             return
 
         if g['_debug']:
-            print '    Datum =', API.get_datum(ref)
+            print('    Datum =', API.get_datum(ref))
             
 #        domain_ancillaries = API.get_datum_ancillaries(ref)
 
@@ -2537,7 +2559,7 @@ and auxiliary coordinate roles for different data variables.
  <CF Field: potential_temperature(19, 30, 24)>]
         '''    
         if _debug:
-            print 'Writing to netCDF:'
+            print('Writing to netCDF:')
 
         # ------------------------------------------------------------
         # Initialise netCDF write parameters
@@ -2717,7 +2739,7 @@ and auxiliary coordinate roles for different data variables.
     #        f.HDF_chunks(chunks)
     
             if g['_debug']:            
-                print '  HDF chunks :', 'PASS FOR NOW' #f.HDF_chunks()
+                print('  HDF chunks :', 'PASS FOR NOW') #f.HDF_chunks()
             
             # Write the field
             self._write_field(f)

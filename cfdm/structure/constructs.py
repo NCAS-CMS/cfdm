@@ -1,13 +1,14 @@
+from builtins import str
+from builtins import object
 import abc
 
 from collections import OrderedDict
+from future.utils import with_metaclass
 
 
-class Constructs(object):
+class Constructs(with_metaclass(abc.ABCMeta, object)):
     '''Keys are item identifiers, values are item objects.
     '''
-
-    __metaclass__ = abc.ABCMeta
     
     def __init__(self, 
                  auxiliary_coordinate=None,                
@@ -60,7 +61,7 @@ class Constructs(object):
                 
                 if copy:
                     new_v = {}
-                    for key, construct in source._constructs[construct_type].iteritems():
+                    for key, construct in source._constructs[construct_type].items():
                         new_v[key] = construct.copy(data=_use_data)
                 else:
                     new_v = source._constructs[construct_type].copy()
@@ -76,7 +77,7 @@ class Constructs(object):
                 
                 if copy:
                     new_v = {}
-                    for key, construct in source._constructs[construct_type].iteritems():
+                    for key, construct in source._constructs[construct_type].items():
                         new_v[key] = construct.copy()
                 else:
                     new_v = source._constructs[construct_type].copy()
@@ -227,7 +228,7 @@ class Constructs(object):
         if axes:
             spans_axes = set(axes)
             construct_axes = self.construct_axes()
-            for key, construct in out.items():
+            for key, construct in list(out.items()):
                 x = construct_axes[key]
                 if not spans_axes.intersection(x):
                     del out[key]
@@ -285,13 +286,13 @@ class Constructs(object):
         else:
             out = {}
             ignore = self._ignore
-            for key, value in self._constructs.iteritems():
+            for key, value in self._constructs.items():
                 if key not in ignore:
                     out.update(value)
         #--- End: if
 
         if copy:
-            for key, construct in out.items():
+            for key, construct in list(out.items()):
                 out[key] = construct.copy()
         #--- End: if
 
@@ -340,7 +341,7 @@ None
             else:
                 ignore = self._ignore
                 out = {}
-                for construct_type, keys in self._constructs.iteritems():
+                for construct_type, keys in self._constructs.items():
                     if construct_type not in ignore:
                         for key in keys:
                             _ = self._construct_axes.get(key)
@@ -460,7 +461,7 @@ None
 '''
         out = {}
 
-        for axes in self.construct_axes().values():
+        for axes in list(self.construct_axes().values()):
             d = {}
             for construct_type in self._array_constructs:
                 d[construct_type] = {}  #ARRAY CONSTRUCTS SHOULD CONTAIN GENERIC NAME, NOT KEY BASE .....
@@ -468,7 +469,7 @@ None
             out[axes] = d
         #--- End: for
 
-        for key, construct in self.array_constructs().iteritems():
+        for key, construct in self.array_constructs().items():
             axes = self.construct_axes(key)
             construct_type = self._construct_type[key]
             out[axes][construct_type][key] = construct

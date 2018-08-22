@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import inspect
 import os
@@ -136,7 +137,7 @@ class FieldTest(unittest.TestCase):
                 
         self.assertTrue(len(auxiliary_coordinates) == 3)
 
-        for key, value in auxiliary_coordinates.iteritems():
+        for key, value in auxiliary_coordinates.items():
             self.assertTrue(isinstance(value, cfdm.AuxiliaryCoordinate))
     #--- End: def
 
@@ -150,7 +151,7 @@ class FieldTest(unittest.TestCase):
                 
         self.assertTrue(len(constructs) == 1)
 
-        for key, value in constructs.iteritems():
+        for key, value in constructs.items():
             self.assertTrue(isinstance(value, cfdm.CellMeasure))
     #--- End: def
 
@@ -164,7 +165,7 @@ class FieldTest(unittest.TestCase):
                 
         self.assertTrue(len(constructs) == 2)
 
-        for key, value in constructs.iteritems():
+        for key, value in constructs.items():
             self.assertTrue(isinstance(value, cfdm.CellMethod))
     #--- End: def
 
@@ -178,7 +179,7 @@ class FieldTest(unittest.TestCase):
                 
         self.assertTrue(len(constructs) == 2)
 
-        for key, value in constructs.iteritems():
+        for key, value in constructs.items():
             self.assertTrue(isinstance(value, cfdm.CoordinateReference))
     #--- End: def
 
@@ -209,7 +210,7 @@ class FieldTest(unittest.TestCase):
                 
         self.assertTrue(len(dimension_coordinates) == 3)
 
-        for key, value in dimension_coordinates.iteritems():
+        for key, value in dimension_coordinates.items():
             self.assertTrue(isinstance(value, cfdm.DimensionCoordinate))
     #--- End: def
 
@@ -223,7 +224,7 @@ class FieldTest(unittest.TestCase):
                 
         self.assertTrue(len(constructs) == 3)
 
-        for key, value in constructs.iteritems():
+        for key, value in constructs.items():
             self.assertTrue(isinstance(value, cfdm.DomainAncillary))
     #--- End: def
 
@@ -237,7 +238,7 @@ class FieldTest(unittest.TestCase):
         
         self.assertTrue(len(domain_axes) == 3)
 
-        for key, value in domain_axes.iteritems():
+        for key, value in domain_axes.items():
             self.assertTrue(isinstance(value, cfdm.DomainAxis))
 
         key = f.set_domain_axis(cfdm.DomainAxis(1))
@@ -292,7 +293,7 @@ class FieldTest(unittest.TestCase):
                 
         self.assertTrue(len(constructs) == 3)
 
-        for key, value in constructs.iteritems():
+        for key, value in constructs.items():
             self.assertTrue(isinstance(value, cfdm.FieldAncillary))
     #--- End: def
 
@@ -332,7 +333,7 @@ class FieldTest(unittest.TestCase):
 #--- End: class
 
 if __name__ == '__main__':
-    print 'Run date:', datetime.datetime.now()
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
-    print''
+    print('')
     unittest.main(verbosity=2)

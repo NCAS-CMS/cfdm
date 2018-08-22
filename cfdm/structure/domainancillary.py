@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
 
-class DomainAncillary(abstract.PropertiesDataBounds):
+class DomainAncillary(with_metaclass(abc.ABCMeta, abstract.PropertiesDataBounds)):
     '''A domain ancillary construct of the CF data model.
 
 A domain ancillary construct provides information which is needed for
@@ -22,6 +24,5 @@ with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
     '''
-    __metaclass__ = abc.ABCMeta
     
 #--- End: class

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import unittest
 
@@ -21,12 +22,12 @@ def run_test_suite(verbosity=2):
     runner.run(testsuite)
 
 if __name__ == '__main__':
-    print '---------------'
-    print 'CFDM TEST SUITE'
-    print '---------------'
-    print 'Run date:', datetime.datetime.now()
+    print('---------------')
+    print('CFDM TEST SUITE')
+    print('---------------')
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
-    print ''
+    print('')
 
     run_test_suite_setup()
     run_test_suite()

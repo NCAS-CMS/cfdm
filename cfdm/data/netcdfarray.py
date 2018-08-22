@@ -1,15 +1,22 @@
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+
 import abc
 import os
 import operator
-import urlparse
+import urllib.parse
 
 import numpy
 import netCDF4
 
 #from .array import Array
-import abstract
+from . import abstract
+from functools import reduce
+from future.utils import with_metaclass
 
-class NetCDFArray(abstract.Array):
+class NetCDFArray(with_metaclass(abc.ABCMeta, abstract.Array)):
 #class NetCDFArray(Array):
     '''An array stored in a netCDF file.
     
@@ -57,7 +64,6 @@ class NetCDFArray(abstract.Array):
                         size=v.size)
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, filename=None, ncvar=None, dtype=None,
                  ndim=None, shape=None, size=None, varid=None):
@@ -89,7 +95,7 @@ class NetCDFArray(abstract.Array):
         self._close = True
 
         if filename is not None:
-            u = urlparse.urlparse(filename)
+            u = urllib.parse.urlparse(filename)
             if u.scheme == '':
                 filename = os.path.abspath(filename)
 
@@ -130,7 +136,7 @@ array on disk.
         else:
             # Get the variable by netCDF ID
             varid = self.varid
-            for value in nc.variables.itervalues():
+            for value in nc.variables.values():
                 if value._varid == varid:
                     array = value[indices]
                     break
@@ -148,23 +154,29 @@ array on disk.
         if array.dtype.kind in ('S', 'U'): # == 'S' and array.ndim > (self.ndim -
                                                  #    getattr(self, 'gathered', 0) -
                                                  #    getattr(self, 'ragged', 0)):
-            #array = netCDF4.chartostring(array)
+
+            array = netCDF4.chartostring(array)
+            shape = array.shape
+#            array.resize((array.size,))
+            array = numpy.array([x.rstrip() for x in array.flat], dtype=array.dtype)
+            array.resize(shape)
+            array = numpy.ma.masked_where(array=='', array)
             
-            strlen = array.shape[-1]
-            
-            new_shape = array.shape[0:-1]
-            new_size  = long(reduce(operator.mul, new_shape, 1))
-            
-            array = numpy.ma.resize(array, (new_size, strlen))
-            
-            array = array.filled(fill_value='')
-            
-            array = numpy.array([''.join(x).rstrip() for x in array],
-                                dtype='S{0}'.format(strlen))
-            
-            array = array.reshape(new_shape)
-            
-            array = numpy.ma.where(array=='', numpy.ma.masked, array)
+#            strlen = array.shape[-1]
+#            
+#            new_shape = array.shape[0:-1]
+#            new_size  = int(reduce(operator.mul, new_shape, 1))
+#            
+#            array = numpy.ma.resize(array, (new_size, strlen))
+#            
+#            array = array.filled(fill_value='')
+#            print('array=', array)
+#            array = numpy.array([''.join(x).rstrip() for x in array],
+#                                dtype='S{0}'.format(strlen))
+#            
+#            array = array.reshape(new_shape)
+#            
+#            array = numpy.ma.where(array=='', numpy.ma.masked, array)
         #--- End: if
 
         if self._close:

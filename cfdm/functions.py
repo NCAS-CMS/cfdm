@@ -1,12 +1,17 @@
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import zip
+from builtins import str
 import os
 import sys
 
 from collections import Iterable
 
-from itertools   import izip, izip_longest, product
+from itertools   import zip_longest, product
 from platform    import system, platform, python_version
-from urlparse    import urlparse as urlparse_urlparse
-from urlparse    import urljoin  as urlparse_urljoin
+from urllib.parse    import urlparse as urlparse_urlparse
+from urllib.parse    import urljoin  as urlparse_urljoin
 
 import netCDF4
 import numpy
@@ -185,7 +190,7 @@ def parse_indices(shape, indices):
         if isinstance(index, slice):            
             is_slice = True
 
-        elif isinstance(index, (int, long)):
+        elif isinstance(index, (int, int)):
             if index < 0: 
                 index += size
 
@@ -632,7 +637,7 @@ cfdm: 1.6 /home/space/anaconda2/lib/python2.7/site-packages/cfdm/__init__.pyc
     out = '\n'.join(out)
 
     if display:
-        print out
+        print(out)
     else:
         return out
 #--- End: def

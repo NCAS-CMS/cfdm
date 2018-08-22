@@ -1,13 +1,14 @@
+from builtins import object
 import abc
+from future.utils import with_metaclass
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class IO(object):
+class IO(with_metaclass(abc.ABCMeta, object)):
     '''Base class for reading Fields from, or writing Fields to, a dataset.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, implementation):
         '''**Initialisation**

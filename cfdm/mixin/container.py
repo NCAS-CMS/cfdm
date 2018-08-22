@@ -1,15 +1,17 @@
+from __future__ import print_function
+from builtins import object
 import abc
 import textwrap
 
 import numpy
 import sys
+from future.utils import with_metaclass
 
 
-class Container(object):
+class Container(with_metaclass(abc.ABCMeta, object)):
     '''Mixin class for storing object components.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     @classmethod
     def _equals(self, x, y, rtol=None, atol=None, **kwargs):
@@ -85,7 +87,7 @@ class Container(object):
                 print("{0}: Incompatible types: {0}, {1}".format(
 			self.__class__.__name__,
 			other.__class__.__name__))
-	    return False
+            return False
 
         return True
     #--- End: def

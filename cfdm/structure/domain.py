@@ -1,12 +1,17 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
-import mixin
+from . import abstract
+from . import mixin
 
 from .constructs import Constructs
+from future.utils import with_metaclass
 
 
-class Domain(mixin.ConstructAccess, abstract.Properties):
+class Domain(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.ConstructAccess, abstract.Properties), {}))):
+    
     '''A domain of the CF data model.
 
 A domain represents a set of discrete "locations" in what generally
@@ -40,7 +45,6 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 ====================  ================================================
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     # Define the base of the identity keys for each construct type
     _construct_key_base = {'auxiliary_coordinate': 'auxiliarycoordinate',
@@ -88,7 +92,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
             except AttributeError:
                 constructs = self._Constructs(**self._construct_key_base)
             else:
-                constructs = constructs.subset(self._construct_key_base.keys(), copy=False)
+                constructs = constructs.subset(list(self._construct_key_base.keys()), copy=False)
                 if copy or not _use_data:
                     constructs = constructs.copy(data=_use_data)
         #--- End: if
@@ -100,7 +104,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         '''x.__repr__() <==> repr(x)
 
         '''
-        shape = sorted([domain_axis.size for domain_axis in self.domain_axes().values()])
+        shape = sorted([domain_axis.size for domain_axis in list(self.domain_axes().values())])
 
         return '<{0}: {1}>'.format(self.__class__.__name__, shape)
     #--- End: def
@@ -124,15 +128,15 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         '''
         '''
         if key in self.domain_axes():
-            for k, v in self.array_constructs().iteritems():
+            for k, v in self.array_constructs().items():
                 if key in self.construct_axes(k):
                     raise ValueError("asda ;wo3in dp08hi n")
         else:
             # Remove pointers to removed construct in coordinate
             # reference constructs
-            for ref in self.coordinate_references().itervalues():
+            for ref in self.coordinate_references().values():
                 coordinate_conversion = ref.coordinate_conversion
-                for term, value in coordinate_conversion.ancillaries().iteritems():
+                for term, value in coordinate_conversion.ancillaries().items():
                     if key == value:
                         coordinate_conversion.set_ancillary(term, None)
                     

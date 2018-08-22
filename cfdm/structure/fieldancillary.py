@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
 
-class FieldAncillary(abstract.PropertiesData):
+class FieldAncillary(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A field ancillary construct of the CF data model.
 
 The field ancillary construct provides metadata which are distributed
@@ -25,6 +27,5 @@ contribute to the domain's definition, unlike, for instance, an
 auxiliary coordinate construct or domain ancillary construct.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
 #--- End: class

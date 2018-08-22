@@ -1,1 +1,2 @@
-from ioread import IORead
+from __future__ import absolute_import
+from .ioread import IORead

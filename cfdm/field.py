@@ -1,16 +1,20 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import (zip, str, super)
 import abc
 import re
 
-import mixin
-import structure
+from . import mixin
+from . import structure
 
 from .constructs import Constructs
 from .domain      import Domain
+from future.utils import with_metaclass
 
 _debug = False
        
 
-class Field(mixin.ConstructAccess, mixin.PropertiesData, structure.Field):
+class Field(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.ConstructAccess, mixin.PropertiesData, structure.Field), {}))):
     '''A CF field construct.
 
 The field construct is central to the CF data model. A field
@@ -38,15 +42,21 @@ standard_name), and some netCDF global file attributes (e.g. history
 and institution).
 
     '''
-    __metaclass__ = abc.ABCMeta
- 
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        
-        obj._Constructs = Constructs
-        obj._Domain     = Domain
 
-        return obj
+    def __new__(cls, *args, **kwargs):
+        '''
+        '''
+        instance = super().__new__(cls) #, *args, **kwargs)
+        #        instance = super().__new__(cls, *args, **kwargs)
+        instance._Constructs = Constructs
+        instance._Domain     = Domain
+#        print(instance)
+        return instance
+
+#        obj = object.__new__(cls, *args, **kwargs)    
+#        obj._Constructs = Constructs
+#        obj._Domain     = Domain
+#        return obj
     #--- End: def
 
     def __init__(self, properties={}, source=None, copy=True,
@@ -67,9 +77,12 @@ and institution).
 
         '''        
         # Initialize the new field with attributes and CF properties
-        super(Field, self).__init__(properties=properties,
-                                    source=source, copy=copy,
-                                    _use_data=_use_data) 
+        super().__init__(properties=properties,
+                         source=source, copy=copy,
+                         _use_data=_use_data) 
+#        super(Field, self).__init__(properties=properties,
+#                                    source=source, copy=copy,
+#                                    _use_data=_use_data) 
 
         self._set_component('unlimited' , None, 'TO DO')
         self._set_component('HDFgubbins', None, 'TO DO')
@@ -131,7 +144,7 @@ x.__str__() <==> str(x)
         cell_methods = self.cell_methods()
         if cell_methods:
             x = []
-            for cm in cell_methods.values():
+            for cm in list(cell_methods.values()):
                 cm = cm.copy()
                 cm.set_axes(tuple([axis_names.get(axis, axis)
                                    for axis in cm.get_axes(())]))                
@@ -182,7 +195,7 @@ x.__str__() <==> str(x)
 
         x = []
         for key in tuple(non_spanning_axes) + data_axes:
-            for dc_key, dim in self.dimension_coordinates().items():
+            for dc_key, dim in list(self.dimension_coordinates().items()):
                 if self.construct_axes()[dc_key] == (key,):
                     name = dim.name(default='id%{0}'.format(dc_key), ncvar=True)
                     y = '{0}({1})'.format(name, dim.get_data().size)
@@ -210,7 +223,7 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
             
         # Coordinate references
-        x = sorted([str(ref) for ref in self.coordinate_references().values()])
+        x = sorted([str(ref) for ref in list(self.coordinate_references().values())])
         if x:
             string.append('Coord references: {}'.format(
                 '\n                : '.join(x)))
@@ -318,7 +331,7 @@ functionality:
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
 
-        for key, construct in new.array_constructs().iteritems():
+        for key, construct in new.array_constructs().items():
             data = self.get_construct(key).get_data(None)
             if data is None:
                 # This construct has no data
@@ -360,12 +373,12 @@ functionality:
         key_to_name = {}
         name_to_keys = {}
 
-        for key, construct in getattr(self, constructs)().iteritems():
+        for key, construct in getattr(self, constructs)().items():
             name = construct.name(default='cfdm%'+key)
             name_to_keys.setdefault(name, []).append(key)
             key_to_name[key] = name
 
-        for name, keys in name_to_keys.iteritems():
+        for name, keys in name_to_keys.items():
             if len(keys) <= 1:
                 continue
             
@@ -384,12 +397,12 @@ functionality:
         key_to_name = {}
         name_to_keys = {}
 
-        for key, value in self.domain_axes().iteritems():
+        for key, value in self.domain_axes().items():
             name_size = (self.domain_axis_name(key), value.get_size(''))
             name_to_keys.setdefault(name_size, []).append(key)
             key_to_name[key] = name_size
 
-        for (name, size), keys in name_to_keys.iteritems():
+        for (name, size), keys in name_to_keys.items():
             if len(keys) == 1:
                 key_to_name[keys[0]] = '{0}({1})'.format(name, size)
             else:
@@ -465,7 +478,7 @@ field.
         string = '\n'.join(w+x)
 
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def
@@ -560,7 +573,7 @@ last values.
         cell_methods = self.cell_methods()
         if cell_methods:
             string.append('')
-            for cm in cell_methods.values():
+            for cm in list(cell_methods.values()):
                 cm = cm.copy()
                 cm.set_axes(tuple([axis_to_name.get(axis, axis)
                                    for axis in cm.get_axes(())]))
@@ -568,14 +581,14 @@ last values.
         #--- End: if
 
         # Field ancillaries
-        for key, value in sorted(self.field_ancillaries().iteritems()):
+        for key, value in sorted(self.field_ancillaries().items()):
             string.append('') 
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level))
 
         # Dimension coordinates
         name = self._unique_construct_names('dimension_coordinates')
-        for key, value in sorted(self.dimension_coordinates().iteritems()):
+        for key, value in sorted(self.dimension_coordinates().items()):
             string.append('')
             string.append(
                 value.dump(display=False,
@@ -584,7 +597,7 @@ last values.
             
         # Auxiliary coordinates
         name = self._unique_construct_names('auxiliary_coordinates')
-        for key, value in sorted(self.auxiliary_coordinates().iteritems()):
+        for key, value in sorted(self.auxiliary_coordinates().items()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, 
@@ -593,7 +606,7 @@ last values.
 
         # Domain ancillaries
         name = self._unique_construct_names('domain_ancillaries')
-        for key, value in sorted(self.domain_ancillaries().iteritems()):
+        for key, value in sorted(self.domain_ancillaries().items()):
             string.append('') 
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level,
@@ -601,7 +614,7 @@ last values.
             
         # Coordinate references
         name = self._unique_construct_names('coordinate_references')
-        for key, value in sorted(self.coordinate_references().iteritems()):
+        for key, value in sorted(self.coordinate_references().items()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level,
@@ -609,7 +622,7 @@ last values.
 
         # Cell measures
         name = self._unique_construct_names('cell_measures')
-        for key, value in sorted(self.cell_measures().iteritems()):
+        for key, value in sorted(self.cell_measures().items()):
             string.append('')
             string.append(
                 value.dump(display=False, field=self, key=key, _level=_level,
@@ -620,7 +633,7 @@ last values.
         string = '\n'.join(string)
        
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def
@@ -706,7 +719,8 @@ False
         '''
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             
-        if not super(Field, self).equals(
+#        if not super(Field, self).equals(
+        if not super().equals(
                 other,
                 rtol=rtol, atol=atol, traceback=traceback,
                 ignore_data_type=ignore_data_type,
@@ -780,7 +794,8 @@ by the data array may be selected.
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
        
         # Expand the dims in the field's data array
-        f = super(Field, self).expand_dims(position, copy=copy)
+#        f = super(Field, self).expand_dims(position, copy=copy)
+        f = super().expand_dims(position, copy=copy)
 
         data_axes.insert(position, axis)
         f.set_data_axes(data_axes)
@@ -805,7 +820,7 @@ by the data array may be selected.
         for construct_type in ('dimensioncoordinate', 'auxiliarycoordinate', 'cellmeasure'):
             for ckey, con in self.constructs(construct_type=construct_type,
                                              axes=data_axes,
-                                             copy=False).iteritems():
+                                             copy=False).items():
                 axes = self.construct_axes().get(ckey)
                 if axes is None:
                     continue
@@ -817,7 +832,7 @@ by the data array may be selected.
         
         # Add coordinate references which span a subset of the item's
         # axes
-        for rkey, ref in self.coordinate_references().iteritems():
+        for rkey, ref in self.coordinate_references().items():
             ok = True
             for ckey in (tuple(ref.coordinates()) +
                          tuple(ref.datum.ancillaries().values()),
@@ -861,21 +876,21 @@ by the data array may be selected.
         d = self.get_read_report({'dimensions': None, 
                                   'components': {}})
         
-        for key0, value0 in d.iteritems():
-            print '{{{0!r}:'.format(key0)
-            print '    dimensions: {0!r},'.format(value0['dimensions'])
-            print '    components: {'
+        for key0, value0 in d.items():
+            print('{{{0!r}:'.format(key0))
+            print('    dimensions: {0!r},'.format(value0['dimensions']))
+            print('    components: {')
             for key1, value1 in sorted(value0['components'].items()):
                 for x in value1:
-                    print '        {!r}: ['.format(key1)
-                    print '            {{{0}}},'.format(
+                    print('        {!r}: ['.format(key1))
+                    print('            {{{0}}},'.format(
                         '\n             '.join(['{0!r}: {1!r},'.format(key2, value2)
-                                                for key2, value2 in sorted(x.items())]))
+                                                for key2, value2 in sorted(x.items())])))
                 #--- End: for
-                print '        ],'
+                print('        ],')
             #--- End: for
-            print '    },'
-            print '}\n'
+            print('    },')
+            print('}\n')
         #--- End: for
     #--- End: def
    
@@ -952,7 +967,8 @@ axes, use the `remove_axes` method.
         iaxes = [data_axes.index(axis) for axis in axes]
 
         # Squeeze the field's data array
-        f = super(Field, self).squeeze(iaxes, copy=copy)
+#        f = super(Field, self).squeeze(iaxes, copy=copy)
+        f = super().squeeze(iaxes, copy=copy)
 
         new_data_axes = [axis for axis in data_axes if axis not in axes]
         f.set_data_axes(new_data_axes)

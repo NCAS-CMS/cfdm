@@ -1,3 +1,7 @@
+from __future__ import print_function
+from builtins import (map, range, str)
+from past.builtins import basestring
+
 import operator
 import re
 import struct
@@ -14,6 +18,7 @@ import netCDF4
 from .custom import Custom
 
 from .. import IORead
+from functools import reduce
 
 
 class NetCDFRead(IORead):
@@ -390,10 +395,10 @@ ancillaries, field ancillaries).
         if extra_read_vars:
             g.update(deepcopy(extra_read_vars))
         
-        if isinstance(filename, file):
-            name = filename.name
-            filename.close()
-            filename = name
+#        if isinstance(filename, file):
+#            name = filename.name
+#            filename.close()
+#            filename = name
 
         compression = {}
         
@@ -424,8 +429,8 @@ ancillaries, field ancillaries).
         g['nc'] = nc
         
         if _debug:
-            print 'Reading netCDF file:', filename
-            print '    Input netCDF dataset =',nc
+            print('Reading netCDF file:', filename)
+            print('    Input netCDF dataset =',nc)
     
         # ----------------------------------------------------------------
         # Put the file's global attributes into the global
@@ -448,7 +453,7 @@ ancillaries, field ancillaries).
         
         g['global_attributes'] = global_attributes
         if _debug:
-            print '    global attributes:', g['global_attributes']
+            print('    global attributes:', g['global_attributes'])
 
 
         # ------------------------------------------------------------
@@ -520,20 +525,20 @@ ancillaries, field ancillaries).
 
         # The netCDF dimensions of the parent file
         internal_dimension_sizes = {}
-        for name, dimension in nc.dimensions.iteritems():
+        for name, dimension in nc.dimensions.items():
             internal_dimension_sizes[name] = dimension.size
 
         g['internal_dimension_sizes'] = internal_dimension_sizes
  
         if _debug:
-            print '    netCDF dimensions:', internal_dimension_sizes
+            print('    netCDF dimensions:', internal_dimension_sizes)
     
         # ------------------------------------------------------------
         # List variables
         #
         # Identify and parse all list variables
         # ------------------------------------------------------------
-        for ncvar, dimensions in variable_dimensions.iteritems():
+        for ncvar, dimensions in variable_dimensions.items():
             if dimensions != (ncvar,):
                 continue
 
@@ -561,7 +566,7 @@ ancillaries, field ancillaries).
                 g['featureType'] = featureType
     
                 sample_dimension = None
-                for ncvar, attributes in variable_attributes.iteritems():
+                for ncvar, attributes in variable_attributes.items():
                     if 'sample_dimension' not in attributes:
                         continue
                     
@@ -585,7 +590,7 @@ ancillaries, field ancillaries).
                 #--- End: for
     
                 instance_dimension = None
-                for ncvar, attributes in variable_attributes.iteritems():
+                for ncvar, attributes in variable_attributes.items():
                     if 'instance_dimension' not in attributes:
                         continue
     
@@ -624,7 +629,7 @@ ancillaries, field ancillaries).
         # Identify and parse all geometry container variables
         # ------------------------------------------------------------
         if g['file_version'] >= g['version']['1.8']:
-            for ncvar, attributes in variable_attributes.iteritems():
+            for ncvar, attributes in variable_attributes.items():
                 if 'geometry' not in attributes:
                     continue
             
@@ -680,30 +685,30 @@ ancillaries, field ancillaries).
         # referenced by other netCDF variables
         # ------------------------------------------------------------
         fields = OrderedDict()
-        for ncvar, f in all_fields.iteritems():
+        for ncvar, f in all_fields.items():
             if self._is_unreferenced(ncvar):
                 fields[ncvar] = f
         #--- End: for
         
         if _debug:
-            print 'Referenced netCDF variables:\n   ',
-            print '\n    '.join([ncvar for  ncvar in all_fields
-                                 if not self._is_unreferenced(ncvar)])
+            print('Referenced netCDF variables:\n   ', end=' ')
+            print('\n    '.join([ncvar for  ncvar in all_fields
+                                 if not self._is_unreferenced(ncvar)]))
 
-            print 'Unreferenced netCDF variables:\n   ',
-            print '\n    '.join([ncvar for ncvar in all_fields
-                                 if self._is_unreferenced(ncvar)])
+            print('Unreferenced netCDF variables:\n   ', end=' ')
+            print('\n    '.join([ncvar for ncvar in all_fields
+                                 if self._is_unreferenced(ncvar)]))
         
         # ------------------------------------------------------------
         # If requested, reinstate fields created from netCDF variables
         # that are referenced by othe netCDF variables
         # ------------------------------------------------------------
         if g['fields']:
-            fields0 = fields.values()
+            fields0 = list(fields.values())
             for construct_type in g['fields']:
                 for f in fields0:
                     get_constructs = getattr(Custom, 'get_'+construct_type)
-                    constructs = get_constructs(f).itervalues()
+                    constructs = iter(get_constructs(f).values())
                     for construct in constructs:
                         ncvar = Custom.get_ncvar(construct)
                         if ncvar not in all_fields:
@@ -712,7 +717,7 @@ ancillaries, field ancillaries).
                         fields[ncvar] = all_fields[ncvar]
         #--- End: if
             
-        for x in fields.values():
+        for x in list(fields.values()):
             x._set_component('component_report', None, g['component_report'])
 
         # ------------------------------------------------------------
@@ -723,7 +728,7 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         # Return the fields
         # ------------------------------------------------------------
-        return fields.values()
+        return list(fields.values())
     #--- End: def
 
     def _get_variables_from_external_files(self, external_variables, external_files):
@@ -1077,7 +1082,7 @@ ancillaries, field ancillaries).
         g = self.read_vars
         _debug = g['_debug']
         if _debug:
-            print '        List variable: compress =', compress
+            print('        List variable: compress =', compress)
     
         gathered_ncdimension = g['variable_dimensions'][ncvar][0]
 
@@ -1117,7 +1122,7 @@ ancillaries, field ancillaries).
 
         _debug = g['_debug']
         if _debug:
-            print '    count variable: sample_dimension =', sample_dimension
+            print('    count variable: sample_dimension =', sample_dimension)
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
@@ -1127,7 +1132,7 @@ ancillaries, field ancillaries).
         element_dimension_size  = Custom.get_int_max(elements_per_instance)
     
         if _debug:
-            print '    contiguous array implied shape:', (instance_dimension_size,element_dimension_size)
+            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
     
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
@@ -1140,7 +1145,7 @@ ancillaries, field ancillaries).
         else:
             element_dimension = 'element'
         if _debug:        
-            print '    featureType =', g['featureType']
+            print('    featureType =', g['featureType'])
             
         element_dimension = self._set_ragged_contiguous_parameters(
                 elements_per_instance=elements_per_instance,
@@ -1204,7 +1209,7 @@ variable should be pre-filled with missing values.
                 
         _debug = g['_debug']
         if _debug:
-            print '    index variable: instance_dimension =', instance_dimension
+            print('    index variable: instance_dimension =', instance_dimension)
 
         # Read the data of the index variable
         index = self._create_data(ncvar, uncompress_override=True)
@@ -1220,7 +1225,7 @@ variable should be pre-filled with missing values.
         else:
             element_dimension = 'element'
         if _debug:        
-            print '    featureType =', g['featureType']
+            print('    featureType =', g['featureType'])
 
         element_dimension = self._set_ragged_indexed_parameters(
             index=index,
@@ -1309,14 +1314,14 @@ variable should be pre-filled with missing values.
                 
         _debug = g['_debug']
         if _debug:
-            print 'Pre-processing indexed and contiguous compression'
-        print g['compression']
+            print('Pre-processing indexed and contiguous compression')
+        print(g['compression'])
         profile_dimension = g['compression'][sample_dimension]['ragged_contiguous']['profile_dimension']
     
         if _debug:
-            print '    sample_dimension  :', sample_dimension
-            print '    instance_dimension:', instance_dimension
-            print '    profile_dimension :', profile_dimension
+            print('    sample_dimension  :', sample_dimension)
+            print('    instance_dimension:', instance_dimension)
+            print('    profile_dimension :', profile_dimension)
             
         contiguous = g['compression'][sample_dimension]['ragged_contiguous']
         indexed    = g['compression'][profile_dimension]['ragged_indexed']
@@ -1333,8 +1338,8 @@ variable should be pre-filled with missing values.
         element_dimension_2_size = int(elements_per_profile.max())
         
         if _debug:
-            print "    Creating g['compression'][{!r}]['ragged_indexed_contiguous']".format(
-                sample_dimension)
+            print("    Creating g['compression'][{!r}]['ragged_indexed_contiguous']".format(
+                sample_dimension))
             
         g['compression'][sample_dimension]['ragged_indexed_contiguous'] = {
             'profiles_per_instance'   : profiles_per_instance,
@@ -1349,11 +1354,11 @@ variable should be pre-filled with missing values.
         }
     
         if _debug:
-            print '    Implied dimensions: {} -> {}'.format(
+            print('    Implied dimensions: {} -> {}'.format(
                 sample_dimension,
-                g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions'])
-            print "    Removing g['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension)
+                g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions']))
+            print("    Removing g['compression'][{!r}]['ragged_contiguous']".format(
+                sample_dimension))
             
         del g['compression'][sample_dimension]['ragged_contiguous']
     #--- End: def
@@ -1381,7 +1386,7 @@ variable should be pre-filled with missing values.
 
         _debug = g['_debug']
         if _debug:
-            print '    Geometry container =', ncvar
+            print('    Geometry container =', ncvar)
             
         g['geometries'][ncvar] = {'geometry_type': attributes[ncvar].get('geometry_type')}
 
@@ -1397,14 +1402,14 @@ variable should be pre-filled with missing values.
         parsed_part_node_count  = self._split_by_white_space(ncvar, part_node_count)
 
         if _debug:
-            print '    node_coordinates =', node_coordinates
-            print '    interior_ring    =', interior_ring
-            print '    node_count       =', node_count
-            print '    part_node_count  =', part_node_count
-            print '    parsed_node_coordinates =', parsed_node_coordinates
-            print '    parsed_interior_ring    =', parsed_interior_ring
-            print '    parsed_node_count       =', parsed_node_count
-            print '    parsed_part_node_count  =', parsed_part_node_count
+            print('    node_coordinates =', node_coordinates)
+            print('    interior_ring    =', interior_ring)
+            print('    node_count       =', node_count)
+            print('    part_node_count  =', part_node_count)
+            print('    parsed_node_coordinates =', parsed_node_coordinates)
+            print('    parsed_interior_ring    =', parsed_interior_ring)
+            print('    parsed_node_count       =', parsed_node_count)
+            print('    parsed_part_node_count  =', parsed_part_node_count)
 
         cf_compliant = True
         
@@ -1483,29 +1488,29 @@ variable should be pre-filled with missing values.
                 part_dimension = g['variable_dimensions'][part_node_count][0]
                 
                 parts = self._create_data(part_node_count)
-                print 'parts=', parts.get_array()
+                print('parts=', parts.get_array())
                 total_number_of_parts = Custom.get_size(parts)
 #                parts_per_geometry = nodes_per_geometry.copy()
-                print 'total_number_of_parts=',total_number_of_parts
+                print('total_number_of_parts=',total_number_of_parts)
                 index = parts.copy()
 
                 p = 0
                 i = 0
-                for j in xrange(Custom.get_size(nodes_per_geometry)):
-                    print 'i=', i
-                    print 'j=', j
+                for j in range(Custom.get_size(nodes_per_geometry)):
+                    print('i=', i)
+                    print('j=', j)
                     n_nodes_in_this_geometry = int(nodes_per_geometry[j])
-                    print 'n_nodes_in_this_geometry=',n_nodes_in_this_geometry
+                    print('n_nodes_in_this_geometry=',n_nodes_in_this_geometry)
                     n_parts_in_this_geometry = 0
                     s = 0
 
-                    for k in xrange(i, total_number_of_parts):
-                        print '  k=', k
-                        print '  p=', p
+                    for k in range(i, total_number_of_parts):
+                        print('  k=', k)
+                        print('  p=', p)
                         n_parts_in_this_geometry += 1                        
                         index[k] = p
                         s += int(parts[k])
-                        print  '  s=', s
+                        print('  s=', s)
                         if s >= n_nodes_in_this_geometry:
 #                           parts_per_geometry[j] = n_parts_in_this_geometry
                             i += k + 1
@@ -1517,8 +1522,8 @@ variable should be pre-filled with missing values.
                 #--- End: for
                 
 
-                print 'index=', index.get_array()
-                print 'part_node_count=',part_node_count
+                print('index=', index.get_array())
+                print('part_node_count=',part_node_count)
                 o
                 element_dimension_1 = self._set_ragged_contiguous_parameters(
                     elements_per_instance=parts,
@@ -1597,8 +1602,8 @@ variable should be pre-filled with missing values.
         }
         
         if g['_debug']:
-            print "    Creating g['compression'][{!r}]['ragged_contiguous']".format(
-                sample_dimension)
+            print("    Creating g['compression'][{!r}]['ragged_contiguous']".format(
+                sample_dimension))
 
         return element_dimension
     #--- End: def
@@ -1668,8 +1673,8 @@ variable should be pre-filled with missing values.
         g['new_dimensions'][element_dimension] = element_dimension_size
         
         if g['_debug']:
-            print "    Created g['compression'][{!r}]['ragged_indexed']".format(
-                indexed_sample_dimension)
+            print("    Created g['compression'][{!r}]['ragged_indexed']".format(
+                indexed_sample_dimension))
     
         return element_dimension
     #--- End: def
@@ -1783,7 +1788,7 @@ variable should be pre-filled with missing values.
         parent_dimensions = self._ncdimensions(field_ncvar)
  
         for x in parsed_formula_terms:
-            term, values = x.items()[0]
+            term, values = list(x.items())[0]
             
             g['formula_terms'][coord_ncvar]['coord'][term] = None
 
@@ -1845,7 +1850,7 @@ variable should be pre-filled with missing values.
                                       variable=coord_ncvar)
 
                 for x in parsed_bounds_formula_terms:
-                    term, values = x.items()[0]
+                    term, values = list(x.items())[0]
                     
                     g['formula_terms'][coord_ncvar]['bounds'][term] = None
 
@@ -1931,7 +1936,7 @@ variable should be pre-filled with missing values.
                 # Infer the formula terms bounds variables from the
                 # coordinates
                 # ----------------------------------------------------
-                for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].iteritems():
+                for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].items():
                     g['formula_terms'][coord_ncvar]['bounds'][term] = None
                     
                     if z_ncdim not in self._ncdimensions(ncvar):
@@ -1999,8 +2004,8 @@ variable should be pre-filled with missing values.
         
         _debug = g['_debug']
         if _debug:
-            print 'Converting netCDF variable {}({}) to a Field:'.format(
-                field_ncvar, ', '.join(dimensions))
+            print('Converting netCDF variable {}({}) to a Field:'.format(
+                field_ncvar, ', '.join(dimensions)))
 
 #        compression = g['compression']
         
@@ -2010,7 +2015,7 @@ variable should be pre-filled with missing values.
         properties.update(g['variable_attributes'][field_ncvar])
 
         if _debug:
-            print '    netCDF attributes:', properties
+            print('    netCDF attributes:', properties)
         
         # Take cell_methods out of the data variable's properties since it
         # will need special processing once the domain has been defined
@@ -2116,12 +2121,12 @@ variable should be pre-filled with missing values.
                 domain_axis = self._create_domain_axis(Custom.get_size(coord),
                                                        ncdim)
                 if _debug:
-                    print '    [0] Inserting', repr(domain_axis)
+                    print('    [0] Inserting', repr(domain_axis))
                 axis = Custom.set_domain_axis(field=f, construct=domain_axis,
                                               copy=False)
 
                 if _debug:
-                    print '    [1] Inserting', repr(coord), coord.shape, coord.get_data().shape, coord.get_data()._get_master_array().shape, repr(coord.get_data())
+                    print('    [1] Inserting', repr(coord), coord.shape, coord.get_data().shape, coord.get_data()._get_master_array().shape, repr(coord.get_data()))
                 dim = Custom.set_dimension_coordinate(field=f, construct=coord,
                                                       axes=[axis], copy=False)
                 
@@ -2145,7 +2150,7 @@ variable should be pre-filled with missing values.
 
                 domain_axis = self._create_domain_axis(size, ncdim)
                 if _debug:
-                    print '    [2] Inserting', repr(domain_axis)
+                    print('    [2] Inserting', repr(domain_axis))
                 axis = Custom.set_domain_axis(field=f, construct=domain_axis,
                                               copy=False)
                 
@@ -2168,7 +2173,7 @@ variable should be pre-filled with missing values.
 
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)        
         if _debug:
-            print '    [3] Inserting', repr(data)
+            print('    [3] Inserting', repr(data))
 
         Custom.set_data(f, data, axes=data_axes, copy=False)
           
@@ -2216,7 +2221,7 @@ variable should be pre-filled with missing values.
                         # construct.
                         domain_axis = self._create_domain_axis(1)
                         if _debug:
-                            print '    [4] Inserting', repr(domain_axis)
+                            print('    [4] Inserting', repr(domain_axis))
                         dim = Custom.set_domain_axis(f, domain_axis)
                         dimensions = [dim]
                     else:  
@@ -2240,13 +2245,13 @@ variable should be pre-filled with missing values.
                     
                     domain_axis = self._create_domain_axis(Custom.get_size(coord))
                     if _debug:
-                        print '    [5] Inserting', repr(domain_axis)
+                        print('    [5] Inserting', repr(domain_axis))
                     axis = Custom.set_domain_axis(field=f,
                                                   construct=domain_axis,
                                                   copy=False)
                     
                     if _debug:
-                        print '    [5] Inserting', repr(coord)
+                        print('    [5] Inserting', repr(coord))
                     dim = Custom.set_dimension_coordinate(f, coord,
                                                           axes=[axis], copy=False)
 
@@ -2262,7 +2267,7 @@ variable should be pre-filled with missing values.
                 else:
                     # Insert auxiliary coordinate
                     if _debug:
-                        print '    [6] Inserting', repr(coord)
+                        print('    [6] Inserting', repr(coord))
                     aux = Custom.set_auxiliary_coordinate(f, coord,
                                                           axes=dimensions,
                                                           copy=False)
@@ -2281,7 +2286,7 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Add coordinate references from formula_terms properties
         # ----------------------------------------------------------------
-        for key, coord in Custom.get_coordinates(field=f).iteritems():
+        for key, coord in Custom.get_coordinates(field=f).items():
             coord_ncvar = Custom.get_ncvar(coord)
 
             formula_terms = g['variable_attributes'][coord_ncvar].get('formula_terms')        
@@ -2298,7 +2303,7 @@ variable should be pre-filled with missing values.
                 
             ok = True
             domain_ancillaries = []
-            for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].iteritems():
+            for term, ncvar in g['formula_terms'][coord_ncvar]['coord'].items():
                 if ncvar is None:
                     continue
 
@@ -2342,7 +2347,7 @@ variable should be pre-filled with missing values.
             # Still here? Create a formula terms coordinate reference.
             for ncvar, domain_anc, axes in domain_ancillaries:
                 if _debug:
-                    print '    [7] Inserting', repr(domain_anc)
+                    print('    [7] Inserting', repr(domain_anc))
                     
                 da_key = Custom.set_domain_ancillary(field=f,
                                                      construct=domain_anc,
@@ -2383,10 +2388,10 @@ variable should be pre-filled with missing values.
                                                     parsed_grid_mapping)
             if not cf_compliant:
                 if _debug:
-                    print '        Bad grid_mapping:', grid_mapping
+                    print('        Bad grid_mapping:', grid_mapping)
             else:
                 for x in parsed_grid_mapping:
-                    grid_mapping_ncvar, coordinates = x.items()[0]
+                    grid_mapping_ncvar, coordinates = list(x.items())[0]
 
                     parameters = g['variable_attributes'][grid_mapping_ncvar].copy()
 
@@ -2409,18 +2414,18 @@ variable should be pre-filled with missing values.
                     if not coordinates:
                         name = parameters.get('grid_mapping_name', None)
                         for n in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
-                            for key, coord in Custom.get_coordinates(field=f).iteritems():
+                            for key, coord in Custom.get_coordinates(field=f).items():
                                 if n == Custom.get_property(coord, 'standard_name', None):
                                     coordinates.append(key)
                         #--- End: for
 
                         # Add the datum to already existing vertical
                         # coordinate references
-                        for vcr in g['vertical_crs'].itervalues():
+                        for vcr in g['vertical_crs'].values():
                             Custom.set_datum(coordinate_reference=vcr,
                                              datum=datum)
                     else:
-                        for vcoord, vcr in g['vertical_crs'].iteritems():
+                        for vcoord, vcr in g['vertical_crs'].items():
                             if vcoord in coordinates:
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
@@ -2453,7 +2458,7 @@ variable should be pre-filled with missing values.
                                                      parsed_cell_measures)
             if cf_compliant:
                 for x in parsed_cell_measures:
-                    measure, ncvars = x.items()[0]
+                    measure, ncvars = list(x.items())[0]
                     ncvar = ncvars[0]
                         
                     # Set the domain axes for the cell measure
@@ -2468,7 +2473,7 @@ variable should be pre-filled with missing values.
                         g['cell_measure'][ncvar] = cell
         
                     if _debug:
-                        print '    [8] Inserting', repr(cell)
+                        print('    [8] Inserting', repr(cell))
 
                     key = Custom.set_cell_measure(field=f, construct=cell,
                                                   axes=axes, copy=False)
@@ -2496,7 +2501,7 @@ variable should be pre-filled with missing values.
                                 
                 cell_method = self._create_cell_method(axes, properties)
                 if _debug:
-                    print '    [ ] Inserting', repr(cell_method)
+                    print('    [ ] Inserting', repr(cell_method))
                         
                 Custom.set_cell_method(field=f, construct=cell_method,
                                        copy=False)
@@ -2526,7 +2531,7 @@ variable should be pre-filled with missing values.
                         
                     # Insert the field ancillary
                     if _debug:
-                        print '    [9] Inserting', repr(field_anc)
+                        print('    [9] Inserting', repr(field_anc))
                     key = Custom.set_field_ancillary(field=f,
                                                      construct=field_anc,
                                                      axes=axes, copy=False)
@@ -2536,7 +2541,7 @@ variable should be pre-filled with missing values.
         #--- End: if
 
         if _debug:
-            print '    Field properties:', f.properties()
+            print('    Field properties:', f.properties())
         
         # Add the structural read report to the field
         f.set_read_report({field_ncvar: g['read_report'][field_ncvar]})
@@ -2613,8 +2618,8 @@ variable should be pre-filled with missing values.
             else:
                 dimensions = '(' + ', '.join(dimensions) + ')'
                 
-            print '    Error processing netCDF variable {}{}: {}'.format(
-                ncvar, dimensions, d['message'])
+            print('    Error processing netCDF variable {}{}: {}'.format(
+                ncvar, dimensions, d['message']))
         #--- End: if
         
         return d
@@ -3189,7 +3194,7 @@ variable should be pre-filled with missing values.
                             uncompressed_shape=uncompressed_shape,
                             instances=c['instances'])
                     else:
-                        raise ValueError("Bad compression vibes. c.keys()={}".format(c.keys()))
+                        raise ValueError("Bad compression vibes. c.keys()={}".format(list(c.keys())))
         #--- End: if
                     
         return data
@@ -3451,7 +3456,7 @@ parameters.
         domain_ancillaries = {}
         parameters         = {}
         
-        for term, ncvar in formula_terms.iteritems():
+        for term, ncvar in formula_terms.items():
             # The term's value is a domain ancillary of the field, so
             # we put its identifier into the coordinate reference.
             domain_ancillaries[term] = g['domain_ancillary_key'].get(ncvar)
@@ -3543,7 +3548,7 @@ dimensions are returned.
                     break
         #--- End: if
         
-        return map(str, ncdimensions)
+        return list(map(str, ncdimensions))
     #--- End: def
 
     def _create_data_gathered(self, ncvar, gathered_array,
@@ -3558,7 +3563,7 @@ variable.
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
-        uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
 
         compression_parameters = {'sample_axis': sample_axis,
                                   'indices'    : list_indices}
@@ -3587,7 +3592,7 @@ netCDF variable.
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
-        uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
 
         compression_parameters = {
             'elements_per_instance': elements_per_instance} 
@@ -3616,7 +3621,7 @@ netCDF variable.
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
-        uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
         
         compression_parameters = {'instances': instances}
 
@@ -3646,7 +3651,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
 
         '''
         uncompressed_ndim  = len(uncompressed_shape)
-        uncompressed_size  = long(reduce(operator.mul, uncompressed_shape, 1))
+        uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
         
         compression_parameters = {
             'profile_indices'     : profile_indices,
@@ -3711,7 +3716,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         component_report = g['component_report'].get(ncvar)
 
         if component_report is not None:
-            for var, report in component_report.iteritems():                
+            for var, report in component_report.items():                
                 g['read_report'][field_ncvar]['components'].setdefault(var, []).extend(
                     report)
         #--- End: if
@@ -3849,7 +3854,7 @@ Checks that
         
         ok = True
         for x in parsed_string:
-            measure, values = x.items()[0]
+            measure, values = list(x.items())[0]
             if len(values) != 1:
                 self._add_message(field_ncvar, field_ncvar,
                                   message=incorrectly_formatted,
@@ -3927,8 +3932,8 @@ Checks that
                                   attribute=attribute)
 
             if _debug:
-                print '    Error processing netCDF variable {}: {}'.format(
-                    field_ncvar, d['message'])                
+                print('    Error processing netCDF variable {}: {}'.format(
+                    field_ncvar, d['message']))                
 
             return False
 
@@ -4059,7 +4064,7 @@ Checks that
 
         ok = True
         for x in parsed_grid_mapping:
-            grid_mapping_ncvar, values = x.items()[0]
+            grid_mapping_ncvar, values = list(x.items())[0]
             if grid_mapping_ncvar not in g['internal_variables']:
                 ok = False
                 self._add_message(field_ncvar, grid_mapping_ncvar,

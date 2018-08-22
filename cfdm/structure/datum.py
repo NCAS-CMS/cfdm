@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
-class Datum(abstract.Parameters):
+class Datum(with_metaclass(abc.ABCMeta, abstract.Parameters)):
     '''A datum of a coordinate reference construct of the CF data model.
 
 A datum is a complete or partial definition of the zeroes of the
@@ -18,6 +20,5 @@ of the dimension and auxiliary coordinate constructs referenced by the
 `CoordinateReference` object that contains the datum.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
 #--- End: class

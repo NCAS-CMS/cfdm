@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
-class Datum(mixin.Parameters, structure.Datum):
+class Datum(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Parameters, structure.Datum), {}))):
     '''A datum of a coordinate reference construct of the CF data model.
 
 A datum is a complete or partial definition of the zeroes of the
@@ -19,6 +21,5 @@ construct, and this may be required for both horizontal and vertical
 coordinate systems.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
 #--- End: class

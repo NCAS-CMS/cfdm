@@ -1,10 +1,11 @@
+from builtins import object
 import abc
+from future.utils import with_metaclass
 
 
-class Implementation(object):
+class Implementation(with_metaclass(abc.ABCMeta, object)):
     '''Store an implementation of the CF data model.
     '''
-    __metaclass__ = abc.ABCMeta
     
     def __init__(self, version=None, **kwargs):
         '''**Initialisation**

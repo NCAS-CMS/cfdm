@@ -1,14 +1,15 @@
+from __future__ import absolute_import
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class DimensionCoordinate(mixin.Coordinate, structure.DimensionCoordinate):
+class DimensionCoordinate(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Coordinate, structure.DimensionCoordinate), {}))):
     '''A dimension coordinate construct of the CF data model.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None):

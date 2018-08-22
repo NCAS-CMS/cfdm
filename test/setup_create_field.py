@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import os
 import sys
@@ -176,13 +177,13 @@ class create_fieldTest(unittest.TestCase):
 #        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment:# ok) '+axisY+': max where sea'):
 #            f.set_cell_method(cm)
 
-        print repr(f)
-        print f
-        print f.constructs()
-        print f.construct_axes()
+        print(repr(f))
+        print(f)
+        print(f.constructs())
+        print(f.construct_axes())
         
         f.dump()
-        print "####################################################"
+        print("####################################################")
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 #        f.dump()
 #        sys.exit(0)
@@ -191,7 +192,7 @@ class create_fieldTest(unittest.TestCase):
 #        for x in g:
 #            x.print_read_report()
         g[0].dump()
-        print g
+        print(g)
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze(copy=False)
@@ -207,7 +208,7 @@ class create_fieldTest(unittest.TestCase):
 
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")
-        print 2
+        print(2)
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 
@@ -218,7 +219,7 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
 #        g.dump()
 
-        print 3
+        print(3)
         g.dump()
         f.dump()
         self.assertTrue(g.equals(f, traceback=True),
@@ -233,7 +234,7 @@ class create_fieldTest(unittest.TestCase):
             x.print_read_report()
 
 
-        print g
+        print(g)
 #        for x in g:
 #            x.dump()
 #        h = g.field('domainancillary2')
@@ -256,7 +257,7 @@ class create_fieldTest(unittest.TestCase):
 #--- End: class
 
 if __name__ == "__main__":
-    print 'Run date:', datetime.datetime.now()
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
-    print ''
+    print('')
     unittest.main(verbosity=2)

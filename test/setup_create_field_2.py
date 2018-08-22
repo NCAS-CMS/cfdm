@@ -1,3 +1,4 @@
+from __future__ import print_function
 import datetime
 import os
 import sys
@@ -174,14 +175,14 @@ class create_fieldTest_2(unittest.TestCase):
         f.set_cell_method(cm0)
         f.set_cell_method(cm1)
 
-        print repr(f)
-        print f
-        print f.constructs()
-        print f.construct_axes()
+        print(repr(f))
+        print(f)
+        print(f.constructs())
+        print(f.construct_axes())
         
         
 #        f.dump()
-        print "####################################################"
+        print("####################################################")
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
@@ -194,10 +195,10 @@ class create_fieldTest_2(unittest.TestCase):
         g = g[0].squeeze(copy=False)
         
 #        g.dump
-        print 'f'
-        print f
-        print  'g'
-        print g
+        print('f')
+        print(f)
+        print('g')
+        print(g)
         self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
                         '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
                             sorted(f.constructs()),
@@ -207,7 +208,7 @@ class create_fieldTest_2(unittest.TestCase):
 
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")
-        print 2
+        print(2)
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 
@@ -218,7 +219,7 @@ class create_fieldTest_2(unittest.TestCase):
 #        f.dump()
 #        g.dump()
 
-        print 3
+        print(3)
         self.assertTrue(g.equals(f, traceback=True),
                         "Field not equal to itself read back in")
 
@@ -231,7 +232,7 @@ class create_fieldTest_2(unittest.TestCase):
             x.print_read_report()
 
 
-        print g
+        print(g)
 #        for x in g:
 #            x.dump()
 #        h = g.field('domainancillary2')
@@ -254,7 +255,7 @@ class create_fieldTest_2(unittest.TestCase):
 #--- End: class
 
 if __name__ == "__main__":
-    print 'Run date:', datetime.datetime.now()
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
-    print ''
+    print('')
     unittest.main(verbosity=2)

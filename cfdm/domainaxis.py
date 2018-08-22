@@ -1,10 +1,15 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import super
+
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class DomainAxis(mixin.Container, structure.DomainAxis):
+class DomainAxis(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Container, structure.DomainAxis), {}))):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an
@@ -17,7 +22,6 @@ exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**
@@ -30,7 +34,8 @@ to the order of the elements.
     source: `DomainAxis`
 
         '''
-        super(DomainAxis, self).__init__(size=size, source=source,
+#        super(DomainAxis, self).__init__(size=size, source=source,
+        super().__init__(size=size, source=source,
                                          copy=copy)
         
         if source:
@@ -78,7 +83,7 @@ to the order of the elements.
                 print("{0}: Incompatible types: {0}, {1}".format(
 			self.__class__.__name__,
 			other.__class__.__name__))
-	    return False
+            return False
 
         # Check that each axis has the same size
         self_size  = self.get_size(None)
@@ -87,7 +92,7 @@ to the order of the elements.
             if traceback:
                 print("{0}: Different axis sizes: {1} != {2}".format(
 			self.__class__.__name__, self_size, other_size))
-	    return False
+            return False
 
         return True
     #--- End: def

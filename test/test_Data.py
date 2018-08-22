@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import range
 import datetime
 import inspect
 import itertools
@@ -123,7 +125,7 @@ class DataTest(unittest.TestCase):
         a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
         d = cfdm.Data(a.copy())
         
-        for indices in (range(a.ndim), range(-a.ndim, 0)):
+        for indices in (list(range(a.ndim)), list(range(-a.ndim, 0))):
             for axes in itertools.permutations(indices):
                 a = numpy.transpose(a, axes)
                 d.transpose(axes, copy=False)
@@ -154,7 +156,7 @@ class DataTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print 'Run date:', datetime.datetime.now()
+    print('Run date:', datetime.datetime.now())
     cfdm.environment()
-    print''
+    print('')
     unittest.main(verbosity=2)

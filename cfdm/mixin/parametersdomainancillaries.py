@@ -1,25 +1,38 @@
+from __future__ import print_function
+from builtins import super
+
 import abc
 
 from .parameters import Parameters
+from future.utils import with_metaclass
 
-class ParametersDomainAncillaries(Parameters):
+class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
     '''Mixin class for parameter- and ancillary-valued terms.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
+    def __bool__(self):
+        '''
+        '''
+#        return (super(ParametersDomainAncillaries, self).__bool__() or
+#                bool(self.domain_ancillaries()))
+        return (super().__bool__() or bool(self.domain_ancillaries()))
+    #--- End: def
+        
     def __nonzero__(self):
         '''
         '''
-        return (super(ParametersDomainAncillaries, self).__nonzero__() or
-                bool(self.domain_ancillaries()))
+#        return (super(ParametersDomainAncillaries, self).__nonzero__() or
+#                bool(self.domain_ancillaries()))
+        return (super().__nonzero__() or bool(self.domain_ancillaries()))
     #--- End: def
         
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''
-        out = [super(ParametersDomainAncillaries, self).__str__()]
+#        out = [super(ParametersDomainAncillaries, self).__str__()]
+        out = [super().__str__()]
 
         out.append('Ancillaries: {0}'.format(', '.join(sorted(self.domain_ancillaries()))))
             
@@ -60,11 +73,12 @@ class ParametersDomainAncillaries(Parameters):
 :Examples:
 
         '''
-        if not super(ParametersDomainAncillaries, self).equals(
+#        if not super(ParametersDomainAncillaries, self).equals(
+        if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_construct_type=ignore_construct_type):
-	    return False
+            return False
         
         # Check that the coordinate conversion ancillary terms
         # match
@@ -80,7 +94,7 @@ class ParametersDomainAncillaries(Parameters):
     set(domain_ancillaries0), set(domain_ancillaries1)))
             return False
 
-        for term, value0 in domain_ancillaries0.iteritems():
+        for term, value0 in domain_ancillaries0.items():
             value1 = domain_ancillaries1[term]  
             if value0 is None and value1 is None:
                 continue

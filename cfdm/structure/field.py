@@ -1,12 +1,18 @@
+from __future__ import absolute_import
+from builtins import super
+
 import abc
 
-import abstract
-import mixin
+from . import abstract
+from . import mixin
 
 from .constructs import Constructs
+from future.utils import with_metaclass
 
 
-class Field(mixin.ConstructAccess, abstract.PropertiesData):
+class Field(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.ConstructAccess, abstract.PropertiesData), {}))):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -57,7 +63,6 @@ standard_name), and some netCDF global file attributes (e.g. history
 and institution).
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     # Define the base of the identity keys for each construct type
     _construct_key_base = {'auxiliary_coordinate': 'auxiliarycoordinate',
@@ -71,9 +76,13 @@ and institution).
     }
     
     def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        obj._Constructs = Constructs
-        return obj
+        instance = super().__new__(cls)
+        instance._Constructs = Constructs
+        return instance
+    
+#        obj = object.__new__(cls, *args, **kwargs)
+#        obj._Constructs = Constructs
+#        return obj
     #--- End: def
 
     def __init__(self, properties={}, source=None, copy=True,
@@ -127,7 +136,8 @@ initialisation with the `set_data` method.
         initialization By default parameters are deep copied.
 
         '''
-        super(Field, self).__init__(properties=properties,
+#        super(Field, self).__init__(properties=properties,
+        super().__init__(properties=properties,
                                     source=source, copy=copy,
                                     _use_data=False)
 
@@ -253,7 +263,7 @@ None
 
             # Remove reference to removed domain axis construct in
             # cell method constructs
-            for cm_key, cm in self.cell_methods().iteritems():
+            for cm_key, cm in self.cell_methods().items():
                 axes = cm.get_axes()
                 if key not in axes:
                     continue
@@ -348,7 +358,8 @@ ValueError: Can't initialize data: Data already exists
         if axes is not None:
             self.set_data_axes(axes)
 
-        super(Field, self).set_data(data, copy=copy)
+#        super(Field, self).set_data(data, copy=copy)
+        super().set_data(data, copy=copy)
     #--- End: def
 
     def set_data_axes(self, value):
@@ -468,7 +479,8 @@ ValueError: Can't initialize data: Data already exists
         '''
 
         '''
-        return super(Field, self).del_data()
+#        return super(Field, self).del_data()
+        return super().del_data()
     #--- End: def
 
 #--- End: class

@@ -1,3 +1,8 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import zip
+from builtins import next
+from builtins import range
 import itertools
 import operator
 
@@ -9,7 +14,7 @@ from ..constants  import masked
 from ..functions  import RTOL, ATOL, _numpy_allclose
 
 #from .array      import Array
-import abstract
+from . import abstract
 
 from .numpyarray import NumpyArray
 
@@ -195,7 +200,7 @@ TypeError: iteration over a 0-d Data
             array = self.get_array()
             i = iter(array)
             while 1:
-                yield i.next()
+                yield next(i)
         else:
             # ndim > 1
             for n in range(self.shape[0]):
@@ -608,7 +613,7 @@ data array shape.
             if isinstance(index, slice):            
                 continue
     
-            if isinstance(index, (int, long)):
+            if isinstance(index, (int, int)):
                 # E.g. index is 43 -> slice(43, 44, 1)
                 if index < 0: 
                     index += size
@@ -842,7 +847,7 @@ Missing data array elements are omitted from the calculation.
 '''
         ndim = self.ndim
 
-        if isinstance(axes, (int, long)):
+        if isinstance(axes, (int, int)):
             axes = (axes,)
             
         axes2 = []
@@ -889,7 +894,7 @@ Missing data array elements are omitted from the calculation.
                     # This index is a list of integers
                     y = []
                     args = [iter(x)] * 2
-                    for start, stop in itertools.izip_longest(*args):
+                    for start, stop in itertools.zip_longest(*args):
                         if not stop:
                             y.append(slice(start, start+1))
                         else:
@@ -1125,12 +1130,12 @@ Missing data array elements are omitted from the calculation.
             if ndim <= 1:
                 return d
 
-            axes = range(ndim-1, -1, -1)
+            axes = list(range(ndim-1, -1, -1))
         else:
             axes = d._parse_axes(axes, 'transpose')
 
             # Return unchanged if axes are in the same order as the data
-            if axes == range(ndim):
+            if axes == list(range(ndim)):
                 return d
 
             if len(axes) != ndim:
@@ -1244,7 +1249,7 @@ Return a string containing a full description of the instance.
         string = '\n'.join(string)
        
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def
@@ -1317,7 +1322,7 @@ False
                 print("{0}: Incompatible types: {0}, {1}".format(
 			self.__class__.__name__,
 			other.__class__.__name__))
-	    return False
+            return False
 
         # Check that each instance has the same shape
         if self.shape != other.shape:
@@ -1375,8 +1380,8 @@ False
             if traceback:
                 print("{0}: S Different data values".format(
                     self.__class__.__name__))
-                print repr(self.get_array())
-                print repr(other.get_array())
+                print(repr(self.get_array()))
+                print(repr(other.get_array()))
             return False
 
         # ------------------------------------------------------------

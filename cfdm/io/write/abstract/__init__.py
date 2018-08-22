@@ -1,1 +1,2 @@
-from iowrite import IOWrite
+from __future__ import absolute_import
+from .iowrite import IOWrite

@@ -1,12 +1,17 @@
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import (str, super, zip)
+
 import abc
 
 import numpy
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class CellMethod(mixin.Properties, structure.CellMethod):
+class CellMethod(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Properties, structure.CellMethod), {}))):
     '''A cell method construct of the CF data model.
 
 Cell method constructs describe how the field construct's cell values
@@ -21,7 +26,6 @@ spacing of the original data, or the fact the method was applied only
 over El Nino years).
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     def dump(self, display=True, _title=None, _level=0):
         '''
@@ -283,14 +287,15 @@ The `!axes` attribute is ignored in the comparison.
 :Examples:
 
 '''
-        if not super(CellMethod, self).equals(
+#        if not super(CellMethod, self).equals(
+        if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties + ('intervals',),
                 ignore_construct_type=ignore_construct_type):
-	    return False
+            return False
         
 #        axes0 = self.get_axes(())
 #        axes1 = other.get_axes(())

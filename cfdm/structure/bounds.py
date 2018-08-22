@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
-class Bounds(abstract.PropertiesData):
+class Bounds(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A cell bounds array with properties.
 
 An array of cell bounds spans the same domain axes as its coordinate
@@ -20,6 +22,5 @@ on a CF-netCDF bounds variable, so the `Bounds` object supports this
 capability.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
 #--- End: class

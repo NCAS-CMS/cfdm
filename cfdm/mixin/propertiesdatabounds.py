@@ -1,16 +1,18 @@
+from __future__ import print_function
+from builtins import (range, super)
 import abc
 
 from .propertiesdata import PropertiesData
 
 from ..functions import RTOL, ATOL
+from future.utils import with_metaclass
 
 
-class PropertiesDataBounds(PropertiesData):
+class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
     '''Mixin class for a data array with descriptive properties and cell
 bounds.
 
     '''
-    __metaclass__ = abc.ABCMeta
     
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -25,7 +27,8 @@ bounds.
 
 #        indices = parse_indices(self.shape, indices)
 
-        new = super(PropertiesDataBounds, self).__getitem__(indices)
+#        new = super(PropertiesDataBounds, self).__getitem__(indices)
+        new = super().__getitem__(indices)
         
         data = self.get_data(None)
 
@@ -119,7 +122,8 @@ bounds.
         # ------------------------------------------------------------
         # Properties and Data
         # ------------------------------------------------------------
-        string = super(PropertiesDataBounds, self).dump(
+#        string = super(PropertiesDataBounds, self).dump(
+        string = super().dump(
             display=False, field=field, key=key,
             _omit_properties=_omit_properties, _prefix=_prefix,
             _title=_title, _create_title=_create_title, _level=_level)
@@ -156,7 +160,7 @@ bounds.
         string = '\n'.join(string)
         
         if display:
-            print string
+            print(string)
         else:
             return string
     #--- End: def
@@ -174,7 +178,8 @@ bounds.
         # ------------------------------------------------------------
         # Check the properties and data
         # ------------------------------------------------------------
-        if not super(PropertiesDataBounds, self).equals(
+#        if not super(PropertiesDataBounds, self).equals(
+        if not super().equals(
                 other,
                 rtol=rtol, atol=atol, traceback=traceback,
                 ignore_data_type=ignore_data_type,
@@ -193,7 +198,7 @@ bounds.
                 print(
 "{0}: Different geometry types: {1}, {2}".format(
     self.__class__.__name__, self.get_geometry_type(None), other.get_geometry_type(None)))
-	    return False
+            return False
 
         # ------------------------------------------------------------
         # Check the bounds 
@@ -278,8 +283,8 @@ bounds.
         '''
         position = self._parse_axes([position])[0]
         
-        c = super(PropertiesDataBounds, self).expand_dims(position,
-                                                          copy=copy)
+#        c = super(PropertiesDataBounds, self).expand_dims(position, copy=copy)
+        c = super().expand_dims(position, copy=copy)
         
         # ------------------------------------------------------------
         # Expand the dims of the bounds
@@ -336,8 +341,8 @@ variable.
         '''
         axes = self._parse_axes(axes)
 
-        c = super(PropertiesDataBounds, self).squeeze(axes, copy=copy)
-        
+#        c = super(PropertiesDataBounds, self).squeeze(axes, copy=copy)
+        c = super().squeeze(axes, copy=copy)        
 
         # ------------------------------------------------------------
         # Squeeze the bounds
@@ -385,11 +390,12 @@ variable.
 
         '''
         if axes is None:
-            axes = range(ndim-1, -1, -1)
+            axes = list(range(ndim-1, -1, -1))
         else:
             axes = self._parse_axes(axes)
 
-        c = super(PropertiesDataBounds, self).transpose(axes, copy=copy)
+#        c = super(PropertiesDataBounds, self).transpose(axes, copy=copy)
+        c = super().transpose(axes, copy=copy)
 
         # ------------------------------------------------------------
         # Transpose the bounds
@@ -399,7 +405,7 @@ variable.
             data = bounds.get_data(None)
             if data is not None:            
                 b_axes = axes[:]
-                b_axes.extend.extend(range(c.ndim, data.ndim))
+                b_axes.extend.extend(list(range(c.ndim, data.ndim)))
                 
                 bounds.transpose(b_axes, copy=False)
                 
@@ -422,7 +428,7 @@ variable.
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:
             interior_ring_axes = axes[:]
-            interior_ring_axes.extend(range(c.ndim, interior_ring.ndim))
+            interior_ring_axes.extend(list(range(c.ndim, interior_ring.ndim)))
             interior_ring.transpose(interior_ring_axes, copy=False)
 
         return c

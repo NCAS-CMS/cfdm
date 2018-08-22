@@ -1,15 +1,15 @@
 import abc
 
 from ... import IO
+from future.utils import with_metaclass
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class IOWrite(IO):
+class IOWrite(with_metaclass(abc.ABCMeta, IO)):
     '''Base class writing Field constructs to a dataset.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def write(self, *args, **kwargs):

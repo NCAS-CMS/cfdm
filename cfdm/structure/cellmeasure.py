@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
 
-class CellMeasure(abstract.PropertiesData):
+class CellMeasure(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A cell measure construct of the CF data model.
 
 A cell measure construct provides information that is needed about the
@@ -24,7 +26,6 @@ array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.
 
     '''   
-    __metaclass__ = abc.ABCMeta
 
     
     

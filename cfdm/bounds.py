@@ -1,13 +1,14 @@
+from __future__ import absolute_import
 import abc
 
-import mixin
-import structure
+from . import mixin
+from . import structure
+from future.utils import with_metaclass
 
 
-class Bounds(mixin.PropertiesData, structure.Bounds):
+class Bounds(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.PropertiesData, structure.Bounds), {}))):
     '''
     '''
-    __metaclass__ = abc.ABCMeta
 
     def dump(self, display=True, field=None, key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,

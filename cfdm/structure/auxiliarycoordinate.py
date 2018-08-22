@@ -1,8 +1,10 @@
+from __future__ import absolute_import
 import abc
 
-import abstract
+from . import abstract
+from future.utils import with_metaclass
 
-class AuxiliaryCoordinate(abstract.Coordinate):
+class AuxiliaryCoordinate(with_metaclass(abc.ABCMeta, abstract.Coordinate)):
     '''An auxiliary coordinate construct of the CF data model.
 
 An auxiliary coordinate construct provides information which locate
@@ -29,6 +31,5 @@ climatological time axes, the bounds are interpreted in a special way
 indicated by the cell method constructs.
 
     '''
-    __metaclass__ = abc.ABCMeta
 
 #--- End: class
