@@ -2205,6 +2205,7 @@ variable should be pre-filled with missing values.
                                                               f,
                                                               verbose=verbose)
                     g['auxiliary_coordinate'][ncvar] = coord
+                    print('PPPPPPPPPPPPPPPPPPPPP', repr(coord), ncvar)
                 #--- End: if
      
                 # --------------------------------------------------------
@@ -2801,14 +2802,16 @@ variable should be pre-filled with missing values.
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
 
         Custom.set_properties(c, properties)
-        
+        print('KK1', repr(c))
         if attribute == 'climatology':
             Custom.set_geometry_type(coordinate=c, value='climatology')
 
         if has_coordinates:
             data = self._create_data(ncvar, c)
+            print('data=', repr(data), data.shape)
             Custom.set_data(c, data, copy=False)
 
+        print('KK1', repr(c))
         # ------------------------------------------------------------
         # Add any bounds
         # ------------------------------------------------------------
@@ -3086,9 +3089,11 @@ variable should be pre-filled with missing values.
             size = int(size)
     
         if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
+            print('JJJJJ1', shape)
             # Has a trailing string-length dimension
             strlen = shape[-1]
             shape = shape[:-1]
+            print('JJJJJ2', shape)
             size /= strlen
             ndim -= 1
             dtype = numpy.dtype('S{0}'.format(strlen))

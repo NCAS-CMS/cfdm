@@ -147,6 +147,8 @@ extra trailing dimension.
             
         new = netCDF4.stringtochar(array, encoding='none')
 
+        print('AAAAAAAAAAAAAAAAAA new.shape=', new.shape, repr(new))
+        
         if masked:
             new = numpy.ma.masked_where(new=='', new)
             new.set_fill_value(fill_value)
@@ -1034,10 +1036,10 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         print(cfvar.get_data().dtype)
         datatype = self._datatype(cfvar)
-        print('datatype=', datatype)
+        print('0 datatype=', datatype)
         data = API.get_data(cfvar, None)
 
-        if data is not None and datatype == 'S':
+        if data is not None and datatype == 'S1':
             # --------------------------------------------------------
             # Convert a string data type numpy array into a
             # character data type ('S1') numpy array with an extra
@@ -1050,7 +1052,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 ncdim = self._string_length_dimension(strlen)            
                 ncdimensions = ncdimensions + (ncdim,)
         #--- End: if
-
+        print('-------')
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
         # filled before any data is written. if the fill value is

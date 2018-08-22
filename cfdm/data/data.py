@@ -255,6 +255,7 @@ elements.
         '''x.__str__() <==> str(x)
 
         '''
+        print('PPPPPPPPPPPP')
         units    = self.get_units(None)
         calendar = self.get_calendar(None)
 
@@ -301,10 +302,12 @@ elements.
                         numpy.ma.array([first, last]), units, calendar).get_dtarray()
                 except OverflowError:
                     first, last = ('??', '??')
+
             if size > 3:
-                out = '{0}{1}, ..., {2}{3}'.format(open_brackets,
-                                                   first,last,
-                                                   close_brackets)
+                print ('ooooooooooooooooo', first, type(first))
+                out = '{0}{1!s}, ..., {2!s}{3}'.format(open_brackets,
+                                                       first, last,
+                                                       close_brackets)
             elif size == 3:                
                 middle = self.second_element()
                 if isreftime:
