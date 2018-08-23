@@ -6,7 +6,9 @@ from . import structure
 from future.utils import with_metaclass
 
 
-class FieldAncillary(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.PropertiesData, structure.FieldAncillary), {}))):
+class FieldAncillary(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.PropertiesData, structure.FieldAncillary), {}))):
     '''A field ancillary construct of the CF data model.
 
 The field ancillary construct provides metadata which are distributed

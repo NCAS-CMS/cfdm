@@ -154,14 +154,17 @@ array on disk.
         if array.dtype.kind in ('S', 'U'): # == 'S' and array.ndim > (self.ndim -
                                                  #    getattr(self, 'gathered', 0) -
                                                  #    getattr(self, 'ragged', 0)):
-
+            if array.dtype.kind == 'U':
+                array = array.astype('S')
+            
             array = netCDF4.chartostring(array)
             shape = array.shape
 #            array.resize((array.size,))
-            array = numpy.array([x.rstrip() for x in array.flat], dtype=array.dtype)
-            array.resize(shape)
-            array = numpy.ma.masked_where(array=='', array)
-            
+            array = numpy.array([x.rstrip() for x in array.flat], dtype='S') #array.dtype)
+            array = numpy.reshape(array, shape)
+            array = numpy.ma.masked_where(array==b'', array)
+
+#            array.set_fill_value('')
 #            strlen = array.shape[-1]
 #            
 #            new_shape = array.shape[0:-1]

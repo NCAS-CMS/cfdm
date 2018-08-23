@@ -9,7 +9,6 @@ This package is an implementation of the CF data model
 
 '''
 
-__Conventions__  = '1.8'
 __author__       = 'David Hassell'
 __date__         = '2018-06-26'
 __version__      = '1.8'
@@ -20,14 +19,10 @@ import platform
 # Check the version of python
 if StrictVersion(platform.python_version()) < StrictVersion('2.7.0'):
     raise ValueError(
-        "Bad python version: cfdm requires 2.7 <= python < 3.0. Got {}".format(
+        "Bad python version: cfdm requires 2.7 <= python. Got {}".format(
         platform.python_version()))
 
 from .bounds               import Bounds
-#from .boundsancillary      import BoundsAncillary
-#from .boundsmapping        import BoundsMapping
-#from .cellextent           import CellExtent
-#from .coordinateancillary  import CoordinateAncillary
 from .coordinateconversion import CoordinateConversion
 from .constants            import *
 from .data.data            import Data

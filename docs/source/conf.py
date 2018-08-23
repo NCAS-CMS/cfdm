@@ -16,6 +16,15 @@ import sys
 import os
 import re
 
+
+def _get_version():
+    """Returns library version by inspecting __init__.py file.
+
+    """
+    return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                     _read("../../cfdm/__init__.py"),
+                     re.MULTILINE).group(1)
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make

@@ -9,7 +9,9 @@ from . import structure
 from future.utils import with_metaclass
 
 
-class DomainAxis(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Container, structure.DomainAxis), {}))):
+class DomainAxis(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.Container, structure.DomainAxis), {}))):
     '''A CF domain axis construct.
 
 A domain axis construct specifies the number of points along an

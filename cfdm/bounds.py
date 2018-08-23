@@ -1,12 +1,15 @@
 from __future__ import absolute_import
+from future.utils import with_metaclass
+
 import abc
 
 from . import mixin
 from . import structure
-from future.utils import with_metaclass
 
 
-class Bounds(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.PropertiesData, structure.Bounds), {}))):
+class Bounds(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.PropertiesData, structure.Bounds), {}))):
     '''
     '''
 

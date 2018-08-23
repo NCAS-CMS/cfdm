@@ -183,6 +183,13 @@ class create_fieldTest(unittest.TestCase):
         print(f.construct_axes())
         
         f.dump()
+
+        self.assertTrue(f.equals(f, traceback=True),
+                        "Field f not equal to itself")
+
+        self.assertTrue(f.equals(f.copy(), traceback=True),
+                        "Field f not equal to a copy of itself")
+
         print("####################################################")
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC',_debug=True)
 #        f.dump()
@@ -191,8 +198,12 @@ class create_fieldTest(unittest.TestCase):
         g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
 #        for x in g:
 #            x.print_read_report()
-        g[0].dump()
         print(g)
+        g[0].dump()
+
+        array = g[0].construct(name='greek_letters').get_array()
+        self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
+
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze(copy=False)
@@ -206,9 +217,12 @@ class create_fieldTest(unittest.TestCase):
                             sorted(g.constructs()),
                             sorted(g.constructs().items())))
 
+        self.assertTrue(f.equals(f, traceback=True),
+                        "Field f not equal to itself after having been written to disk")
+
         self.assertTrue(f.equals(f.copy(), traceback=True),
-                        "Field f not equal to a copy of itself")
-        print(2)
+                        "Field f not equal to a copy of itself after having been written to disk")
+
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 
@@ -219,11 +233,12 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
 #        g.dump()
 
-        print(3)
+        print('g')
         g.dump()
+        print('f')
         f.dump()
         self.assertTrue(g.equals(f, traceback=True),
-                        "Field not equal to itself read back in")
+                        "Field (f) not equal to itself read back in (g)")
 
         
         x = g.dump(display=False)

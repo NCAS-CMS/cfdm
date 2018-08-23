@@ -6,7 +6,9 @@ from . import structure
 from future.utils import with_metaclass
 
 
-class InteriorRing(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.PropertiesData, structure.InteriorRing), {}))):
+class InteriorRing(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.PropertiesData, structure.InteriorRing), {}))):
     '''An interior ring array with properties.
 
 For polygon geometries, an individual geometry may define an "interior

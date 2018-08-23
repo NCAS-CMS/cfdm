@@ -1,7 +1,9 @@
+from future.utils import with_metaclass
+
 import abc
 
 from ... import IO
-from future.utils import with_metaclass
+
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 

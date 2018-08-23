@@ -157,10 +157,10 @@ properties.
 >>> c.has_bounds()
 True
 >>> print c.get_bounds()
-PPPPPPPPPPPPPPPPPPPPP
+
 >>> d = c.del_bounds()
 >>> print d
-PPPPPPPPPPPPPPPPPPPPP
+
 >>> c.has_bounds()
 False
 >>> print c.del_bounds()

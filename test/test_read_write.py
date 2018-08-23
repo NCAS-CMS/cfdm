@@ -1,6 +1,6 @@
 from __future__ import print_function
-from builtins import str
-from builtins import range
+from builtins import (range, str)
+
 import datetime
 import tempfile
 import os

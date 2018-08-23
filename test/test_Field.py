@@ -15,8 +15,10 @@ class FieldTest(unittest.TestCase):
         self.contiguous = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                        'DSG_timeSeries_contiguous.nc')
         
-        self.f = cfdm.read(self.filename)[0]
-
+        f = cfdm.read(self.filename)
+        self.assertTrue(len(f)==1, 'f={}'.format(f))
+        self.f = f[0]
+#        print(self.f)
         self.test_only = []
 #        self.test_only = ['test_Field_squeeze']
 #        self.test_only = ['test_Field_domain_axes']
@@ -134,8 +136,9 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
 
         auxiliary_coordinates = f.auxiliary_coordinates()
-                
-        self.assertTrue(len(auxiliary_coordinates) == 3)
+        
+        self.assertTrue(len(auxiliary_coordinates) == 3,
+                        'auxiliary_coordinates={}'.format(auxiliary_coordinates))
 
         for key, value in auxiliary_coordinates.items():
             self.assertTrue(isinstance(value, cfdm.AuxiliaryCoordinate))

@@ -6,7 +6,9 @@ from . import structure
 from future.utils import with_metaclass
 
 
-class DimensionCoordinate(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Coordinate, structure.DimensionCoordinate), {}))):
+class DimensionCoordinate(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.Coordinate, structure.DimensionCoordinate), {}))):
     '''A dimension coordinate construct of the CF data model.
 
     '''

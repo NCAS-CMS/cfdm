@@ -1,5 +1,6 @@
 from builtins import object
-class Custom(object):
+
+class API(object):
     '''
     '''
     @staticmethod

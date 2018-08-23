@@ -1,6 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from builtins import (str, super, zip)
+from future.utils import with_metaclass
 
 import abc
 
@@ -8,10 +9,11 @@ import numpy
 
 from . import mixin
 from . import structure
-from future.utils import with_metaclass
 
 
-class CellMethod(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.Properties, structure.CellMethod), {}))):
+class CellMethod(with_metaclass(
+        abc.ABCMeta,
+        type('NewBase', (mixin.Properties, structure.CellMethod), {}))):
     '''A cell method construct of the CF data model.
 
 Cell method constructs describe how the field construct's cell values

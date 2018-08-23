@@ -6,19 +6,21 @@ import operator
 import re
 import struct
 
-from ast import literal_eval
-from copy import deepcopy
+from ast               import literal_eval
+from collections       import OrderedDict
+from copy              import deepcopy
 from distutils.version import LooseVersion
-
-from collections import OrderedDict
+from functools         import reduce
 
 import numpy
 import netCDF4
 
-from .custom import Custom
+
+
+from .implementation_interface import API
 
 from .. import IORead
-from functools import reduce
+
 
 
 class NetCDFRead(IORead):
@@ -379,6 +381,8 @@ ancillaries, field ancillaries).
             'do_not_create_field':  set(),
             'references': {},
 
+            'external_variables': set(),
+            
             # The collection of external variables that are actually
             # referenced from within the file
             'referenced_external_variables': set(),
@@ -642,22 +646,27 @@ ancillaries, field ancillaries).
         #--- End: if
         
         # ------------------------------------------------------------
-        # External variables
+        # Parse external variables (>= CF-1.7)
         # ------------------------------------------------------------
-        external_variables = global_attributes.pop('external_variables', None)
-        parsed_external_variables = self._split_by_white_space(None, external_variables)
-        parsed_external_variables = self._check_external_variables(
-            external_variables, parsed_external_variables)
-        g['external_variables'] = set(parsed_external_variables)
-            
-        #
+        if g['file_version'] >= g['version']['1.7']:
+            external_variables = global_attributes.pop('external_variables', None)
+            parsed_external_variables = self._split_string_by_white_space(
+                None, external_variables)
+            parsed_external_variables = self._check_external_variables(
+                external_variables, parsed_external_variables)
+            g['external_variables'] = set(parsed_external_variables)
+
         if _scan_only:
             return self.read_vars
-
-        #
-        if external_files and external_variables:
-            self._get_variables_from_external_files(external_files)
-                
+            
+        # ------------------------------------------------------------
+        # Get external variables (>= CF-1.7)
+        # ------------------------------------------------------------
+        if g['file_version'] >= g['version']['1.7']:
+            if external_files and g['external_variables']:
+                self._get_variables_from_external_files(external_files)
+        #--- End: if
+        
         # ------------------------------------------------------------
         # Convert every netCDF variable to a field (apart from special
         # variables that have already been identified as such)
@@ -669,17 +678,19 @@ ancillaries, field ancillaries).
         #--- End: for
         
         # ------------------------------------------------------------
-        # Check for unreferenced external variables
+        # Check for unreferenced external variables (>= CF-1.7)
         # ------------------------------------------------------------
-        unreferenced_external_variables =  g['external_variables'].difference(
-            g['referenced_external_variables'])
-        for ncvar in unreferenced_external_variables:
-            self._add_message(
-                None, ncvar,
-                message=('External variable',
-                         'is not referenced in file'),
-                attribute={'external_variables': external_variables})
-            
+        if g['file_version'] >= g['version']['1.7']:
+            unreferenced_external_variables = g['external_variables'].difference(
+                g['referenced_external_variables'])
+            for ncvar in unreferenced_external_variables:
+                self._add_message(
+                    None, ncvar,
+                    message=('External variable',
+                             'is not referenced in file'),
+                    attribute={'external_variables': external_variables})
+        #--- End: if
+        
         # ------------------------------------------------------------
         # Discard fields created from netCDF variables that are
         # referenced by other netCDF variables
@@ -707,10 +718,10 @@ ancillaries, field ancillaries).
             fields0 = list(fields.values())
             for construct_type in g['fields']:
                 for f in fields0:
-                    get_constructs = getattr(Custom, 'get_'+construct_type)
+                    get_constructs = getattr(API, 'get_'+construct_type)
                     constructs = iter(get_constructs(f).values())
                     for construct in constructs:
-                        ncvar = Custom.get_ncvar(construct)
+                        ncvar = API.get_ncvar(construct)
                         if ncvar not in all_fields:
                             continue
                         
@@ -1086,7 +1097,7 @@ ancillaries, field ancillaries).
     
         gathered_ncdimension = g['variable_dimensions'][ncvar][0]
 
-        parsed_compress = self._split_by_white_space(ncvar, compress)
+        parsed_compress = self._split_string_by_white_space(ncvar, compress)
         cf_compliant = self._check_compress(ncvar, compress, parsed_compress)
         if not cf_compliant:
             return
@@ -1128,8 +1139,8 @@ ancillaries, field ancillaries).
         
         elements_per_instance = self._create_data(ncvar, uncompress_override=True)
     
-        instance_dimension_size = Custom.get_size(elements_per_instance)
-        element_dimension_size  = Custom.get_int_max(elements_per_instance)
+        instance_dimension_size = API.get_size(elements_per_instance)
+        element_dimension_size  = API.get_int_max(elements_per_instance)
     
         if _debug:
             print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
@@ -1396,10 +1407,10 @@ variable should be pre-filled with missing values.
         part_node_count  = attributes[ncvar].get('part_node_count')
         interior_ring    = attributes[ncvar].get('interior_ring')
         
-        parsed_node_coordinates = self._split_by_white_space(ncvar, node_coordinates)
-        parsed_interior_ring    = self._split_by_white_space(ncvar, interior_ring)
-        parsed_node_count       = self._split_by_white_space(ncvar, node_count)
-        parsed_part_node_count  = self._split_by_white_space(ncvar, part_node_count)
+        parsed_node_coordinates = self._split_string_by_white_space(ncvar, node_coordinates)
+        parsed_interior_ring    = self._split_string_by_white_space(ncvar, interior_ring)
+        parsed_node_count       = self._split_string_by_white_space(ncvar, node_count)
+        parsed_part_node_count  = self._split_string_by_white_space(ncvar, part_node_count)
 
         if _debug:
             print('    node_coordinates =', node_coordinates)
@@ -1489,14 +1500,14 @@ variable should be pre-filled with missing values.
                 
                 parts = self._create_data(part_node_count)
                 print('parts=', parts.get_array())
-                total_number_of_parts = Custom.get_size(parts)
+                total_number_of_parts = API.get_size(parts)
 #                parts_per_geometry = nodes_per_geometry.copy()
                 print('total_number_of_parts=',total_number_of_parts)
                 index = parts.copy()
 
                 p = 0
                 i = 0
-                for j in range(Custom.get_size(nodes_per_geometry)):
+                for j in range(API.get_size(nodes_per_geometry)):
                     print('i=', i)
                     print('j=', j)
                     n_nodes_in_this_geometry = int(nodes_per_geometry[j])
@@ -1578,8 +1589,8 @@ variable should be pre-filled with missing values.
         '''
         g = self.read_vars
         
-        instance_dimension_size = Custom.get_size(elements_per_instance)
-        element_dimension_size  = Custom.get_int_max(elements_per_instance)
+        instance_dimension_size = API.get_size(elements_per_instance)
+        element_dimension_size  = API.get_int_max(elements_per_instance)
         
         # Make sure that the element dimension name is unique
         base = element_dimension
@@ -2071,13 +2082,13 @@ variable should be pre-filled with missing values.
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
         klass = self.implementation.get_class('Field')
-        f = Custom.initialise_Field(klass)
+        f = API.initialise_Field(klass)
 #        f = self.initialise('Field')
 
-        Custom.set_properties(f, properties, copy=False)
+        API.set_properties(f, properties, copy=False)
 
         # Store the field's netCDF variable name
-        Custom.set_ncvar(f, field_ncvar)
+        API.set_ncvar(f, field_ncvar)
    
         f.set_global_attributes(g['global_attributes'])
 
@@ -2118,21 +2129,21 @@ variable should be pre-filled with missing values.
                                                               verbose=verbose)
                     g['dimension_coordinate'][ncdim] = coord
                 
-                domain_axis = self._create_domain_axis(Custom.get_size(coord),
+                domain_axis = self._create_domain_axis(API.get_size(coord),
                                                        ncdim)
                 if _debug:
                     print('    [0] Inserting', repr(domain_axis))
-                axis = Custom.set_domain_axis(field=f, construct=domain_axis,
+                axis = API.set_domain_axis(field=f, construct=domain_axis,
                                               copy=False)
 
                 if _debug:
                     print('    [1] Inserting', repr(coord), coord.shape, coord.get_data().shape, coord.get_data()._get_master_array().shape, repr(coord.get_data()))
-                dim = Custom.set_dimension_coordinate(field=f, construct=coord,
+                dim = API.set_dimension_coordinate(field=f, construct=coord,
                                                       axes=[axis], copy=False)
                 
                 self._reference(ncdim)
                 if coord.has_bounds():
-                    self._reference(Custom.get_ncvar(coord.get_bounds()))
+                    self._reference(API.get_ncvar(coord.get_bounds()))
                     
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
@@ -2151,7 +2162,7 @@ variable should be pre-filled with missing values.
                 domain_axis = self._create_domain_axis(size, ncdim)
                 if _debug:
                     print('    [2] Inserting', repr(domain_axis))
-                axis = Custom.set_domain_axis(field=f, construct=domain_axis,
+                axis = API.set_domain_axis(field=f, construct=domain_axis,
                                               copy=False)
                 
                 # Set unlimited status of axis
@@ -2175,15 +2186,15 @@ variable should be pre-filled with missing values.
         if _debug:
             print('    [3] Inserting', repr(data))
 
-        Custom.set_data(f, data, axes=data_axes, copy=False)
+        API.set_data(f, data, axes=data_axes, copy=False)
           
         # ----------------------------------------------------------------
         # Add scalar dimension coordinates and auxiliary coordinates to
         # the field
         # ----------------------------------------------------------------
-        coordinates = Custom.del_property(f, 'coordinates')
+        coordinates = API.del_property(f, 'coordinates')
         if coordinates is not None:
-            parsed_coordinates = self._split_by_white_space(field_ncvar, coordinates)
+            parsed_coordinates = self._split_string_by_white_space(field_ncvar, coordinates)
             for ncvar in parsed_coordinates:
 
                 # Skip dimension coordinates which are in the list
@@ -2205,7 +2216,6 @@ variable should be pre-filled with missing values.
                                                               f,
                                                               verbose=verbose)
                     g['auxiliary_coordinate'][ncvar] = coord
-                    print('PPPPPPPPPPPPPPPPPPPPP', repr(coord), ncvar)
                 #--- End: if
      
                 # --------------------------------------------------------
@@ -2223,7 +2233,7 @@ variable should be pre-filled with missing values.
                         domain_axis = self._create_domain_axis(1)
                         if _debug:
                             print('    [4] Inserting', repr(domain_axis))
-                        dim = Custom.set_domain_axis(f, domain_axis)
+                        dim = API.set_domain_axis(f, domain_axis)
                         dimensions = [dim]
                     else:  
                         # Numeric valued scalar coordinate
@@ -2235,30 +2245,30 @@ variable should be pre-filled with missing values.
                     # derived from a numeric scalar auxiliary
                     # coordinate
                     klass = self.implementation.get_class('DimensionCoordinate')
-                    coord = Custom.initialise_DimensionCoordinate(klass,
+                    coord = API.initialise_DimensionCoordinate(klass,
                                                                   source=coord,
                                                                   copy=False)
                 
 #                    coord = self.initialise('DimensionCoordinate',
 #                                             source=coord, copy=False)
-                    coord = Custom.expand_dims(construct=coord, position=0,
+                    coord = API.expand_dims(construct=coord, position=0,
                                                copy=False)
                     
-                    domain_axis = self._create_domain_axis(Custom.get_size(coord))
+                    domain_axis = self._create_domain_axis(API.get_size(coord))
                     if _debug:
                         print('    [5] Inserting', repr(domain_axis))
-                    axis = Custom.set_domain_axis(field=f,
+                    axis = API.set_domain_axis(field=f,
                                                   construct=domain_axis,
                                                   copy=False)
                     
                     if _debug:
                         print('    [5] Inserting', repr(coord))
-                    dim = Custom.set_dimension_coordinate(f, coord,
+                    dim = API.set_dimension_coordinate(f, coord,
                                                           axes=[axis], copy=False)
 
                     self._reference(ncvar)
-                    if Custom.has_bounds(coord):
-                        self._reference(Custom.get_ncvar(coord.get_bounds()))
+                    if API.has_bounds(coord):
+                        self._reference(API.get_ncvar(coord.get_bounds()))
                                         
                     dimensions = [axis]
                     ncvar_to_key[ncvar] = dim
@@ -2269,13 +2279,13 @@ variable should be pre-filled with missing values.
                     # Insert auxiliary coordinate
                     if _debug:
                         print('    [6] Inserting', repr(coord))
-                    aux = Custom.set_auxiliary_coordinate(f, coord,
+                    aux = API.set_auxiliary_coordinate(f, coord,
                                                           axes=dimensions,
                                                           copy=False)
 
                     self._reference(ncvar)
-                    if Custom.has_bounds(coord):
-                        self._reference(Custom.get_ncvar(coord.get_bounds())) # Custom ALERT!!
+                    if API.has_bounds(coord):
+                        self._reference(API.get_ncvar(coord.get_bounds())) # API ALERT!!
 
                     ncvar_to_key[ncvar] = aux
 
@@ -2287,8 +2297,8 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Add coordinate references from formula_terms properties
         # ----------------------------------------------------------------
-        for key, coord in Custom.get_coordinates(field=f).items():
-            coord_ncvar = Custom.get_ncvar(coord)
+        for key, coord in API.get_coordinates(field=f).items():
+            coord_ncvar = API.get_ncvar(coord)
 
             formula_terms = g['variable_attributes'][coord_ncvar].get('formula_terms')        
             if formula_terms is None:
@@ -2350,13 +2360,13 @@ variable should be pre-filled with missing values.
                 if _debug:
                     print('    [7] Inserting', repr(domain_anc))
                     
-                da_key = Custom.set_domain_ancillary(field=f,
+                da_key = API.set_domain_ancillary(field=f,
                                                      construct=domain_anc,
                                                      axes=axes, copy=False)
 
                 self._reference(ncvar)
-                if Custom.has_bounds(domain_anc):
-                    self._reference(Custom.get_ncvar(domain_anc.get_bounds()))
+                if API.has_bounds(domain_anc):
+                    self._reference(API.get_ncvar(domain_anc.get_bounds()))
 
                 if ncvar not in ncvar_to_key:
                     ncvar_to_key[ncvar] = da_key
@@ -2369,7 +2379,7 @@ variable should be pre-filled with missing values.
                 f, key, coord,
                 g['formula_terms'][coord_ncvar]['coord'])
             
-            Custom.set_coordinate_reference(field=f,
+            API.set_coordinate_reference(field=f,
                                             construct=coordinate_reference,
                                             copy=False)
 
@@ -2380,7 +2390,7 @@ variable should be pre-filled with missing values.
         # Add grid mapping coordinate references (do this after
         # formula terms)
         # ----------------------------------------------------------------
-        grid_mapping = Custom.del_property(f, 'grid_mapping')
+        grid_mapping = API.del_property(f, 'grid_mapping')
         if grid_mapping is not None:
             parsed_grid_mapping = self._parse_grid_mapping(field_ncvar, grid_mapping)
                  
@@ -2401,46 +2411,46 @@ variable should be pre-filled with missing values.
                                    if ncvar in ncvar_to_key]
                     
                     klass = self.implementation.get_class('CoordinateReference')
-                    coordref = Custom.initialise_CoordinateReference(
+                    coordref = API.initialise_CoordinateReference(
                         klass,
                         parameters=parameters)
                     
 #                    coordref = self.initialise('CoordinateReference',
 #                                                parameters=parameters)
                     
-                    datum = Custom.get_datum(coordinate_reference=coordref)
+                    datum = API.get_datum(coordinate_reference=coordref)
                     
                     create_new = True
                     
                     if not coordinates:
                         name = parameters.get('grid_mapping_name', None)
                         for n in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
-                            for key, coord in Custom.get_coordinates(field=f).items():
-                                if n == Custom.get_property(coord, 'standard_name', None):
+                            for key, coord in API.get_coordinates(field=f).items():
+                                if n == API.get_property(coord, 'standard_name', None):
                                     coordinates.append(key)
                         #--- End: for
 
                         # Add the datum to already existing vertical
                         # coordinate references
                         for vcr in g['vertical_crs'].values():
-                            Custom.set_datum(coordinate_reference=vcr,
+                            API.set_datum(coordinate_reference=vcr,
                                              datum=datum)
                     else:
                         for vcoord, vcr in g['vertical_crs'].items():
                             if vcoord in coordinates:
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
-                                Custom.set_datum(coordinate_reference=vcr,
+                                API.set_datum(coordinate_reference=vcr,
                                                  datum=datum)
                                 coordinates.remove(vcoord)
                                 create_new = bool(coordinates)
                     #--- End: if
 
                     if create_new:
-                        Custom.set_ncvar(coordref, grid_mapping_ncvar)
-                        Custom.set_coordinate_reference_coordinates(coordref,
+                        API.set_ncvar(coordref, grid_mapping_ncvar)
+                        API.set_coordinate_reference_coordinates(coordref,
                                                                   coordinates)
-                        key = Custom.set_coordinate_reference(field=f,
+                        key = API.set_coordinate_reference(field=f,
                                                               construct=coordref,
                                                               copy=False)
                         self._reference(grid_mapping_ncvar)
@@ -2451,7 +2461,7 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Add cell measures to the field
         # ----------------------------------------------------------------
-        measures = Custom.del_property(f, 'cell_measures')
+        measures = API.del_property(f, 'cell_measures')
         if measures is not None:
             parsed_cell_measures = self._parse_x(field_ncvar, measures)
             cf_compliant = self._check_cell_measures(field_ncvar,
@@ -2476,7 +2486,7 @@ variable should be pre-filled with missing values.
                     if _debug:
                         print('    [8] Inserting', repr(cell))
 
-                    key = Custom.set_cell_measure(field=f, construct=cell,
+                    key = API.set_cell_measure(field=f, construct=cell,
                                                   axes=axes, copy=False)
 
                     self._reference(ncvar)
@@ -2504,16 +2514,16 @@ variable should be pre-filled with missing values.
                 if _debug:
                     print('    [ ] Inserting', repr(cell_method))
                         
-                Custom.set_cell_method(field=f, construct=cell_method,
+                API.set_cell_method(field=f, construct=cell_method,
                                        copy=False)
         #--- End: if
 
         # ----------------------------------------------------------------
         # Add field ancillaries to the field
         # ----------------------------------------------------------------
-        ancillary_variables = Custom.del_property(f, 'ancillary_variables')
+        ancillary_variables = API.del_property(f, 'ancillary_variables')
         if ancillary_variables is not None:
-            parsed_ancillary_variables = self._split_by_white_space(field_ncvar, ancillary_variables)
+            parsed_ancillary_variables = self._split_string_by_white_space(field_ncvar, ancillary_variables)
             cf_compliant = self._check_ancillary_variables(field_ncvar,
                                                            ancillary_variables,
                                                            parsed_ancillary_variables)
@@ -2533,7 +2543,7 @@ variable should be pre-filled with missing values.
                     # Insert the field ancillary
                     if _debug:
                         print('    [9] Inserting', repr(field_anc))
-                    key = Custom.set_field_ancillary(field=f,
+                    key = API.set_field_ancillary(field=f,
                                                      construct=field_anc,
                                                      axes=axes, copy=False)
                     self._reference(ncvar)
@@ -2600,7 +2610,9 @@ variable should be pre-filled with missing values.
         d = {'code'       : code,
              'attribute'  : attribute,
              'message'    : message,
-             'conformance': conformance}
+             'conformance': conformance,
+             'version'    : str(g['file_version']),
+        }
 
         if dimensions is not None:
             d['dimensions'] = dimensions
@@ -2783,11 +2795,11 @@ variable should be pre-filled with missing values.
         if dimension:
             properties.pop('compress', None) #??
             klass = self.implementation.get_class('DimensionCoordinate')
-            c = Custom.initialise_DimensionCoordinate(klass)
+            c = API.initialise_DimensionCoordinate(klass)
 #            c = self.initialise('DimensionCoordinate')
         elif auxiliary:
             klass = self.implementation.get_class('AuxiliaryCoordinate')
-            c = Custom.initialise_AuxiliaryCoordinate(klass)
+            c = API.initialise_AuxiliaryCoordinate(klass)
 #            c = self.initialise('AuxiliaryCoordinate')
         elif domain_ancillary:
 #            properties.pop('coordinates', None)
@@ -2795,23 +2807,21 @@ variable should be pre-filled with missing values.
 #            properties.pop('cell_measures', None)
 #            properties.pop('positive', None)
             klass = self.implementation.get_class('DomainAncillary')
-            c = Custom.initialise_DomainAncillary(klass)
+            c = API.initialise_DomainAncillary(klass)
 #            c = self.initialise('DomainAncillary')
         else:
             raise ValueError(
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
 
-        Custom.set_properties(c, properties)
-        print('KK1', repr(c))
+        API.set_properties(c, properties)
+
         if attribute == 'climatology':
-            Custom.set_geometry_type(coordinate=c, value='climatology')
+            API.set_geometry_type(coordinate=c, value='climatology')
 
         if has_coordinates:
             data = self._create_data(ncvar, c)
-            print('data=', repr(data), data.shape)
-            Custom.set_data(c, data, copy=False)
+            API.set_data(c, data, copy=False)
 
-        print('KK1', repr(c))
         # ------------------------------------------------------------
         # Add any bounds
         # ------------------------------------------------------------
@@ -2826,12 +2836,12 @@ variable should be pre-filled with missing values.
                 pass
 
             klass = self.implementation.get_class('Bounds')
-            bounds = Custom.initialise_Bounds(klass)
+            bounds = API.initialise_Bounds(klass)
 #            bounds = self.initialise('Bounds')
             
             properties = g['variable_attributes'][ncbounds].copy()
             properties.pop('formula_terms', None)                
-            Custom.set_properties(bounds, properties, copy=False)
+            API.set_properties(bounds, properties, copy=False)
         
             bounds_data = self._create_data(ncbounds, bounds)
     
@@ -2851,12 +2861,12 @@ variable should be pre-filled with missing values.
 #                                                       axes=axes, copy=False)
 #                #--- End: if
     
-            Custom.set_data(bounds, bounds_data, copy=False)
+            API.set_data(bounds, bounds_data, copy=False)
             
             # Store the netCDF variable name
-            Custom.set_ncvar(bounds, ncbounds)
+            API.set_ncvar(bounds, ncbounds)
             
-            Custom.set_bounds(c, bounds, copy=False)
+            API.set_bounds(c, bounds, copy=False)
             
             if not domain_ancillary:
                 g['bounds'][field_ncvar][ncvar] = ncbounds
@@ -2868,19 +2878,19 @@ variable should be pre-filled with missing values.
         if geometry is not None:
             geometry_type = geometry.get('geometry_type')
             if geometry_type is not None:
-                Custom.set_geometry_type(coordinate=c, value=geometry_type)
+                API.set_geometry_type(coordinate=c, value=geometry_type)
 
             node_dimension = geometry.get('node_dimension')
             if node_dimension is not None:
                 # Set the netCDF name of the dimension of node
                 # coordinate variables
-                Custom.set_node_ncdim(parent=c, ncdim=node_dimension)
+                API.set_node_ncdim(parent=c, ncdim=node_dimension)
                 
             part_dimension = geometry.get('part_dimension')
             if part_dimension is not None:
                 # Set the netCDF name of the dimension of the part_node_count
                 # variable
-                Custom.set_part_ncdim(parent=c, ncdim=part_dimension)
+                API.set_part_ncdim(parent=c, ncdim=part_dimension)
                 
             interior_ring_ncvar = geometry.get('interior_ring')
             if interior_ring_ncvar is not None:
@@ -2890,11 +2900,11 @@ variable should be pre-filled with missing values.
                     interior_ring = self._create_data(interior_ring_ncvar)
                     g['interior_ring']['interior_ring_ncvar'] = interior_ring
 
-                Custom.set_interior_ring(parent=c, interior_ring=interior_ring)
+                API.set_interior_ring(parent=c, interior_ring=interior_ring)
         #--- End: if
         
         # Store the netCDF variable name
-        Custom.set_ncvar(c, ncvar)
+        API.set_ncvar(c, ncvar)
 
         if not domain_ancillary:
             g['coordinates'][field_ncvar].append(ncvar)
@@ -3007,20 +3017,20 @@ variable should be pre-filled with missing values.
         
         # Initialise the cell measure construct
         klass = self.implementation.get_class('CellMeasure')
-        cell_measure = Custom.initialise_CellMeasure(klass, measure=measure)
+        cell_measure = API.initialise_CellMeasure(klass, measure=measure)
 #        cell_measure = self.initialise('CellMeasure', measure=measure)
 
         # Store the netCDF variable name
-        Custom.set_ncvar(cell_measure, ncvar)
+        API.set_ncvar(cell_measure, ncvar)
     
         if ncvar in g['external_variables']:
             # The cell measure variable is in a different file
-            Custom.set_external(construct=cell_measure)
+            API.set_external(construct=cell_measure)
         else:
             # The cell measure variable is this file
-            Custom.set_properties(cell_measure, g['variable_attributes'][ncvar])
+            API.set_properties(cell_measure, g['variable_attributes'][ncvar])
             data = self._create_data(ncvar, cell_measure)            
-            Custom.set_data(cell_measure, data, copy=False)
+            API.set_data(cell_measure, data, copy=False)
             
         return cell_measure
     #--- End: def
@@ -3042,7 +3052,7 @@ variable should be pre-filled with missing values.
 
         '''
         klass = self.implementation.get_class('CellMethod')
-        return Custom.initialise_CellMethod(klass, axes=axes,
+        return API.initialise_CellMethod(klass, axes=axes,
                                             properties=properties)
     
 #        cell_method = self.initialise('CellMethod',
@@ -3089,11 +3099,9 @@ variable should be pre-filled with missing values.
             size = int(size)
     
         if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
-            print('JJJJJ1', shape)
             # Has a trailing string-length dimension
             strlen = shape[-1]
             shape = shape[:-1]
-            print('JJJJJ2', shape)
             size /= strlen
             ndim -= 1
             dtype = numpy.dtype('S{0}'.format(strlen))
@@ -3112,7 +3120,7 @@ variable should be pre-filled with missing values.
 #            
 #        # Find the fill value for the data
 #        if fill_value is None:
-#            fill_value = Custom.get_fill_value(construct)
+#            fill_value = API.get_fill_value(construct)
                 
         compression = g['compression']
 
@@ -3211,7 +3219,7 @@ variable should be pre-filled with missing values.
         '''
         '''
         klass = self.implementation.get_class('NetCDFArray')
-        return Custom.initialise_NetCDFArray(
+        return API.initialise_NetCDFArray(
             klass, filename=filename, ncvar=ncvar, dtype=dtype, ndim=ndim,
             shape=shape, size=size)
     #--- End: def
@@ -3221,10 +3229,10 @@ variable should be pre-filled with missing values.
         '''
 #        domain_axis = self.initialise('DomainAxis')
         klass = self.implementation.get_class('DomainAxis')
-        domain_axis = Custom.initialise_DomainAxis(klass, size=size)
-#        Custom.set_size(domain_axis, size)
+        domain_axis = API.initialise_DomainAxis(klass, size=size)
+#        API.set_size(domain_axis, size)
         if ncdim is not None:
-            Custom.set_ncdim(construct=domain_axis, ncdim=ncdim)
+            API.set_ncdim(construct=domain_axis, ncdim=ncdim)
 
         return domain_axis
     #-- End: def
@@ -3245,20 +3253,20 @@ variable should be pre-filled with missing values.
         '''
         # Create a field ancillary object
         klass = self.implementation.get_class('FieldAncillary')
-        field_ancillary = Custom.initialise_FieldAncillary(klass)
+        field_ancillary = API.initialise_FieldAncillary(klass)
 #        field_ancillary = self.initialise('FieldAncillary')
 
         # Insert properties
-        Custom.set_properties(field_ancillary,
+        API.set_properties(field_ancillary,
                               self.read_vars['variable_attributes'][ncvar],
                               copy=True)
 
         # Insert data
         data = self._create_data(ncvar, field_ancillary)
-        Custom.set_data(field_ancillary, data, copy=False)
+        API.set_data(field_ancillary, data, copy=False)
 
         # Store the netCDF variable name
-        Custom.set_ncvar(field_ancillary, ncvar)
+        API.set_ncvar(field_ancillary, ncvar)
     
         return field_ancillary
     #--- End: def
@@ -3380,7 +3388,7 @@ variable should be pre-filled with missing values.
 
                         try:
                             klass = self.implementation.get_class('Data')
-                            data = Custom.initialise_Data(klass, data=parsed_interval,
+                            data = API.initialise_Data(klass, data=parsed_interval,
                                                           units=units)
 #                            data = self.initialise('Data',
 #                                                   data=parsed_interval,
@@ -3467,13 +3475,13 @@ parameters.
             domain_ancillaries[term] = g['domain_ancillary_key'].get(ncvar)
 
         for name in ('standard_name', 'computed_standard_name'):            
-            value = Custom.get_property(coord, name, None)
+            value = API.get_property(coord, name, None)
             if value is not None:
                 parameters[name] = value
         #--- End: for
         
         klass = self.implementation.get_class('CoordinateReference')
-        coordref = Custom.initialise_CoordinateReference(
+        coordref = API.initialise_CoordinateReference(
             klass,
             coordinates=[key],
             domain_ancillaries=domain_ancillaries,
@@ -3687,7 +3695,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             calendar = None
 
         klass = self.implementation.get_class('Data')
-        return Custom.initialise_Data(klass, data=array, units=units,
+        return API.initialise_Data(klass, data=array, units=units,
                                       calendar=calendar, **kwargs)
     #--- End: def
 
@@ -3727,7 +3735,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         #--- End: if
 
 #        return g[construct_type][ncvar].copy()
-        return Custom.copy_construct(g[construct_type][ncvar])
+        return API.copy_construct(g[construct_type][ncvar])
     #--- End: def
     
     # ================================================================
@@ -3846,7 +3854,8 @@ Checks that
                                  'is not in file nor referenced by the external_variables global attribute')
 
         g = self.read_vars
-        #ppp
+        version = g['file_version']
+        
         if not parsed_string:
             self._add_message(field_ncvar, field_ncvar,
                               message=incorrectly_formatted,
@@ -4315,7 +4324,7 @@ CF-1.7 Appendix A
         return sample_dimension in self.read_vars['internal_dimension_sizes']
     #--- End: def
         
-    def _split_by_white_space(self, parent_ncvar, string):
+    def _split_string_by_white_space(self, parent_ncvar, string):
         '''Split a string by white space.
         '''
         if string is None:
@@ -4336,7 +4345,7 @@ CF-1.7 Appendix A
         else:
             # Pre v1.6, the grid mapping attribute may only point to a
             # single netCDF variable
-            out = self._split_by_white_space(parent_ncvar, string)
+            out = self._split_string_by_white_space(parent_ncvar, string)
             if len(out) == 1:
                 return [{out[0]: []}]
 

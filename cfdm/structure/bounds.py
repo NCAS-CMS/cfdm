@@ -1,8 +1,10 @@
 from __future__ import absolute_import
+from future.utils import with_metaclass
+
 import abc
 
 from . import abstract
-from future.utils import with_metaclass
+
 
 class Bounds(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A cell bounds array with properties.

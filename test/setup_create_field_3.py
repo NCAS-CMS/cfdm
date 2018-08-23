@@ -10,7 +10,7 @@ import cfdm
 
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
+                            'test_file_c.nc')
 
     def test_create_field(self):
 
@@ -64,7 +64,7 @@ class create_fieldTest(unittest.TestCase):
         aux3.set_property('units', 'degreeE')
 
         array = numpy.ma.array(['alpha','beta','gamma','delta','epsilon',
-                               'zeta','eta','theta','iota','kappa'])
+                                'zeta','eta','theta','iota','kappa'], dtype='S')
         array[0] = numpy.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
         aux4.set_property('standard_name', 'greek_letters')

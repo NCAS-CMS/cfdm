@@ -181,6 +181,8 @@ class create_fieldTest_2(unittest.TestCase):
         print(f.constructs())
         print(f.construct_axes())
         
+        self.assertTrue(f.equals(f.copy(), traceback=True),
+                        "Field f not equal to a copy of itself")
         
 #        f.dump()
         print("####################################################")
@@ -190,32 +192,30 @@ class create_fieldTest_2(unittest.TestCase):
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, self.filename, fmt=fmt,_debug=True)
 
-        g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
-        for x in g:
-            x.print_read_report()
-        g[0].dump()
+            g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
+            for x in g:
+                x.print_read_report()
+            g[0].dump()
         
-        self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
+            self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
 
-        g = g[0].squeeze(copy=False)
+            g = g[0].squeeze(copy=False)
         
-#        g.dump
-        print('f')
-        print(f)
-        print('g')
-        print(g)
-        self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
-                        '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
+            #        g.dump
+            print('f')
+            print(f)
+            print('g')
+            print(g)
+            self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
+                            '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
                             sorted(f.constructs()),
                             sorted(f.constructs().items()),
                             sorted(g.constructs()),
                             sorted(g.constructs().items())))
 
-        self.assertTrue(f.equals(f.copy(), traceback=True),
-                        "Field f not equal to a copy of itself")
-        print(2)
-        self.assertTrue(g.equals(g.copy(), traceback=True),
-                        "Field g not equal to a copy of itself")
+            print(2)
+            self.assertTrue(g.equals(g.copy(), traceback=True),
+                            "Field g not equal to a copy of itself")
 
 #        print'f'
 #        print f
@@ -224,10 +224,10 @@ class create_fieldTest_2(unittest.TestCase):
 #        f.dump()
 #        g.dump()
 
-        print(3)
-        self.assertTrue(g.equals(f, traceback=True),
-                        "Field not equal to itself read back in")
-
+            print(3)
+            self.assertTrue(g.equals(f, traceback=True),
+                            "Field not equal to itself read back in")
+        #--- End: for
         
         x = g.dump(display=False)
         x = f.dump(display=False)

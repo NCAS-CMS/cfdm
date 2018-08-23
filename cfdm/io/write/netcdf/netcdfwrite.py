@@ -133,26 +133,47 @@ extra trailing dimension.
 
         '''
 #        strlen = array.dtype.itemsize
-#        shape  = array.shape
+        original_shape = array.shape
+        original_size  = array.size
 
         masked = numpy.ma.isMA(array)
         if masked:
             fill_value = array.fill_value
-#            mask = array.mask
+            mask = array.mask
             array = numpy.ma.filled(array, fill_value='')
 
         if array.dtype.kind == 'U':
-            # Convert unicode to string
             array = array.astype('S')
-            
-        new = netCDF4.stringtochar(array, encoding='none')
 
-        print('AAAAAAAAAAAAAAAAAA new.shape=', new.shape, repr(new))
+        array = numpy.array(tuple(array.tostring().decode('ascii')), dtype='S1')
+
+#        else:
+#            # dtype is 'U'
+#            x = []
+#            for s in array.flatten():
+#                x.extend(tuple(s.ljust(N, '\x00')))
+#
+#            array = numpy.array(k, dtype='S1')               
+
+        array.resize(original_shape + (array.size//original_size,))
+#        if masked:        
+#            array = numpy.ma.array(array, mask=mask, fill_value=fill_value)
+        
+#        if array.dtype.kind == 'U':
+#            # Convert unicode to string
+#            array = array.astype('S')
+#            
+#        new = netCDF4.stringtochar(array, encoding='none')
+#        print('new=', repr(new))
+##        print('AAAAAAAAAAAAAAAAAA new.shape=', new.shape, repr(new))
         
         if masked:
-            new = numpy.ma.masked_where(new=='', new)
-            new.set_fill_value(fill_value)
-            
+            array = numpy.ma.masked_where(array=='', array)
+            array.set_fill_value(fill_value)
+
+        if array.dtype.kind != 'S':
+            raise ValueError("AAAAAAAAARRRRRRRRRRRRRRRGGGGGGGGGGHHHHHHHH")
+        
 #            new = numpy.ma.array(new, mask=mask, fill_value=fill_value)
 
 #        new = numpy.ma.masked_all(shape + (strlen,), dtype='S1')
@@ -165,8 +186,8 @@ extra trailing dimension.
 #                new[index] = tuple(value.ljust(strlen, ' ')) 
 #        #--- End: for
 
-        print('new=', repr(new))
-        return new
+#        print('new=', repr(new))
+        return array
     #--- End: def
     
     def _datatype(self, variable):
@@ -205,7 +226,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
             return 'S1'
 
         dtype = getattr(data, 'dtype', None)
-        print('dtype=', dtype)
+#        print('dtype=', dtype)
 #        if not hasattr(variable, 'dtype'):
 #            dtype = numpy.asanyarray(variable).dtype
         if dtype is None or dtype.char == 'S':
@@ -1034,9 +1055,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
         # ------------------------------------------------------------
-        print(cfvar.get_data().dtype)
         datatype = self._datatype(cfvar)
-        print('0 datatype=', datatype)
         data = API.get_data(cfvar, None)
 
         if data is not None and datatype == 'S1':
@@ -1046,13 +1065,12 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             # trailing dimension.
             # --------------------------------------------------------
             strlen = data.dtype.itemsize
-            print('strlen=', strlen)
             if strlen > 1:
                 data = self._convert_to_char(data)
                 ncdim = self._string_length_dimension(strlen)            
                 ncdimensions = ncdimensions + (ncdim,)
         #--- End: if
-        print('-------')
+
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
         # filled before any data is written. if the fill value is
@@ -1081,7 +1099,6 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # Create a new netCDF variable
         # ------------------------------------------------------------ 
         try:
-            print('ZZZZZZZZZ datatype=', datatype)
             g['nc'][ncvar] = g['netcdf'].createVariable(
                 ncvar,
                 datatype, 
@@ -1195,6 +1212,7 @@ extra trailing dimension.
 
         '''
         strlen = data.dtype.itemsize
+#        print ('1 strlen =', strlen)
         if strlen > 1:
             char_array = self._character_array(API.get_array(data))
             data = type(data)(char_array, source=data, copy=False)

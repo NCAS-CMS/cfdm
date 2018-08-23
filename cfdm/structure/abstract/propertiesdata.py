@@ -1,14 +1,14 @@
+from future.utils import with_metaclass
+
 import abc
 
 from .properties import Properties
-from future.utils import with_metaclass
 
 
 class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     '''Base class for a data array with descriptive properties.
 
     '''
-
     def __init__(self, properties={}, data=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
@@ -34,11 +34,11 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         
     source: optional
         Override the *properties* and *data* parameters with
-        ``source.properties()`` and ``source.get_data()``
+        ``source.properties()`` and ``source.get_data(None)``
         respectively.
 
-        If *source* does not have one of these methods, or it can not
-        return anything, then that parameter is not set.
+        If *source* does not have one of these methods, then that
+        parameter is not set.
         
     copy: `bool`, optional
         If False then do not deep copy arguments prior to

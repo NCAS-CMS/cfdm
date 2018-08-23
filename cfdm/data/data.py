@@ -255,7 +255,6 @@ elements.
         '''x.__str__() <==> str(x)
 
         '''
-        print('PPPPPPPPPPPP')
         units    = self.get_units(None)
         calendar = self.get_calendar(None)
 
@@ -304,7 +303,6 @@ elements.
                     first, last = ('??', '??')
 
             if size > 3:
-                print ('ooooooooooooooooo', first, type(first))
                 out = '{0}{1!s}, ..., {2!s}{3}'.format(open_brackets,
                                                        first, last,
                                                        close_brackets)
@@ -318,13 +316,13 @@ elements.
                     except OverflowError:
                         middle = '??'
                         
-                out = '{0}{1}, {2}, {3}{4}'.format(open_brackets,
-                                                   first, middle, last,
-                                                   close_brackets)
+                out = '{0}{1!s}, {2!s}, {3!s}{4}'.format(open_brackets,
+                                                         first, middle, last,
+                                                         close_brackets)
             else:
-                out = '{0}{1}, {2}{3}'.format(open_brackets,
-                                              first, last,
-                                              close_brackets)
+                out = '{0}{1!s}, {2!s}{3}'.format(open_brackets,
+                                                  first, last,
+                                                  close_brackets)
         #--- End: if
         
         if isreftime:
@@ -533,6 +531,7 @@ data array shape.
             # num2date has issues if the mask is nomask
             mask = array.mask
             if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
+                mask = None
                 array = array.view(numpy.ndarray)
         #--- End: if
         
@@ -545,7 +544,8 @@ data array shape.
                                  calendar=self.get_calendar('standard'))
 #        except OverflowError:
 
-        if not mask:
+#        print('Data mask=', repr(mask))
+        if mask is None:
             # There is no missing data
             array = numpy.array(array, dtype=object)
         else:

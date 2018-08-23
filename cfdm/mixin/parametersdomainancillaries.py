@@ -1,10 +1,11 @@
 from __future__ import print_function
 from builtins import super
+from future.utils import with_metaclass
 
 import abc
 
 from .parameters import Parameters
-from future.utils import with_metaclass
+
 
 class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
     '''Mixin class for parameter- and ancillary-valued terms.
@@ -24,7 +25,8 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
         '''
 #        return (super(ParametersDomainAncillaries, self).__nonzero__() or
 #                bool(self.domain_ancillaries()))
-        return (super().__nonzero__() or bool(self.domain_ancillaries()))
+#        return (super().__nonzero__() or bool(self.domain_ancillaries()))
+        return self.__bool__()
     #--- End: def
         
     def __str__(self):
