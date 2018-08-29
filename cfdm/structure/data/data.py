@@ -4,6 +4,7 @@ import abc
 
 import numpy
 
+from .numpyarray import NumpyArray
 
 class Data(object):
     '''
@@ -26,7 +27,7 @@ An N-dimensional data array with units and masked values.
 
 :Parameters:
 
-    data: numpy.ndarray, optional
+    data: `abstract.Array`, optional
         The data array.
 
     fill_value: optional 
@@ -44,7 +45,7 @@ An N-dimensional data array with units and masked values.
         '''
         if source is not None:
             if data is None:
-                data = source._get_master_array()
+                data = source._get_Array()
         
             if units is None:
                 units = source.get_units(None)
@@ -55,13 +56,13 @@ An N-dimensional data array with units and masked values.
             if fill_value is None:
                 fill_value = source.get_fill_value(None)
         #--- End: if
-        
+
         self._units    = units
         self._calendar = calendar
         
         self._fill_value  = fill_value
 
-        self._set_master_array(data)
+        self._set_Array(data)
     #--- End: def
 
     def __array__(self):
@@ -94,16 +95,16 @@ An N-dimensional data array with units and masked values.
         '''x.__str__() <==> str(x)
 
         '''
-        return str(self._get_master_array(None))
+        return str(self._get_Array(None))
     #--- End: def
-
-    def _del_master_array(self):
+    
+    def _del_Array(self):
         '''
         '''
         self._master_array = None
     #--- End: def
     
-    def _get_master_array(self, *default):
+    def _get_Array(self, *default):
         '''
         '''
         array = self._master_array
@@ -113,11 +114,11 @@ An N-dimensional data array with units and masked values.
         return array   
     #--- End: def
     
-    def _set_master_array(self, value):
+    def _set_Array(self, value):
         '''
 :Parameters:
 
-    value: (subclass of) `Array`
+    value: `abstract.Array`
 
 :Returns:
 
@@ -156,7 +157,7 @@ True
 >>> f.dtype
 dtype('float64')
         '''
-        return self._get_master_array().dtype        
+        return self._get_Array().dtype        
     #--- End: def
     
     # ----------------------------------------------------------------
@@ -222,7 +223,7 @@ None
 1
 
         '''
-        return self._get_master_array().ndim
+        return self._get_Array().ndim
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -256,7 +257,7 @@ None
 1
 
         '''
-        return self._get_master_array().shape
+        return self._get_Array().shape
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -290,7 +291,7 @@ None
 1
 
         '''
-        return self._get_master_array().size
+        return self._get_Array().size
     #--- End: def
 
     def copy(self):
@@ -330,17 +331,17 @@ True
 -99.0 km
 
         '''
-        array = self._get_master_array()
-        array = array[...]
-        
-        if numpy.ma.isMA(array) and not self.ndim:
-            # This is because numpy.ma.copy doesn't work for
-            # scalar arrays (at the moment, at least)
-            ma_array = numpy.ma.empty((), dtype=array.dtype)
-            ma_array[...] = array
-            array = ma_array
-        else:
-            array = array.copy()
+        array = self._get_Array().get_array()
+#        array = array[...]
+#        
+#        if numpy.ma.isMA(array) and not array.ndim:
+#            # This is because numpy.ma.copy doesn't work for
+#            # scalar arrays (at the moment, at least)
+#            ma_array = numpy.ma.empty((), dtype=array.dtype)
+#            ma_array[...] = array
+#            array = ma_array
+#        else:
+#            array = array.copy()
 
         return array
     #--- End: def

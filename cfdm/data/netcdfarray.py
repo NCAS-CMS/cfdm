@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
 from builtins import str
+from future.utils import with_metaclass
 
 import abc
 import os
@@ -14,7 +15,6 @@ import netCDF4
 #from .array import Array
 from . import abstract
 from functools import reduce
-from future.utils import with_metaclass
 
 class NetCDFArray(with_metaclass(abc.ABCMeta, abstract.Array)):
 #class NetCDFArray(Array):
@@ -237,11 +237,11 @@ x.__str__() <==> str(x)
     def varid(self):
          return self._varid
     
-    @property
-    def isunique(self):
-        '''
-        '''
-        return True
+#    @property
+#    def isunique(self):
+#        '''
+#        '''
+#        return True
 
     def close(self):
         '''Close the `netCDF4.Dataset` for the file containing the data.
@@ -288,6 +288,11 @@ x.__str__() <==> str(x)
             raise RuntimeError("{}: {}".format(error, filename))        
     #--- End: def
 
+    def get_array(self):
+        '''
+        '''
+        return self[...]
+    
     def open(self):
         '''Return an open `netCDF4.Dataset` for the file containing the array.
 

@@ -51,7 +51,6 @@ class NetCDFWrite(IOWrite):
         #--- End: if
     
         if base in ncvar_names:
-    
             counter = g.setdefault('count_'+base, 1)
         
             ncvar = '{0}_{1}'.format(base, counter)
@@ -1089,7 +1088,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # Set HDF chunk sizes
         chunksizes = None
     #    chunksizes = [size for i, size in sorted(cfvar.HDF_chunks().items())]
-    #    if chunksizes == [None] * cfvar.data.ndim:
+    #    if chunksizes == [None] * cfvar.get_data().ndim:
     #        chunksizes = None
     #
     #    if _debug:
@@ -1410,7 +1409,8 @@ extra trailing dimension.
                             for key0, (construct0, index0) in spanning_constructs.items():
                                 matched_construct = False
                                 for key1, (construct1, index1) in constructs1.items():
-                                    if index0 == index1 and construct0.equals(construct1):
+#                                    if index0 == index1 and construct0.equals(construct1):
+                                    if index0 == index1 and API.equal_constructs(construct0, construct1):
                                         del constructs1[key1]
                                         matched_construct = True
                                         break

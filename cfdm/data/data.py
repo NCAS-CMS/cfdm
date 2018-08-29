@@ -12,7 +12,6 @@ from ..constants  import masked
 
 from ..functions  import RTOL, ATOL, _numpy_allclose
 
-#from .array      import Array
 from . import abstract
 
 from .numpyarray import NumpyArray
@@ -102,12 +101,12 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''
+        # Make sure that data is None of a subclass of abstract.Array
         if data is not None and not isinstance(data, abstract.Array):
             if not isinstance(data, numpy.ndarray):
                 data = numpy.asanyarray(data)
                 
             data = NumpyArray(data)
-        #-- End: if
 
         super(Data, self).__init__(data=data, units=units,
                                    calendar=calendar,
@@ -130,22 +129,12 @@ There are three extensions to the numpy indexing functionality:
         '''x.__getitem__(indices) <==> x[indices]
 
         '''
-
         indices = tuple(self.parse_indices(indices))
 
-        array = self._get_master_array()
+        array = self._get_Array()
 
         array = array[indices]
         
-        if numpy.ma.isMA(array) and not self.ndim:
-            # This is because numpy.ma.copy doesn't work for
-            # scalar arrays (at the moment, at least)
-            ma_array = numpy.ma.empty((), dtype=array.dtype)
-            ma_array[...] = array
-            array = ma_array
-        else:
-            array = array.copy()
-
         return type(self)(array, units=self.get_units(None),
                           calendar=self.get_calendar(None),
                           fill_value=self.get_fill_value(None))
@@ -237,9 +226,9 @@ elements.
 
         '''
         array = self.get_array()
-
+        print (type(array))
         if value is masked or numpy.ma.isMA(value):
-            # The data is not masked and the assignment is masking
+            # The data is not masked but the assignment is masking
             # elements, so turn the non-masked array into a masked
             # one.
             array = array.view(numpy.ma.MaskedArray)
@@ -248,7 +237,7 @@ elements.
 
         self._set_subspace(array, indices, numpy.asanyarray(value))
 
-        self._set_master_array(NumpyArray(array))
+        self._set_Array(NumpyArray(array))
     #--- End: def
 
     def __str__(self):
@@ -309,7 +298,7 @@ elements.
             elif size == 3:                
                 middle = self.second_element()
                 if isreftime:
-                    # Convert reference times to date-times
+                    # Convert reference time to date-time
                     try:
                         middle = type(self)(
                             numpy.ma.array(middle), units, calendar).get_dtarray()
@@ -508,7 +497,7 @@ data array shape.
         array = self.get_array()
         array = numpy.expand_dims(array, position)
 
-        d._set_master_array(NumpyArray(array))
+        d._set_Array(NumpyArray(array))
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -516,13 +505,24 @@ data array shape.
 #                HDF[axis] = None
 #
 #            d.HDF_chunks(HDF)
-#        #--- End: if
 
         return d
     #--- End: def
 
     def get_dtarray(self):
-        '''
+        '''An independent numpy array of date-time objects.
+
+Only applicable for reference time units.
+
+If the calendar has not been set then the CF default calendar will be
+used.
+
+.. versionadded:: 1.6
+
+.. seealso:: `array`
+
+:Examples:
+
         '''
         array = self.get_array()
 
@@ -535,16 +535,9 @@ data array shape.
                 array = array.view(numpy.ndarray)
         #--- End: if
         
-#        calendar = self.get_calendar('standard')
-#        if calendar is None:
-#            calendar = 'standard'
-#        print  'array=', array
-#        try:
         array = netCDF4.num2date(array, units=self.get_units(None),
                                  calendar=self.get_calendar('standard'))
-#        except OverflowError:
 
-#        print('Data mask=', repr(mask))
         if mask is None:
             # There is no missing data
             array = numpy.array(array, dtype=object)
@@ -688,7 +681,7 @@ Missing data array elements are omitted from the calculation.
         array = numpy.amax(array, axis=axes, keepdims=True)
 
         d = self.copy()
-        d._set_master_array(NumpyArray(array))
+        d._set_Array(NumpyArray(array))
         
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -696,7 +689,6 @@ Missing data array elements are omitted from the calculation.
 #                HDF[axis] = None
 #
 #            d.HDF_chunks(HDF)
-#        #--- End: if
 
         return d
     #--- End: def
@@ -728,7 +720,7 @@ Missing data array elements are omitted from the calculation.
         array = numpy.amin(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._set_master_array(NumpyArray(array))
+        d._set_Array(NumpyArray(array))
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -736,7 +728,6 @@ Missing data array elements are omitted from the calculation.
 #                HDF[axis] = None
 #
 #            d.HDF_chunks(HDF)
-#        #--- End: if
 
         return d
     #--- End: def
@@ -1016,7 +1007,6 @@ selected with the keyword arguments.
                 raise ValueError(
 "Can't squeeze: Can't remove an axis from scalar {}".format(d.__class__.__name__))
             return d
-        #--- End: if
 
         shape = d.shape
 
@@ -1038,7 +1028,7 @@ selected with the keyword arguments.
         array = self.get_array()
         array = numpy.squeeze(array, axes)
 
-        d._set_master_array(NumpyArray(array))
+        d._set_Array(NumpyArray(array))
 
         return d
     #--- End: def
@@ -1070,7 +1060,7 @@ Missing data array elements are omitted from the calculation.
         array = numpy.sum(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._set_master_array(NumpyArray(array))
+        d._set_Array(NumpyArray(array))
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -1078,7 +1068,6 @@ Missing data array elements are omitted from the calculation.
 #                HDF[axis] = None
 #
 #            d.HDF_chunks(HDF)
-#        #--- End: if
         
         return d
     #--- End: def
@@ -1148,7 +1137,7 @@ Missing data array elements are omitted from the calculation.
         array = self.get_array()
         array = numpy.transpose(array, axes=axes)
         
-        d._set_master_array(NumpyArray(array))
+        d._set_Array(NumpyArray(array))
 
         return d
     #--- End: def
@@ -1179,7 +1168,7 @@ Missing data array elements are omitted from the calculation.
 []
 
         '''
-        ma = self._get_master_array()
+        ma = self._get_Array()
 
         compressed_axes = getattr(ma, 'compressed_axes', None)
         if compressed_axes is None:
@@ -1213,7 +1202,7 @@ Missing data array elements are omitted from the calculation.
 >>> d.compression_type()
 None
         '''
-        ma = self._get_master_array()
+        ma = self._get_Array()
         return getattr(ma, 'compression_type', None)
     #--- End: def
     
@@ -1332,7 +1321,6 @@ False
                 print("{0}: Different shapes: {1}, {2}".format(
                     self.__class__.__name__, self.shape, other.shape))
             return False
-        #--- End: if
 
         # Check that each instance has the same units
         for attr in ('units', 'calendar'):
@@ -1353,7 +1341,6 @@ False
                     self.__class__.__name__, 
                     self.get_fill_value(None), other.get_fill_value(None)))
             return False
-        #--- End: if
 
         # Check that each instance has the same data type
         if not ignore_data_type and self.dtype != other.dtype:
@@ -1361,7 +1348,6 @@ False
                 print("{0}: Different data types: {1}, {2}".format(
                     self.__class__.__name__, self.dtype, other.dtype))
             return False
-        #--- End: if
 
         # Return now if we have been asked to not check the array
         # values
@@ -1436,7 +1422,7 @@ False
     out: `Data` or `None`
 
         '''
-        ma = self._get_master_array()
+        ma = self._get_Array()
 
         if getattr(ma, 'compression_type', None) == 'gathered':
             list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
@@ -1455,7 +1441,7 @@ False
 
         '''
         pass
-#        ma = self._get_master_array()
+#        ma = self._get_Array()
 #
 #        if getattr(ma, 'compression_type', None) == 'gathered':
 #            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
@@ -1489,7 +1475,7 @@ False
         value = numpy.dtype(value)
         if value != self.dtype:
             array = numpy.asanyarray(self.get_array(), dtype=value)
-            self._set_master_array(NumpyArray(array))
+            self._set_Array(NumpyArray(array))
     #--- End: def
 
     def unique(self):

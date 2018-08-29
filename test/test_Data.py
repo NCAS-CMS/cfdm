@@ -36,7 +36,8 @@ class DataTest(unittest.TestCase):
             return
 
         a = numpy.ma.arange(3000).reshape(50, 60)
-                
+
+        print ('**********', type(a.filled()))
         d = cfdm.Data(a.filled(), units='m')
         
         for n, (j, i) in enumerate(((34, 23), (0, 0), (-1, -1),

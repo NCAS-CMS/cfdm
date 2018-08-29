@@ -12,11 +12,11 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
     '''
 
-    # ----------------------------------------------------------------
-    # Properties with special [set|get|has|del]_property methods that
-    # are defined by @property decorated methods
-    # ----------------------------------------------------------------
-    _special_properties = ()
+#    # ----------------------------------------------------------------
+#    # Properties with special [set|get|has|del]_property methods that
+#    # are defined by @property decorated methods
+#    # ----------------------------------------------------------------
+#    _special_properties = ()
 
     def __init__(self, properties=None, source=None, copy=True):
         '''**Initialization**
@@ -131,10 +131,10 @@ to netCDF attributes of variables (e.g. "units", "long_name", and
 None
 
         '''
-        if prop not in self._special_properties:
-            return self._del_component('properties', prop)
-        else:
-            return delattr(self, prop)
+#        if prop not in self._special_properties:
+        return self._del_component('properties', prop)
+#        else:
+#            return delattr(self, prop)
     #--- End: def
 
     def get_property(self, prop, *default):
@@ -163,20 +163,20 @@ None
 :Examples 2:
 
 >>> f.set_property('foo', 'bar')
->>> print f.get_property('foo')
+>>> print(f.get_property('foo'))
 bar
 >>> f.del_property('foo')
->>> print f.get_property('foo')
+>>> print(f.get_property('foo'))
 AttributeError: Field doesn't have property 'foo'
->>> print f.get_property('foo', 'UNSET')
-UNSET
+>>> print(f.get_property('foo', 'foo is unset'))
+foo is unset
 
         '''
         try:
-            if prop not in self._special_properties:
-                return self._get_component('properties', prop, *default)
-            else:
-                return getattr(self, prop, *default)
+#            if prop not in self._special_properties:
+            return self._get_component('properties', prop, *default)
+#            else:
+#                return getattr(self, prop, *default)
         except AttributeError:
             raise AttributeError(
                 "{} doesn't have property {!r}".format(
@@ -208,10 +208,10 @@ UNSET
 ...     print 'Has a standard name'
 
         '''
-        if prop not in self._special_properties:
-            return self._has_component('properties', prop)
-        else:
-            return hasattr(self, prop)
+#        if prop not in self._special_properties:
+        return self._has_component('properties', prop)
+#        else:
+#            return hasattr(self, prop)
     #--- End: def
 
     def properties(self, properties=None, copy=True):
@@ -245,23 +245,23 @@ UNSET
         out = self._dict_component('properties', replacement=properties,
                                    copy=copy)
 
-        # Deal with special properties
-        if properties is None:
-            for prop in self._special_properties:
-                value = get_property(prop, None)
-                if value is not None:
-                    out[prop] = value
-        else:
-            for prop in self._special_properties:
-                if prop not in properties:
-                    continue
-
-                value = properties[prop]
-                if copy:
-                    value = deepcopy(value)
-                    
-                self.set_property(prop, value)
-        #--- End: if
+#        # Deal with special properties
+#        if properties is None:
+#            for prop in self._special_properties:
+#                value = get_property(prop, None)
+#                if value is not None:
+#                    out[prop] = value
+#        else:
+#            for prop in self._special_properties:
+#                if prop not in properties:
+#                    continue
+#
+#                value = properties[prop]
+#                if copy:
+#                    value = deepcopy(value)
+#                    
+#                self.set_property(prop, value)
+#        #--- End: if
 
         return out
     #--- End: def
@@ -288,10 +288,10 @@ UNSET
      `None`
 
         '''
-        if prop not in self._special_properties:
-            self._set_component('properties', prop, value)
-        else:
-            setattr(self, prop, value)
+#        if prop not in self._special_properties:
+        self._set_component('properties', prop, value)
+#        else:
+#            setattr(self, prop, value)
     #--- End: def
 
 #--- End: class

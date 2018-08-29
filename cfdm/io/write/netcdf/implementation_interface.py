@@ -114,13 +114,21 @@ class API(object):
         '''
         '''
         return field.construct_axes(key)
+    #--- End: def
     
     @staticmethod
     def get_constructs(field, axes=None):
-        '''
+        '''Return constructs that span particular axes.
+
+If no axes are specified then all constructs are returned.
+
+If axes are specified then constructs whose data arrays span those
+axes, and possibly other axes, are returned.
+
         '''
         return field.constructs(axes=axes)
-
+    #--- End: def
+    
     @staticmethod
     def get_coordinate_reference_coordinates(coordinate_reference):
         '''Return the coordinates of a coordinate reference object.

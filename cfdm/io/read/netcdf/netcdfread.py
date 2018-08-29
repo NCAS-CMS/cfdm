@@ -15,12 +15,9 @@ from functools         import reduce
 import numpy
 import netCDF4
 
-
-
 from .implementation_interface import API
 
 from .. import IORead
-
 
 
 class NetCDFRead(IORead):
@@ -73,7 +70,7 @@ class NetCDFRead(IORead):
 
     def _dereference(self, ncvar):
         '''Decrement by one the reference count to a netCDF variable.
-
+        
 :Examples 1:
 
 >>> r._dereference('longitude')
@@ -119,7 +116,7 @@ netCDF variable.
         return self.read_vars['references'].get(ncvar, 0) <= 0
     #--- End: def
 
-    def _reference(self, ncvar):
+    def  _reference(self, ncvar):
         '''Increment by one the reference count to a netCDF variable.
 
 :Examples 1:
@@ -1326,7 +1323,7 @@ variable should be pre-filled with missing values.
         _debug = g['_debug']
         if _debug:
             print('Pre-processing indexed and contiguous compression')
-        print(g['compression'])
+            print(g['compression'])
         profile_dimension = g['compression'][sample_dimension]['ragged_contiguous']['profile_dimension']
     
         if _debug:
@@ -1394,7 +1391,7 @@ variable should be pre-filled with missing values.
 
     '''
         g = self.read_vars        
-
+        
         _debug = g['_debug']
         if _debug:
             print('    Geometry container =', ncvar)
@@ -1464,12 +1461,12 @@ variable should be pre-filled with missing values.
 
         part_dimension = None
         node_dimension = None
-
+        
         if node_count is not None:
             # Do not attempt to create a field from a node count
             # variable
             g['do_not_create_field'].add(node_count)
-
+            
             # Find the dimension for the total number of cells
             cell_dimension = g['variable_dimensions'][node_count][0]
             
@@ -1661,7 +1658,7 @@ variable should be pre-filled with missing values.
     
         instance_dimension_size = g['internal_dimension_sizes'][instance_dimension]
         element_dimension_size  = int(elements_per_instance.max())
-    
+        
         base = element_dimension
         n = 0
         while (element_dimension in g['internal_dimension_sizes'] or
@@ -1728,8 +1725,7 @@ variable should be pre-filled with missing values.
         
         return out
     #--- End: def
-        
-                
+            
     def _check_formula_terms(self, field_ncvar, coord_ncvar,
                              formula_terms, z_ncdim=None):
         '''asdsdsa
@@ -1778,13 +1774,13 @@ variable should be pre-filled with missing values.
         # =============================================================
 
         g = self.read_vars
- 
+        
         nc = g['nc']
         
-#        variables = nc.variables
+        #        variables = nc.variables
         
         attribute = {coord_ncvar+':formula_terms': formula_terms}
-
+        
         g['formula_terms'].setdefault(coord_ncvar, {'coord' : {},
                                                     'bounds': {}})
         
@@ -1986,7 +1982,7 @@ variable should be pre-filled with missing values.
                 #--- End: for
             #--- End: if
         #--- End: if
-   #--- End: def
+    #--- End: def
 
     def _create_field(self, field_ncvar, verbose=False):
         '''Create a field for a given netCDF variable.
@@ -2003,12 +1999,12 @@ variable should be pre-filled with missing values.
 
         '''
         g = self.read_vars
-
+        
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
         
         nc = g['variable_dataset'][field_ncvar]
-
+        
         dimensions = g['variable_dimensions'][field_ncvar]
         g['read_report'][field_ncvar] = {'dimensions': dimensions,
                                          'components': {}}
@@ -2083,7 +2079,6 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         klass = self.implementation.get_class('Field')
         f = API.initialise_Field(klass)
-#        f = self.initialise('Field')
 
         API.set_properties(f, properties, copy=False)
 
@@ -2134,12 +2129,12 @@ variable should be pre-filled with missing values.
                 if _debug:
                     print('    [0] Inserting', repr(domain_axis))
                 axis = API.set_domain_axis(field=f, construct=domain_axis,
-                                              copy=False)
+                                           copy=False)
 
                 if _debug:
-                    print('    [1] Inserting', repr(coord), coord.shape, coord.get_data().shape, coord.get_data()._get_master_array().shape, repr(coord.get_data()))
+                    print('    [1] Inserting', repr(coord))
                 dim = API.set_dimension_coordinate(field=f, construct=coord,
-                                                      axes=[axis], copy=False)
+                                                   axes=[axis], copy=False)
                 
                 self._reference(ncdim)
                 if coord.has_bounds():
@@ -2163,7 +2158,7 @@ variable should be pre-filled with missing values.
                 if _debug:
                     print('    [2] Inserting', repr(domain_axis))
                 axis = API.set_domain_axis(field=f, construct=domain_axis,
-                                              copy=False)
+                                           copy=False)
                 
                 # Set unlimited status of axis
                 try:
@@ -2246,13 +2241,11 @@ variable should be pre-filled with missing values.
                     # coordinate
                     klass = self.implementation.get_class('DimensionCoordinate')
                     coord = API.initialise_DimensionCoordinate(klass,
-                                                                  source=coord,
-                                                                  copy=False)
-                
-#                    coord = self.initialise('DimensionCoordinate',
-#                                             source=coord, copy=False)
+                                                               source=coord,
+                                                               copy=False)
+
                     coord = API.expand_dims(construct=coord, position=0,
-                                               copy=False)
+                                            copy=False)
                     
                     domain_axis = self._create_domain_axis(API.get_size(coord))
                     if _debug:
@@ -2415,9 +2408,6 @@ variable should be pre-filled with missing values.
                         klass,
                         parameters=parameters)
                     
-#                    coordref = self.initialise('CoordinateReference',
-#                                                parameters=parameters)
-                    
                     datum = API.get_datum(coordinate_reference=coordref)
                     
                     create_new = True
@@ -2573,7 +2563,6 @@ variable should be pre-filled with missing values.
 
           *Example:*
             ``field_ncvar='tas'``
-
 
     ncvar: `str`
         The netCDF variable name of the field component that has the problem.
@@ -2796,11 +2785,9 @@ variable should be pre-filled with missing values.
             properties.pop('compress', None) #??
             klass = self.implementation.get_class('DimensionCoordinate')
             c = API.initialise_DimensionCoordinate(klass)
-#            c = self.initialise('DimensionCoordinate')
         elif auxiliary:
             klass = self.implementation.get_class('AuxiliaryCoordinate')
             c = API.initialise_AuxiliaryCoordinate(klass)
-#            c = self.initialise('AuxiliaryCoordinate')
         elif domain_ancillary:
 #            properties.pop('coordinates', None)
 #            properties.pop('grid_mapping', None)
@@ -2808,7 +2795,6 @@ variable should be pre-filled with missing values.
 #            properties.pop('positive', None)
             klass = self.implementation.get_class('DomainAncillary')
             c = API.initialise_DomainAncillary(klass)
-#            c = self.initialise('DomainAncillary')
         else:
             raise ValueError(
 "Must set one of the dimension, auxiliary or domain_ancillary parameters to True")
@@ -2837,7 +2823,6 @@ variable should be pre-filled with missing values.
 
             klass = self.implementation.get_class('Bounds')
             bounds = API.initialise_Bounds(klass)
-#            bounds = self.initialise('Bounds')
             
             properties = g['variable_attributes'][ncbounds].copy()
             properties.pop('formula_terms', None)                
@@ -3018,7 +3003,6 @@ variable should be pre-filled with missing values.
         # Initialise the cell measure construct
         klass = self.implementation.get_class('CellMeasure')
         cell_measure = API.initialise_CellMeasure(klass, measure=measure)
-#        cell_measure = self.initialise('CellMeasure', measure=measure)
 
         # Store the netCDF variable name
         API.set_ncvar(cell_measure, ncvar)
@@ -3053,12 +3037,7 @@ variable should be pre-filled with missing values.
         '''
         klass = self.implementation.get_class('CellMethod')
         return API.initialise_CellMethod(klass, axes=axes,
-                                            properties=properties)
-    
-#        cell_method = self.initialise('CellMethod',
-#                                      axes=axes,
-#                                      properties=properties)
-#        return cell_method
+                                         properties=properties)
     #--- End: def
 
     def _create_data(self, ncvar, construct=None,
@@ -3226,11 +3205,16 @@ variable should be pre-filled with missing values.
 
     def _create_domain_axis(self, size, ncdim=None):
         '''
+
+:Parameters:
+
+    size: `int`
+
+    ncdim: `str, optional
+
         '''
-#        domain_axis = self.initialise('DomainAxis')
         klass = self.implementation.get_class('DomainAxis')
         domain_axis = API.initialise_DomainAxis(klass, size=size)
-#        API.set_size(domain_axis, size)
         if ncdim is not None:
             API.set_ncdim(construct=domain_axis, ncdim=ncdim)
 
@@ -3254,12 +3238,11 @@ variable should be pre-filled with missing values.
         # Create a field ancillary object
         klass = self.implementation.get_class('FieldAncillary')
         field_ancillary = API.initialise_FieldAncillary(klass)
-#        field_ancillary = self.initialise('FieldAncillary')
 
         # Insert properties
         API.set_properties(field_ancillary,
-                              self.read_vars['variable_attributes'][ncvar],
-                              copy=True)
+                           self.read_vars['variable_attributes'][ncvar],
+                           copy=True)
 
         # Insert data
         data = self._create_data(ncvar, field_ancillary)
@@ -3388,11 +3371,9 @@ variable should be pre-filled with missing values.
 
                         try:
                             klass = self.implementation.get_class('Data')
-                            data = API.initialise_Data(klass, data=parsed_interval,
-                                                          units=units)
-#                            data = self.initialise('Data',
-#                                                   data=parsed_interval,
-#                                                   units=units)
+                            data = API.initialise_Data( klass,
+                                                        data=parsed_interval,
+                                                        units=units)
                         except:
                             self._add_message(
                                 field_ncvar, field_ncvar,
@@ -3486,11 +3467,6 @@ parameters.
             coordinates=[key],
             domain_ancillaries=domain_ancillaries,
             parameters=parameters)
-
-#        coordref = self.initialise('CoordinateReference',
-#                                   coordinates=[key],
-#                                   domain_ancillaries=domain_ancillaries,
-#                                   parameters=parameters)
 
         return coordref
     #--- End: def

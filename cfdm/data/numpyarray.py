@@ -7,8 +7,10 @@ import numpy
 #from .array import Array
 from . import abstract
 
+from ..structure.data import NumpyArray as structure.data.abstractArse
 
-class NumpyArray(abstract.Array):
+
+class NumpyArray(abstract.Array, Arse):
     '''A numpy array.
 
     '''
@@ -61,7 +63,7 @@ numpy array.
 #        #--- End: if
 #        array = self.array
         
-        return self.get_subspace(self.array, indices)
+        return self.get_subspace(self.array, indices, copy=True)
 
 #        if not isunique:
 #        if numpy.ma.isMA(out) and not out.ndim:
@@ -98,9 +100,16 @@ numpy array.
 #        '''
 #        return sys.getrefcount(self.array) <= 2
     
+    def close(self):
+        pass
+    
+    def get_array(self):
+        '''
+        '''
+        return self[...]
+    #--- End: def
+    
     def open(self):
         pass
 
-    def close(self):
-        pass
 #--- End: class

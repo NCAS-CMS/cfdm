@@ -124,7 +124,7 @@ x.__str__() <==> str(x)
 #                if variable.isreftime:
 #                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
 #                else:
-                x.append(' = {}'.format(variable.data))
+                x.append(' = {}'.format(variable.get_data()))
                 
             return ''.join(x)
         #--- End: def
@@ -139,7 +139,7 @@ x.__str__() <==> str(x)
                     if y != axis_names[key]:
                         y = '{0}({1})'.format(name, axis_names[key])
                     if dim.hasdata:
-                        y += ' = {0}'.format(dim.data)
+                        y += ' = {0}'.format(dim.get_data())
                     x.append(y)   
         string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 

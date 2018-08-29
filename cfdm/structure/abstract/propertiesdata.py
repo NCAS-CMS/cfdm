@@ -406,10 +406,9 @@ method to return the data as a `numpy` array.
             raise AttributeError("There is no data")
 
         if data is None:
-            if  default:
-                return default[0]
-
-            raise ValueError("{!r} has no data".format(self.__class__.__name__))
+            if not default:
+                raise ValueError("{!r} has no data".format(self.__class__.__name__))
+            return default[0]
         
         units = self.get_property('units', None)
         if units is not None:

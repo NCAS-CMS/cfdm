@@ -618,11 +618,9 @@ Only applicable for reference time units.
 If the calendar has not been set then the CF default calendar will be
 used.
 
-The data type of the data array is unchanged.
-
 .. versionadded:: 1.6
 
-.. seealso:: `array`, `asdatetime`, `asreftime`, `dtvarray`, `varray`
+.. seealso:: `array`
 
 :Examples:
 
@@ -633,7 +631,7 @@ The data type of the data array is unchanged.
 
         return data.get_dtarray()
 
-#        array = self.data.array
+#        array = self.get_data().get_array()
 #
 #        mask = None
 #        if numpy.ma.isMA(array):

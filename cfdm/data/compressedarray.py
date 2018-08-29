@@ -205,7 +205,7 @@ array.
                     uarray[u_indices] = compressed_array[sample_indices]
         #--- End: if
 
-        return self.get_subspace(uarray, indices) #uarray[indices]
+        return self.get_subspace(uarray, indices, copy=False) #uarray[indices]
     #--- End: def
 
     @property
@@ -235,6 +235,11 @@ array.
         return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
     #--- End: def
 
+    def get_array(self):
+        '''
+        '''
+        return self[...]
+    
     def open(self):
         self.array.open()
 

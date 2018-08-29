@@ -562,7 +562,7 @@ last values.
         if data is not None:
             x = [axis_to_name[axis] for axis in self.get_data_axes(())]
             if self.isreftime:
-                data = data.asdata(data.dtarray)
+                data = data.asdata(data.get_dtarray())
                 
             string.append('')
             string.append('{0}Data({1}) = {2}'.format(indent0,
