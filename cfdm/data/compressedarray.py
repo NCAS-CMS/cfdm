@@ -40,6 +40,9 @@ Returns a numpy array that does not share memory with the compressed
 array.
 
         '''
+
+
+
 #        print 'self.compression_type =',self.compression_type
 #        print 'self.compression_parameters =',self.compression_parameters
 
