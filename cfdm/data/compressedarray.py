@@ -1,17 +1,16 @@
 from __future__ import absolute_import
-from builtins import zip
-from builtins import range
+from builtins import (range, super, zip)
+from functools import reduce
+
 import sys
 
 from operator import mul
 
 import numpy
 
-#from .array import Array
 from . import abstract
-from functools import reduce
 
-#class CompressedArray(Array):
+
 class CompressedArray(abstract.Array):
     '''
 
@@ -25,13 +24,12 @@ class CompressedArray(abstract.Array):
     array: `abstract.Array`
 
         '''
-        super(CompressedArray, self).__init__(
-            array=array,
-            compression_type=compression_type,
-            compression_parameters=compression_parameters,
-            _shape=shape,
-            _size=size,
-            _ndim=ndim,
+        super().__init__(array=array,
+                         compression_type=compression_type,
+                         compression_parameters=compression_parameters,
+                         _shape=shape,
+                         _size=size,
+                         _ndim=ndim,
         )
     #--- End: def
 

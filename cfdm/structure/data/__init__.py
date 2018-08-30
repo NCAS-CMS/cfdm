@@ -1,3 +1,3 @@
-from __future__ import absolute_import
-from .data import Data
+from .data       import Data
+from .numpyarray import NumpyArray
 

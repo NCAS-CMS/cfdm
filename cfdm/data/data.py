@@ -226,7 +226,7 @@ elements.
 
         '''
         array = self.get_array()
-        print (type(array))
+
         if value is masked or numpy.ma.isMA(value):
             # The data is not masked but the assignment is masking
             # elements, so turn the non-masked array into a masked

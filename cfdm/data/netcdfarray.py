@@ -2,9 +2,8 @@ from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
 from builtins import str
-from future.utils import with_metaclass
+#from functools import reduce
 
-import abc
 import os
 import operator
 import urllib.parse
@@ -12,12 +11,10 @@ import urllib.parse
 import numpy
 import netCDF4
 
-#from .array import Array
 from . import abstract
-from functools import reduce
 
-class NetCDFArray(with_metaclass(abc.ABCMeta, abstract.Array)):
-#class NetCDFArray(Array):
+
+class NetCDFArray(abstract.Array):
     '''An array stored in a netCDF file.
     
 **Initialization**
@@ -122,7 +119,7 @@ class NetCDFArray(with_metaclass(abc.ABCMeta, abstract.Array)):
         '''x.__getitem__(indices) <==> x[indices]
 
 Returns a numpy array that does not share memory with the un-indexed
-array on disk.
+array.
 
         '''
         nc = self.open()
@@ -237,12 +234,6 @@ x.__str__() <==> str(x)
     def varid(self):
          return self._varid
     
-#    @property
-#    def isunique(self):
-#        '''
-#        '''
-#        return True
-
     def close(self):
         '''Close the `netCDF4.Dataset` for the file containing the data.
 

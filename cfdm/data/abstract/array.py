@@ -1,121 +1,34 @@
 from future.utils import with_metaclass
-from builtins import (object, str)
+from builtins import str
 import abc
 
 import numpy
 
-from ...structure.data.abstract import Array as structure_data_Array
+from ...structure.data.abstract import Array as structure_Array
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class Array(with_metaclass(abc.ABCMeta, structure_data_Array)):
+class Array(with_metaclass(abc.ABCMeta, structure_Array)):
     '''A container for an array.
     
     '''
-           
-#    def __init__(self, **kwargs):
-#        '''
-#        
-#**Initialization**
-#
-#:Parameters:
-#
-#    dtype: `numpy.dtype`
-#        The numpy data type of the data array.
-#
-#    ndim: `int`
-#        Number of dimensions in the data array.
-#
-#    shape: `tuple`
-#        The data array's dimension sizes.
-#
-#    size: `int`
-#        Number of elements in the data array.
-#
-#'''
-#        self.__dict__ = kwargs
-#    #--- End: def
-               
-#    def __deepcopy__(self, memo):
-#        '''
-#
-#Used if copy.deepcopy is called on the variable.
-#
-#'''
-#        return self.copy()
-#    #--- End: def
-
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns a numpy array.
+Returns a numpy array that does not share memory with the un-indexed
+array.
         '''
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
-#    def __repr__(self):
-#        '''
-#
-#x.__repr__() <==> repr(x)
-#
-#'''      
-#        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
-#    #--- End: def
-#        
-#    def __str__(self):
-#        '''
-#
-#x.__str__() <==> str(x)
-#
-#'''
-#        return "shape={0}, dtype={1}".format(self.shape, self.dtype)
-#    #--- End: def
-
-#    @abc.abstractproperty
-#    def ndim(self):
-#        raise NotImplementedError(_MUST_IMPLEMENT)
-#
-#    @abc.abstractproperty
-#    def shape(self):
-#        raise NotImplementedError(_MUST_IMPLEMENT)
-#
-#    @abc.abstractproperty
-#    def size(self):
-#        raise NotImplementedError(_MUST_IMPLEMENT)
-#    
-#    @abc.abstractproperty
-#    def dtype(self):
-#        raise NotImplementedError(_MUST_IMPLEMENT)
-    
     @abc.abstractmethod
     def close(self):
         '''
         '''
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
-
-#    def copy(self):
-#        '''Return a deep copy.
-#
-#``f.copy() is equivalent to ``copy.deepcopy(f)``.
-#
-#:Returns:
-#
-#    out :
-#        A deep copy.
-#
-#:Examples:
-#
-#>>> g = f.copy()
-#
-#        '''
-#        klass = self.__class__
-#        new = klass.__new__(klass)
-#        new.__dict__ = self.__dict__.copy()
-#        return new
-#    #--- End: def
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
@@ -139,6 +52,9 @@ indices must contain an index for each dimension of the input array.
     array: `numpy.ndarray`
 
     indices: `list`
+
+    copy: `bool`
+        Return an independent array.
 
 :Returns:
 
