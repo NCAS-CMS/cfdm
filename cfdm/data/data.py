@@ -1423,13 +1423,15 @@ False
 
         '''
         ma = self._get_Array()
+        
+        return getattr(ma, 'indices', None)
 
-        if getattr(ma, 'compression_type', None) == 'gathered':
-            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
-        else:
-            list_indices = None
-            
-        return list_indices
+#        if getattr(ma, 'compression_type', None) == 'gathered':
+#            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
+#        else:
+#            list_indices = None
+#            
+#        return list_indices
     #--- End: def
     
     def profile_indices(self): # profile?

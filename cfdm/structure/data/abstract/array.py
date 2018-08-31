@@ -46,21 +46,25 @@ x.__str__() <==> str(x)
     #--- End: def
 
 #    @abc.abstractproperty
+    @property
     @abc.abstractmethod
     def ndim(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
 
 #    @abc.abstractproperty
+    @property
     @abc.abstractmethod
     def shape(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
 
 #    @abc.abstractproperty
+    @property
     @abc.abstractmethod
     def size(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
     
 #    @abc.abstractproperty
+    @property
     @abc.abstractmethod
     def dtype(self):
         raise NotImplementedError(_MUST_IMPLEMENT)

@@ -18,6 +18,9 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         '''
         self._version = version
         self._class = kwargs.copy()
+        for key, value in kwargs.items():
+            if value is None:
+                del self._class[key]
     #--- End: def
 
     def copy(self):
@@ -30,7 +33,10 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     def get_class(self, classname):
         '''Return a class of the implementation.
         '''
-        return self._class[classname]
+        try:
+            return self._class[classname]
+        except KeyError:
+            raise ValueError("Implementation does not have class {}".format(classname))
     #--- End: def
 
     def get_version(self):

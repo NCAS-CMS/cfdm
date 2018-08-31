@@ -15,10 +15,15 @@ from ...domainaxis          import DomainAxis
 from ...field               import Field
 from ...fieldancillary      import FieldAncillary
 
-from ...bounds    import Bounds
+from ...bounds import Bounds
 
-from ...data.data            import Data
-from ...data.netcdfarray     import NetCDFArray
+from ...data import (Data,
+                     GatheredArray,
+                     NetCDFArray,
+                     RaggedContiguousArray,
+                     RaggedIndexedArray,
+                     RaggedIndexedContiguousArray)
+
 from ...data.compressedarray import CompressedArray
 
 from ..cfdmimplementation import CFDMImplementation
@@ -37,11 +42,16 @@ implementation = CFDMImplementation(version = __version__,
                                     Field               = Field,
                                     FieldAncillary      = FieldAncillary,
                                     
-                                    Bounds    = Bounds,
-                                    Data      = Data,
+                                    Bounds = Bounds,
+                                    Data   = Data,
                                     
-                                    NetCDFArray     = NetCDFArray,
-                                    CompressedArray = CompressedArray)
+                                    CompressedArray = CompressedArray,
+                                    GatheredArray                = GatheredArray,
+                                    NetCDFArray                  = NetCDFArray,
+                                    RaggedContiguousArray        = RaggedContiguousArray,
+                                    RaggedIndexedArray           = RaggedIndexedArray,
+                                    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
+                                    )
 
 netcdf = NetCDFRead(implementation)
 # um = UMRead(implementation)

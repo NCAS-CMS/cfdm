@@ -15,24 +15,6 @@ class API(object):
     #--- End: def
 
     @staticmethod
-    def create_compressed_array(self, array=None,
-                                uncompressed_ndim=None,
-                                uncompressed_shape=None,
-                                uncompressed_size=None,
-                                compression_type=None,
-                                compression_parameters=None):
-        '''
-        '''
-        return self.initialise('CompressedArray',
-            array=array,
-            ndim=uncompressed_ndim,
-            shape=uncompressed_shape,
-            size=uncompressed_size,
-            compression_type=compression_type,
-            compression_parameters=compression_parameters)
-    #--- End: def
-
-    @staticmethod
     def del_property(construct, prop):
         '''
 
@@ -600,6 +582,23 @@ variable.
     #--- End: def
 
     @staticmethod
+    def initialise_CompressedArray(klass, array=None,
+                                   uncompressed_ndim=None,
+                                   uncompressed_shape=None,
+                                   uncompressed_size=None,
+                                   compression_type=None,
+                                   compression_parameters=None):
+        '''
+        '''
+        return klass(array=array,
+                     ndim=uncompressed_ndim,
+                     shape=uncompressed_shape,
+                     size=uncompressed_size,
+                     compression_type=compression_type,
+                     compression_parameters=compression_parameters)
+    #--- End: def
+
+    @staticmethod
     def initialise_CoordinateReference(klass, coordinates=None,
                                        domain_ancillaries=None,
                                        parameters=None, **kwargs):
@@ -614,6 +613,17 @@ variable.
     def initialise_Data(klass, data=None, units=None, calendar=None,
                         **kwargs):
         '''
+:Patameters:
+
+    klass: 
+
+    data:
+
+    units:
+
+    calendar:
+
+    kwargs: *optional*
         '''
         return klass(data=data, units=units, calendar=calendar, **kwargs)
     #--- End: def
@@ -655,6 +665,21 @@ variable.
     #--- End: def
 
     @staticmethod
+    def initialise_GatheredArray(klass, array=None, ndim=None,
+                                 shape=None, size=None,
+                                 sample_axis=None,
+                                 indices=None):
+        '''
+        '''
+        return klass(array=array,
+                     ndim=ndim,
+                     shape=shape,
+                     size=size,
+                     sample_axis=sample_axis,
+                     indices=indices)
+    #--- End: def
+
+    @staticmethod
     def initialise_NetCDFArray(klass, filename=None, ncvar=None,
                                dtype=None, ndim=None, shape=None,
                                size=None, **kwargs):
@@ -664,22 +689,47 @@ variable.
                      ndim=ndim, shape=shape, size=size, **kwargs)
     #--- End: def
 
-    def create_compressed_array(self, array=None,
-                                uncompressed_ndim=None,
-                                uncompressed_shape=None,
-                                uncompressed_size=None,
-                                compression_type=None,
-                                compression_parameters=None):
+    @staticmethod
+    def initialise_RaggedContiguousArray(klass, array=None, ndim=None,
+                                         shape=None, size=None,
+                                         elements_per_instance=None):
         '''
         '''
-        return self.initialise('CompressedArray',
-            array=array,
-            ndim=uncompressed_ndim,
-            shape=uncompressed_shape,
-            size=uncompressed_size,
-            compression_type=compression_type,
-            compression_parameters=compression_parameters)
+        return klass(array=array,
+                     ndim=ndim,
+                     shape=shape,
+                     size=size,
+                     elements_per_instance=elements_per_instance)
     #--- End: def
-    
+
+    @staticmethod
+    def initialise_RaggedIndexedArray(klass, array=None, ndim=None,
+                                      shape=None, size=None,
+                                      instances=None):
+        '''
+        '''
+        return klass(array=array,
+                     ndim=ndim,
+                     shape=shape,
+                     size=size,
+                     instances=instances)
+    #--- End: def
+
+    @staticmethod
+    def initialise_RaggedIndexedContiguousArray(klass, array=None,
+                                                ndim=None, shape=None,
+                                                size=None,
+                                                profile_indices=None,
+                                                elements_per_profile=None):
+        '''
+        '''
+        return klass(array=array,
+                     ndim=ndim,
+                     shape=shape,
+                     size=size,
+                     profile_indices=profile_indices,
+                     elements_per_profile=elements_per_profile)
+    #--- End: def
+
 #--- End: class
 

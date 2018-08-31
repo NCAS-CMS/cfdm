@@ -5,13 +5,26 @@ from .abstract import Implementation
 class CFDMImplementation(Implementation):
     '''
     '''
-    def __init__(self, version=None, NetCDFArray=None,
-                 AuxiliaryCoordinate=None, CellMeasure=None,
-                 CellMethod=None, CoordinateAncillary=None
-                 ,CoordinateReference=None, DimensionCoordinate=None,
-                 DomainAncillary=None, DomainAxis=None, Field=None,
-                 FieldAncillary=None, Bounds=None, Data=None,
-                 CompressedArray=None):
+    def __init__(self, version=None,
+                 AuxiliaryCoordinate=None,
+                 CellMeasure=None,
+                 CellMethod=None,
+                 CoordinateAncillary=None,
+                 CoordinateReference=None,
+                 DimensionCoordinate=None,
+                 DomainAncillary=None,
+                 DomainAxis=None,
+                 Field=None,
+                 FieldAncillary=None,
+                 Bounds=None,
+                 Data=None,
+                 CompressedArray=None,
+                 GatheredArray=None,
+                 NetCDFArray=None,
+                 RaggedContiguousArray=None,
+                 RaggedIndexedArray=None,
+                 RaggedIndexedContiguousArray=None,
+    ):
         '''**Initialisation**
 
 :Parameters:
@@ -52,7 +65,6 @@ class CFDMImplementation(Implementation):
         '''
         super(CFDMImplementation, self).__init__(
             version=version,
-            NetCDFArray=NetCDFArray,
             AuxiliaryCoordinate=AuxiliaryCoordinate,
             CellMeasure=CellMeasure,
             CellMethod=CellMethod,
@@ -65,7 +77,13 @@ class CFDMImplementation(Implementation):
             FieldAncillary=FieldAncillary,
             Bounds=Bounds,
             Data=Data,
-            CompressedArray=CompressedArray)
+            CompressedArray=CompressedArray,
+            GatheredArray=GatheredArray,
+            NetCDFArray=NetCDFArray,
+            RaggedContiguousArray=RaggedContiguousArray,
+            RaggedIndexedArray=RaggedIndexedArray,
+            RaggedIndexedContiguousArray=RaggedIndexedContiguousArray,
+        )
     #--- End: def
 
 #--- End: class
