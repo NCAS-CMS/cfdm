@@ -1,12 +1,13 @@
 from builtins import (object, str)
 
-import abc
+#import abc
 
 import numpy
 
 from .numpyarray import NumpyArray
 
-class Data(object):
+
+class Data(object): #with_metaclass(abc.ABCMeta, object)):
     '''
 
 An N-dimensional data array with units and masked values.
@@ -19,7 +20,7 @@ An N-dimensional data array with units and masked values.
   initialised with a masked array.
 
     '''
-    ___metaclass__ = abc.ABCMeta
+#    ___metaclass__ = abc.ABCMeta
     
     def __init__(self, data=None, units=None, calendar=None,
                  fill_value=None, source=None, copy=True):

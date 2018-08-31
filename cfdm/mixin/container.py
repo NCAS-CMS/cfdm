@@ -1,14 +1,15 @@
 from __future__ import print_function
 from builtins import object
-import abc
+
+#import abc
 import textwrap
 
 import numpy
 import sys
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class Container(with_metaclass(abc.ABCMeta, object)):
+class Container(object): #with_metaclass(abc.ABCMeta, object)):
     '''Mixin class for storing object components.
 
     '''

@@ -1,11 +1,12 @@
 from __future__ import absolute_import
-import abc
+#import abc
 
 from . import abstract
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class InteriorRing(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
+class InteriorRing(abstract.PropertiesData):
+        #with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''An interior ring array with properties.
 
 For polygon geometries, an individual part may define an "interior

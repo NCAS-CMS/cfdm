@@ -1,11 +1,12 @@
-from __future__ import absolute_import
-import abc
+#from __future__ import absolute_import
+#import abc
 
 from . import abstract
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class CellMeasure(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
+class CellMeasure(abstract.PropertiesData):
+#    class CellMeasure(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A cell measure construct of the CF data model.
 
 A cell measure construct provides information that is needed about the

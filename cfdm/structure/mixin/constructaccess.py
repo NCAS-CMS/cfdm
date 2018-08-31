@@ -1,6 +1,7 @@
 from builtins import object
-import abc
 from future.utils import with_metaclass
+
+import abc
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
@@ -70,6 +71,13 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return out
     #--- End: def
 
+    @abc.abstractmethod
+    def del_construct(self, key):
+        '''
+        '''
+        raise NotImplementedError(_MUST_IMPLEMENT)
+    #--- End: def
+
     def get_construct(self, key, *default):
         '''
         '''
@@ -94,13 +102,6 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return self._get_constructs().domain_axis_name(axis)
     #--- End: for
     
-    @abc.abstractmethod
-    def del_construct(self, key):
-        '''
-        '''
-        pass
-    #--- End: def
-
     def set_auxiliary_coordinate(self, item, key=None, axes=None,
                                  copy=True, replace=True):
         '''Insert an auxiliary coordinate construct.

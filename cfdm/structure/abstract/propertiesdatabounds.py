@@ -1,3 +1,5 @@
+from future.utils import with_metaclass
+
 import abc
 
 from copy import deepcopy
@@ -5,12 +7,12 @@ from copy import deepcopy
 #import mixin
 
 from .propertiesdata import PropertiesData
-from future.utils import with_metaclass
+
 
 
 class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
-    '''Base class for a data array with bounds and with descriptive
-properties.
+    '''Abstract base class for a data array with bounds and with
+descriptive properties.
 
     '''
     

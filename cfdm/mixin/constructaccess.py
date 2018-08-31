@@ -1,9 +1,9 @@
 from builtins import object
-import abc
-from future.utils import with_metaclass
+#import abc
+#from future.utils import with_metaclass
 
 
-class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
+class ConstructAccess(object): #with_metaclass(abc.ABCMeta, object)):
     '''Mixin class for manipulating constructs stored in a `Constructs`
 object.
 

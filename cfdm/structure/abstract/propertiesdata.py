@@ -6,7 +6,7 @@ from .properties import Properties
 
 
 class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
-    '''Base class for a data array with descriptive properties.
+    '''Abstract base class for a data array with descriptive properties.
 
     '''
     def __init__(self, properties={}, data=None, source=None,

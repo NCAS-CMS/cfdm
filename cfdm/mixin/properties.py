@@ -1,17 +1,17 @@
 from __future__ import print_function
 from builtins import super
 
-import abc
+#import abc
 import textwrap
 
 import numpy
 import sys
 
 from .container import Container
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class Properties(with_metaclass(abc.ABCMeta, Container)):
+class Properties(Container): #with_metaclass(abc.ABCMeta, Container)):
     '''Mixin class for descriptive properties.
 
     '''

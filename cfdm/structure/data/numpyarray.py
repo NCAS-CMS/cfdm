@@ -1,6 +1,4 @@
-from __future__ import absolute_import
 from builtins import super
-import abc
 
 import numpy
 
@@ -45,7 +43,7 @@ class NumpyArray(abstract.Array):
         '''
         array = self.array
         
-        if numpy.ma.isMA(array) and not array.ndim:
+        if not array.ndim and numpy.ma.isMA(array):
             # This is because numpy.ma.copy doesn't work for
             # scalar arrays (at the moment, at least)
             ma_array = numpy.ma.empty((), dtype=array.dtype)

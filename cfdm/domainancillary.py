@@ -1,14 +1,15 @@
 from __future__ import absolute_import
-import abc
+#import abc
 
 from . import mixin
 from . import structure
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class DomainAncillary(with_metaclass(
-        abc.ABCMeta,
-        type('NewBase', (mixin.PropertiesDataBounds, structure.DomainAncillary), {}))):
+class DomainAncillary(mixin.PropertiesDataBounds, structure.DomainAncillary):
+        #with_metaclass(
+        #abc.ABCMeta,
+        #type('NewBase', (mixin.PropertiesDataBounds, structure.DomainAncillary), {}))):
     '''A CF domain ancillary construct.
 
 A domain ancillary construct provides information which is needed for

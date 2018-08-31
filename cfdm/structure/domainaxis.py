@@ -1,11 +1,12 @@
-from __future__ import absolute_import
+#from __future__ import absolute_import
 from builtins import str
-import abc
+#import abc
 
 from . import abstract
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
-class DomainAxis(with_metaclass(abc.ABCMeta, abstract.Container)):
+class DomainAxis(abstract.Container):
+#    with_metaclass(abc.ABCMeta, abstract.Container)):
     '''A domain axis construct of the CF data model. 
 
 A domain axis construct specifies the number of points along an

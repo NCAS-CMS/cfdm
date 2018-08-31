@@ -1,11 +1,12 @@
-from __future__ import absolute_import
-import abc
+#from __future__ import absolute_import
+#import abc
 
 from . import abstract
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class DomainAncillary(with_metaclass(abc.ABCMeta, abstract.PropertiesDataBounds)):
+class DomainAncillary(abstract.PropertiesDataBounds):
+#    with_metaclass(abc.ABCMeta, abstract.PropertiesDataBounds)):
     '''A domain ancillary construct of the CF data model.
 
 A domain ancillary construct provides information which is needed for

@@ -1,18 +1,19 @@
 from __future__ import absolute_import
 from builtins import super
 
-import abc
+#import abc
 
 from . import abstract
 from . import mixin
 
 from .constructs import Constructs
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class Field(with_metaclass(
-        abc.ABCMeta,
-        type('NewBase', (mixin.ConstructAccess, abstract.PropertiesData), {}))):
+class Field(mixin.ConstructAccess, abstract.PropertiesData):
+        #with_metaclass(
+        #abc.ABCMeta,
+        #type('NewBase', (mixin.ConstructAccess, abstract.PropertiesData), {}))):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all

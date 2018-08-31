@@ -2,7 +2,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from builtins import str
 
-import abc
+#import abc
 
 from . import mixin
 from . import structure
@@ -11,9 +11,10 @@ from .constructs import Constructs
 from future.utils import with_metaclass
 
 
-class Domain(with_metaclass(
-        abc.ABCMeta,
-        type('NewBase', (mixin.ConstructAccess, mixin.Properties, structure.Domain), {}))):
+class Domain(mixin.ConstructAccess, mixin.Properties, structure.Domain):
+#        with_metaclass(
+#        abc.ABCMeta,
+#        type('NewBase', (mixin.ConstructAccess, mixin.Properties, structure.Domain), {}))):
     '''A CF Domain construct.
 
 The domain is defined collectively by the following constructs, all of

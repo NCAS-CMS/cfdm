@@ -1,7 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from builtins import (zip, str, super)
-import abc
+#import abc
 import re
 
 from . import mixin
@@ -9,12 +9,13 @@ from . import structure
 
 from .constructs import Constructs
 from .domain      import Domain
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 _debug = False
        
 
-class Field(with_metaclass(abc.ABCMeta, type('NewBase', (mixin.ConstructAccess, mixin.PropertiesData, structure.Field), {}))):
+class Field(mixin.ConstructAccess, mixin.PropertiesData, structure.Field):
+#        with_metaclass(abc.ABCMeta, type('NewBase', (mixin.ConstructAccess, mixin.PropertiesData, structure.Field), {}))):
     '''A CF field construct.
 
 The field construct is central to the CF data model. A field

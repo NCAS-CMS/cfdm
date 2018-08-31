@@ -1,12 +1,13 @@
-from __future__ import absolute_import
-from future.utils import with_metaclass
-
-import abc
+#from __future__ import absolute_import
+#from future.utils import with_metaclass
+#
+#import abc
 
 from . import abstract
 
 
-class Bounds(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
+class Bounds(abstract.PropertiesData):
+#    class Bounds(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A cell bounds array with properties.
 
 An array of cell bounds spans the same domain axes as its coordinate

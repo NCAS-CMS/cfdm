@@ -1,13 +1,14 @@
 from __future__ import absolute_import
-import abc
+#import abc
 
 from . import mixin
 from . import structure
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
-class CoordinateConversion(with_metaclass(
-        abc.ABCMeta,
-        type('NewBase', (mixin.ParametersDomainAncillaries, structure.CoordinateConversion), {}))):
+class CoordinateConversion(mixin.ParametersDomainAncillaries, structure.CoordinateConversion):
+        #with_metaclass(
+        #abc.ABCMeta,
+        #type('NewBase', (mixin.ParametersDomainAncillaries, structure.CoordinateConversion), {}))):
     '''
 '''
     

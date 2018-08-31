@@ -1,12 +1,12 @@
 from __future__ import print_function
 from builtins import (str, super)
-import abc
+#import abc
 
 from .properties import Properties
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
+class PropertiesData(Properties): #with_metaclass(abc.ABCMeta, Properties)):
     '''Mixin class for a data array with descriptive properties.
 
     '''
@@ -59,7 +59,7 @@ x.__str__() <==> str(x)
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
-    @abc.abstractmethod
+#    @abc.abstractmethod
     def dump(self, display=True, field=None, key=None,
              _omit_properties=(), _prefix='', _title=None,
              _create_title=True, _level=0):

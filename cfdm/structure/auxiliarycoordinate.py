@@ -1,10 +1,11 @@
-from __future__ import absolute_import
-import abc
+#from __future__ import absolute_import
+#import abc
 
 from . import abstract
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
-class AuxiliaryCoordinate(with_metaclass(abc.ABCMeta, abstract.Coordinate)):
+class AuxiliaryCoordinate(abstract.Coordinate):
+#    class AuxiliaryCoordinate(with_metaclass(abc.ABCMeta, abstract.Coordinate)):
     '''An auxiliary coordinate construct of the CF data model.
 
 An auxiliary coordinate construct provides information which locate

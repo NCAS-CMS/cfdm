@@ -1,12 +1,12 @@
-from builtins import str
-from builtins import object
-import abc
+from builtins import (object, str)
+#import abc
 
 from collections import OrderedDict
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class Constructs(with_metaclass(abc.ABCMeta, object)):
+class Constructs(object):
+#    class Constructs(with_metaclass(abc.ABCMeta, object)):
     '''Keys are item identifiers, values are item objects.
     '''
     

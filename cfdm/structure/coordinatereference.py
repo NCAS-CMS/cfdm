@@ -1,7 +1,7 @@
-from __future__ import absolute_import
+#from __future__ import absolute_import
 from builtins import super
 
-import abc
+#import abc
 
 from copy import deepcopy
 
@@ -9,10 +9,11 @@ from . import abstract
 
 from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class CoordinateReference(with_metaclass(abc.ABCMeta, abstract.Container)):
+class CoordinateReference(abstract.Container):
+#with_metaclass(abc.ABCMeta, abstract.Container)):
     '''A coordinate reference construct of the CF data model. 
 
 A coordinate reference construct relates the coordinate values of the

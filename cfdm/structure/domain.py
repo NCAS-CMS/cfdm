@@ -1,16 +1,17 @@
-from __future__ import absolute_import
-import abc
+#from __future__ import absolute_import
+#import abc
 
 from . import abstract
 from . import mixin
 
 from .constructs import Constructs
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class Domain(with_metaclass(
-        abc.ABCMeta,
-        type('NewBase', (mixin.ConstructAccess, abstract.Properties), {}))):
+class Domain(mixin.ConstructAccess, abstract.Properties):
+        #with_metaclass(
+        #abc.ABCMeta,
+        #type('NewBase', (mixin.ConstructAccess, abstract.Properties), {}))):
     
     '''A domain of the CF data model.
 

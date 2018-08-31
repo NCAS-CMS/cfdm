@@ -1,15 +1,16 @@
-from __future__ import absolute_import
+#from __future__ import absolute_import
 from builtins import str
 from past.builtins import basestring
-import abc
+#import abc
 
 from copy import deepcopy
 
 from . import abstract
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class CellMethod(with_metaclass(abc.ABCMeta, abstract.Properties)):
+class CellMethod(abstract.Properties):
+#    class CellMethod(with_metaclass(abc.ABCMeta, abstract.Properties)):
     '''A cell method construct of the CF data model.
 
 One or more cell method constructs describe how the cell values of the

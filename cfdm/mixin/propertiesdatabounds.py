@@ -1,14 +1,14 @@
 from __future__ import print_function
 from builtins import (range, super)
-import abc
+#import abc
 
 from .propertiesdata import PropertiesData
 
 from ..functions import RTOL, ATOL
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
 
-class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
+class PropertiesDataBounds(PropertiesData): #):with_metaclass(abc.ABCMeta, PropertiesData)):
     '''Mixin class for a data array with descriptive properties and cell
 bounds.
 

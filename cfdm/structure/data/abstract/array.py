@@ -45,19 +45,23 @@ x.__str__() <==> str(x)
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
     #--- End: def
 
-    @abc.abstractproperty
+#    @abc.abstractproperty
+    @abc.abstractmethod
     def ndim(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
 
-    @abc.abstractproperty
+#    @abc.abstractproperty
+    @abc.abstractmethod
     def shape(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
 
-    @abc.abstractproperty
+#    @abc.abstractproperty
+    @abc.abstractmethod
     def size(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
     
-    @abc.abstractproperty
+#    @abc.abstractproperty
+    @abc.abstractmethod
     def dtype(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
     

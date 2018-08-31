@@ -1,13 +1,15 @@
+from future.utils import with_metaclass
+
 import abc
 
 from copy import deepcopy
 
 from .parameters import Parameters
-from future.utils import with_metaclass
+
 
 class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
-    '''Base class for a collection of named parameters and named domain
-ancillary constructs.
+    '''Abstract base class for a collection of named parameters and named
+domain ancillary constructs.
 
     '''
 

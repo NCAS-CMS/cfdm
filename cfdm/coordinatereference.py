@@ -3,8 +3,6 @@ from __future__ import absolute_import
 from builtins import (str, super)
 from past.builtins import basestring
 
-import abc
-
 import csv
 import os
 

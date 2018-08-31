@@ -1,12 +1,12 @@
 from __future__ import print_function
 from builtins import super
 
-import abc
+#import abc
 
 from .container import Container
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
-class Parameters(with_metaclass(abc.ABCMeta, Container)):
+class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
     '''Mixin class for parameters.
 
     '''

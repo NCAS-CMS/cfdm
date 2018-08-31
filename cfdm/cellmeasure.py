@@ -1,17 +1,18 @@
 from __future__ import print_function
-from __future__ import absolute_import
+#from __future__ import absolute_import
 from builtins import super
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
-import abc
+#import abc
 
 from . import mixin
 from . import structure
 
 
-class CellMeasure(with_metaclass(
-        abc.ABCMeta,
-        type('NewBase', (mixin.PropertiesData, structure.CellMeasure), {}))):
+class CellMeasure(mixin.PropertiesData, structure.CellMeasure):
+        #with_metaclass(
+        #abc.ABCMeta,
+        #type('NewBase', (mixin.PropertiesData, structure.CellMeasure), {}))):
     '''A CF cell measure construct.
 
 A cell measure construct provides information that is needed about the

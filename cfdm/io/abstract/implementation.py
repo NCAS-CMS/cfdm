@@ -1,6 +1,6 @@
 from builtins import object
-import abc
 from future.utils import with_metaclass
+import abc
 
 
 class Implementation(with_metaclass(abc.ABCMeta, object)):

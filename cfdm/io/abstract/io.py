@@ -1,12 +1,13 @@
 from builtins import object
-import abc
 from future.utils import with_metaclass
+import abc
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
 class IO(with_metaclass(abc.ABCMeta, object)):
-    '''Base class for reading Fields from, or writing Fields to, a dataset.
+    '''Abstract base class for reading Fields from, or writing Fields to,
+a dataset.
 
     '''
 

@@ -1,13 +1,13 @@
 from __future__ import print_function
 from builtins import super
-from future.utils import with_metaclass
+#from future.utils import with_metaclass
 
-import abc
+#import abc
 
 from .parameters import Parameters
 
 
-class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
+class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Parameters)):
     '''Mixin class for parameter- and ancillary-valued terms.
 
     '''
