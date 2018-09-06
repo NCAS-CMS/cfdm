@@ -24,7 +24,7 @@ from ...data import (Data,
                      RaggedIndexedArray,
                      RaggedIndexedContiguousArray)
 
-from ...data.compressedarray import CompressedArray
+#from ...data.compressedarray import CompressedArray
 
 from ..cfdmimplementation import CFDMImplementation
 
@@ -45,7 +45,7 @@ implementation = CFDMImplementation(version = __version__,
                                     Bounds = Bounds,
                                     Data   = Data,
                                     
-                                    CompressedArray = CompressedArray,
+#                                    CompressedArray = CompressedArray,
                                     GatheredArray                = GatheredArray,
                                     NetCDFArray                  = NetCDFArray,
                                     RaggedContiguousArray        = RaggedContiguousArray,
