@@ -1,5 +1,4 @@
 from __future__ import print_function
-from __future__ import absolute_import
 from builtins import super
 
 #import abc
@@ -37,9 +36,7 @@ to the order of the elements.
     source: `DomainAxis`
 
         '''
-#        super(DomainAxis, self).__init__(size=size, source=source,
-        super().__init__(size=size, source=source,
-                                         copy=copy)
+        super().__init__(size=size, source=source, copy=copy)
         
         if source:
             ncdim = source.get_ncdim(None)
@@ -157,7 +154,7 @@ By default the name is the first found of the following:
             out = []
             n = self.get_ncdim(None)
             if n is not None:
-                out.append(['ncdim%{0}'.format(n)])
+                out.append('ncdim%{0}'.format(n))
                 
             if default is not None:
                 out.append(default)

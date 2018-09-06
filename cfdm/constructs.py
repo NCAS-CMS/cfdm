@@ -44,11 +44,12 @@ class Constructs(structure.Constructs):
                                                  copy=copy)
 
         if axes is not None:
-            spans_axes = set(axes)
+            axes = set(axes)
             construct_axes = self.construct_axes()
-            for key, construct in list(out.items()):
+#            for key, construct in list(out.items()):
+            for key in tuple(out):
                 x = construct_axes.get(key)
-                if x is None or not spans_axes.intersection(x):
+                if x is None or not axes.intersection(x):
                     del out[key]
         #--- End: if
 
@@ -64,7 +65,7 @@ class Constructs(structure.Constructs):
                 (prefix, _, value) = description.partition(':')
                 custom = (prefix,) if value else None
                 
-                for key, construct in list(out.items()):
+                for key, construct in tuple(out.items()):
                     if description not in construct.name(custom=custom, all_names=True):
                         del out[key]
         #--- End: if
@@ -194,7 +195,7 @@ class Constructs(structure.Constructs):
             log = []
             
             len_axes0 = len(axes0) 
-            for axes1, constructs1 in list(axes_to_constructs1.items()):
+            for axes1, constructs1 in tuple(axes_to_constructs1.items()):
                 log = []
                 constructs1 = constructs1.copy()
 #                print '\n    axes1 = ', axes1
@@ -223,7 +224,7 @@ class Constructs(structure.Constructs):
                     # constructs
                     for key0, item0 in role_constructs0.items():
                         matched_construct = False
-                        for key1, item1 in list(role_constructs1.items()):
+                        for key1, item1 in tuple(role_constructs1.items()):
                             if item0.equals(item1, rtol=rtol,
                                             atol=atol,
                                             traceback=False, **kwargs):
@@ -350,9 +351,9 @@ class Constructs(structure.Constructs):
             return False
 
         if refs0:
-            for ref0 in list(refs0.values()):
+            for ref0 in refs0.values():
                 found_match = False
-                for key1, ref1 in list(refs1.items()):
+                for key1, ref1 in tuple(refs1.items()):
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
                                        traceback=False, **kwargs): ####
                         continue
@@ -369,7 +370,7 @@ class Constructs(structure.Constructs):
                     # Domain ancillary-valued coordinate conversion terms
                     terms0 = ref0.coordinate_conversion.domain_ancillaries()
                     terms1 = {}
-                    for term, key in list(ref1.coordinate_conversion.domain_ancillaries().items()):
+                    for term, key in tuple(ref1.coordinate_conversion.domain_ancillaries().items()):
                         terms1[term] = key1_to_key0.get(key, key)
     
                     if terms0 != terms1:
@@ -420,8 +421,8 @@ class Constructs(structure.Constructs):
         for axis0, axis1 in axis1_to_axis0.items():
             axis0_to_axis1[axis0] = axis1
             
-        for cm0, cm1 in zip(list(cell_methods0.values()),
-                            list(cell_methods1.values())):
+        for cm0, cm1 in zip(tuple(cell_methods0.values()),
+                            tuple(cell_methods1.values())):
             # Check that there are the same number of axes
             axes0 = cm0.get_axes(())
             axes1 = list(cm1.get_axes(()))
@@ -489,8 +490,8 @@ class Constructs(structure.Constructs):
         # ------------------------------------------------------------
         # Domain axes
         # ------------------------------------------------------------
-        self_sizes  = [d.get_size() for d in list(self.domain_axes().values())]
-        other_sizes = [d.get_size() for d in list(other.domain_axes().values())]
+        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
+        other_sizes = [d.get_size() for d in other.domain_axes().values()]
         
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes

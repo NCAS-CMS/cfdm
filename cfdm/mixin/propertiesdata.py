@@ -415,38 +415,6 @@ None
 'air_temperature'
 
         '''
-#        if all_names:
-#            out = []
-#            n = self.get_property('standard_name', None)
-#            if n is not None:
-#                out.append(n)
-#        
-#            n = self.get_property('long_name', None)
-#            if n is not None:
-#                out.append('long_name:{0}'.format(n))
-#        
-#            n = self.get_property('cf_role', None)
-#            if n is not None:
-#                out.append('cf_role:{0}'.format(n))
-#        
-#            n = self.get_ncvar(None)
-#            if n is not None:
-#                out.append('ncvar%{0}'.format(n))
-#        
-#            return out
-#yyyyyy
-#        properties = ['standard_name', 'long_name', 'cf_role']
-#        if property is not None:
-#            properties = [property] + properties
-#            
-#        for prop in properites:
-#            n = self.get_property(prop, None)
-#            if n is not None:
-#                if prop == 'standard_name':
-#                    return n
-#                else:
-#                    return '{0}:{1}'.format(prop, n)
-
         out = []
 
         if custom is None:
@@ -455,8 +423,6 @@ None
                 out.append(n)
 
             custom = ('long_name', 'cf_role')
-#        elif isinstance(custom, basestring):
-#            custom = (custom,)
             
         if all_names or not out:
             for prop in custom:
