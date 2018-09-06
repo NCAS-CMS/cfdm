@@ -77,13 +77,13 @@ array.
             uarray[u_indices] = compressed_array[sample_indices]
         #--- End: for
 
-        return self.get_subspace(uarray, indices, copy=False)
+        return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-    def compressed_axes(self):
-        '''
-        '''
-        return self._compressed_axes(sample_axis=self.sample_axis)
-    #--- End: def
+#    def compressed_axes(self):
+#        '''
+#        '''
+#        return self._compressed_axes(sample_axis=self.sample_axis)
+#    #--- End: def
 
 #--- End: class

@@ -13,7 +13,7 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
     '''
     def __init__(self, array=None, shape=None, size=None, ndim=None,
-                 **kwargs):
+                 sample_axis=None, **kwargs):
         '''**Initialization**
 
 :Parameters:
@@ -22,7 +22,8 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
         '''
         super().__init__(array=array, _shape=shape, _size=size,
-                         _ndim=ndim, **kwargs)
+                         _ndim=ndim, _sample_axis=sample_axis,
+                         **kwargs)
     #--- End: def
 
     @abc.abstractmethod
@@ -38,11 +39,11 @@ MORE BLURB HERE ON UNPACKING ALGORITHM
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
-    def _compressed_axes(self, sample_axis):
-        '''
-        '''
-        return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
-    #--- End: def
+#    def _compressed_axes(self, sample_axis):
+#        '''
+#        '''
+#        return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
+#    #--- End: def
     
     @property
     def ndim(self):
@@ -73,6 +74,13 @@ MORE BLURB HERE ON UNPACKING ALGORITHM
 
         '''
         return self._ndim
+    #--- End: def
+
+    @property
+    def sample_axis(self):
+        '''
+        '''
+        return self._sample_axis
     #--- End: def
 
     @property
@@ -145,11 +153,13 @@ MORE BLURB HERE ON UNPACKING ALGORITHM
         self.array.close()
     #--- End: def
 
-    @abc.abstractmethod
     def compressed_axes(self):
         '''
         '''
-        return self._compressed_axes(sample_axis=0)
+        sample_axis = self.sample_axis
+        return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
+    #--- End: def
+    
     #--- End: def
 
     def get_array(self):

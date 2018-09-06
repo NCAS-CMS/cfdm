@@ -21,7 +21,8 @@ class RaggedIndexedContiguousArray(abstract.CompressedArray):
         super().__init__(array=array, shape=shape, size=size,
                          ndim=ndim,
                          elements_per_profile=elements_per_profile,
-                         profile_indices=profile_indices)    
+                         profile_indices=profile_indices,
+                         sample_axis=0)    
     #--- End: def
 
     def __getitem__(self, indices):
@@ -76,13 +77,13 @@ array.
             #--- End: for
         #--- End: for
 
-        return self.get_subspace(uarray, indices, copy=False)
+        return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-    def compressed_axes(self):
-        '''
-        '''
-        return self._compressed_axes(sample_axis=0)
-    #--- End: def
+#    def compressed_axes(self):
+#        '''
+#        '''
+#        return self._compressed_axes(sample_axis=0)
+#    #--- End: def
 
 #--- End: class

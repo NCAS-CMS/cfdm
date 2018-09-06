@@ -19,7 +19,8 @@ class RaggedIndexedArray(abstract.CompressedArray):
 
         '''
         super().__init__(array=array, shape=shape, size=size,
-                         ndim=ndim, instances=instances)
+                         ndim=ndim, instances=instances,
+                         sample_axis=0)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -51,13 +52,13 @@ array.
             uarray[u_indices] = compressed_array[sample_dimension_indices]
         #--- End: for
 
-        return self.get_subspace(uarray, indices, copy=False)
+        return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-    def compressed_axes(self):
-        '''
-        '''
-        return self._compressed_axes(sample_axis=0)
-    #--- End: def
+#    def compressed_axes(self):
+#        '''
+#        '''
+#        return self._compressed_axes(sample_axis=0)
+#    #--- End: def
 
 #--- End: class
