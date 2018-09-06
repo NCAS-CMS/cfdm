@@ -38,40 +38,128 @@ MORE BLURB HERE ON UNPACKING ALGORITHM
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
+    def _compressed_axes(self, sample_axis):
+        '''
+        '''
+        return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
+    #--- End: def
+    
     @property
     def ndim(self):
+        '''The number of dimensions of the uncompressed data array.
+
+:Examples:
+
+>>> d.shape
+(73, 96)
+>>> d.ndim
+2
+>>> d.size
+7008
+
+>>> d.shape
+(1, 1, 1)
+>>> d.ndim
+3
+>>> d.size
+1
+
+>>> d.shape
+()
+>>> d.ndim
+0
+>>> d.size
+1
+
+        '''
         return self._ndim
+    #--- End: def
 
     @property
     def shape(self):
+        '''Shape of the uncompressed data array.
+
+:Examples:
+
+>>> d.shape
+(73, 96)
+>>> d.ndim
+2
+>>> d.size
+7008
+
+>>> d.shape
+(1, 1, 1)
+>>> d.ndim
+3
+>>> d.size
+1
+
+>>> d.shape
+()
+>>> d.ndim
+0
+>>> d.size
+1
+
+        '''
         return self._shape
+    #--- End: def
 
     @property
     def size(self):
+        '''Number of elements in the uncompressed data array.
+
+:Examples:
+
+>>> d.shape
+(73, 96)
+>>> d.size
+7008
+>>> d.ndim
+2
+
+>>> d.shape
+(1, 1, 1)
+>>> d.ndim
+3
+>>> d.size
+1
+
+>>> d.shape
+()
+>>> d.ndim
+0
+>>> d.size
+1
+'''
         return self._size
+    #--- End: def
 
     @property
     def dtype(self):
         return self.array.dtype
+    #--- End: def
 
     def close(self):
         self.array.close()
-    
+    #--- End: def
+
+    @abc.abstractmethod
     def compressed_axes(self):
         '''
         '''
-#        sample_axis = self.compression_parameters.get('sample_axis', 0)
-        sample_axis = getattr(self, 'sample_axis', 0)
-
-        return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
+        return self._compressed_axes(sample_axis=0)
     #--- End: def
 
     def get_array(self):
         '''
         '''
         return self[...]
-    
+    #--- End: def
+
     def open(self):
         self.array.open()
+    #--- End: def
 
 #--- End: class

@@ -79,4 +79,10 @@ array.
         return self.get_subspace(uarray, indices, copy=False)
     #--- End: def
 
+    def compressed_axes(self):
+        '''
+        '''
+        return self._compressed_axes(sample_axis=0)
+    #--- End: def
+
 #--- End: class
