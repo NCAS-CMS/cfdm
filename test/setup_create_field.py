@@ -61,7 +61,7 @@ class create_fieldTest(unittest.TestCase):
                                 'zeta','eta','theta','iota','kappa'], dtype='S')
         array[0] = numpy.ma.masked
         aux4 = cfdm.AuxiliaryCoordinate(data=cfdm.Data(array))
-        aux4.set_property('standard_name', 'greek_letters')
+        aux4.set_property('long_name', 'greek_letters')
 
         # Cell measures
         msr0 = cfdm.CellMeasure(
@@ -201,7 +201,7 @@ class create_fieldTest(unittest.TestCase):
         print(g)
         g[0].dump()
 
-        array = g[0].construct(name='greek_letters').get_array()
+        array = g[0].construct(description='long_name:greek_letters').get_array()
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
 
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))

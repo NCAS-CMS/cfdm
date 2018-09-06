@@ -25,24 +25,24 @@ object.
             axes=axes, copy=copy)
     #--- End: def
 
-    def construct(self, name=None, axes=None, construct_type=None,
-                  copy=False):
+    def construct(self, description=None, axes=None,
+                  construct_type=None, copy=False):
         '''
         '''
         return self._get_constructs().construct(
+            description=description,
             construct_type=construct_type,
-            name=name,
             axes=axes,
             copy=copy)
     #--- End: def
 
-    def constructs(self, name=None, axes=None, construct_type=None,
-                   copy=False):
+    def constructs(self, description=None, axes=None,
+                   construct_type=None, copy=False):
         '''
         '''
         return self._get_constructs().constructs(
+            description=description,
             construct_type=construct_type,
-            name=name,
             axes=axes,
             copy=copy)
     #--- End: def

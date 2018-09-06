@@ -18,12 +18,13 @@ class Constructs(structure.Constructs):
         return self.constructs(construct_type='auxiliary_coordinate', axes=axes, copy=copy)
     #--- End: def
 
-    def construct(self, construct_type=None, name=None, axes=None,
-                  copy=False):
+    def construct(self, description=None, construct_type=None,
+                  axes=None, copy=False):
         '''
         '''
-        out = self.constructs(construct_type=construct_type,
-                              name=name, axes=axes, copy=copy)
+        out = self.constructs(description=description,
+                              construct_type=construct_type,
+                              axes=axes, copy=copy)
 
         if not out:
             raise ValueError("No such construct")
@@ -35,8 +36,8 @@ class Constructs(structure.Constructs):
         return construct
     #--- End: def
 
-    def constructs(self, name=None, axes=None, construct_type=None,
-                   copy=False):
+    def constructs(self, description=None, axes=None,
+                   construct_type=None, copy=False):
         '''
         '''
         out = super(Constructs, self).constructs(construct_type=construct_type,
@@ -51,8 +52,8 @@ class Constructs(structure.Constructs):
                     del out[key]
         #--- End: if
 
-        if name is not None:
-            (prefix, _, key) = name.partition('%')
+        if description is not None:
+            (prefix, _, key) = description.partition('%')
             if prefix == 'cfdm':
                 construct = out.get(key)
                 if construct is not None:
@@ -60,11 +61,11 @@ class Constructs(structure.Constructs):
                 else:
                     out = {}
             else:
-                (prefix, _, value) = name.partition(':')
+                (prefix, _, value) = description.partition(':')
                 custom = (prefix,) if value else None
                 
                 for key, construct in list(out.items()):
-                    if name not in construct.name(custom=custom, all_names=True):
+                    if description not in construct.name(custom=custom, all_names=True):
                         del out[key]
         #--- End: if
             
