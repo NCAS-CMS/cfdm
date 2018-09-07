@@ -1,7 +1,8 @@
 CFDM
 ====
 
-A reference implementationof the CF data model
+A reference implementation of the [**CF data
+model**](https://www.geosci-model-dev.net/10/4619/2017/)
 
 ----------------------------------------------------------------------
 
@@ -12,11 +13,13 @@ Functionality
 
 * create new field constructs in memory
 
-* modify field construct metadata and data
+* inspect field constructs
+
+* modify field construct metadata and data in memory
 
 * create subspaces of field constructs
 
-* write field constructs to CF-netCDF datasets
+* write field constructs to a CF-netCDF dataset on disk
 
 ----------------------------------------------------------------------
 
@@ -29,14 +32,15 @@ Documentation
 Dependencies
 ============
 
-* **Required:** A [**python**](http://www.python.org) version 2.7.
+* **Required:** [**Python**](http://www.python.org) version 2.7, 3 or
+    later.
  
 * **Required:** The [**python numpy
   package**](https://pypi.python.org/pypi/numpy) at version 1.13 or
   newer.
 
 * **Required:** The [**python netCDF4
-  package**](https://pypi.python.org/pypi/netCDF4) at version 1.3.1 or
+  package**](https://pypi.python.org/pypi/netCDF4) at version 1.4 or
   newer. This package requires the
   [**netCDF**](http://www.unidata.ucar.edu/software/netcdf),
   [**HDF5**](http://www.hdfgroup.org/HDF5) and

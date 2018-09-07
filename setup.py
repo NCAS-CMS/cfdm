@@ -52,10 +52,7 @@ Documentation
 Dependencies
 ============
 
-* Requires Python version 2.7.
- 
-* See the `https://bitbucket.org/cfpython/cfdm`_ for further
-  dependencies.
+* See the `https://bitbucket.org/cfpython/cfdm`_ for dependencies.
 
 Code license
 ============
