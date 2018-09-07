@@ -32,7 +32,7 @@ Documentation
 Dependencies
 ============
 
-* **Required:** [**Python**](http://www.python.org) version 2.7, 3 or
+* **Required:** [**python**](http://www.python.org) version 2.7, 3 or
     later.
  
 * **Required:** The [**python numpy
