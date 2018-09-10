@@ -280,7 +280,12 @@ x.__str__() <==> str(x)
     #--- End: def
 
     def get_array(self):
-        '''
+        '''Return an independent numpy array containing the data.
+
+:Examples:
+
+>>> n = a.get_array()
+
         '''
         return self[...]
     

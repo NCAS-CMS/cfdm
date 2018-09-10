@@ -45,25 +45,21 @@ x.__str__() <==> str(x)
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
     #--- End: def
 
-#    @abc.abstractproperty
     @property
     @abc.abstractmethod
     def ndim(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
 
-#    @abc.abstractproperty
     @property
     @abc.abstractmethod
     def shape(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
 
-#    @abc.abstractproperty
     @property
     @abc.abstractmethod
     def size(self):
         raise NotImplementedError(_MUST_IMPLEMENT)
     
-#    @abc.abstractproperty
     @property
     @abc.abstractmethod
     def dtype(self):
@@ -92,7 +88,12 @@ x.__str__() <==> str(x)
 
     @abc.abstractmethod
     def get_array(self):
-        '''
+        '''Return an independent numpy array containing the data.
+
+:Examples:
+
+>>> n = a.get_array()
+
         '''
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def

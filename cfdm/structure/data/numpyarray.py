@@ -39,7 +39,12 @@ class NumpyArray(abstract.Array):
         return self.array.dtype
 
     def get_array(self):
-        '''
+        '''Return an independent numpy array containing the data.
+
+:Examples:
+
+>>> n = a.get_array()
+
         '''
         array = self.array
         

@@ -1,4 +1,3 @@
-#from __future__ import absolute_import
 from builtins import super
 
 import sys
@@ -6,6 +5,7 @@ import sys
 import numpy
 
 from . import abstract
+
 
 from ..structure.data import NumpyArray as structure_NumpyArray
 

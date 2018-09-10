@@ -39,12 +39,6 @@ MORE BLURB HERE ON UNPACKING ALGORITHM
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
-#    def _compressed_axes(self, sample_axis):
-#        '''
-#        '''
-#        return list(range(sample_axis, self.ndim - (self.array.ndim - sample_axis - 1)))
-#    #--- End: def
-    
     @property
     def ndim(self):
         '''The number of dimensions of the uncompressed data array.
@@ -163,7 +157,14 @@ MORE BLURB HERE ON UNPACKING ALGORITHM
     #--- End: def
 
     def get_array(self):
-        '''
+        '''Return an independent numpy array containing the data.
+
+The compressed axes are uncompressed in the return numpy array.
+
+:Examples:
+
+>>> n = a.get_array()
+
         '''
         return self[...]
     #--- End: def
