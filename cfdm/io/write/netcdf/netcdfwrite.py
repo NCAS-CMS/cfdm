@@ -3,10 +3,7 @@ from builtins import (str, zip)
 from past.builtins import basestring
 
 import copy
-import re
 import os
-import struct
-import sys
 
 import numpy
 import netCDF4
@@ -1213,8 +1210,12 @@ extra trailing dimension.
         strlen = data.dtype.itemsize
 #        print ('1 strlen =', strlen)
         if strlen > 1:
-            char_array = self._character_array(API.get_array(data))
-            data = type(data)(char_array, source=data, copy=False)
+            klass = self.implementation.get_class('Data')
+            data = API.initialise_Data(klass,
+                                       data=self._character_array(API.get_array(data)),
+                                       units=API.get_data_units(data),
+                                       calendar=API.get_data_calendar(data),
+                                       copy=False)
     
         return data
     #--- End: def

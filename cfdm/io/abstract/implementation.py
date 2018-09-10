@@ -36,7 +36,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         try:
             return self._class[classname]
         except KeyError:
-            raise ValueError("Implementation does not have class {}".format(classname))
+            raise ValueError("Implementation does not have class {!r}".format(classname))
     #--- End: def
 
     def get_version(self):

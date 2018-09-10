@@ -1,13 +1,7 @@
 from builtins import (object, str)
 
-#import abc
 
-import numpy
-
-from .numpyarray import NumpyArray
-
-
-class Data(object): #with_metaclass(abc.ABCMeta, object)):
+class Data(object):
     '''
 
 An N-dimensional data array with units and masked values.
@@ -20,15 +14,13 @@ An N-dimensional data array with units and masked values.
   initialised with a masked array.
 
     '''
-#    ___metaclass__ = abc.ABCMeta
-    
     def __init__(self, data=None, units=None, calendar=None,
                  fill_value=None, source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
 
-    data: `abstract.Array`, optional
+    data: `Array`, optional
         The data array.
 
     fill_value: optional 
@@ -45,18 +37,10 @@ An N-dimensional data array with units and masked values.
 
         '''
         if source is not None:
-            if data is None:
-                data = source._get_Array()
-        
-            if units is None:
-                units = source.get_units(None)
-        
-            if calendar is None:
-                calendar = source.get_calendar(None)
-        
-            if fill_value is None:
-                fill_value = source.get_fill_value(None)
-        #--- End: if
+            data = source._get_Array(None)
+            units = source.get_units(None)
+            calendar = source.get_calendar(None)
+            fill_value = source.get_fill_value(None)
 
         self._units    = units
         self._calendar = calendar
@@ -72,14 +56,16 @@ An N-dimensional data array with units and masked values.
 :Returns: 
 
     out: `numpy.ndarray`
-        A numpy array of the data.
+        An independent numpy array of the data.
 
         '''
         return self.get_array()
     #--- End: def
 
     def __deepcopy__(self, memo):
-        '''Used if `copy.deepcopy` is called.
+        '''x.__deepcopy__() -> Deep copy of data.
+
+Used if copy.deepcopy is called on data
 
         ''' 
         return self.copy()
@@ -99,6 +85,9 @@ An N-dimensional data array with units and masked values.
         return str(self._get_Array(None))
     #--- End: def
     
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
     def _del_Array(self):
         '''
         '''
@@ -127,43 +116,25 @@ An N-dimensional data array with units and masked values.
         '''
         self._master_array = value
     #--- End: def
-    
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def data(self):
-        '''
-
-The data array object as an object identity.
-
-:Examples:
-
->>> d.data is d
-True
-
-'''
-        return self
-    #--- End: def
 
     # ----------------------------------------------------------------
-    # Attribute
+    # Attributes
     # ----------------------------------------------------------------
     @property
     def dtype(self):
-        '''Describes the format of the elements in the data array.
+        '''Data-type of the data elements.
 
 :Examples:
 
->>> f.dtype
+>>> d.dtype
 dtype('float64')
+>>> type(d.dtype)
+<type 'numpy.dtype'>
+
         '''
         return self._get_Array().dtype        
     #--- End: def
     
-    # ----------------------------------------------------------------
-    # Attribute
-    # ----------------------------------------------------------------
     @property
     def fill_value(self):
         '''
@@ -193,12 +164,9 @@ None
     @fill_value.deleter
     def fill_value(self)       : self._fill_value = None
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
     @property
     def ndim(self):
-        '''The number of dimensions of the data array.
+        '''Number of data dimensions.
 
 :Examples:
 
@@ -227,12 +195,9 @@ None
         return self._get_Array().ndim
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
     @property
     def shape(self):
-        '''Shape of the data array.
+        '''Tuple of data dimension sizes.
 
 :Examples:
 
@@ -261,12 +226,9 @@ None
         return self._get_Array().shape
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
     @property
     def size(self):
-        '''Number of elements in the data array.
+        '''Number of elements in the data.
 
 :Examples:
 
@@ -295,6 +257,9 @@ None
         return self._get_Array().size
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self):
         '''Return a deep copy.
 
@@ -332,19 +297,7 @@ True
 -99.0 km
 
         '''
-        array = self._get_Array().get_array()
-#        array = array[...]
-#        
-#        if numpy.ma.isMA(array) and not array.ndim:
-#            # This is because numpy.ma.copy doesn't work for
-#            # scalar arrays (at the moment, at least)
-#            ma_array = numpy.ma.empty((), dtype=array.dtype)
-#            ma_array[...] = array
-#            array = ma_array
-#        else:
-#            array = array.copy()
-
-        return array
+        return self._get_Array().get_array()
     #--- End: def
 
     def get_calendar(self, *default):

@@ -382,6 +382,7 @@ None
 :Examples 2:
         '''
         self._set_component('geometry_type', None, value)
+        print ('in pdb.set_geometry_type:', self.get_geometry_type(), self)
     #--- End: def
 
     def set_interior_ring(self, interior_ring, copy=True):

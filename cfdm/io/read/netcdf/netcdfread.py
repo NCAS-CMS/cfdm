@@ -2240,9 +2240,10 @@ variable should be pre-filled with missing values.
                     # derived from a numeric scalar auxiliary
                     # coordinate
                     klass = self.implementation.get_class('DimensionCoordinate')
-                    coord = API.initialise_DimensionCoordinate(klass,
-                                                               source=coord,
-                                                               copy=False)
+                    coord = API.initialise_DimensionCoordinate_from_AuxiliaryCoordinate(
+                        klass,
+                        auxiliary_coordinate=coord,
+                        copy=False)
 
                     coord = API.expand_dims(construct=coord, position=0,
                                             copy=False)
@@ -2251,13 +2252,14 @@ variable should be pre-filled with missing values.
                     if _debug:
                         print('    [5] Inserting', repr(domain_axis))
                     axis = API.set_domain_axis(field=f,
-                                                  construct=domain_axis,
-                                                  copy=False)
+                                               construct=domain_axis,
+                                               copy=False)
                     
                     if _debug:
                         print('    [5] Inserting', repr(coord))
                     dim = API.set_dimension_coordinate(f, coord,
-                                                          axes=[axis], copy=False)
+                                                       axes=[axis],
+                                                       copy=False)
 
                     self._reference(ncvar)
                     if API.has_bounds(coord):
@@ -3380,9 +3382,10 @@ variable should be pre-filled with missing values.
 
                         try:
                             klass = self.implementation.get_class('Data')
-                            data = API.initialise_Data( klass,
-                                                        data=parsed_interval,
-                                                        units=units)
+                            data = API.initialise_Data(klass,
+                                                       data=parsed_interval,
+                                                       units=units,
+                                                       copy=False)
                         except:
                             self._add_message(
                                 field_ncvar, field_ncvar,
@@ -3704,7 +3707,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         #)
     #--- End: def
     
-    def _create_Data(self, array=None, ncvar=None, **kwargs):
+    def _create_Data(self, array=None, ncvar=None):
         '''
         '''
         g = self.read_vars
@@ -3718,7 +3721,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
 
         klass = self.implementation.get_class('Data')
         return API.initialise_Data(klass, data=array, units=units,
-                                      calendar=calendar, **kwargs)
+                                   calendar=calendar, copy=False)
     #--- End: def
 
     def _copy_construct(self, construct_type, field_ncvar, ncvar):

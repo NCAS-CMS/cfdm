@@ -15,10 +15,6 @@ class create_fieldTest(unittest.TestCase):
     def test_create_field(self):
 
         # Dimension coordinates
-        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.)))
-        dim1.set_property('standard_name', 'grid_latitude')
-        dim1.set_property('units', 'degrees')
-
         data = numpy.arange(9.) + 20
         data[-1] = 34
         dim0 = cfdm.DimensionCoordinate(data=cfdm.Data(data))
@@ -31,7 +27,11 @@ class create_fieldTest(unittest.TestCase):
         array[-2, 1] = 30
         array[-1, :] = [30, 36]
         dim0.set_bounds(cfdm.Bounds(data=cfdm.Data(array)))
-        
+
+        dim1 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(10.)))
+        dim1.set_property('standard_name', 'grid_latitude')
+        dim1.set_property('units', 'degrees')
+
         dim2 = cfdm.DimensionCoordinate(data=cfdm.Data([1.5]),
                                         bounds=cfdm.Bounds(data=cfdm.Data([[1, 2.]])))
         dim2.set_property('standard_name'         , 'atmosphere_hybrid_height_coordinate')
@@ -39,16 +39,16 @@ class create_fieldTest(unittest.TestCase):
                       
         dim3 = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.array([15.0])))
         dim3.set_property('standard_name', 'time')
-        dim3.set_property('units', 'days since 2004-6-1')
+        dim3.set_property('units', 'days since 2004-06-01')
 
         dim3.set_bounds(cfdm.Bounds(data=cfdm.Data([[0, 30.]])))
 
         dim3.set_geometry_type('climatology')
         
         # Auxiliary coordinates
-        ak = cfdm.DomainAncillary(data=cfdm.Data([10.])) #, 'm'))
+        ak = cfdm.DomainAncillary(data=cfdm.Data([10.]))
         ak.set_property('units', 'm')
-        ak.set_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]]))) # , ak.Units)
+        ak.set_bounds(cfdm.Bounds(data=cfdm.Data([[5, 15.]])))
         
         bk = cfdm.DomainAncillary(data=cfdm.Data([20.]))
         bk.set_bounds(cfdm.Bounds(data=cfdm.Data([[14, 26.]])))

@@ -66,6 +66,13 @@ AttributeError: Field doesn't have property 'standard_name'
     #--- End: def
 
     @staticmethod
+    def get_bounds(parent, *default):
+       '''
+       '''
+       return parent.get_bounds(*default)
+    #--- End: def
+
+    @staticmethod
     def get_cell_measure(field):
        '''
        '''
@@ -79,6 +86,13 @@ AttributeError: Field doesn't have property 'standard_name'
 
        '''
        return field.coordinates()
+    #--- End: def
+
+    @staticmethod
+    def get_data(parent, *default):
+       '''
+       '''
+       return parent.get_data(*default)
     #--- End: def
 
     @staticmethod
@@ -154,6 +168,13 @@ AttributeError: Field doesn't have property 'standard_name'
     #--- End: def
     
     @staticmethod
+    def get_interior_ring(parent, *default):
+       '''
+       '''
+       return parent.get_interior_ring(*default)
+    #--- End: def
+
+    @staticmethod
     def get_ncvar(construct, *default):
        '''
 
@@ -166,6 +187,18 @@ AttributeError: Field doesn't have property 'standard_name'
        return construct.get_ncvar(*default)
     #--- End: def
 
+    @staticmethod
+    def get_properties(construct):
+        '''
+:Parameters:
+
+:Returns:
+
+    `None`
+        '''
+        return construct.properties()
+    #--- End: def
+ 
     @staticmethod
     def get_property(construct, prop, *default):
        '''
@@ -611,7 +644,7 @@ variable.
 
     @staticmethod
     def initialise_Data(klass, data=None, units=None, calendar=None,
-                        **kwargs):
+                        copy=True):
         '''
 :Patameters:
 
@@ -622,18 +655,29 @@ variable.
     units:
 
     calendar:
-
-    kwargs: *optional*
         '''
-        return klass(data=data, units=units, calendar=calendar, **kwargs)
+        return klass(data=data, units=units, calendar=calendar,
+                     copy=copy)
     #--- End: def
 
     @staticmethod
-    def initialise_DimensionCoordinate(klass, source=None, copy=True,
-                                       **kwargs):
+    def initialise_DimensionCoordinate(klass, properties=None,
+                                       data=None, bounds=None,
+                                       interior_ring=None, copy=True):
         '''
         '''
-        return klass(source=source, copy=copy, **kwargs)
+        return klass(properties=properties, data=data, bounds=bounds,
+                     interior_ring=interior_ring, copy=copy)
+    #--- End: def
+
+    @staticmethod
+    def initialise_DimensionCoordinate_from_AuxiliaryCoordinate(
+            klass,
+            auxiliary_coordinate=None,
+            copy=True):
+        '''
+        '''
+        return klass(source=auxiliary_coordinate, copy=copy)
     #--- End: def
 
     @staticmethod

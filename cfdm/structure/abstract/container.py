@@ -101,11 +101,11 @@ class Container(with_metaclass(abc.ABCMeta, object)):
                 return default[0]
 
             if key is None:
-                raise AttributeError("{!r} object has no component {!r}".format(
+                raise AttributeError("{!r} object has no {!r} component".format(
                     self.__class__.__name__, component))
             
-            raise AttributeError("{!r} object has no element {!r} of the {!r} component".format(
-                self.__class__.__name__, key, component))
+            raise AttributeError("{!r} component of {!r} object has no key {!r}".format(
+                component, self.__class__.__name__, key))
         #--- End: if
         
         return value

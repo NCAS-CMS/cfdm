@@ -28,36 +28,110 @@ class Array(with_metaclass(abc.ABCMeta, object)):
     #--- End: def
 
     def __repr__(self):
-        '''
+        '''x.__repr__() <==> repr(x)
 
-x.__repr__() <==> repr(x)
-
-'''      
+        '''      
         return "<{0}: {1}>".format(self.__class__.__name__, str(self))
     #--- End: def
         
     def __str__(self):
+        '''x.__str__() <==> str(x)
+
         '''
-
-x.__str__() <==> str(x)
-
-'''
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
     #--- End: def
 
     @property
     @abc.abstractmethod
     def ndim(self):
+        '''The number of dimensions of the data array.
+
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.ndim
+2
+>>> a.size
+7008
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+
+        '''
         raise NotImplementedError(_MUST_IMPLEMENT)
 
     @property
     @abc.abstractmethod
     def shape(self):
+        '''Shape of the data array.
+
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.ndim
+2
+>>> a.size
+7008
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+
+        '''
         raise NotImplementedError(_MUST_IMPLEMENT)
 
     @property
     @abc.abstractmethod
     def size(self):
+        '''Number of elements in the data array.
+
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.size
+7008
+>>> a.ndim
+2
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+
+        '''
         raise NotImplementedError(_MUST_IMPLEMENT)
     
     @property

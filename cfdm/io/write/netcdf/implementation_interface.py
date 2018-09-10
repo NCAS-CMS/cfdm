@@ -212,6 +212,20 @@ axes, and possibly other axes, are returned.
     #--- End: def
 
     @staticmethod
+    def get_data_calendar(data):
+        '''
+        '''
+        return data.get_calendar(data)
+    #--- End: def
+
+    @staticmethod
+    def get_data_units(data):
+        '''
+        '''
+        return data.get_units(data)
+    #--- End: def
+
+    @staticmethod
     def get_domain_ancillaries(field):
         '''
         '''
@@ -605,6 +619,15 @@ False
         '''
         return klass(coordinates=coordinates,
                      datum=datum, coordinate_conversion=coordinate_conversion)
+    #--- End: def
+
+    @staticmethod
+    def initialise_Data(klass, data=None, units=None, calendar=None,
+                        copy=True):
+        '''
+        '''
+        return klass(data=data, units=units, calendar=calendar,
+                     copy=copy)
     #--- End: def
 
     @staticmethod
