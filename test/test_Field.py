@@ -55,7 +55,7 @@ class FieldTest(unittest.TestCase):
         g = f[..., slice(None)]
         self.assertTrue((g.get_array()== d).all())
         
-        g = f[:, slice(0, f.shape[1], 1)]
+        g = f[:, slice(0, f.data.shape[1], 1)]
         self.assertTrue((g.get_array() == d).all())
         
         for indices, shape, multiple_list_indices in (
@@ -87,10 +87,11 @@ class FieldTest(unittest.TestCase):
                 e = e[tuple(indices)]
             #--- End: if
             
-            self.assertTrue(g.shape == e.shape,
-                            'Bad shape for {}: {} != {}'.format(indices,
-                                                                g.shape,
-                                                                e.shape))
+            self.assertTrue(g.data.shape == e.data.shape,
+                            'Bad shape for {}: {} != {}'.format(
+                                indices,
+                                g.data.shape,
+                                e.data.shape))
             self.assertTrue((g.get_array() == e).all(),
                             'Bad values for {}: {} != {}'.format(indices,
                                                                  g.get_array(),
@@ -277,12 +278,12 @@ class FieldTest(unittest.TestCase):
 
         key = g.set_domain_axis(cfdm.DomainAxis(1))
         g.expand_dims(axis=key, copy=False)
-        self.assertTrue(g.ndim == f.ndim + 1)
+        self.assertTrue(g.data.ndim == f.data.ndim + 1)
         self.assertTrue(g.get_data_axes()[1:] == f.get_data_axes())
 
         key = g.set_domain_axis(cfdm.DomainAxis(1))
-        g = g.expand_dims(position=g.ndim, axis=key, copy=True)
-        self.assertTrue(g.ndim == f.ndim + 2)
+        g = g.expand_dims(position=g.data.ndim, axis=key, copy=True)
+        self.assertTrue(g.data.ndim == f.data.ndim + 2)
         self.assertTrue(g.get_data_axes()[1:-1] == f.get_data_axes())
     #--- End: def
 

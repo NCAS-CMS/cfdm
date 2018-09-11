@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from builtins import super
 
 #import abc
@@ -137,38 +136,36 @@ initialisation with the `set_data` method.
         initialization By default parameters are deep copied.
 
         '''
-#        super(Field, self).__init__(properties=properties,
-        super().__init__(properties=properties,
-                                    source=source, copy=copy,
-                                    _use_data=False)
+        super().__init__(properties=properties, source=source,
+                         copy=copy, _use_data=False)
 
         if source is not None:
-            # Initialise from the source parameter
+            # Initialise constructs and the data from the source
+            # parameter
             try:
                 constructs = source._get_constructs(None)
             except AttributeError:
                 constructs = None
                 
             try:
-                data_axes = source.get_data_axes(None)
-            except AttributeError:
-                data_axes = None
-                
-            try:
                 data = source.get_data(None) 
             except AttributeError:
                 data = None
+
+            try:
+                data_axes = source.get_data_axes(None)
+            except AttributeError:
+                data_axes = None
+                                
+            if constructs is not None and (copy or not _use_data):
+                constructs = constructs.copy(data=_use_data)
 
             if data is not None:
                 if _use_data:
                     self.set_data(data, data_axes, copy=copy)
             elif data_axes is not None:
                 self.set_data_axes(data_axes)
-                
-            if constructs is not None and (copy or not _use_data):
-                constructs = constructs.copy(data=_use_data)
         else:
-            # Initialise from the properties parameter
             constructs = self._Constructs(**self._construct_key_base)
 
         self._set_component('constructs', None, constructs)
@@ -359,7 +356,6 @@ ValueError: Can't initialize data: Data already exists
         if axes is not None:
             self.set_data_axes(axes)
 
-#        super(Field, self).set_data(data, copy=copy)
         super().set_data(data, copy=copy)
     #--- End: def
 
@@ -480,7 +476,6 @@ ValueError: Can't initialize data: Data already exists
         '''
 
         '''
-#        return super(Field, self).del_data()
         return super().del_data()
     #--- End: def
 

@@ -213,7 +213,7 @@ AttributeError: Field doesn't have property 'standard_name'
     #--- End: def
 
     @staticmethod
-    def get_size(x):
+    def get_data_size(parent):
         '''
 
 :Parameters:
@@ -223,7 +223,7 @@ AttributeError: Field doesn't have property 'standard_name'
     out: `int`
 
         '''
-        return x.size
+        return parent.data.size
     #--- End: def
 
     @staticmethod

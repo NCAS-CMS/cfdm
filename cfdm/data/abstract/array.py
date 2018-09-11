@@ -1,5 +1,6 @@
 from future.utils import with_metaclass
 from builtins import str
+
 import abc
 
 import numpy
@@ -11,7 +12,27 @@ _MUST_IMPLEMENT = 'This method must be implemented'
 
 class Array(with_metaclass(abc.ABCMeta, structure_Array)):
     '''A container for an array.
-    
+
+The form of the contained array is arbitrary and is defined by the
+attributes set on a subclass of the abstract `Array` object.
+
+It must be possible to derive the following from the contained array:
+
+  * Data-type of the array elements (see `dtype`)
+  
+  * Number of array dimensions (see `ndim`)
+  
+  * Array dimension sizes (see `shape`)
+  
+  * Number of elements in the array (see `size`)
+  
+  * An independent numpy array containing the data (see `get_array`)
+
+  * A subspace of the array as an independent numpy array (see
+    `__getitem__`)
+
+See `cfdm.NumpyArray` for an example implementation.
+
     '''
     @abc.abstractmethod
     def __getitem__(self, indices):
@@ -23,12 +44,12 @@ array.
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
-    @abc.abstractmethod
-    def close(self):
-        '''
-        '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
-    #--- End: def
+#    @abc.abstractmethod
+#    def close(self):
+#        '''
+#        '''
+#        raise NotImplementedError(_MUST_IMPLEMENT)
+#    #--- End: def
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
@@ -108,11 +129,11 @@ indices must contain an index for each dimension of the input array.
         return array                
     #--- End: def
 
-    @abc.abstractmethod
-    def open(self):
-        '''
-        '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
-    #---End: def
+#    @abc.abstractmethod
+#    def open(self):
+#        '''
+#        '''
+#        raise NotImplementedError(_MUST_IMPLEMENT)
+#    #---End: def
     
 #--- End: class

@@ -1,7 +1,6 @@
 from __future__ import print_function
-from __future__ import absolute_import
-from builtins import (zip, str, super)
-#import abc
+from builtins import (str, super, zip)
+
 import re
 
 from . import mixin

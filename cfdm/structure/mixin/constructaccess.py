@@ -85,22 +85,28 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     #--- End: def
 
     def dimension_coordinates(self, copy=False):
-        return self._get_constructs().constructs(construct_type='dimension_coordinate',
-                                                 copy=copy)
+        return self._get_constructs().constructs(
+            construct_type='dimension_coordinate',
+            copy=copy)
+    #--- End: def
     
     def domain_ancillaries(self, copy=False):
-        return self._get_constructs().constructs(construct_type='domain_ancillary',
-                                                 copy=copy)
+        return self._get_constructs().constructs(
+            construct_type='domain_ancillary',
+            copy=copy)
+    #--- End: def
     
     def domain_axes(self, copy=False):
-        return self._get_constructs().constructs(construct_type='domain_axis',
-                                                 copy=copy)
-    
+        return self._get_constructs().constructs(
+            construct_type='domain_axis',
+            copy=copy)
+    #--- End: def
+        
     def domain_axis_name(self, axis):
         '''
         '''
         return self._get_constructs().domain_axis_name(axis)
-    #--- End: for
+    #--- End: def
     
     def set_auxiliary_coordinate(self, item, key=None, axes=None,
                                  copy=True, replace=True):
@@ -118,10 +124,12 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         '''Insert a domain axis construct.
         '''
         axes = self.domain_axes()
-        if not replace and key in axes and axes[key].size != domain_axis.size:
+        if (not replace and
+            key in axes and
+            axes[key].get_size() != domain_axis.get_size()):
             raise ValueError(
 "Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
-    key, domain_axis.size, axes[key].size))
+    key, domain_axis.get_size(), axes[key].get_size()))
 
         return self.set_construct('domain_axis',
                                   domain_axis, key=key, copy=copy)

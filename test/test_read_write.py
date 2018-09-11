@@ -114,13 +114,13 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cfdm.read(self.filename)[0] 
-        self.assertTrue(f.dtype == numpy.dtype(float))
+        self.assertTrue(f.data.dtype == numpy.dtype(float))
 
         cfdm.write(f, tmpfile, fmt='NETCDF4', 
                  datatype={numpy.dtype(float): numpy.dtype('float32')})
         g = cfdm.read(tmpfile)[0]
-        self.assertTrue(g.dtype == numpy.dtype('float32'), 
-                        'datatype read in is '+str(g.dtype))
+        self.assertTrue(g.data.dtype == numpy.dtype('float32'), 
+                        'datatype read in is '+str(g.data.dtype))
     #--- End: def
 
 #    def test_write_HDF_chunks(self):

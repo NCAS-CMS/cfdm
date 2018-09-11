@@ -49,8 +49,9 @@ array.
 
         uncompressed_shape = self.shape
         partial_uncompressed_shapes = [
-            reduce(mul, [uncompressed_shape[i] for i in compressed_axes[i:]], 1)
-            for i in range(1, n_compressed_axes)]
+            reduce(mul, [uncompressed_shape[i]
+                         for i in compressed_axes[j:]], 1)
+            for j in range(1, n_compressed_axes)]
         
         sample_indices = [slice(None)] * compressed_array.ndim
         u_indices      = [slice(None)] * self.ndim        

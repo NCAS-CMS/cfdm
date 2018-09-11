@@ -1,9 +1,5 @@
-#from __future__ import absolute_import
 from builtins import str
 from past.builtins import basestring
-#import abc
-
-from copy import deepcopy
 
 from . import abstract
 #from future.utils import with_metaclass

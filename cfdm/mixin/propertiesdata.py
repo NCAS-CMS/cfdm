@@ -1,6 +1,5 @@
 from __future__ import print_function
 from builtins import (str, super)
-#import abc
 
 from .properties import Properties
 #from future.utils import with_metaclass
@@ -151,7 +150,6 @@ standard_name = 'time'
                                                          _prefix,
                                                          shape,
                                                          str(data)))
-        #--- End: if
         
         string = '\n'.join(string)
        
@@ -234,7 +232,6 @@ True
                 return False
 
             return True
-        #--- End: if
                 
         # ------------------------------------------------------------
         # Check the properties
@@ -627,8 +624,7 @@ used.
         if axes is None:
             return axes
 
-#        if ndim is None:
-        ndim = self.ndim
+        ndim = self.data.ndim
         
         if isinstance(axes, (int, int)):
             axes = (axes,)

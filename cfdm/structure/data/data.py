@@ -121,6 +121,13 @@ Used if copy.deepcopy is called on data
     # Attributes
     # ----------------------------------------------------------------
     @property
+    def data(self):
+        '''
+        '''
+        return self
+    #--- End: def
+    
+    @property
     def dtype(self):
         '''Data-type of the data elements.
 
@@ -261,7 +268,7 @@ None
     # Methods
     # ----------------------------------------------------------------
     def copy(self):
-        '''Return a deep copy.
+        '''Return a deep copy of the data.
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
 
@@ -279,22 +286,24 @@ None
     #--- End: def
 
     def get_array(self):
-        '''A numpy array copy the data.
+        '''Return an independent numpy array containing the data.
+
+:Returns:
+
+    out: `numpy.ndarray`
+        An independent numpy array of the data.
 
 :Examples:
 
 >>> d = Data([1, 2, 3.0], 'km')
->>> a = d.array
->>> isinstance(a, numpy.ndarray)
+>>> n = d.get_array()
+>>> isinstance(n, numpy.ndarray)
 True
->>> print a
-[ 1.  2.  3.]
->>> d[0] = -99 
->>> print a[0] 
-1.0
->>> a[0] = 88
->>> print d[0]
--99.0 km
+>>> print(n)
+[ 1.,   2.,   3.]
+>>> n[0] = 88
+>>> print(repr(d))
+<Data: [1.0, 2.0, 3.0] km>
 
         '''
         return self._get_Array().get_array()
@@ -337,7 +346,7 @@ True
             if default:
                 return default[0]
 
-            raise AttributeError("Can't get non-existent property {!r}".format('units'))
+            raise AttributeError("Can't get non-existent 'units'")
         
         return value
     #--- End: def

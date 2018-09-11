@@ -1,5 +1,4 @@
 from builtins import (object, str)
-#import abc
 
 from collections import OrderedDict
 #from future.utils import with_metaclass
@@ -591,12 +590,10 @@ None
             axes_shape = tuple(axes_shape)
                     
             if (construct.has_data() and 
-                construct.shape[:construct.ndim - extra_axes] != axes_shape):
+                construct.data.shape[:construct.data.ndim - extra_axes] != axes_shape):
                 raise ValueError(
 "Can't set {!r}: Data array shape of {} does not match the shape required by domain axes {}: {}".format(
-    construct,
-#    self._construct_type_description(construct_type),
-    construct.shape, tuple(axes), axes_shape))
+    construct, construct.data.shape, tuple(axes), axes_shape))
 
             self._set_construct_axes(key, axes)
         #--- End: if

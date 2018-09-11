@@ -9,7 +9,31 @@ _MUST_IMPLEMENT = 'This method must be implemented'
 
 
 class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
-    '''
+    '''A container for a compressed array.
+
+The compressed array must be a subclass of `Array`.
+
+
+CFDm says array is viewed as uncompressed.
+ndim, etc are for uncomspressed array
+
+
+It must be possible to derive the following from the contained array:
+
+  * Data-type of the array elements (see `dtype`)
+
+The following 
+  
+  * Number of array dimensions (see `ndim`)
+  
+  * Array dimension sizes (see `shape`)
+  
+  * Number of elements in the array (see `size`)
+  
+  * An independent numpy array containing the data (see `get_array`)
+
+  * A subspace of the array as an independent numpy array (see
+    `__getitem__`)
 
     '''
     def __init__(self, array=None, shape=None, size=None, ndim=None,
@@ -18,7 +42,7 @@ class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
 
 :Parameters:
 
-    array: `abstract.Array`
+    array: `Array`
 
         '''
         super().__init__(array=array, _shape=shape, _size=size,
@@ -143,9 +167,9 @@ MORE BLURB HERE ON UNPACKING ALGORITHM
         return self.array.dtype
     #--- End: def
 
-    def close(self):
-        self.array.close()
-    #--- End: def
+#    def close(self):
+#        self.array.close()
+#    #--- End: def
 
     def compressed_axes(self):
         '''
@@ -169,8 +193,8 @@ The compressed axes are uncompressed in the return numpy array.
         return self[...]
     #--- End: def
 
-    def open(self):
-        self.array.open()
-    #--- End: def
+#    def open(self):
+#        self.array.open()
+#    #--- End: def
 
 #--- End: class

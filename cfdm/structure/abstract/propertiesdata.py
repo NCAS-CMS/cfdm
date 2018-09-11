@@ -85,120 +85,120 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         return self.get_data()
     #--- End: def
 
-    @property
-    def dtype(self):
-        '''Describes the format of the elements in the data.
-
-:Examples:
-
->>> f.dtype
-dtype('float64')
-
-        '''
-        return self.get_data().dtype
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def ndim(self):
-        '''The number of dimensions of the data.
-
-:Examples:
-
->>> d.shape
-(73, 96)
->>> d.ndim
-2
->>> d.size
-7008
-
->>> d.shape
-(1, 1, 1)
->>> d.ndim
-3
->>> d.size
-1
-
->>> d.shape
-()
->>> d.ndim
-0
->>> d.size
-1
-
-        '''
-        return self.get_data().ndim
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def shape(self):
-        '''Shape of the data.
-
-:Examples:
-
->>> d.shape
-(73, 96)
->>> d.ndim
-2
->>> d.size
-7008
-
->>> d.shape
-(1, 1, 1)
->>> d.ndim
-3
->>> d.size
-1
-
->>> d.shape
-()
->>> d.ndim
-0
->>> d.size
-1
-
-        '''
-        return self.get_data().shape
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def size(self):
-        '''Number of elements in the data.
-
-:Examples:
-
->>> d.shape
-(73, 96)
->>> d.size
-7008
->>> d.ndim
-2
-
->>> d.shape
-(1, 1, 1)
->>> d.ndim
-3
->>> d.size
-1
-
->>> d.shape
-()
->>> d.ndim
-0
->>> d.size
-1
-
-        '''
-        return self.get_data().size
-    #--- End: def
+#    @property
+#    def dtype(self):
+#        '''Describes the format of the elements in the data.
+#
+#:Examples:
+#
+#>>> f.dtype
+#dtype('float64')
+#
+#        '''
+#        return self.get_data().dtype
+#    #--- End: def
+#
+#    # ----------------------------------------------------------------
+#    # Attribute (read only)
+#    # ----------------------------------------------------------------
+#    @property
+#    def ndim(self):
+#        '''The number of dimensions of the data.##
+#
+#:Examples:##
+#
+#>>> d.shape
+#(73, 96)
+#>>> d.ndim
+#2
+#>>> d.size
+#7008
+#
+#>>> d.shape
+#(1, 1, 1)
+#>>> d.ndim
+#3
+#>>> d.size
+#1
+#
+#>>> d.shape
+#()
+#>>> d.ndim
+#0
+#>>> d.size
+#1
+#
+#        '''
+#        return self.get_data().ndim
+#    #--- End: def
+#
+#    # ----------------------------------------------------------------
+#    # Attribute (read only)
+#    # ----------------------------------------------------------------
+#    @property
+#    def shape(self):
+#        '''Shape of the data.
+#
+#:Examples:
+#
+#>>> d.shape
+#(73, 96)
+#>>> d.ndim
+#2
+#>>> d.size
+#7008
+#
+#>>> d.shape
+#(1, 1, 1)
+#>>> d.ndim
+#3
+#>>> d.size
+#1
+#
+#>>> d.shape
+#()
+#>>> d.ndim
+#0
+#>>> d.size
+#1
+#
+#        '''
+#        return self.get_data().shape
+#    #--- End: def
+#
+#    # ----------------------------------------------------------------
+#    # Attribute (read only)
+#    # ----------------------------------------------------------------
+#    @property
+#    def size(self):
+#        '''Number of elements in the data.
+#
+#:Examples:
+#
+#>>> d.shape
+#(73, 96)
+#>>> d.size
+#7008
+#>>> d.ndim
+#2
+#
+#>>> d.shape
+#(1, 1, 1)
+#>>> d.ndim
+#3
+#>>> d.size
+#1
+#
+#>>> d.shape
+#()
+#>>> d.ndim
+#0
+#>>> d.size
+#1
+#
+#        '''
+#        return self.get_data().size
+#    #--- End: def
 
     def copy(self, data=True):
         '''Return a deep copy.
@@ -453,7 +453,6 @@ If the data has units or calendar properties then they are removed
 prior to insertion.
 
 .. versionadded:: 1.6
-
 
 .. seealso:: `del_data`, `get_data`, `has_data`
 

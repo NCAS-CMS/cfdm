@@ -212,17 +212,17 @@ axes, and possibly other axes, are returned.
     #--- End: def
 
     @staticmethod
-    def get_data_calendar(data):
+    def get_data_calendar(data, *default):
         '''
         '''
-        return data.get_calendar(data)
+        return data.get_calendar(*default)
     #--- End: def
 
     @staticmethod
-    def get_data_units(data):
+    def get_data_units(data, *default):
         '''
         '''
-        return data.get_units(data)
+        return data.get_units(*default)
     #--- End: def
 
     @staticmethod
@@ -422,7 +422,7 @@ AttributeError: Can't get non-existent 'ncvar'
     #--- End: def
 
     @staticmethod
-    def get_ndim(parent):
+    def get_data_ndim(parent):
         '''Return the number of dimensions spanned by the data array.
 
 :Parameters:
@@ -437,21 +437,21 @@ AttributeError: Can't get non-existent 'ncvar'
 
 :Examples 1:
 
->>> ndim = w.get_ndim(x)
+>>> ndim = w.get_data_ndim(x)
 
 :Examples 2:
 
 >>> d
 <DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_ndim(d)
+>>> w.get_data_ndim(d)
 1
 
 >>> b
 <Bounds: latitude(180, 2) degrees_north>
->>> w.get_ndim(b)
+>>> w.get_data_ndim(b)
 2
         '''
-        return parent.ndim
+        return parent.data.ndim
     #--- End: def
 
     @staticmethod
@@ -522,39 +522,39 @@ AttributeError: Can't get non-existent property 'foo'
         return parent.get_property(prop, *default)
     #--- End: def
     
-    @staticmethod
-    def get_shape(parent):
-        '''Return the shape of the data array.
-
-:Parameters:
-
-    parent: 
-        The object containing the data array.
-
-:Returns:
-
-    out: tuple
-        The shape of the data array.
-
-:Examples 1:
-
->>> shape = w.get_shape(x)
-
-:Examples 2:
-
->>> d
-<DimensionCoordinate: latitude(180) degrees_north>
->>> w.get_shape(d)
-(180,)
-
->>> b
-<Bounds: latitude(180, 2) degrees_north>
->>> w.get_shape(b)
-(180, 2)
-
-        '''
-        return parent.shape
-    #--- End: def
+#    @staticmethod
+#    def get_data_shape(parent):
+#        '''Return the shape of the data array.
+#
+#:Parameters:
+#
+#    parent: 
+#        The object containing the data array.
+#
+#:Returns:
+#
+#    out: tuple
+#        The shape of the data array.
+#
+#:Examples 1:
+#
+#>>> shape = w.get_data_shape(x)
+#
+#:Examples 2:
+#
+#>>> d
+#<DimensionCoordinate: latitude(180) degrees_north>
+#>>> w.get_data_shape(d)
+#(180,)
+#
+#>>> b
+#<Bounds: latitude(180, 2) degrees_north>
+#>>> w.get_data_shape(b)
+#(180, 2)
+#
+#        '''
+#        return parent.data.shape
+#    #--- End: def
 
     @staticmethod
     def has_datum(coordinate_reference):

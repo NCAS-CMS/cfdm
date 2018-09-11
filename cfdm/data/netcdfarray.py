@@ -1,11 +1,10 @@
-from __future__ import absolute_import
 from future import standard_library
 standard_library.install_aliases()
 from builtins import str
 #from functools import reduce
 
 import os
-import operator
+#import operator
 import urllib.parse
 
 import numpy
@@ -15,51 +14,8 @@ from . import abstract
 
 
 class NetCDFArray(abstract.Array):
-    '''An array stored in a netCDF file.
+    '''A container for an array stored in a netCDF file.
     
-**Initialization**
-
-:Parameters:
-
-    file: `str`
-        The netCDF file name in normalized, absolute form.
-
-    dtype: `numpy.dtype`
-        The numpy data type of the data array.
-
-    ndim: `int`
-        Number of dimensions in the data array.
-
-    shape: `tuple`
-        The data array's dimension sizes.
-
-    size: `int`
-        Number of elements in the data array.
-
-    ncvar: `str`, optional
-        The netCDF variable name containing the data array. Must be
-        set if *varid* is not set.
-
-    varid: `int`, optional
-        The netCDF ID of the variable containing the data array. Must
-        be set if *ncvar* is not set. Ignored if *ncvar* is set.
-
-#    ragged: `int`, optional
-#        Reduction in logical rank due to ragged array representation.
-#
-#    gathered: `int`, optional
-#        Reduction in logical rank due to compression by gathering.
-
-:Examples:
-
->>> import netCDF4
->>> import os
->>> nc = netCDF4.Dataset('file.nc', 'r')
->>> v = nc.variable['tas']
->>> a = NetCDFFileArray(file=os.path.abspath('file.nc'), ncvar='tas',
-                        dtype=v.dtype, ndim=v.ndim, shape=v.shape,
-                        size=v.size)
-
     '''
 
     def __init__(self, filename=None, ncvar=None, dtype=None,
@@ -85,8 +41,16 @@ class NetCDFArray(abstract.Array):
     size: `int`
         Number of elements in the data array.
 
+:Examples:
+
+>>> import netCDF4
+>>> nc = netCDF4.Dataset('file.nc', 'r')
+>>> v = nc.variable['tas']
+>>> a = NetCDFFileArray(file='file.nc', ncvar='tas', dtype=v.dtype, 
+...                     ndim=v.ndim, shape=v.shape, size=v.size)
+
 '''
-        self._nc = None
+        self._netcdf = None
         
         # By default, close the netCDF file after data array access
         self._close = True
@@ -122,18 +86,18 @@ Returns a numpy array that does not share memory with the un-indexed
 array.
 
         '''
-        nc = self.open()
+        netcdf = self.open()
         
 #        indices = tuple(self.parse_indices(indices))
         
         ncvar = self.ncvar
         if ncvar is not None:
             # Get the variable by name
-            array = nc.variables[ncvar][indices]
+            array = netcdf.variables[ncvar][indices]
         else:
             # Get the variable by netCDF ID
             varid = self.varid
-            for value in nc.variables.values():
+            for value in netcdf.variables.values():
                 if value._varid == varid:
                     array = value[indices]
                     break
@@ -210,22 +174,119 @@ x.__str__() <==> str(x)
         return "file={0} {1} shape={2}".format(self.filename, name, self.shape)
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
-    def ndim(self):
-         return self._ndim
+    def netcdf(self):
+        netcdf =  self._netcdf
     
     @property
     def dtype(self):
-         return self._dtype
+        '''Data-type of the data elements.
+         
+:Examples:
+
+>>> a.dtype
+dtype('float64')
+>>> print(type(a.dtype))
+<type 'numpy.dtype'>
+
+        '''
+        return self._dtype
+    #--- End: def
     
     @property
-    def size(self):
-         return self._size
+    def ndim(self):
+        '''Number of array dimensions
+        
+:Examples:
 
+>>> a.shape
+(73, 96)
+>>> a.ndim
+2
+>>> a.size
+7008
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+        '''
+        return self._ndim
+    #--- End: def
+    
     @property
     def shape(self):
-         return self._shape
+        '''Tuple of array dimension sizes.
 
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.ndim
+2
+>>> a.size
+7008
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+        '''
+        return self._shape
+    #--- End: def
+    
+    @property
+    def size(self):        
+        '''Number of elements in the array.
+
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.size
+7008
+>>> a.ndim
+2
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+
+        '''
+        return self._size
+    #--- End: def
+    
     @property
     def ncvar(self):
          return self._ncvar
@@ -239,58 +300,67 @@ x.__str__() <==> str(x)
 
 :Returns:
 
-    `None`
-
-:Examples:
-
->>> f.close()
-
-        '''
-        nc = self._nc
-        if nc is None:
-            return
-        
-        nc.close()    
-        self._nc = None
-    #--- End: def
-
-    @classmethod
-    def file_open(cls, filename, mode, fmt=None):
-        '''Return an open `netCDF4.Dataset` for a netCDF file.
-
-:Returns:
-
     out: `netCDF4.Dataset`
 
 :Examples:
 
->>> nc = f.file_open(filename, 'r')
->>> nc
-<netCDF4.Dataset at 0x115a4d0>
-
->>> nc = f.file_open(filename, 'w')
->>> nc
-<netCDF4.Dataset at 0x345c9e7>
+>>> a.close()
 
         '''
-        try:        
-            return netCDF4.Dataset(filename, mode, format=fmt)
-        except RuntimeError as error:
-            raise RuntimeError("{}: {}".format(error, filename))        
+        netcdf = self._netcdf
+        if netcdf is  None:
+            return
+        
+        netcdf.close()    
+        self._netcdf = None
     #--- End: def
+
+#    @classmethod
+#    def file_open(cls, filename, mode, fmt=None):
+#        '''Return an open `netCDF4.Dataset` for a netCDF file.
+#
+#:Returns:
+#
+#    out: `netCDF4.Dataset`
+#
+#:Examples:
+#
+#>>> nc = f.file_open(filename, 'r')
+#>>> nc
+#<netCDF4.Dataset at 0x115a4d0>
+#
+#>>> nc = f.file_open(filename, 'w')
+#>>> nc
+#<netCDF4.Dataset at 0x345c9e7>
+#
+#        '''
+#        try:        
+#            return netCDF4.Dataset(filename, mode, format=fmt)
+#        except RuntimeError as error:
+#            raise RuntimeError("{}: {}".format(error, filename))        
+#    #--- End: def
 
     def get_array(self):
         '''Return an independent numpy array containing the data.
 
+:Returns:
+
+    out: `numpy.ndarray`
+        An independent numpy array of the data.
+
 :Examples:
 
->>> n = a.get_array()
-
+>>> n = numpy.asanyarray(a)
+>>> isinstance(n, numpy.ndarray)
+True
         '''
         return self[...]
+    #--- End: def
     
     def open(self):
         '''Return an open `netCDF4.Dataset` for the file containing the array.
+
+The returned dataset is also stored internally.
 
 :Returns:
 
@@ -298,16 +368,21 @@ x.__str__() <==> str(x)
 
 :Examples:
 
->>> f.open()
+>>> a.open()
 <netCDF4.Dataset at 0x115a4d0>
 
         '''
-        nc = self._nc
-        if nc is None:
-            nc = self.file_open(self.filename, 'r')            
-            self._nc = nc
+        netcdf = self._netcdf
+        if netcdf is None:
+            try:        
+                netcdf = netCDF4.Dataset(self.filename, 'r')
+            except RuntimeError as error:
+                raise RuntimeError("{}: {}".format(error, filename))        
+
+#            nc = self.file_open(self.filename, 'r')            
+            self._netcdf = netcdf
             
-        return nc
+        return netcdf
     #--- End: def
 
 #--- End: class

@@ -6,44 +6,141 @@ from . import abstract
 
 
 class NumpyArray(abstract.Array):
-    '''A numpy array.
+    '''A container for a numpy array.
 
     '''
-    def __init__(self, array):
-        '''
-        
-**Initialization**
+    def __init__(self, array=None):
+        '''**Initialization**
 
 :Parameters:
 
     array: `numpy.ndarray`
+        The numpy array to be contained.
 
         '''
         super().__init__(array=array)
     #--- End: def
-
-    @property
-    def ndim(self):
-        return self.array.ndim
-
-    @property
-    def shape(self):
-        return self.array.shape
-
-    @property
-    def size(self):
-        return self.array.size
-
+    
     @property
     def dtype(self):
-        return self.array.dtype
-
-    def get_array(self):
-        '''Return an independent numpy array containing the data.
+        '''Data-type of the data elements.
 
 :Examples:
 
->>> n = a.get_array()
+>>> a.dtype
+dtype('float64')
+>>> print(type(a.dtype))
+<type 'numpy.dtype'>
+
+        '''
+        return self.array.dtype
+    #--- End: def
+
+    @property
+    def ndim(self):
+        '''Number of array dimensions
+                
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.ndim
+2
+>>> a.size
+7008
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+
+        '''
+        return self.array.ndim
+    #--- End: def
+    
+    @property
+    def shape(self):
+        '''Tuple of array dimension sizes.
+
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.ndim
+2
+>>> a.size
+7008
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+
+'''
+        return self.array.shape
+    #--- End: def
+    
+    @property
+    def size(self):
+        '''Number of elements in the array.
+
+:Examples:
+
+>>> a.shape
+(73, 96)
+>>> a.size
+7008
+>>> a.ndim
+2
+
+>>> a.shape
+(1, 1, 1)
+>>> a.ndim
+3
+>>> a.size
+1
+
+>>> a.shape
+()
+>>> a.ndim
+0
+>>> a.size
+1
+        '''
+        return self.array.size
+    #--- End: def
+    
+    def get_array(self):
+        '''Return an independent numpy array containing the data.
+
+:Returns:
+
+    out: `numpy.ndarray`
+        An independent numpy array of the data.
+
+:Examples:
+
+>>> n = numpy.asanyarray(a)
+>>> isinstance(n, numpy.ndarray)
+True
 
         '''
         array = self.array

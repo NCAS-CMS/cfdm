@@ -54,7 +54,7 @@ bounds.
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
                         bounds_indices.append(slice(None, None, -1))
-                #-- End: if
+                #--- End: if
 #                    else:
 #                        bounds_indices.append(slice(None))
 #                else:

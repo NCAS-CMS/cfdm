@@ -1,6 +1,3 @@
-#from __future__ import absolute_import
-#import abc
-
 from . import abstract
 #from future.utils import with_metaclass
 
@@ -26,10 +23,7 @@ does not depend on axes of the domain which are not spanned by the
 array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.
 
-    '''   
-
-    
-    
+    '''
     def __init__(self, measure=None, properties=None, data=None,
                  source=None, copy=True, _use_data=True):
         '''**Initialisation**

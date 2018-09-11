@@ -25,16 +25,16 @@ array.
         return self.get_subspace(self.array, indices, copy=True)
     #--- End: def
 
-    def close(self):
-        '''
-        '''
-        pass
-    #--- End: def
-
-    def open(self):
-        '''
-        '''
-        pass
-    #--- End: def
+#    def close(self):
+#        '''
+#        '''
+#        pass
+#    #--- End: def
+#
+#    def open(self):
+#        '''
+#        '''
+#        pass
+#    #--- End: def
 
 #--- End: class

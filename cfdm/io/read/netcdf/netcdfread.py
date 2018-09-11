@@ -175,34 +175,6 @@ netCDF variable.
 #        return self.implementation.get_class('NetCDFArray').file_open(filename, 'r')
     #--- End: def        
 
-#    def get_coordinates(self, f):
-#       '''
-#       '''
-#       return f.coordinates()
-#    #-- End: def
-#
-#    def get_ncvar(self, construct, *default):
-#       '''
-#       '''
-#       return construct.get_ncvar(*default)
-#    #-- End: def
-#
-#    def get_int_max(self, data):
-#        '''
-#        '''
-#        return int(data.max())
-#
-#    def get_property(self, construct, prop, *default):
-#       '''
-#       '''
-#       return construct.get_property(prop, *default)
-#    #-- End: def
-#
-#    def get_size(self, x):
-#        '''
-#        '''
-#        return x.size
-
     @classmethod    
     def is_netcdf_file(cls, filename):
         '''Return True if the file is a netCDF file.
@@ -826,264 +798,6 @@ ancillaries, field ancillaries).
                         g[key][ncvar] = external_read_vars[key][ncvar]                   
     #--- End: def
     
-#    def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
-#        '''Insert a auxiliary coordinate object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `AuxiliaryCoordinate`
-#
-#    axes: `tuple`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        self._reference(self.get_ncvar(construct))
-#        if construct.has_bounds():
-#            self._reference(self.get_ncvar(construct.get_bounds()))
-#            
-#        return field.set_auxiliary_coordinate(construct, axes=axes, copy=copy)
-#    #--- End: def
-#
-#    def set_bounds(self, construct, bounds, copy=True):
-#        '''
-#        '''
-#        construct.set_bounds(bounds, copy=copy)
-#    #--- End: def
-#
-#    def set_geometry_type(self, coordinate, value):
-#        '''
-#        '''
-#        coordinate.set_geometry_type(value)
-#    #--- End: def
-#    
-#    def set_cell_measure(self, field, construct, axes, copy=True):
-#        '''Insert a cell_measure object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `CellMeasure`
-#
-#    axes: `tuple`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        self._reference(self.get_ncvar(construct))
-#
-#        return field.set_cell_measure(construct, axes=axes, copy=copy)
-#    #--- End: def
-#    
-#    def set_cell_method(self, field, construct, copy=True):
-#        '''Insert a cell_method object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `cell_method`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        return field.set_cell_method(construct, copy=copy)
-#    #--- End: def
-#
-#    def set_coordinate_reference(self, field, construct, copy=True):
-#        '''Insert a coordinate reference object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `CoordinateReference`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        ncvar = self.get_ncvar(construct, None)
-#        if ncvar is not None:
-#            self._reference(ncvar)
-#                    
-#        return field.set_coordinate_reference(construct, copy=copy)
-#    #--- End: def
-#
-#    def set_coordinate_reference_coordinates(self, coordinate_reference,
-#                                             coordinates):
-#        '''
-#
-#:Parameters:
-#
-#:Returns:
-#
-#    `None`
-#        '''
-#        coordinate_reference.coordinates(coordinates)
-#    #--- End: de
-#
-#    def set_datum(self, coordinate_reference, datum):
-#        '''
-#        '''
-#        coordinate_reference.set_datum(datum)
-#    #--- End: def
-#    
-#    def set_dimension_coordinate(self, field, construct, axes, copy=True):
-#        '''Insert a dimension coordinate object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `DimensionCoordinate`
-#
-#    axes: `tuple`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        self._reference(self.get_ncvar(construct))
-#        if construct.has_bounds():
-#            self._reference(self.get_ncvar(construct.get_bounds()))
-#            
-#        return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
-#    #--- End: def
-#    
-#    def set_domain_ancillary(self, field, construct, axes,
-#                             extra_axes=0, copy=True):
-#        '''Insert a domain ancillary object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `DomainAncillary`
-#
-#    axes: `tuple`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        self._reference(self.get_ncvar(construct))
-#        if construct.has_bounds():
-#            self._reference(self.get_ncvar(construct.get_bounds()))
-#
-#        return field.set_domain_ancillary(construct, axes=axes,
-#                                          extra_axes=extra_axes,
-#                                          copy=copy)
-#    #--- End: def
-#    
-#    def set_domain_axis(self, field, construct, copy=True):
-#        '''Insert a domain_axis object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `domain_axis`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        return field.set_domain_axis(construct, copy=copy)
-#    #--- End: def
-#    
-#    def set_external(self, construct):
-#        '''
-#        '''
-#        construct.set_external(True)
-#    #--- End: def
-#
-#    def set_field_ancillary(self, field, construct, axes, copy=True):
-#        '''Insert a field ancillary object into a field.
-#
-#:Parameters:
-#
-#    field: `Field`
-#
-#    construct: `FieldAncillary`
-#
-#    axes: `tuple`
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        self._reference(self.get_ncvar(construct))
-#
-#        return field.set_field_ancillary(construct, axes=axes, copy=copy)
-#    #--- End: def
-#
-#    def set_interior_ring(self, parent, interior_ring, copy=True):
-#        '''Insert an interior ring array into a coordiante.
-#
-#:Parameters:
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    out: `str`
-#        '''
-#        return parent.set_interior_ring(interior_ring, copy=copy)
-#    #--- End: def
-#    
-#    def set_ncdim(self, construct, ncdim):
-#        '''
-#        '''
-#        construct.set_ncdim(ncdim)
-#    #-- End: def
-#
-#    def set_ncvar(self, parent, ncvar):
-#        '''
-#        '''
-#        parent.set_ncvar(ncvar)
-#    #-- End: def
-#
-#    def set_node_ncdim(self, parent, ncdim):
-#        '''
-#        '''
-#        parent.set_node_ncdim(ncdim)
-#    #-- End: def
-#
-#    def set_part_ncdim(self, parent, ncdim):
-#        '''
-#        '''
-#        parent.set_part_ncdim(ncdim)
-#    #-- End: def
-#
-#    def set_properties(self, construct, properties, copy=True):
-#        '''
-#        '''
-#        return construct.properties(properties, copy=copy)
-#    #--- End: def
-
     def _parse_compression_gathered(self, ncvar, compress):
         '''
         '''
@@ -1136,7 +850,7 @@ ancillaries, field ancillaries).
         
         elements_per_instance = self._create_data(ncvar, uncompress_override=True)
     
-        instance_dimension_size = API.get_size(elements_per_instance)
+        instance_dimension_size = API.get_data_size(elements_per_instance)
         element_dimension_size  = API.get_int_max(elements_per_instance)
     
         if _debug:
@@ -1497,14 +1211,14 @@ variable should be pre-filled with missing values.
                 
                 parts = self._create_data(part_node_count)
                 print('parts=', parts.get_array())
-                total_number_of_parts = API.get_size(parts)
+                total_number_of_parts = API.get_data_size(parts)
 #                parts_per_geometry = nodes_per_geometry.copy()
                 print('total_number_of_parts=',total_number_of_parts)
                 index = parts.copy()
 
                 p = 0
                 i = 0
-                for j in range(API.get_size(nodes_per_geometry)):
+                for j in range(API.get_data_size(nodes_per_geometry)):
                     print('i=', i)
                     print('j=', j)
                     n_nodes_in_this_geometry = int(nodes_per_geometry[j])
@@ -1586,7 +1300,7 @@ variable should be pre-filled with missing values.
         '''
         g = self.read_vars
         
-        instance_dimension_size = API.get_size(elements_per_instance)
+        instance_dimension_size = API.get_data_size(elements_per_instance)
         element_dimension_size  = API.get_int_max(elements_per_instance)
         
         # Make sure that the element dimension name is unique
@@ -2072,7 +1786,6 @@ variable should be pre-filled with missing values.
                 pass
     
             unpacked_dtype = numpy.result_type(*values)
-        #--- End: if    
     
         # ----------------------------------------------------------------
         # Initialize the field with its attributes
@@ -2124,8 +1837,9 @@ variable should be pre-filled with missing values.
                                                               verbose=verbose)
                     g['dimension_coordinate'][ncdim] = coord
                 
-                domain_axis = self._create_domain_axis(API.get_size(coord),
-                                                       ncdim)
+                domain_axis = self._create_domain_axis(
+                    API.get_data_size(coord),
+                    ncdim)
                 if _debug:
                     print('    [0] Inserting', repr(domain_axis))
                 axis = API.set_domain_axis(field=f, construct=domain_axis,
@@ -2211,7 +1925,6 @@ variable should be pre-filled with missing values.
                                                               f,
                                                               verbose=verbose)
                     g['auxiliary_coordinate'][ncvar] = coord
-                #--- End: if
      
                 # --------------------------------------------------------
                 # Turn a 
@@ -2248,7 +1961,8 @@ variable should be pre-filled with missing values.
                     coord = API.expand_dims(construct=coord, position=0,
                                             copy=False)
                     
-                    domain_axis = self._create_domain_axis(API.get_size(coord))
+                    domain_axis = self._create_domain_axis(
+                        API.get_data_size(coord))
                     if _debug:
                         print('    [5] Inserting', repr(domain_axis))
                     axis = API.set_domain_axis(field=f,
@@ -2324,12 +2038,12 @@ variable should be pre-filled with missing values.
                     if bounds == ncvar:
                         bounds = None
         
-                    domain_anc = self._create_domain_ancillary(field_ncvar,
-                                                               ncvar,
-                                                               f,
-                                                               bounds=bounds,
-                                                               verbose=verbose)
-                #--- End: if
+                    domain_anc = self._create_domain_ancillary(
+                        field_ncvar,
+                        ncvar,
+                        f,
+                        bounds=bounds,
+                        verbose=verbose)
                 
                 if len(axes) == len(self._ncdimensions(ncvar)):
                     domain_ancillaries.append((ncvar, domain_anc, axes))
@@ -2368,7 +2082,6 @@ variable should be pre-filled with missing values.
                     
                 g['domain_ancillary'][ncvar]     = domain_anc
                 g['domain_ancillary_key'][ncvar] = da_key
-            #--- End: for
             
             coordinate_reference = self._create_formula_terms_ref(
                 f, key, coord,
@@ -2624,32 +2337,10 @@ variable should be pre-filled with missing values.
                 
             print('    Error processing netCDF variable {}{}: {}'.format(
                 ncvar, dimensions, d['message']))
-        #--- End: if
         
         return d
     #--- End: def
 
-#    def _get_bounds_ncvar(self, coord_ncvar):
-#        '''
-#        '''
-#        attribute = None
-#        
-#        bounds = self.read_vars['variable_attributes'][coord_ncvar].get('bounds')
-#        if bounds is not None:
-#            attribute = 'bounds'
-#        else:
-#            bounds = self.read_vars['variable_attributes'][coord_ncvar].get('climatology')
-#            if bounds is not None:
-#                attribute = 'bounds'
-#            else:
-#                bounds = self.read_vars['variable_attributes'][coord_ncvar].get('nodes')
-#                if bounds is not None:
-#                    attribute = 'bounds'
-#        #--- End: if
-#
-#        return (bounds, attribute)
-#    #--- End: def
-                          
     def _get_domain_axes(self, ncvar, allow_external=False):
         '''
         '''
@@ -2902,81 +2593,6 @@ variable should be pre-filled with missing values.
         return c
     #--- End: def
     
-#    def _set_data(self, construct, data, axes=None, copy=True):
-#        '''Insert a data object into construct. 
-#
-#If the construct is a Field then the corresponding domain axes must
-#also be provided.
-#
-#:Parameters:
-#
-#    construct:
-#
-#    data: `Data`
-#
-#    axes: `tuple`, optional
-#
-#    copy: `bool`, optional
-#
-#:Returns:
-#
-#    `None`
-#        '''
-#        if axes is None:
-#            construct.set_data(data, copy=copy)
-#        else:
-#            construct.set_data(data, axes, copy=copy)
-#    #--- End: def
-#
-#    def expand_dims(self, construct, position, copy=True):
-#        '''
-#        '''
-#        return construct.expand_dims(position=position, copy=copy)
-#    #--- End: def
-#    
-#    def get_auxiliary_coordinate(self, f):
-#       '''
-#       '''
-#       return f.auxiliary_coordinates()
-#    #-- End: def
-#
-#    def get_cell_measure(self, f):
-#       '''
-#       '''
-#       return f.cell_measures()
-#    #-- End: def
-#
-#    def get_datum(self, coordinate_reference):
-#        '''
-#        '''
-#        return coordinate_reference.datum
-#    #--- End: def
-#    
-#    def get_dimension_coordinate(self, f):
-#       '''
-#       '''
-#       return f.dimension_coordinates()
-#    #-- End: def
-#
-#    def get_domain_ancillary(self, f):
-#       '''
-#       '''
-#       return f.domain_ancillaries()
-#    #-- End: def
-# 
-#    def get_field_ancillary(self, f):
-#       '''
-#       '''
-#       return f.field_ancillaries()
-#    #-- End: def
-#                                  
-#    def _transpose_data(self, data, axes=None, copy=True):
-#        '''
-#        '''
-#        data = data.tranpose(axes=axes, copy=copy)
-#        return data
-#    #-- End: def
-    
     def _create_cell_measure(self, measure, ncvar):
         '''Create a cell measure object.
     
@@ -3086,7 +2702,6 @@ variable should be pre-filled with missing values.
             size /= strlen
             ndim -= 1
             dtype = numpy.dtype('S{0}'.format(strlen))
-        #--- End: if
 
         array = self._create_NetCDFArray(filename=g['filename'],
                                          ncvar=ncvar, dtype=dtype,
@@ -4415,32 +4030,10 @@ CF-1.7 Appendix A
                           for value in re.finditer(pat_value, mapping.group('values'))]
 
                 out.append({term: values})
-
+        #--- End: if
+        
         return out
     #--- End: def
 
-#    def create_compressed_array(self, array=None,
-#                                uncompressed_ndim=None,
-#                                uncompressed_shape=None,
-#                                uncompressed_size=None,
-#                                compression_type=None,
-#                                compression_parameters=None):
-#        '''
-#        '''
-#        return self.initialise('CompressedArray',
-#            array=array,
-#            ndim=uncompressed_ndim,
-#            shape=uncompressed_shape,
-#            size=uncompressed_size,
-#            compression_type=compression_type,
-#            compression_parameters=compression_parameters)
-#    #--- End: def
-
-#    def del_property(self, construct, prop):
-#        '''
-#        '''
-#        return construct.del_property(prop)
-#    #--- End: def
-    
 #--- End: class
 

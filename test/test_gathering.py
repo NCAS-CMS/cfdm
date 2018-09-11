@@ -124,7 +124,7 @@ class DSGTest(unittest.TestCase):
         print(g.data.list_indices().get_array())
         print(g.data.compression_type())
         print(g.data.compressed_axes())
-        print(g.shape)
+        print(g.data.shape)
         
 #        # Select the specific humidity field
 #        q = [g for g in f

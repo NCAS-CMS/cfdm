@@ -1,4 +1,5 @@
 from __future__ import print_function
+#from future.utils import with_metaclass
 from builtins import super
 
 #import abc
@@ -8,11 +9,13 @@ import numpy
 import sys
 
 from .container import Container
-#from future.utils import with_metaclass
 
 
-class Properties(Container): #with_metaclass(abc.ABCMeta, Container)):
+class Properties(Container):
+#class Properties(with_metaclass(abc.ABCMeta, Container)):
     '''Mixin class for descriptive properties.
+
+Subclasses must also inherit from ..structure.abstract.properties
 
     '''
 
@@ -53,9 +56,9 @@ class Properties(Container): #with_metaclass(abc.ABCMeta, Container)):
             if value.startswith("'") or value.startswith('"'):
                 subsequent_indent = '{0} '.format(subsequent_indent)
                 
-            string.append(textwrap.fill(name+value, 79,
-                                        subsequent_indent=subsequent_indent))
-        #--- End: for
+            string.append(
+                textwrap.fill(name+value, 79,
+                              subsequent_indent=subsequent_indent))
         
         return '\n'.join(string)
     #--- End: def
@@ -113,5 +116,5 @@ class Properties(Container): #with_metaclass(abc.ABCMeta, Container)):
 
         return True
     #--- End: def
-        
+
 #--- End: class

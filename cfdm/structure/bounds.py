@@ -1,8 +1,3 @@
-#from __future__ import absolute_import
-#from future.utils import with_metaclass
-#
-#import abc
-
 from . import abstract
 
 

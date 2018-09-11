@@ -1,6 +1,4 @@
-#from __future__ import absolute_import
 from builtins import str
-#import abc
 
 from . import abstract
 #from future.utils import with_metaclass
