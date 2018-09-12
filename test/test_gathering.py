@@ -121,8 +121,8 @@ class DSGTest(unittest.TestCase):
                 break
 
 #        print(g.get_array())
-        print(g.data.list_indices().get_array())
-        print(g.data.compression_type())
+        print(g.data.list_array().get_array())
+        print('compression_type=',g.data.compression_type())
         print(g.data.compressed_axes())
         print(g.data.shape)
         

@@ -8,9 +8,17 @@ from . import abstract
 class RaggedContiguousArray(abstract.CompressedArray):
     '''A container for a contiguous ragged compressed array.
 
+A collection of features stored using a contiguous ragged array
+combines all features along a single dimension (the "sample"
+dimension) such that each feature in the collection occupies a
+contiguous block.
+
+The information needed to uncompress the data is stored in a separate
+"count" array that gives the size of each block.
+
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, elements_per_instance=None):
+                 ndim=None, count_array=None):
         '''**Initialization**
 
 :Parameters:
@@ -30,28 +38,33 @@ class RaggedContiguousArray(abstract.CompressedArray):
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    elements_per_instance: `Array` or numpy array_like
-        The number of elements that each instance has in the
-        compressed array.
+    count_array: `Array`
+        The "count" array required to uncompress the data, identical to
+        the data of a CF-netCDF "count" variable.
 
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
-                         elements_per_instance=elements_per_instance,
-                         sample_axis=0)
+                         count_array=count_array, sample_axis=0)
     #--- End: def
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns an uncompressed subspace of the gathered array as an
-independent numpy array.
+Returns an subspace of the uncompressed data an independent numpy
+array.
 
-The indices that define the subspace are relative to the full
-uncompressed array and must be either `Ellipsis` or a sequence that
-contains an index for each dimension. In the latter case, each
-dimension's index must either be a `slice` object or a sequence of
-integers.
+The indices that define the subspace are relative to the uncompressed
+data and must be either `Ellipsis` or a sequence that contains an
+index for each dimension. In the latter case, each dimension's index
+must either be a `slice` object or a sequence of two or more integers.
+
+Indexing is similar to numpy indexing. The only difference to numpy
+indexing (given the restrictions on the type of indices allowed) is:
+
+  * When two or more dimension's indices are sequences of integers
+    then these indices work independently along each dimension
+    (similar to the way vector subscripts work in Fortran).
 
         '''
         # ------------------------------------------------------------
@@ -71,7 +84,7 @@ integers.
         # --------------------------------------------------------
             
         start = 0 
-        for i, n in enumerate(self.elements_per_instance):
+        for i, n in enumerate(self.count_array.get_array()):
             n = int(n)
             sample_indices = slice(start, start + n)
             

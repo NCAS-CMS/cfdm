@@ -15,7 +15,7 @@ class NumpyArray(abstract.Array):
 :Parameters:
 
     array: `numpy.ndarray`
-        The numpy array to be contained.
+        The numpy array.
 
         '''
         super().__init__(array=array)

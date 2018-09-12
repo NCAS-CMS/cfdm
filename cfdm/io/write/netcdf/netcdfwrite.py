@@ -230,9 +230,9 @@ If the input variable has no `!dtype` attribute (or it is None) then
     
 #        dtype = variable.dtype
     
-        convert_dtype = g['datatype']
+#        convert_dtype = g['datatype']
     
-        new_dtype = convert_dtype.get(dtype, None)
+        new_dtype = g['datatype'].get(dtype, None)
         if new_dtype is not None:
             dtype = new_dtype
             
@@ -823,6 +823,7 @@ it is not re-written.
             # netCDF variable
             self._write_bounds(anc, ncdimensions, ncvar)
     
+            # Create a new domain ancillary variable
             self._write_netcdf_variable(ncvar, ncdimensions, anc)
         #--- End: if
     
@@ -866,6 +867,8 @@ it is not re-written.
             ncvar = g['seen'][id(anc)]['ncvar']    
         else:
             ncvar = self._create_netcdf_variable_name(anc, default='ancillary_data')
+
+            # Create a new field ancillary variable
             self._write_netcdf_variable(ncvar, ncdimensions, anc)
     
         g['key_to_ncvar'][key] = ncvar
@@ -916,8 +919,9 @@ measure will not be written.
                 raise ValueError(
                     "External cell measure requires a netCDF variable name")
         else:
-            # Create a new cell measure variable
             ncvar = self._create_netcdf_variable_name(cell_measure, default='cell_measure')
+
+            # Create a new cell measure variable
             self._write_netcdf_variable(ncvar, ncdimensions, cell_measure)
                 
         g['key_to_ncvar'][key] = ncvar
@@ -1012,7 +1016,8 @@ measure will not be written.
     #--- End: def
     
     def _write_netcdf_variable(self, ncvar, ncdimensions, cfvar,
-                               omit=(), extra={}, fill=True):
+                               omit=(), extra={}, fill=False,
+                               data_variable=False):
         '''Create a netCDF variable from *cfvar* with name *ncvar* and
 dimensions *ncdimensions*. The new netCDF variable's properties are
 given by cfvar.properties(), less any given by the *omit* argument. If
@@ -1076,7 +1081,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         else:
             fill_value = False
     
-        if getattr(cfvar, 'isfield', False):
+        if data_variable:
             lsd = g['least_significant_digit']
         else:
             lsd = None
@@ -1164,13 +1169,13 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         '''
         g = self.write_vars
 
-        convert_dtype = g['datatype']
+#        convert_dtype = g['datatype']
 
         # Get the data as a numpy array
         array = API.get_array(data)
 
         # Convert data type
-        new_dtype = convert_dtype.get(array.dtype, None)
+        new_dtype = g['datatype'].get(array.dtype, None)
         if new_dtype is not None:
             array = array.astype(new_dtype)  
 
@@ -1654,7 +1659,7 @@ extra trailing dimension.
         # Create a new data variable
         self._write_netcdf_variable(ncvar, ncdimensions, f,
                                     omit=g['global_properties'],
-                                    extra=extra)
+                                    extra=extra, data_variable=True)
         
         # Update the 'seen' dictionary, if required
         if add_to_seen:

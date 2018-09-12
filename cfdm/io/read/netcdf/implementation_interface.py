@@ -711,7 +711,7 @@ variable.
     @staticmethod
     def initialise_GatheredArray(klass, compressed_array=None,
                                  ndim=None, shape=None, size=None,
-                                 sample_axis=None, indices=None):
+                                 sample_axis=None, list_array=None):
         '''
         '''
         return klass(compressed_array=compressed_array,
@@ -719,7 +719,7 @@ variable.
                      shape=shape,
                      size=size,
                      sample_axis=sample_axis,
-                     indices=indices)
+                     list_array=list_array)
     #--- End: def
 
     @staticmethod
@@ -735,28 +735,21 @@ variable.
     @staticmethod
     def initialise_RaggedContiguousArray(klass, compressed_array=None,
                                          ndim=None, shape=None,
-                                         size=None,
-                                         elements_per_instance=None):
+                                         size=None, count_array=None):
         '''
         '''
-        return klass(compressed_array=compressed_array,
-                     ndim=ndim,
-                     shape=shape,
-                     size=size,
-                     elements_per_instance=elements_per_instance)
+        return klass(compressed_array=compressed_array, ndim=ndim,
+                     shape=shape, size=size, count_array=count_array)
     #--- End: def
 
     @staticmethod
     def initialise_RaggedIndexedArray(klass, compressed_array=None,
                                       ndim=None, shape=None,
-                                      size=None, instances=None):
+                                      size=None, index_array=None):
         '''
         '''
-        return klass(compressed_array=compressed_array,
-                     ndim=ndim,
-                     shape=shape,
-                     size=size,
-                     instances=instances)
+        return klass(compressed_array=compressed_array, ndim=ndim,
+                     shape=shape, size=size, index_array=index_array)
     #--- End: def
 
     @staticmethod
@@ -764,16 +757,13 @@ variable.
                                                 compressed_array=None,
                                                 ndim=None, shape=None,
                                                 size=None,
-                                                profile_indices=None,
-                                                elements_per_profile=None):
+                                                count_array=None,
+                                                index_array=None):
         '''
         '''
-        return klass(compressed_array=compressed_array,
-                     ndim=ndim,
-                     shape=shape,
-                     size=size,
-                     profile_indices=profile_indices,
-                     elements_per_profile=elements_per_profile)
+        return klass(compressed_array=compressed_array, ndim=ndim,
+                     shape=shape, size=size, count_array=count_array,
+                     index_array=index_array)
     #--- End: def
 
 #--- End: class

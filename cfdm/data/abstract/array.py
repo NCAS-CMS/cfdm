@@ -43,35 +43,30 @@ Returns a subspace of the array as an independent numpy array.
 The indices that define the subspace must be either `Ellipsis` or a
 sequence that contains an index for each dimension. In the latter
 case, each dimension's index must either be a `slice` object or a
-sequence of integers.
+sequence of two or more integers.
+
+Indexing is similar to numpy indexing. The only difference to numpy
+indexing (given the restrictions on the type of indices allowed) is:
+
+  * When two or more dimension's indices are sequences of integers
+    then these indices work independently along each dimension
+    (similar to the way vector subscripts work in Fortran).
 
         '''
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
-#    @abc.abstractmethod
-#    def close(self):
-#        '''
-#        '''
-#        raise NotImplementedError(_MUST_IMPLEMENT)
-#    #--- End: def
-
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
         '''Return subspace, defined by indices, of a numpy array.
 
-Indexing is similar to numpy indexing. The differences to numpy
-indexing are
+Indexing is similar to numpy indexing. The only difference to numpy
+indexing (given the restrictions on the type of indices allowed, see
+the *indices* parameter for details) is:
 
-  * An integer index i takes the i-th element but does not reduce the
-    rank of the output array by one.
-
-  * When more than one dimension's slice is a 1-d boolean array or 1-d
-    sequence of integers then these indices work independently along
-    each dimension (similar to the way vector subscripts work in
-    Fortran).
-
-Indices must by provided for each of the array dimensions, unless 
+  * When two or more dimension's indices are sequences of integers
+    then these indices work independently along each dimension
+    (similar to the way vector subscripts work in Fortran).
 
 :Parameters:
 
@@ -79,10 +74,12 @@ Indices must by provided for each of the array dimensions, unless
         The array to be subspaced.
         
     indices: 
-        The indices that define the subspace. Must be either
-        `Ellipsis` or a sequence that contains an index for each
-        dimension. In the latter case, each dimension's index must
-        either be a `slice` object or a sequence of integers.
+        The indices that define the subspace.
+     ..
+        Must be either `Ellipsis` or a sequence that contains an index
+        for each dimension. In the latter case, each dimension's index
+        must either be a `slice` object or a sequence of two or more
+        integers.
 
           *Example:*
             indices=Ellipsis
@@ -91,13 +88,13 @@ Indices must by provided for each of the array dimensions, unless
             indices=[[5, 7, 8]]
   
           *Example:*
-            indices=[slice(None)]
+            indices=[slice(4, 7)]
 
           *Example:*
             indices=[slice(None), [5, 7, 8]]
   
           *Example:*
-            indices=[[2, 6], slice(4, 7), [5, 7, 8]]
+            indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]
 
     copy: `bool`
         If `False` then the returned subspace may (or may not) be

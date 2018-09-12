@@ -1414,7 +1414,7 @@ False
 #        return numpy.ma.masked
     #--- End: def
 
-    def list_indices(self):
+    def list_array(self):
         '''
 
 :Returns:
@@ -1424,7 +1424,7 @@ False
         '''
         ma = self._get_Array()
         
-        return getattr(ma, 'indices', None)
+        return getattr(ma, 'list_array', None)
 
 #        if getattr(ma, 'compression_type', None) == 'gathered':
 #            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')

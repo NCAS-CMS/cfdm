@@ -93,7 +93,14 @@ Returns a subspace of the array as an independent numpy array.
 The indices that define the subspace must be either `Ellipsis` or a
 sequence that contains an index for each dimension. In the latter
 case, each dimension's index must either be a `slice` object or a
-sequence of integers.
+sequence of two or more integers.
+
+Indexing is similar to numpy indexing. The only difference to numpy
+indexing (given the restrictions on the type of indices allowed) is:
+
+  * When two or more dimension's indices are sequences of integers
+    then these indices work independently along each dimension
+    (similar to the way vector subscripts work in Fortran).
 
         '''
         netcdf = self.open()

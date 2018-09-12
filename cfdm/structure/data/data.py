@@ -89,32 +89,69 @@ Used if copy.deepcopy is called on data
     # Private methods
     # ----------------------------------------------------------------
     def _del_Array(self):
-        '''
-        '''
-        self._master_array = None
-    #--- End: def
-    
-    def _get_Array(self, *default):
-        '''
-        '''
-        array = self._master_array
-        if array is None and default:
-            return default[0]     
-
-        return array   
-    #--- End: def
-    
-    def _set_Array(self, value):
-        '''
-:Parameters:
-
-    value: `abstract.Array`
+        '''Delete the data.
 
 :Returns:
 
     `None`
+
+:Examples:
+
+>>> d._del_Array()
+
         '''
-        self._master_array = value
+        self._array = None
+    #--- End: def
+    
+    def _get_Array(self, *default):
+        '''Return the data.
+
+:Parameters:
+
+    default: *optional*
+        If there is no data then *default* if returned if set.
+
+:Returns:
+
+    out: `Array`
+        The data stored in a subclass of an `Array` object. If the
+        data has not been set then *default* is returned, if set.
+
+:Examples:
+
+>>> a = d._get_Array()
+
+>>> a = d._get_Array(None)
+
+        '''
+        array = self._array
+        if array is None:
+            if default:
+                return default[0]     
+
+            raise AttributeError("{!r} has no data".format(self.__class__.__name__))
+        
+        return array   
+    #--- End: def
+    
+    def _set_Array(self, array):
+        '''Set the data.
+
+:Parameters:
+
+    array: `Array`
+        The data to be inserted.
+
+:Returns:
+
+    `None`
+
+:Examples:
+
+>>> d._set_Array(a)
+
+        '''
+        self._array = array
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -122,7 +159,7 @@ Used if copy.deepcopy is called on data
     # ----------------------------------------------------------------
     @property
     def data(self):
-        '''
+        '''Return 
         '''
         return self
     #--- End: def
@@ -285,6 +322,80 @@ None
         return type(self)(source=self, copy=True)
     #--- End: def
 
+    def del_calendar(self):
+        '''Delete the calendar.
+
+.. seealso:: `get_calendar`, `has_calendar`, `set_calendar`
+
+:Examples 1:
+
+>>> u = d.del_calendar()
+
+:Returns:
+
+    out:
+        The value of the deleted calendar, or `None` if calendar was
+        not set.
+
+:Examples 2:
+
+>>> d.set_calendar('proleptic_gregorian')
+>>> d.get_calendar
+'proleptic_gregorian'
+>>> d.del_calendar()
+>>> d.get_calendar()
+AttributeError: Can't get non-existent 'calendar'
+>>> print(d.get_calendar(None))
+None
+
+        '''
+        value = getattr(self, '_calendar', None)
+        if value is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("Can't get non-existent 'calendar'")
+        
+        return value
+    #--- End: def
+
+    def del_units(self):
+        '''Delete the units.
+
+.. seealso:: `get_units`, `has_units`, `set_units`
+
+:Examples 1:
+
+>>> u = d.del_units()
+
+:Returns:
+
+    out:
+        The value of the deleted units, or `None` if units was not
+        set.
+
+:Examples 2:
+
+>>> d.set_units('metres')
+>>> d.get_units
+'metres'
+>>> d.del_units()
+>>> d.get_units()
+AttributeError: Can't get non-existent 'units'
+>>> print(d.get_units(None))
+None
+
+        '''
+        value = getattr(self, '_units', None)
+        if value is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("Can't get non-existent 'units'")
+        
+        return value
+    #--- End: def
+
     def get_array(self):
         '''Return an independent numpy array containing the data.
 
@@ -310,7 +421,35 @@ True
     #--- End: def
 
     def get_calendar(self, *default):
-        '''
+        '''Return the calendar.
+
+.. seealso:: `del_calendar`, `has_calendar`, `set_calendar`
+
+:Examples 1:
+
+>>> u = d.get_calendar()
+
+:Parameters:
+
+    default: optional
+        Return *default* if calendar has not been set.
+
+:Returns:
+
+    out:
+        The calendar. If calendar has not been set then return the
+        value of *default* parameter, if provided.
+
+:Examples 2:
+
+>>> d.set_calendar('julian')
+>>> d.get_calendar
+'metres'
+>>> d.del_calendar()
+>>> d.get_calendar()
+AttributeError: Can't get non-existent 'calendar'
+>>> print(d.get_calendar(None))
+None
 
         '''
         value = getattr(self, '_calendar', None)
@@ -338,7 +477,35 @@ True
     #--- End: def
 
     def get_units(self, *default):
-        '''
+        '''Return the units.
+
+.. seealso:: `del_units`, `has_units`, `set_units`
+
+:Examples 1:
+
+>>> u = d.get_units()
+
+:Parameters:
+
+    default: optional
+        Return *default* if units has not been set.
+
+:Returns:
+
+    out:
+        The units. If units has not been set then return the value of
+        *default* parameter, if provided.
+
+:Examples 2:
+
+>>> d.set_units('metres')
+>>> d.get_units
+'metres'
+>>> d.del_units()
+>>> d.get_units()
+AttributeError: Can't get non-existent 'units'
+>>> print(d.get_units(None))
+None
 
         '''
         value = getattr(self, '_units', None)
@@ -352,7 +519,33 @@ True
     #--- End: def
 
     def set_calendar(self, calendar):
-        '''
+        '''Set the calendar.
+
+.. seealso:: `del_calendar`, `get_calendar`, `has_calendar`
+
+:Examples 1:
+
+>>> u = d.set_calendar('365_day')
+
+:Parameters:
+
+    value: `str`
+        The new calendar.
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> d.set_calendar('none')
+>>> d.get_calendar
+'none'
+>>> d.del_calendar()
+>>> d.get_calendar()
+AttributeError: Can't get non-existent 'calendar'
+>>> print(d.get_calendar(None))
+None
 
         '''
         self._calendar = calendar
@@ -366,7 +559,33 @@ True
     #--- End: def
 
     def set_units(self, value):
-        '''
+        '''Set the units.
+
+.. seealso:: `del_units`, `get_units`, `has_units`
+
+:Examples 1:
+
+>>> u = d.set_units('kg m-2')
+
+:Parameters:
+
+    value: `str`
+        The new units.
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> d.set_units('watt')
+>>> d.get_units
+'watt'
+>>> d.del_units()
+>>> d.get_units()
+AttributeError: Can't get non-existent 'units'
+>>> print(d.get_units(None))
+None
 
         '''
         self._units = value
