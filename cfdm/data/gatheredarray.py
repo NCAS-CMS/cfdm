@@ -9,31 +9,63 @@ from . import abstract
 
 
 class GatheredArray(abstract.CompressedArray):
-    '''
+    '''A container for a gathered compressed array.
 
     '''
-    def __init__(self, array=None, shape=None, size=None, ndim=None,
-                 sample_axis=None, indices=None):
+    def __init__(self, compressed_array=None, shape=None, size=None,
+                 ndim=None, sample_axis=None, indices=None):
         '''**Initialization**
 
 :Parameters:
 
-    array: `abstract.Array`
+    compressed_array: `Array`
+        The compressed array.
+
+    shape: `tuple`
+        The uncompressed array dimension sizes.
+
+    size: `int`
+        Number of elements in the uncompressed array.
+
+    ndim: `int`
+        The number of uncompressed array dimensions
+
+    sample_axis: `int`
+        The position of the compressed axis in the compressed array.
+
+    indices: `Array` or numpy array_like
+        The indices required to uncompress the compressed array.
+
+        The list will have been constructed from the original
+        uncompressed array by mapping the axes to be compressed onto
+        one dimension without reordering, and then recording the
+        indices along this 1-d axes of elements that are to be
+        retained in the compressed array.
 
         '''
-        super().__init__(array=array, shape=shape, ndim=ndim,
-                         size=size, sample_axis=sample_axis,
-                         indices=indices)
+        super().__init__(compressed_array=compressed_array,
+                         shape=shape, ndim=ndim, size=size,
+                         sample_axis=sample_axis, indices=indices)
     #--- End: def
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns a numpy array that does not share memory with the compressed
-array.
+Returns an uncompressed subspace of the gathered array as an
+independent numpy array.
 
-'''
-        compressed_array = self.array
+The indices that define the subspace are relative to the full
+uncompressed array and must be either `Ellipsis` or a sequence that
+contains an index for each dimension. In the latter case, each
+dimension's index must either be a `slice` object or a sequence of
+integers.
+
+        '''
+        # ------------------------------------------------------------
+        # Method: Uncompress the entire array and then subspace it
+        # ------------------------------------------------------------
+        
+        compressed_array = self.compressed_array
 
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)

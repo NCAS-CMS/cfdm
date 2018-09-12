@@ -13,10 +13,10 @@ _MUST_IMPLEMENT = 'This method must be implemented'
 class Array(with_metaclass(abc.ABCMeta, structure_Array)):
     '''A container for an array.
 
-The form of the contained array is arbitrary and is defined by the
-attributes set on a subclass of the abstract `Array` object.
+The form of the array is arbitrary and is defined by the attributes
+set on a subclass of the abstract `Array` object.
 
-It must be possible to derive the following from the contained array:
+It must be possible to derive the following from the array:
 
   * Data-type of the array elements (see `dtype`)
   
@@ -31,15 +31,20 @@ It must be possible to derive the following from the contained array:
   * A subspace of the array as an independent numpy array (see
     `__getitem__`)
 
-See `cfdm.NumpyArray` for an example implementation.
+See `cfdm.data.NumpyArray` for an example implementation.
 
     '''
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns a numpy array that does not share memory with the un-indexed
-array.
+Returns a subspace of the array as an independent numpy array.
+
+The indices that define the subspace must be either `Ellipsis` or a
+sequence that contains an index for each dimension. In the latter
+case, each dimension's index must either be a `slice` object or a
+sequence of integers.
+
         '''
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
@@ -53,66 +58,86 @@ array.
 
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
-        '''Subset the input numpy array with the given indices.
+        '''Return subspace, defined by indices, of a numpy array.
 
-Indexing is similar to that of a numpy array. The differences to numpy
-array indexing are
+Indexing is similar to numpy indexing. The differences to numpy
+indexing are
 
-  1. An integer index i takes the i-th element but does not reduce the
-     rank of the output array by one.
+  * An integer index i takes the i-th element but does not reduce the
+    rank of the output array by one.
 
-  2. When more than one dimension's slice is a 1-d boolean array or
-     1-d sequence of integers then these indices work independently
-     along each dimension (similar to the way vector subscripts work
-     in Fortran).
+  * When more than one dimension's slice is a 1-d boolean array or 1-d
+    sequence of integers then these indices work independently along
+    each dimension (similar to the way vector subscripts work in
+    Fortran).
 
-indices must contain an index for each dimension of the input array.
+Indices must by provided for each of the array dimensions, unless 
 
 :Parameters:
 
     array: `numpy.ndarray`
+        The array to be subspaced.
+        
+    indices: 
+        The indices that define the subspace. Must be either
+        `Ellipsis` or a sequence that contains an index for each
+        dimension. In the latter case, each dimension's index must
+        either be a `slice` object or a sequence of integers.
 
-    indices: `list`
+          *Example:*
+            indices=Ellipsis
+  
+          *Example:*
+            indices=[[5, 7, 8]]
+  
+          *Example:*
+            indices=[slice(None)]
+
+          *Example:*
+            indices=[slice(None), [5, 7, 8]]
+  
+          *Example:*
+            indices=[[2, 6], slice(4, 7), [5, 7, 8]]
 
     copy: `bool`
-        Return an independent array.
+        If `False` then the returned subspace may (or may not) be
+        independent of the input *array*. By default the returned
+        subspace is independent of the input *array*.
 
 :Returns:
 
     out: `numpy.ndarray`
 
         '''
-        if indices is Ellipsis:
-            return array
+        if indices is not Ellipsis:
+            axes_with_list_indices = [i for i, x in enumerate(indices)
+                                      if not isinstance(x, slice)]
+            n_axes_with_list_indices = len(axes_with_list_indices)
         
-        axes_with_list_indices = [i for i, x in enumerate(indices)
-                                  if not isinstance(x, slice)]
-        n_axes_with_list_indices = len(axes_with_list_indices)
-    
-        if n_axes_with_list_indices < 2:
-            # ------------------------------------------------------------
-            # At most one axis has a list-of-integers index so we can do a
-            # normal numpy subspace
-            # ------------------------------------------------------------
-            array = array[tuple(indices)]
-        else:
-            # ------------------------------------------------------------
-            # At least two axes have list-of-integers indices so we can't
-            # do a normal numpy subspace
-            # ------------------------------------------------------------
-            if numpy.ma.isMA(array):
-                take = numpy.ma.take
-            else:
-                take = numpy.take
-    
-            indices = list(indices)
-            for axis in axes_with_list_indices:
-                array = take(array, indices[axis], axis=axis)
-                indices[axis] = slice(None)
-    
-            if n_axes_with_list_indices < len(indices):
-                # Apply subspace defined by slices
+            if n_axes_with_list_indices < 2:
+                # ----------------------------------------------------
+                # At most one axis has a list-of-integers index so we
+                # can do a normal numpy subspace
+                # ----------------------------------------------------
                 array = array[tuple(indices)]
+            else:
+                # ----------------------------------------------------
+                # At least two axes have list-of-integers indices so
+                # we can't do a normal numpy subspace
+                # ----------------------------------------------------
+                if numpy.ma.isMA(array):
+                    take = numpy.ma.take
+                else:
+                    take = numpy.take
+        
+                indices = list(indices)
+                for axis in axes_with_list_indices:
+                    array = take(array, indices[axis], axis=axis)
+                    indices[axis] = slice(None)
+        
+                if n_axes_with_list_indices < len(indices):
+                    # Apply subspace defined by slices
+                    array = array[tuple(indices)]
         #--- End: if
 
         if copy:

@@ -3198,7 +3198,7 @@ variable.
         klass = self.implementation.get_class('GatheredArray')
         return API.initialise_GatheredArray(
             klass,
-            array=gathered_array,
+            compressed_array=gathered_array,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
@@ -3240,7 +3240,7 @@ netCDF variable.
         klass = self.implementation.get_class('RaggedContiguousArray')
         return API.initialise_RaggedContiguousArray(
             klass,
-            array=ragged_contiguous_array,
+            compressed_array=ragged_contiguous_array,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
@@ -3277,7 +3277,7 @@ netCDF variable.
         klass = self.implementation.get_class('RaggedIndexedArray')
         return API.initialise_RaggedIndexedArray(
             klass,
-            array=ragged_indexed_array,
+            compressed_array=ragged_indexed_array,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
@@ -3303,7 +3303,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         klass = self.implementation.get_class('RaggedIndexedContiguousArray')
         return API.initialise_RaggedIndexedContiguousArray(
             klass,
-            array=ragged_indexed_contiguous_array,
+            compressed_array=ragged_indexed_contiguous_array,
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,

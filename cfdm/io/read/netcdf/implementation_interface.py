@@ -614,22 +614,22 @@ variable.
         return klass(axes=axes, properties=properties, **kwargs)
     #--- End: def
 
-    @staticmethod
-    def initialise_CompressedArray(klass, array=None,
-                                   uncompressed_ndim=None,
-                                   uncompressed_shape=None,
-                                   uncompressed_size=None,
-                                   compression_type=None,
-                                   compression_parameters=None):
-        '''
-        '''
-        return klass(array=array,
-                     ndim=uncompressed_ndim,
-                     shape=uncompressed_shape,
-                     size=uncompressed_size,
-                     compression_type=compression_type,
-                     compression_parameters=compression_parameters)
-    #--- End: def
+#    @staticmethod
+#    def initialise_CompressedArray(klass, compressed_array=None,
+#                                   uncompressed_ndim=None,
+#                                   uncompressed_shape=None,
+#                                   uncompressed_size=None,
+#                                   compression_type=None,
+#                                   compression_parameters=None):
+#        '''
+#        '''
+#        return klass(compressed_array=compressed_array,
+#                     ndim=uncompressed_ndim,
+#                     shape=uncompressed_shape,
+#                     size=uncompressed_size,
+#                     compression_type=compression_type,
+#                     compression_parameters=compression_parameters)
+#    #--- End: def
 
     @staticmethod
     def initialise_CoordinateReference(klass, coordinates=None,
@@ -709,13 +709,12 @@ variable.
     #--- End: def
 
     @staticmethod
-    def initialise_GatheredArray(klass, array=None, ndim=None,
-                                 shape=None, size=None,
-                                 sample_axis=None,
-                                 indices=None):
+    def initialise_GatheredArray(klass, compressed_array=None,
+                                 ndim=None, shape=None, size=None,
+                                 sample_axis=None, indices=None):
         '''
         '''
-        return klass(array=array,
+        return klass(compressed_array=compressed_array,
                      ndim=ndim,
                      shape=shape,
                      size=size,
@@ -734,12 +733,13 @@ variable.
     #--- End: def
 
     @staticmethod
-    def initialise_RaggedContiguousArray(klass, array=None, ndim=None,
-                                         shape=None, size=None,
+    def initialise_RaggedContiguousArray(klass, compressed_array=None,
+                                         ndim=None, shape=None,
+                                         size=None,
                                          elements_per_instance=None):
         '''
         '''
-        return klass(array=array,
+        return klass(compressed_array=compressed_array,
                      ndim=ndim,
                      shape=shape,
                      size=size,
@@ -747,12 +747,12 @@ variable.
     #--- End: def
 
     @staticmethod
-    def initialise_RaggedIndexedArray(klass, array=None, ndim=None,
-                                      shape=None, size=None,
-                                      instances=None):
+    def initialise_RaggedIndexedArray(klass, compressed_array=None,
+                                      ndim=None, shape=None,
+                                      size=None, instances=None):
         '''
         '''
-        return klass(array=array,
+        return klass(compressed_array=compressed_array,
                      ndim=ndim,
                      shape=shape,
                      size=size,
@@ -760,14 +760,15 @@ variable.
     #--- End: def
 
     @staticmethod
-    def initialise_RaggedIndexedContiguousArray(klass, array=None,
+    def initialise_RaggedIndexedContiguousArray(klass,
+                                                compressed_array=None,
                                                 ndim=None, shape=None,
                                                 size=None,
                                                 profile_indices=None,
                                                 elements_per_profile=None):
         '''
         '''
-        return klass(array=array,
+        return klass(compressed_array=compressed_array,
                      ndim=ndim,
                      shape=shape,
                      size=size,

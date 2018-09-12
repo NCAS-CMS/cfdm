@@ -9,10 +9,10 @@ _MUST_IMPLEMENT = 'This method must be implemented'
 class Array(with_metaclass(abc.ABCMeta, object)):
     '''A container for an array.
 
-The form of the contained array is arbitrary and is defined by the
-attributes set on a subclass of the abstract `Array` object.
+The form of the array is arbitrary and is defined by the attributes
+set on a subclass of the abstract `Array` object.
 
-It must be possible to derive the following from the contained array:
+It must be possible to derive the following from the array:
 
   * Data-type of the array elements (see `dtype`)
   
@@ -24,7 +24,7 @@ It must be possible to derive the following from the contained array:
   
   * An independent numpy array containing the data (see `get_array`)
 
-See `cfdm.structure.NumpyArray` for an example implementation.
+See `cfdm.structure.data.NumpyArray` for an example implementation.
 
     '''
     def __init__(self, **kwargs):
@@ -33,7 +33,7 @@ See `cfdm.structure.NumpyArray` for an example implementation.
 :Parameters:
 
     kwargs: *optional*
-        Named attributes and their values.
+        Named attributes and their values that define the array.
 
         '''
         self.__dict__ = kwargs
@@ -60,7 +60,10 @@ True
     def __deepcopy__(self, memo):
         '''x.__deepcopy__() -> Deep copy of data.
 
-Used if copy.deepcopy is called on data
+Used if copy.deepcopy is called on data. 
+
+Copy-on-write is employed, so care must be taken when modifying any
+attribute.
 
         '''
         return self.copy()
@@ -203,6 +206,9 @@ dtype('float64')
 
 ``a.copy() is equivalent to ``copy.deepcopy(a)``.
 
+Note that copy-on-write is employed, so care must be taken when
+modifying any attribute.
+
 :Returns:
 
     out:
@@ -230,7 +236,7 @@ dtype('float64')
 
 :Examples:
 
->>> n = numpy.asanyarray(a)
+>>> n = a.get_array()
 >>> isinstance(n, numpy.ndarray)
 True
 
