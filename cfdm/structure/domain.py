@@ -1,3 +1,5 @@
+from builtins import super
+
 from . import abstract
 from . import mixin
 
@@ -55,18 +57,21 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     
 
     def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-       
-        obj._Constructs = Constructs
-
-        return obj
+        instance = super().__new__(cls)
+        instance._Constructs = Constructs
+        return instance
     #--- End: def
     
-    def __init__(self, properties=None, source=None, copy=True,
-                 _use_data=True, _view_constructs=None):
+    def __init__(self, properties=None, _constructs=None, source=None,
+                 copy=True, _use_data=True, _view=False):
         '''**Initialization**
 
 :Parameters:
+
+    constructs: `Constructs`
+        Create the domain as a view to another Constructs
+        object. Changes to the Constructs object will affect te
+        Domain, and vice verse.
 
     source: 
 
@@ -74,27 +79,42 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
 
+    _view: `bool`
+        Create the domain as a view to the constructs provided by the
+        *constructs* or *source* parameters object. Changes to the
+        will affect the original constructs, and vice versa.
+
         '''
-        super(Domain, self).__init__(properties=properties,
-                                     source=source, copy=copy)
+        super().__init__(properties=properties, source=source,
+                         copy=copy)
         
-        if _view_constructs is not None:
-            constructs = self._Constructs(source=_view_constructs,
-                                          view=True,
-                                          ignore=('cell_method', 'field_ancillary'))
-        elif source is None:
-            constructs = self._Constructs(**self._construct_key_base)
-        else:
+        if source is not None:
             try:                
                 constructs = source._get_constructs()
             except AttributeError:
                 constructs = self._Constructs(**self._construct_key_base)
+                copy = False
+                _use_data = True            
             else:
-                constructs = constructs.subset(list(self._construct_key_base.keys()), copy=False)
-                if copy or not _use_data:
-                    constructs = constructs.copy(data=_use_data)
-        #--- End: if
+                constructs = constructs.subset(
+                    tuple(self._construct_key_base.keys()), copy=False)
+        elif _constructs is not None:
+            constructs = _constructs
+            if _view:
+                constructs = self._Constructs(source=constructs,
+                                              view=True,
+                                              ignore=('cell_method',
+                                                      'field_ancillary'))
+                copy = False
+                _use_data = True
+        else:
+            constructs = self._Constructs(**self._construct_key_base)
+            copy = False
+            _use_data = True
 
+        if copy or not _use_data:
+            constructs = constructs.copy(data=_use_data)
+            
         self._set_component('constructs', None, constructs)
     #--- End: def
     
@@ -134,7 +154,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
             # reference constructs
             for ref in self.coordinate_references().values():
                 coordinate_conversion = ref.coordinate_conversion
-                for term, value in coordinate_conversion.ancillaries().items():
+                for term, value in coordinate_conversion.domain_ancillaries().items():
                     if key == value:
                         coordinate_conversion.set_ancillary(term, None)
                     

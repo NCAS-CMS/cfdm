@@ -1,6 +1,5 @@
 from __future__ import print_function
-from __future__ import absolute_import
-from builtins import str
+from builtins import (str, super)
 
 #import abc
 
@@ -43,13 +42,10 @@ Cell measure          Domain cell size or shape stored in
 ====================  ================================================
 
     '''
-    
     def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-       
-        obj._Constructs = Constructs
-
-        return obj
+        instance = super().__new__(cls)
+        instance._Constructs = Constructs
+        return instance
     #--- End: def
     
     def __repr__(self):

@@ -23,8 +23,9 @@ sample dimension belongs to.
 
 :Parameters:
 
-    compressed_array: `Array`
-        The compressed array.
+    compressed_array:
+        The compressed array. May be any object that exposes the
+        `cfdm.data.abstract.Array` interface.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -35,13 +36,17 @@ sample dimension belongs to.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    index_array: `Array`
-        The "index" array required to uncompress the data, identical to
-        the data of a CF-netCDF "index" variable.
+    index_array:
+        The "index" array required to uncompress the data, identical
+        to the data of a CF-netCDF "index" variable.  May be any
+        object that exposes the `cfdm.data.abstract.Array` interface.
+
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
-                         sample_axis=0, index_array=index_array)
+                         sample_axis=0,
+                         compression_type='ragged indexed',
+                         _index_array=index_array)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -92,4 +97,9 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
+    @property
+    def index_array(self):
+        '''
+        '''
+        return self._index_array
 #--- End: class

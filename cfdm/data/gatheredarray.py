@@ -27,8 +27,9 @@ uncompress the data.
 
 :Parameters:
 
-    compressed_array: `Array`
-        The compressed array.
+    compressed_array:
+        The compressed array. May be any object that exposes the
+        `cfdm.data.abstract.Array` interface.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -42,15 +43,17 @@ uncompress the data.
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    list_array: `Array` or numpy array_like
+    list_array:
         The "list" array required to uncompress the data, identical to
-        the data of a CF-netCDF "list" variable.
+        the data of a CF-netCDF "list" variable. May be any object
+        that exposes the `cfdm.data.abstract.Array` interface.
 
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, ndim=ndim, size=size,
                          sample_axis=sample_axis,
-                         list_array=list_array)
+                         compression_type='gathered',
+                         _list_array=list_array)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -120,6 +123,13 @@ indexing (given the restrictions on the type of indices allowed) is:
         #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
+    #--- End: def
+
+    @property
+    def list_array(self):
+        '''
+        '''
+        return self._list_array
     #--- End: def
 
 #--- End: class

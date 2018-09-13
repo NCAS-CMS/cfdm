@@ -40,13 +40,15 @@ See `cfdm.data.GatheredArray` for an example implementation.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, sample_axis=None, **kwargs):
+                 ndim=None, sample_axis=None, compression_type=None,
+                 **kwargs):
         '''**Initialization**
 
 :Parameters:
 
-    compressed_array: `Array`
-        The compressed array.
+    compressed_array:
+        The compressed array. May be any object that exposes the
+        `cfdm.data.abstract.Array` interface.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -60,6 +62,9 @@ See `cfdm.data.GatheredArray` for an example implementation.
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
+    compression_type: `str`
+        The type of compression.        
+        
     kwargs: *optional*
         Further attributes that may be required to uncompress the
         compressed array.
@@ -67,7 +72,8 @@ See `cfdm.data.GatheredArray` for an example implementation.
         '''
         super().__init__(compressed_array=compressed_array,
                          _shape=shape, _size=size, _ndim=ndim,
-                         _sample_axis=sample_axis, **kwargs)
+                         _sample_axis=sample_axis,
+                         _compression_type=compression_type, **kwargs)
     #--- End: def
 
     @abc.abstractmethod
@@ -85,6 +91,21 @@ integers.
 
         '''
         raise NotImplementedError(_MUST_IMPLEMENT)
+    #--- End: def
+
+    @property
+    def dtype(self):
+        '''Data-type of the data elements.
+
+:Examples:
+
+>>> a.dtype
+dtype('float64')
+>>> print(type(a.dtype))
+<type 'numpy.dtype'>
+
+        '''
+        return self.compressed_array.dtype
     #--- End: def
 
     @property
@@ -187,25 +208,6 @@ integers.
         return self._size
     #--- End: def
 
-    @property
-    def dtype(self):
-        '''Data-type of the data elements.
-
-:Examples:
-
->>> a.dtype
-dtype('float64')
->>> print(type(a.dtype))
-<type 'numpy.dtype'>
-
-        '''
-        return self.compressed_array.dtype
-    #--- End: def
-
-#    def close(self):
-#        self.compressed_array.close()
-#    #--- End: def
-
     def compressed_axes(self):
         '''The axes of the uncompressed array that have been compressed.
 
@@ -245,9 +247,5 @@ True
         '''
         return self[...]
     #--- End: def
-
-#    def open(self):
-#        self.compressed_array.open()
-#    #--- End: def
 
 #--- End: class

@@ -23,8 +23,9 @@ The information needed to uncompress the data is stored in a separate
 
 :Parameters:
 
-    compressed_array: `Array`
-        The compressed array.
+    compressed_array:
+        The compressed array. May be any object that exposes the
+        `cfdm.data.abstract.Array` interface.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -38,14 +39,16 @@ The information needed to uncompress the data is stored in a separate
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    count_array: `Array`
-        The "count" array required to uncompress the data, identical to
-        the data of a CF-netCDF "count" variable.
+    count_array:
+        The "count" array required to uncompress the data, identical
+        to the data of a CF-netCDF "count" variable. May be any object
+        that exposes the `cfdm.data.abstract.Array` interface.
 
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
-                         count_array=count_array, sample_axis=0)
+                         compression_type='ragged contiguous',
+                         _count_array=count_array, sample_axis=0)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -99,4 +102,10 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
+
+    @property
+    def count_array(self):
+        '''
+        '''
+        return self._count_array
 #--- End: class

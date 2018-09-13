@@ -18,7 +18,11 @@ class Constructs(object):
                  coordinate_reference=None,
                  domain_axis=None,
                  cell_method=None,
-                 source=None, copy=True, _use_data=True, view=False, ignore=()):
+                 source=None,
+                 copy=True,
+                 _use_data=True,
+                 view=False,
+                 ignore=()):
         '''
         '''
         self._ignore = tuple(set(ignore))

@@ -2,7 +2,6 @@ from builtins import super
 
 from . import abstract
 
-
 from ..structure.data import NumpyArray as structure_NumpyArray
 
 

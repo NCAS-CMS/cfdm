@@ -56,13 +56,40 @@ indexing (given the restrictions on the type of indices allowed) is:
         raise NotImplementedError(_MUST_IMPLEMENT)
     #--- End: def
 
+    @property
+    def compression_type(self):
+        '''The type of compression that has been applied to the array.
+
+:Returns:
+
+    out: `str`
+        The compression type. An empty string means that no
+        compression has been applied.
+
+:Examples:
+
+>>> c.compression_type
+''
+
+>>> c.compression_type
+'gathered'
+
+>>> c.compression_type
+'ragged contiguous'
+
+        '''
+        return getattr(self, '_compression_type', None)
+    #--- End: def
+
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
-        '''Return subspace, defined by indices, of a numpy array.
+        '''Return a subspace, defined by indices, of a numpy array.
+
+Only certain type of indices are allowed. See the *indices* parameter
+for details.
 
 Indexing is similar to numpy indexing. The only difference to numpy
-indexing (given the restrictions on the type of indices allowed, see
-the *indices* parameter for details) is:
+indexing (given the restrictions on the type of indices allowed) is
 
   * When two or more dimension's indices are sequences of integers
     then these indices work independently along each dimension
@@ -151,11 +178,4 @@ the *indices* parameter for details) is:
         return array                
     #--- End: def
 
-#    @abc.abstractmethod
-#    def open(self):
-#        '''
-#        '''
-#        raise NotImplementedError(_MUST_IMPLEMENT)
-#    #---End: def
-    
 #--- End: class

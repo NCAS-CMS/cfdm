@@ -1,5 +1,7 @@
 from builtins import (object, str)
 
+import numpy
+
 
 class Data(object):
     '''
@@ -20,14 +22,30 @@ An N-dimensional data array with units and masked values.
 
 :Parameters:
 
-    data: `Array`, optional
-        The data array.
+    data:
+        The data array. May be any object that exposes the
+        `cfdm.structure.data.abstract.Array` interface.
 
+    units: `str`, optional
+        
+    calendar: `str`, optional
+        
     fill_value: optional 
         The fill value of the data. By default, or if None, the numpy
         fill value appropriate to the array's data type will be used.
 
-:Examples:
+    source: *optional*
+        Override the *data*, *units*, *calendar* and *fill_value*
+        parameters with ``source.get_data(None)``,
+        ``source.get_units(None)``, ``source.get_calendar(None)`` and
+        ``source.get_fill_value(None)``respectively.
+
+        If *source* does not have one of these methods then
+        corresponding parameter is set to `None`.
+        
+    copy: `bool`, optional
+        If False then do not deep copy arguments prior to
+        initialization. By default arguments are deep copied.
 
 >>> d = Data(5)
 >>> d = Data([1,2,3])
@@ -37,17 +55,31 @@ An N-dimensional data array with units and masked values.
 
         '''
         if source is not None:
-            data = source._get_Array(None)
-            units = source.get_units(None)
-            calendar = source.get_calendar(None)
-            fill_value = source.get_fill_value(None)
+            try:                
+                data = source.get_data(None)
+            except AttributeError:
+                data = None
 
-        self._units    = units
-        self._calendar = calendar
-        
-        self._fill_value  = fill_value
+            try:
+                units = source.get_units(None)
+            except AttributeError:
+                units = None
+                
+            try:
+                calendar = source.get_calendar(None)
+            except AttributeError:
+                calendar = None
 
-        self._set_Array(data)
+            try:
+                fill_value = source.get_fill_value(None)
+            except AttributeError:
+                fill_value = None
+        #--- End: if
+
+        self.set_data(data)
+        self.set_units(units)
+        self.set_calendar(calendar)   
+        self.set_fill_value(fill_value)
     #--- End: def
 
     def __array__(self):
@@ -82,78 +114,13 @@ Used if copy.deepcopy is called on data
         '''x.__str__() <==> str(x)
 
         '''
-        return str(self._get_Array(None))
+        return str(self.get_data(None))
     #--- End: def
     
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
-    def _del_Array(self):
-        '''Delete the data.
-
-:Returns:
-
-    `None`
-
-:Examples:
-
->>> d._del_Array()
-
-        '''
-        self._array = None
-    #--- End: def
     
-    def _get_Array(self, *default):
-        '''Return the data.
-
-:Parameters:
-
-    default: *optional*
-        If there is no data then *default* if returned if set.
-
-:Returns:
-
-    out: `Array`
-        The data stored in a subclass of an `Array` object. If the
-        data has not been set then *default* is returned, if set.
-
-:Examples:
-
->>> a = d._get_Array()
-
->>> a = d._get_Array(None)
-
-        '''
-        array = self._array
-        if array is None:
-            if default:
-                return default[0]     
-
-            raise AttributeError("{!r} has no data".format(self.__class__.__name__))
-        
-        return array   
-    #--- End: def
-    
-    def _set_Array(self, array):
-        '''Set the data.
-
-:Parameters:
-
-    array: `Array`
-        The data to be inserted.
-
-:Returns:
-
-    `None`
-
-:Examples:
-
->>> d._set_Array(a)
-
-        '''
-        self._array = array
-    #--- End: def
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -176,37 +143,8 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        return self._get_Array().dtype        
+        return self.get_data().dtype        
     #--- End: def
-    
-    @property
-    def fill_value(self):
-        '''
-
-The data array missing data value.
-
-If set to None then the default numpy fill value appropriate to the
-data array's data type will be used.
-
-Deleting this attribute is equivalent to setting it to None, so this
-attribute is guaranteed to always exist.
-
-:Examples:
-
->>> d.fill_value = 9999.0
->>> d.fill_value
-9999.0
->>> del d.fill_value
->>> d.fill_value
-None
-
-'''
-        return self._fill_value
-    #--- End: def
-    @fill_value.setter
-    def fill_value(self, value): self._fill_value = value
-    @fill_value.deleter
-    def fill_value(self)       : self._fill_value = None
 
     @property
     def ndim(self):
@@ -236,7 +174,7 @@ None
 1
 
         '''
-        return self._get_Array().ndim
+        return self.get_data().ndim
     #--- End: def
 
     @property
@@ -267,7 +205,7 @@ None
 1
 
         '''
-        return self._get_Array().shape
+        return self.get_data().shape
     #--- End: def
 
     @property
@@ -298,7 +236,7 @@ None
 1
 
         '''
-        return self._get_Array().size
+        return self.get_data().size
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -308,6 +246,9 @@ None
         '''Return a deep copy of the data.
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
+
+Copy-on-write is employed, so care must be taken when modifying any
+attribute.
 
 :Returns:
 
@@ -325,7 +266,7 @@ None
     def del_calendar(self):
         '''Delete the calendar.
 
-.. seealso:: `get_calendar`, `has_calendar`, `set_calendar`
+.. seealso:: `get_calendar`, `set_calendar`
 
 :Examples 1:
 
@@ -344,25 +285,79 @@ None
 'proleptic_gregorian'
 >>> d.del_calendar()
 >>> d.get_calendar()
-AttributeError: Can't get non-existent 'calendar'
+AttributeError: Can't get non-existent calendar
 >>> print(d.get_calendar(None))
 None
 
         '''
-        value = getattr(self, '_calendar', None)
-        if value is None:
-            if default:
-                return default[0]
+        value = self._calendar
+        self._calendar = None
+        return value
+    #--- End: def
 
-            raise AttributeError("Can't get non-existent 'calendar'")
-        
+    def del_data(self):
+        '''Delete the data.
+
+:Examples 1:
+
+>>> d.del_data()
+
+:Returns:
+
+    out:
+
+:Examples 2:
+
+>>> old = d.del_data()
+
+        '''
+        array = self._data
+        self._data = None
+        return array
+    #--- End: def
+    
+    def del_fill_value(self):
+        '''Delete the fill value.
+
+.. seealso:: `get_fill_value`, `set_fill_value`
+
+:Examples 1:
+
+>>> f = d.del_fill_value()
+
+:Returns:
+
+    out:
+        The value of the deleted fill value, or `None` if fill value
+        was not set.
+
+:Examples 2:
+
+>>> f.set_fill_value(-9999)
+>>> f.get_fill_value()
+-9999
+>>> print(f.del_fill_value())
+-9999
+>>> f.get_fill_value()
+AttributeError: Can't get non-existent fill value
+>>> f.get_fill_value(10**10)
+10000000000
+>>> print(f.get_fill_value(None))
+None
+>>> f.set_fill_value(None)
+>>> print(f.get_fill_value())
+None
+
+        '''
+        value = self._fill_value
+        self._fill_value = None        
         return value
     #--- End: def
 
     def del_units(self):
         '''Delete the units.
 
-.. seealso:: `get_units`, `has_units`, `set_units`
+.. seealso:: `get_units`, `set_units`
 
 :Examples 1:
 
@@ -377,27 +372,26 @@ None
 :Examples 2:
 
 >>> d.set_units('metres')
->>> d.get_units
+>>> d.get_units()
 'metres'
 >>> d.del_units()
 >>> d.get_units()
-AttributeError: Can't get non-existent 'units'
+AttributeError: Can't get non-existent units
 >>> print(d.get_units(None))
 None
 
         '''
-        value = getattr(self, '_units', None)
-        if value is None:
-            if default:
-                return default[0]
-
-            raise AttributeError("Can't get non-existent 'units'")
-        
+        value = self._units
+        self._units = None        
         return value
     #--- End: def
 
     def get_array(self):
         '''Return an independent numpy array containing the data.
+
+If a fill value has been set (see `set_fill_value`) then it will be
+used, otherwise the default numpy fill value appropriate to the data
+type will be used.
 
 :Returns:
 
@@ -417,13 +411,19 @@ True
 <Data: [1.0, 2.0, 3.0] km>
 
         '''
-        return self._get_Array().get_array()
+        array = self.get_data().get_array()
+
+        # Set the numpy array fill value
+        if numpy.ma.isMA(array):
+            array.set_fill_value(self.get_fill_value(None))
+
+        return array
     #--- End: def
 
     def get_calendar(self, *default):
         '''Return the calendar.
 
-.. seealso:: `del_calendar`, `has_calendar`, `set_calendar`
+.. seealso:: `del_calendar`, `set_calendar`
 
 :Examples 1:
 
@@ -447,31 +447,101 @@ True
 'metres'
 >>> d.del_calendar()
 >>> d.get_calendar()
-AttributeError: Can't get non-existent 'calendar'
+AttributeError: Can't get non-existent calendar
 >>> print(d.get_calendar(None))
 None
 
         '''
-        value = getattr(self, '_calendar', None)
+        value = self._calendar
         if value is None:
             if default:
                 return default[0]
 
-            raise AttributeError("Can't get non-existent property {!r}".format('calendar'))
+            raise AttributeError("{!r} has no calendar".format(
+                self.__class__.__name__))
         
         return value
     #--- End: def
 
-    def get_fill_value(self, *default):
-        '''
+    def get_data(self, *default):
+        '''Return the data.
+
+:Examples 1:
+
+>>> a = d.get_data()
+
+:Parameters:
+
+    default: *optional*
+        If there is no data then *default* if returned if set.
+
+:Returns:
+
+    out:
+        The data. If the data has not been set then *default* is
+        returned, if set.
+
+:Examples 2:
+
+>>> a = d.get_data(None)
 
         '''
-        value = getattr(self, '_fill_value', None)
+        array = self._data
+        if array is None:
+            if default:
+                return default[0]     
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+        
+        return array   
+    #--- End: def
+
+    def get_fill_value(self, *default):
+        '''Return the missing data value.
+
+.. seealso:: `del_fill_value`, `set_fill_vlaue`
+
+:Examples 1:
+
+>>> f = d.get_fill_value()
+
+:Parameters:
+
+    default: optional
+        Return *default* if fill value has not been set.
+
+:Returns:
+
+    out:
+        The fill value. If fill value has not been set then return the
+        value of *default* parameter, if provided.
+
+:Examples 2:
+
+>>> f.set_fill_value(-9999)
+>>> f.get_fill_value()
+-9999
+>>> print(f.del_fill_value())
+-9999
+>>> f.get_fill_value()
+AttributeError: Can't get non-existent fill value
+>>> f.get_fill_value(10**10)
+10000000000
+>>> print(f.get_fill_value(None))
+None
+>>> f.set_fill_value(None)
+>>> print(f.get_fill_value())
+None
+
+        '''
+        value = self._fill_value
         if value is None:
             if default:
                 return default[0]
 
-            raise AttributeError("Can't get non-existent property {!r}".format('fill_value'))
+            raise AttributeError("{!r} has no fill value".format(
+                self.__class__.__name__))
         
         return value
     #--- End: def
@@ -479,7 +549,7 @@ None
     def get_units(self, *default):
         '''Return the units.
 
-.. seealso:: `del_units`, `has_units`, `set_units`
+.. seealso:: `del_units`, `set_units`
 
 :Examples 1:
 
@@ -499,21 +569,22 @@ None
 :Examples 2:
 
 >>> d.set_units('metres')
->>> d.get_units
+>>> d.get_units()
 'metres'
 >>> d.del_units()
 >>> d.get_units()
-AttributeError: Can't get non-existent 'units'
+AttributeError: Can't get non-existent units
 >>> print(d.get_units(None))
 None
 
         '''
-        value = getattr(self, '_units', None)
+        value = self._units
         if value is None:
             if default:
                 return default[0]
 
-            raise AttributeError("Can't get non-existent 'units'")
+            raise AttributeError("{!r} has no units".format(
+                self.__class__.__name__))
         
         return value
     #--- End: def
@@ -521,7 +592,7 @@ None
     def set_calendar(self, calendar):
         '''Set the calendar.
 
-.. seealso:: `del_calendar`, `get_calendar`, `has_calendar`
+.. seealso:: `del_calendar`, `get_calendar`
 
 :Examples 1:
 
@@ -543,7 +614,7 @@ None
 'none'
 >>> d.del_calendar()
 >>> d.get_calendar()
-AttributeError: Can't get non-existent 'calendar'
+AttributeError: Can't get non-existent calendar
 >>> print(d.get_calendar(None))
 None
 
@@ -551,8 +622,61 @@ None
         self._calendar = calendar
     #--- End: def
 
-    def set_fill_value(self, value):
+    def set_data(self, data):
+        '''Set the data.
+
+:Parameters:
+
+    data:
+        The data to be inserted. May be any object that exposes the
+        `cfdm.structure.data.abstract.Array` interface.
+
+:Returns:
+
+    `None`
+
+:Examples:
+
+>>> d.set_data(a)
+
         '''
+        self._data = data
+    #--- End: def
+
+    def set_fill_value(self, value):
+        '''Set the missing data value.
+
+.. seealso:: `del_fill_value`, `get_fill_vlaue`
+
+:Examples 1:
+
+>>> f = d.set_fill_value(-256)
+
+:Parameters:
+
+    value: scalar
+        The new fill value.
+
+:Returns:
+
+    `None`
+
+:Examples 2:
+
+>>> f.set_fill_value(-9999)
+>>> f.get_fill_value()
+-9999
+>>> print(f.del_fill_value())
+-9999
+>>> f.get_fill_value()
+AttributeError: Can't get non-existent fill value
+>>> f.get_fill_value(10**10)
+10000000000
+>>> print(f.get_fill_value(None))
+None
+>>> f.set_fill_value(None)
+>>> print(f.get_fill_value())
+None
 
         '''
         self._fill_value = value
@@ -561,7 +685,7 @@ None
     def set_units(self, value):
         '''Set the units.
 
-.. seealso:: `del_units`, `get_units`, `has_units`
+.. seealso:: `del_units`, `get_units`
 
 :Examples 1:
 
@@ -579,11 +703,11 @@ None
 :Examples 2:
 
 >>> d.set_units('watt')
->>> d.get_units
+>>> d.get_units()
 'watt'
 >>> d.del_units()
 >>> d.get_units()
-AttributeError: Can't get non-existent 'units'
+AttributeError: Can't get non-existent units
 >>> print(d.get_units(None))
 None
 

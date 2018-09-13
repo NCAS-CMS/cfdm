@@ -171,6 +171,9 @@ initialisation with the `set_data` method.
         self._set_component('constructs', None, constructs)
     #--- End: def
     
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
     def _get_constructs(self, *default):
         '''
 .. versionadded:: 1.6
@@ -178,14 +181,20 @@ initialisation with the `set_data` method.
         '''
         return self._get_component('constructs', None, *default)
     #--- End: def
-    
+
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
     def domain(self):
         '''
 '''
-        return self._Domain(_view_constructs=self._get_constructs())
-    #--- End:: def
+        return self.get_domain()
+    #--- End: def
     
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def cell_methods(self, copy=False):
         '''
         '''
@@ -199,10 +208,11 @@ initialisation with the `set_data` method.
         return self._del_component('data_axes')
     #--- End: def
 
-    def get_domain(self, copy=True):
+    def get_domain(self):
         '''
         '''
-        return self._Domain(source=self._get_constructs(), copy=copy)
+        return self._Domain(_constructs=self._get_constructs(), _view=True)
+#        return self._Domain(source=self._get_constructs(), copy=False)
     #--- End: def
 
     def get_data_axes(self, *default):

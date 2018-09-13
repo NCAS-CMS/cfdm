@@ -1,6 +1,5 @@
 from __future__ import print_function
-from __future__ import absolute_import
-from builtins import (next, range, zip)
+from builtins import (next, range, super, zip)
 
 import itertools
 import operator
@@ -101,12 +100,12 @@ There are three extensions to the numpy indexing functionality:
 >>> d = Data(tuple('fly'))
 
         '''
-        # Make sure that data is None of a subclass of abstract.Array
-        if data is not None and not isinstance(data, abstract.Array):
-            if not isinstance(data, numpy.ndarray):
-                data = numpy.asanyarray(data)
-                
-            data = NumpyArray(data)
+#        # Make sure that data is None of a subclass of abstract.Array
+#        if data is not None and not isinstance(data, abstract.Array):
+#            if not isinstance(data, numpy.ndarray):
+#                data = numpy.asanyarray(data)
+#                
+#            data = NumpyArray(data)
 
         super(Data, self).__init__(data=data, units=units,
                                    calendar=calendar,
@@ -131,9 +130,7 @@ There are three extensions to the numpy indexing functionality:
         '''
         indices = tuple(self.parse_indices(indices))
 
-        array = self._get_Array()
-
-        array = array[indices]
+        array = self.get_data()[indices]
         
         return type(self)(array, units=self.get_units(None),
                           calendar=self.get_calendar(None),
@@ -225,19 +222,20 @@ elements.
 :Examples:
 
         '''
+        indices = self.parse_indices(indices)
+                
         array = self.get_array()
 
         if value is masked or numpy.ma.isMA(value):
             # The data is not masked but the assignment is masking
             # elements, so turn the non-masked array into a masked
             # one.
-            array = array.view(numpy.ma.MaskedArray)
-            
-        indices = self.parse_indices(indices)
+            array = array.view(numpy.ma.MaskedArray)        
 
         self._set_subspace(array, indices, numpy.asanyarray(value))
 
-        self._set_Array(NumpyArray(array))
+#        self.set_data(NumpyArray(array))
+        self.set_data(array)
     #--- End: def
 
     def __str__(self):
@@ -275,7 +273,7 @@ elements.
                 try:
                     first = type(self)(
                         numpy.ma.array(first), units, calendar).get_dtarray()
-                except OverflowError:
+                except (ValueError, OverflowError):
                     first = '??'
 
             out = '{0}{1}{2}'.format(open_brackets,
@@ -288,7 +286,7 @@ elements.
                 try:
                     first, last = type(self)(
                         numpy.ma.array([first, last]), units, calendar).get_dtarray()
-                except OverflowError:
+                except (ValueError, OverflowError):
                     first, last = ('??', '??')
 
             if size > 3:
@@ -302,7 +300,7 @@ elements.
                     try:
                         middle = type(self)(
                             numpy.ma.array(middle), units, calendar).get_dtarray()
-                    except OverflowError:
+                    except (ValueError, OverflowError):
                         middle = '??'
                         
                 out = '{0}{1!s}, {2!s}, {3!s}{4}'.format(open_brackets,
@@ -497,7 +495,8 @@ data array shape.
         array = self.get_array()
         array = numpy.expand_dims(array, position)
 
-        d._set_Array(NumpyArray(array))
+#        d.set_data(NumpyArray(array))
+        d.set_data(array)
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -507,6 +506,58 @@ data array shape.
 #            d.HDF_chunks(HDF)
 
         return d
+    #--- End: def
+
+    def get_count_array(self, *default):
+        '''
+:Returns:
+
+    out: `Data` or `None`
+
+        '''
+        data = self.get_data(None)
+        if data is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+        
+        array = getattr(data, 'count_array', None)
+        if array is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no count array".format(
+                self.__class__.__name__))
+        
+        return array
+    #--- End: def
+
+    def get_list_array(self, *default):
+        '''
+:Returns:
+
+    out: `Data` or `None`
+
+        '''
+        data = self.get_data(None)
+        if data is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+
+        array = getattr(data, 'list_array', None)
+        if array is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no list array".format(
+                self.__class__.__name__))
+        
+        return array
     #--- End: def
 
     def get_dtarray(self):
@@ -547,6 +598,58 @@ used.
             if not numpy.ndim(array):
                 array = numpy.ma.masked_all((), dtype=object)
 
+        return array
+    #--- End: def
+
+    def get_index_array(self, *default):
+        '''
+:Returns:
+
+    out: `Data` or `None`
+
+        '''
+        data = self.get_data(None)
+        if data is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+
+        array = getattr(data, 'index_array', None)
+        if array is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no index array".format(
+                self.__class__.__name__))
+        
+        return array
+    #--- End: def
+
+    def get_list_array(self, *default):
+        '''
+:Returns:
+
+    out: `Data` or `None`
+
+        '''
+        data = self.get_data(None)
+        if data is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+
+        array = getattr(data, 'list_array', None)
+        if array is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no list array".format(
+                self.__class__.__name__))
+        
         return array
     #--- End: def
 
@@ -681,7 +784,8 @@ Missing data array elements are omitted from the calculation.
         array = numpy.amax(array, axis=axes, keepdims=True)
 
         d = self.copy()
-        d._set_Array(NumpyArray(array))
+#        d.set_data(NumpyArray(array))
+        d.set_data(array)
         
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -720,7 +824,8 @@ Missing data array elements are omitted from the calculation.
         array = numpy.amin(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._set_Array(NumpyArray(array))
+#        d.set_data(NumpyArray(array))
+        d.set_data(array)
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -1019,7 +1124,8 @@ selected with the keyword arguments.
             for i in axes:
                 if shape[i] > 1:
                     raise ValueError(
-"Can't squeeze {}: Can't remove axis of size {}".format(d.__class__.__name__, shape[i]))
+"Can't squeeze {}: Can't remove axis of size {}".format(
+    d.__class__.__name__, shape[i]))
         #--- End: if
 
         if not axes:
@@ -1028,7 +1134,8 @@ selected with the keyword arguments.
         array = self.get_array()
         array = numpy.squeeze(array, axes)
 
-        d._set_Array(NumpyArray(array))
+#        d.set_data(NumpyArray(array))
+        d.set_data(array)
 
         return d
     #--- End: def
@@ -1060,7 +1167,8 @@ Missing data array elements are omitted from the calculation.
         array = numpy.sum(array, axis=axes, keepdims=True)
             
         d = self.copy()
-        d._set_Array(NumpyArray(array))
+#        d.set_data(NumpyArray(array))
+        d.set_data(array)
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -1137,7 +1245,8 @@ Missing data array elements are omitted from the calculation.
         array = self.get_array()
         array = numpy.transpose(array, axes=axes)
         
-        d._set_Array(NumpyArray(array))
+#        d.set_data(NumpyArray(array))
+        d.set_data(array)
 
         return d
     #--- End: def
@@ -1168,7 +1277,7 @@ Missing data array elements are omitted from the calculation.
 []
 
         '''
-        ma = self._get_Array()
+        ma = self.get_data()
 
         compressed_axes = getattr(ma, 'compressed_axes', None)
         if compressed_axes is None:
@@ -1189,21 +1298,26 @@ Missing data array elements are omitted from the calculation.
 :Returns:
 
     out: `str` or `None`
-        The type of compression, or `None` of there is none.
-
+        The compression type. An empty string means that no
+        compression has been applied.
+        
 :Examples 2:
+
+>>> d.compression_type()
+''
 
 >>> d.compression_type()
 'gathered'
 
 >>> d.compression_type()
-'ragged_contiguous'
+'ragged contiguous'
 
->>> d.compression_type()
-None
         '''
-        ma = self._get_Array()
-        return getattr(ma, 'compression_type', None)
+        ma = self.get_data()
+        if ma is None:
+            return 
+
+        return ma.compression_type
     #--- End: def
     
     def dump(self, display=True, prefix=None):
@@ -1366,7 +1480,7 @@ False
         if not _numpy_allclose(self.get_array(), other.get_array(),
                                rtol=rtol, atol=atol):
             if traceback:
-                print("{0}: S Different data values".format(
+                print("{0}: Different data values".format(
                     self.__class__.__name__))
                 print(repr(self.get_array()))
                 print(repr(other.get_array()))
@@ -1382,18 +1496,6 @@ False
         '''
         '''
         return self._element((slice(0, 1),)*self.ndim)
-#        d = self[(slice(0, 1),)*self.ndim]
-#        array = d.get_array()
-#        
-#        if not numpy.ma.isMA(array):
-#            return array.item()
-#
-#        mask = array.mask
-#        if mask is numpy.ma.nomask or not mask.item():
-#            return array.item()
-#
-#
-#        return numpy.ma.masked        
     #--- End: def
     
     def last_element(self):
@@ -1401,74 +1503,39 @@ False
         '''
         
         return self._element((slice(-1, None),)*self.ndim)
-#        d = self[(slice(-1, None),)*self.ndim]
-#        array = d.get_array()
-#        
-#        if not numpy.ma.isMA(array):
-#            return array.item()
-#
-#        mask = array.mask
-#        if mask is numpy.ma.nomask or not mask.item():
-#            return array.item()
-#
-#        return numpy.ma.masked
     #--- End: def
-
-    def list_array(self):
-        '''
-
-:Returns:
-
-    out: `Data` or `None`
-
-        '''
-        ma = self._get_Array()
-        
-        return getattr(ma, 'list_array', None)
-
-#        if getattr(ma, 'compression_type', None) == 'gathered':
-#            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
-#        else:
-#            list_indices = None
-#            
-#        return list_indices
-    #--- End: def
-    
-    def profile_indices(self): # profile?
-        '''
-
-:Returns:
-
-    out: `Data` or `None`
-
-        '''
-        pass
-#        ma = self._get_Array()
-#
-#        if getattr(ma, 'compression_type', None) == 'gathered':
-#            list_indices = getattr(ma, 'compression_parameters', {}).get('indices')
-#        else:
-#            list_indices = None
-#            
-#        return list_indices
-    #--- End: def
-    
+ 
     def second_element(self):
         '''
         '''
         return self._element((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
-#        index = (slice(0, 1),)*(self.ndim-1) + (slice(1, 2),)
-#      
-#        array = self[index].get_array()
-#
-#        if not numpy.ma.isMA(array):
-#            return array.item()
-#
-#        mask = array.mask
-#        if mask is numpy.ma.nomask or not mask.item():
-#            return array.item()
-#
-#        return numpy.ma.masked
+    #--- End: def
+
+    def set_data(self, data):
+        '''Set the data.
+
+:Parameters:
+
+    data: numpy array_like
+        The data to be inserted. Note that any object that exposes the
+        `cfdm.data.abstract.Array` interface is numpy array_like.
+
+:Returns:
+
+    `None`
+
+:Examples:
+
+>>> d.set_data(a)
+
+        '''
+        if data is not None and not isinstance(data, abstract.Array):
+            if not isinstance(data, numpy.ndarray):
+                data = numpy.asanyarray(data)
+                
+            data = NumpyArray(data)
+
+        super().set_data(data)
     #--- End: def
 
     def set_dtype(self, value):
@@ -1477,7 +1544,8 @@ False
         value = numpy.dtype(value)
         if value != self.dtype:
             array = numpy.asanyarray(self.get_array(), dtype=value)
-            self._set_Array(NumpyArray(array))
+#            self.set_data(NumpyArray(array))
+            self.set_data(array)
     #--- End: def
 
     def unique(self):
