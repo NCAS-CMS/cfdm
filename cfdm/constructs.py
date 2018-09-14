@@ -1,10 +1,7 @@
 from __future__ import print_function
-from __future__ import absolute_import
 from builtins import zip
-#import abc
 
 from . import structure
-#from future.utils import with_metaclass
 
 
 class Constructs(structure.Constructs):

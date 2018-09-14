@@ -1,20 +1,33 @@
-#from __future__ import absolute_import
-#from future.utils import with_metaclass
-#
-#import abc
+from builtins import super
 
+from . import abstract
 from . import mixin
 from . import structure
 
 
-class AuxiliaryCoordinate(mixin.Coordinate, structure.AuxiliaryCoordinate):
-        #with_metaclass(
+class AuxiliaryCoordinate(mixin.NetCDFVariable,
+                          abstract.Coordinate,
+                          structure.AuxiliaryCoordinate):
+    #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.Coordinate, structure.AuxiliaryCoordinate), {}))):
     '''A CF auxiliary coordinate construct.
 
     '''
-      
+    def __init__(self, properties={}, data=None, bounds=None,
+                 geometry_type=None, interior_ring=None, source=None,
+                 copy=True, _use_data=True):
+        '''
+        '''
+        super().__init__(properties=properties, data=data,
+                         bounds=bounds, geometry_type=geometry_type,
+                         interior_ring=interior_ring, source=source,
+                         copy=copy, _use_data=_use_data)
+        
+        if source is not None:
+            self._intialise_ncvar_from(source)
+    #--- End: def
+
     
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None):
@@ -39,7 +52,7 @@ coordinate object.
         if _title is None:
             _title = 'Auxiliary coordinate: ' + self.name(default='')
 
-        return super(AuxiliaryCoordinate, self).dump(
+        return super().dump(
             display=display,
             field=field, key=key,
              _level=_level, _title=_title,

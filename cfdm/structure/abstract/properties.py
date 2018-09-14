@@ -1,5 +1,5 @@
 from future.utils import with_metaclass
-from builtins import str
+from builtins import (str, super)
 
 import abc
 
@@ -48,7 +48,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         initialization By default parameters are deep copied.
 
         '''
-        super(Properties, self).__init__(source=source)
+        super().__init__()
 
         self._set_component('properties', None, {})
         

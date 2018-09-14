@@ -1,16 +1,16 @@
 from __future__ import print_function
 from builtins import (str, super)
 
-#import abc
-
+from . import abstract
 from . import mixin
 from . import structure
 
 from .constructs import Constructs
-from future.utils import with_metaclass
 
 
-class Domain(mixin.ConstructAccess, mixin.Properties, structure.Domain):
+class Domain(mixin.ConstructAccess,
+             abstract.Container,
+             structure.Domain):
 #        with_metaclass(
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.ConstructAccess, mixin.Properties, structure.Domain), {}))):

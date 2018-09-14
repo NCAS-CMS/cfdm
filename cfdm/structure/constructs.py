@@ -37,7 +37,6 @@ class Constructs(object):
                 self._construct_type       = source._construct_type
                 self._constructs           = source._constructs
                 return
-            #--- End: if
             
             self._key_base             = source._key_base.copy()
             self._array_constructs     = source._array_constructs.copy()
@@ -49,9 +48,9 @@ class Constructs(object):
 
             for construct_type in self._ignore:
                 self._key_base.pop(construct_type, None)
-                self._array_constructs.pop(construct_type, None)
-                self._non_array_constructs.pop(construct_type, None)
-                self._ordered_constructs.pop(construct_type, None)
+                self._array_constructs.discard(construct_type)
+                self._non_array_constructs.discard(construct_type)
+                self._ordered_constructs.discard(construct_type)
 #                self._constructs.pop(construct_type, None)                
             
             d = {}            

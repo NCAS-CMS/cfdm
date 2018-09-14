@@ -1,5 +1,4 @@
 from __future__ import print_function
-from __future__ import absolute_import
 from builtins import (str, super)
 from past.builtins import basestring
 
@@ -12,6 +11,7 @@ from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
 from .dimensioncoordinate  import DimensionCoordinate
 
+from . import abstract
 from . import mixin
 from . import structure
 
@@ -44,7 +44,9 @@ _datum_parameters  = set(_datum_parameters)
 #_datum_ancillaries = set()
 
 
-class CoordinateReference(mixin.Container, structure.CoordinateReference):
+class CoordinateReference(mixin.NetCDFVariable,
+                          mixin.Container,
+                          structure.CoordinateReference):
     '''A coordinate reference construct of the CF data model. 
 
 A coordinate reference construct relates the coordinate values of the
@@ -246,13 +248,17 @@ frame and consists of the following:
                     domain_ancillaries=coordinate_conversion_domain_ancillaries)
         #--- End: if
             
-#        super(CoordinateReference, self).__init__(
         super().__init__(
             coordinates=coordinates,
             datum=datum,
             coordinate_conversion=coordinate_conversion,
             source=source,
             copy=copy)
+        
+        if source is not None:
+            self._intialise_ncvar_from(source)
+    #--- End: def
+    
     #--- End: def
    
     def __str__(self):
@@ -398,7 +404,6 @@ reference object.
 :Examples:
 
         '''
-#        if not super(CoordinateReference, self).equals(
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,

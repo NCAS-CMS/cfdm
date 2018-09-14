@@ -1,4 +1,5 @@
 from future.utils import with_metaclass
+from builtins import super
 
 import abc
 
@@ -46,8 +47,13 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
         '''
         # Initialise properties
-        super(PropertiesData, self).__init__(properties=properties,
-                                             source=source, copy=copy)
+        try:
+            ncvar = source.get_ncvar(None)
+        except:
+            ncvar=None
+
+        super().__init__(properties=properties, source=source,
+                         copy=copy)
 
         if source is not None:
             if not _use_data:

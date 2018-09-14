@@ -3,17 +3,20 @@ from builtins import (str, super, zip)
 
 import re
 
+#from . import abstract
 from . import mixin
 from . import structure
 
 from .constructs import Constructs
 from .domain      import Domain
-#from future.utils import with_metaclass
 
 _debug = False
        
 
-class Field(mixin.ConstructAccess, mixin.PropertiesData, structure.Field):
+class Field(mixin.NetCDFVariable,
+            mixin.ConstructAccess,
+            mixin.PropertiesData,
+            structure.Field):
 #        with_metaclass(abc.ABCMeta, type('NewBase', (mixin.ConstructAccess, mixin.PropertiesData, structure.Field), {}))):
     '''A CF field construct.
 
@@ -47,10 +50,8 @@ and institution).
         '''
         '''
         instance = super().__new__(cls) #, *args, **kwargs)
-        #        instance = super().__new__(cls, *args, **kwargs)
         instance._Constructs = Constructs
         instance._Domain     = Domain
-#        print(instance)
         return instance
 
 #        obj = object.__new__(cls, *args, **kwargs)    
@@ -77,13 +78,13 @@ and institution).
 
         '''        
         # Initialize the new field with attributes and CF properties
-        super().__init__(properties=properties,
-                         source=source, copy=copy,
-                         _use_data=_use_data) 
-#        super(Field, self).__init__(properties=properties,
-#                                    source=source, copy=copy,
-#                                    _use_data=_use_data) 
-
+        structure.Field.__init__(self, properties=properties,
+                                 source=source, copy=copy,
+                                 _use_data=_use_data)
+        
+        if source is not None:
+            self._intialise_ncvar_from(source)
+    
         self._set_component('unlimited' , None, 'TO DO')
         self._set_component('HDFgubbins', None, 'TO DO')
     #--- End: def
@@ -719,7 +720,6 @@ False
         '''
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             
-#        if not super(Field, self).equals(
         if not super().equals(
                 other,
                 rtol=rtol, atol=atol, traceback=traceback,
@@ -794,7 +794,6 @@ by the data array may be selected.
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
        
         # Expand the dims in the field's data array
-#        f = super(Field, self).expand_dims(position, copy=copy)
         f = super().expand_dims(position, copy=copy)
 
         data_axes.insert(position, axis)
@@ -967,7 +966,6 @@ axes, use the `remove_axes` method.
         iaxes = [data_axes.index(axis) for axis in axes]
 
         # Squeeze the field's data array
-#        f = super(Field, self).squeeze(iaxes, copy=copy)
         f = super().squeeze(iaxes, copy=copy)
 
         new_data_axes = [axis for axis in data_axes if axis not in axes]

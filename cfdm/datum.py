@@ -1,13 +1,9 @@
-#from __future__ import absolute_import
-#from future.utils import with_metaclass
-
-#import abc
-
-from . import mixin
+from . import abstract
 from . import structure
 
 
-class Datum(mixin.Parameters, structure.Datum):
+class Datum(abstract.Parameters,
+            structure.Datum):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.Parameters, structure.Datum), {}))):

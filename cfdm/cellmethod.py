@@ -1,17 +1,14 @@
 from __future__ import print_function
-from __future__ import absolute_import
 from builtins import (str, super, zip)
-#from future.utils import with_metaclass
-
-#import abc
 
 import numpy
 
-from . import mixin
+from . import abstract
 from . import structure
 
 
-class CellMethod(mixin.Properties, structure.CellMethod):
+class CellMethod(abstract.Properties,
+                 structure.CellMethod):
 #        with_metaclass(
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.Properties, structure.CellMethod), {}))):
@@ -290,7 +287,6 @@ The `!axes` attribute is ignored in the comparison.
 :Examples:
 
 '''
-#        if not super(CellMethod, self).equals(
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,

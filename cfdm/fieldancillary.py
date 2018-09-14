@@ -1,12 +1,13 @@
-from __future__ import absolute_import
-#import abc
+from builtins import super
 
+#from . import abstract
 from . import mixin
 from . import structure
-#from future.utils import with_metaclass
 
 
-class FieldAncillary(mixin.PropertiesData, structure.FieldAncillary):
+class FieldAncillary(mixin.NetCDFVariable,
+                     mixin.PropertiesData,
+                     structure.FieldAncillary):
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.PropertiesData, structure.FieldAncillary), {}))):
     '''A field ancillary construct of the CF data model.
@@ -32,6 +33,18 @@ construct.
 
     '''
 
+    def __init__(self, properties={}, data=None, source=None,
+                 copy=True, _use_data=True):
+        '''
+        '''
+        super().__init__(properties=properties, data=data,
+                         source=source, copy=copy,
+                         _use_data=_use_data)
+        
+        if source is not None:
+            self._intialise_ncvar_from(source)
+    #--- End: def
+    
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None):
         '''Return a string containing a full description of the field ancillary
@@ -55,7 +68,7 @@ object.
         if _title is None:
             _title = 'Field Ancillary: ' + self.name(default='')
 
-        return super(FieldAncillary, self).dump(
+        return super().dump(
             display=display,
             field=field, key=key,
              _omit_properties=_omit_properties,

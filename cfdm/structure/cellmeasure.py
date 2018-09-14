@@ -1,3 +1,5 @@
+from builtins import super
+
 from . import abstract
 #from future.utils import with_metaclass
 
@@ -76,10 +78,8 @@ cell measure variables correspond to cell measure constructs.
 ...                 data=d)
 
         '''
-        super(CellMeasure, self).__init__(properties=properties,
-                                          source=source, data=data,
-                                          copy=copy,
-                                          _use_data=_use_data)
+        super().__init__(properties=properties, source=source,
+                         data=data, copy=copy, _use_data=_use_data)
 
         if source is not None:
             try:

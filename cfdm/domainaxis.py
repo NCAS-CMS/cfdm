@@ -1,14 +1,14 @@
 from __future__ import print_function
 from builtins import super
 
-#import abc
-
+from . import abstract
 from . import mixin
 from . import structure
-#from future.utils import with_metaclass
 
 
-class DomainAxis(mixin.Container, structure.DomainAxis):
+class DomainAxis(mixin.NetCDFDimension,
+                 abstract.Container,
+                 structure.DomainAxis):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.Container, structure.DomainAxis), {}))):
@@ -38,12 +38,10 @@ to the order of the elements.
         '''
         super().__init__(size=size, source=source, copy=copy)
         
-        if source:
-            ncdim = source.get_ncdim(None)
-            if ncdim is not None:
-                self.set_ncdim(ncdim)
+        if source is not None:
+            self._intialise_ncdim_from(source)
     #--- End: def
-    
+        
     def equals(self, other, traceback=False, *kwargs):
         '''Return True if two domain axis objects are equal.
 

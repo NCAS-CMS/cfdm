@@ -1,12 +1,11 @@
-from __future__ import absolute_import
-#import abc
-
+from . import abstract
 from . import mixin
 from . import structure
-#from future.utils import with_metaclass
 
 
-class InteriorRing(mixin.PropertiesData, structure.InteriorRing):
+class InteriorRing(mixin.NetCDFVariable,
+                   abstract.PropertiesData,
+                   structure.InteriorRing):
 #        with_metaclass(
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.PropertiesData, structure.InteriorRing), {}))):
@@ -23,7 +22,18 @@ coordinate array, with the addition of an extra ragged dimension that
 indexes the geometries for each cell.
 
     '''
-
+    def __init__(self, properties={}, data=None, source=None,
+                 copy=True, _use_data=True):
+        '''
+        '''
+        super().__init__(properties=properties, data=data,
+                         source=source, copy=copy,
+                         _use_data=_use_data)
+        
+        if source is not None:
+            self._intialise_ncvar_from(source)
+    #--- End: def
+    
     def dump(self, display=True, field=None, key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,
              _omit_properties=None):

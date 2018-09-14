@@ -7,7 +7,7 @@ from .constructs import Constructs
 #from future.utils import with_metaclass
 
 
-class Domain(mixin.ConstructAccess, abstract.Properties):
+class Domain(mixin.ConstructAccess, abstract.Container): #Properties):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.ConstructAccess, abstract.Properties), {}))):
@@ -62,8 +62,8 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         return instance
     #--- End: def
     
-    def __init__(self, properties=None, _constructs=None, source=None,
-                 copy=True, _use_data=True, _view=False):
+    def __init__(self, source=None, copy=True, _use_data=True,
+                 _constructs=None):
         '''**Initialization**
 
 :Parameters:
@@ -85,9 +85,16 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         will affect the original constructs, and vice versa.
 
         '''
-        super().__init__(properties=properties, source=source,
-                         copy=copy)
+        super().__init__()
         
+        if _constructs is not None:
+            constructs = self._Constructs(source=_constructs,
+                                          view=True,
+                                          ignore=('cell_method',
+                                                  'field_ancillary'))
+            self._set_component('constructs', None, constructs)
+            return 
+            
         if source is not None:
             try:                
                 constructs = source._get_constructs()
@@ -96,17 +103,21 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
                 copy = False
                 _use_data = True            
             else:
-                constructs = constructs.subset(
-                    tuple(self._construct_key_base.keys()), copy=False)
-        elif _constructs is not None:
-            constructs = _constructs
-            if _view:
                 constructs = self._Constructs(source=constructs,
                                               view=True,
                                               ignore=('cell_method',
                                                       'field_ancillary'))
-                copy = False
-                _use_data = True
+#                constructs = constructs.subset(
+#                    tuple(self._construct_key_base.keys()), copy=False)
+        #elif _constructs is not None:
+        #    constructs = _constructs
+        #    if _view:
+        #        constructs = self._Constructs(source=constructs,
+        #                                      view=True,
+        #                                      ignore=('cell_method',
+        #                                              'field_ancillary'))
+        #        copy = False
+        #        _use_data = True
         else:
             constructs = self._Constructs(**self._construct_key_base)
             copy = False
@@ -133,7 +144,10 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         '''
         return 'STRINASDAs da sa'
     #-- End: def
-        
+
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
     def _get_constructs(self, *default):
         '''
 .. versionadded:: 1.6
@@ -142,6 +156,15 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         return self._get_component('constructs', None, *default)
     #--- End: def
     
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def copy(self):
+        '''
+        '''
+        return type(self)(source=self, copy=True)
+    #--- End: def
+
     def del_construct(self, key):
         '''
         '''
@@ -167,5 +190,16 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         return self._get_constructs().del_construct(key)
     #--- End: def
 
+    @classmethod
+    def fromconstructs(cls, constructs):
+      '''
+      '''
+      constructs = cls._Constructs(source=constructs,
+                                    view=True,
+                                    ignore=('cell_method',
+                                            'field_ancillary'))
 
+      return cls(_constructs=constructs)
+  #--- End: def
+            
 #--- End: class

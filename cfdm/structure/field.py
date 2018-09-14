@@ -1,12 +1,9 @@
 from builtins import super
 
-#import abc
-
 from . import abstract
 from . import mixin
 
 from .constructs import Constructs
-#from future.utils import with_metaclass
 
 
 class Field(mixin.ConstructAccess, abstract.PropertiesData):
@@ -160,16 +157,26 @@ initialisation with the `set_data` method.
             if constructs is not None and (copy or not _use_data):
                 constructs = constructs.copy(data=_use_data)
 
-            if data is not None:
-                if _use_data:
-                    self.set_data(data, data_axes, copy=copy)
-            elif data_axes is not None:
-                self.set_data_axes(data_axes)
+#            if data is not None:
+ #               if _use_data:
+ #                   self.set_data(data, data_axes, copy=copy)
+ #           elif data_axes is not None:
+ #               self.set_data_axes(data_axes)
         else:
-            constructs = self._Constructs(**self._construct_key_base)
+            constructs = None
+            data       = None
+            data_axes  = None
 
+        if constructs is None:
+            constructs = self._Constructs(**self._construct_key_base)
+            
         self._set_component('constructs', None, constructs)
-    #--- End: def
+
+        if data is not None and _use_data:
+            self.set_data(data, data_axes, copy=copy)
+        elif data_axes is not None:
+            self.set_data_axes(data_axes)
+     #--- End: def
     
     # ----------------------------------------------------------------
     # Private methods
@@ -211,7 +218,7 @@ initialisation with the `set_data` method.
     def get_domain(self):
         '''
         '''
-        return self._Domain(_constructs=self._get_constructs(), _view=True)
+        return self._Domain(_constructs=self._get_constructs())
 #        return self._Domain(source=self._get_constructs(), copy=False)
     #--- End: def
 

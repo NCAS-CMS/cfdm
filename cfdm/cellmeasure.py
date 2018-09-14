@@ -1,15 +1,14 @@
 from __future__ import print_function
-#from __future__ import absolute_import
 from builtins import super
-#from future.utils import with_metaclass
 
-#import abc
-
+from . import abstract
 from . import mixin
 from . import structure
 
 
-class CellMeasure(mixin.PropertiesData, structure.CellMeasure):
+class CellMeasure(mixin.NetCDFVariable,
+                  abstract.PropertiesData,
+                  structure.CellMeasure):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.PropertiesData, structure.CellMeasure), {}))):
@@ -33,7 +32,18 @@ propagated. CF-netCDF cell measure variables correspond to cell
 measure constructs.
 
     '''
-
+    def __init__(self, measure=None, properties={}, data=None, source=None,
+                 copy=True, _use_data=True):
+        '''
+        '''
+        super().__init__(measure=measure, properties=properties,
+                         data=data, source=source, copy=copy,
+                         _use_data=_use_data)
+        
+        if source is not None:
+            self._intialise_ncvar_from(source)
+    #--- End: def
+    
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None):
         '''
@@ -63,7 +73,6 @@ Return a string containing a full description of the cell measure.
             if not (self.has_data() or self.properties()):
                 _title += ' (external variable: {0})'.format(self.get_ncvar(''))
                 
-#        return super(CellMeasure, self).dump(
         return super().dump(
             display=display,
             field=field, key=key,
@@ -76,7 +85,6 @@ Return a string containing a full description of the cell measure.
                ignore_properties=(), ignore_construct_type=False):
         '''
         '''
-#        if not super(CellMeasure, self).equals(
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
@@ -198,7 +206,6 @@ None
             custom = ()
         
         if all_names:    
-#            out += super(CellMeasure, self).name(default=default,
             out += super().name(default=default,
                                                  ncvar=ncvar,
                                                  custom=custom,

@@ -1,10 +1,8 @@
-from builtins import str
+from builtins import (str, super)
 
 from . import abstract
-#from future.utils import with_metaclass
 
 class DomainAxis(abstract.Container):
-#    with_metaclass(abc.ABCMeta, abstract.Container)):
     '''A domain axis construct of the CF data model. 
 
 A domain axis construct specifies the number of points along an
@@ -17,7 +15,6 @@ exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
     '''
-    
     def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**
 
@@ -32,7 +29,7 @@ to the order of the elements.
         If True then . In any 
 
         '''
-        super(DomainAxis, self).__init__(source=source)
+        super().__init__()
         
         if source is not None:
             try:

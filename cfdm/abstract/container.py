@@ -3,12 +3,15 @@ from builtins import object
 from future.utils import with_metaclass
 
 import abc
-import textwrap
 
 import numpy
 import sys
 
-class Container(object):
+from .. import structure
+
+class Container(with_metaclass(
+        abc.ABCMeta,
+        structure.abstract.Container)):
     '''Mixin class for storing object components.
     
     '''
@@ -67,12 +70,6 @@ class Container(object):
             return x == y
     #--- End: def
     
-    def del_ncvar(self):
-        '''
-        '''        
-        return self._del_component('ncvar')
-    #--- End: def
-
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_construct_type=False):
         '''
@@ -92,22 +89,4 @@ class Container(object):
         return True
     #--- End: def
         
-    def get_ncvar(self, *default):
-        '''ttttttttt
-        '''        
-        return self._get_component('ncvar', None, *default)
-    #--- End: def
-
-    def has_ncvar(self):
-        '''
-        '''        
-        return self._has_component('ncvar')
-    #--- End: def
-
-    def set_ncvar(self, value):
-        '''
-        '''
-        return self._set_component('ncvar', None, value)
-    #--- End: def
-
 #--- End: class
