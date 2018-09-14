@@ -1,7 +1,6 @@
 from __future__ import print_function
 from builtins import (str, super)
 
-from . import abstract
 from . import mixin
 from . import structure
 
@@ -9,7 +8,7 @@ from .constructs import Constructs
 
 
 class Domain(mixin.ConstructAccess,
-             abstract.Container,
+             mixin.Container,
              structure.Domain):
 #        with_metaclass(
 #        abc.ABCMeta,
@@ -413,13 +412,12 @@ False
         '''
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             
-        if not super(Domain, self).equals(
-                other,
-                rtol=rtol, atol=atol, traceback=traceback,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,
-                ignore_construct_type=ignore_construct_type):
+        if not super().equals(other, rtol=rtol, atol=atol,
+                              traceback=traceback,
+                              ignore_data_type=ignore_data_type,
+                              ignore_fill_value=ignore_fill_value,
+                              ignore_properties=ignore_properties,
+                              ignore_construct_type=ignore_construct_type):
             return False
 
         # ------------------------------------------------------------

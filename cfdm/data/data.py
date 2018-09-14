@@ -107,10 +107,9 @@ There are three extensions to the numpy indexing functionality:
 #                
 #            data = NumpyArray(data)
 
-        super(Data, self).__init__(data=data, units=units,
-                                   calendar=calendar,
-                                   fill_value=fill_value,
-                                   source=source, copy=copy)
+        super().__init__(data=data, units=units, calendar=calendar,
+                         fill_value=fill_value, source=source,
+                         copy=copy)
                                    
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
@@ -445,7 +444,7 @@ True
 >>> e = d.copy()
 
         '''
-        new = super(Data, self).copy()
+        new = super().copy()
 #        new.HDF_chunks(self.HDF_chunks())
         return new
     #--- End: def

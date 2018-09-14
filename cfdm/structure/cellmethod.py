@@ -1,4 +1,4 @@
-from builtins import str
+from builtins import (str, super)
 from past.builtins import basestring
 
 from . import abstract
@@ -74,8 +74,8 @@ that the method was applied only over El Nino years).
         initialization By default parameters are deep copied.
 
         '''
-        super(CellMethod, self).__init__(properties=properties,
-                                         source=source, copy=copy)
+        super().__init__(properties=properties, source=source,
+                         copy=copy)
 
         if source:
             try:

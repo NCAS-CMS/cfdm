@@ -1,8 +1,6 @@
 from __future__ import print_function
 from builtins import object
-from future.utils import with_metaclass
 
-import abc
 import textwrap
 
 import numpy

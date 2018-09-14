@@ -3,7 +3,6 @@ from builtins import (str, super, zip)
 
 import re
 
-#from . import abstract
 from . import mixin
 from . import structure
 

@@ -1,4 +1,5 @@
-from __future__ import absolute_import
+from builtins import super
+
 from .abstract import Implementation
 
 
@@ -63,7 +64,7 @@ class CFDMImplementation(Implementation):
     CompressedArray     = CompressedArray
 
         '''
-        super(CFDMImplementation, self).__init__(
+        super().__init__(
             version=version,
             AuxiliaryCoordinate=AuxiliaryCoordinate,
             CellMeasure=CellMeasure,

@@ -1,4 +1,5 @@
 from future.utils import with_metaclass
+from builtins import super
 
 import abc
 
@@ -24,7 +25,7 @@ domain ancillary constructs.
     copy: `bool`, optional
 
         '''
-        super(Parameters, self).__init__(source=source)
+        super().__init__()
 
         if source:
             try:

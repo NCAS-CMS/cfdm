@@ -1,12 +1,11 @@
 from builtins import super
 
-from . import abstract
 from . import mixin
 from . import structure
 
 
 class DomainAncillary(mixin.NetCDFVariable,
-                      abstract.PropertiesDataBounds,
+                      mixin.PropertiesDataBounds,
                       structure.DomainAncillary):
         #with_metaclass(
         #abc.ABCMeta,

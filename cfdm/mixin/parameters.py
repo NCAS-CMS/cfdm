@@ -1,10 +1,8 @@
 from __future__ import print_function
 from builtins import super
 
-#import abc
-
 from .container import Container
-#from future.utils import with_metaclass
+
 
 class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
     '''Mixin class for parameters.
@@ -64,7 +62,6 @@ class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
 :Examples:
 
         '''
-#        if not super(Parameters, self).equals(
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,

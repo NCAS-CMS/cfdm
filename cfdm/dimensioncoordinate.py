@@ -1,13 +1,12 @@
 from __future__ import absolute_import
 from builtins import super
 
-from . import abstract
 from . import mixin
 from . import structure
 
 
 class DimensionCoordinate(mixin.NetCDFVariable,
-                          abstract.Coordinate,
+                          mixin.Coordinate,
                           structure.DimensionCoordinate):
         #with_metaclass(
         #abc.ABCMeta,

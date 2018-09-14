@@ -1,10 +1,11 @@
-from . import abstract
+from builtins import super
+
 from . import mixin
 from . import structure
 
 
 class InteriorRing(mixin.NetCDFVariable,
-                   abstract.PropertiesData,
+                   mixin.PropertiesData,
                    structure.InteriorRing):
 #        with_metaclass(
 #        abc.ABCMeta,
@@ -42,12 +43,11 @@ indexes the geometries for each cell.
         if _create_title and _title is None: 
             _title = 'Interior Ring: ' + self.name(default='')
 
-        return super(Bounds, self).dump(
-            display=display,
-            field=field, key=key,
-            _omit_properties=_omit_properties, 
-            _prefix=_prefix, _level=_level, _title=_title,
-            _create_title=_create_title)
+        return super().dump(display=display, field=field, key=key,
+                            _omit_properties=_omit_properties,
+                            _prefix=_prefix, _level=_level,
+                            _title=_title,
+                            _create_title=_create_title)
     #--- End: def
     
 #--- End: class

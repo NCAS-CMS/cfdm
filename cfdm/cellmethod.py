@@ -3,11 +3,11 @@ from builtins import (str, super, zip)
 
 import numpy
 
-from . import abstract
+from . import mixin
 from . import structure
 
 
-class CellMethod(abstract.Properties,
+class CellMethod(mixin.Properties,
                  structure.CellMethod):
 #        with_metaclass(
 #        abc.ABCMeta,

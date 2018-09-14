@@ -13,7 +13,7 @@ class Container(with_metaclass(abc.ABCMeta, object)):
 
     '''
     
-    def __init__(self, source=None):
+    def __init__(self): #, source=None):
         '''**Initialization**
 
 :Parameters:
@@ -23,10 +23,10 @@ class Container(with_metaclass(abc.ABCMeta, object)):
         *source*. Note that the components are not deep copied.
 
         '''
-        if source is not None:
-            self._components = source._components.copy()
-        else:
-            self._components = {}
+#        if source is not None:
+#            self._components = source._components.copy()
+ #       else:
+        self._components = {}
     #--- End: def
         
     def __repr__(self):

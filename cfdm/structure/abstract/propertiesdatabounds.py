@@ -1,13 +1,11 @@
+from builtins import super
 from future.utils import with_metaclass
 
 import abc
 
 from copy import deepcopy
 
-#import mixin
-
 from .propertiesdata import PropertiesData
-
 
 
 class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
@@ -61,12 +59,9 @@ descriptive properties.
 
         '''
         # Initialise properties and data
-        super(PropertiesDataBounds, self).__init__(
-            properties=properties,
-            data=data,
-            source=source,
-            copy=copy,
-            _use_data=_use_data)
+        super().__init__(properties=properties, data=data,
+                         source=source, copy=copy,
+                         _use_data=_use_data)
 
         # Get bounds, geometry type and interior ring from source
         if source is not None:
@@ -137,7 +132,7 @@ descriptive properties.
 >>> d = c.copy(data=False)
 
         '''
-        return super(PropertiesDataBounds, self).copy(data=data)
+        return super().copy(data=data)
     #--- End: def
 
     def del_bounds(self):

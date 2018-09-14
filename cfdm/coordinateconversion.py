@@ -1,8 +1,8 @@
-from . import abstract
+from . import mixin
 from . import structure
 
 
-class CoordinateConversion(abstract.ParametersDomainAncillaries,
+class CoordinateConversion(mixin.ParametersDomainAncillaries,
                            structure.CoordinateConversion):
         #with_metaclass(
         #abc.ABCMeta,

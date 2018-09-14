@@ -1,8 +1,5 @@
 from __future__ import print_function
 from builtins import super
-#from future.utils import with_metaclass
-
-#import abc
 
 from .parameters import Parameters
 
@@ -15,17 +12,12 @@ class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Para
     def __bool__(self):
         '''
         '''
-#        return (super(ParametersDomainAncillaries, self).__bool__() or
-#                bool(self.domain_ancillaries()))
         return (super().__bool__() or bool(self.domain_ancillaries()))
     #--- End: def
         
     def __nonzero__(self):
         '''
         '''
-#        return (super(ParametersDomainAncillaries, self).__nonzero__() or
-#                bool(self.domain_ancillaries()))
-#        return (super().__nonzero__() or bool(self.domain_ancillaries()))
         return self.__bool__()
     #--- End: def
         
@@ -33,7 +25,6 @@ class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Para
         '''x.__str__() <==> str(x)
 
         '''
-#        out = [super(ParametersDomainAncillaries, self).__str__()]
         out = [super().__str__()]
 
         out.append('Ancillaries: {0}'.format(', '.join(sorted(self.domain_ancillaries()))))
@@ -75,7 +66,6 @@ class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Para
 :Examples:
 
         '''
-#        if not super(ParametersDomainAncillaries, self).equals(
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,

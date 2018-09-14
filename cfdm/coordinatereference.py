@@ -11,7 +11,6 @@ from .coordinateconversion import CoordinateConversion
 from .datum                import Datum
 from .dimensioncoordinate  import DimensionCoordinate
 
-from . import abstract
 from . import mixin
 from . import structure
 
@@ -257,8 +256,6 @@ frame and consists of the following:
         
         if source is not None:
             self._intialise_ncvar_from(source)
-    #--- End: def
-    
     #--- End: def
    
     def __str__(self):

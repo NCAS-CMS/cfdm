@@ -1,8 +1,8 @@
-from . import abstract
+from . import mixin
 from . import structure
 
 
-class Datum(abstract.Parameters,
+class Datum(mixin.Parameters,
             structure.Datum):
         #with_metaclass(
         #abc.ABCMeta,

@@ -16,7 +16,8 @@ class NetCDFVariable(object):
 
         if ncvar is not None:
             self.set_ncvar(ncvar)
-            
+    #--- End: def
+
     def del_ncvar(self):
         '''
         '''        

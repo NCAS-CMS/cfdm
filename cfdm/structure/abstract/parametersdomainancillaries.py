@@ -1,3 +1,4 @@
+from builtins import super
 from future.utils import with_metaclass
 
 import abc
@@ -24,10 +25,9 @@ domain ancillary constructs.
     copy: `bool`, optional
 
         '''
-        super(ParametersDomainAncillaries, self).__init__(parameters=parameters,
-                                                          source=source,
-                                                          copy=copy,
-                                                          _use_data=_use_data)
+        super().__init__(parameters=parameters, source=source,
+                         copy=copy,
+                         _use_data=_use_data)
 
         if source:
             try:
@@ -54,7 +54,7 @@ domain ancillary constructs.
         '''x.__str__() <==> str(x)
 
         '''
-        out = [super(ParametersDomainAncillaries, self).__str__()]
+        out = [super().__str__()]
             
         domain_ancillaries = self.domain_ancillaries()
         if domain_ancillaries:

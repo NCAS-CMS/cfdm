@@ -25,7 +25,6 @@ bounds.
 
 #        indices = parse_indices(self.shape, indices)
 
-#        new = super(PropertiesDataBounds, self).__getitem__(indices)
         new = super().__getitem__(indices)
         
         data = self.get_data(None)
@@ -120,7 +119,6 @@ bounds.
         # ------------------------------------------------------------
         # Properties and Data
         # ------------------------------------------------------------
-#        string = super(PropertiesDataBounds, self).dump(
         string = super().dump(
             display=False, field=field, key=key,
             _omit_properties=_omit_properties, _prefix=_prefix,
@@ -177,7 +175,6 @@ bounds.
         # ------------------------------------------------------------
         # Check the properties and data
         # ------------------------------------------------------------
-#        if not super(PropertiesDataBounds, self).equals(
         if not super().equals(
                 other,
                 rtol=rtol, atol=atol, traceback=traceback,
@@ -282,7 +279,6 @@ bounds.
         '''
         position = self._parse_axes([position])[0]
         
-#        c = super(PropertiesDataBounds, self).expand_dims(position, copy=copy)
         c = super().expand_dims(position, copy=copy)
         
         # ------------------------------------------------------------
@@ -340,7 +336,6 @@ variable.
         '''
         axes = self._parse_axes(axes)
 
-#        c = super(PropertiesDataBounds, self).squeeze(axes, copy=copy)
         c = super().squeeze(axes, copy=copy)        
 
         # ------------------------------------------------------------
@@ -393,7 +388,6 @@ variable.
         else:
             axes = self._parse_axes(axes)
 
-#        c = super(PropertiesDataBounds, self).transpose(axes, copy=copy)
         c = super().transpose(axes, copy=copy)
 
         # ------------------------------------------------------------

@@ -1,11 +1,10 @@
 from __future__ import print_function
-from builtins import zip
+from builtins import (super, zip)
 
 from . import structure
 
 
 class Constructs(structure.Constructs):
-        #with_metaclass(abc.ABCMeta, structure.Constructs)):
     '''
     '''    
     
@@ -37,8 +36,8 @@ class Constructs(structure.Constructs):
                    construct_type=None, copy=False):
         '''
         '''
-        out = super(Constructs, self).constructs(construct_type=construct_type,
-                                                 copy=copy)
+        out = super().constructs(construct_type=construct_type,
+                                 copy=copy)
 
         if axes is not None:
             axes = set(axes)

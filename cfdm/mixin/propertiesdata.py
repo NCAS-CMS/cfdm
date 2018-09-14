@@ -2,7 +2,6 @@ from __future__ import print_function
 from builtins import (str, super)
 
 from .properties import Properties
-#from future.utils import with_metaclass
 
 
 class PropertiesData(Properties): #with_metaclass(abc.ABCMeta, Properties)):
@@ -236,7 +235,6 @@ True
         # ------------------------------------------------------------
         # Check the properties
         # ------------------------------------------------------------
-#        if not super(PropertiesData, self).equals(
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,

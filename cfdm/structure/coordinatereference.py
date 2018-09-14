@@ -119,8 +119,7 @@ frame and consists of the following:
         initialization. By default arguments are deep copied.
 
         '''
-#        super(CoordinateReference, self).__init__(source=source)
-        super().__init__(source=source)
+        super().__init__()
 
         self._set_component('coordinates', None, set())
         

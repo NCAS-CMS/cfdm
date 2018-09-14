@@ -1,5 +1,3 @@
-'''
-'''
 from .constructaccess             import ConstructAccess
 from .container                   import Container
 from .coordinate                  import Coordinate

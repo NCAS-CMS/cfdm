@@ -1,8 +1,6 @@
 from __future__ import print_function
-#from future.utils import with_metaclass
 from builtins import super
 
-#import abc
 import textwrap
 
 import numpy
@@ -12,10 +10,7 @@ from .container import Container
 
 
 class Properties(Container):
-#class Properties(with_metaclass(abc.ABCMeta, Container)):
     '''Mixin class for descriptive properties.
-
-Subclasses must also inherit from ..structure.abstract.properties
 
     '''
 
@@ -68,7 +63,6 @@ Subclasses must also inherit from ..structure.abstract.properties
                ignore_properties=(), ignore_construct_type=False):
         '''
         '''
-#        if not super(Properties, self).equals(
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
