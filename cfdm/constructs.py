@@ -141,7 +141,7 @@ class Constructs(structure.Constructs):
             return 'ncdim%{0}'.format(ncdim)
 
         # Get the name from the identifier
-        return 'id%{0}'.format(axis)
+        return 'cfdm%{0}'.format(axis)
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,

@@ -16,21 +16,6 @@ class Array(with_metaclass(abc.ABCMeta, structure_Array)):
 The form of the array is arbitrary and is defined by the attributes
 set on a subclass of the abstract `Array` object.
 
-It must be possible to derive the following from the array:
-
-  * Data-type of the array elements (see `dtype`)
-  
-  * Number of array dimensions (see `ndim`)
-  
-  * Array dimension sizes (see `shape`)
-  
-  * Number of elements in the array (see `size`)
-  
-  * An independent numpy array containing the data (see `get_array`)
-
-  * A subspace of the array as an independent numpy array (see
-    `__getitem__`)
-
 See `cfdm.data.NumpyArray` for an example implementation.
 
     '''

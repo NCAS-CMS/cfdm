@@ -92,7 +92,8 @@ bounds.
 
     def dump(self, display=True, field=None, key=None,
              _omit_properties=None, _prefix='', _title=None,
-             _create_title=True, _level=0):
+             _create_title=True, _level=0, _axes=None,
+             _axis_names=None):
         '''Return a string containing a full description of the instance.
 
 :Parameters:
@@ -119,10 +120,12 @@ bounds.
         # ------------------------------------------------------------
         # Properties and Data
         # ------------------------------------------------------------
-        string = super().dump(
-            display=False, field=field, key=key,
-            _omit_properties=_omit_properties, _prefix=_prefix,
-            _title=_title, _create_title=_create_title, _level=_level)
+        string = super().dump(display=False, field=field, key=key,
+                              _omit_properties=_omit_properties,
+                              _prefix=_prefix, _title=_title,
+                              _create_title=_create_title,
+                              _level=_level, _axes=_axes,
+                              _axis_names=_axis_names)
 
         string = [string]
         
@@ -131,9 +134,12 @@ bounds.
         # ------------------------------------------------------------
         bounds = self.get_bounds(None)
         if bounds is not None:
-            string.append(bounds.dump(display=False, field=field, key=key,
+            string.append(bounds.dump(display=False, field=field,
+                                      key=key,
                                       _prefix=_prefix+'Bounds:',
-                                      _create_title=False, _level=_level))
+                                      _create_title=False,
+                                      _level=_level, _axes=_axes,
+                                      _axis_names=_axis_names))
 
         # ------------------------------------------------------------
         # Geometry type
@@ -150,9 +156,13 @@ bounds.
         # ------------------------------------------------------------
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            string.append(interior_ring.dump(display=False, field=field, key=key,
+            string.append(interior_ring.dump(display=False,
+                                             field=field, key=key,
                                              _prefix=_prefix+'Interior ring:',
-                                             _create_title=False, _level=_level))
+                                             _create_title=False,
+                                             _level=_level,
+                                             _axes=_axes,
+                                             _axis_names=_axis_names))
             
         string = '\n'.join(string)
         

@@ -43,7 +43,8 @@ number of vertices of each cell.
     #--- End: def
     
     def dump(self, display=True, _omit_properties=None, field=None,
-             key='', _level=0, _title=None):
+             key='', _level=0, _title=None, _axes=None,
+             _axis_names=None):
         '''Return a string containing a full description of the domain
 ancillary object.
 
@@ -77,10 +78,11 @@ ancillary object.
             _title = 'Domain Ancillary: ' + self.name(default=key) + ncvar
             
 
-        return super().dump(
-            display=display, _omit_properties=_omit_properties,
-            field=field, key=key, _level=_level,
-            _title=_title)
+        return super().dump(display=display,
+                            _omit_properties=_omit_properties,
+                            field=field, key=key, _level=_level,
+                            _title=_title, _axes=_axes,
+                            _axis_names=_axis_names)
     #--- End: def
 
 #--- End: class

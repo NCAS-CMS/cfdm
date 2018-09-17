@@ -10,7 +10,7 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     '''Abstract base class for a data array with descriptive properties.
 
     '''
-    def __init__(self, properties={}, data=None, source=None,
+    def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 

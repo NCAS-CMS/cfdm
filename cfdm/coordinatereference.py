@@ -270,7 +270,8 @@ x.__str__() <==> str(x)
     #--- End: def
 
     def dump(self, display=True, _omit_properties=None, field=None,
-             key='', _level=0, _title=None):
+             key='', _level=0, _title=None, _construct_names=None,
+             _auxiliary_coordinates=None, _dimension_coordinates=None):
         '''Return a string containing a full description of the coordinate
 reference object.
 
@@ -310,15 +311,24 @@ reference object.
                 indent1, term, value))
 
         # Coordinate conversion domain ancillary-valued terms
-        if field:
+#        if field:
+#            for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
+#                value = field.domain_ancillaries().get(key)
+#                if value is not None:
+#                    value = 'Domain Ancillary: '+value.name(default=key)
+#                else:
+#                    value = ''
+#                string.append('{0}Coordinate conversion:{1} = {2}'.format(
+#                    indent1, term, str(value)))
+        if _construct_names:
             for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
-                value = field.domain_ancillaries().get(key)
-                if value is not None:
-                    value = 'Domain Ancillary: '+value.name(default=key)
-                else:
-                    value = ''
-                string.append('{0}Coordinate conversion:{1} = {2}'.format(
-                    indent1, term, str(value)))
+#                value = field.domain_ancillaries().get(key)
+#                if value is not None:
+#                    value = 'Domain Ancillary: '+value.name(default=key)
+#                else:
+#                    value = ''
+                string.append('{0}Coordinate conversion:{1} = Domain Ancillary: {2}'.format(
+                    indent1, term, _construct_names.get(key, 'cfdm%{}'.format(key))))
         else:
             for term, value in sorted(coordinate_conversion.ancillaries.items()):
                 string.append("{0}Coordinate conversion:{1} = {2}".format(
@@ -343,18 +353,27 @@ reference object.
 #                string.append("{0}Datum:{1} = {2}".format(indent1, term, str(value)))
 
         # Coordinates 
-        if field:
-            for key in sorted(self.coordinates()):
-                coord = field.coordinates().get(key)
-                if coord is not None:
-                    if isinstance(coord, DimensionCoordinate):
-                        coord = 'Dimension Coordinate: '+coord.name(default='key%'+key)
-                    elif isinstance(coord, AuxiliaryCoordinate):
-                        coord = 'Auxiliary Coordinate: '+coord.name(default='key%'+key)
-                    else:
-                        coord = coord.name(default=key)
-
-                    string.append('{0}{1}'.format(indent1, coord))
+#       if field:
+#           for key in sorted(self.coordinates()):
+#               coord = field.coordinates().get(key)
+#               if coord is not None:
+#                   if isinstance(coord, DimensionCoordinate):
+#                       coord = 'Dimension Coordinate: '+coord.name(default='key%'+key)
+#                   elif isinstance(coord, AuxiliaryCoordinate):
+#                       coord = 'Auxiliary Coordinate: '+coord.name(default='key%'+key)
+#                   else:
+#                       coord = coord.name(default=key)
+#
+#                   string.append('{0}{1}'.format(indent1, coord))
+        if _construct_names:
+            for key in sorted(self.coordinates(), reverse=True):
+                coord = '{}'.format(_construct_names.get(key, 'cfdm%{}'.format(key)))
+                if key in _dimension_coordinates:
+                    coord = 'Dimension Coordinate: '+coord
+                elif key in _auxiliary_coordinates:
+                    coord = 'Auxiliary Coordinate: '+coord
+                    
+                string.append('{0}{1}'.format(indent1, coord))
         else:
             for identifier in sorted(self.coordinates()):
                 string.append('{0}{1}'.format(indent1, identifier))

@@ -9,12 +9,11 @@ from .propertiesdata import PropertiesData
 
 
 class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
-    '''Abstract base class for a data array with bounds and with
-descriptive properties.
+    '''Abstract base class for a data array with bounds and descriptive
+properties.
 
-    '''
-    
-    def __init__(self, properties={}, data=None, bounds=None,
+    '''    
+    def __init__(self, properties=None, data=None, bounds=None,
                  geometry_type=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**

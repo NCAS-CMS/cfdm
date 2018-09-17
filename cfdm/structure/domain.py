@@ -58,38 +58,21 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     #--- End: def
     
     def __init__(self, source=None, copy=True, _use_data=True):
-#                 _constructs=None):
         '''**Initialization**
 
 :Parameters:
 
-#    constructs: `Constructs`
-#        Create the domain as a view to another Constructs
-#        object. Changes to the Constructs object will affect te
-#        Domain, and vice verse.
-
-    source: 
-
+    source: optional
+        Initialise the domain from the constructs of *source*,
+        ignoring any cell method or field ancillary constructs.
+        
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
 
-    _view: `bool`
-        Create the domain as a view to the constructs provided by the
-        *constructs* or *source* parameters object. Changes to the
-        will affect the original constructs, and vice versa.
-
         '''
         super().__init__()
         
-#        if _constructs is not None:
-#            constructs = self._Constructs(source=_constructs,
-#                                          view=True,
-#                                          ignore=('cell_method',
-#                                                  'field_ancillary'))
-#            self._set_component('constructs', None, constructs)
-#            return 
-            
         if source is not None:
             try:                
                 constructs = source._get_constructs()
@@ -102,17 +85,6 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
                                               view=True,
                                               ignore=('cell_method',
                                                       'field_ancillary'))
-#                constructs = constructs.subset(
-#                    tuple(self._construct_key_base.keys()), copy=False)
-        #elif _constructs is not None:
-        #    constructs = _constructs
-        #    if _view:
-        #        constructs = self._Constructs(source=constructs,
-        #                                      view=True,
-        #                                      ignore=('cell_method',
-        #                                              'field_ancillary'))
-        #        copy = False
-        #        _use_data = True
         else:
             constructs = self._Constructs(**self._construct_key_base)
             copy = False
@@ -145,7 +117,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     # ----------------------------------------------------------------
     def _get_constructs(self, *default):
         '''
-.. versionadded:: 1.6
+.. versionadded:: 1.7
         
         '''
         return self._get_component('constructs', None, *default)

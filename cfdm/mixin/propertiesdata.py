@@ -4,7 +4,7 @@ from builtins import (str, super)
 from .properties import Properties
 
 
-class PropertiesData(Properties): #with_metaclass(abc.ABCMeta, Properties)):
+class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.
 
     '''
@@ -57,10 +57,10 @@ x.__str__() <==> str(x)
         return '{0}{1} {2}'.format(self.name(''), dims, units)
     #--- End: def
 
-#    @abc.abstractmethod
     def dump(self, display=True, field=None, key=None,
              _omit_properties=(), _prefix='', _title=None,
-             _create_title=True, _level=0):
+             _create_title=True, _level=0, _axes=None,
+             _axis_names=None):
         '''
 
 Return a string containing a full description of the instance.
@@ -133,9 +133,15 @@ standard_name = 'time'
         # ------------------------------------------------------------
         data = self.get_data(None)
         if data is not None:
-            if field and key:
-                axis_names = field._unique_domain_axis_names()
-                x = [axis_names[axis] for axis in field.construct_axes(key)]
+#            if field and keya:
+#                axis_names = field._unique_domain_axis_names()
+#                x = [axis_names[axis] for axis in field.construct_axes(key)]
+#                ndim = data.ndim
+#                x = x[:ndim]                    
+#                if len(x) < ndim:
+#                    x.extend([str(size) for size in data.shape[len(x):]])
+            if _axes and _axis_names:
+                x = [_axis_names[axis] for axis in _axes]
                 ndim = data.ndim
                 x = x[:ndim]                    
                 if len(x) < ndim:

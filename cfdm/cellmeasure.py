@@ -44,7 +44,8 @@ measure constructs.
     #--- End: def
     
     def dump(self, display=True, _omit_properties=None, field=None,
-             key=None, _level=0, _title=None):
+             key=None, _level=0, _title=None, _axes=None,
+             _axis_names=None):
         '''
 
 Return a string containing a full description of the cell measure.
@@ -72,11 +73,10 @@ Return a string containing a full description of the cell measure.
             if not (self.has_data() or self.properties()):
                 _title += ' (external variable: {0})'.format(self.get_ncvar(''))
                 
-        return super().dump(
-            display=display,
-            field=field, key=key,
-            _omit_properties=_omit_properties,
-             _level=_level, _title=_title)
+        return super().dump( display=display, field=field, key=key,
+                             _omit_properties=_omit_properties,
+                             _level=_level, _title=_title,
+                             _axes=_axes, _axis_names=_axis_names)
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,

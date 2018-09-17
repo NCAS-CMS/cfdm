@@ -182,7 +182,7 @@ x.__str__() <==> str(x)
         return '\n'.join(string)
     #--- End def
                           
-    def _dump_axes(self, display=True, _level=0):
+    def _dump_axes(self, axis_names, display=True, _level=0):
         '''Return a string containing a description of the domain axes of the
 field.
     
@@ -205,21 +205,41 @@ field.
         indent1 = '    ' * _level
         indent2 = '    ' * (_level+1)
 
-        data_axes = self.data_axes()
-        if data_axes is None:
-            data_axes = ()
+#        data_axes = self.get_data_axes(())
+
+        axes = self.domain_axes()
+
+        w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
+                    for axis in axes])
+#                    if axis not in data_axes])
+#
+#        x = ["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
+#             for axis in data_axes]
+
+        string = '\n'.join(w) #+x)
+
+        if display:
+            print(string)
+        else:
+            return string
+    #--- End: def
+        indent1 = '    ' * _level
+        indent2 = '    ' * (_level+1)
+
+#        data_axes = self.data_axes()
+#        if data_axes is None:
+#            data_axes = ()
 
         axes = self.domain_axes()
         axis_name = self.domain_axis_name
 
-        w = sorted(["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), axes[axis].size)
-                    for axis in axes
-                    if axis not in data_axes])
+        w = sorted(["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), axes[axis].get_size)
+                    for axis in axes])
+#
+#        x = ["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), axes[axis].size)
+#             for axis in data_axes]
 
-        x = ["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), axes[axis].size)
-             for axis in data_axes]
-
-        string = '\n'.join(w+x)
+        string = '\n'.join(w) #+x)
 
         if display:
             print(string)
@@ -267,73 +287,60 @@ last values.
         indent0 = indent * _level
         indent1 = indent0 + indent
 
-        title = '{0}{1}: {2}'.format(indent0, _title, self.name(''))
+        axis_to_name = self._unique_domain_axis_names()
 
-        # Append the netCDF variable name
-        ncvar = getattr(self, 'ncvar', None)
-        if ncvar is not None:
-            title += " (ncvar%{0})".format(ncvar)
+        construct_name = self._unique_construct_names()
+        
+        string = []
 
-        line  = '{0}{1}'.format(indent0, ''.ljust(len(title)-_level*4, '-'))
-
-        # Title
-        string = [line, title, line]
-
-        # Simple properties
-        if self._simple_properties():
-            string.append(
-                self._dump_simple_properties(_level=_level,
-                                             omit=('Conventions',
-                                                   '_FillValue',
-                                                   'missing_value',
-                                                   'flag_values',
-                                                   'flag_meanings',
-                                                   'flag_masks')))
-            
-        # Flags
-        flags = []
-        for attr in ('flag_values', 'flag_meanings', 'flag_masks'):
-            value = getattr(self, attr, None)
-            if value is not None:
-                flags.append('{0}{1} = {2}'.format(indent0, attr, value))
-        #--- End: for
-        if flags:
-            string.append('')
-            string.extend(flags)
-            
-        # Axes
-        axes = self._dump_axes(display=False, _level=_level)
+        # Domain axes
+        axes = self._dump_axes(axis_to_name, display=False, _level=_level)
         if axes:
-            string.extend(('', axes))
-           
+            string.append('')
+            string.append(axes)
+          
         # Dimension coordinates
         for key, value in sorted(self.dimension_coordinates().items()):
             string.append('')
-            string.append(value.dump(display=False, 
-                                     field=self, key=key, _level=_level))
-             
+            string.append(value.dump(display=False, _level=_level,
+                                     _title='Dimension coordinate: {0}'.format(construct_name[key]),
+                                     _axes=self.construct_axes(key),
+                                     _axis_names=axis_to_name))
+            
         # Auxiliary coordinates
         for key, value in sorted(self.auxiliary_coordinates().items()):
             string.append('')
-            string.append(value.dump(display=False, field=self, 
-                                     key=key, _level=_level))
+            string.append(value.dump(display=False, _level=_level,
+                                     _title='Auxiliary coordinate: {0}'.format(construct_name[key]),
+                                     _axes=self.construct_axes(key),
+                                     _axis_names=axis_to_name))
+
         # Domain ancillaries
         for key, value in sorted(self.domain_ancillaries().items()):
             string.append('') 
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
+            string.append(value.dump(display=False, _level=_level,
+                                     _title='Domain ancillary: {0}'.format(construct_name[key]),
+                                     _axes=self.construct_axes(key),
+                                     _axis_names=axis_to_name))
             
         # Coordinate references
         for key, value in sorted(self.coordinate_references().items()):
             string.append('')
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
+            string.append(value.dump(display=False, _level=_level,
+                                     _title='Coordinate reference: {0}'.format(construct_name[key]),
+                                     _construct_names=construct_name,
+                                     _auxiliary_coordinates=tuple(self.auxiliary_coordinates()),
+                                     _dimension_coordinates=tuple(self.dimension_coordinates())))
 
         # Cell measures
         for key, value in sorted(self.cell_measures().items()):
             string.append('')
-            string.append(
-                value.dump(display=False, field=self, key=key, _level=_level))
+            string.append(value.dump(display=False, field=self,
+                                     key=key, _level=_level,
+                                     _title='Cell measure: {0}'.format(construct_name[key]),
+                                     _axes=self.construct_axes(key),
+                                     _axis_names=axis_to_name))
+
 
         string.append('')
         

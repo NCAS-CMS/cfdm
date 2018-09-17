@@ -1,5 +1,7 @@
 from builtins import object
 
+import re
+
 
 class ConstructAccess(object):
     '''Mixin class for manipulating constructs stored in a `Constructs`
@@ -7,6 +9,61 @@ object.
 
     '''
 
+    def _unique_construct_names(self):
+        '''
+
+        '''    
+        key_to_name = {}
+        name_to_keys = {}
+
+
+        for d in self._get_constructs()._constructs.values():
+            name_to_keys = {}
+
+        
+#        for key, construct in self.constructs().items():
+            for key, construct in d.items():
+                name = construct.name(default='cfdm%'+key)
+                name_to_keys.setdefault(name, []).append(key)
+                key_to_name[key] = name
+    
+            for name, keys in name_to_keys.items():
+                if len(keys) <= 1:
+                    continue
+                
+                for key in keys:
+                    key_to_name[key] = '{0}{{{1}}}'.format(
+                        name,
+                        re.findall('\d+$', key)[0])
+        #--- End: for
+        
+        return key_to_name
+    #--- End: def
+    
+    def _unique_domain_axis_names(self):
+        '''
+        '''
+        key_to_name = {}
+        name_to_keys = {}
+
+        for key, value in self.domain_axes().items():
+            name_size = (self.domain_axis_name(key), value.get_size(''))
+            name_to_keys.setdefault(name_size, []).append(key)
+            key_to_name[key] = name_size
+
+        for (name, size), keys in name_to_keys.items():
+            if len(keys) == 1:
+                key_to_name[keys[0]] = '{0}({1})'.format(name, size)
+            else:
+                for key in keys:                    
+                    key_to_name[key] = '{0}{{{1}}}({2})'.format(name,
+                                                                re.findall('\d+$', key)[0],
+                                                                size)
+        #--- End: for
+        
+        return key_to_name
+    #--- End: def
+    
     def auxiliary_coordinates(self, axes=None, copy=False):
         '''Return the auxiliary coordinates 
         '''    

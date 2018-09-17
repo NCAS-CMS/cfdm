@@ -29,7 +29,8 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
 
     
     def dump(self, display=True, _omit_properties=None, field=None,
-             key=None, _level=0, _title=None):
+             key=None, _level=0, _title=None, _axes=None,
+             _axis_names=None):
         '''Return a string containing a full description of the auxiliary
 coordinate object.
 
@@ -51,11 +52,10 @@ coordinate object.
         if _title is None:
             _title = 'Auxiliary coordinate: ' + self.name(default='')
 
-        return super().dump(
-            display=display,
-            field=field, key=key,
-             _level=_level, _title=_title,
-            _omit_properties=_omit_properties)
+        return super().dump(display=display, field=field, key=key,
+                            _level=_level, _title=_title,
+                            _omit_properties=_omit_properties,
+                            _axes=_axes, _axis_names=_axis_names)
     #--- End: def
 
     
