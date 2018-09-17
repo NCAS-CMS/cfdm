@@ -4,14 +4,9 @@ from . import abstract
 from . import mixin
 
 from .constructs import Constructs
-#from future.utils import with_metaclass
 
 
-class Domain(mixin.ConstructAccess, abstract.Container): #Properties):
-        #with_metaclass(
-        #abc.ABCMeta,
-        #type('NewBase', (mixin.ConstructAccess, abstract.Properties), {}))):
-    
+class Domain(mixin.ConstructAccess, abstract.Container):
     '''A domain of the CF data model.
 
 A domain represents a set of discrete "locations" in what generally
@@ -62,16 +57,16 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         return instance
     #--- End: def
     
-    def __init__(self, source=None, copy=True, _use_data=True,
-                 _constructs=None):
+    def __init__(self, source=None, copy=True, _use_data=True):
+#                 _constructs=None):
         '''**Initialization**
 
 :Parameters:
 
-    constructs: `Constructs`
-        Create the domain as a view to another Constructs
-        object. Changes to the Constructs object will affect te
-        Domain, and vice verse.
+#    constructs: `Constructs`
+#        Create the domain as a view to another Constructs
+#        object. Changes to the Constructs object will affect te
+#        Domain, and vice verse.
 
     source: 
 
@@ -87,13 +82,13 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         '''
         super().__init__()
         
-        if _constructs is not None:
-            constructs = self._Constructs(source=_constructs,
-                                          view=True,
-                                          ignore=('cell_method',
-                                                  'field_ancillary'))
-            self._set_component('constructs', None, constructs)
-            return 
+#        if _constructs is not None:
+#            constructs = self._Constructs(source=_constructs,
+#                                          view=True,
+#                                          ignore=('cell_method',
+#                                                  'field_ancillary'))
+#            self._set_component('constructs', None, constructs)
+#            return 
             
         if source is not None:
             try:                
@@ -194,12 +189,14 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     def fromconstructs(cls, constructs):
       '''
       '''
-      constructs = cls._Constructs(source=constructs,
-                                    view=True,
-                                    ignore=('cell_method',
-                                            'field_ancillary'))
+      domain = cls()
+      constructs = domain._Constructs(source=constructs,
+                                      view=True,
+                                      ignore=('cell_method',
+                                              'field_ancillary'))
+      domain._set_component('constructs', None, constructs)
 
-      return cls(_constructs=constructs)
+      return domain
   #--- End: def
             
 #--- End: class

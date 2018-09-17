@@ -51,23 +51,41 @@ Data classes
    :toctree: classes/
 
    cfdm.Data
-   cfdm.Array
-   cfdm.CompressedArray
    cfdm.NetCDFArray
-   cfdm.NumpyArray
+   cfdm.NumpyArray..
 
-Base classes
-------------
+Mixin classes
+-------------
 
 .. autosummary::
    :nosignatures:
    :toctree: classes/
 
-   cfdm.Container
-   cfdm.Properties
-   cfdm.PropertiesData
-   cfdm.PropertiesDataBounds
-   cfdm.Coordinate
-   cfdm.Terms
-   cfdm.ConstructAccess
+   cfdm.mixin.ConstructAccess
+   cfdm.mixin.Container
+   cfdm.mixin.Coordinate
+   cfdm.mixin.Parameters
+   cfdm.mixin.ParametersDomainAncillaries
+   cfdm.mixin.Properties
+   cfdm.mixin.PropertiesData
+   cfdm.mixin.PropertiesDataBounds
   
+Abstract classes
+----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cfdm.data.abstract.Array
+   cfdm.data.abstract.CompressedArray		
+  
+.. inheritance-diagram:: cfdm.Field cfdm.DomainAxis
+   :top-classes: cfdm.structure.abstract.Container, cfdm.mixin.Container
+                         
+
+.. graphviz::
+
+   digraph foo {
+      "bar" -> "baz";
+   }

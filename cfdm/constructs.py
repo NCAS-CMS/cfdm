@@ -42,7 +42,6 @@ class Constructs(structure.Constructs):
         if axes is not None:
             axes = set(axes)
             construct_axes = self.construct_axes()
-#            for key, construct in list(out.items()):
             for key in tuple(out):
                 x = construct_axes.get(key)
                 if x is None or not axes.intersection(x):
@@ -60,7 +59,6 @@ class Constructs(structure.Constructs):
             else:
                 (prefix, _, value) = description.partition(':')
                 custom = (prefix,) if value else None
-                
                 for key, construct in tuple(out.items()):
                     if description not in construct.name(custom=custom, all_names=True):
                         del out[key]

@@ -218,7 +218,7 @@ initialisation with the `set_data` method.
     def get_domain(self):
         '''
         '''
-        return self._Domain(_constructs=self._get_constructs())
+        return self._Domain.fromconstructs(self._get_constructs())
 #        return self._Domain(source=self._get_constructs(), copy=False)
     #--- End: def
 
