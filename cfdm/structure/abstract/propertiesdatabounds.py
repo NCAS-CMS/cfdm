@@ -3,8 +3,6 @@ from future.utils import with_metaclass
 
 import abc
 
-from copy import deepcopy
-
 from .propertiesdata import PropertiesData
 
 
@@ -14,7 +12,7 @@ properties.
 
     '''    
     def __init__(self, properties=None, data=None, bounds=None,
-                 geometry_type=None, interior_ring=None, source=None,
+                 geometry=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 
@@ -44,16 +42,35 @@ properties.
         The bounds array may also be set after initialisation with the
         `set_bounds` method.
   
-    source: optional
-        Override the *properties*, *data* and *bounds* parameters with
-        ``source.properties()``, ``source.get_data()`` and
-        ``source.get_bounds()`` respectively.
-
-        If *source* does not have one of these methods, or it can not
-        return anything, then that parameter is not set.
+    geometry: `str`, optional
+        Set the geometry type. Ignored if the *source* parameter is
+        set.
         
+          *Example:*
+             ``geometry='polygon'``
+        
+        The geometry type may also be set after initialisation with
+        the `set_geometry` method.
+  
+    interior_ring: `InteriorRing`, optional
+        Set the interior ring array. Ignored if the *source* parameter
+        is set.
+        
+        The interior ring array may also be set after initialisation
+        with the `set_interior_ring` method.
+  
+    source: optional
+        Override the *properties*, *data*, *bounds*, *geometry* and
+        *interior_ring* parameters with ``source.properties()``,
+        ``source.get_data(None)``, ``source.get_bounds(None)``,
+        ``source.get_geometry(None)``,
+        ``source.get_interior_ring(None)`` respectively.
+
+        If *source* does not have one of these methods, then the
+        corresponding parameter is not set.
+ 
     copy: `bool`, optional
-        If False then do not deep copy arguments prior to
+        If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
         '''
@@ -70,9 +87,9 @@ properties.
                 bounds = None
                 
             try:
-                geometry_type = source.get_geometry_type(None)
+                geometry = source.get_geometry(None)
             except AttributeError:
-                geometry_type = None
+                geometry = None
                 
             try:
                 interior_ring = source.get_interior_ring(None)
@@ -87,18 +104,21 @@ properties.
                 
             self.set_bounds(bounds, copy=False)
 
-        # Initialise the geometry type
-        if geometry_type is not None:
-            self.set_geometry_type(geometry_type)
-
         # Initialise interior ring
         if interior_ring is not None:
             if copy or not _use_data:
                 interior_ring = interior_ring.copy(data=_use_data)
                 
             self.set_interior_ring(interior_ring, copy=False)
+            
+        # Initialise the geometry type
+        if geometry is not None:
+            self.set_geometry(geometry)
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
     def bounds(self):
         '''
@@ -106,6 +126,16 @@ properties.
         return self.get_bounds()
     #--- End: def
 
+    @property
+    def interior_ring(self):
+        '''
+        '''
+        return self.get_interior_ring()
+    #--- End: def
+
+     # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self, data=True):
         '''Return a deep copy.
 
@@ -113,13 +143,13 @@ properties.
 
 :Examples 1:
 
->>> d = c.copy()
+>>> g = f.copy()
 
 :Parameters:
 
     data: `bool`, optional
-        If False then do not copy the data nor bounds. By default the
-        data and bounds are copied.
+        If False then do not copy the data, bounds nor interior ring
+        arrays. By default they are copied.
 
 :Returns:
 
@@ -128,14 +158,18 @@ properties.
 
 :Examples 2:
 
->>> d = c.copy(data=False)
+>>> g = f.copy(data=False)
+>>> g.has_data()
+False
+>>> g.bounds.has_data()
+False
 
         '''
         return super().copy(data=data)
     #--- End: def
 
     def del_bounds(self):
-        '''Delete the bounds.
+        '''Remove the bounds.
 
 .. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
 
@@ -146,7 +180,7 @@ properties.
 :Returns: 
 
     out: `Bounds` or `None`
-        The removed bounds, or `None` if the data was not set.
+        The removed bounds, or `None` if the bounds are not set.
 
 :Examples 2:
 
@@ -166,10 +200,10 @@ None
         return self._del_component('bounds')
     #--- End: def
 
-    def del_bounds(self):
-        '''Delete the bounds type.
+    def del_geometry(self):
+        '''Delete the geometry type.
 
-.. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
+.. seealso:: `get_geometry`, `has_geometry`, `set_geometry`
 
 :Examples 1:
 
@@ -180,7 +214,7 @@ None
 :Examples 2:
 
         '''
-        return self._del_component('geometry_type')
+        return self._del_component('geometry')
     #--- End: def
 
     def get_bounds(self, *default):
@@ -213,7 +247,7 @@ None
         return self._get_component('bounds', None, *default)
     #--- End: def
 
-    def get_geometry_type(self, *default):
+    def get_geometry(self, *default):
         '''Return the bounds type.
 
 .. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
@@ -232,7 +266,7 @@ None
 :Examples 2:
 
         '''
-        return self._get_component('geometry_type', None, *default)
+        return self._get_component('geometry', None, *default)
     #--- End: def
 
     def get_interior_ring(self, *default):
@@ -283,14 +317,14 @@ None
         return self._has_component('bounds')
     #--- End: def
 
-    def has_geometry_type(self):
+    def has_geometry(self):
         '''True if there is a bounds type.
         
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
 :Examples 1:
 
->>> x = f.has_geometry_type()
+>>> x = f.has_geometry()
 
 :Returns:
 
@@ -299,7 +333,7 @@ None
 :Examples 2:
 
         '''
-        return self._has_component('geometry_type')
+        return self._has_component('geometry')
     #--- End: def
 
     def has_interior_ring(self):
@@ -358,7 +392,7 @@ None
         self._set_component('bounds', bounds)
     #--- End: def
 
-    def set_geometry_type(self, value):
+    def set_geometry(self, value):
         '''Set the bounds type.
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
@@ -375,7 +409,7 @@ None
 
 :Examples 2:
         '''
-        self._set_component('geometry_type', value)
+        self._set_component('geometry', value)
     #--- End: def
 
     def set_interior_ring(self, interior_ring, copy=True):

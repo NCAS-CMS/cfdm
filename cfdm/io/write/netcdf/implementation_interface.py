@@ -641,7 +641,7 @@ False
         if not set.
 
         '''
-        return bool(coordinate.get_geometry_type(None) == 'climatology')
+        return bool(coordinate.get_geometry(None) == 'climatology')
     #--- End: def
 
     @staticmethod

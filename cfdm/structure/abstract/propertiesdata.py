@@ -38,20 +38,14 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         ``source.properties()`` and ``source.get_data(None)``
         respectively.
 
-        If *source* does not have one of these methods, then that
-        parameter is not set.
+        If *source* does not have one of these methods, then the
+        corresponding parameter is not set.
         
     copy: `bool`, optional
-        If False then do not deep copy arguments prior to
+        If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
         '''
-        # Initialise properties
-        try:
-            ncvar = source.get_ncvar(None)
-        except:
-            ncvar=None
-
         super().__init__(properties=properties, source=source,
                          copy=copy)
 
@@ -91,121 +85,9 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         return self.get_data()
     #--- End: def
 
-#    @property
-#    def dtype(self):
-#        '''Describes the format of the elements in the data.
-#
-#:Examples:
-#
-#>>> f.dtype
-#dtype('float64')
-#
-#        '''
-#        return self.get_data().dtype
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def ndim(self):
-#        '''The number of dimensions of the data.##
-#
-#:Examples:##
-#
-#>>> d.shape
-#(73, 96)
-#>>> d.ndim
-#2
-#>>> d.size
-#7008
-#
-#>>> d.shape
-#(1, 1, 1)
-#>>> d.ndim
-#3
-#>>> d.size
-#1
-#
-#>>> d.shape
-#()
-#>>> d.ndim
-#0
-#>>> d.size
-#1
-#
-#        '''
-#        return self.get_data().ndim
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def shape(self):
-#        '''Shape of the data.
-#
-#:Examples:
-#
-#>>> d.shape
-#(73, 96)
-#>>> d.ndim
-#2
-#>>> d.size
-#7008
-#
-#>>> d.shape
-#(1, 1, 1)
-#>>> d.ndim
-#3
-#>>> d.size
-#1
-#
-#>>> d.shape
-#()
-#>>> d.ndim
-#0
-#>>> d.size
-#1
-#
-#        '''
-#        return self.get_data().shape
-#    #--- End: def
-#
-#    # ----------------------------------------------------------------
-#    # Attribute (read only)
-#    # ----------------------------------------------------------------
-#    @property
-#    def size(self):
-#        '''Number of elements in the data.
-#
-#:Examples:
-#
-#>>> d.shape
-#(73, 96)
-#>>> d.size
-#7008
-#>>> d.ndim
-#2
-#
-#>>> d.shape
-#(1, 1, 1)
-#>>> d.ndim
-#3
-#>>> d.size
-#1
-#
-#>>> d.shape
-#()
-#>>> d.ndim
-#0
-#>>> d.size
-#1
-#
-#        '''
-#        return self.get_data().size
-#    #--- End: def
-
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self, data=True):
         '''Return a deep copy.
 
@@ -231,13 +113,15 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 :Examples 2:
 
 >>> g = f.copy(data=False)
+>>> g.has_data()
+False
 
         '''
         return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
     def del_data(self):
-        '''Delete the data.
+        '''Remove the data.
 
 .. versionadded:: 1.6
 
@@ -245,7 +129,7 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
 :Examples 1:
 
->>> f.del_data()
+>>> d = f.del_data()
 
 :Returns: 
 
@@ -395,21 +279,22 @@ method to return the data as a `numpy` array.
 
 :Returns:
 
-    out:
-        The data. If the data has not been set, then return the value
-        of *default* parameter if provided.
+    out: `Data` or *default*
+        The data. If the data has not been set, then the *default*
+        parameter is returned, if provided.
 
 :Examples 2:
 
->>> f.del_data()
->>> f.get_data('No data')
-'No data'
+>>> f.has_data()
+True
+>>> d = f.del_data()
+>>> f.has_data()
+False
+>> print(f.get_data(None))
+None
 
         '''
-        try:
-            data = self._get_component('data', None, None)
-        except AttributeError:
-            raise AttributeError("There is no data")
+        data = self._get_component('data', None)
 
         if data is None:
             if not default:
@@ -428,7 +313,7 @@ method to return the data as a `numpy` array.
     #--- End: def
 
     def has_data(self):
-        '''True if there are data.
+        '''Whether data has been set.
         
 .. versionadded:: 1.6
 
@@ -445,8 +330,14 @@ method to return the data as a `numpy` array.
 
 :Examples 2:
 
->>> if f.has_data():
-...     print 'Has data'
+>>> f.has_data()
+True
+>>> d = f.del_data()
+>>> f.has_data()
+False
+>> print(f.get_data(None))
+None
+
 
         '''     
         return self._has_component('data')
@@ -469,7 +360,7 @@ prior to insertion.
 :Parameters:
 
     data: `Data`
-        The data to be inserted.
+        The data to be inserted.set.
 
     copy: `bool`, optional
         If False then do not copy the data prior to insertion. By

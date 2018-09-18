@@ -467,10 +467,10 @@ also be provided.
     #--- End: def
 
     @staticmethod
-    def set_geometry_type(coordinate, value):
+    def set_geometry(coordinate, value):
         '''
         '''
-        coordinate.set_geometry_type(value)
+        coordinate.set_geometry(value)
     #--- End: def
 
     @staticmethod

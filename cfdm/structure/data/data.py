@@ -97,7 +97,7 @@ An N-dimensional data array with units and masked values.
     def __deepcopy__(self, memo):
         '''x.__deepcopy__() -> Deep copy of data.
 
-Used if copy.deepcopy is called on data
+Used if copy.deepcopy is called on the object.
 
         ''' 
         return self.copy()

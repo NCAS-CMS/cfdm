@@ -27,6 +27,8 @@ domain ancillary constructs.
         '''
         super().__init__()
 
+        self._set_component('parameters', {})
+
         if source:
             try:
                 parameters = source.parameters()
@@ -37,7 +39,7 @@ domain ancillary constructs.
         if parameters is None:
             parameters = {}
             copy = False
-            
+
         self.parameters(parameters, copy=copy)
     #--- End: def
 
@@ -108,7 +110,7 @@ domain ancillary constructs.
 :Examples 2:
 
         '''
-        return self._del_component_key('parameters', parameter)
+        return self._get_component('parameters').pop(parameter, None)
     #--- End: def
 
     def get_parameter(self, term, *default):
@@ -194,8 +196,15 @@ ERROR
 {}
 
         '''
-        return self._dict_component('parameters',
-                                    replacement=parameters, copy=copy)
+        out = self._get_component('parameters').copy()
+
+        if parameters is not None:
+            if copy:
+                properties = deepcopy(parameters)
+
+            self._set_component('parameters', parameters)
+
+        return out
     #--- End: def
 
     def set_parameter(self, term, value, copy=True):
@@ -227,7 +236,7 @@ ERROR
         if copy:
             value = deepcopy(value)
             
-        self._set_component_key('parameters', term, value)
+        self._get_component('parameters')[term] = value
     #--- End: def
     
 #--- End: class

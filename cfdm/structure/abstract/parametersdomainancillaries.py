@@ -29,6 +29,8 @@ domain ancillary constructs.
                          copy=copy,
                          _use_data=_use_data)
 
+        self._set_component('domain_ancillaries', {})
+
         if source:
             try:
                 domain_ancillaries = source.domain_ancillaries()
@@ -117,7 +119,7 @@ domain ancillary constructs.
 :Examples 2:
 
         '''
-        return self._del_component_key('domain_ancillaries', domain_ancillary)
+        return self._get_component('domain_ancillaries').pop(domain_ancillary, None)
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
@@ -151,8 +153,15 @@ domain ancillary constructs.
 :Examples 2:
 
         '''
-        return self._dict_component('domain_ancillaries',
-                                    replacement=domain_ancillaries, copy=copy)
+        out = self._get_component('domain_ancillaries').copy()
+
+        if domain_ancillaries is not None:
+            if copy:
+                properties = deepcopy(domain_ancillaries)
+
+            self._set_component('domain_ancillaries', domain_ancillaries)
+
+        return out
     #--- End: def
     
     def get_domain_ancillary(self, domain_ancillary, *default):
@@ -228,7 +237,7 @@ ERROR
         if copy:
             value = value.copy()
             
-        self._set_component_key('domain_ancillaries', term, value)
+        self._get_component('domain_ancillaries')[term] = value
     #--- End: def
         
 #--- End: class

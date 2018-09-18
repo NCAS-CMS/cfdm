@@ -40,8 +40,8 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         Override the *properties* parameter with
         ``source.properties()``.
 
-        If *source* does not have this method, or it can not return
-        anything, then the *properties* parameter is not set.
+        If *source* does not have this method then the *properties*
+        parameter is not set.
         
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -64,7 +64,9 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     #--- End: def
         
     def __deepcopy__(self, memo):
-        '''Called by the `copy.deepcopy` standard library function.
+        '''x.__deepcopy__() -> Deep copy of data.
+
+Used if copy.deepcopy is called on the object.
 
         '''
         return self.copy()
@@ -73,11 +75,13 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
-
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self):
         '''Return a deep copy.
 
@@ -97,50 +101,54 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     #--- End: def
 
     def del_property(self, prop):
-        '''Delete a property.
+        '''Remove a property.
 
 A property describes an aspect of the construct that is independent of
-the domain.
-
-A property may have any name and any value. Some properties correspond
-to netCDF attributes of variables (e.g. "units", "long_name", and
-"standard_name"), or netCDF global file attributes (e.g. "history" and
-"institution"),
+the domain and may have any name and value. Some properties correspond
+to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `get_property`, `has_property`, `properties`, `set_property`
 
 :Examples 1:
 
->>> f.del_property('standard_name')
+>>> x = f.del_property('standard_name')
 
 :Parameters:
 
     prop: `str`
-        The name of the property to be deleted.
+        The name of the property to be removed.
 
 :Returns:
 
      out:
-        The value of the deleted property, or `None` if the property
-        was not set.
+        The removed property, or `None` if the property was not set.
 
 :Examples 2:
 
 >>> f.set_property('project', 'CMIP7')
->>> print f.del_property('project')
+>>> f.has_property('project')
+True
+>>> f.get_property('project')
 'CMIP7'
->>> print f.del_property('project')
+>>> f.del_property('project')
+'CMIP7'
+>>> f.has_property('project')
+False
+>>> print(f.del_property('project'))
+None
+>>> print(f.get_property('project', None))
 None
 
         '''
-#        if prop not in self._special_properties:
-        return self._del_component_key('properties', prop)
-#        else:
-#            return delattr(self, prop)
+        return self._get_component('properties').pop(prop, None)
     #--- End: def
 
     def get_property(self, prop, *default):
         '''Return a property.
+
+A property describes an aspect of the construct that is independent of
+the domain and may have any name and value. Some properties correspond
+to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `del_property`, `has_property`, `properties`, `set_property`
 
@@ -151,7 +159,7 @@ None
 :Parameters:
 
     prop: `str`
-        The name of the property to be retrieved.
+        The name of the property to be returned.
 
     default: optional
         Return *default* if the property has not been set.
@@ -159,34 +167,42 @@ None
 :Returns:
 
     out:
-        The property. If the property has not been then the *default*
-        parameter is returned, if provided.
+        The value of the property. If the property has not been then
+        the *default* parameter is returned, if provided.
 
 :Examples 2:
 
->>> f.set_property('foo', 'bar')
->>> print(f.get_property('foo'))
-bar
->>> f.del_property('foo')
->>> print(f.get_property('foo'))
-AttributeError: Field doesn't have property 'foo'
->>> print(f.get_property('foo', 'foo is unset'))
-foo is unset
+>>> f.set_property('project', 'CMIP7')
+>>> f.has_property('project')
+True
+>>> f.get_property('project')
+'CMIP7'
+>>> f.del_property('project')
+'CMIP7'
+>>> f.has_property('project')
+False
+>>> print(f.del_property('project'))
+None
+>>> print(f.get_property('project', None))
+None
 
         '''
         try:
-#            if prop not in self._special_properties:
-            return self._get_component_key('properties', prop, *default)
-#            else:
-#                return getattr(self, prop, *default)
-        except AttributeError:
-            raise AttributeError(
-                "{} doesn't have property {!r}".format(
-                    self.__class__.__name__, prop))
+            return self._get_component('properties')[prop]
+        except KeyError:
+            if default:
+                return default[0]
+
+            raise AttributeError("{!r} has no {!r} property".format(
+                self.__class__.__name__, prop))
     #--- End: def
 
     def has_property(self, prop):
         '''Whether a property has been set.
+
+A property describes an aspect of the construct that is independent of
+the domain and may have any name and value. Some properties correspond
+to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `del_property`, `get_property`, `properties`, `set_property`
 
@@ -206,46 +222,75 @@ foo is unset
 
 :Examples 2:
 
->>> if f.has_property('standard_name'):
-...     print 'Has a standard name'
+>>> f.set_property('project', 'CMIP7')
+>>> f.has_property('project')
+True
+>>> f.get_property('project')
+'CMIP7'
+>>> f.del_property('project')
+'CMIP7'
+>>> f.has_property('project')
+False
+>>> print(f.del_property('project'))
+None
+>>> print(f.get_property('project', None))
+None
 
         '''
-#        if prop not in self._special_properties:
-        return self._has_component_key('properties', prop)
-#        else:
-#            return hasattr(self, prop)
+        return prop in self._get_component('properties')
     #--- End: def
 
     def properties(self, properties=None, copy=True):
-        '''Inspect or change the properties.
+        '''Return or change all properties.
+
+A property describes an aspect of the construct that is independent of
+the domain and may have any name and value. Some properties correspond
+to CF-netCDF attributes, such as 'standard_name', 'history', etc.
+
+.. seealso:: `get_property`, `set_property`
 
 :Examples 1:
 
->>> d = f.properties()
+>>> p = f.properties()
 
 :Parameters:
 
     properties: `dict`, optional   
-        Replace all existing properties with those specified in the
-        *properties* dictionary. If the dictionary is empty then all
-        properties will be deleted.
+        Replace all existing properties with those specified in a
+        dictionary. If the dictionary is empty then all properties
+        will be removed.
+
+          *Example:*
+             ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
+        
+          *Example:*
+             ``properties={}``        
 
     copy: `bool`, optional
         If False then any property values provided by the *properties*
-        parameter are not deep copied before insertion. By default
-        they are deep copied.
+        parameter are not copied before insertion. By default they are
+        deep copied.
 
 :Returns:
 
     out: `dict`
-        The CF properties prior to being changed, or the current CF
+        The properties prior to being changed, or the current
         properties if no changes were specified.
 
 :Examples 2:
 
+>>> p = f.properties({'standard_name': 'altitude', 'foo': 'bar'}, copy=False)
+
         '''
-        out = self._dict_component('properties', replacement=properties,
-                                   copy=copy)
+        out = self._get_component('properties').copy()
+
+        if properties is not None:
+            if copy:
+                properties = deepcopy(properties)
+
+            self._set_component('properties', properties)
+
+        return out
 
 #        # Deal with special properties
 #        if properties is None:
@@ -265,11 +310,15 @@ foo is unset
 #                self.set_property(prop, value)
 #        #--- End: if
 
-        return out
+#        return out
     #--- End: def
 
     def set_property(self, prop, value):
         '''Set a property.
+
+A property describes an aspect of the construct that is independent of
+the domain and may have any name and value. Some properties correspond
+to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `del_property`, `get_property`, `has_property`, `properties`
 
@@ -280,7 +329,7 @@ foo is unset
 :Parameters:
 
     prop: `str`
-        The name of the property.
+        The name of the property to be set.
 
     value:
         The value for the property.
@@ -289,11 +338,24 @@ foo is unset
 
      `None`
 
+:Examples 2:
+
+>>> f.set_property('project', 'CMIP7')
+>>> f.has_property('project')
+True
+>>> f.get_property('project')
+'CMIP7'
+>>> f.del_property('project')
+'CMIP7'
+>>> f.has_property('project')
+False
+>>> print(f.del_property('project'))
+None
+>>> print(f.get_property('project', None))
+None
+
         '''
-#        if prop not in self._special_properties:
-        self._set_component_key('properties', prop, value)
-#        else:
-#            setattr(self, prop, value)
+        self._get_component('properties')[prop] = value
     #--- End: def
 
 #--- End: class

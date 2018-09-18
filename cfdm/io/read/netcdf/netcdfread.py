@@ -2495,7 +2495,7 @@ variable should be pre-filled with missing values.
         API.set_properties(c, properties)
 
         if attribute == 'climatology':
-            API.set_geometry_type(coordinate=c, value='climatology')
+            API.set_geometry(coordinate=c, value='climatology')
 
         if has_coordinates:
             data = self._create_data(ncvar, c)
@@ -2556,7 +2556,7 @@ variable should be pre-filled with missing values.
         if geometry is not None:
             geometry_type = geometry.get('geometry_type')
             if geometry_type is not None:
-                API.set_geometry_type(coordinate=c, value=geometry_type)
+                API.set_geometry(coordinate=c, value=geometry_type)
 
             node_dimension = geometry.get('node_dimension')
             if node_dimension is not None:

@@ -40,7 +40,7 @@ bounds.
                 # There is a bounds array
                 bounds_indices = list(indices)
                 bounds_indices.append(Ellipsis)
-                if data.ndim <= 1 and not self.has_geometry_type():
+                if data.ndim <= 1 and not self.has_geometry():
                     index = bounds_indices[0]
                     if isinstance(index, slice):
                         if index.step < 0:
@@ -144,11 +144,11 @@ bounds.
         # ------------------------------------------------------------
         # Geometry type
         # ------------------------------------------------------------
-        geometry_type = self.get_geometry_type(None)
-        if geometry_type is not None:
+        geometry = self.get_geometry(None)
+        if geometry is not None:
             indent1 = '    ' * (_level + 1)
             string.append(
-                '{0}{1}Geometry type: {2}'.format(indent1, _prefix, geometry_type))
+                '{0}{1}Geometry: {2}'.format(indent1, _prefix, geometry))
 
         #-------------------------------------------------------------
         # Interior ring
@@ -198,11 +198,11 @@ bounds.
         # ------------------------------------------------------------
         # Check the geometry type
         # ------------------------------------------------------------
-        if self.get_geometry_type(None) != other.get_geometry_type(None):
+        if self.get_geometry(None) != other.get_geometry(None):
             if traceback:
                 print(
 "{0}: Different geometry types: {1}, {2}".format(
-    self.__class__.__name__, self.get_geometry_type(None), other.get_geometry_type(None)))
+    self.__class__.__name__, self.get_geometry(None), other.get_geometry(None)))
             return False
 
         # ------------------------------------------------------------

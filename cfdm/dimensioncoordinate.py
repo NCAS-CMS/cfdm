@@ -12,12 +12,12 @@ class DimensionCoordinate(mixin.NetCDFVariable,
 
     '''
     def __init__(self, properties={}, data=None, bounds=None,
-                 geometry_type=None, interior_ring=None, source=None,
+                 geometry=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
         '''
         '''
         super().__init__(properties=properties, data=data,
-                         bounds=bounds, geometry_type=geometry_type,
+                         bounds=bounds, geometry=geometry,
                          interior_ring=interior_ring, source=source,
                          copy=copy, _use_data=_use_data)
         
