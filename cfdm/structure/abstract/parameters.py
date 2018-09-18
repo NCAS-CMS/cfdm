@@ -108,7 +108,7 @@ domain ancillary constructs.
 :Examples 2:
 
         '''
-        return self._del_component('parameters', parameter)
+        return self._del_component_key('parameters', parameter)
     #--- End: def
 
     def get_parameter(self, term, *default):
@@ -227,7 +227,7 @@ ERROR
         if copy:
             value = deepcopy(value)
             
-        self._set_component('parameters', term, value)
+        self._set_component_key('parameters', term, value)
     #--- End: def
     
 #--- End: class

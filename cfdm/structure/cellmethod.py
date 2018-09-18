@@ -200,7 +200,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
 'NO AXES'
 
         '''
-        return self._get_component('axes', None, *default)
+        return self._get_component('axes', *default)
     #--- End: def
 
     def has_axes(self):
@@ -254,7 +254,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
         else:
             value = tuple(value)
             
-        return self._set_component('axes', None, value)
+        return self._set_component('axes', value)
     #--- End: def
 
 #--- End: class

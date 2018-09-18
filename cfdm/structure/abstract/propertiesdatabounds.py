@@ -355,7 +355,7 @@ None
         if copy:
             bounds = bounds.copy()
 
-        self._set_component('bounds', None, bounds)
+        self._set_component('bounds', bounds)
     #--- End: def
 
     def set_geometry_type(self, value):
@@ -375,8 +375,7 @@ None
 
 :Examples 2:
         '''
-        self._set_component('geometry_type', None, value)
-        print ('in pdb.set_geometry_type:', self.get_geometry_type(), self)
+        self._set_component('geometry_type', value)
     #--- End: def
 
     def set_interior_ring(self, interior_ring, copy=True):
@@ -408,7 +407,7 @@ None
         if copy:
             interior_ring = interior_ring.copy()
 
-        self._set_component('interior_ring', None, interior_ring)
+        self._set_component('interior_ring', interior_ring)
     #--- End: def
 
 #--- End: class

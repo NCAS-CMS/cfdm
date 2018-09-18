@@ -94,24 +94,6 @@ to the order of the elements.
         return True
     #--- End: def
 
-    def del_ncdim(self):
-        '''
-        '''
-        return self._del_component('ncdim')
-    #--- End: def
-
-    def get_ncdim(self, *default):
-        '''
-        '''
-        return self._get_component('ncdim', None, *default)
-    #--- End: def
-
-    def has_ncdim(self):
-        '''
-        '''
-        self._has_component('ncdim')
-    #--- End: def
-
     def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
         '''Return a name for the {+variable}.
@@ -163,12 +145,6 @@ By default the name is the first found of the following:
             return 'ncdim%{0}'.format(n)
         
         return default
-    #--- End: def
-
-    def set_ncdim(self, ncdim):
-        '''
-        '''
-        self._set_component('ncdim', None, ncdim)
     #--- End: def
 
 #--- End: class

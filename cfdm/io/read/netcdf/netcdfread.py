@@ -698,7 +698,7 @@ ancillaries, field ancillaries).
         #--- End: if
             
         for x in list(fields.values()):
-            x._set_component('component_report', None, g['component_report'])
+            x._set_component('component_report', g['component_report'])
 
         # ------------------------------------------------------------
         # Close the netCDF file(s)

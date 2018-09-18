@@ -93,7 +93,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         if copy or not _use_data:
             constructs = constructs.copy(data=_use_data)
             
-        self._set_component('constructs', None, constructs)
+        self._set_component('constructs', constructs)
     #--- End: def
     
     def __repr__(self):
@@ -120,7 +120,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 .. versionadded:: 1.7
         
         '''
-        return self._get_component('constructs', None, *default)
+        return self._get_component('constructs', *default)
     #--- End: def
     
     # ----------------------------------------------------------------
@@ -159,16 +159,16 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 
     @classmethod
     def fromconstructs(cls, constructs):
-      '''
-      '''
-      domain = cls()
-      constructs = domain._Constructs(source=constructs,
-                                      view=True,
-                                      ignore=('cell_method',
-                                              'field_ancillary'))
-      domain._set_component('constructs', None, constructs)
-
-      return domain
-  #--- End: def
+        '''
+        '''
+        domain = cls()
+        constructs = domain._Constructs(source=constructs,
+                                        view=True,
+                                        ignore=('cell_method',
+                                                'field_ancillary'))
+        domain._set_component('constructs', constructs)
+        
+        return domain
+    #--- End: def
             
 #--- End: class

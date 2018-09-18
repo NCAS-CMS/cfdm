@@ -121,7 +121,7 @@ frame and consists of the following:
         '''
         super().__init__()
 
-        self._set_component('coordinates', None, set())
+        self._set_component('coordinates', set())
         
         if source:
             try:
@@ -202,11 +202,11 @@ define the coordinate system.
  'auxiliarycoordinate1'}
 
         '''
-        existing = self._get_component('coordinates', None, None)
+        existing = self._get_component('coordinates', None)
 
         if existing is None:
             existing = set()
-            self._set_component('coordinates', None, existing)
+            self._set_component('coordinates', existing)
 
         out = existing.copy()
 
@@ -269,7 +269,7 @@ coordinate system.
 >>> c.coordinates()
 {'dimensioncoordinate1'}
         '''        
-        self._get_component('coordinates', None).discard(key)
+        self._get_component('coordinates').discard(key)
     #--- End: def
     
     def del_coordinate_conversion(self):
@@ -295,7 +295,7 @@ coordinate system.
 
     out: `Datum`
         '''
-        return self._get_component('coordinate_conversion', None, *default)
+        return self._get_component('coordinate_conversion', *default)
     #--- End: def
     
     def get_datum(self, *default):
@@ -305,19 +305,19 @@ coordinate system.
 
     out: `Datum`
         '''
-        return self._get_component('datum', None, *default)
+        return self._get_component('datum', *default)
     #--- End: def
     
     def has_datum(self):
         '''
         '''
-        return bool(self._get_component('datum', None, False))
+        return self._has_component('datum')
     #--- End: def
 
     def has_coordinate_conversion(self):
         '''
         '''
-        return bool(self._get_component('coordinate_conversion', None, False))
+        return self._has_component('coordinate_conversion')
     #--- End: def
 
 #    def name(self, default=None, identity=False, ncvar=False):
@@ -400,7 +400,7 @@ coordinate system.
  'auxiliarycoordinate0'}
 
         '''
-        c = self._get_component('coordinates', None)
+        c = self._get_component('coordinates')
         c.add(coordinate)
     #--- End: def
 
@@ -410,7 +410,7 @@ coordinate system.
         if copy and value is not None:
             value = value.copy()
             
-        self._set_component('coordinate_conversion', None, value)
+        self._set_component('coordinate_conversion', value)
     #--- End: def
 
     def set_datum(self, value, copy=True):
@@ -419,7 +419,7 @@ coordinate system.
         if copy and value is not None:
             value = value.copy()
             
-        self._set_component('datum', None, value)
+        self._set_component('datum', value)
     #--- End: def
 
 #--- End: class

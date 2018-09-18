@@ -117,7 +117,7 @@ domain ancillary constructs.
 :Examples 2:
 
         '''
-        return self._del_component('domain_ancillaries', domain_ancillary)
+        return self._del_component_key('domain_ancillaries', domain_ancillary)
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
@@ -228,7 +228,7 @@ ERROR
         if copy:
             value = value.copy()
             
-        self._set_component('domain_ancillaries', term, value)
+        self._set_component_key('domain_ancillaries', term, value)
     #--- End: def
         
 #--- End: class

@@ -107,13 +107,13 @@ cell measure variables correspond to cell measure constructs.
     def get_measure(self, *default):
         '''
         '''
-        return self._get_component('measure', None, *default)
+        return self._get_component('measure', *default)
     #--- End: def
 
     def set_measure(self, measure):
         '''
         '''
-        return self._set_component('measure', None, measure)
+        return self._set_component('measure', measure)
     #--- End: def
 
 #--- End: class

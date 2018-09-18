@@ -84,8 +84,8 @@ and institution).
         if source is not None:
             self._intialise_ncvar_from(source)
     
-        self._set_component('unlimited' , None, 'TO DO')
-        self._set_component('HDFgubbins', None, 'TO DO')
+        self._set_component('unlimited' , 'TO DO')
+        self._set_component('HDFgubbins', 'TO DO')
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
@@ -546,8 +546,6 @@ last values.
 
         name = self._unique_construct_names()
 
-        string = [self.get_domain().dump(display=False)]
-        
 #        # Domain axes
 #        axes = self._dump_axes(axis_to_name, display=False, _level=_level)
 #        if axes:
@@ -596,31 +594,11 @@ last values.
 #                value.dump(display=False, field=self, key=key, _level=_level,
 #                           _title='Cell measure: {0}'.format(name[key])))
 
-        # Field ancillaries
-        for key, value in sorted(self.field_ancillaries().items()):
-                # value.dump(display=False, field=self,     key=key, _level=_level))
-            string.append(value.dump(display=False,
-                                     _axes=self.construct_axes(key),
-                                     _axis_names=axis_to_name,
-                                     _level=_level))
-            string.append('') 
-
-        # Cell methods
-        cell_methods = self.cell_methods()
-        if cell_methods:
-            for cm in list(cell_methods.values()):
-                cm = cm.copy()
-                cm.set_axes(tuple([axis_to_name.get(axis, axis)
-                                   for axis in cm.get_axes(())]))
-                string.append(cm.dump(display=False,  _level=_level))
-         #--- End: if
 
         # Simple properties
         properties = self.properties()
         if properties:
-           string.append('')  
-           string.append(
-                self._dump_properties(_level=_level))
+           string.append(self._dump_properties(_level=_level))
                
         # Data
         data = self.get_data(None)
@@ -633,8 +611,30 @@ last values.
             string.append('{0}Data({1}) = {2}'.format(indent0,
                                                       ', '.join(x),
                                                       str(data)))
-            
-        string.append('')
+            string.append('')
+
+        # Cell methods
+        cell_methods = self.cell_methods()
+        if cell_methods:
+            for cm in list(cell_methods.values()):
+                cm = cm.copy()
+                cm.set_axes(tuple([axis_to_name.get(axis, axis)
+                                   for axis in cm.get_axes(())]))
+                string.append(cm.dump(display=False,  _level=_level))
+
+            string.append('') 
+        #--- End: if
+
+        # Field ancillaries
+        for key, value in sorted(self.field_ancillaries().items()):
+                # value.dump(display=False, field=self,     key=key, _level=_level))
+            string.append(value.dump(display=False,
+                                     _axes=self.construct_axes(key),
+                                     _axis_names=axis_to_name,
+                                     _level=_level))
+            string.append('') 
+
+        string.append(self.get_domain().dump(display=False))
         
         string = '\n'.join(string)
        
@@ -909,14 +909,14 @@ Consider [get|set|del_global_attribute [NO S]
 ('project', 'experiment')
 
         '''
-        self._set_component('global_attributes', None,
+        self._set_component('global_attributes',
                             tuple(global_attributes))
     #--- End: def
 
     def set_read_report(self, value):
         '''
         '''
-        self._set_component('read_report', None, value)
+        self._set_component('read_report', value)
     #--- End: def    
    
     def squeeze(self, axes=None, copy=True):

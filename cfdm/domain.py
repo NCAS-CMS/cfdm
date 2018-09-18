@@ -205,41 +205,12 @@ field.
         indent1 = '    ' * _level
         indent2 = '    ' * (_level+1)
 
-#        data_axes = self.get_data_axes(())
-
         axes = self.domain_axes()
 
         w = sorted(["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
                     for axis in axes])
-#                    if axis not in data_axes])
-#
-#        x = ["{0}Domain Axis: {1}".format(indent1, axis_names[axis])
-#             for axis in data_axes]
 
-        string = '\n'.join(w) #+x)
-
-        if display:
-            print(string)
-        else:
-            return string
-    #--- End: def
-        indent1 = '    ' * _level
-        indent2 = '    ' * (_level+1)
-
-#        data_axes = self.data_axes()
-#        if data_axes is None:
-#            data_axes = ()
-
-        axes = self.domain_axes()
-        axis_name = self.domain_axis_name
-
-        w = sorted(["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), axes[axis].get_size)
-                    for axis in axes])
-#
-#        x = ["{0}Domain Axis: {1}({2})".format(indent1, axis_name(axis), axes[axis].size)
-#             for axis in data_axes]
-
-        string = '\n'.join(w) #+x)
+        string = '\n'.join(w)
 
         if display:
             print(string)
@@ -254,11 +225,11 @@ field.
         return constructs.domain_axis_name(key)
     #--- End: def
 
-    def dump(self, display=True, _level=0, _title='Field', _q='-'):
-        '''A full description of the field.
+    def dump(self, display=True, _level=0, _title=None):
+        '''A full description of the domain.
 
-The field and its components are described without abbreviation with
-the exception of data arrays, which are abbreviated to their first and
+The domain components are described without abbreviation with the
+exception of data arrays, which are abbreviated to their first and
 last values.
 
 :Examples 1:
@@ -296,7 +267,6 @@ last values.
         # Domain axes
         axes = self._dump_axes(axis_to_name, display=False, _level=_level)
         if axes:
-            string.append('')
             string.append(axes)
           
         # Dimension coordinates

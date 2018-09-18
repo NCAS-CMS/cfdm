@@ -8,9 +8,6 @@ from . import structure
 class DimensionCoordinate(mixin.NetCDFVariable,
                           mixin.Coordinate,
                           structure.DimensionCoordinate):
-        #with_metaclass(
-        #abc.ABCMeta,
-        #type('NewBase', (mixin.Coordinate, structure.DimensionCoordinate), {}))):
     '''A dimension coordinate construct of the CF data model.
 
     '''

@@ -76,7 +76,7 @@ to the order of the elements.
     def set_size(self, size):
         '''
         '''
-        self._set_component('size', None, size)
+        self._set_component('size', size)
     #--- End: def
 
 #--- End: class

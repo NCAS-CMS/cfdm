@@ -12,6 +12,8 @@ class PropertiesData(Properties):
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
+Returns a subspace.
+
         '''
         new = self.copy(data=False)
         
@@ -30,7 +32,6 @@ class PropertiesData(Properties):
         if data is None:
             raise ValueError("Can't set elements when there is no data")    
 
-#        value = type(data).asdata(value)
         data[indices] = value
     #--- End: def
 
@@ -133,13 +134,6 @@ standard_name = 'time'
         # ------------------------------------------------------------
         data = self.get_data(None)
         if data is not None:
-#            if field and keya:
-#                axis_names = field._unique_domain_axis_names()
-#                x = [axis_names[axis] for axis in field.construct_axes(key)]
-#                ndim = data.ndim
-#                x = x[:ndim]                    
-#                if len(x) < ndim:
-#                    x.extend([str(size) for size in data.shape[len(x):]])
             if _axes and _axis_names:
                 x = [_axis_names[axis] for axis in _axes]
                 ndim = data.ndim

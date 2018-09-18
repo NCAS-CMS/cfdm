@@ -170,7 +170,7 @@ initialisation with the `set_data` method.
         if constructs is None:
             constructs = self._Constructs(**self._construct_key_base)
             
-        self._set_component('constructs', None, constructs)
+        self._set_component('constructs', constructs)
 
         if data is not None and _use_data:
             self.set_data(data, data_axes, copy=copy)
@@ -384,7 +384,7 @@ ValueError: Can't initialize data: Data already exists
             if axis not in domain_axes:
                 raise ValueError("Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
             
-        self._set_component('data_axes', None, tuple(value))
+        self._set_component('data_axes', tuple(value))
     #--- End: def
     
 #    def cell_methods(self, copy=False):

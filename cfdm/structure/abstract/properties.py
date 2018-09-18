@@ -50,7 +50,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         '''
         super().__init__()
 
-        self._set_component('properties', None, {})
+        self._set_component('properties', {})
         
         if source is not None:
             try:
@@ -134,7 +134,7 @@ None
 
         '''
 #        if prop not in self._special_properties:
-        return self._del_component('properties', prop)
+        return self._del_component_key('properties', prop)
 #        else:
 #            return delattr(self, prop)
     #--- End: def
@@ -159,8 +159,8 @@ None
 :Returns:
 
     out:
-        The value of the property. If the property has not been set
-        then return the value of *default* parameter, if provided.
+        The property. If the property has not been then the *default*
+        parameter is returned, if provided.
 
 :Examples 2:
 
@@ -176,7 +176,7 @@ foo is unset
         '''
         try:
 #            if prop not in self._special_properties:
-            return self._get_component('properties', prop, *default)
+            return self._get_component_key('properties', prop, *default)
 #            else:
 #                return getattr(self, prop, *default)
         except AttributeError:
@@ -211,7 +211,7 @@ foo is unset
 
         '''
 #        if prop not in self._special_properties:
-        return self._has_component('properties', prop)
+        return self._has_component_key('properties', prop)
 #        else:
 #            return hasattr(self, prop)
     #--- End: def
@@ -291,7 +291,7 @@ foo is unset
 
         '''
 #        if prop not in self._special_properties:
-        self._set_component('properties', prop, value)
+        self._set_component_key('properties', prop, value)
 #        else:
 #            setattr(self, prop, value)
     #--- End: def

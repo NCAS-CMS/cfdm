@@ -6,7 +6,7 @@ from .propertiesdata import PropertiesData
 from ..functions import RTOL, ATOL
 
 
-class PropertiesDataBounds(PropertiesData): #):with_metaclass(abc.ABCMeta, PropertiesData)):
+class PropertiesDataBounds(PropertiesData):
     '''Mixin class for a data array with descriptive properties and cell
 bounds.
 
@@ -145,7 +145,6 @@ bounds.
         # Geometry type
         # ------------------------------------------------------------
         geometry_type = self.get_geometry_type(None)
-        print( 'geometry_type=',geometry_type)
         if geometry_type is not None:
             indent1 = '    ' * (_level + 1)
             string.append(
