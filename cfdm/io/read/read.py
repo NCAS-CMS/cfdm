@@ -26,7 +26,8 @@ from ...data import (Data,
 
 #from ...data.compressedarray import CompressedArray
 
-from ..cfdmimplementation import CFDMImplementation
+#from ..cfdmimplementation import CFDMImplementation
+from .. import CFDMImplementation
 
 from .netcdf import NetCDFRead
 

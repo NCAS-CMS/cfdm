@@ -9,12 +9,16 @@ _MUST_IMPLEMENT = 'This method must be implemented'
 
 
 class IORead(with_metaclass(abc.ABCMeta, IO)):
-    '''Base class for instantiating Field constructs from a dataset.
+    '''Abstract base class for instantiating Field constructs from a
+dataset.
 
     '''
-
     @abc.abstractmethod
     def read(self, *args, **kwargs):
-        raise NotImplementedError(_MUST_IMPLEMENT)    
+        '''
+        '''
+        raise NotImplementedError(_MUST_IMPLEMENT)
+    #--- End: def
+
 #--- End: class
 

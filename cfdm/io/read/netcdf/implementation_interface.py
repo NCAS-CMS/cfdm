@@ -67,9 +67,9 @@ AttributeError: Field doesn't have property 'standard_name'
 
     @staticmethod
     def get_bounds(parent, *default):
-       '''
-       '''
-       return parent.get_bounds(*default)
+        '''
+        '''
+        return parent.get_bounds(*default)
     #--- End: def
 
     @staticmethod
@@ -88,17 +88,17 @@ AttributeError: Field doesn't have property 'standard_name'
        return field.coordinates()
     #--- End: def
 
-    @staticmethod
-    def get_data(parent, *default):
-       '''
-       '''
-       return parent.get_data(*default)
-    #--- End: def
+#    @staticmethod
+#    def get_data(parent, *default):
+#       '''
+#       '''
+#       return parent.get_data(*default)
+#    #--- End: def
 
     @staticmethod
     def get_datum(coordinate_reference):
         '''
-
+        
 :Parameters:
 
 :Returns:
@@ -167,12 +167,12 @@ AttributeError: Field doesn't have property 'standard_name'
         return int(data.max())
     #--- End: def
     
-    @staticmethod
-    def get_interior_ring(parent, *default):
-       '''
-       '''
-       return parent.get_interior_ring(*default)
-    #--- End: def
+#    @staticmethod
+#    def get_interior_ring(parent, *default):
+#       '''
+#       '''
+#       return parent.get_interior_ring(*default)
+#    #--- End: def
 
     @staticmethod
     def get_ncvar(construct, *default):
@@ -187,17 +187,17 @@ AttributeError: Field doesn't have property 'standard_name'
        return construct.get_ncvar(*default)
     #--- End: def
 
-    @staticmethod
-    def get_properties(construct):
-        '''
-:Parameters:
-
-:Returns:
-
-    `None`
-        '''
-        return construct.properties()
-    #--- End: def
+#    @staticmethod
+#    def get_properties(construct):
+#        '''
+#:Parameters:
+#
+#:Returns:
+#
+#    `None`
+#        '''
+#        return construct.properties()
+#    #--- End: def
  
     @staticmethod
     def get_property(construct, prop, *default):

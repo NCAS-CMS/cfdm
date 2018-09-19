@@ -355,8 +355,12 @@ masked
     #--- End: def
 
     # ----------------------------------------------------------------
-    # Attribute
+    # Attributes
     # ----------------------------------------------------------------
+    @property
+    def data(self):
+        return self
+    
     @property
     def fill_value(self):
         '''
