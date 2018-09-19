@@ -223,7 +223,7 @@ AttributeError: Field doesn't have property 'standard_name'
     out: `int`
 
         '''
-        return parent.data.size
+        return parent.get_data().size
     #--- End: def
 
     @staticmethod

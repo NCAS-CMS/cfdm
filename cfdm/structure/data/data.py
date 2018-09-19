@@ -124,12 +124,12 @@ Used if copy.deepcopy is called on the object.
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    @property
-    def data(self):
-        '''Return 
-        '''
-        return self
-    #--- End: def
+#    @property
+#    def data(self):
+#        '''Return 
+#        '''
+#        return self
+#    #--- End: def
     
     @property
     def dtype(self):

@@ -1210,10 +1210,9 @@ variable should be pre-filled with missing values.
                 part_dimension = g['variable_dimensions'][part_node_count][0]
                 
                 parts = self._create_data(part_node_count)
-                print('parts=', parts.get_array())
+
                 total_number_of_parts = API.get_data_size(parts)
-#                parts_per_geometry = nodes_per_geometry.copy()
-                print('total_number_of_parts=',total_number_of_parts)
+
                 index = parts.copy()
 
                 p = 0

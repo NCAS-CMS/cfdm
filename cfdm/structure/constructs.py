@@ -557,7 +557,13 @@ None
 
     extra_axes: `int`, optional
         The number of extra, trailing data array axes that do **not**
-        correspond to a domain axis specified by the *axes* parameter.
+        correspond to a domain axis specified by the *axes*
+        parameter. For example, a coordinate bounds data array may has
+        one or two extra axes. By default it assumed that there are no
+        extra axes.
+
+          *Example:*
+             ``extra_axes=1``
 
         '''
         construct_type = self._check_construct_type(construct_type)

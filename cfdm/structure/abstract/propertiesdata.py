@@ -63,18 +63,6 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
             self.set_data(data, copy=copy)
     #--- End: def
 
-    def __array__(self):
-        '''The numpy array interface.
-
-:Returns: 
-
-    out: `numpy.ndarray`
-        A numpy array of the data.
-
-        '''
-        return self.get_array()
-    #--- End: def
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -154,77 +142,10 @@ None
         return self._del_component('data')
     #--- End: def
 
-#    def fill_value(self, default=None):
-#        '''Return the data missing data value.
-#
-#This is the value of the `missing_value` CF property, or if that is
-#not set, the value of the `_FillValue` CF property, else if that is
-#not set, ``None``. In the last case the default `numpy` missing data
-#value for the array's data type is assumed if a missing data value is
-#required.
-#
-#.. versionadded:: 1.6
-#
-#:Parameters:
-#
-#    default: optional
-#        If the missing value is unset then return this value. By
-#        default, *default* is `None`. If *default* is the special
-#        value ``'netCDF'`` then return the netCDF default value
-#        appropriate to the data array's data type is used. These may
-#        be found as follows:
-#
-#        >>> import netCDF4
-#        >>> print netCDF4.default_fillvals    
-#
-#:Returns:
-#
-#    out:
-#        The missing data value, or the value specified by *default* if
-#        one has not been set.
-#
-#:Examples:
-#
-#>>> f.{+name}()
-#None
-#>>> f._FillValue = -1e30
-#>>> f.{+name}()
-#-1e30
-#>>> f.missing_value = 1073741824
-#>>> f.{+name}()
-#1073741824
-#>>> del f.missing_value
-#>>> f.{+name}()
-#-1e30
-#>>> del f._FillValue
-#>>> f.{+name}()
-#None
-#>>> f,dtype
-#dtype('float64')
-#>>> f.{+name}(default='netCDF')
-#9.969209968386869e+36
-#>>> f._FillValue = -999
-#>>> f.{+name}(default='netCDF')
-#-999
-#
-#        '''
-#        fillval = self.get_property('_FillValue', None)
-#
-#        if fillval is None:
-#            if default == 'netCDF':
-#                d = self.get_data().dtype
-#                fillval = netCDF4.default_fillvals[d.kind + str(d.itemsize)]
-#            else:
-#                fillval = default 
-#        #--- End: if
-#
-#        return fillval
-#    #--- End: def
-
     def get_array(self):
         '''Return a numpy array copy the data.
 
-Use the `get_data` method to return the data as a ``Data` object.
+Use the `get_data` method to return the data as a `Data` object.
 
 .. seealso:: `get_data`
 
@@ -297,9 +218,10 @@ None
         data = self._get_component('data', None)
 
         if data is None:
-            if not default:
-                raise ValueError("{!r} has no data".format(self.__class__.__name__))
-            return default[0]
+            if default:
+                return default[0]
+
+            raise ValueError("{!r} has no data".format(self.__class__.__name__))
         
         units = self.get_property('units', None)
         if units is not None:
@@ -308,6 +230,10 @@ None
         calendar = self.get_property('calendar', None)
         if calendar is not None:
             data.set_calendar(calendar)
+
+        fill_value = self.get_property('fill_value', None)
+        if fill_value is not None:
+            data.set_fill_value(fill_value)
 
         return data        
     #--- End: def
