@@ -681,15 +681,14 @@ ancillaries, field ancillaries).
         
         # ------------------------------------------------------------
         # If requested, reinstate fields created from netCDF variables
-        # that are referenced by othe netCDF variables
+        # that are referenced by other netCDF variables.
         # ------------------------------------------------------------
         if g['fields']:
             fields0 = list(fields.values())
             for construct_type in g['fields']:
                 for f in fields0:
                     get_constructs = getattr(self.implementation, 'get_'+construct_type)
-                    constructs = iter(get_constructs(f).values())
-                    for construct in constructs:
+                    for construct in get_constructs(f).values():
                         ncvar = self.implementation.get_ncvar(construct)
                         if ncvar not in all_fields:
                             continue
