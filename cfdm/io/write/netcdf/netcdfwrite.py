@@ -1580,8 +1580,9 @@ extra trailing dimension.
         # Create the 'ancillary_variables' CF-netCDF attribute and
         # create the referenced CF-netCDF ancillary variables
         # ----------------------------------------------------------------
-        ancillary_variables = [self._write_field_ancillary(f, key, anc)
-                               for key, anc in self.implementation.get_field_ancillaries(f).items()]
+        ancillary_variables = [
+            self._write_field_ancillary(f, key, anc)
+            for key, anc in self.implementation.get_field_ancillaries(f).items()]
     
         # ----------------------------------------------------------------
         # Create the CF-netCDF data variable
@@ -1710,12 +1711,17 @@ extra trailing dimension.
         if count[0] == 1:
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
+            if g['_debug']:
+                print('    Adding', coord_key, 'to', grid_mapping)
+                        
             grid_mapping = count[1]
             self.implementation.set_coordinate_reference_coordinate(grid_mapping,
                                                                     coord_key)
         else:
             # Create a new horizontal coordinate reference for
             # the vertical datum
+            if g['_debug']:
+                print('WHAT??')
             new_grid_mapping = self.implementation.initialise_CoordinateReference(
                 coordinates=[coord_key],
                 datum=self.implementation.get_datum(ref))

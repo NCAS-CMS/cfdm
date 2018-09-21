@@ -19,6 +19,7 @@ import netCDF4
 
 from .. import IORead
 
+from . import  constants
 
 class NetCDFRead(IORead):
     '''
@@ -222,7 +223,7 @@ contents and any file suffix is not not considered.
             return False
     #--- End: def
 
-    def read(self, filename, field=(), default_version=None, verbose=False,
+    def read(self, filename, field=None, default_version=None, verbose=False,
              uncompress=True, external_files=(), extra_read_vars=None,
              _scan_only=False, _debug=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
@@ -255,12 +256,11 @@ ancillaries, field ancillaries).
           ``'dimension_coordinate'``  Dimension coordinate objects
           ``'domain_ancillary'``      Domain ancillary objects
           ``'field_ancillary'``       Field ancillary objects
-          ``'all'``                   All of the above
           ==========================  ================================
 
             *Example:*
               To create fields from auxiliary coordinate objects:
-              ``field=['auxiliarycoordinate']``.
+              ``field=['auxiliary_coordinate']``.
 
             *Example:*
               To create fields from domain ancillary and cell measure
@@ -359,6 +359,8 @@ ancillaries, field ancillaries).
             'version': {'1.6': LooseVersion('1.6'),
                         '1.7': LooseVersion('1.7'),
                         '1.8': LooseVersion('1.8')},
+
+            'datum_parameters': constants.datum_parameters,
         }
         g = self.read_vars
 
@@ -378,21 +380,29 @@ ancillaries, field ancillaries).
         # ----------------------------------------------------------------
         # Parse field parameter
         # ----------------------------------------------------------------
-        try:
-            iter(field)
-        except TypeError:
-            raise ValueError(
-                "Can't read: Bad parameter value: field={!r}".format(field))
-               
-        if 'all' in field:
-            field = ('auxiliary_coordinate',
-                     'cell_measure',
-                     'domain_ancillary',
-                     'dimension_coordinate',
-                     'field_ancillary')
-    
-        g['fields'] = field
+        g['get_constructs'] = {
+            'auxiliary_coordinate': self.implementation.get_auxiliary_coordinates,
+            'cell_measure'        : self.implementation.get_cell_measures,
+            'dimension_coordinate': self.implementation.get_dimension_coordinates,
+            'domain_ancillary'    : self.implementation.get_domain_ancillaries,
+            'field_ancillary'     : self.implementation.get_field_ancillaries,
+        }
+
+        if field:
+            try:
+                iter(field)
+            except TypeError:
+                raise ValueError(
+                    "Can't read: Bad parameter value: field={!r}".format(field))
+            
+            for f in field:
+                if f not in g['get_constructs']:
+                    raise ValueError(
+                        "Can't read: Bad parameter value: field={!r}".format(field))            
+        #--- End: if
         
+        g['field'] = field
+                
         g['filename'] = filename
 
         # ------------------------------------------------------------
@@ -683,12 +693,11 @@ ancillaries, field ancillaries).
         # If requested, reinstate fields created from netCDF variables
         # that are referenced by other netCDF variables.
         # ------------------------------------------------------------
-        if g['fields']:
+        if g['field']:
             fields0 = list(fields.values())
-            for construct_type in g['fields']:
+            for construct_type in g['field']:
                 for f in fields0:
-                    get_constructs = getattr(self.implementation, 'get_'+construct_type)
-                    for construct in get_constructs(f).values():
+                    for construct in g['get_constructs'][construct_type](f).values():
                         ncvar = self.implementation.get_ncvar(construct)
                         if ncvar not in all_fields:
                             continue
@@ -1788,7 +1797,6 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Initialize the field with its attributes
         # ----------------------------------------------------------------
-#        klass = self.implementation.get_class('Field')
         f = self.implementation.initialise_Field()
 
         self.implementation.set_properties(f, properties, copy=False)
@@ -1951,7 +1959,6 @@ variable should be pre-filled with missing values.
                     # Insert a domain axis and dimension coordinate
                     # derived from a numeric scalar auxiliary
                     # coordinate
-#                    klass = self.implementation.get_class('DimensionCoordinate')
                     coord = self.implementation.initialise_DimensionCoordinate_from_AuxiliaryCoordinate(
                         auxiliary_coordinate=coord,
                         copy=False)
@@ -2057,7 +2064,6 @@ variable should be pre-filled with missing values.
                         attribute={coord_ncvar+':formula_terms': formula_terms},
                         dimensions=g['variable_dimensions'][ncvar])
                     ok = False
-#                    break
             #--- End: for
 
             if not ok:
@@ -2088,11 +2094,13 @@ variable should be pre-filled with missing values.
                 f, key, coord,
                 g['formula_terms'][coord_ncvar]['coord'])
             
-            self.implementation.set_coordinate_reference(field=f,
-                                            construct=coordinate_reference,
-                                            copy=False)
+            self.implementation.set_coordinate_reference(
+                field=f,
+                construct=coordinate_reference,
+                copy=False)
 
-            g['vertical_crs'][coord_ncvar] = coordinate_reference
+#            g['vertical_crs'][coord_ncvar] = coordinate_reference
+            g['vertical_crs'][key] = coordinate_reference
         #--- End: for
     
         # ----------------------------------------------------------------
@@ -2118,18 +2126,43 @@ variable should be pre-filled with missing values.
                     # Convert netCDF variable names to internal identifiers
                     coordinates = [ncvar_to_key[ncvar] for ncvar in coordinates
                                    if ncvar in ncvar_to_key]
+
+                    datum_parameters = {}
+                    coordinate_conversion_parameters = {}
+                    for x, value in parameters.items():
+                        if x in g['datum_parameters']:
+                            datum_parameters[x] = value
+                        else:
+                            coordinate_conversion_parameters[x] = value
+                    #-- End: for
+
+                    datum = self.implementation.initialise_Datum(
+                        parameters=datum_parameters)
                     
-#                    klass = self.implementation.get_class('CoordinateReference')
-                    coordref = self.implementation.initialise_CoordinateReference(
-                        parameters=parameters)
-                    
-                    datum = self.implementation.get_datum(coordinate_reference=coordref)
-                    
+                    coordinate_conversion = self.implementation.initialise_CoordinateConversion(
+                        parameters=coordinate_conversion_parameters)
+        
+#                    coordref = self.implementation.initialise_CoordinateReference()
+
+#                    self.implementation.set_coordinate_reference_coordinates(
+#                        coordinate_reference=coordref,
+#                        coordinates=coordinates)
+#                    
+#                    self.implementation.set_datum(
+#                        coordinate_reference=coordref,
+#                        datum=datum)
+#                    
+#                    self.implementation.set_coordinate_conversion(
+#                        coordinate_reference=coordref,
+#                        coordinate_conversion=coordinate_conversion)
+#                    
                     create_new = True
                     
                     if not coordinates:
+                        # DCH ALERT -  what to do about duplicate standard names?
                         name = parameters.get('grid_mapping_name', None)
-                        for n in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
+#                        for n in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
+                        for n in constants.coordinate_reference_coordinates.get(name, ()):
                             for key, coord in self.implementation.get_coordinates(field=f).items():
                                 if n == self.implementation.get_property(coord, 'standard_name', None):
                                     coordinates.append(key)
@@ -2139,25 +2172,41 @@ variable should be pre-filled with missing values.
                         # coordinate references
                         for vcr in g['vertical_crs'].values():
                             self.implementation.set_datum(coordinate_reference=vcr,
-                                             datum=datum)
+                                                          datum=datum)
                     else:
                         for vcoord, vcr in g['vertical_crs'].items():
                             if vcoord in coordinates:
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
+                                if _debug:
+                                    print('    [ ] Inserting {!r} into {!r}'.format(datum, vcr))
                                 self.implementation.set_datum(coordinate_reference=vcr,
-                                                 datum=datum)
+                                                              datum=datum)
                                 coordinates.remove(vcoord)
                                 create_new = bool(coordinates)
                     #--- End: if
 
                     if create_new:
+                        coordref = self.implementation.initialise_CoordinateReference()
+                    
+                        self.implementation.set_datum(
+                            coordinate_reference=coordref,
+                            datum=datum)
+                        
+                        self.implementation.set_coordinate_conversion(
+                            coordinate_reference=coordref,
+                            coordinate_conversion=coordinate_conversion)
+                    
+                        self.implementation.set_coordinate_reference_coordinates(
+                            coordref,
+                            coordinates)
+
                         self.implementation.set_ncvar(coordref, grid_mapping_ncvar)
-                        self.implementation.set_coordinate_reference_coordinates(coordref,
-                                                                  coordinates)
-                        key = self.implementation.set_coordinate_reference(field=f,
-                                                              construct=coordref,
-                                                              copy=False)
+
+                        key = self.implementation.set_coordinate_reference(
+                            field=f,
+                            construct=coordref,
+                            copy=False)
                         self._reference(grid_mapping_ncvar)
                         ncvar_to_key[grid_mapping_ncvar] = key
                 #--- End: for
@@ -2862,7 +2911,6 @@ variable should be pre-filled with missing values.
 
         '''
         # Create a field ancillary object
-#        klass = self.implementation.get_class('FieldAncillary')
         field_ancillary = self.implementation.initialise_FieldAncillary()
 
         # Insert properties
@@ -2879,12 +2927,6 @@ variable should be pre-filled with missing values.
     
         return field_ancillary
     #--- End: def
-
-#    def initialise(self, class_name, **kwargs):
-#        '''
-#        '''
-#        return self.implementation.get_class(class_name)(**kwargs)
-#    #--- End: def
 
     def _parse_cell_methods(self, field_ncvar, cell_methods_string):
         '''Parse a CF cell_methods string.
@@ -3088,12 +3130,36 @@ parameters.
                 parameters[name] = value
         #--- End: for
         
-#        klass = self.implementation.get_class('CoordinateReference')
-        coordref = self.implementation.initialise_CoordinateReference(
-            coordinates=[key],
-            domain_ancillaries=domain_ancillaries,
-            parameters=parameters)
+        datum_parameters = {}
+        coordinate_conversion_parameters = {}
+        for x, value in parameters.items():
+            if x in g['datum_parameters']:
+                datum_parameters[x] = value
+            else:
+                coordinate_conversion_parameters[x] = value
+        #-- End: for
+        
+        datum = self.implementation.initialise_Datum(
+            parameters=datum_parameters)
+        
+        coordinate_conversion = self.implementation.initialise_CoordinateConversion(
+            parameters=coordinate_conversion_parameters,
+            domain_ancillaries=domain_ancillaries)
+        
+        coordref = self.implementation.initialise_CoordinateReference()
 
+        self.implementation.set_coordinate_reference_coordinates(
+            coordinate_reference=coordref,
+            coordinates=[key])
+        
+        self.implementation.set_datum(
+            coordinate_reference=coordref,
+            datum=datum)
+        
+        self.implementation.set_coordinate_conversion(
+            coordinate_reference=coordref,
+            coordinate_conversion=coordinate_conversion)
+        
         return coordref
     #--- End: def
 

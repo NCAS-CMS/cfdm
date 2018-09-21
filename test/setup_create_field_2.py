@@ -94,28 +94,34 @@ class create_fieldTest_2(unittest.TestCase):
         bk = f.set_domain_ancillary(bk, axes=[axisZ])
 
         # Coordinate references
-        ref0 = cfdm.CoordinateReference(
+        coordinate_conversion = cfdm.CoordinateConversion(
             parameters={'grid_mapping_name':  "transverse_mercator",
-                        'semi_major_axis': 6377563.396,
-                        'inverse_flattening': 299.3249646,
-                        'longitude_of_prime_meridian':  0.0,
                         'latitude_of_projection_origin': 49.0,
                         'longitude_of_central_meridian': -2.0,
                         'scale_factor_at_central_meridian':  0.9996012717,
                         'false_easting': 400000.0,
                         'false_northing': -100000.0,
-                        'unit': "metre"},
-            coordinates=[x, y, z]
-        )
+                        'unit': "metre"})
 
+        datum0 = cfdm.Datum(parameters={'inverse_flattening': 299.3249646,
+                                        'longitude_of_prime_meridian':  0.0,
+                                        'semi_major_axis': 6377563.396})
+        
+        ref0 = cfdm.CoordinateReference(coordinates=[x, y],
+                                        datum=datum0,
+                                        coordinate_conversion=coordinate_conversion)
+
+        coordinate_conversion = cfdm.CoordinateConversion(
+            parameters={'grid_mapping_name': "latitude_longitude"})
+        
+        datum2 = cfdm.Datum(parameters={'longitude_of_prime_meridian': 0.0,
+                                        'semi_major_axis': 6378137.0,
+                                        'inverse_flattening': 298.257223563})
+        
         ref2 = cfdm.CoordinateReference(
-            parameters={'grid_mapping_name': "latitude_longitude",
-                        'longitude_of_prime_meridian': 0.0,
-                        'semi_major_axis': 6378137.0,
-                        'inverse_flattening': 298.257223563},
-            coordinates=[lat, lon]
-        )
-
+            coordinates=[lat, lon],
+            datum=datum2,
+            coordinate_conversion=coordinate_conversion)
 
         f.set_cell_measure(msr0, axes=[axisX, axisY])
 
@@ -127,14 +133,15 @@ class create_fieldTest_2(unittest.TestCase):
         orog.set_property('units', 'm')
         orog = f.set_domain_ancillary(orog, axes=[axisY, axisX])
 
-        
-        ref1 = cfdm.CoordinateReference(
+        coordinate_conversion = cfdm.CoordinateConversion(
             parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
             domain_ancillaries={'orog': orog,
                                 'a'   : ak,
-                                'b'   : bk},
-            coordinates=[z]
-        )
+                                'b'   : bk})
+        
+        ref1 = cfdm.CoordinateReference(coordinates=[z],
+                                        datum=datum0,
+                                        coordinate_conversion=coordinate_conversion)
         
         f.set_coordinate_reference(ref1)
         
@@ -195,7 +202,7 @@ class create_fieldTest_2(unittest.TestCase):
             g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
             for x in g:
                 x.print_read_report()
-            g[0].dump()
+#            g[0].dump()
         
             self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
 
@@ -217,15 +224,12 @@ class create_fieldTest_2(unittest.TestCase):
             self.assertTrue(g.equals(g.copy(), traceback=True),
                             "Field g not equal to a copy of itself")
 
-#        print'f'
-#        print f
-#        print 'g'
-#        print g
-#        f.dump()
-#        g.dump()
-
-            print(3)
-            self.assertTrue(g.equals(f, traceback=True),
+            print('f')
+            f.dump()
+            print('g')
+            g.dump()
+            
+            self.assertTrue(g.equals(f, traceback=True),                            
                             "Field not equal to itself read back in")
         #--- End: for
         

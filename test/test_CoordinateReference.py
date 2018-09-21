@@ -17,21 +17,24 @@ class CoordinateReferenceTest(unittest.TestCase):
         # Create a vertical grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=('coord1',),
-            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
-            domain_ancillaries={'a': 'aux0', 'b': 'aux1', 'orog': 'orog'})
+            coordinate_conversion=cfdm.CoordinateConversion(
+                parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
+                domain_ancillaries={'a': 'aux0', 'b': 'aux1', 'orog': 'orog'})
+        )
         self.assertTrue(t.equals(t.copy(), traceback=True))
         
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
             coordinates=['coord1', 'fred', 'coord3'],
-            parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-                        'grid_north_pole_latitude': 38.0,
-                        'grid_north_pole_longitude': 190.0})
-        
+             coordinate_conversion=cfdm.CoordinateConversion(
+                 parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+                             'grid_north_pole_latitude': 38.0,
+                             'grid_north_pole_longitude': 190.0})
+        )            
         self.assertTrue(t.equals(t.copy(), traceback=True))
 
-        datum = cfdm.Datum(parameters={'earth_radius': 6371007})
-        conversion = cfdm.CoordinateConversion(
+        datum=cfdm.Datum(parameters={'earth_radius': 6371007})
+        conversion=cfdm.CoordinateConversion(
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0})
@@ -47,25 +50,25 @@ class CoordinateReferenceTest(unittest.TestCase):
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
                coordinates=['coord1', 'fred', 'coord3'],
-                parameters={'grid_mapping_name': 'albers_conical_equal_area',
-                            'standard_parallel': [-30, 10],
-                            'longitude_of_projection_origin': 34.8,
-                            'false_easting': -20000,
-                            'false_northing': -30000}
+               coordinate_conversion=cfdm.CoordinateConversion(
+                   parameters={'grid_mapping_name': 'albers_conical_equal_area',
+                               'standard_parallel': [-30, 10],
+                               'longitude_of_projection_origin': 34.8,
+                               'false_easting': -20000,
+                               'false_northing': -30000})
         )
-
         self.assertTrue(t.equals(t.copy(), traceback=True))
 
         # Create a horizontal grid mapping coordinate reference
         t = cfdm.CoordinateReference(
                coordinates=['coord1', 'fred', 'coord3'],
-                parameters={'grid_mapping_name': 'albers_conical_equal_area',
-                            'standard_parallel': cfdm.Data([-30, 10]),
-                            'longitude_of_projection_origin': 34.8,
-                            'false_easting': -20000,
-                            'false_northing': -30000}
+               coordinate_conversion=cfdm.CoordinateConversion(
+                   parameters={'grid_mapping_name': 'albers_conical_equal_area',
+                               'standard_parallel': cfdm.Data([-30, 10]),
+                               'longitude_of_projection_origin': 34.8,
+                               'false_easting': -20000,
+                               'false_northing': -30000})
         )
-
         self.assertTrue(t.equals(t.copy(), traceback=True))
     #--- End: def
 

@@ -15,7 +15,9 @@ from ...domainaxis          import DomainAxis
 from ...field               import Field
 from ...fieldancillary      import FieldAncillary
 
-from ...bounds import Bounds
+from ...bounds               import Bounds
+from ...coordinateconversion import CoordinateConversion
+from ...datum                import Datum
 
 from ...data import (Data,
                      GatheredArray,
@@ -43,10 +45,11 @@ implementation = CFDMImplementation(version = __version__,
                                     Field               = Field,
                                     FieldAncillary      = FieldAncillary,
                                     
-                                    Bounds = Bounds,
-                                    Data   = Data,
+                                    Bounds               = Bounds,
+                                    CoordinateConversion = CoordinateConversion,
+                                    Datum                = Datum,
                                     
-#                                    CompressedArray = CompressedArray,
+                                    Data                         = Data,
                                     GatheredArray                = GatheredArray,
                                     NetCDFArray                  = NetCDFArray,
                                     RaggedContiguousArray        = RaggedContiguousArray,

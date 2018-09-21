@@ -133,14 +133,18 @@ class create_fieldTest(unittest.TestCase):
         orog.set_property('units', 'm')
         orog = f.set_domain_ancillary(orog, axes=[axisY, axisX])
 
+        datum1 = cfdm.Datum({'earth_radius' : 6371007})
         
-        ref1 = cfdm.CoordinateReference(
+        coordinate_conversion1 = cfdm.CoordinateConversion(
             parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
-                        'computed_standard_name': 'altitude',
-                        'earth_radius' : 6371007,},
+                        'computed_standard_name': 'altitude'},
             domain_ancillaries={'orog': orog,
                                 'a'   : ak,
-                                'b'   : bk},
+                                'b'   : bk})
+        
+        ref1 = cfdm.CoordinateReference(
+            datum=datum1,
+            coordinate_conversion=coordinate_conversion1,
             coordinates=[z]
         )
         

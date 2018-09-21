@@ -7,19 +7,22 @@ class CFDMImplementation(Implementation):
     '''
     '''
     def __init__(self, version=None,
+                 
                  AuxiliaryCoordinate=None,
                  CellMeasure=None,
                  CellMethod=None,
-                 CoordinateAncillary=None,
                  CoordinateReference=None,
                  DimensionCoordinate=None,
                  DomainAncillary=None,
                  DomainAxis=None,
                  Field=None,
                  FieldAncillary=None,
+                 
                  Bounds=None,
+                 CoordinateConversion=None,
+                 Datum=None,
+                 
                  Data=None,
-                 CompressedArray=None,
                  GatheredArray=None,
                  NetCDFArray=None,
                  RaggedContiguousArray=None,
@@ -66,19 +69,22 @@ class CFDMImplementation(Implementation):
         '''
         super().__init__(
             version=version,
+
             AuxiliaryCoordinate=AuxiliaryCoordinate,
             CellMeasure=CellMeasure,
             CellMethod=CellMethod,
-            CoordinateAncillary=CoordinateAncillary,
             CoordinateReference=CoordinateReference,
             DimensionCoordinate=DimensionCoordinate,
             DomainAncillary=DomainAncillary,
             DomainAxis=DomainAxis,
             Field=Field,
             FieldAncillary=FieldAncillary,
+
             Bounds=Bounds,
+            CoordinateConversion=CoordinateConversion,
+            Datum=Datum,
+
             Data=Data,
-            CompressedArray=CompressedArray,
             GatheredArray=GatheredArray,
             NetCDFArray=NetCDFArray,
             RaggedContiguousArray=RaggedContiguousArray,
@@ -150,12 +156,6 @@ AttributeError: Field doesn't have property 'standard_name'
         return data.get_array()
     #--- End: def
 
-    def get_auxiliary_coordinate(self, field):
-       '''
-       '''
-       return field.auxiliary_coordinates()
-    #--- End: def
-
     def get_auxiliary_coordinates(self, field):
         '''
         '''
@@ -168,12 +168,6 @@ AttributeError: Field doesn't have property 'standard_name'
         return parent.get_bounds(*default)
     #--- End: def
     
-    def get_cell_measure(self, field):
-       '''
-       '''
-       return field.cell_measures()
-    #--- End: def
-
     def get_cell_measures(self, field):
        '''
        '''
@@ -335,26 +329,10 @@ axes, and possibly other axes, are returned.
         return ref.datum.parameters()
     #--- End: def
 
-    def get_dimension_coordinate(self, field):
-       '''
-:Parameters:
-
-       '''
-       return field.dimension_coordinates()
-    #--- End: def
-
     def get_dimension_coordinates(self, field):
         '''
         '''
         return field.dimension_coordinates()
-    #--- End: def
-
-    def get_domain_ancillary(self, field):
-       '''
-:Parameters:
-
-       '''
-       return field.domain_ancillaries()
     #--- End: def
 
     def get_domain_ancillaries(self, field):
@@ -425,20 +403,12 @@ axes, and possibly other axes, are returned.
         return parent.get_external()
     #--- End: def
     
-    def get_field_ancillary(self, field):
-       '''
-:Parameters:
-
-       '''
-       return field.field_ancillaries()
-    #--- End: def
-             
     def get_field_ancillaries(self, field):
         '''Return the field ancillaries of a field.
 
 :Examples 1:
 
->>> field_ancillaries = w.get_field_ancillaries(f)
+>>> x = i.get_field_ancillaries(f)
 
 :Parameters:
 
@@ -448,13 +418,15 @@ axes, and possibly other axes, are returned.
 :Returns:
 
     out: `dict`
-        The field ancillary objects, keyed by their internal identifiers.
+        A dictionary whose values are field ancillary objects, keyed
+        by unique identifiers.
 
 :Examples 2:
 
 >>> w.get_field_ancillaries(f)
-{'fieldancillary0': <FieldAncillary: >,
- 'fieldancillary1': <FieldAncillary: >}
+{'fieldancillary0': <FieldAncillary: ....>,
+ 'fieldancillary1': <FieldAncillary: ....>}
+
         '''
         return field.field_ancillaries()
     #--- End: def
@@ -655,15 +627,21 @@ axes, and possibly other axes, are returned.
         return cls(axes=axes, properties=properties)
     #--- End: def
 
-    def initialise_CoordinateReference(self, coordinates=None,
-                                       domain_ancillaries=None,
-                                       parameters=None):
+    def initialise_CoordinateConversion(self, 
+                                        domain_ancillaries=None,
+                                        parameters=None):
+        '''
+        '''
+        cls = self.get_class('CoordinateConversion')
+        return cls(domain_ancillaries=domain_ancillaries,
+                   parameters=parameters)
+    #--- End: def
+
+    def initialise_CoordinateReference(self):
         '''
         '''
         cls = self.get_class('CoordinateReference')
-        return cls(coordinates=coordinates,
-                   domain_ancillaries=domain_ancillaries,
-                   parameters=parameters)
+        return cls()
     #--- End: def
 
     def initialise_Data(self, data=None, units=None, calendar=None,
@@ -680,6 +658,13 @@ axes, and possibly other axes, are returned.
         cls = self.get_class('Data')
         return cls(data=data, units=units, calendar=calendar,
                      copy=copy)
+    #--- End: def
+
+    def initialise_Datum(self, parameters=None):
+        '''
+        '''
+        cls = self.get_class('Datum')
+        return cls(parameters=parameters)
     #--- End: def
 
     def initialise_DimensionCoordinate(self, properties=None,
@@ -874,6 +859,19 @@ axes, and possibly other axes, are returned.
         cell_method.set_axes(axes)
     #--- End: for
     
+    def set_coordinate_conversion(self, coordinate_reference, coordinate_conversion):
+        '''
+
+:Parameters:
+
+:Returns:
+
+    `None`
+
+        '''
+        coordinate_reference.set_coordinate_conversion(coordinate_conversion)
+    #--- End: def
+
     def set_coordinate_reference(self, field, construct, copy=True):
         '''Insert a coordinate reference object into a field.
 

@@ -54,10 +54,6 @@ frame and consists of the following:
     '''
     
     def __new__(cls, *args, **kwargs):
-#        obj = object.__new__(cls, *args, **kwargs)
-#        obj._CoordinateConversion = CoordinateConversion
-#        obj._Datum                = Datum
-#        return obj
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
         instance._Datum                = Datum

@@ -107,15 +107,12 @@ frame and consists of the following:
         instance._CoordinateConversion = CoordinateConversion
         instance._Datum                = Datum
         return instance
-#        obj = object.__new__(cls, *args, **kwargs)        
-#        obj._CoordinateConversion = CoordinateConversion
-#        obj._Datum                = Datum
-#        return obj
     #--- End: def
 
     def __init__(self, coordinates=None, datum=None,
-                 coordinate_conversion=None, domain_ancillaries=None,
-                 parameters=None, source=None, copy=True):
+                 coordinate_conversion=None, #domain_ancillaries=None,
+#                 parameters=None,
+                 source=None, copy=True):
         '''**Initialization**
 
 :Parameters:
@@ -128,7 +125,9 @@ frame and consists of the following:
             ``coordinates=['dimensioncoordinate2']``
 
           *Example:*
-            ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1', 'auxiliarycoordinate0', 'auxiliarycoordinate1')``
+            ``coordinates=('dimensioncoordinate0',
+            'dimensioncoordinate1', 'auxiliarycoordinate0',
+            'auxiliarycoordinate1')``
 
     parameters: `dict`, optional
         Define parameter-valued terms of both the coordinate
@@ -212,40 +211,40 @@ frame and consists of the following:
         initialization. By default arguments are deep copied.
 
         '''
-        if source is None:
-            if parameters is not None or domain_ancillaries is not None:
-                if datum is not None or coordinate_conversion is not None:
-                    raise ValueError(" xcawed we2q3 \a")
-
-                datum_parameters = {}
-                coordinate_conversion_parameters = {}
-
-#                datum_domain_ancillaries = {}
-                coordinate_conversion_domain_ancillaries = {}
-
-                if parameters is not None:
-                    for x, value in parameters.items():
-                        if x in self._datum_parameters:
-                            datum_parameters[x] = value
-                        else:
-                            coordinate_conversion_parameters[x] = value
-                #-- End: if
-            
-                if domain_ancillaries is not None:                 
-                    for x, value in domain_ancillaries.items():
-#                        if x in self._datum_ancillaries:
-#                            datum_domain_ancillaries[x] = value
+#        if source is None:
+#            if parameters is not None: #or domain_ancillaries is not None:
+#                if datum is not None or coordinate_conversion is not None:
+#                    raise ValueError(" xcawed we2q3 \a")
+#
+#                datum_parameters = {}
+#                coordinate_conversion_parameters = {}
+#
+##                datum_domain_ancillaries = {}
+#                coordinate_conversion_domain_ancillaries = {}
+#
+#                if parameters is not None:
+#                    for x, value in parameters.items():
+#                        if x in self._datum_parameters:
+#                            datum_parameters[x] = value
 #                        else:
-                        coordinate_conversion_domain_ancillaries[x] = value
-                #-- End: if
-
-                datum = self._Datum(
-                    parameters=datum_parameters)
-        
-                coordinate_conversion = self._CoordinateConversion(
-                    parameters=coordinate_conversion_parameters,
-                    domain_ancillaries=coordinate_conversion_domain_ancillaries)
-        #--- End: if
+#                            coordinate_conversion_parameters[x] = value
+#                #-- End: if
+#            
+##                if domain_ancillaries is not None:                 
+##                    for x, value in domain_ancillaries.items():
+###                        if x in self._datum_ancillaries:
+###                            datum_domain_ancillaries[x] = value
+###                        else:
+##                        coordinate_conversion_domain_ancillaries[x] = value
+##                #-- End: if
+#
+#                datum = self._Datum(
+#                    parameters=datum_parameters)
+#        
+##                coordinate_conversion = self._CoordinateConversion(
+##                    parameters=coordinate_conversion_parameters,
+##                    domain_ancillaries=coordinate_conversion_domain_ancillaries)
+#        #--- End: if
             
         super().__init__(
             coordinates=coordinates,

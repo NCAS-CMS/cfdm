@@ -66,7 +66,6 @@ class read_writeTest(unittest.TestCase):
         
         self.assertTrue(len(cfdm.read(filename, field=['domain_ancillary', 'auxiliary_coordinate'])) == 7)
         self.assertTrue(len(cfdm.read(filename, field=['domain_ancillary', 'cell_measure', 'auxiliary_coordinate'])) == 8)
-        self.assertTrue(len(cfdm.read(filename, field='all')) == 14)
 
         f = cfdm.read(filename, field=('field_ancillary', 'dimension_coordinate',
                                        'cell_measure', 'auxiliary_coordinate',
