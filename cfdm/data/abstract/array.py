@@ -5,12 +5,12 @@ import abc
 
 import numpy
 
-from ...structure.data.abstract import Array as structure_Array
+from ...core.data.abstract import Array as core_Array
 
 _MUST_IMPLEMENT = 'This method must be implemented'
 
 
-class Array(with_metaclass(abc.ABCMeta, structure_Array)):
+class Array(with_metaclass(abc.ABCMeta, core_Array)):
     '''A container for an array.
 
 The form of the array is arbitrary and is defined by the attributes

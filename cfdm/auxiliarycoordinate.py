@@ -1,12 +1,12 @@
 from builtins import super
 
 from . import mixin
-from . import structure
+from . import core
 
 
 class AuxiliaryCoordinate(mixin.NetCDFVariable,
                           mixin.Coordinate,
-                          structure.AuxiliaryCoordinate):
+                          core.AuxiliaryCoordinate):
     #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.Coordinate, structure.AuxiliaryCoordinate), {}))):

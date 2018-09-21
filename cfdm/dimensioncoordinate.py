@@ -2,12 +2,12 @@ from __future__ import absolute_import
 from builtins import super
 
 from . import mixin
-from . import structure
+from . import core
 
 
 class DimensionCoordinate(mixin.NetCDFVariable,
                           mixin.Coordinate,
-                          structure.DimensionCoordinate):
+                          core.DimensionCoordinate):
     '''A dimension coordinate construct of the CF data model.
 
     '''

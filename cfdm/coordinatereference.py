@@ -8,7 +8,7 @@ from past.builtins import basestring
 #from . import __file__
 
 from . import mixin
-from . import structure
+from . import core
 
 from . import CoordinateConversion
 from . import Datum
@@ -44,7 +44,7 @@ from . import Datum
 
 class CoordinateReference(mixin.NetCDFVariable,
                           mixin.Container,
-                          structure.CoordinateReference):
+                          core.CoordinateReference):
     '''A coordinate reference construct of the CF data model. 
 
 A coordinate reference construct relates the coordinate values of the

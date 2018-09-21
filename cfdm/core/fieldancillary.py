@@ -1,9 +1,7 @@
 from . import abstract
-#from future.utils import with_metaclass
 
 
 class FieldAncillary(abstract.PropertiesData):
-#        with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A field ancillary construct of the CF data model.
 
 The field ancillary construct provides metadata which are distributed

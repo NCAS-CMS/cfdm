@@ -12,7 +12,7 @@ class Array(with_metaclass(abc.ABCMeta, object)):
 The form of the array is arbitrary and is defined by the attributes
 set on a subclass of the abstract `Array` object.
 
-See `cfdm.structure.data.NumpyArray` for an example implementation.
+See `cfdm.core.data.NumpyArray` for an example implementation.
 
     '''
     def __init__(self, **kwargs):

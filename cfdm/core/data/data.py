@@ -24,7 +24,7 @@ An N-dimensional data array with units and masked values.
 
     data:
         The data array. May be any object that exposes the
-        `cfdm.structure.data.abstract.Array` interface.
+        `cfdm.core.data.abstract.Array` interface.
 
     units: `str`, optional
         
@@ -629,7 +629,7 @@ None
 
     data:
         The data to be inserted. May be any object that exposes the
-        `cfdm.structure.data.abstract.Array` interface.
+        `cfdm.core.data.abstract.Array` interface.
 
 :Returns:
 

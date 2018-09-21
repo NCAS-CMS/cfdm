@@ -2,12 +2,12 @@ from __future__ import print_function
 from builtins import super
 
 from . import mixin
-from . import structure
+from . import core
 
 
 class DomainAxis(mixin.NetCDFDimension,
                  mixin.Container,
-                 structure.DomainAxis):
+                 core.DomainAxis):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.Container, structure.DomainAxis), {}))):

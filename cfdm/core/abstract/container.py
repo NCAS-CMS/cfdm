@@ -13,7 +13,11 @@ class Container(with_metaclass(abc.ABCMeta, object)):
 
     '''
     def __init__(self):
-        '''
+        '''**Initialisation**
+
+A container is initialised with no parameters. Components are set
+after initialisation with the `_set_component` method.
+
         '''
         self._components = {}
     #--- End: def

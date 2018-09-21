@@ -4,11 +4,11 @@ from builtins import (str, super, zip)
 import numpy
 
 from . import mixin
-from . import structure
+from . import core
 
 
 class CellMethod(mixin.Properties,
-                 structure.CellMethod):
+                 core.CellMethod):
 #        with_metaclass(
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.Properties, structure.CellMethod), {}))):

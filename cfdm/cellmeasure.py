@@ -2,12 +2,12 @@ from __future__ import print_function
 from builtins import super
 
 from . import mixin
-from . import structure
+from . import core
 
 
 class CellMeasure(mixin.NetCDFVariable,
                   mixin.PropertiesData,
-                  structure.CellMeasure):
+                  core.CellMeasure):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.PropertiesData, structure.CellMeasure), {}))):

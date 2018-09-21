@@ -1,9 +1,9 @@
 from . import mixin
-from . import structure
+from . import core
 
 
 class Datum(mixin.Parameters,
-            structure.Datum):
+            core.Datum):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.Parameters, structure.Datum), {}))):

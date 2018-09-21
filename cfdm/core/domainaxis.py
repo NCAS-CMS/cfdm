@@ -2,6 +2,7 @@ from builtins import (str, super)
 
 from . import abstract
 
+
 class DomainAxis(abstract.Container):
     '''A domain axis construct of the CF data model. 
 

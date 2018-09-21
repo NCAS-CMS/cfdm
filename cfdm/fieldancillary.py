@@ -1,12 +1,12 @@
 from builtins import super
 
 from . import mixin
-from . import structure
+from . import core
 
 
 class FieldAncillary(mixin.NetCDFVariable,
                      mixin.PropertiesData,
-                     structure.FieldAncillary):
+                     core.FieldAncillary):
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.PropertiesData, structure.FieldAncillary), {}))):
     '''A field ancillary construct of the CF data model.

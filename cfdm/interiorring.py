@@ -1,12 +1,12 @@
 from builtins import super
 
 from . import mixin
-from . import structure
+from . import core
 
 
 class InteriorRing(mixin.NetCDFVariable,
                    mixin.PropertiesData,
-                   structure.InteriorRing):
+                   core.InteriorRing):
 #        with_metaclass(
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.PropertiesData, structure.InteriorRing), {}))):

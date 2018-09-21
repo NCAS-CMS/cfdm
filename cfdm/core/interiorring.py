@@ -1,9 +1,7 @@
 from . import abstract
-#from future.utils import with_metaclass
 
 
 class InteriorRing(abstract.PropertiesData):
-        #with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''An interior ring array with properties.
 
 For polygon geometries, an individual part may define an "interior

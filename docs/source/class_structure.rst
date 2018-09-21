@@ -1,10 +1,10 @@
-.. currentmodule:: cfdm.structure
+.. currentmodule:: cfdm.core
 .. default-role:: obj
 
 .. _class:
 
-Classes of the :mod:`cfdm.structure` module
-===========================================
+Classes of the :mod:`cfdm.core` module
+======================================
 
 Field class
 -------------
@@ -13,7 +13,7 @@ Field class
    :nosignatures:
    :toctree: classes/
 
-   cfdm.structure.Field	              
+   cfdm.core.Field	              
 
 Field component classes
 -----------------------
@@ -22,16 +22,16 @@ Field component classes
    :nosignatures:
    :toctree: classes/
 
-   cfdm.structure.AuxiliaryCoordinate
-   cfdm.structure.CellMeasure
-   cfdm.structure.CellMethod
-   cfdm.structure.CoordinateReference
-   cfdm.structure.DimensionCoordinate
-   cfdm.structure.DomainAncillary
-   cfdm.structure.DomainAxis
-   cfdm.structure.FieldAncillary
+   cfdm.core.AuxiliaryCoordinate
+   cfdm.core.CellMeasure
+   cfdm.core.CellMethod
+   cfdm.core.CoordinateReference
+   cfdm.core.DimensionCoordinate
+   cfdm.core.DomainAncillary
+   cfdm.core.DomainAxis
+   cfdm.core.FieldAncillary
 
-   cfdm.structure.Domain
+   cfdm.core.Domain
 
    
 Miscellaneous classes
@@ -41,17 +41,19 @@ Miscellaneous classes
    :nosignatures:
    :toctree: classes/
 
-   cfdm.CellMethods
-   cfdm.Data
+   cfdm.core.Data
 
 
-Base classes
-------------
+Abstract base classes
+---------------------
 
 .. autosummary::
    :nosignatures:
    :toctree: classes/
-         
-   cfdm.Coordinate
-  
+        
+   cfdm.core.abstract.Container
+   cfdm.core.abstract.Properties
+   cfdm.core.abstract.PropertiesData
+   cfdm.core.abstract.PropertiesDataBounds
+   cfdm.core.abstract.Coordinate
 

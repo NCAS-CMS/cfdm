@@ -46,8 +46,10 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         initialization. By default arguments are deep copied.
 
         '''
-        super().__init__(properties=properties, source=source,
-                         copy=copy)
+#        super().__init__(properties=properties, source=source,
+#                         copy=copy)
+        Properties.__init__(self, properties=properties,
+                            source=source, copy=copy)
 
         if source is not None:
             if not _use_data:

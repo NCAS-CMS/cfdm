@@ -15,9 +15,9 @@ from . import abstract
 
 from . import NumpyArray
 
-from ..structure import Data as structure_Data
+from ..core import Data as core_Data
 
-class Data(structure_Data):
+class Data(core_Data):
     '''
 
 An N-dimensional data array with units and masked values.

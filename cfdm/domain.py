@@ -2,14 +2,14 @@ from __future__ import print_function
 from builtins import (str, super)
 
 from . import mixin
-from . import structure
+from . import core
 
 from . import Constructs
 
 
 class Domain(mixin.ConstructAccess,
              mixin.Container,
-             structure.Domain):
+             core.Domain):
 #        with_metaclass(
 #        abc.ABCMeta,
 #        type('NewBase', (mixin.ConstructAccess, mixin.Properties, structure.Domain), {}))):

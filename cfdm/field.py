@@ -4,7 +4,7 @@ from builtins import (str, super, zip)
 import re
 
 from . import mixin
-from . import structure
+from . import core
 
 from . import Constructs
 from . import Domain
@@ -15,7 +15,7 @@ _debug = False
 class Field(mixin.NetCDFVariable,
             mixin.ConstructAccess,
             mixin.PropertiesData,
-            structure.Field):
+            core.Field):
 #        with_metaclass(abc.ABCMeta, type('NewBase', (mixin.ConstructAccess, mixin.PropertiesData, structure.Field), {}))):
     '''A CF field construct.
 
@@ -77,9 +77,9 @@ and institution).
 
         '''        
         # Initialize the new field with attributes and CF properties
-        structure.Field.__init__(self, properties=properties,
-                                 source=source, copy=copy,
-                                 _use_data=_use_data)
+        core.Field.__init__(self, properties=properties,
+                            source=source, copy=copy,
+                            _use_data=_use_data)
         
         if source is not None:
             self._intialise_ncvar_from(source)

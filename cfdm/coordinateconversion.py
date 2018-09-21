@@ -1,9 +1,9 @@
 from . import mixin
-from . import structure
+from . import core
 
 
 class CoordinateConversion(mixin.ParametersDomainAncillaries,
-                           structure.CoordinateConversion):
+                           core.CoordinateConversion):
         #with_metaclass(
         #abc.ABCMeta,
         #type('NewBase', (mixin.ParametersDomainAncillaries, structure.CoordinateConversion), {}))):

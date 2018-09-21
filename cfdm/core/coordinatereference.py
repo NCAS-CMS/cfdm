@@ -314,55 +314,6 @@ coordinate system.
         return self._has_component('coordinate_conversion')
     #--- End: def
 
-#    def name(self, default=None, identity=False, ncvar=False):
-#        '''Return a name.
-#
-#By default the name is the first found of the following:
-#
-#  1. The `standard_name` CF property.
-#  
-#  2. The `!id` attribute.
-#  
-#  3. The `long_name` CF property, preceeded by the string
-#     ``'long_name:'``.
-#  
-#  4. The `!ncvar` attribute, preceeded by the string ``'ncvar%'``.
-#  
-#  5. The value of the *default* parameter.
-#
-#Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
-#
-#.. seealso:: `identity`
-#
-#:Examples 1:
-#
-#>>> n = r.name()
-#>>> n = r.name(default='NO NAME'))
-#'''
-#        if not ncvar:
-#            parameters = self.coordinate_conversion.parameters()
-#
-#            n = parameters.get('standard_name')
-#            if n is not None:
-#                return n
-#                
-#            n = parameters.get('grid_mapping_name')
-#            if n is not None:
-#                return n
-#                
-#            if identity:
-#                return default
-#
-#        elif identity:
-#            raise ValueError("Can't set identity=True and ncvar=True")
-#
-#        n = self.get_ncvar(None)
-#        if n is not None:
-#            return 'ncvar%{0}'.format(n)
-#            
-#        return default
-##--- End: def
-
     def set_coordinate(self, coordinate):
         '''Set a coordinate.
 

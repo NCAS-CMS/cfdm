@@ -2,7 +2,6 @@ from . import abstract
 
 
 class Bounds(abstract.PropertiesData):
-#    class Bounds(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A cell bounds array with properties.
 
 An array of cell bounds spans the same domain axes as its coordinate

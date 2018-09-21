@@ -1,10 +1,10 @@
 from __future__ import print_function
 from builtins import (super, zip)
 
-from . import structure
+from . import core
 
 
-class Constructs(structure.Constructs):
+class Constructs(core.Constructs):
     '''
     '''    
     

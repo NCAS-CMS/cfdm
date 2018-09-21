@@ -1,10 +1,7 @@
 from . import abstract
 
-#from future.utils import with_metaclass
-
 
 class DimensionCoordinate(abstract.Coordinate):
-#with_metaclass(abc.ABCMeta, abstract.Coordinate)):
     '''A dimension coordinate construct of the CF data model.
 
 A dimension coordinate construct provides information which locate the
