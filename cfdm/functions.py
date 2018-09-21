@@ -16,7 +16,8 @@ from urllib.parse    import urljoin  as urlparse_urljoin
 import netCDF4
 import numpy
 
-from .          import __version__, __file__
+from . import __version__, __file__
+
 from .constants import CONSTANTS
 
 def _numpy_allclose(a, b, rtol=None, atol=None):

@@ -2,7 +2,7 @@ from future.utils import with_metaclass
 
 import abc
 
-from .propertiesdatabounds import PropertiesDataBounds
+from . import PropertiesDataBounds
 
 
 class Coordinate(with_metaclass(abc.ABCMeta, PropertiesDataBounds)):

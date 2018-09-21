@@ -1,7 +1,7 @@
 from __future__ import print_function
 from builtins import super
 
-from .container import Container
+from . import Container
 
 
 class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):

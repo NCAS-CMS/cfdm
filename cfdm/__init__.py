@@ -25,9 +25,11 @@ if StrictVersion(platform.python_version()) < StrictVersion('2.7.0'):
 from .bounds               import Bounds
 from .coordinateconversion import CoordinateConversion
 from .constants            import *
+from .constructs           import Constructs
 from .data.data            import Data
 from .data.netcdfarray     import NetCDFArray
 from .datum                import Datum
+from .domain               import Domain
 from .functions            import *
 from .interiorring         import InteriorRing
 from .io.read              import read
@@ -40,7 +42,6 @@ from .coordinatereference import CoordinateReference
 from .dimensioncoordinate import DimensionCoordinate
 from .domainancillary     import DomainAncillary
 from .domainaxis          import DomainAxis
-from .domain              import Domain
 from .field               import Field
 from .fieldancillary      import FieldAncillary
 

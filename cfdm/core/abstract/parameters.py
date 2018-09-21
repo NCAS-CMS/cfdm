@@ -5,7 +5,7 @@ import abc
 
 from copy import deepcopy
 
-from .container import Container
+from . import Container
 
 
 class Parameters(with_metaclass(abc.ABCMeta, Container)):

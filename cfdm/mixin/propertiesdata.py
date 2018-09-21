@@ -1,7 +1,7 @@
 from __future__ import print_function
 from builtins import (str, super)
 
-from .properties import Properties
+from . import Properties
 
 
 class PropertiesData(Properties):

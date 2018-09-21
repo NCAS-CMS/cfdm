@@ -13,7 +13,7 @@ from ..functions  import RTOL, ATOL, _numpy_allclose
 
 from . import abstract
 
-from .numpyarray import NumpyArray
+from . import NumpyArray
 
 from ..structure import Data as structure_Data
 

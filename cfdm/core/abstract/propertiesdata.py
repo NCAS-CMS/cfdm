@@ -3,7 +3,7 @@ from builtins import super
 
 import abc
 
-from .properties import Properties
+from . import Properties
 
 
 class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):

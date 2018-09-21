@@ -3,7 +3,7 @@ from builtins import super
 from . import abstract
 from . import mixin
 
-from .constructs import Constructs
+from . import Constructs
 
 
 class Domain(mixin.ConstructAccess, abstract.Container):

@@ -1,10 +1,14 @@
-from .constructaccess             import ConstructAccess
 from .container                   import Container
-from .coordinate                  import Coordinate
-from .netcdfdimension             import NetCDFDimension
-from .netcdfvariable              import NetCDFVariable
 from .properties                  import Properties
 from .propertiesdata              import PropertiesData
 from .propertiesdatabounds        import PropertiesDataBounds
+from .coordinate                  import Coordinate
+
 from .parameters                  import Parameters
 from .parametersdomainancillaries import ParametersDomainAncillaries
+
+from .netcdfdimension             import NetCDFDimension
+from .netcdfvariable              import NetCDFVariable
+
+from .constructaccess             import ConstructAccess
+

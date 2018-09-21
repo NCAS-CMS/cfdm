@@ -6,7 +6,7 @@ import textwrap
 import numpy
 import sys
 
-from .container import Container
+from . import Container
 
 
 class Properties(Container):

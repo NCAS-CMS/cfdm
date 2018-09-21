@@ -3,7 +3,7 @@ from future.utils import with_metaclass
 
 import abc
 
-from .propertiesdata import PropertiesData
+from . import PropertiesData
 
 
 class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):

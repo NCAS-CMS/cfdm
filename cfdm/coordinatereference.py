@@ -2,45 +2,44 @@ from __future__ import print_function
 from builtins import (str, super)
 from past.builtins import basestring
 
-import csv
-import os
+#import csv
+#import os
 
-from .                     import __file__
-from .auxiliarycoordinate  import AuxiliaryCoordinate
-from .coordinateconversion import CoordinateConversion
-from .datum                import Datum
-from .dimensioncoordinate  import DimensionCoordinate
+#from . import __file__
 
 from . import mixin
 from . import structure
 
+from . import CoordinateConversion
+from . import Datum
 
-# --------------------------------------------------------------------
-# Map coordinate conversion names to the set of coordinates to which
-# they apply
-# --------------------------------------------------------------------
-_name_to_coordinates = {}
-_file = os.path.join(os.path.dirname(__file__),
-                     'etc/coordinate_reference/coordinates.txt')
-for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
-    if not x or x[0] == '#':
-        continue
-    _name_to_coordinates[x[0]] = set(x[1:])
 
-# --------------------------------------------------------------------
-# Map coordinate conversion names to the set of coordinates to which
-# they apply
-# --------------------------------------------------------------------
-_datum_parameters = []
-_file = os.path.join(os.path.dirname(__file__),
-                     'etc/coordinate_reference/datum_parameters.txt')
-for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
-    if not x or x[0] == '#':
-        continue
-    _datum_parameters.append(x[0])
-    
-_datum_parameters  = set(_datum_parameters)
-#_datum_ancillaries = set()
+## --------------------------------------------------------------------
+## Map coordinate conversion names to the set of coordinates to which
+## they apply
+## --------------------------------------------------------------------
+#_name_to_coordinates = {}
+#_file = os.path.join(os.path.dirname(__file__),
+#                     'etc/coordinate_reference/coordinates.txt')
+#for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+#    if not x or x[0] == '#':
+#        continue
+#    _name_to_coordinates[x[0]] = set(x[1:])
+#
+## --------------------------------------------------------------------
+## Map coordinate conversion names to the set of coordinates to which
+## they apply
+## --------------------------------------------------------------------
+#_datum_parameters = []
+#_file = os.path.join(os.path.dirname(__file__),
+#                     'etc/coordinate_reference/datum_parameters.txt')
+#for x in csv.reader(open(_file, 'r'), delimiter=' ', skipinitialspace=True):
+#    if not x or x[0] == '#':
+#        continue
+#    _datum_parameters.append(x[0])
+#    
+#_datum_parameters  = set(_datum_parameters)
+##_datum_ancillaries = set()
 
 
 class CoordinateReference(mixin.NetCDFVariable,
@@ -98,8 +97,8 @@ frame and consists of the following:
 
     '''
 
-    _name_to_coordinates = _name_to_coordinates
-    _datum_parameters    = _datum_parameters
+#    _name_to_coordinates = _name_to_coordinates
+#    _datum_parameters    = _datum_parameters
 #    _datum_ancillaries   = _datum_ancillaries
 
     def __new__(cls, *args, **kwargs):
@@ -128,55 +127,6 @@ frame and consists of the following:
             ``coordinates=('dimensioncoordinate0',
             'dimensioncoordinate1', 'auxiliarycoordinate0',
             'auxiliarycoordinate1')``
-
-    parameters: `dict`, optional
-        Define parameter-valued terms of both the coordinate
-        conversion formula and the datum. A term is assumed to apply
-        to the coordinate conversion formula unless it is one of the
-        terms defined by `CoordinateReference._datum_parameters`, in
-        which case the term applies to the datum.
-
-          *Example:*
-            In this case, the ``'earth_radius'`` term is applied to
-            the datum and all of the other terms are applied to the
-            coordinate conversion formula:
-
-            >>> c = CoordinateReference(
-            ...         parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-            ...                     'grid_north_pole_latitude': 38.0,
-            ...                     'grid_north_pole_longitude': 190.0,
-            ...                     'earth_radius': 6371007})
-            ...
-            >>> c.coordinate_conversion.parameters()
-            {'grid_mapping_name': 'rotated_latitude_longitude',
-             'grid_north_pole_latitude': 38.0,
-             'grid_north_pole_longitude': 190.0}
-            >>> c.datum.parameters()
-            {'earth_radius': 6371007}
-
-    domain_ancillaries: `dict`, optional
-        Define domain ancillary-valued terms of both the coordinate
-        conversion formula and the datum. A term is assumed to apply
-        to the coordinate conversion formula unless it is one of the
-        terms defined by
-        `CoordinateReference._datum_ancillaries`, in which case
-        the term applies to the datum.
-
-          *Example:*
-            In this case, all terms are applied to the coordinate
-            conversion formula:
-
-            >>> c = CoordinateReference(
-            ...         domain_ancillaries={'orog': 'domainancillary2',
-            ...                             'a': 'domainancillary0',
-            ...                             'b': 'domainancillary1'})
-            ...
-            >>> c.coordinate_conversion.domain_ancillaries()
-            {'a': 'domainancillary0',
-             'b': 'domainancillary1',
-             'orog': 'domainancillary2'}
-            >>> c.datum.domain_ancillaries()
-            {}
 
     datum: `Datum`, optional
         Define the datum of the coordinate reference construct. Cannot

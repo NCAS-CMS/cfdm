@@ -2,13 +2,11 @@ from builtins import super
 
 from . import abstract
 
-from .coordinateconversion import CoordinateConversion
-from .datum                import Datum
-#from future.utils import with_metaclass
+from . import CoordinateConversion
+from . import Datum
 
 
 class CoordinateReference(abstract.Container):
-#with_metaclass(abc.ABCMeta, abstract.Container)):
     '''A coordinate reference construct of the CF data model. 
 
 A coordinate reference construct relates the coordinate values of the

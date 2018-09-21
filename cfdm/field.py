@@ -6,8 +6,8 @@ import re
 from . import mixin
 from . import structure
 
-from .constructs import Constructs
-from .domain      import Domain
+from . import Constructs
+from . import Domain
 
 _debug = False
        

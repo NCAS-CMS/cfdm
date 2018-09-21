@@ -1,7 +1,7 @@
 from __future__ import print_function
 from builtins import (range, super)
 
-from .propertiesdata import PropertiesData
+from . import PropertiesData
 
 from ..functions import RTOL, ATOL
 

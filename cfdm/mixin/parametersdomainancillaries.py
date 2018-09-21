@@ -1,7 +1,7 @@
 from __future__ import print_function
 from builtins import super
 
-from .parameters import Parameters
+from . import Parameters
 
 
 class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Parameters)):

@@ -1,4 +1,4 @@
-from .propertiesdatabounds import PropertiesDataBounds
+from . import PropertiesDataBounds
 
 
 class Coordinate(PropertiesDataBounds):

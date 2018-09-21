@@ -5,7 +5,7 @@ import abc
 
 from copy import deepcopy
 
-from .parameters import Parameters
+from . import Parameters
 
 
 class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):

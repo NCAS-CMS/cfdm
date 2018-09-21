@@ -4,7 +4,7 @@ from builtins import (str, super)
 from . import mixin
 from . import structure
 
-from .constructs import Constructs
+from . import Constructs
 
 
 class Domain(mixin.ConstructAccess,
