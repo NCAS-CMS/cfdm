@@ -133,3 +133,12 @@ coordinate_reference_coordinates = {
     'ocean_sigma_z_coordinate'                   : ('ocean_sigma_z_coordinate',),
     'ocean_double_sigma_coordinate'              : ('ocean_double_sigma_coordinate',),
 }
+
+description_of_file_contents_attributes = ('comment',
+                                           'Conventions',
+                                           'featureType',
+                                           'history',
+                                           'institution',
+                                           'references',
+                                           'source',
+                                           'title',)

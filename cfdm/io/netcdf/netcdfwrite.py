@@ -16,6 +16,8 @@ import netCDF4
 
 from .. import IOWrite
 
+from . import constants
+
 
 class NetCDFWrite(IOWrite):
     '''
@@ -1793,17 +1795,8 @@ write them to the netCDF4.Dataset.
 
         global_attributes = g['global_attributes']
                                                
-        global_attributes.update(
-            ('comment',
-             'Conventions',
-             'history',
-             'institution',
-             'references',
-             'source',
-             'title',)
-        )
-        
-        global_attributes.add(('featureType',))
+        global_attributes.update(constants.description_of_file_contents_attributes)
+    
         
 #        # Put all non-standard CF properties (i.e. those not in the
 #        # data_properties set) into the global_attributes set, but
