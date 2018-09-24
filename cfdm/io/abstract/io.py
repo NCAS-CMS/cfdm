@@ -60,7 +60,7 @@ dataset.
 
 
 class IOWrite(with_metaclass(abc.ABCMeta, IO)):
-    '''Base class writing Field constructs to a dataset.
+    '''Abstract base class for writing Field constructs to a dataset.
 
     '''
 
