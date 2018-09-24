@@ -27,7 +27,7 @@ class NetCDFDimension(object):
     def get_ncdim(self, *default):
         '''ttttttttt
         '''        
-        return self._get_component('ncdim', None, *default)
+        return self._get_component('ncdim', *default)
     #--- End: def
 
     def has_ncdim(self):
@@ -39,7 +39,7 @@ class NetCDFDimension(object):
     def set_ncdim(self, value):
         '''
         '''
-        return self._set_component('ncdim', value)
+        return self._set_component('ncdim', value, copy=False)
     #--- End: def
 
 #--- End: class

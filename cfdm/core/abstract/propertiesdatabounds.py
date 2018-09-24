@@ -244,7 +244,7 @@ None
 'No bounds'
 
         '''
-        return self._get_component('bounds', None, *default)
+        return self._get_component('bounds', *default)
     #--- End: def
 
     def get_geometry(self, *default):
@@ -266,7 +266,7 @@ None
 :Examples 2:
 
         '''
-        return self._get_component('geometry', None, *default)
+        return self._get_component('geometry', *default)
     #--- End: def
 
     def get_interior_ring(self, *default):
@@ -291,7 +291,7 @@ None
 :Examples 2:
 
         '''
-        return self._get_component('interior_ring', None, *default)
+        return self._get_component('interior_ring', *default)
     #--- End: def
 
     def has_bounds(self):
@@ -389,10 +389,10 @@ None
         if copy:
             bounds = bounds.copy()
 
-        self._set_component('bounds', bounds)
+        self._set_component('bounds', bounds, copy=False)
     #--- End: def
 
-    def set_geometry(self, value):
+    def set_geometry(self, value, copy=True):
         '''Set the bounds type.
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
@@ -409,7 +409,7 @@ None
 
 :Examples 2:
         '''
-        self._set_component('geometry', value)
+        self._set_component('geometry', value, copy=copy)
     #--- End: def
 
     def set_interior_ring(self, interior_ring, copy=True):
@@ -441,7 +441,7 @@ None
         if copy:
             interior_ring = interior_ring.copy()
 
-        self._set_component('interior_ring', interior_ring)
+        self._set_component('interior_ring', interior_ring, copy=False)
     #--- End: def
 
 #--- End: class

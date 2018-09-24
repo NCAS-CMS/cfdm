@@ -3,14 +3,11 @@ from future.utils import with_metaclass
 
 import abc
 
-_MUST_IMPLEMENT = 'This method must be implemented'
-
 
 class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     '''Mixin class for manipulating a `Constructs` object.
 
-    '''
-
+    '''   
     @abc.abstractmethod
     def _get_constructs(self, *default):
         '''Return the `Constructs` object
@@ -33,7 +30,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
 >>> c = f._get_constructs(None)
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
     
     def array_constructs(self, copy=False):
@@ -75,7 +72,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     def del_construct(self, key):
         '''
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
 
     def get_construct(self, key, *default):

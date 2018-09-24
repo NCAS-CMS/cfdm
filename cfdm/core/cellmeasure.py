@@ -110,10 +110,10 @@ cell measure variables correspond to cell measure constructs.
         return self._get_component('measure', *default)
     #--- End: def
 
-    def set_measure(self, measure):
+    def set_measure(self, measure, copy=True):
         '''
         '''
-        return self._set_component('measure', measure)
+        return self._set_component('measure', measure, copy=copy)
     #--- End: def
 
 #--- End: class

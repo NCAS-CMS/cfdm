@@ -84,8 +84,8 @@ and institution).
         if source is not None:
             self._intialise_ncvar_from(source)
     
-        self._set_component('unlimited' , 'TO DO')
-        self._set_component('HDFgubbins', 'TO DO')
+        self._set_component('unlimited' , 'TO DO', copy=False)
+        self._set_component('HDFgubbins', 'TO DO', copy=False)
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
@@ -488,6 +488,16 @@ field.
 #        constructs = self._get_constructs()
 #        return constructs.domain_axis_name(key)
 #    #--- End: def
+    def copy(self, data=True):
+        '''
+        '''
+        new = super().copy(data=data)
+
+        new.set_global_attributes(self.get_global_attributes(()))
+        new.set_read_report(self.get_read_report({}))
+
+        return new
+    #--- End: def
     
     def dump(self, display=True, _level=0, _title='Field'):
         '''A full description of the field.
@@ -865,13 +875,13 @@ by the data array may be selected.
     def get_global_attributes(self, *default):
         '''
         '''
-        return self._get_component('global_attributes', None, *default)
+        return self._get_component('global_attributes', *default)
     #--- End: def
 
     def get_read_report(self, *default):
         '''
         '''
-        return self._get_component('read_report', None, *default)
+        return self._get_component('read_report', *default)
     #--- End: def
    
     def print_read_report(self, *default):
@@ -910,13 +920,13 @@ Consider [get|set|del_global_attribute [NO S]
 
         '''
         self._set_component('global_attributes',
-                            tuple(global_attributes))
+                            set(global_attributes), copy=False)
     #--- End: def
 
-    def set_read_report(self, value):
+    def set_read_report(self, value, copy=True):
         '''
         '''
-        self._set_component('read_report', value)
+        self._set_component('read_report', value, copy=copy)
     #--- End: def    
    
     def squeeze(self, axes=None, copy=True):

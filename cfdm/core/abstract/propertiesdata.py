@@ -309,7 +309,7 @@ prior to insertion.
         data.set_units(None)
         data.set_calendar(None)
         
-        self._set_component('data', data)
+        self._set_component('data', data, copy=False)
     #--- End: def
 
 #--- End: class

@@ -310,13 +310,13 @@ bounds.
     def get_node_ncdim(self, *default):
         '''ttttttttt
         '''        
-        return self._get_component('node_ncdim', None, *default)
+        return self._get_component('node_ncdim', *default)
     #--- End: def
 
     def get_part_ncdim(self, *default):
         '''ttttttttt
         '''        
-        return self._get_component('part_ncdim', None, *default)
+        return self._get_component('part_ncdim', *default)
     #--- End: def
 
     def has_part_ncdim(self):
@@ -329,7 +329,7 @@ bounds.
         '''Set the netCDF name of the dimension of a node coordinate variable.
 
         '''
-        return self._set_component('node_ncdim', None, value)
+        return self._set_component('node_ncdim', value)
     #--- End: def
 
     def set_part_ncdim(self, value):
@@ -337,7 +337,7 @@ bounds.
 variable.
 
         '''
-        return self._set_component('part_ncdim', None, value)
+        return self._set_component('part_ncdim', value)
     #--- End: def
 
     def squeeze(self, axes=None , copy=True):

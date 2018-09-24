@@ -7,8 +7,6 @@ import numpy
 
 from ...core.data.abstract import Array as core_Array
 
-_MUST_IMPLEMENT = 'This method must be implemented'
-
 
 class Array(with_metaclass(abc.ABCMeta, core_Array)):
     '''A container for an array.
@@ -38,7 +36,7 @@ indexing (given the restrictions on the type of indices allowed) is:
     (similar to the way vector subscripts work in Fortran).
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
 
     @property

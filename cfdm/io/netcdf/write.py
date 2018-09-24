@@ -5,7 +5,7 @@ from ...data                import Data
 
 from .. import CFDMImplementation
 
-from .netcdf import NetCDFWrite
+from . import NetCDFWrite
 
 
 implementation = CFDMImplementation(version=__version__,

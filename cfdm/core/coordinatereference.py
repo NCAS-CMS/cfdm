@@ -115,7 +115,7 @@ frame and consists of the following:
         '''
         super().__init__()
 
-        self._set_component('coordinates', set())
+        self._set_component('coordinates', set(), copy=False)
         
         if source:
             try:
@@ -172,7 +172,7 @@ blah de balh 2
         return out
     #--- End: def
 
-    def coordinates(self, coordinates=None, copy=True):
+    def coordinates(self, coordinates=None):
         '''Return or replace the identifiers of the coordinate objects that
 define the coordinate system.
 
@@ -196,20 +196,10 @@ define the coordinate system.
  'auxiliarycoordinate1'}
 
         '''
-        existing = self._get_component('coordinates', None)
+        out = self._get_component('coordinates').copy()
 
-        if existing is None:
-            existing = set()
-            self._set_component('coordinates', existing)
-
-        out = existing.copy()
-
-        if not coordinates:
-            return out
-
-        # Still here?
-        existing.clear()
-        existing.update(coordinates)
+        if coordinates is not None:
+            self._set_component('coordinates', set(coordinates), copy=False)
 
         return out
     #--- End: def
@@ -355,7 +345,7 @@ coordinate system.
         if copy and value is not None:
             value = value.copy()
             
-        self._set_component('coordinate_conversion', value)
+        self._set_component('coordinate_conversion', value, copy=False)
     #--- End: def
 
     def set_datum(self, value, copy=True):
@@ -364,7 +354,7 @@ coordinate system.
         if copy and value is not None:
             value = value.copy()
             
-        self._set_component('datum', value)
+        self._set_component('datum', value, copy=False)
     #--- End: def
 
 #--- End: class

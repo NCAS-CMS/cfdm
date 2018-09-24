@@ -21,14 +21,14 @@ class Constructs(object):
                  source=None,
                  copy=True,
                  _use_data=True,
-                 view=False,
-                 ignore=()):
+                 _view=False,
+                 _ignore=()):
         '''
         '''
-        self._ignore = tuple(set(ignore))
+        self._ignore = tuple(set(_ignore))
     
         if source is not None:
-            if view:
+            if _view:
                 self._key_base             = source._key_base
                 self._array_constructs     = source._array_constructs
                 self._non_array_constructs = source._non_array_constructs
@@ -405,8 +405,8 @@ None
 >>> d = c.copy()
 
         '''
-        return type(self)(source=self, copy=True, view=False,
-                          _use_data=data, ignore=self._ignore)
+        return type(self)(source=self, copy=True, _view=False,
+                          _use_data=data, _ignore=self._ignore)
     #--- End: def
 
     def axes_to_constructs(self):
@@ -717,6 +717,12 @@ Return a new, unique identifier for the construct.
             construct = construct.copy()
             
         self._constructs[construct_type][key] = construct
+    #--- End: def
+    
+    def view(self, ignore=()):
+        '''
+        '''
+        return type(self)(source=self, _view=True, _ignore=ignore)
     #--- End: def
     
 #--- End: class

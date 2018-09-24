@@ -5,8 +5,6 @@ import abc
 
 from .array import Array
 
-_MUST_IMPLEMENT = 'This method must be implemented'
-
 
 class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
     '''A container for a compressed array.
@@ -90,7 +88,7 @@ dimension's index must either be a `slice` object or a sequence of
 integers.
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
 
     @property

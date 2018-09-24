@@ -71,13 +71,13 @@ to the order of the elements.
     def get_size(self, *default):
         '''
         '''
-        return self._get_component('size', None, *default)
+        return self._get_component('size', *default)
     #--- End: def
 
-    def set_size(self, size):
+    def set_size(self, size, copy=True):
         '''
         '''
-        self._set_component('size', size)
+        self._set_component('size', size, copy=copy)
     #--- End: def
 
 #--- End: class

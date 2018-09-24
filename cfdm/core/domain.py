@@ -81,10 +81,8 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
                 copy = False
                 _use_data = True            
             else:
-                constructs = self._Constructs(source=constructs,
-                                              view=True,
-                                              ignore=('cell_method',
-                                                      'field_ancillary'))
+                constructs = constructs.view(ignore=('cell_method',
+                                                     'field_ancillary'))
         else:
             constructs = self._Constructs(**self._construct_key_base)
             copy = False
@@ -93,7 +91,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         if copy or not _use_data:
             constructs = constructs.copy(data=_use_data)
             
-        self._set_component('constructs', constructs)
+        self._set_component('constructs', constructs, copy=False)
     #--- End: def
     
     def __repr__(self):
@@ -160,14 +158,24 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     @classmethod
     def fromconstructs(cls, constructs):
         '''
+:Parameters:
+
+    constructs: `Constructs`
+        
+:Returns:
+
+    out: `Domain`
+
+:Examples:
+
+>>> d = Domain.fromconstructs(f._get_constructs())
+        
         '''
         domain = cls()
-        constructs = domain._Constructs(source=constructs,
-                                        view=True,
-                                        ignore=('cell_method',
-                                                'field_ancillary'))
-        domain._set_component('constructs', constructs)
-        
+        domain._set_component('constructs',
+                              constructs.view(ignore=('cell_method',
+                                                      'field_ancillary')),
+                              copy=False)
         return domain
     #--- End: def
             

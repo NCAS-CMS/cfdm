@@ -26,12 +26,9 @@ from ...data import (Data,
                      RaggedIndexedArray,
                      RaggedIndexedContiguousArray)
 
-#from ...data.compressedarray import CompressedArray
-
-#from ..cfdmimplementation import CFDMImplementation
 from .. import CFDMImplementation
 
-from .netcdf import NetCDFRead
+from . import NetCDFRead
 
 implementation = CFDMImplementation(version = __version__,
 

@@ -32,8 +32,8 @@ from .datum                import Datum
 from .domain               import Domain
 from .functions            import *
 from .interiorring         import InteriorRing
-from .io.read              import read
-from .io.write             import write
+#from .io.read              import read
+#from .io.write             import write
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure
@@ -45,6 +45,7 @@ from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
 
+from .io import read, write
 
 
     

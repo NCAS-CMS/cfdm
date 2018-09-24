@@ -5,8 +5,6 @@ import abc
 
 from copy import deepcopy
 
-_MUST_IMPLEMENT = 'This method must be implemented'
-
 
 class Container(with_metaclass(abc.ABCMeta, object)):
     '''Abstract base class for storing object components.
@@ -144,7 +142,7 @@ False
         return component in self._components
     #--- End: def
 
-    def _set_component(self, component, value):
+    def _set_component(self, component, value, copy=True):
         '''Set a component.
 
 .. seealso:: `_del_component`, `_get_component`, `_has_component`
@@ -175,6 +173,9 @@ True
 False
 
         '''
+        if copy:
+            value = deepcopy(value)
+            
         self._components[component] = value
     #--- End: def
 
@@ -194,7 +195,7 @@ False
         The deep copy.
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
     
 #--- End: class

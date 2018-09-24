@@ -9,16 +9,9 @@ from . import Container
 
 
 class Properties(with_metaclass(abc.ABCMeta, Container)):
-    '''Abstract base class for descriptive properties.
+    '''Abstract base class for an object with descriptive properties.
 
     '''
-
-#    # ----------------------------------------------------------------
-#    # Properties with special [set|get|has|del]_property methods that
-#    # are defined by @property decorated methods
-#    # ----------------------------------------------------------------
-#    _special_properties = ()
-
     def __init__(self, properties=None, source=None, copy=True):
         '''**Initialization**
 
@@ -49,7 +42,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         '''
         super().__init__()
 
-        self._set_component('properties', {})
+        self._set_component('properties', {}, copy=False)
         
         if source is not None:
             try:
@@ -285,34 +278,16 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
         if properties is not None:
             if copy:
-                properties = deepcopy(properties)
+                properties = deepcopy(properties)                
+            else:
+                properties = properties.copy()
 
-            self._set_component('properties', properties)
+            self._set_component('properties', properties, copy=False)
 
         return out
-
-#        # Deal with special properties
-#        if properties is None:
-#            for prop in self._special_properties:
-#                value = get_property(prop, None)
-#                if value is not None:
-#                    out[prop] = value
-#        else:
-#            for prop in self._special_properties:
-#                if prop not in properties:
-#                    continue
-#
-#                value = properties[prop]
-#                if copy:
-#                    value = deepcopy(value)
-#                    
-#                self.set_property(prop, value)
-#        #--- End: if
-
-#        return out
     #--- End: def
 
-    def set_property(self, prop, value):
+    def set_property(self, prop, value, copy=True):
         '''Set a property.
 
 A property describes an aspect of the construct that is independent of
@@ -354,6 +329,9 @@ None
 None
 
         '''
+        if copy:
+            value = deepcopy(value)
+            
         self._get_component('properties')[prop] = value
     #--- End: def
 

@@ -542,7 +542,6 @@ dictionary.
                 continue
     
             # Still here?
-#            if variable.equals(value['variable'], ignore_construct_type=ignore_type):
             if self.implementation.equal_constructs(variable, value['variable'],
                                                     ignore_construct_type=ignore_type):
                 seen[id(variable)] = {'variable': variable,
@@ -591,9 +590,6 @@ name.
         if data is None:
             return {}
 
-#        if API.is_geometry(coord):
-#            return {'nodes': 999}
-        
         # Still here? Then this coordinate has a bounds attribute
         # which contains data.
         extra = {}
@@ -1415,7 +1411,6 @@ extra trailing dimension.
                             for key0, (construct0, index0) in spanning_constructs.items():
                                 matched_construct = False
                                 for key1, (construct1, index1) in constructs1.items():
-#                                    if index0 == index1 and construct0.equals(construct1):
                                     if (index0 == index1 and
                                         self.implementation.equal_constructs(construct0, construct1)):
                                         del constructs1[key1]
@@ -1660,7 +1655,7 @@ extra trailing dimension.
             
         # Create a new data variable
         self._write_netcdf_variable(ncvar, ncdimensions, f,
-                                    omit=g['global_properties'],
+                                    omit=g['global_attributes'],
                                     extra=extra, data_variable=True)
         
         # Update the 'seen' dictionary, if required
@@ -1758,15 +1753,13 @@ extra trailing dimension.
         return unlimited
     #--- End: def
     
-    def _write_global_properties(self, fields):
+    def _write_global_attributes(self, fields):
         '''Find the netCDF global properties from all of the input fields and
 write them to the netCDF4.Dataset.
     
-.. note:: This function updates ``g['global_properties']``.
-    
 :Parameters:
   
-    fields : list
+    fields : `list`
   
 :Returns:
     
@@ -1775,72 +1768,82 @@ write them to the netCDF4.Dataset.
         '''
         g = self.write_vars
         
-        # Data variable properties, as defined in Appendix A, without
-        # those which are not simple.
-        data_properties = set(('add_offset',
-                               'cell_methods',
-                               '_FillValue',
-                               'flag_masks',
-                               'flag_meanings',
-                               'flag_values',
-                               'long_name',
-                               'missing_value',
-                               'scale_factor',
-                               'standard_error_multiplier',
-                               'standard_name',
-                               'units',
-                               'valid_max',
-                               'valid_min',
-                               'valid_range',
-                               ))
+#        # Data variable properties, as defined in Appendix A, without
+#        # those which are not simple.
+#        data_properties = set(('add_offset',
+#                               'cell_methods',
+#                               '_FillValue',
+#                               'flag_masks',
+#                               'flag_meanings',
+#                               'flag_values',
+#                               'long_name',
+#                               'missing_value',
+#                               'scale_factor',
+#                               'standard_error_multiplier',
+#                               'standard_name',
+#                               'units',
+#                               'valid_max',
+#                               'valid_min',
+#                               'valid_range',
+#                               ))
     
         # Global properties, as defined in Appendix A
-        global_properties = set(('comment',
-                                 'Conventions',
-                                 'featureType',
-                                 'history',
-                                 'institution',
-                                 'references',
-                                 'source',
-                                 'title',
-                                 ))
-    
-        # Put all non-standard CF properties (i.e. those not in the
-        # data_properties set) into the global_properties set, but
-        # omitting those which have been requested to be on variables.
-        for f in fields:
-#            for attr in set(f._simple_properties()) - global_properties - g['variable_attributes']:
-            for attr in set(f.properties()) - global_properties - g['variable_attributes']: # DCH CHECK
-                if attr not in data_properties:
-                    global_properties.add(attr)
-        #--- End: for
-    
+#        global_properties = set()
+
+
+        global_attributes = g['global_attributes']
+                                               
+        global_attributes.update(
+            ('comment',
+             'Conventions',
+             'history',
+             'institution',
+             'references',
+             'source',
+             'title',)
+        )
+        
+        global_attributes.add(('featureType',))
+        
+#        # Put all non-standard CF properties (i.e. those not in the
+#        # data_properties set) into the global_attributes set, but
+#        # omitting those which have been requested to be on variables.
+#        for f in fields:
+#            for attr in set(f.properties()) - global_properties: # - g['variable_attributes']:
+#                if attr not in data_properties:
+#                    global_properties.add(attr)
+#        #--- End: for
+
+        global_attributes.difference(g['variable_attributes'])
+
+#        for x in g['variable_attributes']:
+#            global_properties.discard(x)
+        
         # Remove properties from the new global_properties set which
         # have different values in different fields
         f0 = fields[0]
-        for prop in tuple(global_properties):
+        for prop in tuple(global_attributes):
             if not self.implementation.has_property(f0, prop):
-                global_properties.remove(prop)
+                global_attributes.remove(prop)
                 continue
                 
-            prop0 = self.implementation.get_property(f0, prop)
-    
+            prop0 = self.implementation.get_property(f0, prop, None)
+
             if len(fields) > 1:
                 for f in fields[1:]:
-                    if (not self.implementation.has_property(f, prop) or 
-                        not equals(self.implementation.get_property(f, prop), prop0, traceback=False)):
-                        global_properties.remove(prop)
+                    prop1 = self.implementation.get_property(f, prop, None)
+                    if not self.implementation.equal_properties(prop0, prop1):
+                        global_attributes.remove(prop)
                         break
         #--- End: for
     
         # Write the global properties to the file
-#        g['netcdf'].setncattr('Conventions', g['Conventions'])
         g['netcdf'].setncattr('Conventions', self.implementation.get_version())
         
-        for attr in global_properties - set(('Conventions',)):
+        for attr in global_attributes - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self.implementation.get_property(f0, attr)) 
     
-        g['global_properties'] = global_properties
+        g['global_attributes'] = global_attributes
     #--- End: def
 
     def file_close(self, filename):
@@ -1906,8 +1909,8 @@ write them to the netCDF4.Dataset.
               verbose=False, mode='w', least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
               no_shuffle=False, datatype=None,
-              variable_attributes=None, HDF_chunks=None,
-              unlimited=None, extra_write_vars=None, #Conventions=None,
+              variable_attributes=None, global_attributes=None,
+              HDF_chunks=None, unlimited=None, extra_write_vars=None,
               _debug=False):
         '''Write fields to a netCDF file.
         
@@ -2051,8 +2054,9 @@ and auxiliary coordinate roles for different data variables.
             'ncvar_names': set(()),
             # Set of global or non-standard CF properties which have
             # identical values across all input fields.
-            'global_properties': set(()), 
+#            'global_properties': set(()), 
             'variable_attributes': set(()),
+            'global_attributes': set(()),
             'bounds': {},
             # Compression/endian
             'compression': {},
@@ -2098,7 +2102,14 @@ and auxiliary coordinate roles for different data variables.
                 variable_attributes = set(variable_attributes)
 
             g['variable_attributes'] = variable_attributes
-        #--- End: def
+    
+        if global_attributes:
+            if isinstance(global_attributes, basestring):
+                global_attributes = set((global_attributes,))
+            else:
+                global_attributes = set(global_attributes)
+
+            g['global_attributes'] = global_attributes
     
         # ------------------------------------------------------------
         # Set up data type conversions. By default, booleans are
@@ -2175,12 +2186,12 @@ and auxiliary coordinate roles for different data variables.
         g['netcdf'].set_fill_off()
     
         # ---------------------------------------------------------------
-        # Write global properties to the file first. This is important as
-        # doing it later could slow things down enormously. This function
-        # also creates the g['global_properties'] set, which is used in
-        # the _write_field function.
+        # Write global properties to the file first. This is important
+        # as doing it later could slow things down enormously. This
+        # function also creates the g['global_attributes'] set, which
+        # is used in the _write_field function.
         # ---------------------------------------------------------------
-        self._write_global_properties(fields)
+        self._write_global_attributes(fields)
     
         # ---------------------------------------------------------------
         #

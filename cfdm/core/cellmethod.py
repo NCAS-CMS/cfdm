@@ -1,12 +1,12 @@
 from builtins import (str, super)
 from past.builtins import basestring
 
+from copy import deepcopy
+
 from . import abstract
-#from future.utils import with_metaclass
 
 
 class CellMethod(abstract.Properties):
-#    class CellMethod(with_metaclass(abc.ABCMeta, abstract.Properties)):
     '''A cell method construct of the CF data model.
 
 One or more cell method constructs describe how the cell values of the
@@ -228,7 +228,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
         return self._has_component('axes')
     #--- End: def
 
-    def set_axes(self, value):
+    def set_axes(self, value, copy=True):
         '''Set the axes of the cell method.
 
 .. versionadded:: 1.6
@@ -249,12 +249,15 @@ AttributeError: 'CellMethod' object has no component 'axes'
      `None`
 
         '''
+        if copy:
+            value = deepcopy(value)
+        
         if isinstance(value, basestring):
             value = (value,)
         else:
             value = tuple(value)
             
-        return self._set_component('axes', value)
+        return self._set_component('axes', value, copy=False)
     #--- End: def
 
 #--- End: class

@@ -27,7 +27,7 @@ domain ancillary constructs.
         '''
         super().__init__()
 
-        self._set_component('parameters', {})
+        self._set_component('parameters', {}, copy=False)
 
         if source:
             try:
@@ -146,7 +146,7 @@ ERROR
 
 
         '''
-        d = self._get_component('parameters', None)
+        d = self._get_component('parameters')
         if term in d:
             return d[term]
         
@@ -201,8 +201,10 @@ ERROR
         if parameters is not None:
             if copy:
                 properties = deepcopy(parameters)
-
-            self._set_component('parameters', parameters)
+            else:
+                properties = parameters.copy()
+                
+            self._set_component('parameters', parameters, copy=False)
 
         return out
     #--- End: def

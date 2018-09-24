@@ -1,1 +1,0 @@
-from .netcdfread import NetCDFRead

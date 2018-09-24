@@ -1,8 +1,7 @@
 from . import abstract
-#from future.utils import with_metaclass
+
 
 class AuxiliaryCoordinate(abstract.Coordinate):
-#    class AuxiliaryCoordinate(with_metaclass(abc.ABCMeta, abstract.Coordinate)):
     '''An auxiliary coordinate construct of the CF data model.
 
 An auxiliary coordinate construct provides information which locate

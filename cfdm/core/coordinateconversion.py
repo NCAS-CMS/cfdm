@@ -1,8 +1,7 @@
 from . import abstract
-#from future.utils import with_metaclass
+
 
 class CoordinateConversion(abstract.ParametersDomainAncillaries):
-#with_metaclass(abc.ABCMeta, abstract.ParametersDomainAncillaries)):
     '''A coordinate conversion formula of a coordinate reference construct
 of the CF data model.
 

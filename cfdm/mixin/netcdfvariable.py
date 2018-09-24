@@ -39,7 +39,7 @@ class NetCDFVariable(object):
     def set_ncvar(self, value):
         '''
         '''
-        return self._set_component('ncvar', value)
+        return self._set_component('ncvar', value, copy=False)
     #--- End: def
 
 #--- End: class

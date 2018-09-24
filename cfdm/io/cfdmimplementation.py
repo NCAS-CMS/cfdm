@@ -364,6 +364,14 @@ axes, and possibly other axes, are returned.
                                  ignore_construct_type=ignore_construct_type)
     #--- End: def
 
+    def equal_properties(self, property_value0, property_value1):
+        '''
+
+        '''
+        field = self.get_class('Field')()
+        return field._equals(property_value0, property_value1)
+    #--- End: def
+
     def equal_datums(self, coordinate_reference0, coordinate_reference1):
         ''':Parameters:
 

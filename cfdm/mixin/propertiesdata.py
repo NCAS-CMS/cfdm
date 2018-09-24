@@ -214,8 +214,8 @@ True
         # Check external variables (returning True if both are
         # external with the same netCDF variable name)
         # ------------------------------------------------------------
-        external0 = self._get_component('external', None, False)
-        external1 = other._get_component('external', None, False)
+        external0 = self._get_component('external', False)
+        external1 = other._get_component('external', False)
         if external0 != external1:
             if traceback:
                 print("{0}: Only one external variable)".format(

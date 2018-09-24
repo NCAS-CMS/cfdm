@@ -3,8 +3,6 @@ from future.utils import with_metaclass
 
 import abc
 
-_MUST_IMPLEMENT = 'This method must be implemented'
-
 
 class Array(with_metaclass(abc.ABCMeta, object)):
     '''A container for an array.
@@ -87,7 +85,7 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
 
     @property
@@ -119,7 +117,7 @@ dtype('float64')
 1
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
     
     @property
@@ -151,7 +149,7 @@ dtype('float64')
 1
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
     
     @property
@@ -183,7 +181,7 @@ dtype('float64')
 1
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -229,7 +227,7 @@ modifying any attribute.
 True
 
         '''
-        raise NotImplementedError(_MUST_IMPLEMENT)
+        raise NotImplementedError()
     #--- End: def
     
 #--- End: class

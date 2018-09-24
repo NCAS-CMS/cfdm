@@ -170,7 +170,7 @@ initialisation with the `set_data` method.
         if constructs is None:
             constructs = self._Constructs(**self._construct_key_base)
             
-        self._set_component('constructs', constructs)
+        self._set_component('constructs', constructs, copy=False)
 
         if data is not None and _use_data:
             self.set_data(data, data_axes, copy=copy)
@@ -186,7 +186,7 @@ initialisation with the `set_data` method.
 .. versionadded:: 1.6
         
         '''
-        return self._get_component('constructs', None, *default)
+        return self._get_component('constructs', *default)
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -219,7 +219,6 @@ initialisation with the `set_data` method.
         '''
         '''
         return self._Domain.fromconstructs(self._get_constructs())
-#        return self._Domain(source=self._get_constructs(), copy=False)
     #--- End: def
 
     def get_data_axes(self, *default):
@@ -258,7 +257,7 @@ None
 ()
 
         '''    
-        return self._get_component('data_axes', None, *default)
+        return self._get_component('data_axes', *default)
     #--- End: def
     
     def field_ancillaries(self, copy=False):
@@ -382,9 +381,10 @@ ValueError: Can't initialize data: Data already exists
         domain_axes = self.domain_axes()
         for axis in value:
             if axis not in domain_axes:
-                raise ValueError("Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
+                raise ValueError(
+"Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
             
-        self._set_component('data_axes', tuple(value))
+        self._set_component('data_axes', tuple(value), copy=False)
     #--- End: def
     
 #    def cell_methods(self, copy=False):

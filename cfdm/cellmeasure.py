@@ -128,7 +128,7 @@ sepcifically set to be external with the `set_external` method.
 ...     print "Cell measure is external"
 
         '''        
-        return self._get_component('external', None, False)
+        return self._get_component('external', False)
     #--- End: def
 
     def name(self, default=None, ncvar=False, custom=None,
@@ -248,7 +248,7 @@ True
 False
 
         '''
-        return self._set_component('external', None, bool(value))
+        return self._set_component('external', bool(value), copy=False)
     #--- End: def
 
 #--- End: class

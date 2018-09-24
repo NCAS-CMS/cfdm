@@ -29,7 +29,7 @@ domain ancillary constructs.
                          copy=copy,
                          _use_data=_use_data)
 
-        self._set_component('domain_ancillaries', {})
+        self._set_component('domain_ancillaries', {}, copy=False)
 
         if source:
             try:
@@ -158,8 +158,11 @@ domain ancillary constructs.
         if domain_ancillaries is not None:
             if copy:
                 properties = deepcopy(domain_ancillaries)
-
-            self._set_component('domain_ancillaries', domain_ancillaries)
+            else:
+                properties = domain_ancillaries.copy()
+                
+            self._set_component('domain_ancillaries', domain_ancillaries,
+                                copy=False)
 
         return out
     #--- End: def
@@ -195,7 +198,7 @@ ERROR
 
 
         '''
-        d = self._get_component('domain_ancillaries', None)
+        d = self._get_component('domain_ancillaries')
         if term in d:
             return d[term]
         

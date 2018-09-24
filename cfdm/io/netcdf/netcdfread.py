@@ -15,11 +15,10 @@ from functools         import reduce
 import numpy
 import netCDF4
 
-#from .implementation_interface import API
-
 from .. import IORead
 
-from . import  constants
+from . import constants
+
 
 class NetCDFRead(IORead):
     '''
@@ -370,11 +369,6 @@ ancillaries, field ancillaries).
         if extra_read_vars:
             g.update(deepcopy(extra_read_vars))
         
-#        if isinstance(filename, file):
-#            name = filename.name
-#            filename.close()
-#            filename = name
-
         compression = {}
         
         # ----------------------------------------------------------------
@@ -438,7 +432,6 @@ ancillaries, field ancillaries).
         if _debug:
             print('    global attributes:', g['global_attributes'])
 
-
         # ------------------------------------------------------------
         # Find the CF version for the file
         # ------------------------------------------------------------
@@ -446,9 +439,11 @@ ancillaries, field ancillaries).
         file_version = g['global_attributes'].get('Conventions', '').replace('CF-', '', 1)
         if not file_version:
             if default_version is not None:
+                # Assume the default version provided by the user
                 file_version = default_version
             else:
-                # Assume the version of the CFDM implementation
+                # Assume the file has the same version of the CFDM
+                # implementation
                 file_version = self.implementation.get_version()
         #--- End: if
         
@@ -456,7 +451,7 @@ ancillaries, field ancillaries).
 
         # ------------------------------------------------------------
         # Create a dictionary keyed by netCDF variable names where
-        # each key's value is a dictionary of that variable's nc
+        # each key's value is a dictionary of that variable's netCDF
         # attributes. E.g. attributes['tas']['units']='K'
         # ------------------------------------------------------------
         variable_attributes = {}
@@ -1735,55 +1730,24 @@ variable should be pre-filled with missing values.
             print('Converting netCDF variable {}({}) to a Field:'.format(
                 field_ncvar, ', '.join(dimensions)))
 
-#        compression = g['compression']
-        
-        # Add global attributes to the data variable's properties, unless
-        # the data variables already has a property with the same name.
-        properties = g['global_attributes'].copy()
-        properties.update(g['variable_attributes'][field_ncvar])
+        # Combine the global properties with the data variable
+        # properties, giving precedence to those of the data variable.
+        field_properties = g['global_attributes'].copy()
+        field_properties.update(g['variable_attributes'][field_ncvar])
 
         if _debug:
-            print('    netCDF attributes:', properties)
+            print('    netCDF attributes:', field_properties)
         
-        # Take cell_methods out of the data variable's properties since it
-        # will need special processing once the domain has been defined
-        cell_methods_string = properties.pop('cell_methods', None)
+        # Take cell_methods out of the data variable's properties
+        # since it will need special processing once the domain has
+        # been defined
+        cell_methods_string = field_properties.pop('cell_methods', None)
         
-#        cell_methods = []
-#        if cell_methods_string is not None:
-#            cell_methods = self._parse_cell_methods(cell_methods_string,
-#                                                    allow_error=True)
-#            error = cell_methods[0].get_error(False)
-#            if error:
-#                self._add_message(
-#                    field_ncvar, field_ncvar,
-#                    message=(error,),
-#                    attribute={field_ncvar+':cell_methods': cell_methods_string})
-#
-##                if verbose :
-##                    print ("WARNING: {0}: {1!r}".format(
-##                        error, cell_methods[0].get_string('')))
-#                cell_methods = None
-#        #--- End: if
-#        if cell_methods_string is not None:
-#            cell_methods = self.parse_cell_methods(cell_methods_string)
-#            if error:
-#                self._add_message(
-#                    field_ncvar, field_ncvar,
-#                    message=(error,),
-#                    attribute={field_ncvar+':cell_methods': cell_methods_string})
-#
-##                if verbose :
-##                    print ("WARNING: {0}: {1!r}".format(
-##                        error, cell_methods[0].get_string('')))
-#                cell_methods = None
-#        #--- End: if
-    
         # Take add_offset and scale_factor out of the data variable's
-        # properties since they will be dealt with by the variable's Data
-        # object. Makes sure we note that they were there so we can adjust
-        # the field's dtype accordingly
-        values = [properties.pop(k, None)
+        # properties since they will be dealt with by the variable's
+        # Data object. Makes sure we note that they were there so we
+        # can adjust the field's data type accordingly.
+        values = [field_properties.pop(k, None)
                   for k in ('add_offset', 'scale_factor')]
         unpacked_dtype = (values != [None, None])
         if unpacked_dtype:
@@ -1799,11 +1763,11 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         f = self.implementation.initialise_Field()
 
-        self.implementation.set_properties(f, properties, copy=False)
+        self.implementation.set_properties(f, field_properties, copy=True)
 
         # Store the field's netCDF variable name
         self.implementation.set_ncvar(f, field_ncvar)
-   
+
         f.set_global_attributes(g['global_attributes'])
 
         # Map netCDF dimension names to domain axis names.
@@ -2016,7 +1980,7 @@ variable should be pre-filled with missing values.
         for key, coord in self.implementation.get_coordinates(field=f).items():
             coord_ncvar = self.implementation.get_ncvar(coord)
 
-            formula_terms = g['variable_attributes'][coord_ncvar].get('formula_terms')        
+            formula_terms = g['variable_attributes'][coord_ncvar].get('formula_terms')
             if formula_terms is None:
                 # This coordinate doesn't have a formula_terms attribute
                 continue
@@ -2127,13 +2091,17 @@ variable should be pre-filled with missing values.
                     coordinates = [ncvar_to_key[ncvar] for ncvar in coordinates
                                    if ncvar in ncvar_to_key]
 
+                    # ------------------------------------------------
+                    # Find the datum and coordinate conversion for the
+                    # grid mapping
+                    # ------------------------------------------------
                     datum_parameters = {}
                     coordinate_conversion_parameters = {}
-                    for x, value in parameters.items():
-                        if x in g['datum_parameters']:
-                            datum_parameters[x] = value
+                    for parameter, value in parameters.items():
+                        if parameter in g['datum_parameters']:
+                            datum_parameters[parameter] = value
                         else:
-                            coordinate_conversion_parameters[x] = value
+                            coordinate_conversion_parameters[parameter] = value
                     #-- End: for
 
                     datum = self.implementation.initialise_Datum(
@@ -2142,26 +2110,11 @@ variable should be pre-filled with missing values.
                     coordinate_conversion = self.implementation.initialise_CoordinateConversion(
                         parameters=coordinate_conversion_parameters)
         
-#                    coordref = self.implementation.initialise_CoordinateReference()
-
-#                    self.implementation.set_coordinate_reference_coordinates(
-#                        coordinate_reference=coordref,
-#                        coordinates=coordinates)
-#                    
-#                    self.implementation.set_datum(
-#                        coordinate_reference=coordref,
-#                        datum=datum)
-#                    
-#                    self.implementation.set_coordinate_conversion(
-#                        coordinate_reference=coordref,
-#                        coordinate_conversion=coordinate_conversion)
-#                    
                     create_new = True
                     
                     if not coordinates:
                         # DCH ALERT -  what to do about duplicate standard names?
                         name = parameters.get('grid_mapping_name', None)
-#                        for n in self.implementation.get_class('CoordinateReference')._name_to_coordinates.get(name, ()):
                         for n in constants.coordinate_reference_coordinates.get(name, ()):
                             for key, coord in self.implementation.get_coordinates(field=f).items():
                                 if n == self.implementation.get_property(coord, 'standard_name', None):
@@ -2277,7 +2230,8 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         ancillary_variables = self.implementation.del_property(f, 'ancillary_variables')
         if ancillary_variables is not None:
-            parsed_ancillary_variables = self._split_string_by_white_space(field_ncvar, ancillary_variables)
+            parsed_ancillary_variables = self._split_string_by_white_space(field_ncvar,
+                                                                           ancillary_variables)
             cf_compliant = self._check_ancillary_variables(field_ncvar,
                                                            ancillary_variables,
                                                            parsed_ancillary_variables)
@@ -2525,17 +2479,14 @@ variable should be pre-filled with missing values.
             
         if dimension:
             properties.pop('compress', None) #??
-#            klass = self.implementation.get_class('DimensionCoordinate')
             c = self.implementation.initialise_DimensionCoordinate()
         elif auxiliary:
-#            klass = self.implementation.get_class('AuxiliaryCoordinate')
-            c = self.implementation.initialise_AuxiliaryCoordinate() #klass)
+            c = self.implementation.initialise_AuxiliaryCoordinate()
         elif domain_ancillary:
 #            properties.pop('coordinates', None)
 #            properties.pop('grid_mapping', None)
 #            properties.pop('cell_measures', None)
 #            properties.pop('positive', None)
-#            klass = self.implementation.get_class('DomainAncillary')
             c = self.implementation.initialise_DomainAncillary()
         else:
             raise ValueError(
@@ -2563,7 +2514,6 @@ variable should be pre-filled with missing values.
             else:
                 pass
 
-#            klass = self.implementation.get_class('Bounds')
             bounds = self.implementation.initialise_Bounds()
             
             properties = g['variable_attributes'][ncbounds].copy()
@@ -2668,7 +2618,6 @@ variable should be pre-filled with missing values.
         g = self.read_vars
         
         # Initialise the cell measure construct
-#        klass = self.implementation.get_class('CellMeasure')
         cell_measure = self.implementation.initialise_CellMeasure(measure=measure)
 
         # Store the netCDF variable name
@@ -2702,14 +2651,12 @@ variable should be pre-filled with missing values.
     out: `CellMethod`
 
         '''
-#        klass = self.implementation.get_class('CellMethod')
         return self.implementation.initialise_CellMethod(axes=axes,
                                                          properties=properties)
     #--- End: def
 
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None): 
-#                     units=None, calendar=None): #, fill_value=None):
         '''Set the Data attribute of a variable.
 
 :Parameters:
@@ -2756,16 +2703,6 @@ variable should be pre-filled with missing values.
                                          ncvar=ncvar, dtype=dtype,
                                          ndim=ndim, shape=shape,
                                          size=size)
-#        # Find the units for the data
-#        if units is None:
-#            units = g['variable_attributes'][ncvar].get('units')
-#            
-#        if calendar is None:
-#            calendar = g['variable_attributes'][ncvar].get('calendar')
-#            
-#        # Find the fill value for the data
-#        if fill_value is None:
-#            fill_value = self.implementation.get_fill_value(construct)
                 
         compression = g['compression']
 
@@ -2805,12 +2742,6 @@ variable should be pre-filled with missing values.
                             [g['internal_dimension_sizes'][dim]
                              for dim in self._ncdimensions(ncvar)])
                         sample_axis = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
-#                        data = self._create_data_gathered(
-#                            ncvar,
-#                            array,
-#                            uncompressed_shape=uncompressed_shape,
-#                            sample_axis=sample_axis,
-#                            list_indices=c['indices'])
                         array = self._create_gathered_array(
                             gathered_array=array,
                             uncompressed_shape=uncompressed_shape,
@@ -2839,11 +2770,6 @@ variable should be pre-filled with missing values.
                         c = c['ragged_contiguous']
                         uncompressed_shape=(c['instance_dimension_size'],
                                             c['element_dimension_size'])
-#                        data = self._create_data_ragged_contiguous(
-#                            ncvar,
-#                            array,
-#                            uncompressed_shape=uncompressed_shape,
-#                            elements_per_instance=c['elements_per_instance'])
                         array = self._create_ragged_contiguous_array(
                             ragged_contiguous_array=array,
                             uncompressed_shape=uncompressed_shape,
@@ -2864,7 +2790,6 @@ variable should be pre-filled with missing values.
         #--- End: if
 
         return self._create_Data(array, ncvar=ncvar) 
-#        return data
     #--- End: def
 
     def _create_NetCDFArray(self,filename=None, ncvar=None,
@@ -2872,7 +2797,6 @@ variable should be pre-filled with missing values.
                             size=None):
         '''
         '''
-#        klass = self.implementation.get_class('NetCDFArray')
         return self.implementation.initialise_NetCDFArray(
             filename=filename, ncvar=ncvar, dtype=dtype, ndim=ndim,
             shape=shape, size=size)
@@ -2888,7 +2812,6 @@ variable should be pre-filled with missing values.
     ncdim: `str, optional
 
         '''
-#        klass = self.implementation.get_class('DomainAxis')
         domain_axis = self.implementation.initialise_DomainAxis(size=size)
         if ncdim is not None:
             self.implementation.set_ncdim(construct=domain_axis, ncdim=ncdim)
@@ -3038,7 +2961,6 @@ variable should be pre-filled with missing values.
                             return []
 
                         try:
-#                            klass = self.implementation.get_class('Data')
                             data = self.implementation.initialise_Data(
                                 data=parsed_interval,
                                 units=units,
@@ -3246,7 +3168,6 @@ variable.
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
 
-#        klass = self.implementation.get_class('GatheredArray')
         return self.implementation.initialise_GatheredArray(
             compressed_array=gathered_array,
             ndim=uncompressed_ndim,
@@ -3271,7 +3192,6 @@ netCDF variable.
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
 
-#        klass = self.implementation.get_class('RaggedContiguousArray')
         return self.implementation.initialise_RaggedContiguousArray(
             compressed_array=ragged_contiguous_array,
             ndim=uncompressed_ndim,
@@ -3294,7 +3214,6 @@ netCDF variable.
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
         
-#        klass = self.implementation.get_class('RaggedIndexedArray')
         return self.implementation.initialise_RaggedIndexedArray(
             compressed_array=ragged_indexed_array,
             ndim=uncompressed_ndim,
@@ -3318,7 +3237,6 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
         uncompressed_ndim  = len(uncompressed_shape)
         uncompressed_size  = int(reduce(operator.mul, uncompressed_shape, 1))
         
-#        klass = self.implementation.get_class('RaggedIndexedContiguousArray')
         return self.implementation.initialise_RaggedIndexedContiguousArray(
             compressed_array=ragged_indexed_contiguous_array,
             ndim=uncompressed_ndim,
@@ -3340,7 +3258,6 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             units    = None
             calendar = None
 
-#        klass = self.implementation.get_class('Data')
         return self.implementation.initialise_Data(data=array,
                                                    units=units, calendar=calendar,
                                                    copy=False)
