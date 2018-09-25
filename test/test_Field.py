@@ -260,7 +260,7 @@ class FieldTest(unittest.TestCase):
         g = f.copy()
         self.assertTrue(f.equals(g, traceback=True))
 
-        g.squeeze(copy=False)
+        g = g.squeeze()
         self.assertFalse(f.equals(g))
 
         h = f.copy()
@@ -277,14 +277,14 @@ class FieldTest(unittest.TestCase):
         g = f.copy()
 
         key = g.set_domain_axis(cfdm.DomainAxis(1))
-        g.expand_dims(axis=key, copy=False)
-        self.assertTrue(g.data.ndim == f.data.ndim + 1)
-        self.assertTrue(g.get_data_axes()[1:] == f.get_data_axes())
+        h = g.expand_dims(axis=key)
+        self.assertTrue(h.data.ndim == f.data.ndim + 1)
+        self.assertTrue(h.get_data_axes()[1:] == f.get_data_axes())
 
         key = g.set_domain_axis(cfdm.DomainAxis(1))
-        g = g.expand_dims(position=g.data.ndim, axis=key, copy=True)
-        self.assertTrue(g.data.ndim == f.data.ndim + 2)
-        self.assertTrue(g.get_data_axes()[1:-1] == f.get_data_axes())
+        h = g.expand_dims(position=g.data.ndim, axis=key)
+        self.assertTrue(h.data.ndim == f.data.ndim + 1)
+        self.assertTrue(h.get_data_axes()[:-1] == f.get_data_axes())
     #--- End: def
 
     def test_Field_field_ancillaries(self):
@@ -314,13 +314,7 @@ class FieldTest(unittest.TestCase):
             return
 
         f = self.f.copy()
-
-        f.squeeze(copy=False)
-        g = f.copy()
-        h = f.copy()
-        i = h.squeeze(copy=False)
-        self.assertTrue(f.equals(g, traceback=True))
-        self.assertTrue(h is i)
+        g = f.squeeze()
     #--- End: def
 
 

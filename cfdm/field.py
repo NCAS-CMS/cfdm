@@ -761,7 +761,7 @@ False
         return True
     #--- End: def
         
-    def expand_dims(self, position=0, axis=None, copy=True):
+    def expand_dims(self, position=0, axis=None):
         '''Insert a size 1 axis into the data array.
 
 By default default a new size 1 axis is inserted which doesn't yet
@@ -794,6 +794,8 @@ by the data array may be selected.
 :Examples 2:
 
         '''
+        f = self.copy()
+        
         domain_axis = self.domain_axes().get(axis)
         data_axes = list(self.get_data_axes(()))
 
@@ -808,11 +810,13 @@ by the data array may be selected.
             raise ValueError(
                 "Can't insert a duplicate data array axis: {!r}".format(axis))
        
-        # Expand the dims in the field's data array
-        f = super().expand_dims(position, copy=copy)
-
         data_axes.insert(position, axis)
         f.set_data_axes(data_axes)
+
+        # Expand the dims in the field's data array
+        new_data = self.data.expand_dims(position)
+        
+        f.set_data(new_data, data_axes)
 
         return f
     #--- End: def
@@ -929,7 +933,7 @@ Consider [get|set|del_global_attribute [NO S]
         self._set_component('read_report', value, copy=copy)
     #--- End: def    
    
-    def squeeze(self, axes=None, copy=True):
+    def squeeze(self, axes=None):
         '''Remove size-1 axes from the data array.
 
 By default all size 1 axes are removed, but particular size 1 axes may
@@ -962,7 +966,9 @@ axes, use the `remove_axes` method.
 
 :Examples 2:
 
-        '''     
+        '''
+        f = self.copy()
+        
         data_axes = self.get_data_axes(())
         domain_axes = self.domain_axes()
             
@@ -978,13 +984,14 @@ axes, use the `remove_axes` method.
             axes = [axis for axis in axes if axis in data_axes]
         #--- End: if
         
-        iaxes = [data_axes.index(axis) for axis in axes]
-
-        # Squeeze the field's data array
-        f = super().squeeze(iaxes, copy=copy)
-
         new_data_axes = [axis for axis in data_axes if axis not in axes]
         f.set_data_axes(new_data_axes)
+
+        # Squeeze the field's data array
+        iaxes = [data_axes.index(axis) for axis in axes]
+        new_data = self.data.squeeze(iaxes)
+
+        f.set_data(new_data, new_data_axes)
 
         return f
     #--- End: def

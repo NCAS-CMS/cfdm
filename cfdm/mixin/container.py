@@ -38,6 +38,7 @@ class Container(object):
    
             x_is_masked = numpy.ma.isMA(x)
             y_is_masked = numpy.ma.isMA(y)
+
             if not (x_is_masked or y_is_masked):
                 try:            
                     return numpy.allclose(x, y, rtol=rtol, atol=atol)
@@ -47,7 +48,8 @@ class Container(object):
                 if x_is_masked and y_is_masked:
                     if (x.mask != y.mask).any():
                         return False
-                else:
+                elif ((x_is_masked and x.mask.any()) or
+                      (y_is_masked and y.mask.any())):
                     return False
 
                 try:
@@ -58,14 +60,12 @@ class Container(object):
                         return True
                     else:
                         return out
-                
-#            return _numpy_allclose(x, y, rtol=rtol, atol=atol)
-
         else:
             return x == y
     #--- End: def
     
-    def equals(self, other, rtol=None, atol=None, traceback=False,
+    def equals(self, other, #rtol=None, atol=None,
+               traceback=False,
                ignore_construct_type=False):
         '''
         '''

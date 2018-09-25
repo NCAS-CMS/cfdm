@@ -152,7 +152,7 @@ class create_fieldTest_2(unittest.TestCase):
         f.set_field_ancillary(anc, axes=[axisY, axisX])
         
         g = f[0]
-        g.squeeze(copy=False)
+        g = g.squeeze()
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryB'
         f.set_field_ancillary(anc, axes=[axisX])
@@ -199,14 +199,14 @@ class create_fieldTest_2(unittest.TestCase):
                     'NETCDF4_CLASSIC'):
             cfdm.write(f, self.filename, fmt=fmt,_debug=True)
 
-            g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
+            g = cfdm.read(self.filename, _debug=True)
             for x in g:
                 x.print_read_report()
 #            g[0].dump()
         
             self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
 
-            g = g[0].squeeze(copy=False)
+            g = g[0].squeeze()
         
             #        g.dump
             print('f')

@@ -1,3 +1,4 @@
-from .data       import Data
+from .abstract   import Array
 from .numpyarray import NumpyArray
+from .data       import Data
 

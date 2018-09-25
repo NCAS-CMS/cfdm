@@ -271,7 +271,7 @@ True
         return True
     #--- End: def
 
-    def expand_dims(self, position=0, copy=True):
+    def expand_dims(self, position=0):
         '''Insert a size 1 axis into the data array.
 
 .. versionadded:: 1.6
@@ -301,14 +301,11 @@ True
 >>> v.{+name}(-1)
 
         '''       
-        if copy:
-            v = self.copy()
-        else:
-            v = self
+        v = self.copy()
 
         data = v.get_data(None)
         if data is not None:
-            data.expand_dims(position, copy=False)
+            v.set_data(data.expand_dims(position))
         
         return v
     #--- End: def
@@ -490,7 +487,7 @@ None
             self.get_data().open()
     #--- End: def
 
-    def squeeze(self, axes=None, copy=True):
+    def squeeze(self, axes=None):
         '''Remove size 1 dimensions from the data array
 
 .. versionadded:: 1.6
@@ -520,19 +517,16 @@ None
 >>> f.{+name}([1, 2])
 
         '''
-        if copy:
-            v = self.copy()
-        else:
-            v = self
+        v = self.copy()
 
         data = v.get_data(None)
         if data is not None:
-            data.squeeze(axes, copy=False)
+            v.set_data(data.squeeze(axes))
 
         return v
     #--- End: def
 
-    def transpose(self, axes=None, copy=True):
+    def transpose(self, axes=None):
         '''
 
 .. versionadded:: 1.6
@@ -555,14 +549,11 @@ None
 
 >>> 
         '''       
-        if copy:
-            v = self.copy()
-        else:
-            v = self
+        v = self.copy()
 
         data = v.get_data(None)
         if data is not None:
-            data.transpose(axes, copy=False)
+            v.set_data(data.transpose(axes))
         
         return v
     #--- End: def

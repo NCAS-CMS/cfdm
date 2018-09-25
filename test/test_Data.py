@@ -128,9 +128,9 @@ class DataTest(unittest.TestCase):
         for indices in (list(range(a.ndim)), list(range(-a.ndim, 0))):
             for axes in itertools.permutations(indices):
                 a = numpy.transpose(a, axes)
-                d.transpose(axes, copy=False)
-                message = 'cfdm.Data.transpose(%s) failed: d.shape=%s, a.shape=%s' % \
-                          (axes, d.shape, a.shape)
+                d = d.transpose(axes)
+                message = 'cfdm.Data.transpose({}) failed: d.shape={}, a.shape={}'.format(
+                    axes, d.shape, a.shape)
                 self.assertTrue(d.shape == a.shape, message)
                 self.assertTrue((d.get_array() == a).all(), message)
             #--- End: for

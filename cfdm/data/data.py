@@ -2,25 +2,21 @@ from __future__ import print_function
 from builtins import (next, range, super, zip)
 
 import itertools
-import operator
 
 import numpy
 import netCDF4
 
+from .. import core
+from .. import mixin
+
 from ..constants  import masked
 
-from ..functions  import RTOL, ATOL, _numpy_allclose
-
 from . import abstract
-
 from . import NumpyArray
 
-from ..core import Data as core_Data
 
-class Data(core_Data):
-    '''
-
-An N-dimensional data array with units and masked values.
+class Data(mixin.Container, core.Data):
+    '''An N-dimensional data array with units and masked values.
 
 * Contains an N-dimensional, indexable and broadcastable array with
   many similarities to a `numpy` array.
@@ -32,7 +28,7 @@ An N-dimensional data array with units and masked values.
 
 **Indexing**
 
-A data array is indexable in a similar way to numpy array:
+A data array is indexable in a similar way to `numpy` array:
 
 >>> d.shape
 (12, 19, 73, 96)
@@ -41,7 +37,7 @@ A data array is indexable in a similar way to numpy array:
 >>> d[slice(0, 9), 10:0:-2, :, :].shape
 (9, 5, 73, 96)
 
-There are three extensions to the numpy indexing functionality:
+There are three extensions to the `numpy` indexing functionality:
 
 * Size 1 dimensions are never removed by indexing.
 
@@ -69,7 +65,7 @@ There are three extensions to the numpy indexing functionality:
   >>> d[0, :, [0, 1], [0, 13, 27]].shape
   (1, 19, 2, 3)
 
-* Boolean indices may be any object which exposes the numpy array
+* Boolean indices may be any object which exposes the `numpy` array
   interface.
 
   >>> d.shape
@@ -79,7 +75,8 @@ There are three extensions to the numpy indexing functionality:
     '''
 
     def __init__(self, data=None, units=None, calendar=None,
-                 fill_value=None, source=None, copy=True):
+                 fill_value=None, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -95,21 +92,14 @@ There are three extensions to the numpy indexing functionality:
 
 >>> d = Data(5)
 >>> d = Data([1,2,3])
->>> import numpy   
+>>> import numpy
 >>> d = Data(numpy.arange(10).reshape(2, 5), fill_value=-999)
 >>> d = Data(tuple('fly'))
 
         '''
-#        # Make sure that data is None of a subclass of abstract.Array
-#        if data is not None and not isinstance(data, abstract.Array):
-#            if not isinstance(data, numpy.ndarray):
-#                data = numpy.asanyarray(data)
-#                
-#            data = NumpyArray(data)
-
         super().__init__(data=data, units=units, calendar=calendar,
                          fill_value=fill_value, source=source,
-                         copy=copy)
+                         copy=copy, _use_data=_use_data)
                                    
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
@@ -126,14 +116,28 @@ There are three extensions to the numpy indexing functionality:
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
+Returns a independent subspace of the data.
+
+Indexing is similar to `numpy` indexing. The only difference to
+`numpy` indexing is:
+
+  * When two or more dimension's indices are sequences of integers
+    then these indices work independently along each dimension
+    (similar to the way vector subscripts work in Fortran).
+
         '''
         indices = tuple(self.parse_indices(indices))
 
-        array = self.get_data()[indices]
-        
-        return type(self)(array, units=self.get_units(None),
-                          calendar=self.get_calendar(None),
-                          fill_value=self.get_fill_value(None))
+        array = self._get_Array(None)
+        if array is None:
+            raise ValueError("No data!!")
+            
+        array = array[indices]
+
+        out = self.copy(data=False)
+        out._set_Array(array, copy=False)
+
+        return out
     #--- End: def
 
     def __int__(self):
@@ -147,76 +151,62 @@ There are three extensions to the numpy indexing functionality:
         return int(self.get_array())
     #--- End: def
 
-    def __iter__(self):
-        '''x.__iter__() <==> iter(x)
-
-:Examples:
-
->>> d = Data([1, 2, 3], 'metres')
->>> for i in d:
-...    print repr(i), type(i)
-...
-1 <type 'int'>
-2 <type 'int'>
-3 <type 'int'>
-
->>> d = Data([[1, 2], [4, 5]], 'metres')
->>> for e in d:
-...    print repr(e)
-...
-<Data: [1, 2] metres>
-<Data: [4, 5] metres>
-
->>> d = Data(34, 'metres')
->>> for e in d:
-...     print repr(e)
-...
-TypeError: iteration over a 0-d Data
-
-        '''
-        ndim = self.ndim
-
-        if not ndim:
-            raise TypeError(
-                "Iteration over 0-d {}".format(self.__class__.__name__))
-            
-        if ndim == 1:
-            array = self.get_array()
-            i = iter(array)
-            while 1:
-                yield next(i)
-        else:
-            # ndim > 1
-            for n in range(self.shape[0]):
-                yield self[n, ...].squeeze(0, copy=False)
-    #--- End: def
-
     def __setitem__(self, indices, value):
-        '''Implement indexed assignment
-
-x.__setitem__(indices, y) <==> x[indices]=y
+        '''x.__setitem__(indices, y) <==> x[indices]=y
 
 Assignment to data array elements defined by indices.
 
-Elements of a data array may be changed by assigning values to a
-subspace. See `__getitem__` for details on how to define subspace of
-the data array.
+Indexing is similar to `numpy` indexing. The only difference to
+`numpy` indexing is:
+
+  * When two or more dimension's indices are sequences of integers
+    then these indices work independently along each dimension
+    (similar to the way vector subscripts work in Fortran).
+
+For example:
+
+   >>> d = cfdm.Data([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+   >>> d
+   >>> d.get_array()
+   array([[1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9]])
+   >>> d[[0, 2], [1, 2]].get_array()
+   array([[2, 3],
+          [8, 9]])
+   >>> d.get_array()[[0, 2], [1, 2]]
+   array([2, 9])
+
+**Broadcasting**
+
+The value being assigned must be broadcastable (in the `numpy` sense)
+to the subspace defined by the indices. For example:
+
+   >>> d = cfdm.Data([1, 2, 3])
+   >>> d
+   <Data: [1, 2, 3]>
+   >>> d[:] = 99
+   <Data: [99, 99, 99]>
+   >>> d[1:] = [-2, -1]
+   <Data: [99, -2, -1]>
 
 **Missing data**
 
-The treatment of missing data elements during assignment to a subspace
-depends on the value of the `hardmask` attribute. If it is True then
-masked elements will notbe unmasked, otherwise masked elements may be
-set to any value.
+Data array elements may be set to missing values by assigning them to
+`cfdm.masked` (or, equivalently, `numpy.ma.masked`). Missing values
+may be unmasked by simple assignment. For example:
 
-In either case, unmasked elements may be set, (including missing
-data).
+   >>> d = cfdm.Data([1, 2, 3])
+   >>> d
+   <Data: [1, 2, 3]>
+   >>> d[1:] = cfdm.masked
+   >>> d
+   <Data: [1, --, --]>
+   >>> d[:2] = 99
+   >>> d
+   <Data: [99, 99, --]>
 
-Unmasked elements may be set to missing data by assignment to the
-`masked` constant or by assignment to a value which contains masked
-elements.
-
-.. seealso:: `masked`
+.. seealso:: `__getitem__`, `masked`, `parse_indices`, `_set_subspace`
 
 :Examples:
 
@@ -233,8 +223,7 @@ elements.
 
         self._set_subspace(array, indices, numpy.asanyarray(value))
 
-#        self.set_data(NumpyArray(array))
-        self.set_data(array)
+        self._set_Array(array, copy=False)
     #--- End: def
 
     def __str__(self):
@@ -320,25 +309,31 @@ elements.
         return out
     #--- End: def
 
-    def _element(self, index):
-        '''Return an element of the data array.
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+    def _item(self, index):
+        '''Copy an element of an array to a standard Python scalar and return it.
 
 It is assumed, but not checked, that the given index selects exactly
 one element.
 
 :Examples 1:
 
->>> x = d._element(8)
+>>> x = d._item(8)
 
 :Examples 2:
 
 >>> import numpy
 >>> d = Data([[1, 2, 3]], 'km')
->>> x = d._element((0, -1))
->>> print x, type(x)
+>>> x = d._item((0, -1))
+>>> print(x, type(x))
 3 <type 'int'>
+>>> x = d._item(1)
+>>> print(x, type(x))
+2 <type 'int'>
 >>> d[0, 1] = numpy.ma.masked
->>> d._element((slice(None), slice(1, 2)))
+>>> d._item((slice(None), slice(1, 2)))
 masked
 
         '''
@@ -353,87 +348,144 @@ masked
 
         return numpy.ma.masked
     #--- End: def
-
-    # ----------------------------------------------------------------
-    # Attributes
-    # ----------------------------------------------------------------
-    @property
-    def data(self):
-        return self
     
-    @property
-    def fill_value(self):
-        '''
-
-The data array missing data value.
-
-If set to None then the default numpy fill value appropriate to the
-data array's data type will be used.
-
-Deleting this attribute is equivalent to setting it to None, so this
-attribute is guaranteed to always exist.
-
-:Examples:
-
->>> d.fill_value = 9999.0
->>> d.fill_value
-9999.0
->>> del d.fill_value
->>> d.fill_value
-None
-
-'''
-        return self._fill_value
-    #--- End: def
-    @fill_value.setter
-    def fill_value(self, value): self._fill_value = value
-    @fill_value.deleter
-    def fill_value(self)       : self._fill_value = None
-
-    @classmethod
-    def asdata(cls, d, copy=False):
-        '''Convert the input to a `Data` object.
+    def _parse_axes(self, axes):
+        '''asdasdasdasds
 
 :Parameters:
 
-    d: data-like
-        Input data in any form that can be converted to an `Data`
-        object. This includes `Data` and `Field` objects, numpy arrays
-        and any object which may be converted to a numpy array.
+    axes: (sequence of) `int`
+        The axes of the data array. May be one of, or a sequence of
+        any combination of zero or more of:
+
+          * The integer position of a dimension in the data array
+            (negative indices allowed).
 
 :Returns:
 
-    out: `Data`
-        The `Data` interpretation of *d*. No copy is performed on the
-        input.
+    out: `tuple`
 
 :Examples:
 
->>> d = Data([1, 2])
->>> Data.asdata(d) is d
-True
->>> d.asdata(d) is d
-True
-
->>> Data.asdata([1, 2])
-<Data: [1, 2]>
-
->>> Data.asdata(numpy.array([1, 2]))
-<Data: [1, 2]>
-
         '''
-        __data__ = getattr(d, '__data__', None)
-        if __data__ is None:
-            return cls(d)
+        ndim = self.ndim
 
-        data = __data__()
-        if copy:
-            return data.copy()
-        else:
-            return data
+        if isinstance(axes, int):
+            axes = (axes,)
+            
+        axes2 = []
+        for axis in axes:
+            if 0 <= axis < ndim:
+                axes2.append(axis)
+            elif -ndim <= axis < 0:
+                axes2.append(axis + ndim)
+            else:
+                raise ValueError(
+                    "Invalid axis: {!r}".format(axis))
+        #--- End: for
+            
+        # Check for duplicate axes
+        n = len(axes2)
+        if n > len(set(axes2)) >= 1:
+            raise ValueError("Duplicate axis: {}".format(axes2))
+        
+        return tuple(axes2)
     #--- End: def
 
-    def copy(self):
+    def _set_Array(self, data, copy=True):
+        '''Set the data.
+
+:Parameters:
+
+    data: `numpy` array_like or subclass of `cfdm.data.Array`
+        The data to be inserted.
+
+:Returns:
+
+    `None`
+
+:Examples:
+
+>>> d._set_Array(a)
+
+        '''
+        if not isinstance(data, abstract.Array):
+            if not isinstance(data, numpy.ndarray):
+                data = numpy.asanyarray(data)
+                
+            data = NumpyArray(data)
+
+        super()._set_Array(data, copy=copy)
+    #--- End: def
+
+    @classmethod
+    def _set_subspace(cls, array, indices, value):
+        '''
+        '''
+        axes_with_list_indices = [i for i, x in enumerate(indices)
+                                  if not isinstance(x, slice)]
+
+        if len(axes_with_list_indices) < 2: 
+            # ------------------------------------------------------------
+            # At most one axis has a list-of-integers index so we can do a
+            # normal numpy assignment
+            # ------------------------------------------------------------
+            array[tuple(indices)] = value
+        else:
+            # ------------------------------------------------------------
+            # At least two axes have list-of-integers indices so we can't
+            # do a normal numpy assignment
+            # ------------------------------------------------------------
+            indices1 = indices[:]
+            for i, x in enumerate(indices):
+                if i in axes_with_list_indices:
+                    # This index is a list of integers
+                    y = []
+                    args = [iter(x)] * 2
+                    for start, stop in itertools.zip_longest(*args):
+                        if not stop:
+                            y.append(slice(start, start+1))
+                        else:
+                            step = stop - start
+                            stop += 1
+                            y.append(slice(start, stop, step))
+                    #--- End: for
+                    indices1[i] = y
+                else:
+                    indices1[i] = (x,)
+            #--- End: for
+
+            if numpy.size(value) == 1:
+                for i in itertools.product(*indices1):
+                    array[i] = value
+                    
+            else:
+                indices2 = []
+                ndim_difference = array.ndim - numpy.ndim(value)
+                for i, n in enumerate(numpy.shape(value)):
+                    if n == 1:
+                        indices2.append((slice(None),))
+                    elif i + ndim_difference in axes_with_list_indices:
+                        y = []
+                        start = 0
+                        while start < n:
+                            stop = start + 2
+                            y.append(slice(start, stop))
+                            start = stop
+                        #--- End: while
+                        indices2.append(y)
+                    else:
+                        indices2.append((slice(None),))
+                #--- End: for
+
+                for i, j in zip(itertools.product(*indices1), itertools.product(*indices2)):
+                    array[i] = value[j]
+    #--- End: def
+
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def copy(self, data=True):
         '''Return a deep copy.
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
@@ -448,12 +500,12 @@ True
 >>> e = d.copy()
 
         '''
-        new = super().copy()
+        new = super().copy(data=data)
 #        new.HDF_chunks(self.HDF_chunks())
         return new
     #--- End: def
 
-    def expand_dims(self, position=0, copy=True):
+    def expand_dims(self, position=0):
         '''Expand the shape of the data array.
 
 Insert a new size 1 axis, corresponding to a given position in the
@@ -487,19 +539,13 @@ data array shape.
             position += ndim + 1
         elif not 0 <= position <= ndim:
             raise ValueError(
-                "Can't expand_dims: Invalid position (%d)" % position)
-        #--- End: for
-
-        if copy:
-            d = self.copy()
-        else:
-            d = self
+                "Can't expand dimension sof data: Invalid position: {!r}".format(position))
 
         array = self.get_array()
         array = numpy.expand_dims(array, position)
 
-#        d.set_data(NumpyArray(array))
-        d.set_data(array)
+        d = self.copy(data=False)
+        d._set_Array(array, copy=False)
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -518,7 +564,7 @@ data array shape.
     out: `Data` or `None`
 
         '''
-        data = self.get_data(None)
+        data = self._get_Array(None)
         if data is None:
             if default:
                 return default
@@ -544,7 +590,7 @@ data array shape.
     out: `Data` or `None`
 
         '''
-        data = self.get_data(None)
+        data = self._get_Array(None)
         if data is None:
             if default:
                 return default
@@ -564,7 +610,7 @@ data array shape.
     #--- End: def
 
     def get_dtarray(self):
-        '''An independent numpy array of date-time objects.
+        '''An independent `numpy` array of date-time objects.
 
 Only applicable for reference time units.
 
@@ -611,7 +657,7 @@ used.
     out: `Data` or `None`
 
         '''
-        data = self.get_data(None)
+        data = self._get_Array(None)
         if data is None:
             if default:
                 return default
@@ -637,7 +683,7 @@ used.
     out: `Data` or `None`
 
         '''
-        data = self.get_data(None)
+        data = self._get_Array(None)
         if data is None:
             if default:
                 return default
@@ -673,9 +719,6 @@ used.
         shape = self.shape
         
         parsed_indices = []
-#        roll           = {}
-#        flip           = []
-#        compressed_indices = []
     
         if not isinstance(indices, tuple):
             indices = (indices,)
@@ -714,7 +757,7 @@ used.
             if isinstance(index, slice):            
                 continue
     
-            if isinstance(index, (int, int)):
+            if isinstance(index, int):
                 # E.g. index is 43 -> slice(43, 44, 1)
                 if index < 0: 
                     index += size
@@ -729,7 +772,7 @@ used.
                     # has a size attribute.
                     if index.size != size:
                         raise IndexError(
-                            "Invalid indices for data with shape {}: {} ".format(
+"Invalid indices for data with shape {}: {} ".format(
                                 shape, parsed_indices))
 
                     index = numpy.where(index)[0]
@@ -781,14 +824,17 @@ Missing data array elements are omitted from the calculation.
         '''
         # Parse the axes. By default flattened input is used.
         if axes is not None:
-            axes = self._parse_axes(axes, 'max')
-
+            try:
+                axes = self._parse_axes(axes)
+            except ValueError as error:
+                raise ValueError("Can't find maximum of data: {}".format(error))
+        #--- End: if
+        
         array = self.get_array()
         array = numpy.amax(array, axis=axes, keepdims=True)
 
-        d = self.copy()
-#        d.set_data(NumpyArray(array))
-        d.set_data(array)
+        d = self.copy(data=False)
+        d._set_Array(array, copy=False)
         
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -818,17 +864,20 @@ Missing data array elements are omitted from the calculation.
 
 :Examples:
 
-        '''
+        '''            
         # Parse the axes. By default flattened input is used.
         if axes is not None:
-            axes = self._parse_axes(axes, 'min')
+            try:
+                axes = self._parse_axes(axes)
+            except ValueError as error:
+                raise ValueError("Can't find minimum of data: {}".format(error))
+        #--- End: if
 
         array = self.get_array()
         array = numpy.amin(array, axis=axes, keepdims=True)
-            
-        d = self.copy()
-#        d.set_data(NumpyArray(array))
-        d.set_data(array)
+
+        d = self.copy(data=False)
+        d._set_Array(array, copy=False)
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -925,120 +974,7 @@ Missing data array elements are omitted from the calculation.
 #        return org_HDF_chunks
 #    #--- End: def
 
-    def _parse_axes(self, axes, method):
-        '''
-        
-:Parameters:
-
-    axes : (sequence of) int
-        The axes of the data array. May be one of, or a sequence of
-        any combination of zero or more of:
-
-            * The integer position of a dimension in the data array
-              (negative indices allowed).
-
-    method : str
-
-:Returns:
-
-    out: list
-
-:Examples:
-
-'''
-        ndim = self.ndim
-
-        if isinstance(axes, (int, int)):
-            axes = (axes,)
-            
-        axes2 = []
-        for axis in axes:
-            if 0 <= axis < ndim:
-                axes2.append(axis)
-            elif -ndim <= axis < 0:
-                axes2.append(axis + ndim)
-            else:
-                raise ValueError(
-                    "Can't {}: Invalid axis: {!r}".format(method, axis))
-        #--- End: for
-            
-        # Check for duplicate axes
-        n = len(axes2)
-        if n > 1 and n > len(set(axes2)):
-            raise ValueError("Can't {}: Duplicate axis: {}".format(
-                method, axes2))            
-        
-        return tuple(axes2)
-    #--- End: def
-
-    @classmethod
-    def _set_subspace(cls, array, indices, value):
-        '''
-        '''
-        axes_with_list_indices = [i for i, x in enumerate(indices)
-                                  if not isinstance(x, slice)]
-
-        if len(axes_with_list_indices) < 2: 
-            # ------------------------------------------------------------
-            # At most one axis has a list-of-integers index so we can do a
-            # normal numpy assignment
-            # ------------------------------------------------------------
-            array[tuple(indices)] = value
-        else:
-            # ------------------------------------------------------------
-            # At least two axes have list-of-integers indices so we can't
-            # do a normal numpy assignment
-            # ------------------------------------------------------------
-            indices1 = indices[:]
-            for i, x in enumerate(indices):
-                if i in axes_with_list_indices:
-                    # This index is a list of integers
-                    y = []
-                    args = [iter(x)] * 2
-                    for start, stop in itertools.zip_longest(*args):
-                        if not stop:
-                            y.append(slice(start, start+1))
-                        else:
-                            step = stop - start
-                            stop += 1
-                            y.append(slice(start, stop, step))
-                    #--- End: for
-                    indices1[i] = y
-                else:
-                    indices1[i] = (x,)
-            #--- End: for
-#            print 'indices1 =',    indices1
- 
-    #        if not numpy.ndim(value) :
-            if numpy.size(value) == 1:
-                for i in itertools.product(*indices1):
-                    array[i] = value
-                    
-            else:
-                indices2 = []
-                ndim_difference = array.ndim - numpy.ndim(value)
-                for i, n in enumerate(numpy.shape(value)):
-                    if n == 1:
-                        indices2.append((slice(None),))
-                    elif i + ndim_difference in axes_with_list_indices:
-                        y = []
-                        start = 0
-                        while start < n:
-                            stop = start + 2
-                            y.append(slice(start, stop))
-                            start = stop
-                        #--- End: while
-                        indices2.append(y)
-                    else:
-                        indices2.append((slice(None),))
-                #--- End: for
-#                print 'indices2 =',    indices2
-                for i, j in zip(itertools.product(*indices1), itertools.product(*indices2)):
-#                    print 'i, j =',i,j
-                    array[i] = value[j]
-    #--- End: def
-
-    def squeeze(self, axes=None, copy=True):
+    def squeeze(self, axes=None):
         '''Remove size 1 axes from the data.
 
 By default all size 1 axes are removed, but particular axes may be
@@ -1105,15 +1041,12 @@ selected with the keyword arguments.
 (2, 3, 4, 5, 6)
 
         '''
-        if copy:
-            d = self.copy()
-        else:
-            d = self
+        d = self.copy()
 
         if not d.ndim:
             if axes or axes == 0:
-                raise ValueError(
-"Can't squeeze: Can't remove an axis from scalar {}".format(d.__class__.__name__))
+                raise ValueError("Can't squeeze data: Data has no axes")
+
             return d
 
         shape = d.shape
@@ -1121,14 +1054,16 @@ selected with the keyword arguments.
         if axes is None:
             axes = [i for i, n in enumerate(shape) if n == 1]
         else:
-            axes = d._parse_axes(axes, 'squeeze')
-            
+            try:
+                axes = self._parse_axes(axes)
+            except ValueError as error:
+                raise ValueError("Can't squeeze data: {}".format(error))
+
             # Check the squeeze axes
             for i in axes:
                 if shape[i] > 1:
                     raise ValueError(
-"Can't squeeze {}: Can't remove axis of size {}".format(
-    d.__class__.__name__, shape[i]))
+"Can't squeeze data: Can't remove axis of size {}".format(shape[i]))
         #--- End: if
 
         if not axes:
@@ -1137,8 +1072,7 @@ selected with the keyword arguments.
         array = self.get_array()
         array = numpy.squeeze(array, axes)
 
-#        d.set_data(NumpyArray(array))
-        d.set_data(array)
+        d._set_Array(array, copy=False)
 
         return d
     #--- End: def
@@ -1164,14 +1098,17 @@ Missing data array elements are omitted from the calculation.
         '''
         # Parse the axes. By default flattened input is used.
         if axes is not None:
-            axes = self._parse_axes(axes, 'sum')
-
+            try:
+                axes = self._parse_axes(axes)
+            except ValueError as error:
+                raise ValueError("Can't sum data: {}".format(error))
+        #--- End: if
+        
         array = self.get_array()
         array = numpy.sum(array, axis=axes, keepdims=True)
             
         d = self.copy()
-#        d.set_data(NumpyArray(array))
-        d.set_data(array)
+        d._set_Array(array, copy=False)
 
 #        if d._HDF_chunks:            
 #            HDF = {}
@@ -1183,7 +1120,7 @@ Missing data array elements are omitted from the calculation.
         return d
     #--- End: def
 
-    def transpose(self, axes=None, copy=True):
+    def transpose(self, axes=None):
         '''Permute the axes of the data array.
 
 .. versionadded:: 1.6
@@ -1220,11 +1157,8 @@ Missing data array elements are omitted from the calculation.
 (19, 73, 96)
 
         '''
-        if copy:
-            d = self.copy()
-        else:
-            d = self
-
+        d = self.copy()
+        
         ndim = d.ndim    
         
         # Parse the axes. By default, reverse the order of the axes.
@@ -1234,7 +1168,10 @@ Missing data array elements are omitted from the calculation.
 
             axes = list(range(ndim-1, -1, -1))
         else:
-            axes = d._parse_axes(axes, 'transpose')
+            try:
+                axes = self._parse_axes(axes)
+            except ValueError as error:
+                raise ValueError("Can't transpose data: {}".format(error))
 
             # Return unchanged if axes are in the same order as the data
             if axes == list(range(ndim)):
@@ -1242,14 +1179,13 @@ Missing data array elements are omitted from the calculation.
 
             if len(axes) != ndim:
                 raise ValueError(
-                    "Can't transpose: Axes don't match array: {}".format(axes))
+                    "Can't transpose data: Axes don't match array: {}".format(axes))
         #--- End: if
 
         array = self.get_array()
         array = numpy.transpose(array, axes=axes)
         
-#        d.set_data(NumpyArray(array))
-        d.set_data(array)
+        d._set_Array(array, copy=False)
 
         return d
     #--- End: def
@@ -1280,7 +1216,7 @@ Missing data array elements are omitted from the calculation.
 []
 
         '''
-        ma = self.get_data()
+        ma = self._get_Array(None)
 
         compressed_axes = getattr(ma, 'compressed_axes', None)
         if compressed_axes is None:
@@ -1316,7 +1252,7 @@ Missing data array elements are omitted from the calculation.
 'ragged contiguous'
 
         '''
-        ma = self.get_data()
+        ma = self._get_Array(None)
         if ma is None:
             return 
 
@@ -1420,17 +1356,28 @@ False
 False
 
         '''
-        # Check each instance's id
-        if self is other:
-            return True
-
-        # Check that each instance is of the same type
-        if not ignore_construct_type and not isinstance(other, self.__class__):
+        if not super().equals(other, traceback=traceback,
+                              ignore_construct_type=ignore_construct_type):
             if traceback:
-                print("{0}: Incompatible types: {0}, {1}".format(
-			self.__class__.__name__,
-			other.__class__.__name__))
+                print(
+                    "{0}: Different ??/".format(self.__class__.__name__))
             return False
+
+#        # Check for object identity
+#        if self is other:
+#            return True
+#
+#        # Check each instance's id
+#        if self is other:
+#            return True
+#
+#        # Check that each instance is of the same type
+#        if not ignore_construct_type and not isinstance(other, self.__class__):
+#            if traceback:
+#                print("{0}: Incompatible types: {0}, {1}".format(#
+#			self.__class__.__name__#,#
+#			other.__class__.__name__)a#)
+#            return False
 
         # Check that each instance has the same shape
         if self.shape != other.shape:
@@ -1474,14 +1421,17 @@ False
         # ------------------------------------------------------------
         # Check that each instance has equal array values
         # ------------------------------------------------------------
-        # Set default tolerances
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()        
+#        # Set default tolerances
+#        if rtol is None:
+#            rtol = RTOL()
+#        if atol is None:
+#            atol = ATOL()        
 
-        if not _numpy_allclose(self.get_array(), other.get_array(),
-                               rtol=rtol, atol=atol):
+        if not self._equals(self.get_array(), other.get_array(),
+                            rtol=rtol, atol=atol):
+
+#        if not _numpy_allclose(self.get_array(), other.get_array(),
+#                               rtol=rtol, atol=atol):
             if traceback:
                 print("{0}: Different data values".format(
                     self.__class__.__name__))
@@ -1498,58 +1448,30 @@ False
     def first_element(self):
         '''
         '''
-        return self._element((slice(0, 1),)*self.ndim)
+        return self._item((slice(0, 1),)*self.ndim)
     #--- End: def
     
     def last_element(self):
         '''
         '''
         
-        return self._element((slice(-1, None),)*self.ndim)
+        return self._item((slice(-1, None),)*self.ndim)
     #--- End: def
  
     def second_element(self):
         '''
         '''
-        return self._element((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
+        return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
     #--- End: def
 
-    def set_data(self, data):
-        '''Set the data.
-
-:Parameters:
-
-    data: numpy array_like
-        The data to be inserted. Note that any object that exposes the
-        `cfdm.data.abstract.Array` interface is numpy array_like.
-
-:Returns:
-
-    `None`
-
-:Examples:
-
->>> d.set_data(a)
-
-        '''
-        if data is not None and not isinstance(data, abstract.Array):
-            if not isinstance(data, numpy.ndarray):
-                data = numpy.asanyarray(data)
-                
-            data = NumpyArray(data)
-
-        super().set_data(data)
-    #--- End: def
-
-    def set_dtype(self, value):
-        '''
-        '''
-        value = numpy.dtype(value)
-        if value != self.dtype:
-            array = numpy.asanyarray(self.get_array(), dtype=value)
-#            self.set_data(NumpyArray(array))
-            self.set_data(array)
-    #--- End: def
+#    def set_dtype(self, value):
+#        '''
+#        '''
+#        value = numpy.dtype(value)
+ #       if value != self.dtype:
+#            array = numpy.asanyarray(self.get_array(), dtype=value)
+#            self._set_Array(array, copy=False)
+#    #--- End: def
 
     def unique(self):
         '''The unique elements of the data.
@@ -1580,9 +1502,10 @@ missing values.
         if numpy.ma.is_masked(array):
             array = array.compressed()
 
-        return type(self)(array, units=self.get_units(None),
-                          calendar=self.get_calendar(None),
-                          fill_value=self.get_fill_value(None))
+        out = self.copy(data=False)
+        out._set_Array(array, copy=False)
+
+        return out
     #--- End: def
 
 #--- End: class

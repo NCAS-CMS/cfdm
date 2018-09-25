@@ -1,9 +1,11 @@
-from builtins import (object, str)
+from builtins import (str, super)
 
 import numpy
 
+from .. import abstract
 
-class Data(object):
+
+class Data(abstract.Container):
     '''
 
 An N-dimensional data array with units and masked values.
@@ -17,12 +19,13 @@ An N-dimensional data array with units and masked values.
 
     '''
     def __init__(self, data=None, units=None, calendar=None,
-                 fill_value=None, source=None, copy=True):
+                 fill_value=None, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
 :Parameters:
 
-    data:
+    data: sublcass of `Array`
         The data array. May be any object that exposes the
         `cfdm.core.data.abstract.Array` interface.
 
@@ -54,9 +57,11 @@ An N-dimensional data array with units and masked values.
 >>> d = Data(tuple('fly'))
 
         '''
+        super().__init__()
+        
         if source is not None:
             try:                
-                data = source.get_data(None)
+                data = source._get_Array(None)
             except AttributeError:
                 data = None
 
@@ -76,10 +81,12 @@ An N-dimensional data array with units and masked values.
                 fill_value = None
         #--- End: if
 
-        self.set_data(data)
         self.set_units(units)
         self.set_calendar(calendar)   
         self.set_fill_value(fill_value)
+
+        if _use_data:
+            self._set_Array(data, copy=copy)
     #--- End: def
 
     def __array__(self):
@@ -114,7 +121,7 @@ Used if copy.deepcopy is called on the object.
         '''x.__str__() <==> str(x)
 
         '''
-        return str(self.get_data(None))
+        return str(self._get_Array(None))
     #--- End: def
     
     # ----------------------------------------------------------------
@@ -143,7 +150,7 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        return self.get_data().dtype        
+        return self._get_Array().dtype        
     #--- End: def
 
     @property
@@ -174,7 +181,7 @@ dtype('float64')
 1
 
         '''
-        return self.get_data().ndim
+        return self._get_Array().ndim
     #--- End: def
 
     @property
@@ -205,7 +212,7 @@ dtype('float64')
 1
 
         '''
-        return self.get_data().shape
+        return self._get_Array().shape
     #--- End: def
 
     @property
@@ -236,13 +243,13 @@ dtype('float64')
 1
 
         '''
-        return self.get_data().size
+        return self._get_Array().size
     #--- End: def
 
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def copy(self):
+    def copy(self, data=True):
         '''Return a deep copy of the data.
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
@@ -260,7 +267,7 @@ attribute.
 >>> e = d.copy()
 
         '''
-        return type(self)(source=self, copy=True)
+        return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
     def del_calendar(self):
@@ -290,12 +297,13 @@ AttributeError: Can't get non-existent calendar
 None
 
         '''
-        value = self._calendar
-        self._calendar = None
-        return value
+        return self._del_component('calendar')
+#        value = self._calendar
+#        self._calendar = None
+#        return value
     #--- End: def
 
-    def del_data(self):
+    def _del_Array(self):
         '''Delete the data.
 
 :Examples 1:
@@ -311,6 +319,7 @@ None
 >>> old = d.del_data()
 
         '''
+        return self._del_component('data')
         array = self._data
         self._data = None
         return array
@@ -349,9 +358,10 @@ None
 None
 
         '''
-        value = self._fill_value
-        self._fill_value = None        
-        return value
+        return self._del_component('fill_value')
+#        value = self._fill_value
+#        self._fill_value = None        
+#        return value
     #--- End: def
 
     def del_units(self):
@@ -381,9 +391,10 @@ AttributeError: Can't get non-existent units
 None
 
         '''
-        value = self._units
-        self._units = None        
-        return value
+        return self._del_component('units')
+#        value = self._units
+#        self._units = None        
+#        return value
     #--- End: def
 
     def get_array(self):
@@ -411,7 +422,7 @@ True
 <Data: [1.0, 2.0, 3.0] km>
 
         '''
-        array = self.get_data().get_array()
+        array = self._get_Array().get_array()
 
         # Set the numpy array fill value
         if numpy.ma.isMA(array):
@@ -452,7 +463,8 @@ AttributeError: Can't get non-existent calendar
 None
 
         '''
-        value = self._calendar
+        value = self._get_component('calendar', *default)
+#        value = self._calendar
         if value is None:
             if default:
                 return default[0]
@@ -463,7 +475,7 @@ None
         return value
     #--- End: def
 
-    def get_data(self, *default):
+    def _get_Array(self, *default):
         '''Return the data.
 
 :Examples 1:
@@ -486,7 +498,8 @@ None
 >>> a = d.get_data(None)
 
         '''
-        array = self._data
+        array = self._get_component('data', *default)
+#        array = self._data
         if array is None:
             if default:
                 return default[0]     
@@ -535,7 +548,8 @@ None
 None
 
         '''
-        value = self._fill_value
+        value = self._get_component('fill_value', *default)
+#        value = self._fill_value
         if value is None:
             if default:
                 return default[0]
@@ -578,7 +592,8 @@ AttributeError: Can't get non-existent units
 None
 
         '''
-        value = self._units
+        value = self._get_component('units', *default)
+#        value = self._units
         if value is None:
             if default:
                 return default[0]
@@ -619,10 +634,11 @@ AttributeError: Can't get non-existent calendar
 None
 
         '''
-        self._calendar = calendar
+        return self._set_component('calendar', calendar, copy=False)
+#        self._calendar = calendar
     #--- End: def
 
-    def set_data(self, data):
+    def _set_Array(self, data, copy=True):
         '''Set the data.
 
 :Parameters:
@@ -637,10 +653,14 @@ None
 
 :Examples:
 
->>> d.set_data(a)
+>>> d._set_Array(a)
 
         '''
-        self._data = data
+        if copy:
+            data = data.copy()
+            
+        self._set_component('data', data, copy=False)
+#        self._data = data
     #--- End: def
 
     def set_fill_value(self, value):
@@ -679,7 +699,8 @@ None
 None
 
         '''
-        self._fill_value = value
+#        self._fill_value = value
+        self._set_component('fill_value', value, copy=False)
     #--- End: def
 
     def set_units(self, value):
@@ -712,7 +733,8 @@ AttributeError: Can't get non-existent units
 None
 
         '''
-        self._units = value
+        self._set_component('units', value, copy=False)
+#        self._units = value
     #--- End: def
 
 #--- End: class

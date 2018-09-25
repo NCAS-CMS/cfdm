@@ -291,7 +291,7 @@ metadata construct.
                       for axis in self.implementation.get_construct_axes(field, key)])
     #--- End: def
         
-    def _create_netcdf_variable_name(self, parent, default):
+    def _create_netcdf_variable_name(self, parent, default, scalar=False):
         '''asdasdasd
         
 :Parameter:
@@ -304,7 +304,8 @@ metadata construct.
         ncvar = self.implementation.get_ncvar(parent, None)
         if ncvar is None:
             try:
-                ncvar = self.implementation.get_property(parent, 'standard_name', default)
+                ncvar = self.implementation.get_property(parent,
+                                                         'standard_name', default)
             except AttributeError:
                 ncvar = default
                 
@@ -648,7 +649,7 @@ name.
         return extra
     #--- End: def
             
-    def _write_scalar_coordinate(self, f, axis, coord, coordinates,
+    def _write_scalar_coordinate(self, f, key, coord_1d, axis, coordinates,
                                  extra={}):
         '''Write a scalar coordinate and its bounds to the netCDF file.
     
@@ -677,31 +678,29 @@ then the input coordinate is not written.
 
 #        coord = self._change_reference_datetime(coord)
             
-        coord = self.implementation.squeeze(coord, axes=0, copy=True)
+        scalar_coord = self.implementation.squeeze(coord_1d, axes=0)
     
-        if not self._already_in_file(coord, ()):
-            ncvar = self._create_netcdf_variable_name(coord,
+        if not self._already_in_file(scalar_coord, ()):
+            ncvar = self._create_netcdf_variable_name(scalar_coord,
                                                       default='scalar')                        
-#            ncvar = self._write_netcdf_variable_name(coord,
-#                                                     default='scalar',
-#                                                     extra=extra)
-    
+
             # If this scalar coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
             # attribute to the dictionary of extra attributes
-            bounds_extra = self._write_bounds(coord, (), ncvar)
+            bounds_extra = self._write_bounds(scalar_coord, (), ncvar)
     
             # Create a new scalar coordinate variable
-            self._write_netcdf_variable(ncvar, (), coord, extra=bounds_extra)
+            self._write_netcdf_variable(ncvar, (), scalar_coord,
+                                        extra=bounds_extra)
     
         else:
             # This scalar coordinate has already been written to the
             # file
-            ncvar = g['seen'][id(coord)]['ncvar']
+            ncvar = g['seen'][id(scalar_coord)]['ncvar']
     
         g['axis_to_ncscalar'][axis] = ncvar
     
-        g['key_to_ncvar'][axis] = ncvar
+        g['key_to_ncvar'][key] = ncvar
     
         coordinates.append(ncvar)
     
@@ -1358,7 +1357,8 @@ extra trailing dimension.
     
                         # Expand the field's data array to include
                         # this domain axis
-                        f = self.implementation.field_expand_dims(f, position=0, axis=axis, copy=False) 
+                        f = self.implementation.field_expand_dims(f,
+                                                                  position=0, axis=axis) 
                     else:
                         # There are NO auxiliary coordinates, cell
                         # measures, domain ancillaries or field
@@ -1366,8 +1366,7 @@ extra trailing dimension.
                         # write the dimension coordinate to the file
                         # as a scalar coordinate variable.
                         coordinates = self._write_scalar_coordinate(
-                            f, axis, dim_coord,
-                            coordinates)
+                            f, key, dim_coord, axis, coordinates)
                 #-- End: if
 
                 found_dimension_coordinate = True
@@ -1385,7 +1384,8 @@ extra trailing dimension.
                     # an auxiliary coordinate, cell measure, domain
                     # ancillary or field ancillary does, so expand the
                     # data array to include it.
-                    f = self.implementation.field_expand_dims(f, position=0, axis=axis, copy=False)
+                    f = self.implementation.field_expand_dims(f,
+                                                              position=0, axis=axis)
                     data_axes.append(axis)
     
                 # If the data array (now) spans this domain axis then create a
@@ -1478,12 +1478,11 @@ extra trailing dimension.
         for ref in g['formula_terms_refs']:
             formula_terms = []
             bounds_formula_terms = []
-            owning_coord = None
+            owning_coord_key = None
 
-            standard_name = self.implementation.get_coordinate_conversion_parameters(ref).get('standard_name')
+            standard_name = self.implementation.get_coordinate_conversion_parameters(ref).get(
+                'standard_name')
             if standard_name is not None:
-#                c = [(key, coord) for key, coord in API.get_coordinates(f).items()
-#                     if API.get_property(coord, 'standard_name', None) == standard_name]
                 c = []
                 for key in self.implementation.get_coordinate_reference_coordinates(ref):
                     coord = self.implementation.get_coordinates(f)[key]
@@ -1491,14 +1490,15 @@ extra trailing dimension.
                         c.append((key, coord))
 
                 if len(c) == 1:
-                    owning_coord_key, owning_coord = c[0]
+#                    owning_coord_key, owning_coord = c[0]
+                    owning_coord_key, _ = c[0]
             #--- End: if
     
             z_axis = self.implementation.get_construct_axes(f, owning_coord_key)[0]
                 
-            if owning_coord is not None:
-                # This formula_terms coordinate reference matches up with
-                # an existing coordinate
+            if owning_coord_key is not None:
+                # This formula_terms coordinate reference matches up
+                # with an existing coordinate
     
                 for term, value in self.implementation.get_coordinate_conversion_parameters(ref).items():
                     if value is None:
@@ -1542,7 +1542,7 @@ extra trailing dimension.
             # Add the formula_terms attribute to the parent coordinate
             # variable
             if formula_terms:
-                ncvar = seen[id(owning_coord)]['ncvar']
+                ncvar = g['key_to_ncvar'][owning_coord_key]
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
                 if g['_debug']:

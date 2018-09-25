@@ -5,7 +5,7 @@ import abc
 
 import numpy
 
-from ...core.data.abstract import Array as core_Array
+from ...core.data import Array as core_Array
 
 
 class Array(with_metaclass(abc.ABCMeta, core_Array)):

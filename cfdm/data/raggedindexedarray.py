@@ -23,9 +23,8 @@ sample dimension belongs to.
 
 :Parameters:
 
-    compressed_array:
-        The compressed array. May be any object that exposes the
-        `cfdm.data.abstract.Array` interface.
+    compressed_array: subclass of `Array`
+        The compressed array.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -36,10 +35,9 @@ sample dimension belongs to.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    index_array:
+    index_array: `Data`
         The "index" array required to uncompress the data, identical
-        to the data of a CF-netCDF "index" variable.  May be any
-        object that exposes the `cfdm.data.abstract.Array` interface.
+        to the data of a CF-netCDF "index" variable.
 
         '''
         super().__init__(compressed_array=compressed_array,

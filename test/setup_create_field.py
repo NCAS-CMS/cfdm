@@ -148,7 +148,7 @@ class create_fieldTest(unittest.TestCase):
         f.set_field_ancillary(anc, axes=[axisY, axisX])
         
         g = f[0]
-        g.squeeze(copy=False)
+        g = g.squeeze()
 #        g.standard_name = 'ancillary2'
 #        g *= 0.001
         anc = cfdm.FieldAncillary(data=g.get_data())
@@ -214,7 +214,7 @@ class create_fieldTest(unittest.TestCase):
 
         self.assertTrue(len(g) == 1, 'Read produced the wrong number of fields: {} != 1'.format(len(g)))
 
-        g = g[0].squeeze(copy=False)
+        g = g[0].squeeze()
         
 #        g.dump()
 #        print g

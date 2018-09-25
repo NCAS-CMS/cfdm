@@ -454,7 +454,16 @@ ancillaries, field ancillaries).
         # each key's value is a dictionary of that variable's netCDF
         # attributes. E.g. attributes['tas']['units']='K'
         # ------------------------------------------------------------
+
+        # The netCDF attributes for each variable.
+        #
+        # E.g. {'lon': {'standard_name': 'longitude'}}
         variable_attributes = {}
+
+                # The netCDF attributes for each variable.
+        #
+        # E.g. {'lon': {'standard_name': 'longitude'}}
+        
         variable_dimensions = {}
         variable_dataset    = {}
         variables           = {}
@@ -482,9 +491,13 @@ ancillaries, field ancillaries).
         #--- End: for
 
         # The netCDF attributes for each variable
+        #
+        # E.g. {'grid_lon': {'standard_name': 'grid_longitude'}}
         g['variable_attributes'] = variable_attributes
 
         # The netCDF dimensions for each variable
+        #
+        # E.g. {'grid_lon_bounds': ('grid_longitude', 'bounds2')}
         g['variable_dimensions'] = variable_dimensions
 
         # The netCDF4 dataset object for each variable
@@ -507,7 +520,7 @@ ancillaries, field ancillaries).
             internal_dimension_sizes[name] = dimension.size
 
         g['internal_dimension_sizes'] = internal_dimension_sizes
- 
+
         if _debug:
             print('    netCDF dimensions:', internal_dimension_sizes)
     
@@ -852,9 +865,9 @@ ancillaries, field ancillaries).
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
         elements_per_instance = self._create_data(ncvar, uncompress_override=True)
-    
+
         instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
-        element_dimension_size  = self.implementation.get_int_max(elements_per_instance)
+        element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
     
         if _debug:
             print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
@@ -1303,7 +1316,7 @@ variable should be pre-filled with missing values.
         g = self.read_vars
         
         instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
-        element_dimension_size  = self.implementation.get_int_max(elements_per_instance)
+        element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
         
         # Make sure that the element dimension name is unique
         base = element_dimension
@@ -1808,7 +1821,7 @@ variable should be pre-filled with missing values.
                     g['dimension_coordinate'][ncdim] = coord
                 
                 domain_axis = self._create_domain_axis(
-                    self.implementation.get_data_size(coord),
+                    self.implementation.get_construct_data_size(coord),
                     ncdim)
                 if _debug:
                     print('    [0] Inserting', repr(domain_axis))
@@ -1928,11 +1941,10 @@ variable should be pre-filled with missing values.
                         copy=False)
 
                     coord = self.implementation.construct_expand_dims(construct=coord,
-                                                                      position=0,
-                                                                      copy=False)
+                                                                      position=0)
                     
                     domain_axis = self._create_domain_axis(
-                        self.implementation.get_data_size(coord))
+                        self.implementation.get_construct_data_size(coord))
                     if _debug:
                         print('    [5] Inserting', repr(domain_axis))
                     axis = self.implementation.set_domain_axis(field=f,

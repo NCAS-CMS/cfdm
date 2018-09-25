@@ -23,9 +23,8 @@ The information needed to uncompress the data is stored in a separate
 
 :Parameters:
 
-    compressed_array:
-        The compressed array. May be any object that exposes the
-        `cfdm.data.abstract.Array` interface.
+    compressed_array: subclass of `Array`
+        The compressed array.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -39,10 +38,9 @@ The information needed to uncompress the data is stored in a separate
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    count_array:
+    count_array: `Data`
         The "count" array required to uncompress the data, identical
-        to the data of a CF-netCDF "count" variable. May be any object
-        that exposes the `cfdm.data.abstract.Array` interface.
+        to the data of a CF-netCDF "count" variable.
 
         '''
         super().__init__(compressed_array=compressed_array,

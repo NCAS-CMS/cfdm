@@ -27,9 +27,8 @@ uncompress the data.
 
 :Parameters:
 
-    compressed_array:
-        The compressed array. May be any object that exposes the
-        `cfdm.data.abstract.Array` interface.
+    compressed_array: subclass of `Array`
+        The compressed array.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -43,10 +42,9 @@ uncompress the data.
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    list_array:
+    list_array: `Data`
         The "list" array required to uncompress the data, identical to
-        the data of a CF-netCDF "list" variable. May be any object
-        that exposes the `cfdm.data.abstract.Array` interface.
+        the data of a CF-netCDF "list" variable.
 
         '''
         super().__init__(compressed_array=compressed_array,

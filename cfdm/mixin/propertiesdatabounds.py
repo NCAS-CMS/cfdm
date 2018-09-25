@@ -176,21 +176,20 @@ bounds.
                ignore_properties=(), ignore_construct_type=False):
         '''
         '''
-        if rtol is None:
-            rtol = RTOL()
-        if atol is None:
-            atol = ATOL()
+#        if rtol is None:
+#            rtol = RTOL()
+#        if atol is None:
+#            atol = ATOL()
     
         # ------------------------------------------------------------
         # Check the properties and data
         # ------------------------------------------------------------
-        if not super().equals(
-                other,
-                rtol=rtol, atol=atol, traceback=traceback,
-                ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties,
-                ignore_construct_type=ignore_construct_type):
+        if not super().equals(other, rtol=rtol, atol=atol,
+                              traceback=traceback,
+                              ignore_data_type=ignore_data_type,
+                              ignore_fill_value=ignore_fill_value,
+                              ignore_properties=ignore_properties,
+                              ignore_construct_type=ignore_construct_type):
             if traceback:
                 print("???????/")
             return False
@@ -283,26 +282,26 @@ bounds.
         return self._del_component('part_ncdim')
     #--- End: def
 
-    def expand_dims(self, position , copy=True):
+    def expand_dims(self, position):
         '''
         '''
         position = self._parse_axes([position])[0]
         
-        c = super().expand_dims(position, copy=copy)
+        c = super().expand_dims(position)
         
         # ------------------------------------------------------------
         # Expand the dims of the bounds
         # ------------------------------------------------------------
         bounds = c.get_bounds(None)
         if bounds is not None:
-            bounds.expand_dims(position, copy=False)
+            c.set_bounds(bounds.expand_dims(position), copy=False)
 
         # ------------------------------------------------------------
         # Expand the dims of the interior_ring
         # ------------------------------------------------------------
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:
-            interior_ring.expand_dims(position, copy=False)
+            c.set_interior_ring(interior_ring.expand_dims(position), copy=False)
 
         return c
     #--- End: def
@@ -340,31 +339,31 @@ variable.
         return self._set_component('part_ncdim', value)
     #--- End: def
 
-    def squeeze(self, axes=None , copy=True):
+    def squeeze(self, axes=None):
         '''
         '''
         axes = self._parse_axes(axes)
 
-        c = super().squeeze(axes, copy=copy)        
+        c = super().squeeze(axes)
 
         # ------------------------------------------------------------
         # Squeeze the bounds
         # ------------------------------------------------------------
         bounds = c.get_bounds(None)
         if bounds is not None:
-            bounds.squeeze(axes, copy=False)
+            c.set_bounds(bounds.squeeze(axes), copy=False)
 
         # ------------------------------------------------------------
         # Squeeze the interior_ring
         # ------------------------------------------------------------
         interior_ring = c.get_interior_ring(None)
         if interior_ring is not None:
-            interior_ring.squeeze(axes, copy=False)
+            c.set_bounds(interior_ring.squeeze(axes), copy=False)
 
         return c
     #--- End: def
     
-    def transpose(self, axes=None, copy=True):
+    def transpose(self, axes=None):
         '''Permute the dimensions of the data.
 
 .. seealso:: `expand_dims`, `squeeze`
@@ -397,7 +396,7 @@ variable.
         else:
             axes = self._parse_axes(axes)
 
-        c = super().transpose(axes, copy=copy)
+        c = super().transpose(axes)
 
         # ------------------------------------------------------------
         # Transpose the bounds
@@ -409,7 +408,8 @@ variable.
                 b_axes = axes[:]
                 b_axes.extend.extend(list(range(c.ndim, data.ndim)))
                 
-                bounds.transpose(b_axes, copy=False)
+                bounds = bounds.transpose(b_axes)
+                c.set_bounds(bounds, copy=False)
                 
                 if (c.ndim == 2 and data.ndim == 3 and data.shape[-1] == 4 and 
                     b_axes[0:2] == [1, 0]):
@@ -431,7 +431,8 @@ variable.
         if interior_ring is not None:
             interior_ring_axes = axes[:]
             interior_ring_axes.extend(list(range(c.ndim, interior_ring.ndim)))
-            interior_ring.transpose(interior_ring_axes, copy=False)
+            c.set_interior_ring(interior_ring.transpose(interior_ring_axes),
+                                copy=False)
 
         return c
     #--- End: def

@@ -93,7 +93,7 @@ class CFDMImplementation(Implementation):
         )
     #--- End: def
 
-    def construct_expand_dims(self, construct, position, copy=True):
+    def construct_expand_dims(self, construct, position):
         '''
 
 :Parameters:
@@ -109,7 +109,7 @@ class CFDMImplementation(Implementation):
     out: construct
 
         '''
-        return construct.expand_dims(position=position, copy=copy)
+        return construct.expand_dims(position=position)
     #--- End: def
 
     def copy_construct(self, construct):
@@ -144,10 +144,10 @@ AttributeError: Field doesn't have property 'standard_name'
         return construct.del_property(prop)
     #--- End: def
 
-    def field_expand_dims(self, field, position=0, axis=None, copy=True):
+    def field_expand_dims(self, field, position=0, axis=None):
         '''
         '''
-        return field.expand_dims(position=position, axis=axis, copy=copy)
+        return field.expand_dims(position=position, axis=axis)
     #--- End: def
 
     def get_array(self, data):
@@ -388,7 +388,20 @@ axes, and possibly other axes, are returned.
         datum1 = coordinate_reference1.datum
         return datum0.equals(datum1)
     #--- End: def
-    
+
+    def get_construct_data_size(self, construct):
+        '''
+
+:Parameters:
+
+:Returns:
+
+    out: `int`
+
+        '''
+        return construct.data.size
+    #--- End: def
+   
     def get_external(self, parent):
         '''Return whether a construct is external.
 
@@ -445,7 +458,7 @@ axes, and possibly other axes, are returned.
         return field.get_data_axes()
     #--- End: def
          
-    def get_int_max(self, data):
+    def get_data_max(self, data):
         '''
 
 :Parameters:
@@ -455,7 +468,7 @@ axes, and possibly other axes, are returned.
     out: `int`
         
         '''
-        return int(data.max())
+        return data.max()
     #--- End: def
     
     def get_measure(self, cell_measure):
@@ -594,7 +607,7 @@ axes, and possibly other axes, are returned.
         return parent.get_data(*default)
     #--- End: def
 
-    def get_data_size(self, parent):
+    def get_data_size(self, data):
         '''
 
 :Parameters:
@@ -604,7 +617,7 @@ axes, and possibly other axes, are returned.
     out: `int`
 
         '''
-        return parent.data.size
+        return data.size
     #--- End: def
 
     def initialise_AuxiliaryCoordinate(self):
@@ -1211,10 +1224,10 @@ False
         return parent.has_property(prop)
     #--- End: def
     
-    def squeeze(self, construct, axes=None, copy=True):
+    def squeeze(self, construct, axes=None):
         '''
         '''
-        return construct.squeeze(axes=axes, copy=copy)
+        return construct.squeeze(axes=axes)
     #--- End: def
         
 #--- End: class

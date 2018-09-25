@@ -63,7 +63,7 @@ class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
 
         '''
         if not super().equals(
-                other, rtol=rtol, atol=atol,
+                other, #rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_construct_type=ignore_construct_type):
             return False
