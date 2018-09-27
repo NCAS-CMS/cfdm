@@ -246,4 +246,22 @@ True
         return self[...]
     #--- End: def
 
+    def get_compressed_array(self):
+        '''Return an independent numpy array containing the uncompressed data.
+
+:Returns:
+
+    out: `numpy.ndarray`
+        The uncompressed array.
+
+:Examples:
+
+>>> n = a.get_array()
+>>> isinstance(n, numpy.ndarray)
+True
+
+        '''
+        return self.compressed_array.get_array()
+    #--- End: def
+
 #--- End: class

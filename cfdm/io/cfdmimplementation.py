@@ -199,6 +199,17 @@ AttributeError: Field doesn't have property 'standard_name'
         return str(cell_method)
     #--- End: for
 
+    def get_compressed_axes(self, field):
+        '''
+:Returns:
+
+    out: `list`
+        '''
+        data = self.get_data(field)
+        data_axes = self.get_field_data_axes(field)
+        return [data_axes[i] for i in self.get_data_compressed_axes(data)]
+    #--- End: def
+
     def get_construct_axes(self, field, key):
         '''
         '''
@@ -261,6 +272,15 @@ axes, and possibly other axes, are returned.
         '''
         '''
         return data.get_calendar(*default)
+    #--- End: def
+
+    def get_data_compressed_axes(self, data):
+        '''
+:Returns:
+
+    out: `list`
+        '''
+        return data.compressed_axes()
     #--- End: def
 
     def get_data_ndim(self, parent):

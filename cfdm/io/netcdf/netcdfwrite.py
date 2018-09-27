@@ -12,8 +12,6 @@ import netCDF4
 
 ### numpy.count_nonzero(numpy.ma.count(coordinates, axis=-1))
 
-#from .implementation_interface import API
-
 from .. import IOWrite
 
 from . import constants
@@ -468,6 +466,16 @@ a new netCDF dimension for the bounds.
 
         return ncvar
     #--- End: def
+
+#    def _write_list_variable(self, f, key):
+#        '''
+#        '''
+#        
+#        g = self.write_vars
+#
+#        seen = g['seen']
+#    
+#    #--- End: def
     
     def _write_scalar_data(self, value, ncvar):
         '''Write a dimension coordinate and bounds to the netCDF file.
@@ -744,6 +752,8 @@ then the input coordinate is not written.
         else:
             ncvar = self._create_netcdf_variable_name(coord,
                                                       default='auxiliary')
+
+            
             
             # If this auxiliary coordinate has bounds then create the
             # bounds netCDF variable and add the bounds or climatology
@@ -1325,7 +1335,11 @@ extra trailing dimension.
             elif x != csn:
                 raise ValueError(";sdm p8whw=0[")
         #--- End: for
-        
+
+#        compressed_axes = self.implementation.get_compressed_axes(f)
+#        if compressed_axes:
+            
+    
         dimension_coordinates = self.implementation.get_dimension_coordinates(f)
         
         # For each of the field's axes ...
@@ -1346,13 +1360,17 @@ extra trailing dimension.
                     ncvar = self._write_dimension_coordinate(f, key, dim_coord)
                 else:
                     # The data array does not span this axis (and
-                    # therefore it must have size 1).
-                    if len(self.implementation.get_constructs(f, axes=[axis])) >= 2:
-                        # There ARE auxiliary coordinates, cell
-                        # measures, domain ancillaries or field
-                        # ancillaries which span this domain axis, so
-                        # write the dimension coordinate to the file
-                        # as a coordinate variable.
+                    # therefore the dimension coordinate must have
+                    # size 1).
+                    if (not g['scalar'] or
+                        len(self.implementation.get_constructs(f, axes=[axis])) >= 2):
+                        # Either A) it has been requested to not write
+                        # scalar coordinate variables; or B) there ARE
+                        # auxiliary coordinates, cell measures, domain
+                        # ancillaries or field ancillaries which span
+                        # this domain axis. Therefore write the
+                        # dimension coordinate to the file as a
+                        # coordinate variable.
                         ncvar = self._write_dimension_coordinate(f, key, dim_coord)
     
                         # Expand the field's data array to include
@@ -1360,11 +1378,13 @@ extra trailing dimension.
                         f = self.implementation.field_expand_dims(f,
                                                                   position=0, axis=axis) 
                     else:
-                        # There are NO auxiliary coordinates, cell
-                        # measures, domain ancillaries or field
-                        # ancillaries which span this domain axis, so
-                        # write the dimension coordinate to the file
-                        # as a scalar coordinate variable.
+                        # Scalar coordinate variables are being
+                        # allowed; and there are NO auxiliary
+                        # coordinates, cell measures, domain
+                        # ancillaries or field ancillaries which span
+                        # this domain axis. Therefore write the
+                        # dimension coordinate to the file as a scalar
+                        # coordinate variable.
                         coordinates = self._write_scalar_coordinate(
                             f, key, dim_coord, axis, coordinates)
                 #-- End: if
@@ -1450,7 +1470,7 @@ extra trailing dimension.
         # Initialize the list of 'coordinates' attribute variable values
         # (each of the form 'name')
         for key, aux_coord in sorted(self.implementation.get_auxiliary_coordinates(f).items()):
-#            if API.is_geometry(aux_coord):
+#            if self.implementation.is_geometry(aux_coord):
 #                coordinates = self._write_geometry_coordinate(f, key, aux_coord,
 #                                                              coordinates)
 
@@ -1901,7 +1921,7 @@ write them to the netCDF4.Dataset.
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
               verbose=False, mode='w', least_significant_digit=None,
               endian='native', compress=0, fletcher32=False,
-              no_shuffle=False, datatype=None,
+              no_shuffle=False, datatype=None, scalar=True,
               variable_attributes=None, global_attributes=None,
               HDF_chunks=None, unlimited=None, extra_write_vars=None,
               _debug=False):
@@ -2143,7 +2163,13 @@ and auxiliary coordinate roles for different data variables.
                 fields = tuple(fields)
             except TypeError:
                 raise TypeError("'fields' parameter must be a (sequence of) Field")
-    
+
+            
+        # -------------------------------------------------------
+        # Scalar coordinate variables
+        # -------------------------------------------------------
+        g['scalar'] = scalar
+            
         # ---------------------------------------------------------------
         # Still here? Open the output netCDF file.
         # ---------------------------------------------------------------

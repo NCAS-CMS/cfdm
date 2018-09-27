@@ -583,6 +583,28 @@ data array shape.
         return array
     #--- End: def
 
+#    def compress_by_gathering(self, list_data, compressed_axes, replace_list_data=False
+
+#    def set_list_data(self, list_data, compressed_axes=None,
+#                      copy=True):
+#        '''
+#        '''
+#        compression_type = self.compression_type
+#        if compression_type == 'gathered':
+#            self._set_Array().set_list_data(list_data)
+##            raise ValueError("eqweqweweqw 1")
+#        elif compression_type:
+#            raise ValueError("eqweqweweqw 2")
+#
+#        compressed_array = self._compress_by_gathering(list_data, compressed_axes)
+#
+#        self._set_Array(GatheredArray(compressed_array=compressed_array,
+#                                      shape=self.shape,
+#                                      size=self.size, ndim=self.ndim,
+#                                      sample_axis=compressed_axes[0],
+#                                      list_array=list_data))
+#    #--- End: def
+
     def get_list_array(self, *default):
         '''
 :Returns:

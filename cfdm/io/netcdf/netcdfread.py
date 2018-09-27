@@ -830,10 +830,10 @@ ancillaries, field ancillaries).
             return
             
         compression_type = 'gathered'
-        indices = self._create_data(ncvar, uncompress_override=True)
+        list_array = self._create_data(ncvar, uncompress_override=True)
         
         g['compression'][gathered_ncdimension] = {
-            'gathered': {'indices'             : indices,
+            'gathered': {'list_array'          : list_array,
                          'implied_ncdimensions': parsed_compress,
                          'sample_dimension'    : gathered_ncdimension}}
     #--- End: def
@@ -2667,27 +2667,23 @@ variable should be pre-filled with missing values.
                                                          properties=properties)
     #--- End: def
 
-    def _create_data(self, ncvar, construct=None,
-                     unpacked_dtype=False, uncompress_override=None): 
+    def _create_netcdfarray(self, ncvar, unpacked_dtype=False):
         '''Set the Data attribute of a variable.
 
 :Parameters:
 
     ncvar: `str`
 
-    construct: `Variable`, optional
-
     unpacked_dtype: `False` or `numpy.dtype`, optional
 
 :Returns:
 
-    out: `Data`
+    out: `NetCDFArray`
 
 :Examples:
 
         '''
         g = self.read_vars
-        nc = g['nc']
         
         variable = g['variables'].get(ncvar)
         if variable is None:
@@ -2711,10 +2707,71 @@ variable should be pre-filled with missing values.
             ndim -= 1
             dtype = numpy.dtype('S{0}'.format(strlen))
 
-        array = self._create_NetCDFArray(filename=g['filename'],
-                                         ncvar=ncvar, dtype=dtype,
-                                         ndim=ndim, shape=shape,
-                                         size=size)
+        return self.implementation.initialise_NetCDFArray(
+            filename=g['filename'], ncvar=ncvar,
+            dtype=dtype,
+            ndim=ndim,
+            shape=shape,
+            size=size)
+#
+#        return self._create_NetCDFArray(filename=g['filename'],
+#                                        ncvar=ncvar, dtype=dtype,
+#                                        ndim=ndim, shape=shape,
+#                                        size=size)
+    #--- End: def 
+    
+    def _create_data(self, ncvar, construct=None,
+                     unpacked_dtype=False, uncompress_override=None): 
+        '''Set the Data attribute of a variable.
+
+:Parameters:
+
+    ncvar: `str`
+
+    construct: `Variable`, optional
+
+    unpacked_dtype: `False` or `numpy.dtype`, optional
+
+:Returns:
+
+    out: `Data`
+
+:Examples:
+
+        '''
+        g = self.read_vars
+
+        array = self._create_netcdfarray(ncvar, unpacked_dtype=unpacked_dtype)
+
+        if array is None:
+            return None
+        
+#        variable = g['variables'].get(ncvar)
+#        if variable is None:
+#            return None
+#        
+#        dtype = variable.dtype
+#        if unpacked_dtype is not False:
+#            dtype = numpy.result_type(dtype, unpacked_dtype)
+#    
+#        ndim  = variable.ndim
+#        shape = variable.shape
+#        size  = variable.size
+#        if size < 2:
+#            size = int(size)
+#    
+#        if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
+#            # Has a trailing string-length dimension
+#            strlen = shape[-1]
+#            shape = shape[:-1]
+#            size /= strlen
+#            ndim -= 1
+#            dtype = numpy.dtype('S{0}'.format(strlen))
+#
+#        array = self._create_NetCDFArray(filename=g['filename'],
+#                                         ncvar=ncvar, dtype=dtype,
+#                                         ndim=ndim, shape=shape,
+#                                         size=size)
                 
         compression = g['compression']
 
@@ -2758,7 +2815,7 @@ variable should be pre-filled with missing values.
                             gathered_array=array,
                             uncompressed_shape=uncompressed_shape,
                             sample_axis=sample_axis,
-                            list_array=c['indices'])
+                            list_array=c['list_array'])
                     elif 'ragged_indexed_contiguous' in c:
                         # --------------------------------------------
                         # Contiguous indexed ragged array. Check this
@@ -2804,15 +2861,15 @@ variable should be pre-filled with missing values.
         return self._create_Data(array, ncvar=ncvar) 
     #--- End: def
 
-    def _create_NetCDFArray(self,filename=None, ncvar=None,
-                            dtype=None, ndim=None, shape=None,
-                            size=None):
-        '''
-        '''
-        return self.implementation.initialise_NetCDFArray(
-            filename=filename, ncvar=ncvar, dtype=dtype, ndim=ndim,
-            shape=shape, size=size)
-    #--- End: def
+#    def _create_NetCDFArray(self,filename=None, ncvar=None,
+#                            dtype=None, ndim=None, shape=None,
+#                            size=None):
+#        '''
+#        '''
+#        return self.implementation.initialise_NetCDFArray(
+#            filename=filename, ncvar=ncvar, dtype=dtype, ndim=ndim,
+#            shape=shape, size=size)
+#    #--- End: def
 
     def _create_domain_axis(self, size, ncdim=None):
         '''
@@ -3171,6 +3228,12 @@ dimensions are returned.
                                sample_axis=None, list_array=None):
         '''Create a `Data` object for a compressed-by-gathering netCDF
 variable.
+
+:Parameters:
+
+    gathered_array: `NetCDFArray`
+
+    list_array: `NetCDFArray`
 
 :Returns:
 

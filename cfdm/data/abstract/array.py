@@ -64,6 +64,24 @@ indexing (given the restrictions on the type of indices allowed) is:
         return getattr(self, '_compression_type', None)
     #--- End: def
 
+    def get_compressed_array(self, *default):
+        '''Return an independent numpy array containing the compressed data.
+
+:Returns:
+
+    out: `numpy.ndarray`
+        The compressed array.
+
+:Examples:
+
+>>> n = a.get_compressed_array()
+>>> isinstance(n, numpy.ndarray)
+True
+
+        '''
+        return self.compressed_array.get_compressed_array()
+    #--- End: def
+    
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
         '''Return a subspace, defined by indices, of a numpy array.
