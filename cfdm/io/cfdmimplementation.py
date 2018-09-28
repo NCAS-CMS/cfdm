@@ -19,6 +19,10 @@ class CFDMImplementation(Implementation):
                  FieldAncillary=None,
                  
                  Bounds=None,
+                 List=None,
+                 Count=None,
+                 Index=None,
+
                  CoordinateConversion=None,
                  Datum=None,
                  
@@ -81,6 +85,10 @@ class CFDMImplementation(Implementation):
             FieldAncillary=FieldAncillary,
 
             Bounds=Bounds,
+            List=List,
+            Count=Count,
+            Index=Index,
+            
             CoordinateConversion=CoordinateConversion,
             Datum=Datum,
 
@@ -765,6 +773,14 @@ axes, and possibly other axes, are returned.
         return cls(compressed_array=compressed_array, ndim=ndim,
                    shape=shape, size=size, sample_axis=sample_axis,
                    list_array=list_array)
+    #--- End: def
+
+    def initialise_List(self):
+        '''
+
+        '''
+        cls = self.get_class('List')
+        return cls()
     #--- End: def
 
     def initialise_NetCDFArray(self, filename=None, ncvar=None,

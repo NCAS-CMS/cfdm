@@ -16,6 +16,7 @@ from ..field               import Field
 from ..fieldancillary      import FieldAncillary
 
 from ..bounds               import Bounds
+from ..list                 import List
 from ..coordinateconversion import CoordinateConversion
 from ..datum                import Datum
 
@@ -42,7 +43,9 @@ implementation = CFDMImplementation(version = __version__,
                                     Field               = Field,
                                     FieldAncillary      = FieldAncillary,
                                     
-                                    Bounds               = Bounds,
+                                    Bounds = Bounds,
+                                    List   = List,
+                                    
                                     CoordinateConversion = CoordinateConversion,
                                     Datum                = Datum,
                                     

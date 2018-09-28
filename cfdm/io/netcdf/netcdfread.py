@@ -829,8 +829,9 @@ ancillaries, field ancillaries).
         if not cf_compliant:
             return
             
-        compression_type = 'gathered'
-        list_array = self._create_data(ncvar, uncompress_override=True)
+#        compression_type = 'gathered'
+#        list_array = self._create_data(ncvar, uncompress_override=True)
+        list_array = self._create_List(ncvar)
         
         g['compression'][gathered_ncdimension] = {
             'gathered': {'list_array'          : list_array,
@@ -2645,6 +2646,74 @@ variable should be pre-filled with missing values.
             self.implementation.set_data(cell_measure, data, copy=False)
             
         return cell_measure
+    #--- End: def
+
+    def _create_Index(self, ncvar):
+        '''Create a 
+    
+:Parameters:
+    
+    ncvar: `str`
+        The name of the netCDF list variable.
+
+          *Example:*
+             ``ncvar='landpoints'``
+
+:Returns:
+
+    out: `Index`
+
+        '''
+        g = self.read_vars
+        
+        # Initialise the list variable
+        variable = self.implementation.initialise_Index()
+
+        # Store the netCDF variable name
+        self.implementation.set_ncvar(variable, ncvar)
+
+        properties = g['variable_attributes'][ncvar]
+        properties.pop('instance_dimension', None)
+        self.implementation.set_properties(variable, properties)
+        
+        data = self._create_data(ncvar, variable, uncompress_override=True)
+        self.implementation.set_data(variable, data, copy=False)
+            
+        return variable
+    #--- End: def
+
+    def _create_List(self, ncvar):
+        '''Create a 
+    
+:Parameters:
+    
+    ncvar: `str`
+        The name of the netCDF list variable.
+
+          *Example:*
+             ``ncvar='landpoints'``
+
+:Returns:
+
+    out: `List`
+
+        '''
+        g = self.read_vars
+        
+        # Initialise the list variable
+        variable = self.implementation.initialise_List()
+
+        # Store the netCDF variable name
+        self.implementation.set_ncvar(variable, ncvar)
+
+        properties = g['variable_attributes'][ncvar]
+        properties.pop('compress', None)
+        self.implementation.set_properties(variable, properties)
+        
+        data = self._create_data(ncvar, variable, uncompress_override=True)
+        self.implementation.set_data(variable, data, copy=False)
+            
+        return variable
     #--- End: def
 
     def _create_cell_method(self, axes, properties):
