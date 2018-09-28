@@ -557,7 +557,7 @@ data array shape.
         return d
     #--- End: def
 
-    def get_count_array(self, *default):
+    def get_count_data(self, *default):
         '''
 :Returns:
 
@@ -605,32 +605,6 @@ data array shape.
 #                                      list_array=list_data))
 #    #--- End: def
 
-    def get_list_array(self, *default):
-        '''
-:Returns:
-
-    out: `Data` or `None`
-
-        '''
-        data = self._get_Array(None)
-        if data is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no data".format(
-                self.__class__.__name__))
-
-        array = getattr(data, 'list_array', None)
-        if array is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no list array".format(
-                self.__class__.__name__))
-        
-        return array
-    #--- End: def
-
     def get_dtarray(self):
         '''An independent `numpy` array of date-time objects.
 
@@ -672,7 +646,7 @@ used.
         return array
     #--- End: def
 
-    def get_index_array(self, *default):
+    def get_index_data(self, *default):
         '''
 :Returns:
 
@@ -698,7 +672,7 @@ used.
         return array
     #--- End: def
 
-    def get_list_array(self, *default):
+    def get_list_data(self, *default):
         '''
 :Returns:
 

@@ -1336,9 +1336,24 @@ extra trailing dimension.
                 raise ValueError(";sdm p8whw=0[")
         #--- End: for
 
-#        compressed_axes = self.implementation.get_compressed_axes(f)
-#        if compressed_axes:
-            
+        compressed_axes = self.implementation.get_compressed_axes(f)
+        if compressed_axes:
+            compression_type = self.implementation.get_compression_type(f)
+            if compression_type == 'gathered':
+                # Write the list variable
+                pass
+            elif compression_type in ('ragged contiguous',
+                                      'ragged indexed contiguous'):
+                # Write the count variable
+                pass
+            elif compression_type in ('ragged indexed',
+                                      'ragged indexed contiguous'):
+                # Write the index variable
+                pass
+            else:
+                raise ValueError(
+                    "Unknown compression type: {!r}".format(compression_type))
+        #--- End: if
     
         dimension_coordinates = self.implementation.get_dimension_coordinates(f)
         
