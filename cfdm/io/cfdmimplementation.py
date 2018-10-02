@@ -217,7 +217,13 @@ AttributeError: Field doesn't have property 'standard_name'
         data_axes = self.get_field_data_axes(field)
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
     #--- End: def
-
+    def get_compression_type(self, field):
+        '''
+        '''
+        print repr(field.get_data()._get_Array().get_compression_type())
+        return field.get_data().get_compression_type()
+    #--- End: def
+        
     def get_construct_axes(self, field, key):
         '''
         '''
@@ -321,6 +327,38 @@ axes, and possibly other axes, are returned.
 2
         '''
         return parent.data.ndim
+    #--- End: def
+
+    def get_data_size(self, parent):
+        '''Return the number of elements in the data array.
+
+:Parameters:
+
+    parent: 
+        The object containing the data array.
+
+:Returns:
+
+    out: `int`
+        The number of elements in the data array.
+
+:Examples 1:
+
+>>> size = w.get_data_size(x)
+
+:Examples 2:
+
+>>> d
+<DimensionCoordinate: latitude(180) degrees_north>
+>>> w.get_data_ndim(d)
+180
+
+>>> b
+<Bounds: latitude(180, 2) degrees_north>
+>>> w.get_data_ndim(b)
+360
+        '''
+        return parent.data.size
     #--- End: def
 
     def get_data_units(self, data, *default):
@@ -499,6 +537,33 @@ axes, and possibly other axes, are returned.
         return data.max()
     #--- End: def
     
+    def get_list_variable(self, field):
+        '''Return the measure property of a cell measure contruct.
+
+:Examples 1:
+
+>>> measure = w.get_measure(c)
+
+:Parameters:
+
+    cell_measure:
+        The cell measure object.
+
+:Returns:
+
+    out: `str` or `None`
+        The measure property, or `None` if it has not been set.
+
+:Examples 2:
+
+>>> c
+<CellMeasure: area(73, 96) km2>
+>>> w.get_measure(c)
+'area'
+        '''
+        return field.get_data().get_list_variable()
+    #--- End: def
+    
     def get_measure(self, cell_measure):
         '''Return the measure property of a cell measure contruct.
 
@@ -547,7 +612,7 @@ axes, and possibly other axes, are returned.
 
 :Examples 2:
         '''
-        return field.get_domain_axis()[axis].get_ncdim(*default)
+        return field.domain_axes()[axis].get_ncdim(*default)
     #--- End: def
 
     def get_ncvar(self, construct, *default):
@@ -633,19 +698,6 @@ axes, and possibly other axes, are returned.
 <Data: [[-90, ..., 90]] degrees_north>
         '''
         return parent.get_data(*default)
-    #--- End: def
-
-    def get_data_size(self, data):
-        '''
-
-:Parameters:
-
-:Returns:
-
-    out: `int`
-
-        '''
-        return data.size
     #--- End: def
 
     def initialise_AuxiliaryCoordinate(self):

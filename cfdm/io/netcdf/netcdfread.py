@@ -829,12 +829,10 @@ ancillaries, field ancillaries).
         if not cf_compliant:
             return
             
-#        compression_type = 'gathered'
-#        list_array = self._create_data(ncvar, uncompress_override=True)
-        list_array = self._create_List(ncvar)
+        list_variable = self._create_List(ncvar)
         
         g['compression'][gathered_ncdimension] = {
-            'gathered': {'list_array'          : list_array,
+            'gathered': {'list_array'          : list_variable,
                          'implied_ncdimensions': parsed_compress,
                          'sample_dimension'    : gathered_ncdimension}}
     #--- End: def

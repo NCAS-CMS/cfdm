@@ -39,8 +39,8 @@ indexing (given the restrictions on the type of indices allowed) is:
         raise NotImplementedError()
     #--- End: def
 
-    @property
-    def compression_type(self):
+#    @property
+    def get_compression_type(self):
         '''The type of compression that has been applied to the array.
 
 :Returns:
@@ -62,6 +62,7 @@ indexing (given the restrictions on the type of indices allowed) is:
 
         '''
         return getattr(self, '_compression_type', None)
+#        return self._get_component('_compression_type', '')
     #--- End: def
 
     def get_compressed_array(self, *default):

@@ -1,10 +1,12 @@
-from builtins import (object, str)
+from builtins import (str, super) #(object, str)
 from future.utils import with_metaclass
 
 import abc
 
+from ...abstract import Container
 
-class Array(with_metaclass(abc.ABCMeta, object)):
+#class Array(with_metaclass(abc.ABCMeta, object)):
+class Array(with_metaclass(abc.ABCMeta, Container)):
     '''A container for an array.
 
 The form of the array is arbitrary and is defined by the attributes
@@ -22,7 +24,9 @@ See `cfdm.core.data.NumpyArray` for an example implementation.
         Named attributes and their values that define the array.
 
         '''
-        self.__dict__ = kwargs
+        super().__init__()
+        
+        self.__dict__.update(kwargs)
     #--- End: def
 
     def __array__(self):

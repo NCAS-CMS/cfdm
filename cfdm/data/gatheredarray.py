@@ -130,4 +130,10 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self._list_array
     #--- End: def
 
+    def get_list(self):
+        '''
+        '''
+        return self._list_array
+    #--- End: def
+
 #--- End: class

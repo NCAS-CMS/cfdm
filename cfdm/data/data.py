@@ -672,7 +672,7 @@ used.
         return array
     #--- End: def
 
-    def get_list_data(self, *default):
+    def get_list_variable(self, *default):
         '''
 :Returns:
 
@@ -692,7 +692,7 @@ used.
             if default:
                 return default
 
-            raise AttributeError("{!r} has no list array".format(
+            raise AttributeError("{!r} has no list variable".format(
                 self.__class__.__name__))
         
         return array
@@ -1221,7 +1221,7 @@ Missing data array elements are omitted from the calculation.
         return compressed_axes()
     #--- End: def
 
-    def compression_type(self):
+    def get_compression_type(self):
         '''Return the type of compression applied to the internal array.
 
 .. seealso:: `compression_axes`, `list_indices`
@@ -1250,9 +1250,9 @@ Missing data array elements are omitted from the calculation.
         '''
         ma = self._get_Array(None)
         if ma is None:
-            return 
+            return ''
 
-        return ma.compression_type
+        return ma.get_compression_type()
     #--- End: def
     
     def dump(self, display=True, prefix=None):
