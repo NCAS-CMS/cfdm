@@ -68,7 +68,6 @@ class CFDMImplementation(Implementation):
     CoordinateAncillary = CoordinateAncillary
     Data                = Data
     NetCDF              = NetCDF
-    CompressedArray     = CompressedArray
 
         '''
         super().__init__(
@@ -207,20 +206,28 @@ AttributeError: Field doesn't have property 'standard_name'
         return str(cell_method)
     #--- End: for
 
-    def get_compressed_axes(self, field):
+    def get_compressed_axes(self, field, key=None, construct=None):
         '''
 :Returns:
 
     out: `list`
         '''
-        data = self.get_data(field)
-        data_axes = self.get_field_data_axes(field)
+        if construct is not None:
+            data = self.get_data(construct)
+        else:
+            data = self.get_data(field)
+            
+        if key is not None:
+            data_axes = self.get_construct_axes(field, key)
+        else:
+            data_axes = self.get_field_data_axes(field)
+            
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
     #--- End: def
+
     def get_compression_type(self, field):
         '''
         '''
-        print repr(field.get_data()._get_Array().get_compression_type())
         return field.get_data().get_compression_type()
     #--- End: def
         
@@ -537,7 +544,7 @@ axes, and possibly other axes, are returned.
         return data.max()
     #--- End: def
     
-    def get_list_variable(self, field):
+    def get_list_variable(self, construct):
         '''Return the measure property of a cell measure contruct.
 
 :Examples 1:
@@ -561,7 +568,7 @@ axes, and possibly other axes, are returned.
 >>> w.get_measure(c)
 'area'
         '''
-        return field.get_data().get_list_variable()
+        return construct.get_data().get_list_variable()
     #--- End: def
     
     def get_measure(self, cell_measure):

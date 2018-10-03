@@ -297,7 +297,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
         return ncdim
     #--- End: def
     
-    def _netcdf_dimensions(self, field, key):
+    def _netcdf_dimensions(self, field, key, construct):
         '''Return a tuple of the netCDF dimension names for the axes of a
 metadata construct.
     
@@ -314,9 +314,74 @@ metadata construct.
 
         '''
         g = self.write_vars
-                
-        return tuple([g['axis_to_ncdim'][axis]
-                      for axis in self.implementation.get_construct_axes(field, key)])
+
+        domain_axes = self.implementation.get_construct_axes(field, key)
+        
+        ncdims = tuple([g['axis_to_ncdim'][axis] for axis in domain_axes])
+
+        compressed_axes = self.implementation.get_compressed_axes(field, key, construct)
+        if compressed_axes:
+            compressed_ncdims = [g['axis_to_ncdim'][axis] for axis in compressed_axes]
+            sample_dimension = self.implementation.get_sample_dimension(construct)
+            compression_type = self.implementation.get_compression_type(construct)
+            
+            if compression_type == 'gathered':
+                # ----------------------------------------------------
+                # Compression by gathering
+                #
+                # Find the dimension of the list variable, writing the
+                # list variable to the file if required.
+                # ----------------------------------------------------
+                list_variable = self.implementation.get_list_variable(construct)
+                new_ncdim = self._write_list_variable(f, list_variable,
+                                                      compress=', '.join(compressed_ncdims))
+
+            elif compression_type in ('ragged contiguous',
+                                      'ragged indexed contiguous'):
+                # ----------------------------------------------------
+                # Compression by contiguous ragged array or indexed
+                # contiguous ragged aray
+                #
+                # Find the dimension of the count variable, writing
+                # the count variable to the file if required.
+                # ----------------------------------------------------
+                count_variable = self.implementation.get_count_variable(construct)
+                sample_ncdim = self.implementation.get_property(
+                    count_variable,
+                    'sample_dimension',
+                    'instance')
+                sample_ncdim = self._netcdf_name(sample_ncdim)
+                new_ncdim = self._write_count_variable(
+                    f, count_variable,
+                    sample_dimension=sample_ncdim)
+
+            elif compression_type in ('ragged indexed',
+                                      'ragged indexed contiguous'):
+                # ----------------------------------------------------
+                # Compression by indexed ragged array or indexed
+                # contiguous ragged aray
+                #
+                # Find the dimension of the index variable, writing
+                # the index variable to the file if required.
+                # ----------------------------------------------------
+                index_variable = self.implementation.get_index_variable(construct)
+                instance_ncdim = self.implementation.get_property(
+                    index_variable,
+                    'instance_dimension',
+                    'instance')
+                instance_ncdim = self._netcdf_name(instance_ncdim)
+                new_ncdim = self._write_index_variable(
+                    f, index_variable,
+                    instance_dimension=instance_ncdim)
+
+            else:
+                raise ValueError(
+                    "Unknown compression type: {!r}".format(compression_type))
+
+            ncdims[sample_dimension:sample_dimension+len(compressed_ncdims)] = ncdim
+        #--- End: if
+    
+        return ncdims
     #--- End: def
         
     def _write_dimension(self, ncdim, f, axis=None, unlimited=False,
@@ -463,7 +528,7 @@ a new netCDF dimension for the bounds.
             unlimited = self.unlimited(f, axis)
             self._write_dimension(ncvar, f, axis, unlimited=unlimited)
     
-            ncdimensions = self._netcdf_dimensions(f, key)
+            ncdimensions = self._netcdf_dimensions(f, key, coord)
             
             # If this dimension coordinate has bounds then write the
             # bounds to the netCDF file and add the 'bounds' or
@@ -495,7 +560,7 @@ a new netCDF dimension for the bounds.
             ncvar = self._create_netcdf_variable_name(list_variable,
                                                       default='list')
             
-            # Create a new dimensione
+            # Create a new dimension
             self._write_dimension(
                 ncvar, f,
                 size=self.implementation.get_data_size(list_variable))
@@ -779,8 +844,10 @@ then the input coordinate is not written.
         g = self.write_vars
 
 #        coord = self._change_reference_datetime(coord)
-        ncdimensions = self._netcdf_dimensions(f, key)
+        ncdimensions = self._netcdf_dimensions(f, key, coord)
 
+        
+        
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
         else:
@@ -834,9 +901,11 @@ it is not re-written.
         '''
         g = self.write_vars
 
-        ncdimensions = tuple([g['axis_to_ncdim'][axis]
-                              for axis in self.implementation.get_construct_axes(f, key)])
-    
+#        ncdimensions = tuple([g['axis_to_ncdim'][axis]
+#                              for axis in self.implementation.get_construct_axes(f, key)])
+
+        ncdimensions = self._netcdf_dimensions(f, key, anc)
+        
         create = not self._already_in_file(anc, ncdimensions, ignore_type=True)
     
         if not create:
@@ -900,9 +969,11 @@ it is not re-written.
     '''
         g = self.write_vars
 
-        ncdimensions = tuple([g['axis_to_ncdim'][axis]
-                              for axis in self.implementation.get_construct_axes(f, key)])
+#        ncdimensions = tuple([g['axis_to_ncdim'][axis]
+#                              for axis in self.implementation.get_construct_axes(f, key)])
     
+        ncdimensions = self._netcdf_dimensions(f, key, anc)
+        
         create = not self._already_in_file(anc, ncdimensions)
     
         if not create:
@@ -949,7 +1020,7 @@ measure will not be written.
             raise ValueError(
 "Can't create a netCDF cell measure variable without a 'measure' property")
 
-        ncdimensions = self._netcdf_dimensions(field, key)
+        ncdimensions = self._netcdf_dimensions(field, key, cell_measure)
     
         if self._already_in_file(cell_measure, ncdimensions):
             # Use existing cell measure variable
@@ -1507,7 +1578,7 @@ extra trailing dimension.
                 # Creat the netCDF "compress" attribute
                 compress = ', '.join([g['axis_to_ncdim'][axis] for axis in compressed_axes])
                 list_variable = self.implementation.get_list_variable(f)
-                self._write_list_variable(f, list_variable, compress=compress)
+                ncvar = self._write_list_variable(f, list_variable, compress=compress)
             elif compression_type in ('ragged contiguous',
                                       'ragged indexed contiguous'):
                 # ----------------------------------------------------

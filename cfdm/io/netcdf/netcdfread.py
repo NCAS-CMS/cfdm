@@ -3225,7 +3225,7 @@ parameters.
         '''Return a list of the netCDF dimensions corresponding to a netCDF
 variable.
 
-If the variable has been compressed then the *implied, uncompressed*
+If the variable has been compressed then the *implied uncompressed*
 dimensions are returned.
     
 :Examples 1: 
