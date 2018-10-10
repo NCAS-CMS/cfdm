@@ -5,7 +5,8 @@ from . import mixin
 from . import core
 
 
-class CellMeasure(mixin.NetCDFVariable,
+class CellMeasure(mixin.NetCDF,
+                  mixin.NetCDFVariable,
                   mixin.PropertiesData,
                   core.CellMeasure):
         #with_metaclass(
@@ -41,6 +42,8 @@ measure constructs.
         
         if source is not None:
             self._intialise_ncvar_from(source)
+
+        self._intialise_netcdf(source)
     #--- End: def
     
     def dump(self, display=True, _omit_properties=None, field=None,
@@ -71,7 +74,7 @@ Return a string containing a full description of the cell measure.
 
         if self.get_external():
             if not (self.has_data() or self.properties()):
-                _title += ' (external variable: {0})'.format(self.get_ncvar(''))
+                _title += ' (external variable: {0})'.format(self.nc_get_variable(''))
                 
         return super().dump( display=display, field=field, key=key,
                              _omit_properties=_omit_properties,

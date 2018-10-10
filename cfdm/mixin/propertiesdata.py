@@ -223,11 +223,11 @@ True
             return False
         elif external0:
             # Both variables are external
-            if self.get_ncvar(None) != other.get_ncvar(None):
+            if self.nc_get_variable(None) != other.nc_get_variable(None):
                 if traceback:
                     print(
 "{0}: External variable have different netCDF variable names: {} != {})".format(
-    self.__class__.__name__, self.get_ncvar(None), other.get_ncvar(None)))
+    self.__class__.__name__, self.nc_get_variable(None), other.nc_get_variable(None)))
                 return False
 
             return True
@@ -426,7 +426,7 @@ None
         #--- End: if
         
         if ncvar and (all_names or not out):
-            n = self.get_ncvar(None)
+            n = self.nc_get_variable(None)
             if n is not None:
                 out.append('ncvar%{0}'.format(n))
         #--- End: if
@@ -456,7 +456,7 @@ None
 #                return '{0}:{1}'.format(prop, n)
 #        
 #        if ncvar:
-#            n = self.get_ncvar(None)
+#            n = self.nc_get_variable(None)
 #            if n is not None:
 #                return 'ncvar%{0}'.format(n)
 #            
@@ -473,7 +473,7 @@ None
 #            return 'cf_role:{0}'.format(n)
 #
 #        if ncvar:
-#            n = self.get_ncvar(None)
+#            n = self.nc_get_variable(None)
 #            if n is not None:
 #                return 'ncvar%{0}'.format(n)
 #            

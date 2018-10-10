@@ -451,8 +451,8 @@ The `!axes` attribute is ignored in the comparison.
 By default the name is the first found of the following:
 
   3. If the *ncdim* parameter is True, the netCDF variable name (as
-     returned by the `get_ncvar` method), preceeded by the string
-     ``'ncvar%'``.
+     returned by the `nc_get_variable` method), preceeded by the
+     string ``'ncvar%'``.
   
   4. The value of the *default* parameter.
 

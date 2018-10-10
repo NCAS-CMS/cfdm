@@ -832,7 +832,7 @@ ancillaries, field ancillaries).
         list_variable = self._create_List(ncvar)
         
         g['compression'][gathered_ncdimension] = {
-            'gathered': {'list_array'          : list_variable,
+            'gathered': {'list_variable'       : list_variable,
                          'implied_ncdimensions': parsed_compress,
                          'sample_dimension'    : gathered_ncdimension}}
     #--- End: def
@@ -863,13 +863,13 @@ ancillaries, field ancillaries).
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
-        elements_per_instance = self._create_data(ncvar, uncompress_override=True)
+        elements_per_instance = self._create_Count(ncvar) #(ncvar, uncompress_override=True)
 
-        instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
-        element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
-    
-        if _debug:
-            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
+#        instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
+#        element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
+#    
+#        if _debug:
+#            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
     
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
@@ -949,7 +949,7 @@ variable should be pre-filled with missing values.
             print('    index variable: instance_dimension =', instance_dimension)
 
         # Read the data of the index variable
-        index = self._create_data(ncvar, uncompress_override=True)
+        index = self._create_Index(ncvar)
 
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
@@ -1065,23 +1065,23 @@ variable should be pre-filled with missing values.
     
         # The indices of the sample dimension which define the start
         # positions of each instances profiles
-        profile_indices = indexed['instances']
+        profile_indices = indexed['index_variable']
     
-        profiles_per_instance = indexed['elements_per_instance']
-        elements_per_profile  = contiguous['elements_per_instance']
+        profiles_per_instance = indexed['elements_per_instance'] # This is a numpy array
+        elements_per_profile  = contiguous['count_variable']
     
         instance_dimension_size  = indexed['instance_dimension_size']
         element_dimension_1_size = int(profiles_per_instance.max())
-        element_dimension_2_size = int(elements_per_profile.max())
+        element_dimension_2_size = int(self.implementation.get_data_max(elements_per_profile)) #int(elements_per_profile.max())
         
         if _debug:
             print("    Creating g['compression'][{!r}]['ragged_indexed_contiguous']".format(
                 sample_dimension))
             
         g['compression'][sample_dimension]['ragged_indexed_contiguous'] = {
-            'profiles_per_instance'   : profiles_per_instance,
-            'elements_per_profile'    : elements_per_profile,
-            'profile_indices'         : profile_indices,
+#            'profiles_per_instance'   : profiles_per_instance,
+            'count_variable'          : elements_per_profile,
+            'index_variable'          : profile_indices,
             'implied_ncdimensions'    : (instance_dimension,
                                          indexed['element_dimension'],
                                          contiguous['element_dimension']),
@@ -1297,7 +1297,7 @@ variable should be pre-filled with missing values.
 
 :Parameters:
 
-    elements_per_instance: `Data`
+    elements_per_instance: `Count`
 
     sample_dimension: `str`
 
@@ -1317,6 +1317,9 @@ variable should be pre-filled with missing values.
         instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
         element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
         
+#        if g['_debug']:
+#            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
+    
         # Make sure that the element dimension name is unique
         base = element_dimension
         n = 0
@@ -1328,7 +1331,7 @@ variable should be pre-filled with missing values.
         g['new_dimensions'][element_dimension] = element_dimension_size
                             
         g['compression'].setdefault(sample_dimension, {})['ragged_contiguous'] = {
-            'elements_per_instance'  : elements_per_instance,
+            'count_variable'         : elements_per_instance,
             'implied_ncdimensions'   : (instance_dimension,
                                         element_dimension),
             'profile_dimension'      : instance_dimension,
@@ -1354,7 +1357,7 @@ variable should be pre-filled with missing values.
 :Parameters:
 
    
-    index: `Data`
+    index: `Index`
 
     element_dimension: `str`
  
@@ -1369,20 +1372,21 @@ variable should be pre-filled with missing values.
         '''
         g = self.read_vars
 
-        (instance, inverse, count) = numpy.unique(index.get_array(),
-                                                  return_inverse=True,
-                                                  return_counts=True)
+#        (instance, inverse, count) = numpy.unique(index.get_array(),
+#                                                  return_inverse=True,
+#                                                  return_counts=True)
+        (_, count) = numpy.unique(index.get_array(), return_counts=True)
 
         # Get the zero-based indices of the sample dimension that
         # apply to each instance. For example, if the sample dimension
         # has size 20 and there are 3 instances then the instances
         # array might look like [1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 2, 1,
         # 2, 2, 1, 0, 0, 0, 2, 0].
-        instances = self._create_Data(array=inverse)
+#        instances = index #self._create_Data(array=inverse)
 
         # The number of elements per instance. For the instances array
         # example above, the elements_per_instance array is [7, 5, 7].
-        elements_per_instance = self._create_Data(array=count)
+        elements_per_instance = count #self._create_Data(array=count)
     
         instance_dimension_size = g['internal_dimension_sizes'][instance_dimension]
         element_dimension_size  = int(elements_per_instance.max())
@@ -1398,7 +1402,7 @@ variable should be pre-filled with missing values.
         
         g['compression'].setdefault(indexed_sample_dimension, {})['ragged_indexed'] = {
             'elements_per_instance'  : elements_per_instance,
-            'instances'              : instances,
+            'index_variable'         : index, #instances,
             'implied_ncdimensions'   : (instance_dimension,
                                         element_dimension),
             'element_dimension'      : element_dimension,
@@ -2646,13 +2650,47 @@ variable should be pre-filled with missing values.
         return cell_measure
     #--- End: def
 
+    def _create_Count(self, ncvar):
+        '''Create a 
+    
+:Parameters:
+    
+    ncvar: `str`
+        The name of the netCDF count variable.
+
+          *Example:*
+             ``ncvar='landpoints'``
+
+:Returns:
+
+    out: `Count`
+
+        '''
+        g = self.read_vars
+        
+        # Initialise the count variable
+        variable = self.implementation.initialise_Count()
+
+        # Store the netCDF variable name
+        self.implementation.set_ncvar(variable, ncvar)
+
+        properties = g['variable_attributes'][ncvar]
+        properties.pop('instance_dimension', None)
+        self.implementation.set_properties(variable, properties)
+        
+        data = self._create_data(ncvar, variable, uncompress_override=True)
+        self.implementation.set_data(variable, data, copy=False)
+            
+        return variable
+    #--- End: def
+
     def _create_Index(self, ncvar):
         '''Create a 
     
 :Parameters:
     
     ncvar: `str`
-        The name of the netCDF list variable.
+        The name of the netCDF index variable.
 
           *Example:*
              ``ncvar='landpoints'``
@@ -2671,7 +2709,7 @@ variable should be pre-filled with missing values.
         self.implementation.set_ncvar(variable, ncvar)
 
         properties = g['variable_attributes'][ncvar]
-        properties.pop('instance_dimension', None)
+        properties.pop('sample_dimension', None)
         self.implementation.set_properties(variable, properties)
         
         data = self._create_data(ncvar, variable, uncompress_override=True)
@@ -2681,7 +2719,7 @@ variable should be pre-filled with missing values.
     #--- End: def
 
     def _create_List(self, ncvar):
-        '''Create a 
+        '''Create a ppp
     
 :Parameters:
     
@@ -2696,15 +2734,13 @@ variable should be pre-filled with missing values.
     out: `List`
 
         '''
-        g = self.read_vars
-        
         # Initialise the list variable
         variable = self.implementation.initialise_List()
 
         # Store the netCDF variable name
         self.implementation.set_ncvar(variable, ncvar)
 
-        properties = g['variable_attributes'][ncvar]
+        properties = self.read_vars['variable_attributes'][ncvar]
         properties.pop('compress', None)
         self.implementation.set_properties(variable, properties)
         
@@ -2882,7 +2918,7 @@ variable should be pre-filled with missing values.
                             gathered_array=array,
                             uncompressed_shape=uncompressed_shape,
                             sample_axis=sample_axis,
-                            list_array=c['list_array'])
+                            list_variable=c['list_variable'])
                     elif 'ragged_indexed_contiguous' in c:
                         # --------------------------------------------
                         # Contiguous indexed ragged array. Check this
@@ -2897,8 +2933,8 @@ variable should be pre-filled with missing values.
                         array = self._create_ragged_indexed_contiguous_array(
                             ragged_indexed_contiguous_array=array,
                             uncompressed_shape=uncompressed_shape,
-                            count_array=c['elements_per_profile'],
-                            index_array=c['profile_indices'])
+                            count_variable=c['count_variable'],
+                            index_variable=c['index_variable'])
                     elif 'ragged_contiguous' in c:                    
                         # --------------------------------------------
                         # Contiguous ragged array
@@ -2909,7 +2945,7 @@ variable should be pre-filled with missing values.
                         array = self._create_ragged_contiguous_array(
                             ragged_contiguous_array=array,
                             uncompressed_shape=uncompressed_shape,
-                            count_array=c['elements_per_instance'])
+                            count_variable=c['count_variable'])
                     elif 'ragged_indexed' in c:
                         # --------------------------------------------
                         # Indexed ragged array
@@ -2920,7 +2956,7 @@ variable should be pre-filled with missing values.
                         array = self._create_ragged_indexed_array(
                             ragged_indexed_array=array,
                             uncompressed_shape=uncompressed_shape,
-                            index_array=c['instances'])
+                            index_variable=c['index_variable'])
                     else:
                         raise ValueError("Bad compression vibes. c.keys()={}".format(list(c.keys())))
         #--- End: if
@@ -3292,7 +3328,7 @@ dimensions are returned.
 
     def _create_gathered_array(self, gathered_array=None,
                                uncompressed_shape=None,
-                               sample_axis=None, list_array=None):
+                               sample_axis=None, list_variable=None):
         '''Create a `Data` object for a compressed-by-gathering netCDF
 variable.
 
@@ -3300,7 +3336,7 @@ variable.
 
     gathered_array: `NetCDFArray`
 
-    list_array: `NetCDFArray`
+    list_variable: `List`
 
 :Returns:
 
@@ -3316,13 +3352,13 @@ variable.
             shape=uncompressed_shape,
             size=uncompressed_size,
             sample_axis=sample_axis,
-            list_array=list_array,
+            list_array=list_variable,
         )
     #--- End: def
     
     def _create_ragged_contiguous_array(self, ragged_contiguous_array,
                                         uncompressed_shape=None,
-                                        count_array=None):
+                                        count_variable=None):
         '''Create a `Data` object for a compressed-by-contiguous-ragged-array
 netCDF variable.
 
@@ -3339,12 +3375,12 @@ netCDF variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            count_array=count_array)
+            count_array=count_variable)
     #--- End: def
     
     def _create_ragged_indexed_array(self, ragged_indexed_array,
                                      uncompressed_shape=None,
-                                     index_array=None):
+                                     index_variable=None):
         '''Create a `Data` object for a compressed-by-indexed-ragged-array
 netCDF variable.
 
@@ -3361,13 +3397,14 @@ netCDF variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            index_array=index_array)
+            index_array=index_variable)
     #--- End: def
     
     def _create_ragged_indexed_contiguous_array(self,
                                                 ragged_indexed_contiguous_array,
                                                 uncompressed_shape=None,
-                                                count_array=None, index_array=None):
+                                                count_variable=None,
+                                                index_variable=None):
         '''Create a `Data` object for a
 compressed-by-indexed-contiguous-ragged-array netCDF variable.
 
@@ -3384,8 +3421,8 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            count_array=count_array,
-            index_array=index_array)
+            count_array=count_variable,
+            index_array=index_variable)
     #--- End: def
     
     def _create_Data(self, array=None, ncvar=None):

@@ -206,7 +206,7 @@ dtype('float64')
         return self._size
     #--- End: def
 
-    def compressed_axes(self):
+    def get_compressed_axes(self):
         '''The axes of the uncompressed array that have been compressed.
 
 :Returns:

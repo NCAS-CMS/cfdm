@@ -83,6 +83,22 @@ True
         return self.compressed_array.get_compressed_array()
     #--- End: def
     
+    def get_compressed_axes(self):
+        '''The axes of the array that have been compressed.
+
+:Returns:
+
+    out: `list`
+        The compressed axes described by their integer positions in
+        the list of (uncompressed) axes. If no axes have been
+        compressed then the list is empty.
+
+:Examples:
+
+        '''
+        return []
+    #--- End: def
+    
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
         '''Return a subspace, defined by indices, of a numpy array.

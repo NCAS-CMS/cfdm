@@ -5,20 +5,37 @@ import os
 
 from .. import __version__
 
-from ..auxiliarycoordinate import AuxiliaryCoordinate
-from ..cellmethod          import CellMethod
-from ..cellmeasure         import CellMeasure
-from ..coordinatereference import CoordinateReference
-from ..dimensioncoordinate import DimensionCoordinate
-from ..domainancillary     import DomainAncillary
-from ..domainaxis          import DomainAxis
-from ..field               import Field
-from ..fieldancillary      import FieldAncillary
-
-from ..bounds               import Bounds
-from ..list                 import List
-from ..coordinateconversion import CoordinateConversion
-from ..datum                import Datum
+from .. import (AuxiliaryCoordinate,
+                CellMethod,
+                CellMeasure,
+                CoordinateReference,
+                DimensionCoordinate,
+                DomainAncillary,
+                DomainAxis,
+                Field,
+                FieldAncillary,
+                Bounds,
+                Count,
+                List,
+                Index,
+                CoordinateConversion,
+                Datum)
+#from ..auxiliarycoordinate import AuxiliaryCoordinate
+#from ..cellmethod          import CellMethod
+#from ..cellmeasure         import CellMeasure
+#from ..coordinatereference import CoordinateReference
+#from ..dimensioncoordinate import DimensionCoordinate
+#from ..domainancillary     import DomainAncillary
+#from ..domainaxis          import DomainAxis
+#from ..field               import Field
+#from ..fieldancillary      import FieldAncillary
+#
+#from ..bounds               import Bounds
+#from ..count                 import Count
+#from ..list                 import List
+#from ..index                 import Index
+#from ..coordinateconversion import CoordinateConversion
+#from ..datum                import Datum
 
 from ..data import (Data,
                     GatheredArray,
@@ -45,6 +62,8 @@ implementation = CFDMImplementation(version = __version__,
                                     
                                     Bounds = Bounds,
                                     List   = List,
+                                    Index=Index,
+                                    Count=Count,
                                     
                                     CoordinateConversion = CoordinateConversion,
                                     Datum                = Datum,
@@ -57,12 +76,12 @@ implementation = CFDMImplementation(version = __version__,
                                     RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
                                     )
 
-netcdf = NetCDFRead(implementation)
+#netcdf = NetCDFRead(implementation)
 # um = UMRead(implementation)
 
 def read(filename, external_files=(), verbose=False,
          ignore_read_error=False, uncompress=True, field=None,
-         _debug=False):
+         _debug=False, _implementation=implementation):
     '''Read fields from netCDF files.
 
 Files may be on disk or on a OPeNDAP server.
@@ -187,19 +206,20 @@ Any amount of netCDF files may be read.
     # ----------------------------------------------------------------
     # Read the fields in the file
     # ----------------------------------------------------------------
-    field_list = _read_a_file(filename,
-                              external_files=external_files,
-                              ignore_read_error=ignore_read_error,
-                              verbose=verbose,
-                              field=field,
-                              uncompress=uncompress,
-                              _debug=_debug)
-            
+    fields = _read_a_file(filename,
+                          external_files=external_files,
+                          ignore_read_error=ignore_read_error,
+                          verbose=verbose,
+                          field=field,
+                          uncompress=uncompress,
+                          _debug=_debug,
+                          _implementation=_implementation)
+    
     if verbose:
         print("Read {0} field{1} from file {2}".format( 
-            len(field_list), _plural(field_counter), filename))
+            len(fields), _plural(field_counter), filename))
    
-    return field_list
+    return fields
 #--- End: def
 
 def _plural(n):
@@ -214,7 +234,8 @@ def _read_a_file(filename,
                  verbose=False,
                  field=(),
                  uncompress=True,
-                 _debug=False):
+                 _debug=False,
+                 _implementation=None):
     '''
 
 Read the contents of a single file into a field list.
@@ -238,42 +259,22 @@ Read the contents of a single file into a field list.
         The fields in the file.
 
 '''
-    # Check the file type
-    ftype = file_type(filename)        
-    
     # ----------------------------------------------------------------
-    # Still here? Read the file into fields.
+    # Initialise the netCDF read object
     # ----------------------------------------------------------------
-    fields = netcdf.read(filename, field=field, verbose=verbose,
-                         uncompress=uncompress, _debug=_debug)
-        
+    netcdf = NetCDFRead(_implementation)
+
+    # ----------------------------------------------------------------
+    # Read the file into fields.
+    # ----------------------------------------------------------------
+    if netcdf.is_netcdf_file(filename):
+        fields = netcdf.read(filename, field=field, verbose=verbose,
+                             uncompress=uncompress, _debug=_debug)
+    else:
+        raise IOError("Can't determine format of file {}".format(filename))
+
     # ----------------------------------------------------------------
     # Return the fields
     # ----------------------------------------------------------------
     return fields
-#--- End: def
-
-def file_type(filename):
-    '''
-
-:Parameters:
-
-    filename: `str`
-        The file name.
-
-:Returns:
-
-    out: `str`
-        The format type of the file.
-
-:Examples:
-
->>> filetype = file_type(filename)
-
-'''
-    if netcdf.is_netcdf_file(filename):
-        return 'netCDF'
-
-    # Still here?
-    raise IOError("Can't determine format of file {}".format(filename))
 #--- End: def

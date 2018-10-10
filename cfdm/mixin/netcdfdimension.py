@@ -10,36 +10,36 @@ class NetCDFDimension(object):
         '''
         '''
         try:
-            ncdim = source.get_ncdim(None)
+            ncdim = source.nc_get_dimension(None)
         except AttributeError:
             ncdim = None
 
         if ncdim is not None:
-            self.set_ncdim(ncdim)
+            self.nc_set_dimension(ncdim)
     #--- End: def
 
-    def del_ncdim(self):
+    def nc_del_dimension(self):
         '''
         '''        
-        return self._del_component('ncdim')
+        return self._del_component('nc_dimension')
     #--- End: def
 
-    def get_ncdim(self, *default):
+    def nc_get_dimension(self, *default):
         '''ttttttttt
         '''        
-        return self._get_component('ncdim', *default)
+        return self._get_component('nc_dimension', *default)
     #--- End: def
 
-    def has_ncdim(self):
+    def nc_has_dimension(self):
         '''
         '''        
-        return self._has_component('ncdim')
+        return self._has_component('nc_dimension')
     #--- End: def
 
-    def set_ncdim(self, value):
+    def nc_set_dimension(self, value):
         '''
         '''
-        return self._set_component('ncdim', value, copy=False)
+        return self._set_component('nc_dimension', value, copy=False)
     #--- End: def
 
 #--- End: class

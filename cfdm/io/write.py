@@ -1,8 +1,12 @@
 from ..                    import __version__
 
-from ..coordinatereference import CoordinateReference
-from ..field               import Field
-from ..data                import Data
+from .. import (CoordinateReference,
+                Field,
+                Data)
+
+#from ..coordinatereference import CoordinateReference
+#from ..field               import Field
+#from ..data                import Data
 
 from . import CFDMImplementation
 
@@ -11,16 +15,18 @@ from .netcdf import NetCDFWrite
 
 implementation = CFDMImplementation(version=__version__,
                                     CoordinateReference=CoordinateReference,
-                                    Field=Field, Data=Data)
+                                    Field=Field,
+                                    Data=Data)
 
 
-netcdf = NetCDFWrite(implementation)
+#netcdf = NetCDFWrite(implementation)
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           verbose=False, mode='w', least_significant_digit=None,
           endian='native', compress=0, fletcher32=False,
           no_shuffle=False, variable_attributes=None, datatype=None,
-          HDF_chunksizes=None, unlimited=None, _debug=False):
+          HDF_chunksizes=None, unlimited=None, _debug=False,
+          _implementation=implementation):
     '''Write fields to a netCDF file.
     
 NetCDF dimension and variable names will be taken, if present, from
@@ -268,7 +274,13 @@ which have equal values across all input fields.
  <CF Field: v_compnt_of_wind(19, 29, 24)>,
  <CF Field: potential_temperature(19, 30, 24)>]
 
-    '''      
+    '''
+    # ----------------------------------------------------------------
+    # Initialise the netCDF write object
+    # ----------------------------------------------------------------
+    netcdf = NetCDFWrite(_implementation)
+
+         
     if fields:
         netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
                      verbose=verbose, mode=mode,
@@ -277,6 +289,5 @@ which have equal values across all input fields.
                      no_shuffle=no_shuffle, fletcher32=fletcher32,
                      variable_attributes=variable_attributes,
                      datatype=datatype, HDF_chunks=HDF_chunksizes,
-                     unlimited=unlimited, #Conventions=Conventions,
-                     _debug=_debug)
+                     unlimited=unlimited, _debug=_debug)
 #--- End: def

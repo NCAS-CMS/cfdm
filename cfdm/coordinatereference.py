@@ -215,7 +215,7 @@ The built-in function `str`
 x.__str__() <==> str(x)
 
 '''    
-        return self.name(default=self.get_ncvar(''))
+        return self.name(default=self.nc_get_variable(''))
     #--- End: def
 
     def dump(self, display=True, _omit_properties=None, field=None,
@@ -462,7 +462,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
         #--- End: if
         
         if ncvar and (all_names or not out):
-            n = self.get_ncvar(None)
+            n = self.nc_get_variable(None)
             if n is not None:
                 out.append('ncvar%{0}'.format(n))
         #--- End: if

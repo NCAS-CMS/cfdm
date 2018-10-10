@@ -101,8 +101,8 @@ to the order of the elements.
 By default the name is the first found of the following:
 
   3. If the *ncdim* parameter is True, the netCDF variable name (as
-     returned by the `get_ncvar` method), preceeded by the string
-     ``'ncvar%'``.
+     returned by the `nc_get_variable` method), preceeded by the
+     string ``'ncvar%'``.
   
   4. The value of the *default* parameter.
 
@@ -131,7 +131,7 @@ By default the name is the first found of the following:
         '''
         if all_names:
             out = []
-            n = self.get_ncdim(None)
+            n = self.nc_get_dimension(None)
             if n is not None:
                 out.append('ncdim%{0}'.format(n))
                 
@@ -140,7 +140,7 @@ By default the name is the first found of the following:
 
             return out
        
-        n = self.get_ncdim(None)
+        n = self.nc_get_dimension(None)
         if n is not None:
             return 'ncdim%{0}'.format(n)
         

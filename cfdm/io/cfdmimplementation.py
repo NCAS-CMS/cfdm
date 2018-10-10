@@ -531,7 +531,7 @@ axes, and possibly other axes, are returned.
         return field.get_data_axes()
     #--- End: def
          
-    def get_data_max(self, data):
+    def get_data_max(self, parent):
         '''
 
 :Parameters:
@@ -541,7 +541,7 @@ axes, and possibly other axes, are returned.
     out: `int`
         
         '''
-        return data.max()
+        return parent.data.max()
     #--- End: def
     
     def get_list_variable(self, construct):
@@ -619,7 +619,7 @@ axes, and possibly other axes, are returned.
 
 :Examples 2:
         '''
-        return field.domain_axes()[axis].get_ncdim(*default)
+        return field.domain_axes()[axis].nc_get_dimension(*default)
     #--- End: def
 
     def get_ncvar(self, construct, *default):
@@ -631,7 +631,7 @@ axes, and possibly other axes, are returned.
 
     out: `str`
        '''
-       return construct.get_ncvar(*default)
+       return construct.nc_get_variable(*default)
     #--- End: def
 
     def get_properties(self, parent):
@@ -751,6 +751,14 @@ axes, and possibly other axes, are returned.
         cls = self.get_class('CoordinateReference')
         return cls()
     #--- End: def
+ 
+    def initialise_Count(self):
+        '''
+
+        '''
+        cls = self.get_class('Count')
+        return cls()
+    #--- End: def
 
     def initialise_Data(self, data=None, units=None, calendar=None,
                         copy=True):
@@ -832,6 +840,14 @@ axes, and possibly other axes, are returned.
         return cls(compressed_array=compressed_array, ndim=ndim,
                    shape=shape, size=size, sample_axis=sample_axis,
                    list_array=list_array)
+    #--- End: def
+
+    def initialise_Index(self):
+        '''
+
+        '''
+        cls = self.get_class('Index')
+        return cls()
     #--- End: def
 
     def initialise_List(self):
@@ -1183,7 +1199,7 @@ also be provided.
     `None`
 
         '''
-        construct.set_ncdim(ncdim)
+        construct.nc_set_dimension(ncdim)
     #--- End: def
 
     def set_ncvar(self, parent, ncvar):
@@ -1195,7 +1211,7 @@ also be provided.
 
     `None`
         '''
-        parent.set_ncvar(ncvar)
+        parent.nc_set_variable(ncvar)
     #--- End: def
 
     def set_node_ncdim(self, parent, ncdim):

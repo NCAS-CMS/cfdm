@@ -1040,8 +1040,9 @@ selected with the keyword arguments.
         d = self.copy()
 
         if not d.ndim:
-            if axes or axes == 0:
-                raise ValueError("Can't squeeze data: Data has no axes")
+            if axes:
+                raise ValueError(
+"Can't squeeze data: axes {} is not allowed data with shape {}".format(axes, d.shape))
 
             return d
 
@@ -1073,48 +1074,48 @@ selected with the keyword arguments.
         return d
     #--- End: def
 
-    def sum(self, axes=None):
-        '''Return the sum of an array or the sum along axes.
-
-Missing data array elements are omitted from the calculation.
-
-.. seealso:: `max`, `min`
-
-:Parameters:
-
-    axes: (sequence of) `int`, optional
-
-:Returns:
-
-    out: `Data`
-        The sum of the data along the specified axes.
-
-:Examples:
-
-        '''
-        # Parse the axes. By default flattened input is used.
-        if axes is not None:
-            try:
-                axes = self._parse_axes(axes)
-            except ValueError as error:
-                raise ValueError("Can't sum data: {}".format(error))
-        #--- End: if
-        
-        array = self.get_array()
-        array = numpy.sum(array, axis=axes, keepdims=True)
-            
-        d = self.copy()
-        d._set_Array(array, copy=False)
-
-#        if d._HDF_chunks:            
-#            HDF = {}
-#            for axis in axes:
-#                HDF[axis] = None
+#    def sum(self, axes=None):
+#        '''Return the sum of an array or the sum along axes.
 #
-#            d.HDF_chunks(HDF)
-        
-        return d
-    #--- End: def
+#Missing data array elements are omitted from the calculation.
+#
+#.. seealso:: `max`, `min`
+#
+#:Parameters:
+#
+#    axes: (sequence of) `int`, optional
+#
+#:Returns:
+#
+#    out: `Data`
+#        The sum of the data along the specified axes.
+#
+#:Examples:
+#
+#        '''
+#        # Parse the axes. By default flattened input is used.
+#        if axes is not None:
+#            try:
+#                axes = self._parse_axes(axes)
+#            except ValueError as error:
+#                raise ValueError("Can't sum data: {}".format(error))
+#        #--- End: if
+#        
+#        array = self.get_array()
+#        array = numpy.sum(array, axis=axes, keepdims=True)
+#            
+#        d = self.copy()
+#        d._set_Array(array, copy=False)
+#
+##        if d._HDF_chunks:            
+##            HDF = {}
+##            for axis in axes:
+##                HDF[axis] = None
+##
+##            d.HDF_chunks(HDF)
+#        
+#        return d
+#    #--- End: def
 
     def transpose(self, axes=None):
         '''Permute the axes of the data array.
@@ -1180,13 +1181,13 @@ Missing data array elements are omitted from the calculation.
 
         array = self.get_array()
         array = numpy.transpose(array, axes=axes)
-        
+
         d._set_Array(array, copy=False)
 
         return d
     #--- End: def
 
-    def compressed_axes(self):
+    def get_compressed_axes(self):
         '''asd s
 
 .. seealso:: `compression_type`, `list_indices`
@@ -1212,13 +1213,12 @@ Missing data array elements are omitted from the calculation.
 []
 
         '''
-        ma = self._get_Array(None)
+        ca = self._get_Array(None)
 
-        compressed_axes = getattr(ma, 'compressed_axes', None)
-        if compressed_axes is None:
+        if ca is None:
             return []
 
-        return compressed_axes()
+        return ca.get_compressed_axes()
     #--- End: def
 
     def get_compression_type(self):

@@ -52,14 +52,14 @@ after initialisation with the `_set_component` method.
 
 :Examples:
 
->>> f._set_component('ncvar', 'air_temperature')
->>> f._has_component('ncvar')
+>>> f._set_component('foo', 'bar')
+>>> f._has_component('foo')
 True
->>> f._get_component('ncvar')
-'air_temperature'
->>> f._del_component('ncvar')
-'air_temperature'
->>> f._has_component('ncvar')
+>>> f._get_component('foo')
+'bar'
+>>> f._del_component('foo')
+'bar'
+>>> f._has_component('foo')
 False
 
         '''
@@ -88,14 +88,14 @@ False
 
 :Examples:
 
->>> f._set_component('ncvar', 'air_temperature')
->>> f._has_component('ncvar')
+>>> f._set_component('foo', 'bar')
+>>> f._has_component('foo')
 True
->>> f._get_component('ncvar')
-'air_temperature'
->>> f._del_component('ncvar')
-'air_temperature'
->>> f._has_component('ncvar')
+>>> f._get_component('foo')
+'bar'
+>>> f._del_component('foo')
+'bar'
+>>> f._has_component('foo')
 False
 
         '''
@@ -128,14 +128,14 @@ False
 
 :Examples:
 
->>> f._set_component('ncvar', 'air_temperature')
->>> f._has_component('ncvar')
+>>> f._set_component('foo', 'bar')
+>>> f._has_component('foo')
 True
->>> f._get_component('ncvar')
-'air_temperature'
->>> f._del_component('ncvar')
-'air_temperature'
->>> f._has_component('ncvar')
+>>> f._get_component('foo')
+'bar'
+>>> f._del_component('foo')
+'bar'
+>>> f._has_component('foo')
 False
 
         '''
@@ -162,14 +162,14 @@ False
 :Examples:
 
 
->>> f._set_component('ncvar', 'air_temperature')
->>> f._has_component('ncvar')
+>>> f._set_component('foo', 'bar')
+>>> f._has_component('foo')
 True
->>> f._get_component('ncvar')
-'air_temperature'
->>> f._del_component('ncvar')
-'air_temperature'
->>> f._has_component('ncvar')
+>>> f._get_component('foo')
+'bar'
+>>> f._del_component('foo')
+'bar'
+>>> f._has_component('foo')
 False
 
         '''

@@ -115,7 +115,7 @@ x.__str__() <==> str(x)
         title = "Field: {0}".format(self.name(''))
 
         # Append the netCDF variable name
-        ncvar = self.get_ncvar(None)
+        ncvar = self.nc_get_variable(None)
         if ncvar is not None:
             title += " (ncvar%{0})".format(ncvar)
         
@@ -533,7 +533,7 @@ last values.
         indent1 = indent0 + indent
 
         if _title is None:
-            ncvar = self.get_ncvar(None)
+            ncvar = self.nc_get_variable(None)
             _title = self.name(default=None)
             if ncvar is not None:
                 if _title is None:

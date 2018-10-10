@@ -22,18 +22,23 @@ if StrictVersion(platform.python_version()) < StrictVersion('2.7.0'):
         "Bad python version: cfdm requires 2.7 <= python. Got {}".format(
         platform.python_version()))
 
-from .bounds               import Bounds
-from .coordinateconversion import CoordinateConversion
-from .constants            import *
-from .constructs           import Constructs
-from .data.data            import Data
-from .data.netcdfarray     import NetCDFArray
-from .datum                import Datum
-from .domain               import Domain
-from .functions            import *
-from .interiorring         import InteriorRing
+from .constants        import *
+from .constructs       import Constructs
+from .data.data        import Data
+from .data.netcdfarray import NetCDFArray
+from .functions        import *
 #from .io.read              import read
 #from .io.write             import write
+
+from .count import Count
+from .index import Index
+from .list  import List
+
+from .bounds               import Bounds
+from .coordinateconversion import CoordinateConversion
+from .datum                import Datum
+from .domain               import Domain
+from .interiorring         import InteriorRing
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure

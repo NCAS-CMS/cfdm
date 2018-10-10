@@ -121,10 +121,10 @@ class DSGTest(unittest.TestCase):
                 break
 
 #        print(g.get_array())
-        print(repr(g.data.get_list_data().get_array()))
-        print(g.data.get_list_data().get_array())
+        print(repr(g.data.get_list_variable().get_array()))
+        print(g.data.get_list_variable().get_array())
         print('compression_type=',g.data.get_compression_type())
-        print(g.data.compressed_axes())
+        print(g.data.get_compressed_axes())
         print(g.data.shape)
         
 #        # Select the specific humidity field
