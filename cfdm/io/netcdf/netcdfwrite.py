@@ -297,7 +297,8 @@ If the input variable has no `!dtype` attribute (or it is None) then
         return ncdim
     #--- End: def
     
-    def _netcdf_dimensions(self, field, key, construct):
+    def _netcdf_dimensions(self, field, key, construct,
+                           create_compression_variable=False):
         '''Return a tuple of the netCDF dimension names for the axes of a
 metadata construct.
     
@@ -333,9 +334,11 @@ metadata construct.
 #                # list variable to the file if required.
 #                # ----------------------------------------------------
 #                list_variable = self.implementation.get_list_variable(construct)
-#                new_ncdim = self._write_list_variable(f, list_variable,
-#                                                      compress=', '.join(compressed_ncdims))
-#
+#                if create_compression_variable:
+#                    new_ncdim = self._write_list_variable(f, list_variable,
+#                                                          compress=', '.join(compressed_ncdims))
+#                else:
+#                    new_ncdim = self.implementation.nc_get_variable(list_variable)
 #            elif compression_type in ('ragged contiguous',
 #                                      'ragged indexed contiguous'):
 #                # ----------------------------------------------------
@@ -599,33 +602,36 @@ a new netCDF dimension for the bounds.
 #        return ncdim
 #    #--- End: def
 #    
-#    def _write_list_variable(self, f, list_variable, compress):
-#        '''
-#
-#        '''        
-#        g = self.write_vars
-#
-#        create = not self._already_in_file(list_variable)
-#    
-#        if create:
-#            ncvar = self._create_netcdf_variable_name(list_variable,
-#                                                      default='list')
-#            
-#            # Create a new dimension
-#            self._write_dimension(
-#                ncvar, f,
-#                size=self.implementation.get_data_size(list_variable))
-#            
-#            extra = {'compress': compress}
-#    
-#            # Create a new list variable
-#            self._write_netcdf_variable(ncvar, (ncvar,),
-#                                        list_variable, extra=extra)
-#        else:
-#            ncvar = g['seen'][id(list_variable)]['ncvar']
-#
-#        return ncvar
-#    #--- End: def
+    def _write_list_variable(self, f, list_variable, compress):
+        '''
+
+        '''        
+        g = self.write_vars
+
+        create = not self._already_in_file(list_variable)
+    
+        if create:
+            ncvar = self._create_netcdf_variable_name(list_variable,
+                                                      default='list')
+            
+            # Create a new dimension
+            self._write_dimension(
+                ncvar, f,
+                size=self.implementation.get_data_size(list_variable))
+            
+            extra = {'compress': compress}
+    
+            # Create a new list variable
+            self._write_netcdf_variable(ncvar, (ncvar,),
+                                        list_variable, extra=extra)
+
+
+            self.implementation.nc_set_variable(list_variable, ncvar)
+        else:
+            ncvar = g['seen'][id(list_variable)]['ncvar']
+
+        return ncvar
+    #--- End: def
     
     def _write_scalar_data(self, value, ncvar):
         '''Write a dimension coordinate and bounds to the netCDF file.
@@ -1418,6 +1424,8 @@ extra trailing dimension.
             id_f = id(f)
             org_f = f
             
+        # Copy the field, as we will undoubtedly to terrible things to
+        # it.
         f = self.implementation.copy_construct(f)
     
         data_axes = self.implementation.get_field_data_axes(f)

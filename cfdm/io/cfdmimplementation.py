@@ -915,6 +915,19 @@ axes, and possibly other axes, are returned.
         return bool(coordinate.get_geometry(None) == 'climatology')
     #--- End: def
 
+    def nc_set_instance_dimension(self, variable, ncdim):
+        '''
+        '''
+        variable.nc_set_instance_dimension(ncdim)
+    #--- End: def
+    
+
+    def nc_set_sample_dimension(self, variable, ncdim):
+        '''
+        '''
+        variable.nc_set_sample_dimension(ncdim)
+    #--- End: def
+    
     def set_auxiliary_coordinate(self, field, construct, axes, copy=True):
         '''Insert a auxiliary coordinate object into a field.
         

@@ -23,8 +23,8 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
                          interior_ring=interior_ring, source=source,
                          copy=copy, _use_data=_use_data)
         
-        if source is not None:
-            self._intialise_ncvar_from(source)
+#        if source is not None:
+        self._intialise_netcdf(source)
     #--- End: def
 
     

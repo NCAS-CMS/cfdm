@@ -7,9 +7,10 @@ from .coordinate                  import Coordinate
 from .parameters                  import Parameters
 from .parametersdomainancillaries import ParametersDomainAncillaries
 
-from .netcdf                      import NetCDF
-from .netcdfdimension             import NetCDFDimension
-from .netcdfvariable              import NetCDFVariable
+from .netcdf                      import (NetCDFDimension,
+                                          NetCDFInstanceDimension,
+                                          NetCDFSampleDimension,
+                                          NetCDFVariable)
 
 from .constructaccess             import ConstructAccess
 

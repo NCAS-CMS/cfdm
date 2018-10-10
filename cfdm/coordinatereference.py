@@ -203,8 +203,8 @@ frame and consists of the following:
             source=source,
             copy=copy)
         
-        if source is not None:
-            self._intialise_ncvar_from(source)
+#        if source is not None:
+        self._intialise_netcdf(source)
     #--- End: def
    
     def __str__(self):

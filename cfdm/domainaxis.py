@@ -37,8 +37,9 @@ to the order of the elements.
         '''
         super().__init__(size=size, source=source, copy=copy)
         
-        if source is not None:
-            self._intialise_ncdim_from(source)
+#        if source is not None:
+#            self._intialise_ncdim_from(source)
+        self._intialise_netcdf(source)
     #--- End: def
         
     def equals(self, other, traceback=False, *kwargs):

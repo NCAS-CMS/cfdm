@@ -5,8 +5,7 @@ from . import mixin
 from . import core
 
 
-class CellMeasure(mixin.NetCDF,
-                  mixin.NetCDFVariable,
+class CellMeasure(mixin.NetCDFVariable,
                   mixin.PropertiesData,
                   core.CellMeasure):
         #with_metaclass(
@@ -40,8 +39,8 @@ measure constructs.
                          data=data, source=source, copy=copy,
                          _use_data=_use_data)
         
-        if source is not None:
-            self._intialise_ncvar_from(source)
+#        if source is not None:
+#            self._intialise_ncvar_from(source)
 
         self._intialise_netcdf(source)
     #--- End: def
