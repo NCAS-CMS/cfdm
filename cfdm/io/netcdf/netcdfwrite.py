@@ -1578,7 +1578,7 @@ extra trailing dimension.
                 list_variable = self.implementation.get_list_variable(f)
                 compressed_ncdims = [g['axis_to_ncdim'][axis] for axis in g['compressed_axes']]
                 g['sample_ncdim'] = self._write_list_variable(f, list_variable,
-                                                              compress=', '.join(compressed_ncdims))
+                                                              compress=' '.join(compressed_ncdims))
                 
             nc = len(g['compressed_axes'])
             sample_dimension = [i for i in range(len(field_data_axes)-nc+1)

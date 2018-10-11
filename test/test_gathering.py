@@ -126,7 +126,22 @@ class DSGTest(unittest.TestCase):
         print('compression_type=',g.data.get_compression_type())
         print(g.data.get_compressed_axes())
         print(g.data.shape)
-        
+
+        cfdm.write(f, 'delme.nc', _debug=1)
+        g = cfdm.read('delme.nc', _debug=1)
+
+        print ('\nf\n')
+        for x in f:
+            print(x)
+        print ('\ng\n')
+        for x in g:
+            print(x)
+
+
+        for i in [0, 1, 2]:
+            print  (i)
+            self.assertTrue(g[i].equals(f[i], traceback=True))
+            
 #        # Select the specific humidity field
 #        q = [g for g in f
 #             if g.get_property('standard_name') == 'specific_humidity'][0]#
@@ -234,19 +249,19 @@ class DSGTest(unittest.TestCase):
         temp1 = n.createVariable('temp1', 'f8', ('time', 'height', 'lat', 'list1', 'p'))
         temp1.long_name = "temp1"
         temp1.units = "K"
-        temp1.coordinates = "aux0 aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
+        temp1.coordinates = "aux0 aux7 aux8 aux9"
         temp1[...] = numpy.arange(2*3*4*4*6)
         
         temp2 = n.createVariable('temp2', 'f8', ('time', 'height', 'list2', 'p'))
         temp2.long_name = "temp2"
         temp2.units = "K"
-        temp2.coordinates = "aux0 aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
+        temp2.coordinates = "aux7 aux8 aux9"
         temp2[...] = numpy.arange(2*3*9*6)
         
         temp3 = n.createVariable('temp3', 'f8', ('time', 'list3', 'p'))
         temp3.long_name = "temp3"
         temp3.units = "K"
-        temp3.coordinates = "aux0 aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
+        temp3.coordinates = "aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
         temp3[...] = numpy.arange(2*14*6)
         
         n.close()
