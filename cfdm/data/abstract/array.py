@@ -98,7 +98,31 @@ True
         '''
         return []
     #--- End: def
-    
+
+    def get_sample_axis(self):
+        '''The type of compression that has been applied to the array.
+
+:Returns:
+
+    out: `str`
+        The compression type. An empty string means that no
+        compression has been applied.
+
+:Examples:
+
+>>> c.compression_type
+''
+
+>>> c.compression_type
+'gathered'
+
+>>> c.compression_type
+'ragged contiguous'
+
+        '''
+        return getattr(self, 'sample_axis', None)
+    #--- End: def
+
     @classmethod
     def get_subspace(cls, array, indices, copy=True):
         '''Return a subspace, defined by indices, of a numpy array.

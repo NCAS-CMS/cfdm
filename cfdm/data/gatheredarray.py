@@ -85,7 +85,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Initialise the uncomprssed array
         sample_axis = self.sample_axis
             
-        compressed_axes = self.compressed_axes()
+        compressed_axes = self.get_compressed_axes()
         
         n_compressed_axes = len(compressed_axes)
 

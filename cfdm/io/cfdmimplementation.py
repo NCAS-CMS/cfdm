@@ -159,6 +159,10 @@ AttributeError: Field doesn't have property 'standard_name'
 
     def get_array(self, data):
         '''
+:Parameters:
+
+    data: `Data`
+
         '''
         return data.get_array()
     #--- End: def
@@ -205,6 +209,20 @@ AttributeError: Field doesn't have property 'standard_name'
 '''
         return str(cell_method)
     #--- End: for
+
+    def get_compressed_array(self, data):
+        '''
+
+:Parameters:
+
+    data: `Data`
+
+:Returns:
+
+    out: `numpy.ndarray`
+        '''
+        return data.get_compressed_array()
+    #--- End: def
 
     def get_compressed_axes(self, field, key=None, construct=None):
         '''
@@ -301,7 +319,7 @@ axes, and possibly other axes, are returned.
 
     out: `list`
         '''
-        return data.compressed_axes()
+        return data.get_compressed_axes()
     #--- End: def
 
     def get_data_ndim(self, parent):
@@ -428,6 +446,12 @@ axes, and possibly other axes, are returned.
         return field.domain_axes()[axis].get_size()
     #--- End: def
 
+    def get_sample_dimension(self, construct):
+        '''
+        '''
+        return construct.get_data().get_sample_axis()
+    #--- End: def
+    
     def equal_constructs(self, construct0, construct1,
                          ignore_construct_type=False):
         '''

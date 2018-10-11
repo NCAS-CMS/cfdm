@@ -3760,6 +3760,7 @@ Checks that
         # with a trailing dimension)
         dimensions        = self._ncdimensions(coord_ncvar)
         parent_dimensions = self._ncdimensions(field_ncvar)
+        print ('dimensions=',dimensions, 'parent_dimensions=',parent_dimensions)
         if not self._dimensions_are_subset(coord_ncvar,
                                            self._ncdimensions(coord_ncvar),
                                            self._ncdimensions(field_ncvar)):

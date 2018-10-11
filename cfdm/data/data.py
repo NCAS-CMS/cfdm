@@ -698,6 +698,19 @@ used.
         return array
     #--- End: def
 
+    def get_sample_axis(self):
+        '''
+        '''        
+        ca = self._get_Array(None)
+
+        sa = ca.get_sample_axis()
+        if sa is None:
+            raise ValueError("not compressed: can't get sample axis")
+
+        return sa
+    #--- End: def
+
+    
     def parse_indices(self, indices):
         '''
     
@@ -1185,6 +1198,40 @@ selected with the keyword arguments.
         d._set_Array(array, copy=False)
 
         return d
+    #--- End: def
+
+    def get_compressed_array(self):
+        '''asd s
+
+.. seealso:: `compression_type`, `list_indices`
+
+:Examples 1:
+
+>>> a = d.compression_axes()
+
+:Returns:
+
+    out: `list`
+        The axes of the data that are compressed to a single axis in the internal array.
+
+:Examples 2:
+
+>>> d.compression_axes()
+[0, 1]
+
+>>> d.compression_axes()
+[1, 2, 3]
+
+>>> d.compression_axes()
+[]
+
+        '''
+        ca = self._get_Array(None)
+
+        if not ca.get_compressed_axes():
+            raise ValueError("not compressed: can't get compressed array")
+
+        return ca.get_compressed_array()
     #--- End: def
 
     def get_compressed_axes(self):

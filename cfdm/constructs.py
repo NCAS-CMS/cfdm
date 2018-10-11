@@ -135,7 +135,7 @@ class Constructs(core.Constructs):
         if name is not None:
             return name
 
-        ncdim = domain_axes[axis].get_ncdim(None)
+        ncdim = domain_axes[axis].nc_get_dimension(None)
         if ncdim is not None:
             # Get the name from a netCDF dimension
             return 'ncdim%{0}'.format(ncdim)
