@@ -316,29 +316,32 @@ metadata construct.
         '''
         g = self.write_vars
 
-        domain_axes = self.implementation.get_construct_axes(field, key)
-        
+        if key is not None:
+            domain_axes = self.implementation.get_construct_axes(field, key)
+        else:
+            domain_axes = self.implementation.get_field_data_axes(field)
+            
         ncdims = tuple([g['axis_to_ncdim'][axis] for axis in domain_axes])
 
-#        compressed_axes = self.implementation.get_compressed_axes(field, key, construct)
-#        if compressed_axes:
-#            compressed_ncdims = [g['axis_to_ncdim'][axis] for axis in compressed_axes]
-#            sample_dimension = self.implementation.get_sample_dimension(construct)
-#            compression_type = self.implementation.get_compression_type(construct)
-#            
-#            if compression_type == 'gathered':
-#                # ----------------------------------------------------
-#                # Compression by gathering
-#                #
-#                # Find the dimension of the list variable, writing the
-#                # list variable to the file if required.
-#                # ----------------------------------------------------
-#                list_variable = self.implementation.get_list_variable(construct)
-#                if create_compression_variable:
-#                    new_ncdim = self._write_list_variable(f, list_variable,
-#                                                          compress=', '.join(compressed_ncdims))
-#                else:
-#                    new_ncdim = self.implementation.nc_get_variable(list_variable)
+        compressed_axes = self.implementation.get_compressed_axes(field, key, construct)
+        if compressed_axes:
+            compressed_ncdims = [g['axis_to_ncdim'][axis] for axis in compressed_axes]
+            sample_dimension = self.implementation.get_sample_dimension(construct)
+            compression_type = self.implementation.get_compression_type(construct)
+            
+            if compression_type == 'gathered':
+                # ----------------------------------------------------
+                # Compression by gathering
+                #
+                # Find the dimension of the list variable, writing the
+                # list variable to the file if required.
+                # ----------------------------------------------------
+                list_variable = self.implementation.get_list_variable(construct)
+                if create_compression_variable:
+                    new_ncdim = self._write_list_variable(f, list_variable,
+                                                          compress=', '.join(compressed_ncdims))
+                else:
+                    new_ncdim = self.implementation.nc_get_variable(list_variable)
 #            elif compression_type in ('ragged contiguous',
 #                                      'ragged indexed contiguous'):
 #                # ----------------------------------------------------
@@ -396,12 +399,12 @@ metadata construct.
 #                    sample_dimension=sample_ncdim)
 #
 #        
-#            else:
-#                raise ValueError(
-#                    "Unknown compression type: {!r}".format(compression_type))
-#
-#            ncdims[sample_dimension:sample_dimension+len(compressed_ncdims)] = ncdim
-#        #--- End: if
+            else:
+                raise ValueError(
+                    "Unknown compression type: {!r}".format(compression_type))
+
+            ncdims[sample_dimension:sample_dimension+len(compressed_ncdims)] = ncdim
+        #--- End: if
     
         return ncdims
     #--- End: def
@@ -1499,7 +1502,7 @@ extra trailing dimension.
             elif x != csn:
                 raise ValueError(";sdm p8whw=0[")
         #--- End: for
-
+        
         dimension_coordinates = self.implementation.get_dimension_coordinates(f)
         
         # For each of the field's axes ...
@@ -1622,6 +1625,10 @@ extra trailing dimension.
                         xxx.append({(ncdim, axis_size0): spanning_constructs})
             #--- End: if    
         #--- End: for
+
+        # Now that we've dealt with all of the axes, deal with compression
+        data_ncdimensions = self._netcdf_dimensions(f, None, f,
+                                                    create_compression_variable=True)
 
         # ----------------------------------------------------------------
         # Create auxiliary coordinate variables, except those which might
