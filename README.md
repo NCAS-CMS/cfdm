@@ -33,7 +33,7 @@ Dependencies
 ============
 
 * **Required:** [**python**](http://www.python.org) version 2.7, 3 or
-    later.
+  later.
  
 * **Required:** The [**python numpy
   package**](https://pypi.python.org/pypi/numpy) at version 1.13 or
