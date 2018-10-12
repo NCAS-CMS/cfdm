@@ -9,12 +9,12 @@ class RaggedContiguousArray(abstract.CompressedArray):
     '''A container for a contiguous ragged compressed array.
 
 A collection of features stored using a contiguous ragged array
-combines all features along a single dimension (the "sample"
-dimension) such that each feature in the collection occupies a
+combines all features along a single dimension (the "sample
+dimension") such that each feature in the collection occupies a
 contiguous block.
 
 The information needed to uncompress the data is stored in a separate
-"count" array that gives the size of each block.
+"count variable" that gives the size of each block.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -38,9 +38,9 @@ The information needed to uncompress the data is stored in a separate
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    count_array: `Data`
-        The "count" array required to uncompress the data, identical
-        to the data of a CF-netCDF "count" variable.
+    count_array: `Count`
+        The "count variable" required to uncompress the data, identical
+        to the data of a CF-netCDF count variable.
 
         '''
         super().__init__(compressed_array=compressed_array,

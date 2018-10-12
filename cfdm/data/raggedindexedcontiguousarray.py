@@ -10,14 +10,15 @@ class RaggedIndexedContiguousArray(abstract.CompressedArray):
 
 A collection of features, each of which is sequence of (vertical)
 profiles, stored using an indexed contiguous ragged array combines all
-feature elements along a single dimension (the "sample" dimension)
+feature elements along a single dimension (the "sample dimension")
 such that a contiguous ragged array representation is used for each
 profile and the indexed ragged array representation to organise the
 profiles into timeseries.
 
 The information needed to uncompress the data is stored in a separate
-"count" array that gives the size of each profile; and in a separate
-"index" array that specifies the feature that each profile belongs to.
+"count variable" that gives the size of each profile; and in a
+separate "index variable" that specifies the feature that each profile
+belongs to.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -41,13 +42,13 @@ The information needed to uncompress the data is stored in a separate
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    count_array: `Data`
-        The "count" array required to uncompress the data, identical
-        to the data of a CF-netCDF "count" variable.
+    count_array: `Count`
+        The "count variable" required to uncompress the data,
+        identical to the data of a CF-netCDF count variable.
 
-    index_array: `Data`
-        The "index" array required to uncompress the data, identical
-        to the data of a CF-netCDF "index" variable.
+    index_array: `Index`
+        The "index variable" required to uncompress the data,
+        identical to the data of a CF-netCDF index variable.
 
         '''
         super().__init__(compressed_array=compressed_array,

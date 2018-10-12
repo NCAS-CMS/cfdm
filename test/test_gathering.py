@@ -133,20 +133,20 @@ class DSGTest(unittest.TestCase):
         print ('\nf\n')
         for x in f:
             print(x)
+#            a = x.get_array()
+##            print(a)
+#            x.dump()
+#            
         print ('\ng\n')
         for x in g:
             print(x)
+#            a = x.get_array()
+##            print(a)
+#            x.dump()
 
 
         for i in [0, 1, 2]:
-            print  (i)
             self.assertTrue(g[i].equals(f[i], traceback=True))
-            
-#        # Select the specific humidity field
-#        q = [g for g in f
-#             if g.get_property('standard_name') == 'specific_humidity'][0]#
-#
-#        self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
     #--- End: def        
 
     def _make_gathered_file(self):

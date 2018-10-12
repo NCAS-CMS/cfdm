@@ -12,12 +12,12 @@ class GatheredArray(abstract.CompressedArray):
     '''A container for a gathered compressed array.
 
 Compression by gathering combines axes of a multi-dimensional array
-into a new, discrete axis (the "list" dimension) whilst omitting the
+into a new, discrete axis (the "list dimension") whilst omitting the
 missing values and thus reducing the number of values that need to be
 stored.
 
 The information needed to uncompress the data is stored in a separate
-array (the "list" array) that contains the indices needed to
+variable (the "list variable") that contains the indices needed to
 uncompress the data.
 
     '''
@@ -42,9 +42,9 @@ uncompress the data.
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    list_array: `Data`
-        The "list" array required to uncompress the data, identical to
-        the data of a CF-netCDF "list" variable.
+    list_array: `List`
+        The "list variable" required to uncompress the data, identical
+        to the data of a CF-netCDF list variable.
 
         '''
         super().__init__(compressed_array=compressed_array,
@@ -116,8 +116,8 @@ indexing (given the restrictions on the type of indices allowed) is:
             # Note that it is important for indices a and b to be
             # integers (rather than the slices a:a+1 and b:b+1) so
             # that these dimensions are dropped from uarray[u_indices]
-                
-            uarray[u_indices] = compressed_array[sample_indices]
+
+            uarray[tuple(u_indices)] = compressed_array[tuple(sample_indices)]
         #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)

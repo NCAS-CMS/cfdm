@@ -9,11 +9,11 @@ class RaggedIndexedArray(abstract.CompressedArray):
     '''A container for an indexed ragged compressed array.
 
 A collection of features stored using an indexed ragged array combines
-all features along a single dimension (the "sample" dimension) such
+all features along a single dimension (the "sample dimension") such
 that the values of each feature in the collection are interleaved.
 
 The information needed to uncompress the data is stored in a separate
-"index" array that specifies the feature that each element of the
+"index variable" that specifies the feature that each element of the
 sample dimension belongs to.
 
     '''
@@ -35,9 +35,9 @@ sample dimension belongs to.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    index_array: `Data`
-        The "index" array required to uncompress the data, identical
-        to the data of a CF-netCDF "index" variable.
+    index_array: `Index`
+        The "index variable" required to uncompress the data,
+        identical to the data of a CF-netCDF index variable.
 
         '''
         super().__init__(compressed_array=compressed_array,
