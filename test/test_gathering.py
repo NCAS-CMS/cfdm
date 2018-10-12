@@ -129,7 +129,8 @@ class DSGTest(unittest.TestCase):
 
         cfdm.write(f, 'delme.nc', _debug=1)
         g = cfdm.read('delme.nc', _debug=1)
-
+        self.assertTrue(len(g) == len(f))
+      
         print ('\nf\n')
         for x in f:
             print(x)
@@ -145,7 +146,7 @@ class DSGTest(unittest.TestCase):
 #            x.dump()
 
 
-        for i in [0, 1, 2]:
+        for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))
     #--- End: def        
 
@@ -261,7 +262,7 @@ class DSGTest(unittest.TestCase):
         temp3 = n.createVariable('temp3', 'f8', ('time', 'list3', 'p'))
         temp3.long_name = "temp3"
         temp3.units = "K"
-        temp3.coordinates = "aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
+        temp3.coordinates = "aux0 aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
         temp3[...] = numpy.arange(2*14*6)
         
         n.close()

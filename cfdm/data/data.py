@@ -672,6 +672,32 @@ used.
         return array
     #--- End: def
 
+    def get_count_variable(self, *default):
+        '''
+:Returns:
+
+    out: `Data` or `None`
+
+        '''
+        data = self._get_Array(None)
+        if data is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+
+        array = getattr(data, 'count_array', None)
+        if array is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no count variable".format(
+                self.__class__.__name__))
+        
+        return array
+    #--- End: def
+
     def get_list_variable(self, *default):
         '''
 :Returns:
@@ -1087,48 +1113,48 @@ selected with the keyword arguments.
         return d
     #--- End: def
 
-#    def sum(self, axes=None):
-#        '''Return the sum of an array or the sum along axes.
+    def sum(self, axes=None):
+        '''Return the sum of an array or the sum along axes.
+
+Missing data array elements are omitted from the calculation.
+
+.. seealso:: `max`, `min`
+
+:Parameters:
+
+    axes: (sequence of) `int`, optional
+
+:Returns:
+
+    out: `Data`
+        The sum of the data along the specified axes.
+
+:Examples:
+
+        '''
+        # Parse the axes. By default flattened input is used.
+        if axes is not None:
+            try:
+                axes = self._parse_axes(axes)
+            except ValueError as error:
+                raise ValueError("Can't sum data: {}".format(error))
+        #--- End: if
+        
+        array = self.get_array()
+        array = numpy.sum(array, axis=axes, keepdims=True)
+            
+        d = self.copy()
+        d._set_Array(array, copy=False)
+
+#        if d._HDF_chunks:            
+#            HDF = {}
+#            for axis in axes:
+#                HDF[axis] = None
 #
-#Missing data array elements are omitted from the calculation.
-#
-#.. seealso:: `max`, `min`
-#
-#:Parameters:
-#
-#    axes: (sequence of) `int`, optional
-#
-#:Returns:
-#
-#    out: `Data`
-#        The sum of the data along the specified axes.
-#
-#:Examples:
-#
-#        '''
-#        # Parse the axes. By default flattened input is used.
-#        if axes is not None:
-#            try:
-#                axes = self._parse_axes(axes)
-#            except ValueError as error:
-#                raise ValueError("Can't sum data: {}".format(error))
-#        #--- End: if
-#        
-#        array = self.get_array()
-#        array = numpy.sum(array, axis=axes, keepdims=True)
-#            
-#        d = self.copy()
-#        d._set_Array(array, copy=False)
-#
-##        if d._HDF_chunks:            
-##            HDF = {}
-##            for axis in axes:
-##                HDF[axis] = None
-##
-##            d.HDF_chunks(HDF)
-#        
-#        return d
-#    #--- End: def
+#            d.HDF_chunks(HDF)
+        
+        return d
+    #--- End: def
 
     def transpose(self, axes=None):
         '''Permute the axes of the data array.

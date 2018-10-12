@@ -321,14 +321,45 @@ metadata construct.
 
         compression_type = self.implementation.get_compression_type(construct)
         
-        if compression_type and compression_type == g['compression_type']:
-            field_compressed_axes = g['field_compressed_axes']
+       #if compression_type and compression_type == g['compression_type']:
+       #    field_compressed_axes = g['field_compressed_axes']
+       #    sample_dimension = self.implementation.get_sample_dimension(construct)
+       #    n = len(field_compressed_axes)
+       #    if domain_axes[sample_dimension:sample_dimension+n] == field_compressed_axes:
+       #        ncdims[sample_dimension:sample_dimension+n] = [g['sample_ncdim']]
+       ##--- End: if
+
+        if compression_type:
             sample_dimension = self.implementation.get_sample_dimension(construct)
-            n = len(field_compressed_axes)
-            if domain_axes[sample_dimension:sample_dimension+n] == field_compressed_axes:
-                ncdims[sample_dimension:sample_dimension+n] = [g['sample_ncdim']]
+            compressed_axes = tuple(self.implementation.get_compressed_axes(field, key, construct))
+            compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
+
+            sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
+                            
+            if compression_type == 'gathered':
+                if sample_ncdim is None:
+                    list_variable = self.implementation.get_list_variable(construct)                
+                    sample_ncdim = self._write_list_variable(field, list_variable,
+                                                             compress=' '.join(compressed_ncdims))
+                    g['sample_ncdim'][compressed_ncdims] = sample_ncdim
+
+            elif compression_type == 'ragged contiguous':
+                # ----------------------------------------------------
+                # Compression by contiguous ragged array
+                #
+                # Find the dimension of the count variable, writing
+                # the count variable to the file.
+                # ----------------------------------------------------
+                pass
+#                count = self.implementation.get_count_variable(f)
+#                instance_ncdim = self._write_count_variable(f, count)
+            else:
+                pass
+
+            n = len(compressed_ncdims)
+            ncdims[sample_dimension:sample_dimension+n] = [sample_ncdim]
         #--- End: if
-                
+
         return tuple(ncdims)
     #--- End: def
         
@@ -496,38 +527,49 @@ a new netCDF dimension for the bounds.
         return ncvar
     #--- End: def
 
-#    def _write_count_variable(self, f, count_variable,
-#                              ncdim_base=None, sample_dimension=None):
-#        '''
-#
-#        '''        
-#        g = self.write_vars
-#
-#        create = not self._already_in_file(count_variable)
-#    
-#        if create:
-#            ncvar = self._create_netcdf_variable_name(count_variable,
-#                                                      default='count')
-#            
-#            # Create a new dimension
-#            ncdim = self._netcdf_name(ncdim_base)
+    def _write_count_variable(self, f, count_variable):
+        '''
+
+        '''
+        print ('count_variable= =',repr(count_variable))
+        print ('field =',repr(f))
+        g = self.write_vars
+    
+        if not self._already_in_file(count_variable):
+            ncvar = self._create_netcdf_variable_name(count_variable,
+                                                      default='count')
+
+
+            sample_ncdim = self.implementation.nc_get_sample_dimension(count_variable, 'elements')
+            sample_ncdim = self._netcdf_name(sample_ncdim)
+            self._write_dimension(sample_ncdim, f, None,
+                                  size=int(self.implementation.get_data_sum(count_variable)))
+            
+            # Assume that the instance axis is the first in the data
+            # array
+            instance_axis = self.implementation.get_field_data_axes(f)[0]
+            ncdim = g['axis_to_ncdim'][instance_axis]
+            
 #            self._write_dimension(
 #                ncdim, f,
 #                size=self.implementation.get_data_size(count_variable))
-#
-#            extra = {}
-#            if sample_dimension is not None:
-#                extra['sample_dimension'] = sample_dimension
-#
-#            # Create a new list variable
-#            self._write_netcdf_variable(ncvar, (ncvar,),
-#                                        count_variable, extra=extra)
-#        else:
-#            ncvar = g['seen'][id(count_variable)]['ncvar']
-#
-#        return ncdim
-#    #--- End: def
-#    
+
+            extra = {'sample_dimension': sample_ncdim}
+
+            # Create a new list variable
+            self._write_netcdf_variable(ncvar, (ncdim,),
+                                        count_variable, extra=extra)
+
+            g['count_variable_sample_dimension'][ncvar] = sample_ncdim
+            print (g['count_variable_sample_dimension'])
+        else:
+            ncvar = g['seen'][id(count_variable)]['ncvar']
+            print ('ncvar=',ncvar)
+            sample_ncdim = g['count_variable_sample_dimension'][ncvar]
+    
+        return sample_ncdim
+    #--- End: def
+    
     def _write_list_variable(self, f, list_variable, compress):
         '''
 
@@ -829,7 +871,7 @@ then the input coordinate is not written.
 #        coord = self._change_reference_datetime(coord)
         ncdimensions = self._netcdf_dimensions(f, key, coord)
 
-        
+        print (repr(coord))
         
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
@@ -1269,9 +1311,10 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
 
 #        convert_dtype = g['datatype']
 
-        if g['sample_ncdim'] in ncdimensions:
+        if set(ncdimensions).intersection(g['sample_ncdim'].values()): # in ncdimensions:
             # Get the data as a compressed numpy array
             array = self.implementation.get_compressed_array(data)
+            print ('getting compressed array shape=', array.shape, ncdimensions,'g[nc][ncvar].shape=',g['nc'][ncvar].shape)
         else:
             # Get the data as an uncompressed numpy array
             array = self.implementation.get_array(data)
@@ -1371,9 +1414,8 @@ extra trailing dimension.
         # coordinate variable names
         g['axis_to_ncscalar'] = {}
 
-        g['field_compressed_axes']  = ()
-        g['sample_ncdim']     = None
         g['compression_type'] = None
+        g['sample_ncdim']                    = {}
         
         # Mapping of field component internal identifiers to netCDF
         # variable names
@@ -1564,11 +1606,15 @@ extra trailing dimension.
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
         data_ncdimensions = [g['axis_to_ncdim'][axis] for axis in field_data_axes]
    
-        g['field_compressed_axes'] = tuple(self.implementation.get_compressed_axes(f))
-        if g['field_compressed_axes']:
-            g['compression_type'] = self.implementation.get_compression_type(f)
+        compressed_axes = tuple(self.implementation.get_compressed_axes(f))
+        g['compressed_axes'] = compressed_axes
+        if compressed_axes:
+            compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
+
+            compression_type = self.implementation.get_compression_type(f)
+            g['compression_type'] =  compression_type
             
-            if g['compression_type'] == 'gathered':
+            if compression_type == 'gathered':
                 # ----------------------------------------------------
                 # Compression by gathering
                 #
@@ -1576,18 +1622,31 @@ extra trailing dimension.
                 # list variable to the file.
                 # ----------------------------------------------------
                 list_variable = self.implementation.get_list_variable(f)
-                compressed_ncdims = [g['axis_to_ncdim'][axis] for axis in g['field_compressed_axes']]
-                g['sample_ncdim'] = self._write_list_variable(f, list_variable,
-                                                              compress=' '.join(compressed_ncdims))
+                compress = ' '.join(compressed_ncdims)
+                sample_ncdim = self._write_list_variable(f, list_variable,
+                                                         compress=compress)
+            
+            elif compression_type == 'ragged contiguous':
+                # ----------------------------------------------------
+                # Compression by contiguous ragged array
+                #
+                # Find the dimension of the count variable, writing
+                # the count variable to the file.
+                # ----------------------------------------------------
+                count = self.implementation.get_count_variable(f)
+                sample_ncdim = self._write_count_variable(f, count)
             else:
-                pass
+                raise ValueError("unknown compression: {!r}".format(compression_type))
                 
-            n = len(g['field_compressed_axes'])
-            sample_dimension = [i for i in range(len(field_data_axes)-n+1)
-                                if field_data_axes[i:i+n] == g['field_compressed_axes']]
-            sample_dimension = sample_dimension[0]
+            g['sample_ncdim'][compressed_ncdims] = sample_ncdim
+            
+            n = len(compressed_ncdims)
+            sample_dimension = self.implementation.get_sample_dimension(f)
+#            sample_dimension = [i for i in range(len(field_data_axes)-n+1)
+#                                if field_data_axes[i:i+n] == compressed_axes]
+#            sample_dimension = sample_dimension[0]
 
-            data_ncdimensions[sample_dimension:sample_dimension+n] = [g['sample_ncdim']]
+            data_ncdimensions[sample_dimension:sample_dimension+n] = [sample_ncdim]
         #--- End: if
         
         data_ncdimensions = tuple(data_ncdimensions)
@@ -2217,6 +2276,9 @@ and auxiliary coordinate roles for different data variables.
             '_debug' : False,
 
             'xxx': [],
+
+            'count_variable_sample_dimension': {},
+
         }
         g = self.write_vars
         

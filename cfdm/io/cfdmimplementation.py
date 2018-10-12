@@ -451,6 +451,12 @@ axes, and possibly other axes, are returned.
         '''
         return construct.get_data().get_sample_axis()
     #--- End: def
+
+    def nc_get_sample_dimension(self, count, *default):
+        '''
+        '''
+        return count.nc_get_sample_dimension(count, *default)
+    #--- End: def
     
     def equal_constructs(self, construct0, construct1,
                          ignore_construct_type=False):
@@ -566,6 +572,46 @@ axes, and possibly other axes, are returned.
         
         '''
         return parent.data.max()
+    #--- End: def
+    
+    def get_data_sum(self, parent):
+        '''
+
+:Parameters:
+
+:Returns:
+
+    out: `int`
+        
+        '''
+        return parent.data.sum()
+    #--- End: def
+    
+    def get_count_variable(self, construct):
+        '''Return the measure property of a cell measure contruct.
+
+:Examples 1:
+
+>>> measure = w.get_measure(c)
+
+:Parameters:
+
+    cell_measure:
+        The cell measure object.
+
+:Returns:
+
+    out: `str` or `None`
+        The measure property, or `None` if it has not been set.
+
+:Examples 2:
+
+>>> c
+<CellMeasure: area(73, 96) km2>
+>>> w.get_measure(c)
+'area'
+        '''
+        return construct.get_data().get_count_variable()
     #--- End: def
     
     def get_list_variable(self, construct):
