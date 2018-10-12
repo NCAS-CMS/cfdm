@@ -322,11 +322,11 @@ metadata construct.
         compression_type = self.implementation.get_compression_type(construct)
         
         if compression_type and compression_type == g['compression_type']:
-            compressed_axes = g['compressed_axes']
+            field_compressed_axes = g['field_compressed_axes']
             sample_dimension = self.implementation.get_sample_dimension(construct)
-            nc = len(compressed_axes)
-            if domain_axes[sample_dimension:sample_dimension+nc] == compressed_axes:
-                ncdims[sample_dimension:sample_dimension+nc] = [g['sample_ncdim']]
+            n = len(field_compressed_axes)
+            if domain_axes[sample_dimension:sample_dimension+n] == field_compressed_axes:
+                ncdims[sample_dimension:sample_dimension+n] = [g['sample_ncdim']]
         #--- End: if
                 
         return tuple(ncdims)
@@ -1371,7 +1371,7 @@ extra trailing dimension.
         # coordinate variable names
         g['axis_to_ncscalar'] = {}
 
-        g['compressed_axes']  = ()
+        g['field_compressed_axes']  = ()
         g['sample_ncdim']     = None
         g['compression_type'] = None
         
@@ -1564,8 +1564,8 @@ extra trailing dimension.
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
         data_ncdimensions = [g['axis_to_ncdim'][axis] for axis in field_data_axes]
    
-        g['compressed_axes'] = tuple(self.implementation.get_compressed_axes(f))
-        if g['compressed_axes']:
+        g['field_compressed_axes'] = tuple(self.implementation.get_compressed_axes(f))
+        if g['field_compressed_axes']:
             g['compression_type'] = self.implementation.get_compression_type(f)
             
             if g['compression_type'] == 'gathered':
@@ -1573,19 +1573,21 @@ extra trailing dimension.
                 # Compression by gathering
                 #
                 # Find the dimension of the list variable, writing the
-                # list variable to the file if required.
+                # list variable to the file.
                 # ----------------------------------------------------
                 list_variable = self.implementation.get_list_variable(f)
-                compressed_ncdims = [g['axis_to_ncdim'][axis] for axis in g['compressed_axes']]
+                compressed_ncdims = [g['axis_to_ncdim'][axis] for axis in g['field_compressed_axes']]
                 g['sample_ncdim'] = self._write_list_variable(f, list_variable,
                                                               compress=' '.join(compressed_ncdims))
+            else:
+                pass
                 
-            nc = len(g['compressed_axes'])
-            sample_dimension = [i for i in range(len(field_data_axes)-nc+1)
-                                if field_data_axes[i:i+nc] == g['compressed_axes']]
+            n = len(g['field_compressed_axes'])
+            sample_dimension = [i for i in range(len(field_data_axes)-n+1)
+                                if field_data_axes[i:i+n] == g['field_compressed_axes']]
             sample_dimension = sample_dimension[0]
 
-            data_ncdimensions[sample_dimension:sample_dimension+nc] = [g['sample_ncdim']]
+            data_ncdimensions[sample_dimension:sample_dimension+n] = [g['sample_ncdim']]
         #--- End: if
         
         data_ncdimensions = tuple(data_ncdimensions)
