@@ -727,13 +727,13 @@ used.
     def get_sample_axis(self):
         '''
         '''        
-        ca = self._get_Array(None)
+        a = self._get_Array(None)
 
-        sa = ca.get_sample_axis()
-        if sa is None:
+        sample_axis = a.get_sample_axis()
+        if sample_axis is None:
             raise ValueError("not compressed: can't get sample axis")
 
-        return sa
+        return sample_axis
     #--- End: def
 
     

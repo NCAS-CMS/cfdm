@@ -36,7 +36,7 @@ The information needed to uncompress the data is stored in a separate
         The number of uncompressed array dimensions
 
     sample_axis: `int`
-        The position of the compressed axis in the compressed array.
+        The position of the sample dimension in the compressed array.
 
     count_array: `Count`
         The "count variable" required to uncompress the data, identical

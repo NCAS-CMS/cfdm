@@ -131,7 +131,7 @@ class DSGTest(unittest.TestCase):
 ##            print(a)
 #            x.dump()
 #            
-        cfdm.write(f, 'delme.nc')
+        cfdm.write(f, 'delme.nc', _debug=1)
         g = cfdm.read('delme.nc')
         self.assertTrue(len(g) == len(f))
         

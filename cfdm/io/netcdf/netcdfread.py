@@ -839,22 +839,24 @@ ancillaries, field ancillaries).
     
     def _parse_ragged_contiguous_compression(self, ncvar, 
                                              sample_dimension):
-        '''
+        '''asdasdasds
 
 :Parameters:
 
     ncvar: `str`
-        The netCDF variable name of the count variable.
+        The netCDF variable name of the count variable (section
+        9.3.3).
 
     sample_dimension: `str`
-        The netCDF dimension name of the sample dimension.
+        The netCDF dimension name of the sample dimension (section
+        9.3.3).
 
 :Returns:
 
     out: `str`
         The made-up netCDF dimension name of the element dimension.
 
-    '''
+        '''
         g = self.read_vars        
 
         _debug = g['_debug']
@@ -863,14 +865,8 @@ ancillaries, field ancillaries).
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
-        elements_per_instance = self._create_Count(ncvar) #(ncvar, uncompress_override=True)
+        elements_per_instance = self._create_Count(ncvar)
 
-#        instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
-#        element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
-#    
-#        if _debug:
-#            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
-    
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
         if featureType in ('timeseries', 'trajectory', 'profile'):
@@ -889,30 +885,6 @@ ancillaries, field ancillaries).
                 sample_dimension=sample_dimension,
                 element_dimension=element_dimension,
                 instance_dimension=instance_dimension)
-
-#        base = element_dimension
-#        n = 0
-#        while (element_dimension in g['nc'].dimensions or
-#               element_dimension in g['new_dimensions']):
-#            n += 1
-#            element_dimension = '{0}_{1}'.format(base, n)
-#
-#        g['compression'].setdefault(sample_dimension, {})['ragged_contiguous'] = {
-#            'elements_per_instance'  : elements_per_instance,
-#            'implied_ncdimensions'   : (instance_dimension,
-#                                        element_dimension),
-#            'profile_dimension'      : instance_dimension,
-#            'element_dimension'      : element_dimension,
-#            'element_dimension_size' : element_dimension_size,
-#            'instance_dimension_size': instance_dimension_size,
-#        }
-#    
-#        g['new_dimensions'][element_dimension] = element_dimension_size
-#        
-#        if _debug:
-#            print "    Creating g['compression'][{!r}]['ragged_contiguous']".format(
-#                sample_dimension)
-#    
 
         return element_dimension
     #--- End: def
@@ -1041,10 +1013,6 @@ variable should be pre-filled with missing values.
     element_dimension_1: `str`
         The name of the implied element dimension whose size is the
         maximum number of sub-features in any instance.
-
-    element_dimension_2: `str`
-        The name of the implied element dimension whose size is the
-        maximum number of elements in any sub-feature.
 
     '''
         g = self.read_vars

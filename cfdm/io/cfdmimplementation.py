@@ -446,7 +446,7 @@ axes, and possibly other axes, are returned.
         return field.domain_axes()[axis].get_size()
     #--- End: def
 
-    def get_sample_dimension(self, construct):
+    def get_sample_dimension_position(self, construct):
         '''
         '''
         return construct.get_data().get_sample_axis()

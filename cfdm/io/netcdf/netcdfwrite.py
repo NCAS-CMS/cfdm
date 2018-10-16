@@ -320,17 +320,8 @@ metadata construct.
         ncdims = [g['axis_to_ncdim'][axis] for axis in domain_axes]
 
         compression_type = self.implementation.get_compression_type(construct)
-        
-       #if compression_type and compression_type == g['compression_type']:
-       #    field_compressed_axes = g['field_compressed_axes']
-       #    sample_dimension = self.implementation.get_sample_dimension(construct)
-       #    n = len(field_compressed_axes)
-       #    if domain_axes[sample_dimension:sample_dimension+n] == field_compressed_axes:
-       #        ncdims[sample_dimension:sample_dimension+n] = [g['sample_ncdim']]
-       ##--- End: if
-
         if compression_type:
-            sample_dimension = self.implementation.get_sample_dimension(construct)
+            sample_dimension_position = self.implementation.get_sample_dimension_position(construct)
             compressed_axes = tuple(self.implementation.get_compressed_axes(field, key, construct))
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
 
@@ -346,18 +337,18 @@ metadata construct.
             elif compression_type == 'ragged contiguous':
                 # ----------------------------------------------------
                 # Compression by contiguous ragged array
-                #
-                # Find the dimension of the count variable, writing
-                # the count variable to the file.
                 # ----------------------------------------------------
+                # No need to do anything because i) the count variable
+                # has already been written to the file, ii) we already
+                # have the position of the sample dimension in the
+                # compressed array, and iii) we already have the
+                # netCDF name of the sample dimension.
                 pass
-#                count = self.implementation.get_count_variable(f)
-#                instance_ncdim = self._write_count_variable(f, count)
             else:
                 pass
 
             n = len(compressed_ncdims)
-            ncdims[sample_dimension:sample_dimension+n] = [sample_ncdim]
+            ncdims[sample_dimension_position:sample_dimension_position+n] = [sample_ncdim]
         #--- End: if
 
         return tuple(ncdims)
@@ -401,7 +392,8 @@ metadata construct.
         
 #            g['ncdim_to_size'][ncdim] = size
             g['axis_to_ncdim'][axis] = ncdim
-
+        #--- End: if
+        
         g['ncdim_to_size'][ncdim] = size
         
         if unlimited:
@@ -531,8 +523,6 @@ a new netCDF dimension for the bounds.
         '''
 
         '''
-        print ('count_variable= =',repr(count_variable))
-        print ('field =',repr(f))
         g = self.write_vars
     
         if not self._already_in_file(count_variable):
@@ -561,10 +551,8 @@ a new netCDF dimension for the bounds.
                                         count_variable, extra=extra)
 
             g['count_variable_sample_dimension'][ncvar] = sample_ncdim
-            print (g['count_variable_sample_dimension'])
         else:
             ncvar = g['seen'][id(count_variable)]['ncvar']
-            print ('ncvar=',ncvar)
             sample_ncdim = g['count_variable_sample_dimension'][ncvar]
     
         return sample_ncdim
@@ -871,8 +859,8 @@ then the input coordinate is not written.
 #        coord = self._change_reference_datetime(coord)
         ncdimensions = self._netcdf_dimensions(f, key, coord)
 
-        print (repr(coord))
-        
+#        print (repr(coord), ncdimensions)
+
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
         else:
@@ -1196,6 +1184,8 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         datatype = self._datatype(cfvar)
         data = self.implementation.get_data(cfvar, None)
 
+        original_ncdimensions = ncdimensions 
+        
         if data is not None and datatype == 'S1':
             # --------------------------------------------------------
             # Convert a string data type numpy array into a
@@ -1206,7 +1196,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             if strlen > 1:
                 data = self._convert_to_char(data)
                 ncdim = self._string_length_dimension(strlen)            
-                ncdimensions = ncdimensions + (ncdim,)
+                ncdimensions = original_ncdimensions + (ncdim,)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -1290,7 +1280,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         # Update the 'seen' dictionary
         g['seen'][id(cfvar)] = {'variable': cfvar,
                                 'ncvar'   : ncvar,
-                                'ncdims'  : ncdimensions}
+                                'ncdims'  : original_ncdimensions}
     #--- End: def
     
     def _write_data(self, data, ncvar, ncdimensions, unset_values=()):
@@ -1399,8 +1389,8 @@ extra trailing dimension.
             id_f = id(f)
             org_f = f
             
-        # Copy the field, as we will undoubtedly to terrible things to
-        # it.
+        # Copy the field, as we are almost certainly about to do
+        # terrible things to it.
         f = self.implementation.copy_construct(f)
     
         data_axes = self.implementation.get_field_data_axes(f)
@@ -1414,8 +1404,12 @@ extra trailing dimension.
         # coordinate variable names
         g['axis_to_ncscalar'] = {}
 
-        g['compression_type'] = None
-        g['sample_ncdim']                    = {}
+        # Type of compression applied to the field
+        compression_type = self.implementation.get_compression_type(f)
+        g['compression_type'] = compression_type
+
+        # 
+        g['sample_ncdim']     = {}
         
         # Mapping of field component internal identifiers to netCDF
         # variable names
@@ -1480,8 +1474,10 @@ extra trailing dimension.
                    
         dimension_coordinates = self.implementation.get_dimension_coordinates(f)
         
-        # For each of the field's axes ...
-        for axis in sorted(self.implementation.get_domain_axes(f)):
+        # For each of the field's domain axes ...
+        domain_axes = self.implementation.get_domain_axes(f)
+       
+        for axis in sorted(domain_axes):
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
                 if self.implementation.get_construct_axes(f, key) != (axis,):
@@ -1535,6 +1531,7 @@ extra trailing dimension.
                 # --------------------------------------------------------
                 # There is no dimension coordinate for this axis
                 # --------------------------------------------------------
+
                 spanning_constructs = self.implementation.get_constructs(f, axes=[axis])
                 
                 if axis not in data_axes and spanning_constructs:
@@ -1606,20 +1603,20 @@ extra trailing dimension.
         field_data_axes = tuple(self.implementation.get_field_data_axes(f))
         data_ncdimensions = [g['axis_to_ncdim'][axis] for axis in field_data_axes]
    
-        compressed_axes = tuple(self.implementation.get_compressed_axes(f))
-        g['compressed_axes'] = compressed_axes
-        if compressed_axes:
+        if compression_type:
+            compressed_axes = tuple(self.implementation.get_compressed_axes(f))
+            g['compressed_axes'] = compressed_axes
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
 
-            compression_type = self.implementation.get_compression_type(f)
-            g['compression_type'] =  compression_type
+#            compression_type = self.implementation.get_compression_type(f)
+#            g['compression_type'] = compression_type
             
             if compression_type == 'gathered':
                 # ----------------------------------------------------
                 # Compression by gathering
                 #
-                # Find the dimension of the list variable, writing the
-                # list variable to the file.
+                # Write the list variable to the file, making a note
+                # of the netCDF sample dimension.
                 # ----------------------------------------------------
                 list_variable = self.implementation.get_list_variable(f)
                 compress = ' '.join(compressed_ncdims)
@@ -1630,8 +1627,8 @@ extra trailing dimension.
                 # ----------------------------------------------------
                 # Compression by contiguous ragged array
                 #
-                # Find the dimension of the count variable, writing
-                # the count variable to the file.
+                # Write the count variable to the file, making a note
+                # of the netCDF sample dimension.
                 # ----------------------------------------------------
                 count = self.implementation.get_count_variable(f)
                 sample_ncdim = self._write_count_variable(f, count)
@@ -1641,7 +1638,7 @@ extra trailing dimension.
             g['sample_ncdim'][compressed_ncdims] = sample_ncdim
             
             n = len(compressed_ncdims)
-            sample_dimension = self.implementation.get_sample_dimension(f)
+            sample_dimension = self.implementation.get_sample_dimension_position(f)
 #            sample_dimension = [i for i in range(len(field_data_axes)-n+1)
 #                                if field_data_axes[i:i+n] == compressed_axes]
 #            sample_dimension = sample_dimension[0]
@@ -1812,7 +1809,7 @@ extra trailing dimension.
         if coordinates:
             coordinates = ' '.join(coordinates)
             if _debug:
-                print('    Writing coordinates to netCDF variable', ncvar+':', coordinates)
+                print('    Writing attribute to netCDF variable {}: coordinates={!r}'.format(ncvar, str(coordinates)))
                 
             extra['coordinates'] = coordinates
     

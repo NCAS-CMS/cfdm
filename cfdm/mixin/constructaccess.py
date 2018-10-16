@@ -19,7 +19,6 @@ object.
 
         for d in self._get_constructs()._constructs.values():
             name_to_keys = {}
-
         
 #        for key, construct in self.constructs().items():
             for key, construct in d.items():

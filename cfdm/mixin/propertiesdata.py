@@ -414,7 +414,7 @@ None
             if n is not None:
                 out.append(n)
 
-            custom = ('long_name', 'cf_role')
+            custom = ('cf_role', 'long_name')
             
         if all_names or not out:
             for prop in custom:
