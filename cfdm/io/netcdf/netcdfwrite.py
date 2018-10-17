@@ -328,10 +328,18 @@ metadata construct.
             sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
                             
             if compression_type == 'gathered':
+                # ----------------------------------------------------
+                # Compression by gathering
+                # ----------------------------------------------------
                 if sample_ncdim is None:
+                    # The list variable has not yet been written to
+                    # the file, so write it and also get the netCDF
+                    # name of the sample dimension.
                     list_variable = self.implementation.get_list_variable(construct)                
-                    sample_ncdim = self._write_list_variable(field, list_variable,
-                                                             compress=' '.join(compressed_ncdims))
+                    sample_ncdim = self._write_list_variable(
+                        field,
+                        list_variable,
+                        compress=' '.join(compressed_ncdims))
                     g['sample_ncdim'][compressed_ncdims] = sample_ncdim
 
             elif compression_type == 'ragged contiguous':
@@ -530,8 +538,8 @@ a new netCDF dimension for the bounds.
                                                       default='count')
 
 
-            sample_ncdim = self.implementation.nc_get_sample_dimension(count_variable, 'elements')
-            sample_ncdim = self._netcdf_name(sample_ncdim)
+            _ = self.implementation.nc_get_sample_dimension(count_variable, 'elements')
+            sample_ncdim = self._netcdf_name(_)
             self._write_dimension(sample_ncdim, f, None,
                                   size=int(self.implementation.get_data_sum(count_variable)))
             
@@ -540,10 +548,6 @@ a new netCDF dimension for the bounds.
             instance_axis = self.implementation.get_field_data_axes(f)[0]
             ncdim = g['axis_to_ncdim'][instance_axis]
             
-#            self._write_dimension(
-#                ncdim, f,
-#                size=self.implementation.get_data_size(count_variable))
-
             extra = {'sample_dimension': sample_ncdim}
 
             # Create a new list variable
@@ -1301,10 +1305,9 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
 
 #        convert_dtype = g['datatype']
 
-        if set(ncdimensions).intersection(g['sample_ncdim'].values()): # in ncdimensions:
+        if set(ncdimensions).intersection(g['sample_ncdim'].values()):
             # Get the data as a compressed numpy array
             array = self.implementation.get_compressed_array(data)
-            print ('getting compressed array shape=', array.shape, ncdimensions,'g[nc][ncvar].shape=',g['nc'][ncvar].shape)
         else:
             # Get the data as an uncompressed numpy array
             array = self.implementation.get_array(data)
@@ -1385,13 +1388,13 @@ extra trailing dimension.
             
         seen = g['seen']
           
+        org_f = f
         if add_to_seen:
             id_f = id(f)
-            org_f = f
             
         # Copy the field, as we are almost certainly about to do
         # terrible things to it.
-        f = self.implementation.copy_construct(f)
+        f = self.implementation.copy_construct(org_f)
     
         data_axes = self.implementation.get_field_data_axes(f)
     
@@ -1607,9 +1610,6 @@ extra trailing dimension.
             compressed_axes = tuple(self.implementation.get_compressed_axes(f))
             g['compressed_axes'] = compressed_axes
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
-
-#            compression_type = self.implementation.get_compression_type(f)
-#            g['compression_type'] = compression_type
             
             if compression_type == 'gathered':
                 # ----------------------------------------------------
@@ -1633,7 +1633,8 @@ extra trailing dimension.
                 count = self.implementation.get_count_variable(f)
                 sample_ncdim = self._write_count_variable(f, count)
             else:
-                raise ValueError("unknown compression: {!r}".format(compression_type))
+                raise ValueError(
+"Can't write {!r}: Unknown compression type: {!r}".format(org_f, compression_type))
                 
             g['sample_ncdim'][compressed_ncdims] = sample_ncdim
             
