@@ -116,9 +116,9 @@ class NetCDFWrite(IOWrite):
     
         '''
         netcdf_attrs = self.implementation.get_properties(parent)
-
+        
         netcdf_attrs.update(extra)
-        netcdf_attrs.pop('_FillValue', None)
+#        netcdf_attrs.pop('_FillValue', None)
     
         for attr in omit:
             netcdf_attrs.pop(attr, None) 
@@ -562,6 +562,40 @@ a new netCDF dimension for the bounds.
         return sample_ncdim
     #--- End: def
     
+    def _write_index_variable(self, f, index_variable):
+        '''
+
+        '''
+        g = self.write_vars
+    
+        if not self._already_in_file(index_variable):
+            ncvar = self._create_netcdf_variable_name(index_variable,
+                                                      default='index')
+
+            _ = self.implementation.nc_get_sample_dimension(index_variable, 'instance')
+            instance_ncdim = self._netcdf_name(_)
+            self._write_dimension(instance_ncdim, f, None,
+                                  size=???)
+            
+            # Assume that the instance axis is the first in the data
+            # array
+            instance_axis = self.implementation.get_field_data_axes(f)[0]
+            ncdim = g['axis_to_ncdim'][instance_axis]
+            
+            extra = {'instance_dimension': instance_ncdim}
+
+            # Create a new list variable
+            self._write_netcdf_variable(ncvar, (ncdim,),
+                                        index_variable, extra=extra)
+
+            g['index_variable_instance_dimension'][ncvar] = sample_ncdim
+        else:
+            ncvar = g['seen'][id(count_variable)]['ncvar']
+            sample_ncdim = g['count_variable_sample_dimension'][ncvar]
+    
+        return sample_ncdim
+    #--- End: def
+    
     def _write_list_variable(self, f, list_variable, compress):
         '''
 
@@ -863,8 +897,6 @@ then the input coordinate is not written.
 #        coord = self._change_reference_datetime(coord)
         ncdimensions = self._netcdf_dimensions(f, key, coord)
 
-#        print (repr(coord), ncdimensions)
-
         if self._already_in_file(coord, ncdimensions):
             ncvar = g['seen'][id(coord)]['ncvar']
         else:
@@ -1100,7 +1132,7 @@ measure will not be written.
 
             g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
                                                         endian=g['endian'],
-                                                        **g['compression'])
+                                                        **g['netcdf_compression'])
     
 #            cref = ref.copy()
 #            cref = ref.canonical(f) # NOTE: NOT converting units
@@ -1209,7 +1241,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # False then the variable is not pre-filled.
         # ------------------------------------------------------------
         if fill:
-            fill_value = getattr(cfvar, '_FillValue', None)
+            fill_value = self.implementation.get_property(cfvar, '_FillValue', None)
         else:
             fill_value = False
     
@@ -1239,7 +1271,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 least_significant_digit=lsd,
                 endian=g['endian'],
                 chunksizes=chunksizes,
-                **g['compression'])
+                **g['netcdf_compression'])
         except RuntimeError as error:
             error = str(error)
             if error == 'NetCDF: Not a valid data type or _FillValue type mismatch':
@@ -1591,6 +1623,16 @@ extra trailing dimension.
     
                     if use_existing_dimension:
                         g['axis_to_ncdim'][axis] = ncdim1
+                    elif (g['compression_type'] == 'ragged contiguous' and 
+                          len(data_axes) == 2 and axis == data_axes[1]):
+                        # Do not create the a netCDF dimension for the
+                        # element dimension
+                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('hmm_contiguous')
+                    elif (g['compression_type'] == 'ragged indexed' and 
+                          len(data_axes) == 2 and axis == data_axes[1]):
+                        # Do not create the a netCDF dimension for the
+                        # element dimension
+                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('hmm_indexed')
                     else:
                         ncdim = self.implementation.get_ncdim(f, axis, 'dim')
                         ncdim = self._netcdf_name(ncdim)
@@ -1632,6 +1674,18 @@ extra trailing dimension.
                 # ----------------------------------------------------
                 count = self.implementation.get_count_variable(f)
                 sample_ncdim = self._write_count_variable(f, count)
+
+            elif compression_type == 'ragged indexed':
+                # ----------------------------------------------------
+                # Compression by indexed ragged array
+                #
+                # Write the index variable to the file, making a note
+                # of the netCDF sample dimension.
+                # ----------------------------------------------------
+                index = self.implementation.get_index_variable(f)
+                print (repr(index))
+                sample_ncdim = self._write_index_variable(f, index)
+
             else:
                 raise ValueError(
 "Can't write {!r}: Unknown compression type: {!r}".format(org_f, compression_type))
@@ -2256,8 +2310,8 @@ and auxiliary coordinate roles for different data variables.
             'variable_attributes': set(()),
             'global_attributes': set(()),
             'bounds': {},
-            # Compression/endian
-            'compression': {},
+            # NetCDF compression/endian
+            'netcdf_compression': {},
             'endian': 'native',
             'least_significant_digit': None,
             # CF properties which need not be set on bounds if they're set
@@ -2330,7 +2384,7 @@ and auxiliary coordinate roles for different data variables.
         # -------------------------------------------------------
         # Compression/endian
         # -------------------------------------------------------
-        g['compression'].update(
+        g['netcdf_compression'].update(
             {'zlib'       : zlib,
              'complevel'  : compress,
              'fletcher32' : fletcher32,

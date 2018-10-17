@@ -452,6 +452,12 @@ axes, and possibly other axes, are returned.
         return construct.get_data().get_sample_axis()
     #--- End: def
 
+    def nc_get_instance_dimension(self, index, *default):
+        '''
+        '''
+        return index.nc_get_instance_dimension(index, *default)
+    #--- End: def
+    
     def nc_get_sample_dimension(self, count, *default):
         '''
         '''
@@ -612,6 +618,22 @@ axes, and possibly other axes, are returned.
 'area'
         '''
         return construct.get_data().get_count_variable()
+    #--- End: def
+    
+    def get_index_variable(self, construct):
+        '''
+
+:Parameters:
+
+  
+:Returns:
+
+    out: 
+
+:Examples:
+
+        '''
+        return construct.get_data().get_index_variable()
     #--- End: def
     
     def get_list_variable(self, construct):

@@ -646,32 +646,6 @@ used.
         return array
     #--- End: def
 
-    def get_index_data(self, *default):
-        '''
-:Returns:
-
-    out: `Data` or `None`
-
-        '''
-        data = self._get_Array(None)
-        if data is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no data".format(
-                self.__class__.__name__))
-
-        array = getattr(data, 'index_array', None)
-        if array is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no index array".format(
-                self.__class__.__name__))
-        
-        return array
-    #--- End: def
-
     def get_count_variable(self, *default):
         '''
 :Returns:
@@ -693,6 +667,32 @@ used.
                 return default
 
             raise AttributeError("{!r} has no count variable".format(
+                self.__class__.__name__))
+        
+        return array
+    #--- End: def
+
+    def get_index_variable(self, *default):
+        '''
+:Returns:
+
+    out: `Data` or `None`
+
+        '''
+        data = self._get_Array(None)
+        if data is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+
+        array = getattr(data, 'index_array', None)
+        if array is None:
+            if default:
+                return default
+
+            raise AttributeError("{!r} has no index variable".format(
                 self.__class__.__name__))
         
         return array

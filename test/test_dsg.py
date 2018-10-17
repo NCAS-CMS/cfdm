@@ -124,23 +124,17 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
 
-        print ('\nf\n')
-        for x in f:
-            print(x)
-#            a = x.get_array()
-##            print(a)
-#            x.dump()
-#            
-        cfdm.write(f, 'delme.nc', _debug=1)
+#        print ('\nf\n')
+#        for x in f:
+#            print(x)
+            
+        cfdm.write(f, 'delme.nc', _debug=False)
         g = cfdm.read('delme.nc')
         self.assertTrue(len(g) == len(f))
         
-        print ('\ng\n')
-        for x in g:
-            print(x)
-#            a = x.get_array()
-##            print(a)
-#            x.dump()
+#        print ('\ng\n')
+#        for x in g:
+#            print(x)
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))
@@ -162,6 +156,21 @@ class DSGTest(unittest.TestCase):
              if g.get_property('standard_name') == 'specific_humidity'][0]
 
         self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
+        
+        print ('\nf\n')
+        for x in f:
+            print(x)
+            
+        cfdm.write(f, 'delme.nc', _debug=1)
+        g = cfdm.read('delme.nc')
+        self.assertTrue(len(g) == len(f))
+        
+        print ('\ng\n')
+        for x in g:
+            print(x)
+
+        for i in range(len(f)):
+            self.assertTrue(g[i].equals(f[i], traceback=True))
     #--- End: def        
 
     def test_DSG_INDEXED_CONTIGUOUS(self):  
