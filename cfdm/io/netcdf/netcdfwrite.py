@@ -575,7 +575,7 @@ a new netCDF dimension for the bounds.
             _ = self.implementation.nc_get_sample_dimension(index_variable, 'instance')
             instance_ncdim = self._netcdf_name(_)
             self._write_dimension(instance_ncdim, f, None,
-                                  size=???)
+                                  size=self.implementation.get_data_size(index_variable))
             
             # Assume that the instance axis is the first in the data
             # array

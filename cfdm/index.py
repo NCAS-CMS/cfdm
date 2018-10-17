@@ -6,6 +6,7 @@ from . import core
 
 class Index(mixin.NetCDFVariable,
             mixin.NetCDFInstanceDimension,
+            mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
     '''An ??? with properties.

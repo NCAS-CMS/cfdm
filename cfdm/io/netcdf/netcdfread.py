@@ -2683,7 +2683,10 @@ variable should be pre-filled with missing values.
         self.implementation.set_properties(variable, properties)
         if ncdim is not None:
             self.implementation.nc_set_instance_dimension(variable, ncdim)
-                
+
+        ncdim = g['variable_dimensions'][ncvar][0]
+        self.implementation.nc_set_sample_dimension(variable, ncdim)
+
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
             
