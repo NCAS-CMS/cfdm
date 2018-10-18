@@ -352,8 +352,21 @@ metadata construct.
                 # compressed array, and iii) we already have the
                 # netCDF name of the sample dimension.
                 pass
-            else:
+
+            elif compression_type == 'ragged indexed':
+                # ----------------------------------------------------
+                # Compression by indexed ragged array
+                # ----------------------------------------------------
+                # No need to do anything because i) the index variable
+                # has already been written to the file, ii) we already
+                # have the position of the sample dimension in the
+                # compressed array, and iii) we already have the
+                # netCDF name of the sample dimension.
                 pass
+            
+            else:
+                raise ValueError(
+"Can't write {!r}: Unknown compression type: {!r}".format(construct, compression_type))
 
             n = len(compressed_ncdims)
             ncdims[sample_dimension_position:sample_dimension_position+n] = [sample_ncdim]
@@ -538,7 +551,7 @@ a new netCDF dimension for the bounds.
                                                       default='count')
 
 
-            _ = self.implementation.nc_get_sample_dimension(count_variable, 'elements')
+            _ = self.implementation.nc_get_sample_dimension(count_variable, 'element')
             sample_ncdim = self._netcdf_name(_)
             self._write_dimension(sample_ncdim, f, None,
                                   size=int(self.implementation.get_data_sum(count_variable)))
@@ -572,26 +585,24 @@ a new netCDF dimension for the bounds.
             ncvar = self._create_netcdf_variable_name(index_variable,
                                                       default='index')
 
-            _ = self.implementation.nc_get_sample_dimension(index_variable, 'instance')
-            instance_ncdim = self._netcdf_name(_)
-            self._write_dimension(instance_ncdim, f, None,
+            _ = self.implementation.nc_get_sample_dimension(index_variable, 'element')
+            sample_ncdim = self._netcdf_name(_)
+            self._write_dimension(sample_ncdim, f, None,
                                   size=self.implementation.get_data_size(index_variable))
             
-            # Assume that the instance axis is the first in the data
-            # array
-            instance_axis = self.implementation.get_field_data_axes(f)[0]
-            ncdim = g['axis_to_ncdim'][instance_axis]
+            instance_ncdim =  self.implementation.nc_get_instance_dimension(
+                index_variable, 'instance')
             
             extra = {'instance_dimension': instance_ncdim}
 
             # Create a new list variable
-            self._write_netcdf_variable(ncvar, (ncdim,),
+            self._write_netcdf_variable(ncvar, (sample_ncdim,),
                                         index_variable, extra=extra)
 
-            g['index_variable_instance_dimension'][ncvar] = sample_ncdim
+            g['index_variable_sample_dimension'][ncvar] = sample_ncdim
         else:
-            ncvar = g['seen'][id(count_variable)]['ncvar']
-            sample_ncdim = g['count_variable_sample_dimension'][ncvar]
+            ncvar = g['seen'][id(index_variable)]['ncvar']
+            sample_ncdim = g['index_variable_sample_dimension'][ncvar]
     
         return sample_ncdim
     #--- End: def
@@ -1212,7 +1223,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         _debug = g['_debug']
         
         if g['verbose'] or _debug:
-            print('    Writing', repr(cfvar), 'to netCDF variable:', ncvar)
+            print('    Writing {!r}'.format(cfvar), end='')
      
         # ------------------------------------------------------------
         # Set the netCDF4.createVariable datatype
@@ -1234,6 +1245,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 ncdim = self._string_length_dimension(strlen)            
                 ncdimensions = original_ncdimensions + (ncdim,)
         #--- End: if
+        
+        if g['verbose'] or _debug:
+            print(' to netCDF variable: {}({})'.format(ncvar, ', '.join(ncdimensions)))
 
         # ------------------------------------------------------------
         # Find the fill value - the value that the variable's data get
@@ -1336,6 +1350,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
         g = self.write_vars
 
 #        convert_dtype = g['datatype']
+
 
         if set(ncdimensions).intersection(g['sample_ncdim'].values()):
             # Get the data as a compressed numpy array
@@ -1442,7 +1457,8 @@ extra trailing dimension.
         # Type of compression applied to the field
         compression_type = self.implementation.get_compression_type(f)
         g['compression_type'] = compression_type
-
+        if _debug:
+            print ('    Compression = {!r}'.format(g['compression_type']))
         # 
         g['sample_ncdim']     = {}
         
@@ -1633,6 +1649,11 @@ extra trailing dimension.
                         # Do not create the a netCDF dimension for the
                         # element dimension
                         g['axis_to_ncdim'][axis] = 'dsg%{}'.format('hmm_indexed')
+ppppppp                    elif (g['compression_type'] == 'ragged indexed contiguous' and 
+                          len(data_axes) == 2 and axis == data_axes[1]):
+                        # Do not create the a netCDF dimension for the
+                        # element dimension
+                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('hmm_indexed')
                     else:
                         ncdim = self.implementation.get_ncdim(f, axis, 'dim')
                         ncdim = self._netcdf_name(ncdim)
@@ -1683,7 +1704,6 @@ extra trailing dimension.
                 # of the netCDF sample dimension.
                 # ----------------------------------------------------
                 index = self.implementation.get_index_variable(f)
-                print (repr(index))
                 sample_ncdim = self._write_index_variable(f, index)
 
             else:
@@ -2330,6 +2350,7 @@ and auxiliary coordinate roles for different data variables.
             'xxx': [],
 
             'count_variable_sample_dimension': {},
+            'index_variable_sample_dimension': {},
 
         }
         g = self.write_vars

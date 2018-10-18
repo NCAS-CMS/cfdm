@@ -157,17 +157,17 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
         
-        print ('\nf\n')
-        for x in f:
-            print(x)
+#        print ('\nf\n')
+#        for x in f:
+#            print(x)
             
-        cfdm.write(f, 'delme.nc', _debug=1)
+        cfdm.write(f, 'delme.nc', _debug=False)
         g = cfdm.read('delme.nc')
         self.assertTrue(len(g) == len(f))
         
-        print ('\ng\n')
-        for x in g:
-            print(x)
+#        print ('\ng\n')
+#        for x in g:
+#            print(x)
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))
@@ -190,6 +190,21 @@ class DSGTest(unittest.TestCase):
         message= repr(q-self.b) +'\n'+repr(q[2,0])+'\n'+repr(self.b[2, 0])
         self.assertTrue(cfdm.functions._numpy_allclose(q, self.b),
                         message)        
+
+        print ('\nf\n')
+        for x in f:
+            print(x)
+            
+        cfdm.write(f, 'delme.nc', _debug=True)
+        g = cfdm.read('delme.nc')
+        self.assertTrue(len(g) == len(f))
+        
+        print ('\ng\n')
+        for x in g:
+            print(x)
+
+        for i in range(len(f)):
+            self.assertTrue(g[i].equals(f[i], traceback=True))
     #--- End: def        
 
 #--- End: class
