@@ -5,6 +5,7 @@ from . import core
 
 
 class Count(mixin.NetCDFVariable,
+            mixin.NetCDFDimension,
             mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
@@ -25,10 +26,8 @@ value.
         super().__init__(properties=properties, data=data,
                          source=source, copy=copy,
                          _use_data=_use_data)
-        
-#        if source is not None:
-#            self._intialise_ncvar_from(source)
-        self._intialise_netcdf(source)
+
+        self._initialise_netcdf(source)
     #--- End: def
     
     def dump(self, display=True, field=None, key=None, _title=None,

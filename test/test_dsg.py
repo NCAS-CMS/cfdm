@@ -130,11 +130,12 @@ class DSGTest(unittest.TestCase):
             
         cfdm.write(f, 'delme.nc', _debug=False)
         g = cfdm.read('delme.nc')
-        self.assertTrue(len(g) == len(f))
         
 #        print ('\ng\n')
 #        for x in g:
 #            print(x)
+
+        self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))
@@ -163,11 +164,12 @@ class DSGTest(unittest.TestCase):
             
         cfdm.write(f, 'delme.nc', _debug=False)
         g = cfdm.read('delme.nc')
-        self.assertTrue(len(g) == len(f))
         
 #        print ('\ng\n')
 #        for x in g:
 #            print(x)
+
+        self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))
@@ -177,7 +179,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.indexed_contiguous, _debug=False)
+        f = cfdm.read(self.indexed_contiguous, _debug=True)
 
         self.assertTrue(len(f) == 2)
 
@@ -196,12 +198,13 @@ class DSGTest(unittest.TestCase):
             print(x)
             
         cfdm.write(f, 'delme.nc', _debug=True)
-        g = cfdm.read('delme.nc')
-        self.assertTrue(len(g) == len(f))
+        g = cfdm.read('delme.nc', _debug=True)
         
         print ('\ng\n')
         for x in g:
             print(x)
+
+        self.assertTrue(len(g) == len(f))
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))

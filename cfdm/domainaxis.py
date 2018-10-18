@@ -39,7 +39,7 @@ to the order of the elements.
         
 #        if source is not None:
 #            self._intialise_ncdim_from(source)
-        self._intialise_netcdf(source)
+        self._initialise_netcdf(source)
     #--- End: def
         
     def equals(self, other, traceback=False, *kwargs):

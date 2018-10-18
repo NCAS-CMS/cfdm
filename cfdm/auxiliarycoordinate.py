@@ -24,7 +24,7 @@ class AuxiliaryCoordinate(mixin.NetCDFVariable,
                          copy=copy, _use_data=_use_data)
         
 #        if source is not None:
-        self._intialise_netcdf(source)
+        self._initialise_netcdf(source)
     #--- End: def
 
     

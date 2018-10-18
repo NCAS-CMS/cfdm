@@ -690,7 +690,7 @@ axes, and possibly other axes, are returned.
         return cell_measure.get_measure(None)
     #--- End: def
     
-    def get_ncdim(self, field, axis, *default):
+    def nc_get_dimension(self, parent, *default):
         '''Return the netCDF variable name.
 
 :Examples 1:
@@ -711,7 +711,7 @@ axes, and possibly other axes, are returned.
 
 :Examples 2:
         '''
-        return field.domain_axes()[axis].nc_get_dimension(*default)
+        return parent.nc_get_dimension(*default)
     #--- End: def
 
     def get_ncvar(self, construct, *default):
@@ -1295,7 +1295,7 @@ also be provided.
         return parent.set_interior_ring(interior_ring, copy=copy)
     #--- End: def
 
-    def set_ncdim(self, construct, ncdim):
+    def nc_set_dimension(self, construct, ncdim):
         '''
 :Parameters:
 

@@ -40,7 +40,7 @@ number of vertices of each cell.
         
 #        if source is not None:
  #           self._intialise_ncvar_from(source)
-        self._intialise_netcdf(source)
+        self._initialise_netcdf(source)
     #--- End: def
     
     def dump(self, display=True, _omit_properties=None, field=None,

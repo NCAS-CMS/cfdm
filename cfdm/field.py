@@ -81,8 +81,7 @@ and institution).
                             source=source, copy=copy,
                             _use_data=_use_data)
         
-#        if source is not None:
-        self._intialise_netcdf(source)
+        self._initialise_netcdf(source)
     
         self._set_component('unlimited' , 'TO DO', copy=False)
         self._set_component('HDFgubbins', 'TO DO', copy=False)

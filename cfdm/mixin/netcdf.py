@@ -6,7 +6,7 @@ class NetCDF(object):
 
     '''
 
-    def _intialise_netcdf(self, source=None):
+    def _initialise_netcdf(self, source=None):
         '''
         '''
         if source is None:
@@ -29,22 +29,25 @@ class NetCDFDimension(NetCDF):
 
     '''
 
-    def _intialise_ncdim_from(self, source):
+#    def _initialise_ncdim_from(self, source):
+#        '''
+#        '''
+#        try:
+#            ncdim = source.nc_get_dimension(None)
+#        except AttributeError:
+#            ncdim = None##
+#
+#        if ncdim is not None:
+#            self.nc_set_dimension(ncdim)
+#    #--- End: def
+
+    def nc_del_dimension(self, *default):
         '''
         '''
         try:
-            ncdim = source.nc_get_dimension(None)
-        except AttributeError:
-            ncdim = None
-
-        if ncdim is not None:
-            self.nc_set_dimension(ncdim)
-    #--- End: def
-
-    def nc_del_dimension(self):
-        '''
-        '''        
-        return self._get_component('netcdf').pop('dimension', None)
+            return self._get_component('netcdf').pop('dimension', *default)
+        except keyError:
+            raise AttributeError("{!r} object has no netCDF dimension name".format(self.__class__.__name__))
     #--- End: def
 
     def nc_get_dimension(self, *default):
@@ -80,22 +83,25 @@ class NetCDFVariable(NetCDF):
 
     '''
 
-    def _intialise_ncvar_from(self, source):
-        '''
-        '''
-        try:
-            ncvar = source.nc_get_variable(None)
-        except AttributeError:
-            ncvar = None
+#    def _initialise_ncvar_from(self, source):
+#        '''
+#        '''
+#        try:
+#            ncvar = source.nc_get_variable(None)
+#        except AttributeError:
+#            ncvar = None
+#
+#        if ncvar is not None:
+#            self.nc_set_variable(ncvar)
+#    #--- End: def
 
-        if ncvar is not None:
-            self.nc_set_variable(ncvar)
-    #--- End: def
-
-    def nc_del_variable(self):
+    def nc_del_variable(self, *default):
         '''
         '''        
-        return self._get_component('netcdf').pop('variable', None)
+        try:
+            return self._get_component('netcdf').pop('variable', *default)
+        except keyError:
+            raise AttributeError("{!r} object has no netCDF variable name".format(self.__class__.__name__))
     #--- End: def
         
     def nc_get_variable(self, *default):
@@ -130,10 +136,13 @@ class NetCDFSampleDimension(NetCDF):
     '''Mixin
 
     '''
-    def nc_del_sample_dimension(self):
+    def nc_del_sample_dimension(self, *default):
         '''
         '''        
-        return self._get_component('netcdf').pop('sample_dimension', None)
+        try:
+            return self._get_component('netcdf').pop('sample_dimension', *default)
+        except keyError:
+            raise AttributeError("{!r} object has no netCDF sample dimension name".format(self.__class__.__name__))
     #--- End: def
 
     def nc_get_sample_dimension(self, *default):
@@ -167,10 +176,13 @@ class NetCDFInstanceDimension(NetCDF):
     '''Mixin
 
     '''
-    def nc_del_instance_dimension(self):
+    def nc_del_instance_dimension(self,*default):
         '''
         '''        
-        return self._get_component('netcdf').pop('instance_dimension', None)
+        try:
+            return self._get_component('netcdf').pop('instance_dimension', *default)
+        except keyError:
+            raise AttributeError("{!r} object has no netCDF instance dimension name".format(self.__class__.__name__))
     #--- End: def
 
     def nc_get_instance_dimension(self, *default):

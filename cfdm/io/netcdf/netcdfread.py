@@ -865,7 +865,7 @@ ancillaries, field ancillaries).
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
         
-        elements_per_instance = self._create_Count(ncvar)
+        elements_per_instance = self._create_Count(ncvar, ncdim=instance_dimension)
 
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
@@ -879,7 +879,7 @@ ancillaries, field ancillaries).
             element_dimension = 'element'
         if _debug:        
             print('    featureType =', g['featureType'])
-            
+
         element_dimension = self._set_ragged_contiguous_parameters(
                 elements_per_instance=elements_per_instance,
                 sample_dimension=sample_dimension,
@@ -921,7 +921,9 @@ variable should be pre-filled with missing values.
             print('    index variable: instance_dimension =', instance_dimension)
 
         # Read the data of the index variable
-        index = self._create_Index(ncvar)
+        ncdim = g['variable_dimensions'][ncvar][0]
+        
+        index = self._create_Index(ncvar, ncdim=ncdim)
 
         # Make up a netCDF dimension name for the element dimension
         featureType = g['featureType'].lower()
@@ -1289,12 +1291,15 @@ variable should be pre-filled with missing values.
 #            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
     
         # Make sure that the element dimension name is unique
+        print ('PPPPPPPPPPPPPPP element_dimension = ', element_dimension, g['internal_dimension_sizes'], g['new_dimensions'], end='')
+        dont need it to be unique for indexed contiguous ????
         base = element_dimension
         n = 0
         while (element_dimension in g['internal_dimension_sizes'] or
                element_dimension in g['new_dimensions']):
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
+        print (element_dimension)
 
         g['new_dimensions'][element_dimension] = element_dimension_size
                             
@@ -1756,9 +1761,7 @@ variable should be pre-filled with missing values.
 
         # Map netCDF dimension names to domain axis names.
         # 
-        # For example:
-        # >>> ncdim_to_axis
-        # {'lat': 'dim0', 'time': 'dim1'}
+        # For example: {'lat': 'dim0', 'time': 'dim1'}
         ncdim_to_axis = {}
         g['ncdim_to_axis'] = ncdim_to_axis
     
@@ -1766,9 +1769,7 @@ variable should be pre-filled with missing values.
     
         # Map netCDF variable names to internal identifiers
         # 
-        # For example:
-        # >>> ncvar_to_key
-        # {'dimensioncoordinate1': 'time'}
+        # For example: {'dimensioncoordinate1': 'time'}
         ncvar_to_key = {}
             
         data_axes = []
@@ -1858,6 +1859,8 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         coordinates = self.implementation.del_property(f, 'coordinates')
         if coordinates is not None:
+            print ('coordinates = ', coordinates)
+            print ('field_ncdimensions = ', field_ncdimensions, g['compression'])
             parsed_coordinates = self._split_string_by_white_space(field_ncvar, coordinates)
             for ncvar in parsed_coordinates:
 
@@ -1869,7 +1872,7 @@ variable should be pre-filled with missing values.
                     field_ncvar, ncvar, coordinates)
                 if not cf_compliant:
                     continue
-    
+                print ('ncvar =',ncvar)
                 # Set dimensions for this variable
                 dimensions = self._get_domain_axes(ncvar)
     
@@ -2618,7 +2621,7 @@ variable should be pre-filled with missing values.
         return cell_measure
     #--- End: def
 
-    def _create_Count(self, ncvar):
+    def _create_Count(self, ncvar, ncdim):
         '''Create a 
     
 :Parameters:
@@ -2627,7 +2630,13 @@ variable should be pre-filled with missing values.
         The name of the netCDF count variable.
 
           *Example:*
-             ``ncvar='landpoints'``
+             ``ncvar='row_size'``
+
+    ncdim: `str`
+        The name of the count variable's netCDF dimension.
+
+          *Example:*
+             ``ncdim='profile'``
 
 :Returns:
 
@@ -2643,18 +2652,20 @@ variable should be pre-filled with missing values.
         self.implementation.set_ncvar(variable, ncvar)
 
         properties = g['variable_attributes'][ncvar]
-        ncdim = properties.pop('sample_dimension', None)
+        sample_ncdim = properties.pop('sample_dimension', None)
         self.implementation.set_properties(variable, properties)
-        if ncdim is not None:
-            self.implementation.nc_set_sample_dimension(variable, ncdim)
-        
+        if sample_ncdim is not None:
+            self.implementation.nc_set_sample_dimension(variable, sample_ncdim)
+
+        self.implementation.nc_set_dimension(variable, ncdim)
+            
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
             
         return variable
     #--- End: def
 
-    def _create_Index(self, ncvar):
+    def _create_Index(self, ncvar, ncdim):
         '''Create a 
     
 :Parameters:
@@ -2664,6 +2675,12 @@ variable should be pre-filled with missing values.
 
           *Example:*
              ``ncvar='landpoints'``
+
+    ncdim: `str`
+        The name of the index variable's netCDF dimension.
+
+          *Example:*
+             ``ncdim='profile'``
 
 :Returns:
 
@@ -2679,14 +2696,16 @@ variable should be pre-filled with missing values.
         self.implementation.set_ncvar(variable, ncvar)
 
         properties = g['variable_attributes'][ncvar]
-        ncdim = properties.pop('instance_dimension', None)
+        instance_ncdim = properties.pop('instance_dimension', None)
         self.implementation.set_properties(variable, properties)
-        if ncdim is not None:
-            self.implementation.nc_set_instance_dimension(variable, ncdim)
+        if instance_ncdim is not None:
+            self.implementation.nc_set_instance_dimension(variable, instance_ncdim)
 
-        ncdim = g['variable_dimensions'][ncvar][0]
-        self.implementation.nc_set_sample_dimension(variable, ncdim)
+        sample_ncdim = ncdim #g['variable_dimensions'][ncvar][0]
+        self.implementation.nc_set_sample_dimension(variable, sample_ncdim)
 
+        self.implementation.nc_set_dimension(variable, ncdim)
+        
         data = self._create_data(ncvar, variable, uncompress_override=True)
         self.implementation.set_data(variable, data, copy=False)
             
@@ -2961,7 +2980,7 @@ variable should be pre-filled with missing values.
         '''
         domain_axis = self.implementation.initialise_DomainAxis(size=size)
         if ncdim is not None:
-            self.implementation.set_ncdim(construct=domain_axis, ncdim=ncdim)
+            self.implementation.nc_set_dimension(construct=domain_axis, ncdim=ncdim)
 
         return domain_axis
     #-- End: def
