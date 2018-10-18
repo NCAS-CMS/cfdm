@@ -326,7 +326,7 @@ metadata construct.
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
 
             sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
-            print ( sample_ncdim, compressed_ncdims)
+
             if compression_type == 'gathered':
                 # ----------------------------------------------------
                 # Compression by gathering
@@ -1484,7 +1484,7 @@ extra trailing dimension.
         compression_type = self.implementation.get_compression_type(f)
         g['compression_type'] = compression_type
         if _debug:
-            print ('    Compression = {!r}'.format(g['compression_type']))
+            print('    Compression = {!r}'.format(g['compression_type']))
         # 
         g['sample_ncdim']     = {}
         

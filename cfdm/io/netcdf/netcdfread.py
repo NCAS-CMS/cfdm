@@ -545,7 +545,8 @@ ancillaries, field ancillaries).
             # Do not attempt to create a field from a list
             # variable
             g['do_not_create_field'].add(ncvar)
-
+        #--- End: for
+        
         # ------------------------------------------------------------
         # DSG variables  (>= CF-1.6)
         #
@@ -636,11 +637,11 @@ ancillaries, field ancillaries).
         # Parse external variables (>= CF-1.7)
         # ------------------------------------------------------------
         if g['file_version'] >= g['version']['1.7']:
-            external_variables = global_attributes.pop('external_variables', None)
+            netcdf_external_variables = global_attributes.pop('external_variables', None)
             parsed_external_variables = self._split_string_by_white_space(
-                None, external_variables)
+                None, netcdf_external_variables)
             parsed_external_variables = self._check_external_variables(
-                external_variables, parsed_external_variables)
+                netcdf_external_variables, parsed_external_variables)
             g['external_variables'] = set(parsed_external_variables)
 
         if _scan_only:
@@ -651,7 +652,8 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         if g['file_version'] >= g['version']['1.7']:
             if external_files and g['external_variables']:
-                self._get_variables_from_external_files(external_files)
+                self._get_variables_from_external_files(
+                    netcdf_external_variables, external_files)
         #--- End: if
         
         # ------------------------------------------------------------
@@ -732,6 +734,8 @@ ancillaries, field ancillaries).
 
 :Parameters:
 
+    external_variables: `str`
+
     external_files: sequence of `str`
         The external file names.
 
@@ -746,8 +750,8 @@ ancillaries, field ancillaries).
 
         external_variables       = g['external_variables']
         datasets                 = g['datasets']
-        internal_dimension_sizes = g['internal_dimension_sizes']
-                                
+        internal_dimension_sizes = g['internal_dimension_sizes']                
+
         keys  = ('variable_attributes',
                  'variable_dimensions',
                  'variable_dataset',
@@ -768,8 +772,8 @@ ancillaries, field ancillaries).
                     continue
                 
                 if ncvar in found:
-                    # The external variable exists in more than one
-                    # external file
+                    # Error: The external variable exists in more than
+                    # one external file
                     external_variables.add(ncvar)
                     for key in keys:
                         g[key].pop(ncvar)
@@ -781,7 +785,8 @@ ancillaries, field ancillaries).
                         attribute=attribute)                    
                     continue
 
-                # The external variable exists in this external file
+                # Still here? Then the external variable exists in
+                # this external file
                 found.append(ncvar)
 
                 # Check that the external variable dimensions exist in
@@ -1230,7 +1235,7 @@ variable should be pre-filled with missing values.
 
                 print('index=', index.get_array())
                 print('part_node_count=',part_node_count)
-                o
+                
                 element_dimension_1 = self._set_ragged_contiguous_parameters(
                     elements_per_instance=parts,
                     sample_dimension=node_dimension,
@@ -1291,15 +1296,13 @@ variable should be pre-filled with missing values.
 #            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
     
         # Make sure that the element dimension name is unique
-        print ('PPPPPPPPPPPPPPP element_dimension = ', element_dimension, g['internal_dimension_sizes'], g['new_dimensions'], end='')
-        dont need it to be unique for indexed contiguous ????
         base = element_dimension
         n = 0
         while (element_dimension in g['internal_dimension_sizes'] or
-               element_dimension in g['new_dimensions']):
+               element_dimension in g['new_dimensions'] or
+               element_dimension in g['variables']):
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
-        print (element_dimension)
 
         g['new_dimensions'][element_dimension] = element_dimension_size
                             
@@ -1367,7 +1370,8 @@ variable should be pre-filled with missing values.
         base = element_dimension
         n = 0
         while (element_dimension in g['internal_dimension_sizes'] or
-               element_dimension in g['new_dimensions']):
+               element_dimension in g['new_dimensions'] or
+               element_dimension in g['variables']):
             n += 1
             element_dimension = '{0}_{1}'.format(base, n)
             
@@ -1859,8 +1863,6 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         coordinates = self.implementation.del_property(f, 'coordinates')
         if coordinates is not None:
-            print ('coordinates = ', coordinates)
-            print ('field_ncdimensions = ', field_ncdimensions, g['compression'])
             parsed_coordinates = self._split_string_by_white_space(field_ncvar, coordinates)
             for ncvar in parsed_coordinates:
 
@@ -1872,7 +1874,7 @@ variable should be pre-filled with missing values.
                     field_ncvar, ncvar, coordinates)
                 if not cf_compliant:
                     continue
-                print ('ncvar =',ncvar)
+
                 # Set dimensions for this variable
                 dimensions = self._get_domain_axes(ncvar)
     

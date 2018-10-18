@@ -158,16 +158,16 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
         
-#        print ('\nf\n')
-#        for x in f:
-#            print(x)
+        print ('\nf\n')
+        for x in f:
+            print(x)
             
-        cfdm.write(f, 'delme.nc', _debug=False)
+        cfdm.write(f, 'delme.nc', _debug=True)
         g = cfdm.read('delme.nc')
         
-#        print ('\ng\n')
-#        for x in g:
-#            print(x)
+        print ('\ng\n')
+        for x in g:
+            print(x)
 
         self.assertTrue(len(g) == len(f))
 
@@ -179,7 +179,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.indexed_contiguous, _debug=True)
+        f = cfdm.read(self.indexed_contiguous, _debug=False)
 
         self.assertTrue(len(f) == 2)
 
@@ -193,16 +193,16 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(cfdm.functions._numpy_allclose(q, self.b),
                         message)        
 
-        print ('\nf\n')
-        for x in f:
-            print(x)
+#        print ('\nf\n')
+#        for x in f:
+#            print(x)
             
-        cfdm.write(f, 'delme.nc', _debug=True)
-        g = cfdm.read('delme.nc', _debug=True)
+        cfdm.write(f, 'delme.nc', _debug=False)
+        g = cfdm.read('delme.nc', _debug=False)
         
-        print ('\ng\n')
-        for x in g:
-            print(x)
+#        print ('\ng\n')
+#        for x in g:
+#            print(x)
 
         self.assertTrue(len(g) == len(f))
 
