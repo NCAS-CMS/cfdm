@@ -350,6 +350,7 @@ ancillaries, field ancillaries).
             'references': {},
 
             'external_variables': set(),
+            'external_files': external_files,
             
             # The collection of external variables that are actually
             # referenced from within the file
@@ -643,17 +644,21 @@ ancillaries, field ancillaries).
             parsed_external_variables = self._check_external_variables(
                 netcdf_external_variables, parsed_external_variables)
             g['external_variables'] = set(parsed_external_variables)
-
+            
         if _scan_only:
             return self.read_vars
-            
+
         # ------------------------------------------------------------
         # Get external variables (>= CF-1.7)
         # ------------------------------------------------------------
         if g['file_version'] >= g['version']['1.7']:
-            if external_files and g['external_variables']:
+            if _debug:
+                print('    External variables:', sorted(g['external_variables']))
+                print('    External files    :', g['external_files'])
+                
+            if g['external_files'] and g['external_variables']:
                 self._get_variables_from_external_files(
-                    netcdf_external_variables, external_files)
+                    netcdf_external_variables, g['external_files'])
         #--- End: if
         
         # ------------------------------------------------------------
@@ -753,8 +758,14 @@ ancillaries, field ancillaries).
 
         '''
         attribute = {'external_variables': external_variables}
-                
+
+        
         g = self.read_vars
+ #       print ('  D', g['variables'].keys())
+ #       print ('  D', g['variable_dataset'].keys())
+ #       print ('  D2', self.read_vars['variables'].keys())
+ #       print ('  D2', self.read_vars['variable_dataset'].keys())
+
 
         external_variables       = g['external_variables']
         datasets                 = g['datasets']
@@ -768,8 +779,10 @@ ancillaries, field ancillaries).
         found = []
             
         for external_file in external_files:
+            read_vars = self.read_vars
             external_read_vars = self.read(external_file, _scan_only=True,
-                                   _debug=_debug)
+                                           _debug=g['_debug'])
+            self.read_vars = read_vars
             
             datasets.append(external_read_vars['nc'])
             
@@ -824,7 +837,7 @@ ancillaries, field ancillaries).
                     # Update the read parameters so that this external
                     # variable looks like its internal
                     for key in keys:
-                        g[key][ncvar] = external_read_vars[key][ncvar]
+                        self.read_vars[key][ncvar] = external_read_vars[key][ncvar]
 
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
@@ -1724,7 +1737,7 @@ variable should be pre-filled with missing values.
         
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
-        
+
         nc = g['variable_dataset'][field_ncvar]
         
         dimensions = g['variable_dimensions'][field_ncvar]
@@ -2175,7 +2188,9 @@ variable should be pre-filled with missing values.
             cf_compliant = self._check_cell_measures(field_ncvar,
                                                      measures,
                                                      parsed_cell_measures)
+            print ('@ARSE 0')
             if cf_compliant:
+                print ('@ARSE')
                 for x in parsed_cell_measures:
                     measure, ncvars = list(x.items())[0]
                     ncvar = ncvars[0]
