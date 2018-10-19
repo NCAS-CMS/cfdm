@@ -127,6 +127,9 @@ class NetCDFWrite(IOWrite):
             return
         
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
+
+        if True:
+            self.write_vars['zzz'].write('\n{}.setncatts({})\n'.format(ncvar, netcdf_attrs))            
     #--- End: def
     
     def _character_array(self, array):
@@ -1140,7 +1143,22 @@ measure will not be written.
         # Update the field's cell_measures list
         return '{0}: {1}'.format(measure, ncvar)
     #--- End: def
-      
+
+    def _createVariable(self, **kwargs):
+        '''
+        '''
+        g = self.write_vars
+
+        ncvar = kwargs['varname']
+        
+        g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
+        
+        if True:
+            g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
+                ncvar,
+                ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
+    #--- End: def
+    
     def _write_grid_mapping(self, f, ref, multiple_grid_mappings):
         '''Write a grid mapping georeference to the netCDF file.
     
@@ -1186,13 +1204,15 @@ measure will not be written.
                       'endian': g['endian']}
             kwargs.update(g['netcdf_compression'])
 
-            g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs) #ncvar, 'S1', (),
+            self._createVariable(**kwargs)
+            
+#            g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs) #ncvar, 'S1', (),
 #                                                        endian=g['endian'],
 #                                                        **g['netcdf_compression'])
-            if True:
-                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
-                    ncvar,
-                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
+#            if True:
+#                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
+#                    ncvar,
+#                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
 
                           
 #            cref = ref.copy()
@@ -1336,8 +1356,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         kwargs.update(g['netcdf_compression'])
 
         try:
+            self._createVariable(**kwargs)
 #            args = (ncvar, datatype, ncdimensions)
-            g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
+#            g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
 #                *args,
 #                fill_value=fill_value,
 #                least_significant_digit=lsd,
@@ -1359,11 +1380,11 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 message+". Unlimited dimension must be the first (leftmost) dimension of the variable. Consider using a netCDF4 format.")
                     
             raise RuntimeError(message)
-        else:
-            if True:
-                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
-                    ncvar,
-                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
+#        else:
+#            if True:
+#                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
+#                    ncvar,
+#                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
         #--- End: try
 
         #-------------------------------------------------------------
@@ -1442,8 +1463,31 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
     
         # Copy the array into the netCDF variable
         g['nc'][ncvar][...] = array
+
+        self._aaa(ncvar, array)
+    #--- End: def
+
+    def _aaa(self, ncvar, array):
+        '''
+        '''
+        g = self.write_vars
+        
         if True:
-            g['zzz'].write('{ncvar}[...] = {array!r}\n'.format(ncvar=ncvar, array=array))
+            masked = numpy.ma.isMA(array)
+            if masked:
+                array = array.toflex()
+
+#            fd, filename = mkstemp(prefix=ncvar+'_array', suffix='.npy')
+#            close(fd)
+            filename = ncvar+'_array.npy'
+            
+            numpy.save(filename, array)
+
+            g['zzz'].write('\n_ = numpy.load({filename!r})\n'.format(filename=filename))
+            if masked:
+                g['zzz'].write('_ = numpy.ma.array(_["_data"], mask=_["_mask"], copy=False)\n')
+                
+            g['zzz'].write('{ncvar}[...] = _\n'.format(ncvar=ncvar))
     #--- End: def
     
     def _convert_to_char(self, data):
@@ -2262,10 +2306,9 @@ write them to the netCDF4.Dataset.
             self.write_vars['zzz'] = zzz
             
             zzz.writelines(['import netCDF4\n',
-                            'from numpy import array as array\n',
-                            'from numpy.ma import array as masked_array\n',
+                            'import numpy\n',
                             '\n',
-                            'nc = netCDF.Dataset({!r}, {!r}, {format!r})\n'.format(
+                            'nc = netCDF4.Dataset({!r}, {!r}, {format!r})\n'.format(
                                 filename, mode, format=fmt),
             ])
             
