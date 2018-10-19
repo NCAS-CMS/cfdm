@@ -112,7 +112,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.filename, _debug=False) #True)
+        f = cfdm.read(self.filename, _debug=False)
 
         self.assertTrue(len(f) == 3)
 
@@ -121,30 +121,25 @@ class DSGTest(unittest.TestCase):
                 break
 
 #        print(g.get_array())
-        print(repr(g.data.get_list_variable().get_array()))
-        print(g.data.get_list_variable().get_array())
-        print('compression_type=',g.data.get_compression_type())
-        print(g.data.get_compressed_axes())
-        print(g.data.shape)
+#        print(repr(g.data.get_list_variable().get_array()))
+#        print(g.data.get_list_variable().get_array())
+#        print('compression_type=',g.data.get_compression_type())
+#        print(g.data.get_compressed_axes())
+#        print(g.data.shape)
 
-        cfdm.write(f, 'delme.nc', _debug=1)
-        g = cfdm.read('delme.nc', _debug=1)
+        cfdm.write(f, 'delme.nc', _debug=False)
+        g = cfdm.read('delme.nc', _debug=False)
         self.assertTrue(len(g) == len(f))
       
-        print ('\nf\n')
-        for x in f:
-            print(x)
+#        print ('\nf\n')
+#        for x in f:
+#            print(x)
 #            a = x.get_array()
-##            print(a)
-#            x.dump()
-#            
-        print ('\ng\n')
-        for x in g:
-            print(x)
+            
+#        print ('\ng\n')
+#        for x in g:
+#            print(x)
 #            a = x.get_array()
-##            print(a)
-#            x.dump()
-
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))

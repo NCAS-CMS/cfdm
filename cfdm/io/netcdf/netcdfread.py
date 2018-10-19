@@ -735,9 +735,17 @@ ancillaries, field ancillaries).
 :Parameters:
 
     external_variables: `str`
+        The un-parsed netCDF external_variables attribute in the
+        parent file.
+
+          :Example:
+            ``external_variables='areacello'``
 
     external_files: sequence of `str`
         The external file names.
+
+          :Example:
+            ``external_files=['area.nc']``
 
 :Returns:
 
@@ -812,11 +820,16 @@ ancillaries, field ancillaries).
                         continue
                 #--- End: for
                     
-                # Update the read parameters
                 if ok:
-                    external_variables.remove(ncvar)
+                    # Update the read parameters so that this external
+                    # variable looks like its internal
                     for key in keys:
-                        g[key][ncvar] = external_read_vars[key][ncvar]                   
+                        g[key][ncvar] = external_read_vars[key][ncvar]
+
+                    # Remove this ncvar from the set of external variables
+                    external_variables.remove(ncvar)
+            #--- End: for
+        #--- End: for
     #--- End: def
     
     def _parse_compression_gathered(self, ncvar, compress):
@@ -1759,7 +1772,7 @@ variable should be pre-filled with missing values.
         self.implementation.set_properties(f, field_properties, copy=True)
 
         # Store the field's netCDF variable name
-        self.implementation.set_ncvar(f, field_ncvar)
+        self.implementation.nc_set_variable(f, field_ncvar)
 
         f.set_global_attributes(g['global_attributes'])
 
@@ -2142,7 +2155,7 @@ variable should be pre-filled with missing values.
                             coordref,
                             coordinates)
 
-                        self.implementation.set_ncvar(coordref, grid_mapping_ncvar)
+                        self.implementation.nc_set_variable(coordref, grid_mapping_ncvar)
 
                         key = self.implementation.set_coordinate_reference(
                             field=f,
@@ -2181,8 +2194,9 @@ variable should be pre-filled with missing values.
                     if _debug:
                         print('    [8] Inserting', repr(cell))
 
-                    key = self.implementation.set_cell_measure(field=f, construct=cell,
-                                                  axes=axes, copy=False)
+                    key = self.implementation.set_cell_measure(
+                        field=f, construct=cell,
+                        axes=axes, copy=False)
 
                     self._reference(ncvar)
         
@@ -2333,7 +2347,30 @@ variable should be pre-filled with missing values.
     #--- End: def
 
     def _get_domain_axes(self, ncvar, allow_external=False):
-        '''
+        '''Return the domain axis identifiers that correspond to a netCDF
+variable's netCDF dimensions.
+
+:Parameter:
+
+    ncvar: `str`
+        The netCDF variable name.
+
+    allow_external: `bool`
+        If True and *ncvar* is an external variable then return an
+        empty list.
+
+:Returns:
+
+    out: `list`
+
+:Examples:
+
+>>> r._get_domain_axes('areacello')
+['domainaxis0', 'domainaxis1']
+
+>>> r._get_domain_axes('areacello', allow_external=True)
+[]
+
         '''
         g = self.read_vars
         
@@ -2529,7 +2566,7 @@ variable should be pre-filled with missing values.
             self.implementation.set_data(bounds, bounds_data, copy=False)
             
             # Store the netCDF variable name
-            self.implementation.set_ncvar(bounds, ncbounds)
+            self.implementation.nc_set_variable(bounds, ncbounds)
             
             self.implementation.set_bounds(c, bounds, copy=False)
             
@@ -2569,7 +2606,7 @@ variable should be pre-filled with missing values.
         #--- End: if
         
         # Store the netCDF variable name
-        self.implementation.set_ncvar(c, ncvar)
+        self.implementation.nc_set_variable(c, ncvar)
 
         if not domain_ancillary:
             g['coordinates'][field_ncvar].append(ncvar)
@@ -2609,13 +2646,13 @@ variable should be pre-filled with missing values.
         cell_measure = self.implementation.initialise_CellMeasure(measure=measure)
 
         # Store the netCDF variable name
-        self.implementation.set_ncvar(cell_measure, ncvar)
+        self.implementation.nc_set_variable(cell_measure, ncvar)
     
         if ncvar in g['external_variables']:
-            # The cell measure variable is in a different file
+            # The cell measure variable is in an unknown other file
             self.implementation.set_external(construct=cell_measure)
         else:
-            # The cell measure variable is this file
+            # The cell measure variable is in a known file
             self.implementation.set_properties(cell_measure, g['variable_attributes'][ncvar])
             data = self._create_data(ncvar, cell_measure)            
             self.implementation.set_data(cell_measure, data, copy=False)
@@ -2651,7 +2688,7 @@ variable should be pre-filled with missing values.
         variable = self.implementation.initialise_Count()
 
         # Store the netCDF variable name
-        self.implementation.set_ncvar(variable, ncvar)
+        self.implementation.nc_set_variable(variable, ncvar)
 
         properties = g['variable_attributes'][ncvar]
         sample_ncdim = properties.pop('sample_dimension', None)
@@ -2695,7 +2732,7 @@ variable should be pre-filled with missing values.
         variable = self.implementation.initialise_Index()
 
         # Store the netCDF variable name
-        self.implementation.set_ncvar(variable, ncvar)
+        self.implementation.nc_set_variable(variable, ncvar)
 
         properties = g['variable_attributes'][ncvar]
         instance_ncdim = properties.pop('instance_dimension', None)
@@ -2734,7 +2771,7 @@ variable should be pre-filled with missing values.
         variable = self.implementation.initialise_List()
 
         # Store the netCDF variable name
-        self.implementation.set_ncvar(variable, ncvar)
+        self.implementation.nc_set_variable(variable, ncvar)
 
         properties = self.read_vars['variable_attributes'][ncvar]
         properties.pop('compress', None)
@@ -3014,7 +3051,7 @@ variable should be pre-filled with missing values.
         self.implementation.set_data(field_ancillary, data, copy=False)
 
         # Store the netCDF variable name
-        self.implementation.set_ncvar(field_ancillary, ncvar)
+        self.implementation.nc_set_variable(field_ancillary, ncvar)
     
         return field_ancillary
     #--- End: def

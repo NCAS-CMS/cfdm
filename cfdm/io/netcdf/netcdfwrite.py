@@ -293,7 +293,9 @@ If the input variable has no `!dtype` attribute (or it is None) then
             # This string length dimension needs creating
             g['ncdim_to_size'][ncdim] = size
             g['netcdf'].createDimension(ncdim, size)
-    
+            if True:
+                g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
+                    ncdim=ncdim, size=size))
         return ncdim
     #--- End: def
     
@@ -326,7 +328,7 @@ metadata construct.
             compressed_ncdims = tuple([g['axis_to_ncdim'][axis] for axis in compressed_axes])
 
             sample_ncdim = g['sample_ncdim'].get(compressed_ncdims)
-
+            
             if compression_type == 'gathered':
                 # ----------------------------------------------------
                 # Compression by gathering
@@ -335,7 +337,7 @@ metadata construct.
                     # The list variable has not yet been written to
                     # the file, so write it and also get the netCDF
                     # name of the sample dimension.
-                    list_variable = self.implementation.get_list_variable(construct)                
+                    list_variable = self.implementation.get_list_variable(construct)
                     sample_ncdim = self._write_list_variable(
                         field,
                         list_variable,
@@ -420,8 +422,9 @@ metadata construct.
         
         if unlimited:
             # Create an unlimited dimension
+            size = None
             try:
-                g['netcdf'].createDimension(ncdim, None)
+                g['netcdf'].createDimension(ncdim, size)
             except RuntimeError as error:
                 message = "Can't create unlimited dimension in {} file ({}).".format(
                     g['netcdf'].file_format, error)
@@ -439,6 +442,12 @@ message+" Only one unlimited dimension allowed. Consider using a netCDF4 format.
                 raise RuntimeError(
                     "Can't create dimension of size {} in {} file ({})".format(
                         size, g['netcdf'].file_format, error))
+        #--- End: if
+        
+        if True:
+            g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
+                ncdim=ncdim, size=size))
+
     #--- End: def
     
 #    def _change_reference_datetime(self, coord):
@@ -605,8 +614,8 @@ a new netCDF dimension for the bounds.
                     ncdim, f, None,
                     size=self.implementation.get_data_size(index_variable))
                 
-            if sample_dimension is None:
-                sample_dimension = ncdim
+#            if sample_dimension is None:
+#                sample_dimension = ncdim
 #                _ = self.implementation.nc_get_sample_dimension(index_variable, 'element')
 #                sample_ncdim = self._netcdf_name(_)
 #                self._write_dimension(
@@ -657,7 +666,7 @@ a new netCDF dimension for the bounds.
                                         list_variable, extra=extra)
 
 
-            self.implementation.set_ncvar(list_variable, ncvar)
+            self.implementation.nc_set_variable(list_variable, ncvar) # Why?
         else:
             ncvar = g['seen'][id(list_variable)]['ncvar']
 
@@ -815,7 +824,10 @@ name.
                     
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
-             
+                if True:
+                    g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
+                        ncdim=ncdim, size=size))
+
             ncvar = self.implementation.get_ncvar(bounds, coord_ncvar+'_bounds')                
             ncvar = self._netcdf_name(ncvar)
             
@@ -946,7 +958,7 @@ then the input coordinate is not written.
             # bounds netCDF variable and add the bounds or climatology
             # attribute to the dictionary of extra attributes
             extra = self._write_bounds(coord, ncdimensions, ncvar)
-            
+
             # Create a new auxiliary coordinate variable
             self._write_netcdf_variable(ncvar, ncdimensions, coord,
                                         extra=extra)
@@ -1167,10 +1179,22 @@ measure will not be written.
             if g['verbose'] or _debug:
                 print('    Writing', repr(ref), 'to netCDF variable:', ncvar)
 
-            g['nc'][ncvar] = g['netcdf'].createVariable(ncvar, 'S1', (),
-                                                        endian=g['endian'],
-                                                        **g['netcdf_compression'])
-    
+#            args = [ncvar, 'S1', ()]
+            kwargs = {'varname': ncvar,
+                      'datatype': 'S1',
+                      'dimensions': (),
+                      'endian': g['endian']}
+            kwargs.update(g['netcdf_compression'])
+
+            g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs) #ncvar, 'S1', (),
+#                                                        endian=g['endian'],
+#                                                        **g['netcdf_compression'])
+            if True:
+                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
+                    ncvar,
+                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
+
+                          
 #            cref = ref.copy()
 #            cref = ref.canonical(f) # NOTE: NOT converting units
     
@@ -1196,7 +1220,9 @@ measure will not be written.
 #                parameters['grid_mapping_name'] = grid_mapping_name
                 
             g['nc'][ncvar].setncatts(parameters)
-            
+            if True:
+                g['zzz'].write('{}.setncatts({})\n'.format(ncvar, parameters))
+                
             # Update the 'seen' dictionary
             g['seen'][id(ref)] = {'variable': ref, 
                                   'ncvar'   : ncvar,
@@ -1302,16 +1328,22 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         # ------------------------------------------------------------
         # Create a new netCDF variable
         # ------------------------------------------------------------
+        kwargs = {'varname'   : ncvar,
+                  'datatype'  : datatype,
+                  'dimensions': ncdimensions,
+                  'endian'    : g['endian'],
+                  'chunksizes': chunksizes}
+        kwargs.update(g['netcdf_compression'])
+
         try:
-            g['nc'][ncvar] = g['netcdf'].createVariable(
-                ncvar,
-                datatype, 
-                ncdimensions,
-                fill_value=fill_value,
-                least_significant_digit=lsd,
-                endian=g['endian'],
-                chunksizes=chunksizes,
-                **g['netcdf_compression'])
+#            args = (ncvar, datatype, ncdimensions)
+            g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
+#                *args,
+#                fill_value=fill_value,
+#                least_significant_digit=lsd,
+#                endian=g['endian'],
+#                chunksizes=chunksizes,
+#                **g['netcdf_compression'])
         except RuntimeError as error:
             error = str(error)
             if error == 'NetCDF: Not a valid data type or _FillValue type mismatch':
@@ -1327,6 +1359,11 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 message+". Unlimited dimension must be the first (leftmost) dimension of the variable. Consider using a netCDF4 format.")
                     
             raise RuntimeError(message)
+        else:
+            if True:
+                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
+                    ncvar,
+                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
         #--- End: try
 
         #-------------------------------------------------------------
@@ -1405,6 +1442,8 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
     
         # Copy the array into the netCDF variable
         g['nc'][ncvar][...] = array
+        if True:
+            g['zzz'].write('{ncvar}[...] = {array!r}\n'.format(ncvar=ncvar, array=array))
     #--- End: def
     
     def _convert_to_char(self, data):
@@ -1669,22 +1708,22 @@ extra trailing dimension.
                           len(data_axes) == 2 and axis == data_axes[1]):
                         # Do not create the a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('hmm_contiguous')
+                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('contiuous_element')
                     elif (g['compression_type'] == 'ragged indexed' and 
                           len(data_axes) == 2 and axis == data_axes[1]):
                         # Do not create the a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('hmm_indexed')
+                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('indexed_element')
                     elif (g['compression_type'] == 'ragged indexed contiguous' and 
                           len(data_axes) == 3 and axis == data_axes[1]):
                         # Do not create the a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('element1')
+                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('indexed_contiguous_element1')
                     elif (g['compression_type'] == 'ragged indexed contiguous' and 
                           len(data_axes) == 3 and axis == data_axes[2]):
                         # Do not create the a netCDF dimension for the
                         # element dimension
-                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('element2')
+                        g['axis_to_ncdim'][axis] = 'dsg%{}'.format('indexed_contiguous_element2')
                     else:
                         domain_axis = self.implementation.get_domain_axes(f)[axis] 
                         ncdim = self.implementation.nc_get_dimension(domain_axis, 'dim')
@@ -1743,7 +1782,8 @@ extra trailing dimension.
                 sample_ncdim = self._write_index_variable(
                     f, index,
                     ncdim=index_ncdim, create_ncdim=True,
-                    instance_dimension=data_ncdimensions[0])
+                    instance_dimension=data_ncdimensions[0],
+                    sample_dimension=index_ncdim)
 
             elif compression_type == 'ragged indexed contiguous':
                 # ----------------------------------------------------
@@ -1887,6 +1927,10 @@ extra trailing dimension.
                 ncvar = g['key_to_ncvar'][owning_coord_key]
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
+                if True:
+                    g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
+                        ncvar=ncvar, formula_terms=formula_terms))
+            
                 if g['_debug']:
                     print('    Writing formula_terms to netCDF variable', ncvar+':', repr(formula_terms))
     
@@ -1896,6 +1940,10 @@ extra trailing dimension.
                 if bounds_ncvar is not None:
                     bounds_formula_terms = ' '.join(bounds_formula_terms)
                     g['nc'][bounds_ncvar].setncattr('formula_terms', bounds_formula_terms)
+                    if True:
+                        g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
+                            ncvar=bounds_ncvar, formula_terms=bounds_formula_terms))
+
                     if g['_debug']:
                         print('    Writing formula_terms to netCDF bounds variable', bounds_ncvar+':', repr(bounds_formula_terms))
             #--- End: if
@@ -2191,6 +2239,9 @@ write them to the netCDF4.Dataset.
 
         '''
         self.write_vars['netcdf'].close()
+
+        if True:
+            self.write_vars['zzz'].close()
     #--- End: def
 
     def file_open(self, filename, mode, fmt):
@@ -2205,8 +2256,20 @@ write them to the netCDF4.Dataset.
             nc = netCDF4.Dataset(filename, mode, format=fmt)
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))        
-        else:
-            return nc
+
+        if True:
+            zzz = open('netcdf4_creator.py', 'w')
+            self.write_vars['zzz'] = zzz
+            
+            zzz.writelines(['import netCDF4\n',
+                            'from numpy import array as array\n',
+                            'from numpy.ma import array as masked_array\n',
+                            '\n',
+                            'nc = netCDF.Dataset({!r}, {!r}, {format!r})\n'.format(
+                                filename, mode, format=fmt),
+            ])
+            
+        return nc
     #--- End: def
 
 #    @classmethod

@@ -1307,7 +1307,7 @@ also be provided.
         construct.nc_set_dimension(ncdim)
     #--- End: def
 
-    def set_ncvar(self, parent, ncvar):
+    def nc_set_variable(self, parent, ncvar):
         '''
 
 :Parameters:

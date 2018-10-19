@@ -12,5 +12,7 @@ from .netcdf                      import (NetCDFDimension,
                                           NetCDFSampleDimension,
                                           NetCDFVariable)
 
+from .external                    import External
+
 from .constructaccess             import ConstructAccess
 

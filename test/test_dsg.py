@@ -158,16 +158,16 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(cfdm.functions._numpy_allclose(q.get_array(), self.a))
         
-        print ('\nf\n')
-        for x in f:
-            print(x)
+#        print ('\nf\n')
+#        for x in f:
+#            print(x)
             
-        cfdm.write(f, 'delme.nc', _debug=True)
+        cfdm.write(f, 'delme.nc', _debug=False)
         g = cfdm.read('delme.nc')
         
-        print ('\ng\n')
-        for x in g:
-            print(x)
+#        print ('\ng\n')
+#        for x in g:
+#            print(x)
 
         self.assertTrue(len(g) == len(f))
 
