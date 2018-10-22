@@ -17,9 +17,8 @@ designed to promote the creation, processing, and sharing of climate
 and forecasting data using Network Common Data Form (netCDF,
 (https://www.unidata.ucar.edu/software/netcdf) files and libraries.
 
-The CF data model (https://www.geosci-model-dev.net/10/4619/2017/)
-identifies the fundamental elemnts of CF and shows how they relate to
-each other.
+The CF data model identifies the fundamental elemnts of CF and shows
+how they relate to each other.
 
 The field construct, which corresponds to a CF-netCDF data variable
 with all of its metadata, is central to the CF data model. The field
@@ -58,11 +57,10 @@ Quick start
 
 ----------------------------------------------------------------------
 
-* Make sure [**numpy package**](https://pypi.python.org/pypi/numpy)
-  1.13 or newer and [**netCDF4
-  package**](https://pypi.python.org/pypi/netCDF4) 1.4 or newer are
-  installed, and you have [**Python**](http://www.python.org) 2.7 or
-  newer.
+* Make sure [**numpy**](https://pypi.python.org/pypi/numpy) 1.13 or
+  newer and [**netCDF4**](https://pypi.python.org/pypi/netCDF4) 1.4 or
+  newer are installed, and you have
+  [**Python**](http://www.python.org) 2.7 or newer.
 
 Tests
 =====
