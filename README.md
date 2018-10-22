@@ -14,7 +14,8 @@ The CF (Climate and Forecast) metadata conventions (http://cfconventions.org) pr
 meaning of data and of their spatial and temporal properties and are designed to promote the creation, processing, and sharing of climate
 and forecasting data using Network Common Data Form (netCDF, https://www.unidata.ucar.edu/software/netcdf) files and libraries.
 
-The CF data model identifies the fundamental elemnts of CF and shows how they relate to each other.
+The CF data model identifies the fundamental elements of CF and shows
+how they relate to each other, independently of the netCDF encoding.
 
 The field construct, which corresponds to a CF-netCDF data variable
 with all of its metadata, is central to the CF data model. The field
