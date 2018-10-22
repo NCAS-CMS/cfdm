@@ -170,30 +170,30 @@ highlight_language = 'python'
 
 # The theme to use for HTML and HTML Help pages.  See the
 # documentation for a list of builtin themes.
-html_theme = 'haiku' #'default'
+html_theme = 'default' #'haiku' #'default'
 
 #/home/opt-user/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/Sphinx-1.2.2-py2.7.egg/sphinx/themes
 
 # Theme options are theme-specific and customize the look and feel of
 # a theme further.  For a list of options available for each theme,
 # see the documentation.
-#html_theme_options = {"stickysidebar"   : "true",
-#                      "externalrefs"    : "false",
-#                      'sidebarbgcolor'  : '#F2F2F2',
-#                      'sidebartextcolor': '#777777',
-#                      'sidebarbgcolor'  : '#F2F2F2',
-#                      'sidebartextcolor': '#777777',
-#                      'sidebarlinkcolor': '#003469',
-#                      'relbarbgcolor'   : '#5682AD',
-#                      'relbartextcolor' : '#ffffff',
-#                      'relbarlinkcolor' : '#ffffff',
-#                      'headbgcolor'     : '#FFFFFF',
-#                      'headtextcolor'   : '#000000',
-#                      }
+html_theme_options = {"stickysidebar"   : "true",
+                      "externalrefs"    : "false",
+                      'sidebarbgcolor'  : '#F2F2F2',
+                      'sidebartextcolor': '#777777',
+                      'sidebarbgcolor'  : '#F2F2F2',
+                      'sidebartextcolor': '#777777',
+                      'sidebarlinkcolor': '#003469',
+                      'relbarbgcolor'   : '#5682AD',
+                      'relbartextcolor' : '#ffffff',
+                      'relbarlinkcolor' : '#ffffff',
+                      'headbgcolor'     : '#FFFFFF',
+                      'headtextcolor'   : '#000000',
+                      }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = "Documentation"
+html_title = "Documentation"
 
 # A shorter title for the navigation bar.  Default is the same as
 # html_title.
@@ -224,6 +224,7 @@ html_last_updated_fmt = '%b %d, %Y'
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
+html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
 
 # Additional templates that should be rendered to pages, maps page
 # names to template names.
