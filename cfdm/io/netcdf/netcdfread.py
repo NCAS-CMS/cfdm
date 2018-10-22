@@ -326,14 +326,10 @@ ancillaries, field ancillaries).
             'coordinates' : {},
             
             'bounds': {},
-
-            # Vertical coordinate reference constructs, keyed by the
-            # netCDF variable name of their parent parametric vertical
-            # coordinate variable.
-            #
-            # E.g. {'ocean_s_coordinate': <CoordinateReference: ocean_s_coordinate>}
-            'vertical_crs': {},
-
+            
+            # --------------------------------------------------------            
+            # Simple geometries
+            # --------------------------------------------------------
             # Geometry containers, keyed by their netCDF variable name.
             #
             # E.g. {'geometry_container': {
@@ -349,17 +345,37 @@ ancillaries, field ancillaries).
             'do_not_create_field':  set(),
             'references': {},
 
+            # --------------------------------------------------------
+            # External variables
+            # --------------------------------------------------------
+            # Variables listed by the global external_variables
+            # attribute
             'external_variables': set(),
+
+            # External file names
+            'external_files' : set(external_files),
             
-            # The collection of external variables that are actually
-            # referenced from within the file
+            # External variables that are actually referenced from
+            # within the parent file
             'referenced_external_variables': set(),
 
+            # --------------------------------------------------------
+            # Coordinate references
+            # --------------------------------------------------------
+            # Grid mapping attributes that describe horizontal datum
+            'datum_parameters': constants.datum_parameters,
+
+            # Vertical coordinate reference constructs, keyed by the
+            # netCDF variable name of their parent parametric vertical
+            # coordinate variable.
+            #
+            # E.g. {'ocean_s_coordinate': <CoordinateReference: ocean_s_coordinate>}
+            'vertical_crs': {},
+
+            # 
             'version': {'1.6': LooseVersion('1.6'),
                         '1.7': LooseVersion('1.7'),
                         '1.8': LooseVersion('1.8')},
-
-            'datum_parameters': constants.datum_parameters,
         }
         g = self.read_vars
 
@@ -466,6 +482,7 @@ ancillaries, field ancillaries).
         
         variable_dimensions = {}
         variable_dataset    = {}
+        variable_filename   = {}
         variables           = {}
         for ncvar in nc.variables:
             variable = nc.variables[ncvar]
@@ -487,6 +504,8 @@ ancillaries, field ancillaries).
 
             variable_dataset[ncvar] = nc
             
+            variable_filename[ncvar] = g['filename']
+            
             variables[ncvar] = variable
         #--- End: for
 
@@ -502,6 +521,9 @@ ancillaries, field ancillaries).
 
         # The netCDF4 dataset object for each variable
         g['variable_dataset'] = variable_dataset
+
+        # The name of the file containing the each variable
+        g['variable_filename'] = variable_filename
 
         # The netCDF4 variable object for each variable
         g['variables'] = variables
@@ -646,16 +668,19 @@ ancillaries, field ancillaries).
 
         if _scan_only:
             return self.read_vars
-            
+
         # ------------------------------------------------------------
         # Get external variables (>= CF-1.7)
         # ------------------------------------------------------------
         if g['file_version'] >= g['version']['1.7']:
-            if external_files and g['external_variables']:
-                self._get_variables_from_external_files(
-                    netcdf_external_variables, external_files)
+            if _debug:
+                print('    External variables:', sorted(g['external_variables']))
+                print('    External files    :', g['external_files'])
+                
+            if g['external_files'] and g['external_variables']:
+                self._get_variables_from_external_files(netcdf_external_variables)
         #--- End: if
-        
+
         # ------------------------------------------------------------
         # Convert every netCDF variable to a field (apart from special
         # variables that have already been identified as such)
@@ -729,12 +754,13 @@ ancillaries, field ancillaries).
         return list(fields.values())
     #--- End: def
 
-    def _get_variables_from_external_files(self, external_variables, external_files):
+    def _get_variables_from_external_files(self,
+                                           netcdf_external_variables): #, external_files):
         '''Get external variables from external files.
 
 :Parameters:
 
-    external_variables: `str`
+    netcdf_external_variables: `str`
         The un-parsed netCDF external_variables attribute in the
         parent file.
 
@@ -752,24 +778,28 @@ ancillaries, field ancillaries).
     `None`
 
         '''
-        attribute = {'external_variables': external_variables}
-                
-        g = self.read_vars
+        attribute = {'external_variables': netcdf_external_variables}
 
-        external_variables       = g['external_variables']
-        datasets                 = g['datasets']
-        internal_dimension_sizes = g['internal_dimension_sizes']                
+        read_vars = self.read_vars.copy()
+        
+        external_variables       = read_vars['external_variables']
+        external_files           = read_vars['external_files']
+        datasets                 = read_vars['datasets']
+        parent_dimension_sizes   = read_vars['internal_dimension_sizes']                
 
         keys  = ('variable_attributes',
                  'variable_dimensions',
                  'variable_dataset',
+                 'variable_filename',
                  'variables')
         
         found = []
             
         for external_file in external_files:
             external_read_vars = self.read(external_file, _scan_only=True,
-                                   _debug=_debug)
+                                           _debug=False)
+            # Reset self.read_vars
+            self.read_vars = read_vars
             
             datasets.append(external_read_vars['nc'])
             
@@ -784,7 +814,7 @@ ancillaries, field ancillaries).
                     # one external file
                     external_variables.add(ncvar)
                     for key in keys:
-                        g[key].pop(ncvar)
+                        self.read_vars[key].pop(ncvar)
 
                     self._add_message(
                         None, ncvar,
@@ -801,7 +831,7 @@ ancillaries, field ancillaries).
                 # parent file, with the same sizes.
                 ok = True
                 for d in external_read_vars['variable_dimensions'][ncvar]:
-                    size = internal_dimension_sizes.get(d)
+                    size = parent_dimension_sizes.get(d)
                     if size is None:
                         ok = False
                         self._add_message(
@@ -824,7 +854,7 @@ ancillaries, field ancillaries).
                     # Update the read parameters so that this external
                     # variable looks like its internal
                     for key in keys:
-                        g[key][ncvar] = external_read_vars[key][ncvar]
+                        self.read_vars[key][ncvar] = external_read_vars[key][ncvar]
 
                     # Remove this ncvar from the set of external variables
                     external_variables.remove(ncvar)
@@ -1721,10 +1751,10 @@ variable should be pre-filled with missing values.
 
         '''
         g = self.read_vars
-        
+
         # Reset 'domain_ancillary_key'
         g['domain_ancillary_key'] = {}
-        
+
         nc = g['variable_dataset'][field_ncvar]
         
         dimensions = g['variable_dimensions'][field_ncvar]
@@ -1974,7 +2004,7 @@ variable should be pre-filled with missing values.
                     ncscalar_to_axis[ncvar] = dimensions[0]
             #--- End: for
         #--- End: if
-    
+
         # ----------------------------------------------------------------
         # Add coordinate references from formula_terms properties
         # ----------------------------------------------------------------
@@ -2067,7 +2097,7 @@ variable should be pre-filled with missing values.
 #            g['vertical_crs'][coord_ncvar] = coordinate_reference
             g['vertical_crs'][key] = coordinate_reference
         #--- End: for
-    
+
         # ----------------------------------------------------------------
         # Add grid mapping coordinate references (do this after
         # formula terms)
@@ -2172,9 +2202,11 @@ variable should be pre-filled with missing values.
         measures = self.implementation.del_property(f, 'cell_measures')
         if measures is not None:
             parsed_cell_measures = self._parse_x(field_ncvar, measures)
+
             cf_compliant = self._check_cell_measures(field_ncvar,
                                                      measures,
                                                      parsed_cell_measures)
+
             if cf_compliant:
                 for x in parsed_cell_measures:
                     measure, ncvars = list(x.items())[0]
@@ -2649,10 +2681,11 @@ variable's netCDF dimensions.
         self.implementation.nc_set_variable(cell_measure, ncvar)
     
         if ncvar in g['external_variables']:
-            # The cell measure variable is in an unknown other file
+            # The cell measure variable is in an unknown external file
             self.implementation.set_external(construct=cell_measure)
         else:
-            # The cell measure variable is in a known file
+            # The cell measure variable is in this file or in a known
+            # external file
             self.implementation.set_properties(cell_measure, g['variable_attributes'][ncvar])
             data = self._create_data(ncvar, cell_measure)            
             self.implementation.set_data(cell_measure, data, copy=False)
@@ -2843,17 +2876,15 @@ variable's netCDF dimensions.
             ndim -= 1
             dtype = numpy.dtype('S{0}'.format(strlen))
 
+
+        filename = g['variable_filename'][ncvar]
+        
         return self.implementation.initialise_NetCDFArray(
-            filename=g['filename'], ncvar=ncvar,
+            filename=filename, ncvar=ncvar,
             dtype=dtype,
             ndim=ndim,
             shape=shape,
             size=size)
-#
-#        return self._create_NetCDFArray(filename=g['filename'],
-#                                        ncvar=ncvar, dtype=dtype,
-#                                        ndim=ndim, shape=shape,
-#                                        size=size)
     #--- End: def 
     
     def _create_data(self, ncvar, construct=None,
@@ -2877,37 +2908,11 @@ variable's netCDF dimensions.
         '''
         g = self.read_vars
 
-        array = self._create_netcdfarray(ncvar, unpacked_dtype=unpacked_dtype)
+        array = self._create_netcdfarray(ncvar,
+                                         unpacked_dtype=unpacked_dtype)
 
         if array is None:
             return None
-        
-#        variable = g['variables'].get(ncvar)
-#        if variable is None:
-#            return None
-#        
-#        dtype = variable.dtype
-#        if unpacked_dtype is not False:
-#            dtype = numpy.result_type(dtype, unpacked_dtype)
-#    
-#        ndim  = variable.ndim
-#        shape = variable.shape
-#        size  = variable.size
-#        if size < 2:
-#            size = int(size)
-#    
-#        if dtype.kind == 'S' and ndim >= 1: #shape[-1] > 1:
-#            # Has a trailing string-length dimension
-#            strlen = shape[-1]
-#            shape = shape[:-1]
-#            size /= strlen
-#            ndim -= 1
-#            dtype = numpy.dtype('S{0}'.format(strlen))
-#
-#        array = self._create_NetCDFArray(filename=g['filename'],
-#                                         ncvar=ncvar, dtype=dtype,
-#                                         ndim=ndim, shape=shape,
-#                                         size=size)
                 
         compression = g['compression']
 
@@ -2996,16 +3001,6 @@ variable's netCDF dimensions.
 
         return self._create_Data(array, ncvar=ncvar) 
     #--- End: def
-
-#    def _create_NetCDFArray(self,filename=None, ncvar=None,
-#                            dtype=None, ndim=None, shape=None,
-#                            size=None):
-#        '''
-#        '''
-#        return self.implementation.initialise_NetCDFArray(
-#            filename=filename, ncvar=ncvar, dtype=dtype, ndim=ndim,
-#            shape=shape, size=size)
-#    #--- End: def
 
     def _create_domain_axis(self, size, ncdim=None):
         '''
@@ -3639,7 +3634,7 @@ Checks that
             return False
 
         parent_dimensions  = self._ncdimensions(field_ncvar)
-        external_variables = self.read_vars['external_variables']
+        external_variables = g['external_variables']
         
         ok = True
         for x in parsed_string:
@@ -3653,12 +3648,13 @@ Checks that
                 continue
 
             ncvar = values[0]
-            external = (ncvar in external_variables)
+
+            unknown_external = (ncvar in external_variables)
 
             # Check that the variable exists in the file, or if not
             # that it is listed in the 'external_variables' global
             # file attribute
-            if (not external and ncvar not in g['internal_variables']):
+            if (not unknown_external and ncvar not in g['variables']):
                 self._add_message(field_ncvar, ncvar,
                                   message=missing_variable,
                                   attribute=attribute,
@@ -3667,7 +3663,7 @@ Checks that
                 continue
                 
             dimensions = self._ncdimensions(ncvar)
-            if (not external and
+            if (not unknown_external and
                 not self._dimensions_are_subset(ncvar, dimensions, parent_dimensions)):
                 # The cell measure variable's dimensions do NOT span a
                 # subset of the parent variable's dimensions.
@@ -3686,10 +3682,6 @@ Checks that
     def _check_ancillary_variables(self, field_ncvar, string,
                                    parsed_string):
         '''Checks requirements
-
-  * 7.2.requirement.1
-  * 7.2.requirement.3
-  * 7.2.requirement.4
 
 :Parameters:
 

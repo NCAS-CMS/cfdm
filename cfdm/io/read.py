@@ -20,22 +20,6 @@ from .. import (AuxiliaryCoordinate,
                 Index,
                 CoordinateConversion,
                 Datum)
-#from ..auxiliarycoordinate import AuxiliaryCoordinate
-#from ..cellmethod          import CellMethod
-#from ..cellmeasure         import CellMeasure
-#from ..coordinatereference import CoordinateReference
-#from ..dimensioncoordinate import DimensionCoordinate
-#from ..domainancillary     import DomainAncillary
-#from ..domainaxis          import DomainAxis
-#from ..field               import Field
-#from ..fieldancillary      import FieldAncillary
-#
-#from ..bounds               import Bounds
-#from ..count                 import Count
-#from ..list                 import List
-#from ..index                 import Index
-#from ..coordinateconversion import CoordinateConversion
-#from ..datum                import Datum
 
 from ..data import (Data,
                     GatheredArray,
@@ -76,12 +60,10 @@ implementation = CFDMImplementation(version = __version__,
                                     RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
                                     )
 
-#netcdf = NetCDFRead(implementation)
-# um = UMRead(implementation)
-
 def read(filename, external_files=(), verbose=False,
          ignore_read_error=False, uncompress=True, field=None,
-         _debug=False, _implementation=implementation):
+          _debug=False,
+         _implementation=implementation):
     '''Read fields from netCDF files.
 
 Files may be on disk or on a OPeNDAP server.
@@ -223,10 +205,11 @@ Any amount of netCDF files may be read.
 #--- End: def
 
 def _plural(n):
-    '''Return a suffix which reflects a word's plural.
+    '''Return a suffix which reflects a word's plurality.
 
     '''
     return 's' if n !=1 else ''
+#--- End: def
 
 def _read_a_file(filename,
                  external_files=(),
@@ -236,9 +219,7 @@ def _read_a_file(filename,
                  uncompress=True,
                  _debug=False,
                  _implementation=None):
-    '''
-
-Read the contents of a single file into a field list.
+    '''Read the contents of a single file into a field list.
 
 :Parameters:
 
@@ -258,9 +239,9 @@ Read the contents of a single file into a field list.
     out: `list`
         The fields in the file.
 
-'''
+    '''
     # ----------------------------------------------------------------
-    # Initialise the netCDF read object
+    # Initialise a netCDF read object
     # ----------------------------------------------------------------
     netcdf = NetCDFRead(_implementation)
 
@@ -268,7 +249,8 @@ Read the contents of a single file into a field list.
     # Read the file into fields.
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
-        fields = netcdf.read(filename, field=field, verbose=verbose,
+        fields = netcdf.read(filename, external_files=external_files,
+                             field=field, verbose=verbose,
                              uncompress=uncompress, _debug=_debug)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
