@@ -233,13 +233,14 @@ None
     #--- End: def
 
     def properties(self, properties=None, copy=True):
-        '''Return or change all properties.
+        '''Return or replace all properties.
 
 A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
 to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
-.. seealso:: `get_property`, `set_property`
+.. seealso:: `del_property`, `get_property`, `has_property`,
+             `set_property`
 
 :Examples 1:
 
@@ -248,7 +249,8 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 :Parameters:
 
     properties: `dict`, optional   
-        Replace all existing properties with those specified in a
+
+        Replace all existing properties with those specified in the
         dictionary. If the dictionary is empty then all properties
         will be removed.
 

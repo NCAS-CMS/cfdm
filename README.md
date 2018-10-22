@@ -1,13 +1,45 @@
-CFDM
+cfdm
 ====
-
-A reference implementation of the [**CF data
-model**](https://www.geosci-model-dev.net/10/4619/2017/)
 
 ----------------------------------------------------------------------
 
-Functionality
-=============
+A python reference implementation of the CF data model.
+
+Description
+===========
+
+----------------------------------------------------------------------
+
+The CF (Climate and Forecast) metadata conventions
+(http://cfconventions.org) provide a description of the physical
+meaning of data and of their spatial and temporal properties and are
+designed to promote the creation, processing, and sharing of climate
+and forecasting data using Network Common Data Form (netCDF,
+(https://www.unidata.ucar.edu/software/netcdf) files and libraries.
+
+The CF data model (https://www.geosci-model-dev.net/10/4619/2017/)
+identifies the fundamental elemnts of CF and shows how they relate to
+each other.
+
+The field construct, which corresponds to a CF-netCDF data variable
+with all of its metadata, is central to the CF data model. The field
+construct consists of a data array and the definition of its domain,
+ancillary metadata fields defined over the same domain, and cell
+method constructs to describe how the cell values represent the
+variation of the physical quantity within the cells of the domain. The
+domain itself is defined collectively by various other constructs
+included in the field: domain axis, dimension coordinate, auxiliary
+coordinate, cell measure, coordinate reference and domain ancillary
+constructs. See https://www.geosci-model-dev.net/10/4619/2017/ for
+full details.
+
+The **cfdm** library implements the CF data model for its internal
+data structures and so is able to process any CF-compliant dataset. It
+is, however, not strict about CF compliance so that partially
+conformant datasets may be modified in memory as well as ingested from
+existing datasets, or written to new datasets.
+
+The **cfdm** package can
 
 * read netCDF datasets into field constructs
 
@@ -19,48 +51,43 @@ Functionality
 
 * create subspaces of field constructs
 
-* write field constructs to a CF-netCDF dataset on disk
+* write field constructs to a netCDF dataset on disk
+
+Quick start
+===========
 
 ----------------------------------------------------------------------
 
-Documentation
-=============
-
-
-----------------------------------------------------------------------
-
-Dependencies
-============
-
-* **Required:** [**python**](http://www.python.org) version 2.7, 3 or
-  later.
- 
-* **Required:** The [**python numpy
-  package**](https://pypi.python.org/pypi/numpy) at version 1.13 or
+* Make sure [**numpy package**](https://pypi.python.org/pypi/numpy)
+  1.13 or newer and [**netCDF4
+  package**](https://pypi.python.org/pypi/netCDF4) 1.4 or newer are
+  installed, and you have [**Python**](http://www.python.org) 2.7 or
   newer.
-
-* **Required:** The [**python netCDF4
-  package**](https://pypi.python.org/pypi/netCDF4) at version 1.4 or
-  newer. This package requires the
-  [**netCDF**](http://www.unidata.ucar.edu/software/netcdf),
-  [**HDF5**](http://www.hdfgroup.org/HDF5) and
-  [**zlib**](ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4)
-  libraries.
-
-----------------------------------------------------------------------
 
 Tests
 =====
+
+----------------------------------------------------------------------
 
 The test scripts are in the ``test`` directory. To run all tests:
 
     python test/run_tests.py
 
 
+Documentation
+=============
+
+----------------------------------------------------------------------
+
+See the online [**documentation**](https://ncas-cms.github.io/cfdm)
+for more details.
+
 ----------------------------------------------------------------------
 
 Code license
 ============
+
+----------------------------------------------------------------------
 
 [**MIT License**](http://opensource.org/licenses/mit-license.php)
 
