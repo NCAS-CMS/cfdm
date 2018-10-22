@@ -54,9 +54,9 @@ Quick start
 
 ----------------------------------------------------------------------
 
-* Make sure [**numpy**](https://pypi.python.org/pypi/numpy) 1.13 or
-  newer and [**netCDF4**](https://pypi.python.org/pypi/netCDF4) 1.4 or
-  newer are installed, and you have
+* Make sure [**numpy**](https://pypi.python.org/pypi/numpy) (1.13 or
+  newer) and [**netCDF4**](https://pypi.python.org/pypi/netCDF4) (1.4
+  or newer) are installed, and you have
   [**Python**](http://www.python.org) 2.7 or newer.
 
 Tests
