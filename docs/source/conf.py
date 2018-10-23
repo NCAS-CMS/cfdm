@@ -99,7 +99,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Python cfdm package'
-copyright = u'2017, David Hassell'
+copyright = u'2018, David Hassell'
 
 # The version info for the project you're documenting, acts as
 # replacement for |version| and |release|, also used in various other
@@ -206,7 +206,6 @@ html_theme_options = {
     "show_relbars"    : 'true',
 #    "link"            : '#ED1010', #'#5682AD', # light blue
 #    "link_hover"      : '#46DD6c',
-    "font_family"     : 'aerial',
 #    "sidebar_search_button" :  '#ED1010',
     'fixed_sidebar' : 'true',
     
@@ -214,10 +213,13 @@ html_theme_options = {
     'github_repo' : 'cfdm',
 
 #    'table_border': '#FFFFFF', #'#000000',
-#    'shadow'      : 'true',
-    'show_powered_by': 'true',
+    'shadow'      : 'false',
     
-#    'sidebarbgcolor'  : '#F2F2F2',
+    'show_powered_by' : 'true',
+    'font_size'       : 1.0,
+    'code_font_size'  : '9pt',
+    "font_family"     : 'Arial',
+    'head_font_family': 'Arial',
 #    'sidebartextcolor': '#777777',
 #    'sidebarbgcolor'  : '#F2F2F2',
 #    'sidebartextcolor': '#777777',

@@ -242,7 +242,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 .. seealso:: `del_property`, `get_property`, `has_property`,
              `set_property`
 
-:Examples 1:
+:Example:
 
 >>> p = f.properties()
 
@@ -271,9 +271,10 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
         The properties prior to being changed, or the current
         properties if no changes were specified.
 
-:Examples 2:
+:Examples:
 
->>> p = f.properties({'standard_name': 'altitude', 'foo': 'bar'}, copy=False)
+>>> p = f.properties({'standard_name': 'altitude', 'foo': 'bar'},
+...                  copy=False)
 
         '''
         out = self._get_component('properties').copy()

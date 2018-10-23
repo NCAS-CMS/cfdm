@@ -72,14 +72,6 @@ Tutorial
 
 .. _fs-data-array:
 
-Reference manual
-================
-  
-.. toctree::
-   :maxdepth: 3
-
-   reference 
-
 Indices and tables
 ==================
 

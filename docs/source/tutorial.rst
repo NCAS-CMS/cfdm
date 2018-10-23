@@ -43,7 +43,7 @@ The built-in `str` function returns the same information as the the
 one-line output, along with short descriptions of the field's other
 components:
 
-   >>> print f[0]
+   >>> print(f[0])
    air_temperature field summary
    -----------------------------
    Data           : air_temperature(time(1200), latitude(64), longitude(128)) K
@@ -210,7 +210,7 @@ is achieved by indexing the field directly, using the same indexing
 rules as for assignment to the data array:
 
    >>> g = f[:, ::-1, 2]
-   >>> print g
+   >>> print(g)
 
 The new subspace contains similar constructs to the original field, but
 these are also subspaced when they span the altered axes.
@@ -221,7 +221,7 @@ Constructs
 Each construct of the CF data model has a corresponding `cfdm` class:
 
 =====================  ==============================  =======================
-`cfdm` class           Description                     CF data model construct
+cfdm class             Description                     CF data model construct
 =====================  ==============================  =======================
 `Field`                Scientific data discretised     Field               
                        within a domain		                         
@@ -238,7 +238,8 @@ Each construct of the CF data model has a corresponding `cfdm` class:
                        variation within cells
 =====================  ==============================  =======================
 
-The metadata constructs of the field are returned by the
+The metadata constructs of the field (i.e all of the constructs
+contained by the field construct) are returned by the
 `~Field.constructs` method, that provides a dictionary of the
 constructs keyed by an internal identifier:
 
@@ -283,7 +284,7 @@ Other `cfdm` classes are required to represent certain components of
 CF data model constructs:
 
 ======================  ==============================  ======================
-`cfdm` class            Description                     `cfdm` parent classes
+cfdm class              Description                     cfdm parent classes
 ======================  ==============================  ======================
 `Bounds`                Cell bounds.                    `DimensionCoordinate`,
                                                         `AuxiliaryCoordinate`,
@@ -347,18 +348,131 @@ Discrete sampling geometries
 ----------------------------
 
 When a collection of discrete sampling geomtry (DSG) features has been
-combined in using ragged representations to save space, the field
+combined using a ragged representation to save space, the field
 contains the domain axes that have been compressed and presents a view
-of the data in their uncompressed, incomplete orthogonal form. The
-underlying arrays, however, remain in their ragged representation and
-if the field is written to disk then they shall be written to disk in
-that form.
+of the data in their uncompressed, incomplete orthogonal form, even
+though the underlying arrays remain in their ragged representation.
 
-Modifying a data array that has an underlying ragged representation
-will permenently change the underlying array to its incomplete
-orthogonal form.
+Accessing the data by indexing, or by a call to the `!get_array`
+method, always returns data that is uncompressed, i.e. in incomplete
+orthogonal representation. The compressed data may be retrieved with
+the `get_compressed_data` method of a `Data` object. If the elements
+are modified by indexed assignment then the underlying compressed
+array is replaced by its incomplete orthogonal form.
 
+If an underlying array is compressed at the time of writing to disk,
+then it is written as a ragged array.
 
+A count variable that is required to uncompress a contiguous, or
+indexed contiguous, ragged array is retrieved and set with the
+`get_count_variable` and `set_count_variable` methods respectively of
+a `Data` object.
+
+An index variable that is required to uncompress a indexed, or indexed
+contiguous, ragged array is retrieved and set with the
+`get_index_variable` and `set_index_variable` methods respectively of
+a `Data` object.
+
+This is illustrated with the file **contiguous.nc** (`download`):
+
+.. code:: bash
+   
+   $ ncdump -h
+   netcdf contiguous {
+   dimensions:
+	station = 4 ;
+	obs = 24 ;
+	name_strlen = 8 ;
+   variables:
+	double lon(station) ;
+		lon:standard_name = "longitude" ;
+		lon:units = "degrees_east" ;
+	double lat(station) ;
+		lat:standard_name = "latitude" ;
+		lat:units = "degrees_north" ;
+	double alt(station) ;
+		alt:standard_name = "height" ;
+		alt:units = "m" ;
+		alt:positive = "up" ;
+		alt:axis = "Z" ;
+	char station_name(station, name_strlen) ;
+		station_name:long_name = "station name" ;
+		station_name:cf_role = "timeseries_id" ;
+	int row_size(station) ;
+		row_size:long_name = "number of observations for this station" ;
+		row_size:sample_dimension = "obs" ;
+	double time(obs) ;
+		time:standard_name = "time" ;
+		time:units = "days since 1970-01-01 00:00:00" ;
+	double humidity(obs) ;
+		humidity:_FillValue = -999.9 ;
+		humidity:standard_name = "specific_humidity" ;
+		humidity:coordinates = "time lat lon alt station_name" ;
+
+   // global attributes:
+		:Conventions = "CF-1.6" ;
+		:featureType = "timeSeries" ;
+   }
+..
+
+   >>> c = cfdm.read('contiguous.nc')[0]
+   >>> print(c)
+   >>> c.get_array()
+   >>> c.data.get_compressed_array().get_array()
+   >>> c.data.get_count_variable().get_array()
 
 Gathering
 ---------
+
+When axes have been compressed by gathering, the field contains the
+domain axes that have been compressed and presents a view of the data
+in their uncompressed form, even though the underlying arrays remain
+in their gathered representation.
+
+Accessing the data by indexing, or by a call to the `!get_array`
+method, always returns data that is uncompressed. The compressed data
+may be retrieved with the `get_compressed_data` method of a `Data`
+object. If the elements are modified by indexed assignment then the
+underlying compressed array is replaced by its uncompressed form.
+
+If an underlying array is compressed at the time of writing to disk,
+then it is written as a gathered array.
+
+A list variable that is required to uncompress a gathered array is
+retrieved and set with the `get_list_variable` and `set_list_variable`
+methods respectively of a `Data` object.
+
+This is illustrated with the file **gathered.nc** (`download`):
+
+.. code:: bash
+   
+   $ ncdump -h gathered.nc
+   netcdf gathered {
+   dimensions:
+   	time = 2 ;
+   	lat = 4 ;
+   	lon = 5 ;
+	list = 3 ;
+   variables:
+   	double time(time) ;
+   		time:standard_name = "time" ;
+   		time:units = "days since 2000-1-1" ;
+   	double lat(lat) ;
+   		lat:standard_name = "latitude" ;
+   		lat:units = "degrees_north" ;
+   	int list(list) ;
+   		list:compress = "lat lon" ;
+   	double pr(time, list) ;
+		pr:standard_name = "precipitation_flux" ;
+		pr:units = "kg m2 s-1" ;
+		
+   // global attributes:
+ 		:Conventions = "CF-1.7" ;
+   }
+..
+
+   >>> c = cfdm.read('gathered.nc')[0]
+   >>> print(c)
+   >>> c.get_array
+   >>> c.data.get_compressed_array().get_array()
+   >>> c.data.get_list_variable().get_array()
