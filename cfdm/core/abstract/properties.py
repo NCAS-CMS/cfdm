@@ -92,7 +92,7 @@ Used if copy.deepcopy is called on the object.
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_property(self, prop):
+    def del_property(self, prop, *default):
         '''Remove a property.
 
 A property describes an aspect of the construct that is independent of
@@ -100,10 +100,6 @@ the domain and may have any name and value. Some properties correspond
 to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `get_property`, `has_property`, `properties`, `set_property`
-
-:Examples 1:
-
->>> x = f.del_property('standard_name')
 
 :Parameters:
 
@@ -115,7 +111,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
      out:
         The removed property, or `None` if the property was not set.
 
-:Examples 2:
+**Examples**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')
@@ -144,10 +140,6 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `del_property`, `has_property`, `properties`, `set_property`
 
-:Examples 1:
-
->>> x = f.get_property('method')
-
 :Parameters:
 
     prop: `str`
@@ -162,7 +154,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
         The value of the property. If the property has not been then
         the *default* parameter is returned, if provided.
 
-:Examples 2:
+**Examples**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')
@@ -198,10 +190,6 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `del_property`, `get_property`, `properties`, `set_property`
 
-:Examples 1:
-
->>> x = f.has_property('long_name')
-
 :Parameters:
 
     prop: `str`
@@ -212,7 +200,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
      out: `bool`
         True if the property has been set, otherwise False.
 
-:Examples 2:
+**Examples**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')
@@ -242,10 +230,6 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 .. seealso:: `del_property`, `get_property`, `has_property`,
              `set_property`
 
-:Example:
-
->>> p = f.properties()
-
 :Parameters:
 
     properties: `dict`, optional   
@@ -271,7 +255,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
         The properties prior to being changed, or the current
         properties if no changes were specified.
 
-:Examples:
+**Examples**
 
 >>> p = f.properties({'standard_name': 'altitude', 'foo': 'bar'},
 ...                  copy=False)
@@ -299,10 +283,6 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. seealso:: `del_property`, `get_property`, `has_property`, `properties`
 
-:Examples 1:
-
->>> f.set_property('standard_name', 'time')
-
 :Parameters:
 
     prop: `str`
@@ -315,7 +295,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
      `None`
 
-:Examples 2:
+**Examples**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')

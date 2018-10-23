@@ -1,4 +1,5 @@
-from abstract import Array, CompressedArray
+from abstract import (Array,
+                      CompressedArray)
 
 from .gatheredarray                import GatheredArray
 from .netcdfarray                  import NetCDFArray

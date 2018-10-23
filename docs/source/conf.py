@@ -212,14 +212,18 @@ html_theme_options = {
     'github_user' : 'ncas-cms',
     'github_repo' : 'cfdm',
 
+    'seealso_bg'     : 'transparent',
+    'seealso_border' : 'transparent',
+    
 #    'table_border': '#FFFFFF', #'#000000',
     'shadow'      : 'false',
     
     'show_powered_by' : 'true',
-    'font_size'       : 1.0,
-    'code_font_size'  : '9pt',
+    'font_size'       : '13pt',
+    'code_font_size'  : '10pt',
     "font_family"     : 'Arial',
     'head_font_family': 'Arial',
+    
 #    'sidebartextcolor': '#777777',
 #    'sidebarbgcolor'  : '#F2F2F2',
 #    'sidebartextcolor': '#777777',
@@ -429,10 +433,10 @@ def linkcode_resolve(domain, info):
 #        commit = '11dddff56c31c24d86c3b83995e503989f90911b'
 #        commit = 'master'
         commit = 'v'+release
-        print "https://bitbucket.org/cfpython/cfdm/src/{0}/cfdm/{1}{2}".format(
+        print "https://github.com/NCAS-CMS/cfdm/blob/{0}/cfdm/{1}{2}".format(
             commit, fn, linespec)
 
-        return "https://bitbucket.org/cfpython/cfdm/src/{0}/cfdm/{1}{2}".format(
+        return "https://github.com/NCAS-CMS/cfdm/blob/{0}/cfdm/{1}{2}".format(
             commit, fn, linespec)
     else:
         # Point to local source code relative to this directory

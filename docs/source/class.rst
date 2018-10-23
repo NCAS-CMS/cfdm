@@ -3,11 +3,11 @@
 
 .. _class:
 
-Classes of the :mod:`cfdm` module
-=================================
+Classes of the **cfdm** package
+===============================
 
-Field class
--------------
+Field construct class
+--------------------
 
 .. autosummary::
    :nosignatures:
@@ -15,8 +15,8 @@ Field class
 
    cfdm.Field	              
 
-Field component classes
------------------------
+Metadata construct classes
+--------------------------
 
 .. autosummary::
    :nosignatures:
@@ -31,15 +31,16 @@ Field component classes
    cfdm.DomainAxis
    cfdm.FieldAncillary
 
-Miscellaneous classes
----------------------
+Construct component classes
+---------------------------
 
 .. autosummary::
    :nosignatures:
    :toctree: classes/
 
-   cfdm.CellExtent
+   cfdm.Bounds
    cfdm.CoordinateConversion
+   cfdm.Data
    cfdm.Datum
    cfdm.Domain
 
@@ -51,8 +52,22 @@ Data classes
    :toctree: classes/
 
    cfdm.Data
+   cfdm.GatheredArray
    cfdm.NetCDFArray
-   cfdm.NumpyArray..
+   cfdm.NumpyArray
+   cfdm.RaggedContiguousArray
+   cfdm.RaggedIndexedArray
+   cfdm.RaggedIndexedContiguousArray
+  
+Abstract classes
+----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cfdm.data.abstract.Array
+   cfdm.data.abstract.CompressedArray		
 
 Mixin classes
 -------------
@@ -64,28 +79,13 @@ Mixin classes
    cfdm.mixin.ConstructAccess
    cfdm.mixin.Container
    cfdm.mixin.Coordinate
+   cfdm.mixin.External
+   cfdm.mixin.NetCDFDimension,
+   cfdm.mixin.NetCDFInstanceDimension,
+   cfdm.mixin.NetCDFSampleDimension,
+   cfdm.mixin.NetCDFVariable)
    cfdm.mixin.Parameters
    cfdm.mixin.ParametersDomainAncillaries
    cfdm.mixin.Properties
    cfdm.mixin.PropertiesData
    cfdm.mixin.PropertiesDataBounds
-  
-Abstract classes
-----------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.data.abstract.Array
-   cfdm.data.abstract.CompressedArray		
-  
-.. inheritance-diagram:: cfdm.Field cfdm.DomainAxis
-   :top-classes: cfdm.structure.abstract.Container, cfdm.mixin.Container
-                         
-
-.. graphviz::
-
-   digraph foo {
-      "bar" -> "baz";
-   }

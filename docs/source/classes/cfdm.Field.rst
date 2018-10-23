@@ -242,6 +242,20 @@ Comparison
 
    ~cfdm.Field.equals
 
+NetCDF methods
+--------------
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+
+   ~cfdm.Field.nc_del_variable
+   ~cfdm.Field.nc_get_variable
+   ~cfdm.Field.nc_has_variable
+   ~cfdm.Field.nc_set_variable
 
 Miscellaneous
 -------------

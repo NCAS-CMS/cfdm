@@ -611,9 +611,9 @@ def environment(display=True):
         is printed and `None` is returned. Otherwise the description
         is returned as a string.
 
-:Examples:
+**Examples**
 
->>> environment()
+>>> cfdm.environment()
 Platform: Linux-4.4.0-53-generic-x86_64-with-debian-stretch-sid
 HDF5 library: 1.8.17
 netcdf library: 4.4.1

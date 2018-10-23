@@ -1,91 +1,29 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-.. _class:
+.. _function:
 
-Classes of the :mod:`cfdm` module
+Functions of the **cfdm** package
 =================================
 
-Field class
--------------
+Reading and writing functions
+-----------------------------
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: generated/
+   :template: function.rst
 
-   cfdm.Field	              
+   cfdm.read 
+   cfdm.write
 
-Field component classes
+Miscellaneous functions
 -----------------------
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: generated/
+   :template: function.rst
 
-   cfdm.AuxiliaryCoordinate
-   cfdm.CellMeasure
-   cfdm.CellMethod
-   cfdm.CoordinateReference
-   cfdm.DimensionCoordinate
-   cfdm.DomainAncillary
-   cfdm.DomainAxis
-   cfdm.FieldAncillary
+   cfdm.environment
 
-Miscellaneous classes
----------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.CellExtent
-   cfdm.CoordinateConversion
-   cfdm.Datum
-   cfdm.Domain
-
-Data classes
-------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.Data
-   cfdm.NetCDFArray
-   cfdm.NumpyArray..
-
-Mixin classes
--------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.mixin.ConstructAccess
-   cfdm.mixin.Container
-   cfdm.mixin.Coordinate
-   cfdm.mixin.Parameters
-   cfdm.mixin.ParametersDomainAncillaries
-   cfdm.mixin.Properties
-   cfdm.mixin.PropertiesData
-   cfdm.mixin.PropertiesDataBounds
-  
-Abstract classes
-----------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.data.abstract.Array
-   cfdm.data.abstract.CompressedArray		
-  
-.. inheritance-diagram:: cfdm.Field cfdm.DomainAxis
-   :top-classes: cfdm.structure.abstract.Container, cfdm.mixin.Container
-                         
-
-.. graphviz::
-
-   digraph foo {
-      "bar" -> "baz";
-   }

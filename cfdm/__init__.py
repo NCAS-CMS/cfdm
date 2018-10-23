@@ -11,7 +11,7 @@ This package is an implementation of the CF data model
 
 __author__       = 'David Hassell'
 __date__         = '2018-10-22'
-__version__      = '0.8'
+__version__      = '1.8'
 
 from distutils.version import StrictVersion
 import platform
