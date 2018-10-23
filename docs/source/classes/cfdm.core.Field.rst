@@ -8,6 +8,39 @@ cfdm.core.Field
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cfdm.core.Field.auxiliary_coordinates
+   ~cfdm.core.Field.cell_methods
+   ~cfdm.core.Field.cell_measures
+   ~cfdm.core.Field.construct
+   ~cfdm.core.Field.constructs
+   ~cfdm.core.Field.construct_axes
+   ~cfdm.core.Field.coordinate_references
+   ~cfdm.core.Field.coordinates
+   ~cfdm.core.Field.dimension_coordinates
+   ~cfdm.core.Field.domain_ancillaries
+   ~cfdm.core.Field.domain_axes
+   ~cfdm.core.Field.field_ancillaries
+   ~cfdm.core.Field.get_data
+   ~cfdm.core.Field.get_property
+   ~cfdm.core.Field.has_data
+   ~cfdm.core.Field.has_property
+   ~cfdm.core.Field.properties
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cfdm.core.Field.data
+
 Properties
 ----------
 
@@ -22,24 +55,26 @@ Properties
    ~cfdm.core.Field.properties
    ~cfdm.core.Field.set_property
 
-.. _field_methods:
-
-Inspection
-----------
+Metadata constructs
+-------------------
 
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
 
-   ~cfdm.core.Field.__repr__
-   ~cfdm.core.Field.__str__
+   ~cfdm.core.Field.auxiliary_coordinates
+   ~cfdm.core.Field.cell_methods
+   ~cfdm.core.Field.cell_measures
+   ~cfdm.core.Field.construct
    ~cfdm.core.Field.constructs
-   ~cfdm.core.Field.dump
-   ~cfdm.core.Field.files
-   ~cfdm.core.Field.identity
-   ~cfdm.core.Field.match
-   ~cfdm.core.Field.name
+   ~cfdm.core.Field.construct_axes
+   ~cfdm.core.Field.coordinate_references
+   ~cfdm.core.Field.coordinates
+   ~cfdm.core.Field.dimension_coordinates
+   ~cfdm.core.Field.domain_ancillaries
+   ~cfdm.core.Field.domain_axes
+   ~cfdm.core.Field.field_ancillaries
 
 Domain axes
 -----------
@@ -61,166 +96,47 @@ Domain axes
    ~cfdm.core.Field.remove_axes
    ~cfdm.core.Field.remove_axis
 
-Field items
------------
-
-A field item is a dimension coordinate, auxiliary coordinate, cell
-measure, coordinate reference, domain ancillary or field ancillary
-object.
+Creation
+--------
    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
 
-   ~cfdm.core.Field.insert_aux
-   ~cfdm.core.Field.insert_cell_methods
-   ~cfdm.core.Field.insert_dim
-   ~cfdm.core.Field.insert_domain_anc
-   ~cfdm.core.Field.insert_field_anc
-   ~cfdm.core.Field.insert_measure
-   ~cfdm.core.Field.insert_ref
-   ~cfdm.core.Field.item
-   ~cfdm.core.Field.items
-   ~cfdm.core.Field.remove_item
-   ~cfdm.core.Field.remove_items
+   ~cfdm.core.Field.del_construct
+   ~cfdm.core.Field.del_data
+   ~cfdm.core.Field.del_data_axes
+   ~cfdm.core.Field.del_property
+   ~cfdm.core.Field.properties
+   ~cfdm.core.Field.set_auxiliary_coordinate
+   ~cfdm.core.Field.set_cell_measure
+   ~cfdm.core.Field.set_cell_method
+   ~cfdm.core.Field.set_coordinate_reference
+   ~cfdm.core.Field.set_data
+   ~cfdm.core.Field.set_data_axes
+   ~cfdm.core.Field.set_dimension_coordinate
+   ~cfdm.core.Field.set_domain_ancillary
+   ~cfdm.core.Field.set_domain_axis
+   ~cfdm.core.Field.set_field_ancillary
+   ~cfdm.core.Field.set_property
 
-Subspacing
-----------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.core.Field.__getitem__
- 
-Data array
-----------
-
-.. http://docs.scipy.org/doc/numpy/reference/routines.array-manipulation.html
-
-.. _field_data_array_access:
-
-
-.. rubric:: Data array access
+Data
+----
 
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: attribute.rst
 
-   ~cfdm.core.Field.array
-   ~cfdm.core.Field.data
-   ~cfdm.core.Field.datum
-   ~cfdm.core.Field.dtarray
-   ~cfdm.core.Field.dtype
-   ~cfdm.core.Field.hasdata
-   ~cfdm.core.Field.ndim
-   ~cfdm.core.Field.shape
-   ~cfdm.core.Field.size
-   ~cfdm.core.Field.varray
-
-
-Units
------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.core.Field.calendar
-   ~cfdm.core.Field.units
-   ~cfdm.core.Field.Units
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.core.Field.override_units
-   ~cfdm.core.Field.override_calendar
-
-Data array mask
----------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.core.Field.count
-   ~cfdm.core.Field.hardmask
-   ~cfdm.core.Field.mask
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.core.Field.fill_value
- 
-Order and number of dimensions
-------------------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.core.Field.expand_dims
-   ~cfdm.core.Field.squeeze
-   ~cfdm.core.Field.transpose
-   ~cfdm.core.Field.unsqueeze
-
-.. rubric:: Changing data array values
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.core.Field.__setitem__
-   ~cfdm.core.Field.mask_invalid
- 
-Miscellaneous data array operations
------------------------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.core.Field.insert_data
-   ~cfdm.core.Field.isscalar
-   ~cfdm.core.Field.remove_data
-
-Comparison
-----------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-
-   ~cfdm.core.Field.equals
-
-NetCDF methods
---------------
-
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-
-   ~cfdm.core.Field.nc_del_variable
-   ~cfdm.core.Field.nc_get_variable
-   ~cfdm.core.Field.nc_has_variable
-   ~cfdm.core.Field.nc_set_variable
+   ~cfdm.core.Field.del_data
+   ~cfdm.core.Field.del_data_axes
+   ~cfdm.core.Field.get_array
+   ~cfdm.core.Field.get_data
+   ~cfdm.core.Field.get_data_axes
+   ~cfdm.core.Field.has_data
+   ~cfdm.core.Field.set_data
+   ~cfdm.core.Field.set_data_axes
 
 Miscellaneous
 -------------
@@ -230,25 +146,9 @@ Miscellaneous
    :toctree: ../generated/
    :template: method.rst
 
-   ~cfdm.core.Field.attributes
    ~cfdm.core.Field.copy 
    ~cfdm.core.Field.field
-   ~cfdm.core.Field.HDF_chunks
-   ~cfdm.core.Field.unlimited
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.core.Field.Flags
-   ~cfdm.core.Field.hasbounds
-   ~cfdm.core.Field.isfield
-   ~cfdm.core.Field.rank
-   ~cfdm.core.Field.T
-   ~cfdm.core.Field.X
-   ~cfdm.core.Field.Y
-   ~cfdm.core.Field.Z
 
 Special methods
 ---------------
@@ -259,3 +159,5 @@ Special methods
    :template: method.rst
 
    ~cfdm.core.Field.__deepcopy__
+   ~cfdm.core.Field.__repr__
+   ~cfdm.core.Field.__str__
