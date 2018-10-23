@@ -45,7 +45,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.linkcode',
               'sphinx.ext.mathjax',
               'sphinx.ext.graphviz',
-              'sphinx.ext.inheritance_diagram',
+#              'sphinx.ext.inheritance_diagram',
               'sphinx.ext.intersphinx',
               'sphinx.ext.doctest',
               ]
@@ -59,9 +59,9 @@ autosummary_generate = True
 # and inserted.
 autoclass_content = 'both'
 
-inheritance_graph_attrs = {'rankdir': "TB",
-                           'clusterrank': 'local'}
-inheritance_node_attrs  = {'style': 'filled'}
+#inheritance_graph_attrs = {'rankdir': "TB",
+#                           'clusterrank': 'local'}
+#inheritance_node_attrs  = {'style': 'filled'}
 
 # This value selects how automatically documented members are sorted
 # (http://sphinx-doc.org/latest/ext/autodoc.html)
@@ -170,25 +170,63 @@ highlight_language = 'python'
 
 # The theme to use for HTML and HTML Help pages.  See the
 # documentation for a list of builtin themes.
-html_theme = 'default' #'haiku' #'default'
+html_theme = 'alabaster' #'default' #'haiku' #'default'
+
+# body_min_width (int or str): Minimal width of the document
+# body. This can be an int, which is interpreted as pixels or a valid
+# CSS dimension string such as ‘70em’ or ‘50%’. Use 0 if you don’t
+# want a width limit. Defaults may depend on the theme (often 450px).
+#body_min_width = '100000px' #180em'
 
 #/home/opt-user/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/Sphinx-1.2.2-py2.7.egg/sphinx/themes
 
 # Theme options are theme-specific and customize the look and feel of
 # a theme further.  For a list of options available for each theme,
 # see the documentation.
-html_theme_options = {"stickysidebar"   : "true",
-                      "externalrefs"    : "false",
-                      'sidebarbgcolor'  : '#F2F2F2',
-                      'sidebartextcolor': '#777777',
-                      'sidebarbgcolor'  : '#F2F2F2',
-                      'sidebartextcolor': '#777777',
-                      'sidebarlinkcolor': '#003469',
-                      'relbarbgcolor'   : '#5682AD',
-                      'relbartextcolor' : '#ffffff',
-                      'relbarlinkcolor' : '#ffffff',
-                      'headbgcolor'     : '#FFFFFF',
-                      'headtextcolor'   : '#000000',
+#default html_theme_options = {"stickysidebar"   : "true",
+#default                       "externalrefs"    : "false",
+#default                       'sidebarbgcolor'  : '#F2F2F2',
+#default                       'sidebartextcolor': '#777777',
+#default                       'sidebarbgcolor'  : '#F2F2F2',
+#default                       'sidebartextcolor': '#777777',
+#default                       'sidebarlinkcolor': '#003469',
+#default                       'relbarbgcolor'   : '#5682AD',
+#default                       'relbartextcolor' : '#ffffff',
+#default                       'relbarlinkcolor' : '#ffffff',
+#default                       'headbgcolor'     : '#FFFFFF',
+#default                       'headtextcolor'   : '#000000',
+#default                       }
+
+# https://alabaster.readthedocs.io/en/latest/customization.html
+# https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
+
+html_theme_options = {
+#    "page_width"      : "auto",
+    "show_related"    : 'true',
+    "show_relbars"    : 'true',
+#    "link"            : '#ED1010', #'#5682AD', # light blue
+#    "link_hover"      : '#46DD6c',
+    "font_family"     : 'aerial',
+#    "sidebar_search_button" :  '#ED1010',
+    'fixed_sidebar' : 'true',
+    
+    'github_user' : 'ncas-cms',
+    'github_repo' : 'cfdm',
+
+#    'table_border': '#FFFFFF', #'#000000',
+#    'shadow'      : 'true',
+    'show_powered_by': 'true',
+    
+#    'sidebarbgcolor'  : '#F2F2F2',
+#    'sidebartextcolor': '#777777',
+#    'sidebarbgcolor'  : '#F2F2F2',
+#    'sidebartextcolor': '#777777',
+#    'sidebarlinkcolor': '#003469',
+#    'relbarbgcolor'   : '#5682AD',
+#    'relbartextcolor' : '#ffffff',
+#    'relbarlinkcolor' : '#ffffff',
+#    'headbgcolor'     : '#FFFFFF',
+#    'headtextcolor'   : '#000000',
                       }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -212,7 +250,7 @@ html_title = "Documentation"
 # sheets) here, relative to this directory. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite
 # the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ['_static/']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.
@@ -220,24 +258,28 @@ html_last_updated_fmt = '%b %d, %Y'
 
 ## If true, SmartyPants will be used to convert quotes and dashes to
 ## typographically correct entities.
-#html_use_smartypants = True
+html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
-html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
+html_sidebars = { '**': ['globaltoc.html',
+                         'relations.html',
+                         'sourcelink.html',
+                         'searchbox.html']
+}
 
 # Additional templates that should be rendered to pages, maps page
 # names to template names.
 #html_additional_pages = {}
 
 # If false, no module index is generated.
-#html_domain_indices = True
+html_domain_indices = True
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
-html_split_index = True #False
+html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
 #html_show_sourcelink = True

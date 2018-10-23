@@ -1,8 +1,8 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-Field tutorial
-==============
+Tutorial
+========
 
 The field construct defined by the CF data model is represented by a
 `Field` object.
@@ -10,11 +10,15 @@ The field construct defined by the CF data model is represented by a
 Reading from disk
 -----------------
 
-The `cfdm.read` function reads netCDF file from disk and returns its
+The `cfdm.read` function reads a netCDF file from disk and returns its
 contents as a list one or more `Field` objects:
 
 >>> import cfdm
 >>> f = cfdm.read('file.nc')
+
+The `cfdm.read` function has options to define external files that
+contain extra metadata, and to specify which metadata constructs
+should also be returned as independent fields.
 
 Inspection
 ----------
@@ -25,14 +29,15 @@ detail.
 The built-in `repr` function returns a short, one-line description of
 the field:
 
-   >>> f
-   [<Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
-    <Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
+>>> f
+[<Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
+ <Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
 
-This gives the identity of the field (air_temperature), the identities
-and sizes of its data array axes (time, latitude and longitude with
+This gives the identity of the field (that has the standard name
+"air_temperature"), the identities and sizes of the domain axes
+spanned by the field's data array (time, latitude and longitude with
 sizes 12, 64 and 128 respectively) and the units of the field's data
-array (K).
+(K).
 
 The built-in `str` function returns the same information as the the
 one-line output, along with short descriptions of the field's other
@@ -43,16 +48,16 @@ components:
    -----------------------------
    Data           : air_temperature(time(1200), latitude(64), longitude(128)) K
    Cell methods   : time: mean (interval: 1.0 month)
-   Axes           : time(12) = [ 450-11-01 00:00:00, ...,  451-10-16 12:00:00] noleap calendar
+   Axes           : time(12) = [ 450-11-01 00:00:00, ...,  451-10-16 12:00:00] noleap
                   : latitude(64) = [-87.8638000488, ..., 87.8638000488] degrees_north
                   : longitude(128) = [0.0, ..., 357.1875] degrees_east
                   : height(1) = [2.0] m
 
-This shows that the field has a cell method and four dimension
-coordinates, one of which (height) is a coordinate for a size 1 axis
-that is not a axis of the field's data array. The units and first and
-last values of the coordinates' data arrays are given and relative
-time values are translated into strings.
+This shows that the field also has a cell method and four dimension
+coordinates, one of which (height) is a coordinate for a size 1 domain
+axis that is not a dimension of the field's data array. The units and
+first and last values of all data arrays are given and relative time
+values are translated into strings.
 
 The field's `~cfdm.Field.dump` method describes each component's
 properties, as well as the first and last values of the field's data
@@ -105,33 +110,166 @@ array::
        positive = 'up'
        standard_name = 'height'
 
-Construct classes
------------------
+Properties
+----------
+
+Properties of the field may be retrieved with the `~Field.properties`
+method:
+
+   >>> f.properties()
+
+Individual properties may be accessed with the `~Field.del_property`,
+`~Field.get_property`, `~Field.has_property`, and
+`~Field.set_property` methods:
+
+   >>> f.has_property('standard_name')
+   True
+   >>> f.get_property('standard_name')
+   'air_temperature'
+   >>> f.del_property('standard_name')
+   'air_temperature'
+   >>> f.get_property('standard_name', 'not set')
+   'not set'
+   >>> f.set_property('standard_name', 'air_temperature')
+   >>> f.get_property('standard_name', 'not set')
+   'air_temperature'
+
+All properties may be removed and completed replace with another
+collection by providing the new properties to the `~Field.properties`
+method:
+
+   >>> original = f.properties({'foo': 'bar', 'units': 'm s-1'}
+   >>> f.properties()
+   {'foo': 'bar',
+    'units': 'm s-1'}
+   >>> f.properties(original)
+   {'foo': 'bar',
+    'units': 'm s-1'}
+   >>> f.properties()
+   
+Data
+----
+
+The field's data array is stored in a `Data` object, that is accessed
+with the `~Field.get_data` method:
+
+   >>> f.get_data()
+   <>
+
+The data may be retrieved as an independent `numpy` array with the
+`~Field.get_array` method:
+
+   >>> f.get_array()
+
+The file also has a `~Field.data` attribute that is an alias for the
+`~Field.get_data` method, which makes it easier to access attributes
+and methods of the `Data` object:
+
+   >>> f.data.dtype
+   asasdasdasd
+   >>> f.data.ndim
+   3
+   >>> f.data.shape
+   ()
+   >>> f.data.size
+   34534534
+
+Indexing the `Data` object creates new, independent `Data`
+object. Indexing is similar to `numpy` indexing, the only difference
+being:
+
+* When two or more dimension's indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same as
+  indexing a `netCDF.Variable` object.
+..
+
+   >>> f.data[0, 1, 2]
+   >>> f.data[0, ::-2, 2]
+    
+Data array elements are changed by assigning to indices of the `Data`
+object. The value being assigned must be broadcastable to the shape
+defined by the indices, using the same broadcasting rules as `numpy`:
+
+   >>> import numpy
+   >>> f.data[:, 0] = -99
+   >>> f.data[:, 0] = range()
+   >>> f.data[:, 0] = numpy.array()
+   >>> d = f.data
+   >>> f.data[:, 0] = d[0, 1]
+      
+Data elements may be set to missing data by assigning the `numpy` mask object:
+
+   >>> f[...] = numpy.ma.masked
+
+Subspacing
+----------
+
+Creation of a new field that spans a subspace of the original domain
+is achieved by indexing the field directly, using the same indexing
+rules as for assignment to the data array:
+
+   >>> g = f[:, ::-1, 2]
+   >>> print g
+
+The new subspace contains similar constructs to the original field, but
+these are also subspaced when they span the altered axes.
+
+Constructs
+----------
 
 Each construct of the CF data model has a corresponding `cfdm` class:
 
-=====================  ==============================  ====================
-Class                  Description                     Construct           
-=====================  ==============================  ====================
+=====================  ==============================  =======================
+`cfdm` class           Description                     CF data model construct
+=====================  ==============================  =======================
 `Field`                Scientific data discretised     Field               
                        within a domain		                         
-`DomainAxis`           Independent axes of the domain  Domain Axis         
-`DimensionCoordinate`  Domain cell locations           Dimension Coordinate
-`AuxiliaryCoordinate`  Domain cell locations           Auxiliary Coordinate
-=====================  ==============================  ====================
+`DomainAxis`           Independent axes of the domain  Domain axis         
+`DimensionCoordinate`  Domain cell locations           Dimension coordinate
+`AuxiliaryCoordinate`  Domain cell locations           Auxiliary coordinate
+`CoordinateReference`  Domain coordinate systems       Coordinate reference
+`DomainAncillary`      Cell locations in alternative   Domain ancillary
+                       coordinate systems
+`CellMeasure`          Domain cell size or shape       Cell measure
+`FieldAncillary`       Ancillary metadata which vary   Field ancillary
+                       within the domain
+`CellMethod`           Describes how data represent    Cell method
+                       variation within cells
+=====================  ==============================  =======================
 
-The constructs contained by the field (i.e. the metadata constructs)
-are accessed with the field's `~Field.constructs` and
-`~Field.construct` methods:
+The metadata constructs of the field are returned by the
+`~Field.constructs` method, that provides a dictionary of the
+constructs keyed by an internal identifier:
 
-   >>> f.constructs
+   >>> f.constructs()
+   
+The `~Field.constructs` method has options to fileter the constructs
+by their type, their property and other attribute values, and by the
+domain axes that are spanned by the data array:
 
-   >>> f.construct('latitude')
+   >>> f.constructs(description='long_name:asdasdasdas')
+   >>> f.constructs(description='dimaneioncoordinate2')
+   >>> f.constructs(construct_type='dimension_coordinate')
+   >>> f.constructs(axes=['domainaxis1'])
+   >>> f.constructs(description='latitude',
+                    construct_type='dimension_coordinate'
+                    axes=['domainaxis1'])
 
-Where applicable, the metadata constructs share the same API as the
-field. For example, this means that any construct that has a data
-array will have a `!get_array` method to access the data as a numpy
-array
+Note that we can also use the field's internal identifier to select
+constructs (e.g. "dimensioncoordinate1"), which is useful if a
+construct is not identifiable from its descriptive properties. 
+
+An individual construct may be returned without its identifier with
+the `~Field.construct` method:
+
+   >>> f.construct(description='latitude')
+   <>
+
+Where applicable, the classes representing metadata constructs share
+the same API as the field. For example, this means that the class for
+any construct that has a data array will have a `!get_array` method to
+access the data as a numpy array:
 
    >>> lon = f.construct('longitude')
    >>> lon
@@ -140,14 +278,14 @@ array
    >>> lon.properties()
    >>> lon.data[2] = 3453453454
    >>> lon.get_array()
-   
-Other classes are required to represent certain components of CF data
-model constructs:
+
+Other `cfdm` classes are required to represent certain components of
+CF data model constructs:
 
 ======================  ==============================  ======================
-Class                   Description                     Parent classes
+`cfdm` class            Description                     `cfdm` parent classes
 ======================  ==============================  ======================
-`Bounds`                Cell bounds                     `DimensionCoordinate`,
+`Bounds`                Cell bounds.                    `DimensionCoordinate`,
                                                         `AuxiliaryCoordinate`,
                                                         `DomainAncillary`
 
@@ -157,10 +295,10 @@ Class                   Description                     Parent classes
 		        auxiliary coordinate
 			constructs
 		        to a different coordinate
-			system
+			system.
 
-`Data`                                                  `Field`,
-                                                        `DimensionCoordinate`,
+`Data`                  A container for the data        `Field`,
+                        array.                          `DimensionCoordinate`,
                                                         `AuxiliaryCoordinate`,
                                                         `DomainAncillary`,
 							`CellMeasure`,
@@ -169,8 +307,11 @@ Class                   Description                     Parent classes
 `Datum`                 The zeroes                      `CoordinateReference`
                         of the dimension
                         and auxiliary coordinate
-			constructs which define the
-			coordinate system
+			constructs which define a
+			coordinate system.
+
+`Domain`                The locations of the data       `Field`
+                        array elements.
 ======================  ==============================  ======================
 
 
@@ -180,6 +321,11 @@ Writing to disk
 The `cfdm.write` function writes fields to a netCDF file on disk:
 
    >>> cfdm.write(f, 'new_file.nc')
+
+The `cfdm.write` function has options to set the format, netCDF
+compression, endian (native), and HDF chunk size of the ouput file; as
+well as options that modify output data types, and which specify which
+properties should be global attributes.
 
 Equality
 --------
@@ -191,30 +337,28 @@ the field's `~cfdm.Field.equals` methods.
    >>> f[0].equals(g[0])
    True
 
-Properties
-----------
-
-.. autosummary::
-   :nosignatures:
-   :template: method.rst
-
-   ~cfdm.Field.del_property
-   ~cfdm.Field.get_property
-   ~cfdm.Field.has_property
-   ~cfdm.Field.set_property
-   ~cfdm.Field.properties
-
-Data
-----
-
-Creation
---------
+Field creation
+--------------
 
 Exernal variables
 -----------------
 
-Discrete sampling geomtries
----------------------------
+Discrete sampling geometries
+----------------------------
+
+When a collection of discrete sampling geomtry (DSG) features has been
+combined in using ragged representations to save space, the field
+contains the domain axes that have been compressed and presents a view
+of the data in their uncompressed, incomplete orthogonal form. The
+underlying arrays, however, remain in their ragged representation and
+if the field is written to disk then they shall be written to disk in
+that form.
+
+Modifying a data array that has an underlying ragged representation
+will permenently change the underlying array to its incomplete
+orthogonal form.
+
+
 
 Gathering
 ---------
