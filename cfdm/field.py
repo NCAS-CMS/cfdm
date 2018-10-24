@@ -95,11 +95,6 @@ and institution).
 
 x.__repr__() <==> repr(x)
 
-:Examples:
-
->>> f
-<CF Field: air_temperature(latitude(73), longitude(96) K>
-
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
                                    self._one_line_description())
@@ -287,19 +282,17 @@ functionality:
 >>> f[...].shape
 (12, 73, 96)
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `__setitem__`
-
-:Examples 1:
-
->>> g = f[..., 0, :6, 9:1:-2, [1, 3, 4]]
 
 :Returns:
 
     out: `Field`
 
-:Examples 2:
+**Examples**
+
+>>> g = f[..., 0, :6, 9:1:-2, [1, 3, 4]]
 
 >>> f.shape
 (12, 73, 96)
@@ -456,7 +449,7 @@ field.
     out: `str`
         A string containing the description.
     
-:Examples:
+**Examples**
 
         '''
         indent1 = '    ' * _level
@@ -504,10 +497,6 @@ field.
 The field and its components are described without abbreviation with
 the exception of data arrays, which are abbreviated to their first and
 last values.
-
-:Examples 1:
-        
->>> f.{+name}()
 
 :Parameters:
 
@@ -680,10 +669,6 @@ True.
 
 .. seealso:: `cf.FieldList.equals`, `cf.FieldList.set_equals`
 
-:Examples 1:
-
->>> b = f.{+name}(g)
-
 :Parameters:
 
     other: `object`
@@ -710,7 +695,7 @@ True.
     out: `bool`
         Whether or not the two {+variable}s are equal.
 
-:Examples 2:
+**Examples**
 
 >>> f.Conventions
 'CF-1.0'
@@ -769,11 +754,6 @@ by the data array may be selected.
 
 .. seealso:: `axes`, `squeeze`, `transpose`
 
-:Examples 1:
-
->>> g = f.{+name}()
->>> g = f.{+name}(2, axes='T')
-
 :Parameters:
 
     position: `int`, optional
@@ -790,7 +770,7 @@ by the data array may be selected.
     out: `{+Variable}`
         The expanded field.
 
-:Examples 2:
+**Examples**
 
         '''
         f = self.copy()
@@ -915,7 +895,7 @@ by the data array may be selected.
         '''
 Consider [get|set|del_global_attribute [NO S]
 
-:Examples 2:
+**Examples**
 
 >>> f.set_global_attributes(['project', 'experiment'])
 >>> f.get_global_attributes()
@@ -946,12 +926,6 @@ axes, use the `remove_axes` method.
 
 .. seealso:: `expand_dims`, `remove_axes`, `transpose`, `unsqueeze`
 
-
-:Examples 1:
-
->>> g = f.{+name}()
->>> g = f.{+name}('T')
-
 :Parameters:
 
     {+axes, kwargs}
@@ -963,7 +937,7 @@ axes, use the `remove_axes` method.
     out: `{+Variable}`
         The squeezed field.
 
-:Examples 2:
+**Examples**
 
         '''
         f = self.copy()

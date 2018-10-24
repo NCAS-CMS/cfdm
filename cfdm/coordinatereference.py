@@ -239,7 +239,7 @@ reference object.
 
     out: `None` or `str`
 
-:Examples:
+**Examples**
 
         '''          
         indent0 = '    ' * _level
@@ -365,7 +365,7 @@ reference object.
     out: `bool`
         Whether or not the two instances are equal.
 
-:Examples:
+**Examples**
 
         '''
         if not super().equals(
@@ -429,7 +429,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 
 .. seealso:: `identity`
 
-:Examples 1:
+**Examples**
 
 >>> n = r.name()
 >>> n = r.name(default='NO NAME'))
@@ -529,7 +529,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 #        True if the coordinate reference satisfies the given criteria,
 #        False otherwise.
 #
-#:Examples:
+#**Examples**
 #
 #        '''
 ##        conditions_have_been_set = False

@@ -82,11 +82,6 @@ class Constructs(core.Constructs):
     def domain_axis_name(self, axis):
         '''Return the canonical name for an axis.
 
-:Examples 1:
-
->>> f.domain_axis_name('domainaxis1')
-'longitude'
-
 :Parameters:
 
     axis: `str`
@@ -100,7 +95,11 @@ class Constructs(core.Constructs):
     out: `str`
         The canonical name for the axis.
 
-:Examples:
+**Examples**
+
+>>> f.domain_axis_name('domainaxis1')
+'longitude'
+
 
         '''
         domain_axes = self.domain_axes()

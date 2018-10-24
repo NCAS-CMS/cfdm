@@ -137,24 +137,25 @@ names will need to be modified to be netCDF dimension names.
         return ' '.join(string)
     #--- End: def
 
-    def del_axes(self):
-        '''Delete the axes of the cell method.
+    def del_axes(self, *default):
+        '''Remove the axes of the cell method.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `get_axes`, `has_axes`, `set_axes`
 
-:Examples 1:
+:Parameters:
 
->>> c.del_axes()
+    default: optional
+        Return *default* if axes have not been set.
 
 :Returns:
 
      out:
-        The value of the deleted axes, or `None` if the axes were not
-        set.
+        The removed axes, identified by field key or standard name. If
+        unset then *default* is returned, if provided.
 
-:Examples 2:
+**Examples**
 
 >>> c.set_axes('area')
 >>> print c.del_axes()
@@ -169,7 +170,7 @@ None
     def get_axes(self, *default):
         '''Return the axes of the cell method.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `del_axes`, `has_axes`, `set_axes`
 
@@ -188,7 +189,7 @@ None
         The axes. If axes have not been set then return the value
         of *default* parameter, if provided.
 
-:Examples 2:
+**Examples**
 
 >>> c.set_axes(['time'])
 >>> c.get_axes()
@@ -206,7 +207,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
     def has_axes(self):
         '''Whether the axes of the cell method have been set.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `del_axes`, `get_axes`, `set_axes`
 
@@ -219,7 +220,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
      out: `bool`
         True if the axes have been set, otherwise False.
 
-:Examples 2:
+**Examples**
 
 >>> if c.has_axes():
 ...     print 'Has axes'
@@ -231,7 +232,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
     def set_axes(self, value, copy=True):
         '''Set the axes of the cell method.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `del_axes`, `get_axes`, `has_axes`
 

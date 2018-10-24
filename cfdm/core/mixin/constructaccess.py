@@ -12,10 +12,6 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     def _get_constructs(self, *default):
         '''Return the `Constructs` object
 
-:Examples 1:
-
->>> c = f._get_constructs()
-
 :Parameters:
 
     default: optional
@@ -25,8 +21,9 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     out:
         The `Constructs` object. If unset then return *default* if provided.
 
-:Examples 2:
+**Examples**
 
+>>> c = f._get_constructs()
 >>> c = f._get_constructs(None)
 
         '''
@@ -37,12 +34,48 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return self._get_constructs().array_constructs(copy=copy)
     
     def auxiliary_coordinates(self, copy=False):
-        return self._get_constructs().constructs(construct_type='auxiliary_coordinate',
-                                                 copy=copy)
+        '''Return the auxiliary coordinate constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.auxiliary_constructs()
+{}
+        '''
+        return self._get_constructs().constructs(construct_type='auxiliary_coordinate', copy=copy)
     
     def cell_measures(self, copy=False):
-        return self._get_constructs().constructs(construct_type='cell_measure',
-                                                 copy=copy)
+        '''Return the cell measure constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.cell_measure()
+{}
+        '''
+        return self._get_constructs().constructs(construct_type='cell_measure', copy=copy)
     
     def construct_axes(self, key=None):
         return self._get_constructs().construct_axes(key=key)
@@ -51,16 +84,53 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return self._get_constructs().construct_type(key)
        
     def constructs(self, copy=False):
-        '''
+        '''Return the metadata constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `construct_axes`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.constructs()
+{}
+
         '''
         return self._get_constructs().constructs(copy=copy)
     #--- End: def
     
     def coordinate_references(self, copy=False):
-        return self._get_constructs().constructs(construct_type='coordinate_reference',
-                                                 copy=copy)
+        '''Return the coordinate reference constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.coordinate_references()
+{}
+        '''
+        return self._get_constructs().constructs(construct_type='coordinate_reference', copy=copy)
     
     def coordinates(self, copy=False):
+
         '''
         '''
         out = self.dimension_coordinates(copy=copy)
@@ -82,21 +152,72 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     #--- End: def
 
     def dimension_coordinates(self, copy=False):
-        return self._get_constructs().constructs(
-            construct_type='dimension_coordinate',
-            copy=copy)
+        '''Return the dimension coordinate constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.dimension_coordinates()
+{}
+        '''
+        return self._get_constructs().constructs(construct_type='dimension_coordinate', copy=copy)
     #--- End: def
     
     def domain_ancillaries(self, copy=False):
-        return self._get_constructs().constructs(
-            construct_type='domain_ancillary',
-            copy=copy)
+        '''Return the domain ancillary constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.domain_ancillaries()
+{}
+        '''
+        return self._get_constructs().constructs(construct_type='domain_ancillary', copy=copy)
     #--- End: def
     
     def domain_axes(self, copy=False):
-        return self._get_constructs().constructs(
-            construct_type='domain_axis',
-            copy=copy)
+        '''Return the domain axis constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.domain_axes()
+{}
+        '''
+        return self._get_constructs().constructs(construct_type='domain_axis', copy=copy)
     #--- End: def
         
     def domain_axis_name(self, axis):

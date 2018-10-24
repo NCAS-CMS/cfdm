@@ -324,8 +324,8 @@ The `cfdm.write` function writes fields to a netCDF file on disk:
    >>> cfdm.write(f, 'new_file.nc')
 
 The `cfdm.write` function has options to set the format, netCDF
-compression, endian (native), and HDF chunk size of the ouput file; as
-well as options that modify output data types, and which specify which
+compression, endian, and HDF chunk size of the ouput file; as well as
+options that modify output data types, and which specify which
 properties should be global attributes.
 
 Equality

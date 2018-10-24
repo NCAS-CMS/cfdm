@@ -79,14 +79,14 @@ Used if copy.deepcopy is called on the object.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-:Examples 1:
-
->>> g = f.copy()
-
 :Returns:
 
     out:
         The deep copy.
+
+**Examples**
+
+>>> g = f.copy()
 
         '''
         return type(self)(source=self, copy=True)
@@ -99,6 +99,8 @@ A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
 to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
+.. versionadded:: 1.7
+
 .. seealso:: `get_property`, `has_property`, `properties`, `set_property`
 
 :Parameters:
@@ -106,10 +108,17 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
     prop: `str`
         The name of the property to be removed.
 
+          *Example:*
+             ``prop='long_name'``
+
+    default: optional
+        Return *default* if the property has not been set.
+
 :Returns:
 
      out:
-        The removed property, or `None` if the property was not set.
+        The removed property. If unset then *default* is returned, if
+        provided.
 
 **Examples**
 
@@ -145,14 +154,17 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
     prop: `str`
         The name of the property to be returned.
 
+          *Example:*
+             ``prop='standard_name'``
+
     default: optional
         Return *default* if the property has not been set.
 
 :Returns:
 
     out:
-        The value of the property. If the property has not been then
-        the *default* parameter is returned, if provided.
+        The value of the property. If unset then *default* is
+        returned, if provided.
 
 **Examples**
 

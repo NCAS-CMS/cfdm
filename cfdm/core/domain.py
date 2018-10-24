@@ -166,7 +166,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 
     out: `Domain`
 
-:Examples:
+**Examples**
 
 >>> d = Domain.fromconstructs(f._get_constructs())
         

@@ -56,10 +56,10 @@ to the order of the elements.
         return type(self)(source=self)
     #--- End: def
 
-    def del_size(self):
+    def del_size(self, *default):
         '''
         '''
-        return self._del_component('size')
+        return self._del_component('size', *default)
     #--- End: def
 
     def has_size(self):

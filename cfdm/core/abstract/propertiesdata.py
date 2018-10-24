@@ -70,7 +70,31 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     # ----------------------------------------------------------------
     @property
     def data(self):
-        '''
+        '''Return the data.
+
+``f.data`` is equivalent to ``f.get_data()`` 
+
+Note that the data are returned in a `Data` object. Use the `get_array`
+method to return the data as a `numpy` array.
+
+.. versionadded:: 1.7
+
+.. seealso:: `del_data`, `get_array`, `get_data`, `has_data`,
+             `set_data`
+
+:Returns:
+
+    out: `Data`
+        The data.
+
+**Examples**
+
+>>> f.has_data()
+True
+>>> d = f.data
+>>> f.data.ndim
+3
+
         '''
         return self.get_data()
     #--- End: def
@@ -83,11 +107,7 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> g = f.copy()
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -100,8 +120,9 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     out:
         The deep copy.
 
-:Examples 2:
+**Examples**
 
+>>> g = f.copy()
 >>> g = f.copy(data=False)
 >>> g.has_data()
 False
@@ -110,23 +131,25 @@ False
         return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
-    def del_data(self):
+    def del_data(self, *default):
         '''Remove the data.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `get_data`, `has_data`, `set_data`
 
-:Examples 1:
+:Parameters:
 
->>> d = f.del_data()
+    default: optional
+        Return *default* if the data has not been set.
 
 :Returns: 
 
-    out: `Data` or `None`
-        The removed data, or `None` if the data was not set.
+    out:
+        The removed data. If the data has not been set then the
+        *default* is returned, if provided.
 
-:Examples 2:
+**Examples**
 
 >>> f.has_data()
 True
@@ -151,16 +174,12 @@ Use the `get_data` method to return the data as a `Data` object.
 
 .. seealso:: `get_data`
 
-:Examples 1:
-
->>> a = f.get_array()
-
 :Returns:
 
     out: `numpy.ndarray`
         An independent numpy array of the data.
 
-:Examples 2:
+**Examples**
 
 >>> d = Data([1, 2, 3.0], 'km')
 >>> array = d.get_array()
@@ -191,10 +210,6 @@ method to return the data as a `numpy` array.
 
 .. seealso:: `del_data`, `get_array`, `has_data`, `set_data`
 
-:Examples 1:
-
->>> d = f.get_data()
-
 :Parameters:
 
     default: optional
@@ -206,8 +221,9 @@ method to return the data as a `numpy` array.
         The data. If the data has not been set, then the *default*
         parameter is returned, if provided.
 
-:Examples 2:
+**Examples**
 
+>>> d = f.get_data()
 >>> f.has_data()
 True
 >>> d = f.del_data()
@@ -247,16 +263,12 @@ None
 
 .. seealso:: `del_data`, `get_data`, `set_data`
 
-:Examples 1:
-
->>> x = f.has_data()
-
 :Returns:
 
     out: `bool`
         True if there are data, otherwise False.
 
-:Examples 2:
+**Examples**
 
 >>> f.has_data()
 True
@@ -281,10 +293,6 @@ prior to insertion.
 
 .. seealso:: `del_data`, `get_data`, `has_data`
 
-:Examples 1:
-
->>> f.set_data(d)
-
 :Parameters:
 
     data: `Data`
@@ -298,7 +306,7 @@ prior to insertion.
 
     `None`
 
-:Examples 2:
+**Examples**
 
 >>> f.set_data(d, copy=False)
 

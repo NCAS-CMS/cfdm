@@ -107,12 +107,7 @@ By default the name is the first found of the following:
   
   4. The value of the *default* parameter.
 
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> n = f.{+name}()
->>> n = f.{+name}(default='NO NAME')
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -127,7 +122,10 @@ By default the name is the first found of the following:
     out:
         The name.
 
-:Examples 2:
+**Examples**
+
+>>> n = f.{+name}()
+>>> n = f.{+name}(default='NO NAME')
 
         '''
         if all_names:

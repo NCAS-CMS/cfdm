@@ -49,7 +49,7 @@ between ``a`` and ``b``.
     out: `bool`
         Returns True if the arrays are equal, otherwise False.
 
-:Examples:
+**Examples**
 
 >>> cf._numpy_allclose([1, 2], [1, 2])
 True
@@ -124,8 +124,7 @@ between ``a`` and ``b``.
 
     out: `numpy.ndarray`
 
-:Examples:
-
+**Examples**
     '''      
     try:
         return numpy.isclose(a, b, rtol=rtol, atol=atol)
@@ -146,7 +145,7 @@ def parse_indices(shape, indices):
 
     out: `list`
 
-:Examples:
+**Examples**
 
 '''
     parsed_indices = []
@@ -327,10 +326,6 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 
 .. seealso:: `RTOL`
 
-:Examples 1:
-
->>> atol = ATOL()
-
 :Parameters:
 
     arg: `float`, optional
@@ -343,7 +338,7 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
         The value prior to the change, or the current value if no
         new value was specified.
 
-:Examples 2:
+**Examples**
 
 >>> ATOL()
 1e-08
@@ -374,10 +369,6 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 
 .. seealso:: `ATOL`
 
-:Examples 1:
-
->>> rtol = RTOL()
-
 :Parameters:
 
     arg: `float`, optional
@@ -390,7 +381,7 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
         The value prior to the change, or the current value if no
         new value was specified.
 
-:Examples 2:
+**Examples**
 
 >>> RTOL()
 1.0000000000000001e-05
@@ -445,7 +436,7 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 #    out: `bool`
 #        Whether or not the two objects are equal.
 #
-#:Examples:
+#**Examples**
 #
 #>>> f
 #<CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
@@ -524,7 +515,7 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 #    out: `str`
 #        The normalized absolutized version of *filename*.
 # 
-#:Examples:
+#**Examples**
 #
 #>>> import os
 #>>> os.getcwd()
@@ -573,7 +564,7 @@ between ``a`` and ``b``.
     out: `bool`
         Returns True if the arrays are equal, otherwise False.
 
-:Examples:
+**Examples**
 
 '''    
     if rtol is None:

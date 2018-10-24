@@ -70,11 +70,7 @@ domain ancillary constructs.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> g = f.copy()
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -87,51 +83,53 @@ domain ancillary constructs.
     out:
         The deep copy.
 
-:Examples 2:
+**Examples**
 
+>>> g = f.copy()
 >>> g = f.copy(data=False)
 
         '''
         return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
-    def del_domain_ancillary(self, domain_ancillary):
+    def del_domain_ancillary(self, domain_ancillary, *default):
         '''Delete a domain ancillary.
 
-.. seealso:: `domain_ancillaries`, `get_domain_ancillary`, `has_domain_ancillary`,
-             `set_domain_ancillary`
+.. versionadded:: 1.7
 
-:Examples 1:
-
->>> f.del_domain_ancillary('orog')
+.. seealso:: `domain_ancillaries`, `get_domain_ancillary`,
+             `has_domain_ancillary`, `set_domain_ancillary`
 
 :Parameters:
 
-    parmtaeter: `str`
-        The name of the parameter to be deleted.
+    domain_ancillary: `str`
+        The name of the domain ancillary to be deleted.
+
+          *Example:*
+             ``domain_ancillary='orog'``
+
+    default: optional
+        Return *default* if the domain ancillary has not been set.
 
 :Returns:
 
      out:
-        The value of the deleted parameter, or `None` if the parameter
-        was not set.
+        The removed domain. If the property has not been then the
+        *default* is returned, if provided.
 
-:Examples 2:
+**Examples**
 
         '''
-        return self._get_component('domain_ancillaries').pop(domain_ancillary, None)
+        return self._get_component('domain_ancillaries').pop(
+            domain_ancillary, None)
     #--- End: def
 
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
         '''Return or replace the domain ancillary-valued terms.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `parameters`
-
-:Examples 1:
-
->>> d = c.ancillaries()
 
 :Parameters:
 
@@ -150,8 +148,9 @@ domain ancillary constructs.
         *parameters* keyword has been set then the parameter-valued
         terms prior to replacement are returned.
 
-:Examples 2:
+**Examples**
 
+>>> d = c.ancillaries()
         '''
         out = self._get_component('domain_ancillaries').copy()
 
@@ -170,10 +169,6 @@ domain ancillary constructs.
     def get_domain_ancillary(self, domain_ancillary, *default):
         '''Get a parameter value.
 
-:Examples 1:
-
->>> v = c.get_parameter('false_northing')
-
 :Parameters:
 
     term: `str`
@@ -186,7 +181,7 @@ domain ancillary constructs.
     out:
         The value of the term <SOMETING BAOUT DEFAULT>
 
-:Examples 2:
+**Examples**
 
 >>> c.get_parameter('grid_north_pole_latitude')
 70.0
@@ -212,20 +207,16 @@ ERROR
     def set_domain_ancillary(self, term, value, copy=True):
         '''Set an domain ancillary-valued term.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `domain_ancillaries`, `del_domain_ancillary`, `get_domain_ancillary`,
              `set_domain_ancillary`
-
-:Examples 1:
-
->>> c.set_domain_ancillary('longitude_of_central_meridian', 265.0)
 
 :Returns:
 
     `None`
 
-:Examples 2:
+**Examples**
 
 >>> c.parameters()
 {'standard_parallel': 25.0;

@@ -61,11 +61,7 @@ domain ancillary constructs.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> g = f.copy()
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -78,36 +74,38 @@ domain ancillary constructs.
     out:
         The deep copy.
 
-:Examples 2:
+**Examples**
 
+>>> g = f.copy()
 >>> g = f.copy(data=False)
 
         '''
         return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
     
-    def del_parameter(self, parameter):
+    def del_parameter(self, parameter, *default):
         '''Delete a parameter.
+
+.. versionadded:: 1.7
 
 .. seealso:: `get_parameter`, `has_parameter`, `parameters`,
              `set_parameter`
 
-:Examples 1:
-
->>> f.del_parameter('grid_mapping_name')
-
 :Parameters:
 
-    parmtaeter: `str`
+    parameter: `str`
         The name of the parameter to be deleted.
+
+    default: optional
+        Return *default* if the parameter has not been set.
 
 :Returns:
 
      out:
-        The value of the deleted parameter, or `None` if the parameter
-        was not set.
+        The removed parameter. If the parameter has not been then
+        *default* is returned, if provided.
 
-:Examples 2:
+**Examples**
 
         '''
         return self._get_component('parameters').pop(parameter, None)
@@ -116,11 +114,7 @@ domain ancillary constructs.
     def get_parameter(self, term, *default):
         '''Get a parameter value.
 
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> v = c.get_parameter('false_northing')
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -134,7 +128,7 @@ domain ancillary constructs.
     out:
         The value of the term <SOMETING BAOUT DEFAULT>
 
-:Examples 2:
+**Examples**
 
 >>> c.get_parameter('grid_north_pole_latitude')
 70.0
@@ -160,13 +154,9 @@ ERROR
     def parameters(self, parameters=None, copy=True):
         '''Return or replace the parameter-valued terms.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `ancillaries`
-
-:Examples 1:
-
->>> d = c.parameters()
 
 :Parameters:
 
@@ -185,7 +175,7 @@ ERROR
         *parameters* keyword has been set then the parameter-valued
         terms prior to replacement are returned.
 
-:Examples 2:
+**Examples**
 
 >>> c.parameters()
 {'standard_parallel': 25.0;
@@ -212,19 +202,15 @@ ERROR
     def set_parameter(self, term, value, copy=True):
         '''Set a parameter-valued term.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `parameters`
-
-:Examples 1:
-
->>> c.set_parameter('longitude_of_central_meridian', 265.0)
 
 :Returns:
 
     `None`
 
-:Examples 2:
+**Examples**
 
 >>> c.parameters()
 {'standard_parallel': 25.0;

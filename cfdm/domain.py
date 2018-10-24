@@ -199,7 +199,7 @@ field.
     out: `str`
         A string containing the description.
     
-:Examples:
+**Examples**
 
         '''
         indent1 = '    ' * _level
@@ -231,10 +231,6 @@ field.
 The domain components are described without abbreviation with the
 exception of data arrays, which are abbreviated to their first and
 last values.
-
-:Examples 1:
-        
->>> f.{+name}()
 
 :Parameters:
 
@@ -335,10 +331,6 @@ True.
 
 .. seealso:: `cf.FieldList.equals`, `cf.FieldList.set_equals`
 
-:Examples 1:
-
->>> b = f.{+name}(g)
-
 :Parameters:
 
     other: `object`
@@ -365,7 +357,7 @@ True.
     out: `bool`
         Whether or not the two {+variable}s are equal.
 
-:Examples 2:
+**Examples**
 
 >>> f.Conventions
 'CF-1.0'

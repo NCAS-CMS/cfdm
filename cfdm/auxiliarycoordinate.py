@@ -46,7 +46,7 @@ coordinate object.
     out: `None` or `str`
         A string containing the description.
 
-:Examples:
+**Examples**
 
         '''
         if _title is None:

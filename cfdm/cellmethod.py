@@ -48,7 +48,7 @@ corresponding dimension or dimensions.
     out: `str` or `None`
         A string containing the description.
 
-:Examples:
+**Examples**
          
         '''
         indent0 = '    ' * _level
@@ -94,7 +94,7 @@ corresponding dimension or dimensions.
 #
 #    out: `list`
 #
-#:Examples 2:
+#**Examples**
 #
 #>>> c = CellMethod.parse('time: minimum within years time: mean over years (ENSO years)')
 #>>> print c
@@ -284,7 +284,7 @@ The `!axes` attribute is ignored in the comparison.
     out : bool
         Whether or not the two instances are equal.
 
-:Examples:
+**Examples**
 
 '''
         if not super().equals(
@@ -376,7 +376,7 @@ The `!axes` attribute is ignored in the comparison.
 #    out : bool
 #        Whether or not the two instances are equivalent.
 #
-#:Examples:
+#**Examples**
 #
 #        '''
 #        if self is other:
@@ -456,12 +456,7 @@ By default the name is the first found of the following:
   
   4. The value of the *default* parameter.
 
-.. versionadded:: 1.6
-
-:Examples 1:
-
->>> n = f.{+name}()
->>> n = f.{+name}(default='NO NAME')
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -476,7 +471,11 @@ By default the name is the first found of the following:
     out:
         The name.
 
-:Examples 2:
+**Examples**
+
+
+>>> n = f.{+name}()
+>>> n = f.{+name}(default='NO NAME')
 
         '''
         out = []
@@ -519,11 +518,6 @@ By default the name is the first found of the following:
 The domain axes are sorted by their internal identifiers and the
 intervals, if provided, are sorted accordingly.
 
-
-:Examples 1:
-
->>> d = c.sorted()
-
 :Parameters:
 
     indices: ordered sequence of `int`, optional
@@ -535,7 +529,7 @@ intervals, if provided, are sorted accordingly.
     out: `CellMethod`
         A new cell method object with sorted domain axes.
 
-:Examples 2:
+**Examples**
 
 >>> cm = CellMethod(axes=['domainaxis1', 'domainaxis0'],
 ...                 method='mean',

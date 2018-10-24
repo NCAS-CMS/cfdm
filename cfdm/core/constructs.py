@@ -160,7 +160,7 @@ class Constructs(object):
     def __deepcopy__(self, memo):
         '''Called by the :py:obj:`copy.deepcopy` standard library function.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
         '''
         return self.copy()
@@ -303,10 +303,6 @@ class Constructs(object):
     
     def construct_axes(self, key=None): #, *default):
         '''
-:Examples 1:
-
->>> x = f.construct_axes()
-
 :Parameters:
 
     key: `str`, optional
@@ -319,8 +315,9 @@ class Constructs(object):
 
     out: `dict` or `tuple` or *default*
 
-:Examples 2:
+**Examples**
 
+>>> x = f.construct_axes()
 >>> f.variable_axes()
 {'aux0': ('dim1', 'dim0'),
  'aux1': ('dim0',),
@@ -400,7 +397,7 @@ None
     out: `Constructs`
         The copy.
 
-:Examples:
+**Examples**
 
 >>> d = c.copy()
 
@@ -412,15 +409,11 @@ None
     def axes_to_constructs(self):
         '''e3 49jrjfn
 
-:Examples 1:
-
->>> d = c.axes_to_constructs()
-
 :Returns:
 
     out: `dict`
 
-:Examples 2:
+**Examples**
 
 >>> print c.axes_to_constructs()
 {('domainaxis1',): {
@@ -481,15 +474,11 @@ None
 
     def domain_axes(self, copy=False):
         '''
-:Examples 1:
-
->>> d = f.domain_axes()
-
 :Parameters:
 
     copy: 
 
-:Examples 2:
+**Examples**
 
 >>> d = f.domain_axes()
 >>> d
@@ -635,7 +624,7 @@ Return a new, unique identifier for the construct.
     out: `str`
         The new identifier.
 
-:Examples:
+**Examples**
 
 >>> d.items().keys()
 ['aux2', 'aux0', 'dim1', 'ref2']
@@ -676,10 +665,6 @@ Return a new, unique identifier for the construct.
     def del_construct(self, key):        
         '''Remove a construct.
 
-:Examples 1:
-
->>> x = f.del_construct('auxiliarycoordinate2')
-
 :Parameters:
 
     key: `str`
@@ -690,8 +675,9 @@ Return a new, unique identifier for the construct.
         The removed construct, or `None` if the given key did not
         exist.
 
-:Examples 2:
+**Examples**
 
+>>> x = f.del_construct('auxiliarycoordinate2')
         '''
         self._construct_axes.pop(key, None)
 

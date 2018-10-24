@@ -65,7 +65,7 @@ Return a string containing a full description of the cell measure.
     out : None or str
         A string containing the description.
 
-:Examples:
+**Examples**
 
 ''' 
         if _title is None:
@@ -175,7 +175,7 @@ Note that ``c.name(identity=True)`` is equivalent to ``c.identity()``.
     out : str
         A  name for the cell measure.
 
-:Examples:
+**Examples**
 
 >>> f.standard_name = 'air_temperature'
 >>> f.long_name = 'temperature of the air'

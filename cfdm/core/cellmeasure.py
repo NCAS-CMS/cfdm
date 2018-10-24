@@ -71,7 +71,7 @@ cell measure variables correspond to cell measure constructs.
         If False then do not deep copy input parameters prior to
         initialization By default parameters are deep copied.
 
-:Examples:
+**Examples**
 
 >>> c = CellMeasure(measure='area'
 ...                 properties={'units': 'km 2'},
@@ -92,8 +92,26 @@ cell measure variables correspond to cell measure constructs.
             self.set_measure(measure)
     #--- End: def
 
-    def del_measure(self):
-        '''
+    def del_measure(self, *default):
+        '''Remove the measure.
+
+.. versionadded:: 1.7
+
+.. seealso:: `get_measure`, `has_measure`, `properties`, `set_measure`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the property has not been set.
+
+:Returns:
+
+     out:
+        The removed measure. If unset then *default* is returned, if
+        provided.
+
+**Examples**
+
         '''
         return self._del_component('measure')
     #--- End: def

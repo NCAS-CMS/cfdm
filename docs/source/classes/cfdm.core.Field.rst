@@ -8,9 +8,13 @@ cfdm.core.Field
    :no-members:
    :no-inherited-members:
 
+.. _inspection:
+      
 Inspection
 ----------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
@@ -19,7 +23,6 @@ Inspection
    ~cfdm.core.Field.auxiliary_coordinates
    ~cfdm.core.Field.cell_methods
    ~cfdm.core.Field.cell_measures
-   ~cfdm.core.Field.construct
    ~cfdm.core.Field.constructs
    ~cfdm.core.Field.construct_axes
    ~cfdm.core.Field.coordinate_references
@@ -28,22 +31,29 @@ Inspection
    ~cfdm.core.Field.domain_ancillaries
    ~cfdm.core.Field.domain_axes
    ~cfdm.core.Field.field_ancillaries
+   ~cfdm.core.Field.get_array
    ~cfdm.core.Field.get_data
-   ~cfdm.core.Field.get_property
+   ~cfdm.core.Field.get_domain
    ~cfdm.core.Field.has_data
+   ~cfdm.core.Field.get_property
    ~cfdm.core.Field.has_property
    ~cfdm.core.Field.properties
 
+.. rubric:: Attributes
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: attribute.rst
 
    ~cfdm.core.Field.data
+   ~cfdm.core.Field.domain
 
 Properties
 ----------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
@@ -55,9 +65,39 @@ Properties
    ~cfdm.core.Field.properties
    ~cfdm.core.Field.set_property
 
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cfdm.core.Field.del_data
+   ~cfdm.core.Field.del_data_axes
+   ~cfdm.core.Field.get_array
+   ~cfdm.core.Field.get_data
+   ~cfdm.core.Field.get_data_axes
+   ~cfdm.core.Field.has_data
+   ~cfdm.core.Field.set_data
+   ~cfdm.core.Field.set_data_axes
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cfdm.core.Field.data
+
 Metadata constructs
 -------------------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
@@ -79,6 +119,8 @@ Metadata constructs
 Domain axes
 -----------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
@@ -98,7 +140,9 @@ Domain axes
 
 Creation
 --------
-   
+
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
@@ -121,26 +165,12 @@ Creation
    ~cfdm.core.Field.set_field_ancillary
    ~cfdm.core.Field.set_property
 
-Data
-----
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.core.Field.del_data
-   ~cfdm.core.Field.del_data_axes
-   ~cfdm.core.Field.get_array
-   ~cfdm.core.Field.get_data
-   ~cfdm.core.Field.get_data_axes
-   ~cfdm.core.Field.has_data
-   ~cfdm.core.Field.set_data
-   ~cfdm.core.Field.set_data_axes
 
 Miscellaneous
 -------------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
@@ -150,8 +180,10 @@ Miscellaneous
    ~cfdm.core.Field.field
 
 
-Special methods
----------------
+Special
+-------
+
+.. rubric:: Methods
 
 .. autosummary::
    :nosignatures:

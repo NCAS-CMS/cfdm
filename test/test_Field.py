@@ -198,7 +198,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.get_data_axes(None) == ref)
 
         self.assertTrue(f.del_data_axes() == ref)
-        self.assertTrue(f.del_data_axes() == None)        
+        self.assertTrue(f.del_data_axes(None) == None)        
         
         self.assertTrue(f.set_data_axes(ref) == None)
         self.assertTrue(f.get_data_axes() == ref)

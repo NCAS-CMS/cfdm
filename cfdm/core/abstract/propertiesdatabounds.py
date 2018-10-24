@@ -141,10 +141,6 @@ properties.
 
 ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
-:Examples 1:
-
->>> g = f.copy()
-
 :Parameters:
 
     data: `bool`, optional
@@ -156,8 +152,9 @@ properties.
     out:
         The deep copy.
 
-:Examples 2:
+**Examples**
 
+>>> g = f.copy()
 >>> g = f.copy(data=False)
 >>> g.has_data()
 False
@@ -168,21 +165,25 @@ False
         return super().copy(data=data)
     #--- End: def
 
-    def del_bounds(self):
+    def del_bounds(self, *default):
         '''Remove the bounds.
+
+.. versionadded:: 1.7
 
 .. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
 
-:Examples 1:
+:Parameters:
 
->>> c.del_bounds()
+    default: optional
+        Return *default* if the bounds has not been set.
 
-:Returns: 
+:Returns:
 
-    out: `Bounds` or `None`
-        The removed bounds, or `None` if the bounds are not set.
+     out:
+        The removed bounds. If the bounds has not been set then the
+        *default* is returned, if provided.
 
-:Examples 2:
+**Examples**
 
 >>> c.has_bounds()
 True
@@ -200,18 +201,26 @@ None
         return self._del_component('bounds')
     #--- End: def
 
-    def del_geometry(self):
+    def del_geometry(self, *default):
         '''Delete the geometry type.
+
+.. versionadd:: 1.7
 
 .. seealso:: `get_geometry`, `has_geometry`, `set_geometry`
 
-:Examples 1:
+:Parameters:
 
-:Returns: 
+    default: optional
+        Return *default* if the geometry type has not been set.
 
-    out: `str` or `None`
+:Returns:
 
-:Examples 2:
+     out:
+
+        The removed geometry type. If the geometry type has not been
+        set then the *default* is returned, if provided.
+
+**Examples**
 
         '''
         return self._del_component('geometry')
@@ -220,11 +229,9 @@ None
     def get_bounds(self, *default):
         '''Return the bounds.
 
+.. versionadd:: 1.7
+
 .. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
-
-:Examples 1:
-
->>> b = c.get_bounds()
 
 :Parameters:
 
@@ -237,7 +244,7 @@ None
         The bounds. If the bounds have not been set, then return the
         value of *default* parameter if provided.
 
-:Examples 2:
+**Examples**
 
 >>> b = c.del_bounds()
 >>> c.get_bounds('No bounds')
@@ -252,8 +259,6 @@ None
 
 .. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
 
-:Examples 1:
-
 :Parameters:
 
     default: optional
@@ -263,7 +268,7 @@ None
 
     out:
 
-:Examples 2:
+**Examples**
 
         '''
         return self._get_component('geometry', *default)
@@ -275,10 +280,6 @@ None
 .. seealso:: `del_interior_ring`, `get_bounds`, `has_interior_ring`,
              `set_interior_ring`
 
-:Examples 1:
-
->>> i = c.get_interior_ring()
-
 :Parameters:
 
     default: optional
@@ -288,8 +289,9 @@ None
 
     out:
     
-:Examples 2:
+**Examples**
 
+>>> i = c.get_interior_ring()
         '''
         return self._get_component('interior_ring', *default)
     #--- End: def
@@ -299,17 +301,15 @@ None
         
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
-:Examples 1:
-
->>> x = f.has_bounds()
 
 :Returns:
 
     out: `bool`
         True if there are bounds, otherwise False.
 
-:Examples 2:
+**Examples**
 
+>>> x = c.has_bounds()
 >>> if c.has_bounds():
 ...     print 'Has bounds'
 
@@ -322,15 +322,13 @@ None
         
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
-:Examples 1:
-
->>> x = f.has_geometry()
-
 :Returns:
 
     out: `bool`
 
-:Examples 2:
+**Examples**
+
+>>> x = c.has_geometry()
 
         '''
         return self._has_component('geometry')
@@ -341,17 +339,14 @@ None
         
 .. seealso:: `del_interior_ring`, `get_interior_ring`, `has_data`, `set_interior_ring`
 
-:Examples 1:
-
->>> x = f.has_interior_ring()
-
 :Returns:
 
     out: `bool`
         True if there are interior_ring, otherwise False.
 
-:Examples 2:
+**Examples**
 
+>>> x = f.has_interior_ring()
 >>> if c.has_interior_ring():
 ...     print 'Has interior_ring'
 
@@ -363,10 +358,6 @@ None
         '''Set the bounds.
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
-
-:Examples 1:
-
->>> c.set_bounds(b)
 
 :Parameters:
 
@@ -381,8 +372,9 @@ None
 
     `None`
 
-:Examples 2:
+**Examples**
 
+>>> c.set_bounds(b)
 >>> c.set_data(b, copy=False)
 
         '''
@@ -397,8 +389,6 @@ None
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 
-:Examples 1:
-
 :Parameters:
 
     value: `str`
@@ -407,7 +397,7 @@ None
 
     `None`
 
-:Examples 2:
+**Examples**
         '''
         self._set_component('geometry', value, copy=copy)
     #--- End: def
@@ -417,10 +407,6 @@ None
 
 .. seealso: `del_interior_ring`, `get_interior_ring`,
             `has_interior_ring`
-
-:Examples 1:
-
->>> c.set_interior_ring(b)
 
 :Parameters:
 
@@ -435,8 +421,9 @@ None
 
     `None`
 
-:Examples 2:
+**Examples**
 
+>>> c.set_interior_ring(b)
         '''
         if copy:
             interior_ring = interior_ring.copy()

@@ -183,7 +183,7 @@ initialisation with the `set_data` method.
     # ----------------------------------------------------------------
     def _get_constructs(self, *default):
         '''
-.. versionadded:: 1.6
+.. versionadded:: 1.7
         
         '''
         return self._get_component('constructs', *default)
@@ -194,8 +194,23 @@ initialisation with the `set_data` method.
     # ----------------------------------------------------------------
     @property
     def domain(self):
+        '''Return the domain.
+        
+``f.domain`` is equivalent to ``f.get_domain()`` 
+
+.. versionadded:: 1.7
+
+.. seealso:: `get_domain`
+
+:Returns:
+
+    out: `Domain`
+
+**Examples**
+
+>>> d = f.domain
+
         '''
-'''
         return self.get_domain()
     #--- End: def
     
@@ -203,20 +218,54 @@ initialisation with the `set_data` method.
     # Methods
     # ----------------------------------------------------------------
     def cell_methods(self, copy=False):
-        '''
+        '''Return the cell method constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `OrderDict`
+
+**Examples**
+
+>>> f.cell_methods()
+OrderedDict([('cellmethod0',
+              <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>),
+             ('cellmethod1', <CellMethod: domainaxis1: maximum where sea>)])
+
         '''
         return self._get_constructs().constructs(
             construct_type='cell_method', copy=copy)
     #--- End: def
     
-    def del_data_axes(self):
+    def del_data_axes(self, *default):
         '''
+.. versionadded:: 1.7
         '''
-        return self._del_component('data_axes')
+        return self._del_component('data_axes', *default)
     #--- End: def
 
     def get_domain(self):
-        '''
+        '''Return the domain.
+
+.. versionadded:: 1.7
+
+.. seealso:: `domain`
+
+:Returns:
+
+    out: `Domain`
+
+**Examples**
+
+>>> d = f.get_domain()
+
         '''
         return self._Domain.fromconstructs(self._get_constructs())
     #--- End: def
@@ -224,11 +273,9 @@ initialisation with the `set_data` method.
     def get_data_axes(self, *default):
         '''Return the domain axes corresponding to the data array dimensions.
         
+.. versionadded:: 1.7
+
 .. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
-
-:Examples 1:
-
->>> d = f.get_data_axes()
 
 :Parameters:
 
@@ -241,7 +288,7 @@ initialisation with the `set_data` method.
         The ordered axes of the data array. If there are no data axes
         then return the value of *default* parameter, if provided.
 
-:Examples 2:
+**Examples**
 
 >>> f.ndim
 3
@@ -261,13 +308,32 @@ None
     #--- End: def
     
     def field_ancillaries(self, copy=False):
-        '''
-        '''
+        '''Return the field ancillary constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.field_ancillaries()
+{}
+
+'''
         return self._get_constructs().constructs(
             construct_type='field_ancillary', copy=copy)
 
     def del_construct(self, key):
         '''
+.. versionadded:: 1.7
         '''
         if key in self.domain_axes():
             domain_axis = True
@@ -297,9 +363,7 @@ None
     def set_data(self, data, axes, copy=True):
         '''Insert a data array into the {+variable}.
 
-:Examples 1:
-
->>> f.set_data(d)
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -338,7 +402,7 @@ None
 
     `None`
 
-:Examples 2:
+**Examples**
 
 >>> f.axes()
 {'dim0': 1, 'dim1': 3}
@@ -462,7 +526,7 @@ ValueError: Can't initialize data: Data already exists
 
     `None`
 
-:Examples:
+**Examples**
 
         '''
         self.set_construct('cell_method', cell_method, key=key,

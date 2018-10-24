@@ -124,12 +124,12 @@ frame and consists of the following:
                 coordinates = None
 
             try:
-                coordinate_conversion = source.get_coordinate_conversion(None)
+                coordinate_conversion = source.get_coordinate_conversion()
             except AttributeError:
                 coordinate_conversion = None
 
             try:
-                datum = source.get_datum(None)
+                datum = source.get_datum()
             except AttributeError:
                 datum = None
         #--- End: if
@@ -151,12 +151,13 @@ frame and consists of the following:
         '''
 blah de balh
         '''
-        out = self.get_coordinate_conversion(None)
-        if out is None:
-            out = self._CoordinateConversion()
-            self.set_coordinate_conversion(out)
-            
-        return out
+        return self.get_coordinate_conversion()
+#        out = self.get_coordinate_conversion(None)
+#        if out is None:
+#            out = self._CoordinateConversion()
+#            self.set_coordinate_conversion(out)
+#            
+#        return out
     #--- End: def
         
     @property
@@ -164,12 +165,13 @@ blah de balh
         '''
 blah de balh 2
         '''
-        out = self.get_datum(None)
-        if out is None:
-            out = self._Datum()
-            self.set_datum(out)
-            
-        return out
+        return self.get_datum()
+#        out = self.get_datum(None)
+#        if out is None:
+#            out = self._Datum()
+#            self.set_datum(out)
+#            
+#        return out
     #--- End: def
 
     def coordinates(self, coordinates=None):
@@ -187,7 +189,7 @@ define the coordinate system.
     out: `set`
         The identifiers of the coordinate objects.
 
-:Examples 2:
+**Examples**
 
 >>> c.coordinates()
 {'dimensioncoordinate0',
@@ -209,7 +211,7 @@ define the coordinate system.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 :Examples 1:
 
@@ -224,27 +226,31 @@ define the coordinate system.
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_coordinate(self, key):
+    def del_coordinate(self, key, *default):
         '''Delete the identifier of a coordinate object that defines the
 coordinate system.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `coordinates`
-
-:Examples 1:
-
->>> c.del_coordinate('dimensioncoordinate1')
 
 :Parameters:
 
     key: `str`
 
+          *Example:*
+             ``key='dimensioncoordinate1'``
+
+    default: optional
+        Return *default* if the coordinate key has not been set.
+
 :Returns:
 
-    `None`
+    out: 
+        The removed coordinate key. If unset then *default* is
+        returned, if provided.
 
-:Examples 2:
+**Examples**
 
 >>> c.coordinates()
 {'dimensioncoordinate0',
@@ -252,44 +258,116 @@ coordinate system.
 >>> c.del_coordinate('dimensioncoordinate0')
 >>> c.coordinates()
 {'dimensioncoordinate1'}
-        '''        
-        self._get_component('coordinates').discard(key)
+
+        '''
+        coordinates = self._get_component('coordinates')
+        if key in coordinates:
+            coordinates.remove(key)
+            return key
+
+        if default:
+            return default[0]
+        
+        raise AttributeError("{!r} has no {!r} coordinate".format(
+            self.__class__.__name__, key))
     #--- End: def
     
-    def del_coordinate_conversion(self):
+    def del_coordinate_conversion(self, *default):
+        '''Remove the coordinate conversion.
+
+.. versionadded:: 1.7
+
+..seealso:: `coordinate_conversion`, `get_coordinate_conversion`,
+            `has_coordinate_conversion`, `set_coordinate_conversion`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the coordinate conversion has not been
+        set.
+
+:Returns:
+
+    out: 
+        The removed coordinate conversion. If unset then *default* is
+        returned, if provided.
+
+**Examples**
+
         '''
-        '''
-        coordinate_conversion = self.get_coordinate_conversion()
-        self.set_coordinate_conversion(self._CoordinateConversion())
-        return coordinate_conversion
+        new = self._CoordinateConversion()
+        out = self._del_component('coordinate_conversion', new)
+        self.set_coordinate_conversion(new)
+        return out
     #--- End: def
     
     def del_datum(self):
+        '''Remove the datum.
+
+.. versionadded:: 1.7
+
+..seealso:: `datum`, `get_datum`, `has_datum`, `set_datum`
+
+        :Returns:
+
+    out: 
+        The removed datum.
+
+**Examples**
+
         '''
-        '''
-        datum = self.get_datum()
-        self.set_datum(self._Datum())
-        return datum
+        new = self._Datum()
+        out = self._del_component('datum', new)
+        self.set_datum(new)
+        return out
     #--- End: def
 
     def get_coordinate_conversion(self, *default):
         '''Get the coordinate_conversion.
 
+.. versionadded:: 1.7
+
+..seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
+            `has_coordinate_conversion`, `set_coordinate_conversion`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the coordinate conversion has not been
+        set.
+
 :Returns:
 
-    out: `Datum`
+    out:
+        The coordinate conversion. If unset then *default* is
+        returned, if provided.
+
+**Examples**
+
         '''
-        return self._get_component('coordinate_conversion', *default)
+        out = self._get_component('coordinate_conversion', None)
+        if out is None:
+            out = self._CoordinateConversion()
+            self.set_coordinate_conversion(out)
+
+        return out
+
+#        return self._get_component('coordinate_conversion', *default)
     #--- End: def
     
-    def get_datum(self, *default):
+    def get_datum(self):
         '''Get the datum.
 
 :Returns:
 
-    out: `Datum`
+    out:
         '''
-        return self._get_component('datum', *default)
+        out = self._get_component('datum', None)
+        if out is None:
+            out = self._Datum()
+            self.set_datum(out)
+
+        return out
     #--- End: def
     
     def has_datum(self):
@@ -307,7 +385,7 @@ coordinate system.
     def set_coordinate(self, coordinate):
         '''Set a coordinate.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `del_coordinate`
 
@@ -323,7 +401,7 @@ coordinate system.
 
     `None`
 
-:Examples 2:
+**Examples**
 
 >>> c.coordinates()
 {'dimensioncoordinate0',
