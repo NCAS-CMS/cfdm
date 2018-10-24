@@ -322,9 +322,8 @@ functionality:
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
-
         for key, construct in new.array_constructs().items():
-            data = self.get_construct(key).get_data(None)
+            data = self.get_construct(id=key).get_data(None)
             if data is None:
                 # This construct has no data
                 continue

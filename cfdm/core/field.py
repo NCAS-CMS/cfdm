@@ -331,31 +331,32 @@ None
         return self._get_constructs().constructs(
             construct_type='field_ancillary', copy=copy)
 
-    def del_construct(self, key):
-        '''
+    def del_construct(self, id):
+        '''TODO
+
 .. versionadded:: 1.7
         '''
-        if key in self.domain_axes():
+        if id in self.domain_axes():
             domain_axis = True
-            if key in self.get_data_axes(()):
+            if id in self.get_data_axes(()):
                 raise ValueError(
-"Can't remove domain axis {!r} that is spanned by the field's data".format(key))
+"Can't remove domain axis {!r} that is spanned by the field's data".format(id))
 
             # Remove reference to removed domain axis construct in
             # cell method constructs
             for cm_key, cm in self.cell_methods().items():
                 axes = cm.get_axes()
-                if key not in axes:
+                if id not in axes:
                     continue
                 
                 axes = list(axes)
-                axes.remove(key)
+                axes.remove(id)
                 cm.set_axes(axes)
         #--- End: if
         
-        x = self.domain.del_construct(key)
+        x = self.domain.del_construct(id)
         if x is None:
-            x = self._get_constructs().del_construct(key)
+            x = self._get_constructs().del_construct(id)
             
         return x
     #--- End: def

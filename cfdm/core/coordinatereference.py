@@ -148,11 +148,21 @@ frame and consists of the following:
 
     @property
     def coordinate_conversion(self):
-        '''
-blah de balh
+        '''Return the coordinate conversion.
+
+.. versionadded:: 1.7
+
+..seealso:: `datum`, `get_coordinate_conversion`
+
+:Returns:
+
+    out: `CoordinateConversion`
+        The coordinate conversion.
+
+**Examples**
+
         '''
         return self.get_coordinate_conversion()
-#        out = self.get_coordinate_conversion(None)
 #        if out is None:
 #            out = self._CoordinateConversion()
 #            self.set_coordinate_conversion(out)
@@ -162,11 +172,21 @@ blah de balh
         
     @property
     def datum(self):
-        '''
-blah de balh 2
+        '''Return the datum.
+
+.. versionadded:: 1.7
+
+..seealso:: `coordinate_conversion`, `datum`
+
+:Returns:
+
+   out: `Datum`
+        The datum.
+
+**Examples**
         '''
         return self.get_datum()
-#        out = self.get_datum(None)
+    
 #        if out is None:
 #            out = self._Datum()
 #            self.set_datum(out)
@@ -322,25 +342,18 @@ coordinate system.
         return out
     #--- End: def
 
-    def get_coordinate_conversion(self, *default):
-        '''Get the coordinate_conversion.
+    def get_coordinate_conversion(self):
+        '''Get the coordinate conversion.
 
 .. versionadded:: 1.7
 
 ..seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
             `has_coordinate_conversion`, `set_coordinate_conversion`
 
-:Parameters:
-
-    default: optional
-        Return *default* if the coordinate conversion has not been
-        set.
-
 :Returns:
 
-    out:
-        The coordinate conversion. If unset then *default* is
-        returned, if provided.
+    out: `CoordinateConversion`
+        The coordinate conversion.
 
 **Examples**
 
@@ -356,18 +369,27 @@ coordinate system.
     #--- End: def
     
     def get_datum(self):
-        '''Get the datum.
+        '''Return the datum.
+
+.. versionadded:: 1.7
+
+..seealso:: `datum`, `get_coordinate_conversion`
 
 :Returns:
 
-    out:
+   out: `Datum`
+        The datum.
+
+**Examples**
         '''
         out = self._get_component('datum', None)
         if out is None:
             out = self._Datum()
             self.set_datum(out)
-
+            
         return out
+    
+#return self._get_component('coordinate_conversion', *default)
     #--- End: def
     
     def has_datum(self):

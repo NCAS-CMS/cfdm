@@ -20,7 +20,6 @@ object.
         for d in self._get_constructs()._constructs.values():
             name_to_keys = {}
         
-#        for key, construct in self.constructs().items():
             for key, construct in d.items():
                 name = construct.name(default='cfdm%'+key)
                 name_to_keys.setdefault(name, []).append(key)
@@ -63,78 +62,76 @@ object.
         return key_to_name
     #--- End: def
     
-    def auxiliary_coordinates(self, axes=None, copy=False):
-        '''Return the auxiliary coordinates 
-        '''    
-        return self._get_constructs().constructs(
-            construct_type='auxiliary_coordinate',
-            axes=axes, copy=copy)
-    #--- End: def
+#    def auxiliary_coordinates(self, axes=None, copy=False):
+#        '''Return the auxiliary coordinates 
+#        '''    
+#        return self._get_constructs().constructs(
+#            construct_type='auxiliary_coordinate',
+#            axes=axes, copy=copy)
+#    #--- End: def
+#
+#    def cell_measures(self, axes=None, copy=False):
+#        '''Return the 
+#        '''    
+#        return self._get_constructs().constructs(
+#            construct_type='cell_measure',
+#            axes=axes, copy=copy)
+#    #--- End: def
+#
+#    def construct(self, description=None, axes=None,
+#                  construct_type=None, copy=False):
+#        '''
+#        '''
+#        return self._get_constructs().construct(
+#            description=description,
+#            construct_type=construct_type,
+#            axes=axes,
+#            copy=copy)
+#    #--- End: def
 
-    def cell_measures(self, axes=None, copy=False):
-        '''Return the 
-        '''    
-        return self._get_constructs().constructs(
-            construct_type='cell_measure',
-            axes=axes, copy=copy)
-    #--- End: def
-
-    def construct(self, description=None, axes=None,
-                  construct_type=None, copy=False):
+    def get_construct(self, description=None, id=None, axes=None,
+                      construct_type=None, copy=False):
         '''
         '''
-        return self._get_constructs().construct(
-            description=description,
+        return self._get_constructs().get_construct(
+            description=description, id=id,
             construct_type=construct_type,
             axes=axes,
             copy=copy)
     #--- End: def
 
-    def construct(self, description=None, axes=None,
-                  construct_type=None, copy=False):
-        '''
-        '''
-        return self._get_constructs().construct(
-            description=description,
-            construct_type=construct_type,
-            axes=axes,
-            copy=copy)
-    #--- End: def
-
-    def constructs(self, description=None, axes=None,
+    def constructs(self, description=None, id=None, axes=None,
                    construct_type=None, copy=False):
         '''
         '''
         return self._get_constructs().constructs(
-            description=description,
-            construct_type=construct_type,
-            axes=axes,
-            copy=copy)
+            description=description, id=id,
+            construct_type=construct_type, axes=axes, copy=copy)
     #--- End: def
 
-    def coordinates(self, axes=None, copy=False):
-        '''
-        '''
-        out = self.dimension_coordinates(axes=axes, copy=copy)
-        out.update(self.auxiliary_coordinates(axes=axes, copy=copy))
-        return out
-    #--- End: def
-
-    def dimension_coordinates(self, axes=None, copy=False):
-        '''Return the 
-        '''    
-        return self._get_constructs().constructs(
-            construct_type='dimension_coordinate',
-            axes=axes, copy=copy)
-    #--- End: def
-
-    def domain_ancillaries(self, axes=None, copy=False):
-        '''
-        '''    
-        return self._get_constructs().constructs(
-            construct_type='domain_ancillary',
-            axes=axes, copy=copy)
-    #--- End: def
+#    def coordinates(self, axes=None, copy=False):
+#        '''
+#        '''
+#        out = self.dimension_coordinates(axes=axes, copy=copy)
+ #       out.update(self.auxiliary_coordinates(axes=axes, copy=copy))
+ #       return out
+ #   #--- End: def
+#
+#    def dimension_coordinates(self, axes=None, copy=False):
+#        '''Return the 
+#        '''    
+#        return self._get_constructs().constructs(
+#            construct_type='dimension_coordinate',
+#            axes=axes, copy=copy)
+#    #--- End: def
+#
+#    def domain_ancillaries(self, axes=None, copy=False):
+#        '''
+#        '''    
+#        return self._get_constructs().constructs(
+#            construct_type='domain_ancillary',
+#            axes=axes, copy=copy)
+#    #--- End: def
 
     def domain_axis_name(self, axis):
         '''

@@ -77,12 +77,43 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         '''
         return self._get_constructs().constructs(construct_type='cell_measure', copy=copy)
     
-    def construct_axes(self, key=None):
-        return self._get_constructs().construct_axes(key=key)
+    def construct_axes(self, id=None):
+        '''Return the identifiers of the domain axes spanned by the construct
+data array.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `get_construct`
+
+:Parameters:
+
+    id: `str`
+        The identifier of the construct.
+
+:Returns:
+
+    out: `tuple` or `None`
+        The identifiers of the domain axes spanned by the construct's
+        data array. If the construct does not have a data array then
+        `None` is returned.
+
+**Examples**
+
+>>> f.construct_axes('auxiliarycoordinate0')
+('domainaxis1', 'domainaxis0')
+>>> print(f.construct_axes('auxiliarycoordinate99'))
+None
+
+        '''
+        return self._get_constructs().construct_axes(id=id)
+    #--- End: def
     
-    def construct_type(self, key):
-        return self._get_constructs().construct_type(key)
-       
+    def construct_type(self, id):
+        '''TODO
+        '''                
+        return self._get_constructs().construct_type(id)
+    #--- End: def
+    
     def constructs(self, copy=False):
         '''Return the metadata constructs.
 
@@ -130,8 +161,24 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return self._get_constructs().constructs(construct_type='coordinate_reference', copy=copy)
     
     def coordinates(self, copy=False):
+        '''Return the dimension and auxiliar coordinate constructs.
 
-        '''
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`
+
+:Parameters:
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples**
+
+>>> f.coordinates()
+{}
         '''
         out = self.dimension_coordinates(copy=copy)
         out.update(self.auxiliary_coordinates(copy=copy))
@@ -139,16 +186,32 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     #--- End: def
 
     @abc.abstractmethod
-    def del_construct(self, key):
-        '''
+    def del_construct(self, id):
+        '''REQUIRES DOCUMENTATION
         '''
         raise NotImplementedError()
     #--- End: def
 
-    def get_construct(self, key, *default):
+    def get_construct(self, id):
+        '''Return a metadata construct.
+
+:Parameters:
+
+    id: `str`
+
+:Returns:
+
+    out:
+
+**Examples**
+
+>>> f.constructs()
+>>> f.get_construct('dimensioncoordinate1')
+<>
+>>> f.get_construct('dimensioncoordinate99', 'Not set')
+'Not set'
         '''
-        '''
-        return self._get_constructs().get_construct(key, *default)
+        return self._get_constructs().get_construct(id)
     #--- End: def
 
     def dimension_coordinates(self, copy=False):
@@ -226,16 +289,16 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return self._get_constructs().domain_axis_name(axis)
     #--- End: def
     
-    def set_auxiliary_coordinate(self, item, key=None, axes=None,
+    def set_auxiliary_coordinate(self, item, id=None, axes=None,
                                  copy=True, replace=True):
         '''Insert an auxiliary coordinate construct.
         '''
-        if not replace and key in self.auxiliary_coordinates():
+        if not replace and id in self.auxiliary_coordinates():
             raise ValueError(
-"Can't insert auxiliary coordinate construct: Identifier {!r} already exists".format(key))
+"Can't insert auxiliary coordinate construct: Identifier {!r} already exists".format(id))
 
         return self.set_construct('auxiliary_coordinate', item,
-                                  key=key, axes=axes, copy=copy)
+                                  key=id, axes=axes, copy=copy)
     #--- End: def
 
     def set_domain_axis(self, domain_axis, key=None, replace=True, copy=True):

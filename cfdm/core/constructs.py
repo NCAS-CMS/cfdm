@@ -1,12 +1,11 @@
 from builtins import (object, str)
 
 from collections import OrderedDict
-#from future.utils import with_metaclass
 
 
 class Constructs(object):
-#    class Constructs(with_metaclass(abc.ABCMeta, object)):
-    '''Keys are item identifiers, values are item objects.
+    '''TODO
+
     '''
     
     def __init__(self, 
@@ -23,7 +22,7 @@ class Constructs(object):
                  _use_data=True,
                  _view=False,
                  _ignore=()):
-        '''
+        '''TODO
         '''
         self._ignore = tuple(set(_ignore))
     
@@ -51,7 +50,6 @@ class Constructs(object):
                 self._array_constructs.discard(construct_type)
                 self._non_array_constructs.discard(construct_type)
                 self._ordered_constructs.discard(construct_type)
-#                self._constructs.pop(construct_type, None)                
             
             d = {}            
             for construct_type in source._array_constructs:
@@ -152,7 +150,7 @@ class Constructs(object):
     #--- End: def
 
     def __call__(self):
-        '''
+        '''TODO
         '''
         return self.constructs()
     #--- End: def
@@ -177,11 +175,11 @@ class Constructs(object):
         '''x.__str__() <==> str(x)
 
         '''
-        return 'SOMETHING BETTER NEEDED'
+        return 'TODO'
     #--- End: def
     
     def construct_type(self, key):
-        '''
+        '''TODO
         '''
         x = self._construct_type.get(key)
         if x in self._ignore:
@@ -191,19 +189,19 @@ class Constructs(object):
     #--- End: def
 
     def _construct_type_description(self, construct_type):
-        '''
+        '''TODO
         '''
         return construct_type.replace('_', ' ')
     #--- End: def
 
     def _set_construct_axes(self, key, axes):
-        '''
+        '''TODO
         '''
         self._construct_axes[key] = tuple(axes)
     #--- End: def
 
     def construct_types(self):
-        '''
+        '''TODO
         '''
         out =  self._construct_type.copy()
         if self._ignore:
@@ -214,7 +212,7 @@ class Constructs(object):
     #--- End: def
 
     def array_constructs(self, axes=None, copy=False):
-        '''
+        '''TODO
         '''
         out = {}
 
@@ -240,7 +238,7 @@ class Constructs(object):
     #--- End: def
     
     def non_array_constructs(self):
-        '''
+        '''TODO
         '''
         out = {}        
         if not self._ignore:
@@ -256,7 +254,7 @@ class Constructs(object):
     #--- End: def
 
     def _check_construct_type(self, construct_type):
-        '''
+        '''TODO
         '''
         if construct_type is None:
             return None
@@ -274,7 +272,7 @@ class Constructs(object):
     #--- End: def
         
     def constructs(self, construct_type=None, copy=False):
-        '''
+        '''TODO
 
 :Returns:
 
@@ -301,8 +299,9 @@ class Constructs(object):
         return out
     #--- End: def
     
-    def construct_axes(self, key=None): #, *default):
-        '''
+    def construct_axes(self, id=None):
+        '''TODO
+
 :Parameters:
 
     key: `str`, optional
@@ -333,7 +332,7 @@ None
 ('dim0', 'dim1')
 
 '''
-        if key is None:
+        if id is None:
             # Return all of the constructs' axes
             if not self._ignore:
                 return self._construct_axes.copy()
@@ -348,24 +347,13 @@ None
                                 out[key] = _
                 #--- End: for
                 return out
-
-        # Return a particular construct's axes
-        if self._ignore:
-            if self.construct_type(key) is None:
-                key = None
-
-        return self._construct_axes.get(key)
-#        out = self._construct_axes.get(key)
-#        if out is None:
-#            if default:
-#                return default[0]#
-#
-#            raise ValueError("ascdscj w0hdpiqund s")
-            
-        return out
+        #--- End: if
         
-#        # Still here? The set new item axes.
-#        self._construct_axes[key] = tuple(new_axes)
+        # Return a particular construct's axes
+        if self._ignore and self.construct_type(id) is None:
+            id = None
+
+        return self._construct_axes.get(id)
     #--- End: def
 
 
@@ -379,7 +367,7 @@ None
 #        return construct_type
 
     def set_construct_axes(self, key, axes):
-        '''
+        '''TODO
         '''
         if self.construct_type(key) is None:
             raise ValueError("Can't set axes of non-existent key")
@@ -407,7 +395,7 @@ None
     #--- End: def
 
     def axes_to_constructs(self):
-        '''e3 49jrjfn
+        '''TODO
 
 :Returns:
 
@@ -473,7 +461,8 @@ None
     #--- End: def
 
     def domain_axes(self, copy=False):
-        '''
+        '''TODO
+
 :Parameters:
 
     copy: 
@@ -508,10 +497,27 @@ None
         return self.constructs(construct_type='domain_axis', copy=copy)
     #--- End: def
     
-    def get_construct(self, key, *default):
+    def get_construct(self, id):
+        '''Return a metadata construct.
+
+Parameters:	
+
+    id: `str`
+
+:Returns:	
+
+    out:
+
+**Examples**
+
+>>> f.constructs()
+>>> f.get_construct('dimensioncoordinate1')
+<>
+>>> f.get_construct('dimensioncoordinate99', 'Not set')
+'Not set'
+
         '''
-        '''
-        construct_type = self.construct_type(key)
+        construct_type = self.construct_type(id)
         if construct_type is None:
             if default:
                 return default[0]
@@ -522,11 +528,10 @@ None
             d = {}
             
         try:            
-            return d[key]
+            return d[id]
         except KeyError:
-            if default:
-                return default[0]
-
+#            if default:
+#                return default[0]
             raise ValueError("Can't get construct!!!!!!")
     #--- End: def
     
@@ -611,9 +616,9 @@ None
     #--- End: def
 
     def new_identifier(self, construct_type):
-        '''
+        '''Return a new, unique identifier for a construct.
 
-Return a new, unique identifier for the construct.
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -638,7 +643,6 @@ Return a new, unique identifier for the construct.
 >>> d.new_identifier('dim')
 'dim0'
 
-
 >>> d.axes()
 {'dim0', 'dim4'}
 >>> d.new_identifier('axis')
@@ -652,7 +656,6 @@ Return a new, unique identifier for the construct.
         '''
         keys = self._constructs[construct_type]
 
-#        key = '{0}{1}'.format(construct_type, len(keys))
         key_base = self._key_base[construct_type]
         key = '{0}{1}'.format(key_base, len(keys))
         while key in keys:
@@ -689,7 +692,8 @@ Return a new, unique identifier for the construct.
     #--- End: def
 
     def replace(self, key, construct, axes=None, copy=True):
-        '''
+        '''TODO
+
 .. note:: No checks on the axes are done!!!!!
 '''
         construct_type = self.construct_types().get(key)
@@ -706,7 +710,7 @@ Return a new, unique identifier for the construct.
     #--- End: def
     
     def view(self, ignore=()):
-        '''
+        '''TODO
         '''
         return type(self)(source=self, _view=True, _ignore=ignore)
     #--- End: def

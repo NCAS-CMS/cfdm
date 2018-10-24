@@ -8,22 +8,31 @@ class Constructs(core.Constructs):
     '''
     '''    
     
-    def auxiliary_coordinates(self, axes=None, copy=False):
-        '''
-        '''
-        return self.constructs(construct_type='auxiliary_coordinate', axes=axes, copy=copy)
-    #--- End: def
+#    def auxiliary_coordinates(self, axes=None, copy=False):
+#        '''
+#        '''
+#        return self.constructs(construct_type='auxiliary_coordinate', axes=axes, copy=copy)
+#    #--- End: def
 
-    def construct(self, description=None, construct_type=None,
-                  axes=None, copy=False):
+    def get_construct(self, description=None, id=None, construct_type=None,
+                      axes=None, copy=False):
+        '''Return a metadata construct.
+
+:Parameters:
+
+:Returns:
+
+    out:
+
+**Examples**
+
         '''
-        '''
-        out = self.constructs(description=description,
+        out = self.constructs(description=description, id=id,
                               construct_type=construct_type,
                               axes=axes, copy=copy)
 
         if not out:
-            raise ValueError("No such construct")
+            raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
         
         key, construct = out.popitem()
         if out:
@@ -32,36 +41,50 @@ class Constructs(core.Constructs):
         return construct
     #--- End: def
 
-    def constructs(self, description=None, axes=None,
+    def constructs(self, description=None, id=None, axes=None,
                    construct_type=None, copy=False):
-        '''
+        '''TODO
         '''
         out = super().constructs(construct_type=construct_type,
                                  copy=copy)
 
+        if id is not None:
+            construct = out.get(id)
+            if construct is not None:
+                out = {id: construct}
+            else:
+                out = {}
+
+            if not out:
+                return out
+        #--- End: if
+        
         if axes is not None:
             axes = set(axes)
             construct_axes = self.construct_axes()
-            for key in tuple(out):
-                x = construct_axes.get(key)
+            for id in tuple(out):
+                x = construct_axes.get(id)
                 if x is None or not axes.intersection(x):
-                    del out[key]
+                    del out[id]
+                
+            if not out:
+                return out
         #--- End: if
 
         if description is not None:
-            (prefix, _, key) = description.partition('%')
-            if prefix == 'cfdm':
-                construct = out.get(key)
-                if construct is not None:
-                    out = {key: construct}
-                else:
-                    out = {}
-            else:
-                (prefix, _, value) = description.partition(':')
-                custom = (prefix,) if value else None
-                for key, construct in tuple(out.items()):
-                    if description not in construct.name(custom=custom, all_names=True):
-                        del out[key]
+#            (prefix, _, key) = description.partition('%')
+#            if prefix == 'id':
+#                construct = out.get(key)
+#                if construct is not None:
+#                    out = {key: construct}
+#                else:
+#                    out = {}
+#            else:
+            (prefix, _, value) = description.partition(':')
+            custom = (prefix,) if value else None
+            for key, construct in tuple(out.items()):
+                if description not in construct.name(custom=custom, all_names=True):
+                    del out[key]
         #--- End: if
             
         return out
@@ -421,7 +444,7 @@ class Constructs(core.Constructs):
             axes1 = list(cm1.get_axes(()))
             if len(axes0) != len(axes1):
                 if traceback:
-                    print (
+                    print(
 "{0}: Different cell methods (mismatched axes): {1!r}, {2!r}".format(
     cm0.__class__.__name__, cell_methods0, cell_methods1))
                 return False
@@ -438,7 +461,7 @@ class Constructs(core.Constructs):
                             break
                     elif axis0 in axis0_to_axis1 or axis1 in axis1_to_axis0:
                         if traceback:
-                            print (
+                            print(
 "Traceback: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
                         return False
@@ -448,7 +471,7 @@ class Constructs(core.Constructs):
                         indices.append(cm1.get_axes(()).index(axis1))
                     elif axis1 is None:
                         if traceback:
-                            print (
+                            print(
 "Traceback: Different cell methods (undefined axis): {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
                         return False
@@ -456,7 +479,7 @@ class Constructs(core.Constructs):
 
             if len(cm1.get_axes(())) != len(indices):
                 if traceback:
-                    print ("Field: Different cell methods: {0!r}, {1!r}".format(
+                    print("Field: Different cell methods: {0!r}, {1!r}".format(
                         cell_methods0, cell_methods1))
                 return False
 
@@ -466,7 +489,7 @@ class Constructs(core.Constructs):
             if not cm0.equals(cm1, atol=atol, rtol=rtol,
                               traceback=traceback, **kwargs):
                 if traceback:
-                    print (
+                    print(
 "Traceback: Different cell methods: {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
                 return False                
