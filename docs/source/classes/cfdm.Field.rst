@@ -116,6 +116,7 @@ Modification
    ~cfdm.Field.set_auxiliary_coordinate
    ~cfdm.Field.set_cell_measure
    ~cfdm.Field.set_cell_method
+   ~cfdm.Field.set_construct
    ~cfdm.Field.set_construct_axes
    ~cfdm.Field.set_coordinate_reference
    ~cfdm.Field.set_data

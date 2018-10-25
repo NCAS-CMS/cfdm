@@ -536,7 +536,7 @@ Parameters:
     #--- End: def
     
     def set_construct(self, construct_type, construct, key=None,
-                      axes=None, extra_axes=0, replace=True,
+                      axes=None, #extra_axes=0, #replace=True,
                       copy=True):
         '''Insert a construct.
 
@@ -565,10 +565,10 @@ Parameters:
         if key is None:
             # Create a new construct identifier
             key = self.new_identifier(construct_type)
-        elif not replace and key in self._constructs[construct_type]:
-            raise ValueError(
-"Can't set {} construct: Identifier {!r} already exists".format(
-    self._construct_type_description(construct_type), key))
+#        elif not replace and key in self._constructs[construct_type]:
+#            raise ValueError(
+#"Can't set {} construct: Identifier {!r} already exists".format(
+#    self._construct_type_description(construct_type), key))
     
         if construct_type in self._array_constructs:
             #---------------------------------------------------------
@@ -591,7 +591,7 @@ Parameters:
                 axes_shape.append(domain_axes[axis].get_size())
             #--- End: for
             axes_shape = tuple(axes_shape)
-                    
+            extra_axes=0        
             if (construct.has_data() and 
                 construct.data.shape[:construct.data.ndim - extra_axes] != axes_shape):
                 raise ValueError(

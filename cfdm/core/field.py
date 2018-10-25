@@ -450,8 +450,8 @@ TODO
         super().set_data(data, copy=copy)
     #--- End: def
 
-    def set_data_axes(self, value):
-        '''Set the identifiers of the domain axes spanned by the data array.
+    def set_data_axes(self, axes):
+        '''Set the domain axes spanned by the data array.
 
 .. versionadded:: 1.7
 
@@ -459,8 +459,11 @@ TODO
 
 :Parameters:
 
-    value: sequence of `str`
+     axes: sequence of `str`
         The identifiers of the domain axes spanned by the data array.
+
+        *Example:*
+          ``axes=['domainaxis0', 'domainaxis1']``
 
 :Returns:
 
@@ -472,12 +475,12 @@ TODO
 
         '''
         domain_axes = self.domain_axes()
-        for axis in value:
+        for axis in axes:
             if axis not in domain_axes:
                 raise ValueError(
 "Can't set data axes: Domain axis {!r} doesn't exist".format(axis))
             
-        self._set_component('data_axes', tuple(value), copy=False)
+        self._set_component('data_axes', tuple(axes), copy=False)
     #--- End: def
     
 #    def cell_methods(self, copy=False):
@@ -541,92 +544,92 @@ TODO
 #        return out
 #    #--- End: def
     
-    def set_cell_method(self, cell_method, id=None, copy=True):
-        '''Set a cell method construct.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct_axes`
-
-:Parameters:
-
-    item: `CellMethod`
-        TODO
-        
-    id: `str`, optional
-        The identifier of the construct. If not set then a new, unique
-        identifier is created. If the identifier already exisits then
-        the exisiting construct will be replaced.
-
-        *Example:*
-          ``id='cellmethod0'``
-        
-    copy: `bool`, optional
-        If False then do not copy the construct prior to insertion. By
-        default it is copied.
-        
-:Returns:
-
-     out: `str`
-        The identifier of the construct.
-    
-**Examples**
-
-TODO
-
-        '''
-        self.set_construct('cell_method', cell_method, id=id,
-                           copy=copy)
-    #--- End: def
-
-    def set_field_ancillary(self, construct, axes=None, id=None,
-                            copy=True):
-        '''Set a field ancillary construct.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct_axes`
-
-:Parameters:
-
-    item: `FieldAncillary`
-        TODO
-
-    axes: sequence of `str`, optional
-        The identifiers of the domain axes spanned by the data array.
-
-        The axes may also be set afterwards with the
-        `set_construct_axes` method.
-
-        *Example:*
-          ``axes=['domainaxis0', 'domainaxis1']``
-
-    id: `str`, optional
-        The identifier of the construct. If not set then a new, unique
-        identifier is created. If the identifier already exisits then
-        the exisiting construct will be replaced.
-
-        *Example:*
-          ``id='fieldancillary0'``
-        
-    copy: `bool`, optional
-        If False then do not copy the construct prior to insertion. By
-        default it is copied.
-        
-:Returns:
-
-     out: `str`
-        The identifier of the construct.
-    
-**Examples**
-
-TODO
-        
-        '''
-        return self.set_construct('field_ancillary', construct, id=id,
-                                  axes=axes, copy=copy)
-    #--- End: def
+#    def set_cell_method(self, cell_method, id=None, copy=True):
+#        '''Set a cell method construct.
+#
+#.. versionadded:: 1.7
+#
+#.. seealso:: `constructs`, `del_construct`, `get_construct`,
+#             `set_construct_axes`
+#
+#:Parameters:
+#
+#    item: `CellMethod`
+#        TODO
+#        
+#    id: `str`, optional
+#        The identifier of the construct. If not set then a new, unique
+#        identifier is created. If the identifier already exisits then
+#        the exisiting construct will be replaced.
+#
+#        *Example:*
+#          ``id='cellmethod0'``
+#        
+#    copy: `bool`, optional
+#        If False then do not copy the construct prior to insertion. By
+#        default it is copied.
+#        
+#:Returns:
+#
+#     out: `str`
+#        The identifier of the construct.
+#    
+#**Examples**
+#
+#TODO
+#
+#        '''
+#        self.set_construct('cell_method', cell_method, id=id,
+#                           copy=copy)
+#    #--- End: def
+#
+#    def set_field_ancillary(self, construct, axes=None, id=None,
+#                            copy=True):
+#        '''Set a field ancillary construct.
+#
+#.. versionadded:: 1.7
+#
+#.. seealso:: `constructs`, `del_construct`, `get_construct`,
+#             `set_construct_axes`
+#
+#:Parameters:
+#
+#    item: `FieldAncillary`
+#        TODO
+#
+#    axes: sequence of `str`, optional
+#        The identifiers of the domain axes spanned by the data array.
+#
+#        The axes may also be set afterwards with the
+#        `set_construct_axes` method.
+#
+#        *Example:*
+#          ``axes=['domainaxis0', 'domainaxis1']``
+#
+#    id: `str`, optional
+#        The identifier of the construct. If not set then a new, unique
+#        identifier is created. If the identifier already exisits then
+#        the exisiting construct will be replaced.
+#
+#        *Example:*
+#          ``id='fieldancillary0'``
+#        
+#    copy: `bool`, optional
+#        If False then do not copy the construct prior to insertion. By
+#        default it is copied.
+#        
+#:Returns:
+#
+#     out: `str`
+#        The identifier of the construct.
+#    
+#**Examples**
+#
+#TODO
+#        
+#        '''
+#        return self.set_construct('field_ancillary', construct, id=id,
+#                                  axes=axes, copy=copy)
+#    #--- End: def
 
 #--- End: class

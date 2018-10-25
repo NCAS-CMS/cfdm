@@ -1208,8 +1208,8 @@ also be provided.
         return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
     #--- End: def
 
-    def set_domain_ancillary(self, field, construct, axes,
-                             extra_axes=0, copy=True):
+    def set_domain_ancillary(self, field, construct, axes, copy=True):
+#                             extra_axes=0, copy=True):
         '''Insert a domain ancillary object into a field.
 
 :Parameters:
@@ -1227,7 +1227,7 @@ also be provided.
     out: `str`
         '''
         return field.set_domain_ancillary(construct, axes=axes,
-                                          extra_axes=extra_axes,
+#                                          extra_axes=extra_axes,
                                           copy=copy)
     #--- End: def
 

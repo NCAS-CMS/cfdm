@@ -98,17 +98,10 @@ Modification
    ~cfdm.core.Field.del_data_axes
    ~cfdm.core.Field.del_property
    ~cfdm.core.Field.properties
-   ~cfdm.core.Field.set_auxiliary_coordinate
-   ~cfdm.core.Field.set_cell_measure
-   ~cfdm.core.Field.set_cell_method
+   ~cfdm.core.Field.set_construct
    ~cfdm.core.Field.set_construct_axes
-   ~cfdm.core.Field.set_coordinate_reference
    ~cfdm.core.Field.set_data
    ~cfdm.core.Field.set_data_axes
-   ~cfdm.core.Field.set_dimension_coordinate
-   ~cfdm.core.Field.set_domain_ancillary
-   ~cfdm.core.Field.set_domain_axis
-   ~cfdm.core.Field.set_field_ancillary
    ~cfdm.core.Field.set_property
 
 

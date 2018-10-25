@@ -381,7 +381,6 @@ def linkcode_resolve(domain, info):
     # >> rm -fr build/.doctrees build/*/.doctrees build/*/*/.doctrees
     #=================================================================
 
-
     online_source_code = True
 #    online_source_code = False
 
