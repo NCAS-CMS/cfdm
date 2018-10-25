@@ -13,7 +13,7 @@ class Container(object):
     
     @classmethod
     def _equals(self, x, y, rtol=None, atol=None, **kwargs):
-        '''
+        '''TODO
         '''
         if rtol is None:
             rtol = sys.float_info.epsilon
@@ -67,7 +67,7 @@ class Container(object):
     def equals(self, other, #rtol=None, atol=None,
                traceback=False,
                ignore_construct_type=False):
-        '''
+        '''TODO
         '''
         # Check for object identity
         if self is other:

@@ -94,7 +94,7 @@ bounds.
              _omit_properties=None, _prefix='', _title=None,
              _create_title=True, _level=0, _axes=None,
              _axis_names=None):
-        '''Return a string containing a full description of the instance.
+        '''TODO Return a string containing a full description of the instance.
 
 :Parameters:
 
@@ -174,7 +174,7 @@ bounds.
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''
+        '''TODO
         '''
 #        if rtol is None:
 #            rtol = RTOL()
@@ -277,13 +277,13 @@ bounds.
 #    #--- End: def
     
     def del_part_ncdim(self):
-        '''
+        '''TODO
         '''        
         return self._del_component('part_ncdim')
     #--- End: def
 
     def expand_dims(self, position):
-        '''
+        '''TODO
         '''
         position = self._parse_axes([position])[0]
         
@@ -307,32 +307,32 @@ bounds.
     #--- End: def
     
     def get_node_ncdim(self, *default):
-        '''ttttttttt
+        '''TODO
         '''        
         return self._get_component('node_ncdim', *default)
     #--- End: def
 
     def get_part_ncdim(self, *default):
-        '''ttttttttt
+        '''TODO
         '''        
         return self._get_component('part_ncdim', *default)
     #--- End: def
 
     def has_part_ncdim(self):
-        '''
+        '''TODO
         '''        
         return self._has_component('part_ncdim')
     #--- End: def
 
     def set_node_ncdim(self, value):
-        '''Set the netCDF name of the dimension of a node coordinate variable.
+        '''TODO Set the netCDF name of the dimension of a node coordinate variable.
 
         '''
         return self._set_component('node_ncdim', value)
     #--- End: def
 
     def set_part_ncdim(self, value):
-        '''Set the netCDF name of the dimension of the part_node_count
+        '''TODO Set the netCDF name of the dimension of the part_node_count
 variable.
 
         '''
@@ -340,7 +340,7 @@ variable.
     #--- End: def
 
     def squeeze(self, axes=None):
-        '''
+        '''TODO 
         '''
         axes = self._parse_axes(axes)
 
@@ -364,7 +364,7 @@ variable.
     #--- End: def
     
     def transpose(self, axes=None):
-        '''Permute the dimensions of the data.
+        '''TODO  Permute the dimensions of the data.
 
 .. seealso:: `expand_dims`, `squeeze`
 

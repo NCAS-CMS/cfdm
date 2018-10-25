@@ -5,7 +5,7 @@ import abc
 
 
 class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
-    '''Mixin class for manipulating a `Constructs` object.
+    '''Mixin class for accessing an embedded `Constructs` object.
 
     '''   
     @abc.abstractmethod
@@ -16,6 +16,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
 
     default: optional
         If set then return *default* if there is no `Constructs` object.
+
 :Returns:
 
     out:
@@ -32,57 +33,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     
     def array_constructs(self, copy=False):
         return self._get_constructs().array_constructs(copy=copy)
-    
-    def auxiliary_coordinates(self, copy=False):
-        '''Return the auxiliary coordinate constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        TODO
-
-:Returns:
-
-    out: `dict`
-        TODO
-
-**Examples**
-
-TODO
->>> f.auxiliary_constructs()
-{}
-        '''
-        return self._get_constructs().constructs(construct_type='auxiliary_coordinate', copy=copy)
-    
-    def cell_measures(self, copy=False):
-        '''Return the cell measure constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        TODO
-
-:Returns:
-
-    out: `dict`
-        TODO
-
-**Examples**
-
-TODO
->>> f.cell_measure()
-{}
-        '''
-        return self._get_constructs().constructs(construct_type='cell_measure', copy=copy)
-    
+ 
     def construct_axes(self, id=None):
         '''Return the identifiers of the domain axes spanned by the construct
 data arrays.
@@ -130,7 +81,7 @@ None
 :Parameters:
 
     copy: `bool`, optional
-        TODO
+        If `True` then deep copies of the constructs are returned.
 
 :Returns:
 
@@ -145,62 +96,31 @@ TODO
         return self._get_constructs().constructs(copy=copy)
     #--- End: def
     
-    def coordinate_references(self, copy=False):
-        '''Return the coordinate reference constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        TODO
-
-:Returns:
-
-    out: `dict`
-        TODO
-
-**Examples**
-
-TODO
->>> f.coordinate_references()
-{}
-        '''
-        return self._get_constructs().constructs(construct_type='coordinate_reference', copy=copy)
-    
-    def coordinates(self, copy=False):
-        '''Return the dimension and auxiliar coordinate constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        TODO
-
-:Returns:
-
-    out: `dict`
-        TODO
-
-**Examples**
-
-TODO
->>> f.coordinates()
-{}
-        '''
-        out = self.dimension_coordinates(copy=copy)
-        out.update(self.auxiliary_coordinates(copy=copy))
-        return out
-    #--- End: def
-
     @abc.abstractmethod
     def del_construct(self, id):
-        '''TODO
+        '''Remove a construct.
+
+.. versionadded:: 1.7
+
+.. seealso:: `get_construct`, `constructs`
+
+:Parameters:
+
+    id: `str`, optional
+        The identifier of the construct.
+
+        *Example:*
+          ``id='auxiliarycoordinate0'``
+        
+:Returns:
+
+    out: 
+        The removed construct.
+
+**Examples**
+
+TODO
+
         '''
         raise NotImplementedError()
     #--- End: def
@@ -229,84 +149,6 @@ TODO
         return self._get_constructs().get_construct(id)
     #--- End: def
 
-    def dimension_coordinates(self, copy=False):
-        '''Return the dimension coordinate constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        TODO
-
-:Returns:
-
-    out: `dict`
-        TODO
-
-**Examples**
-
-TODO
->>> f.dimension_coordinates()
-{}
-        '''
-        return self._get_constructs().constructs(construct_type='dimension_coordinate', copy=copy)
-    #--- End: def
-    
-    def domain_ancillaries(self, copy=False):
-        '''Return the domain ancillary constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        TODO
-
-:Returns:
-
-    out: `dict`
-        TODO
-
-**Examples**
-
-TODO
->>> f.domain_ancillaries()
-{}
-        '''
-        return self._get_constructs().constructs(construct_type='domain_ancillary', copy=copy)
-    #--- End: def
-    
-    def domain_axes(self, copy=False):
-        '''Return the domain axis constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-        TODO
-
-:Returns:
-
-    out: `dict`
-        TODO
-
-**Examples**
-
-TODO
->>> f.domain_axes()
-{}
-        '''
-        return self._get_constructs().constructs(construct_type='domain_axis', copy=copy)
-    #--- End: def
-        
     def domain_axis_name(self, axis):
         '''TODO WHY DO WE NED THIS HERE?
         '''
@@ -314,7 +156,7 @@ TODO
     #--- End: def
     
     def set_auxiliary_coordinate(self, item, axes=None, id=None,
-                                 copy=True): #, replace=True):
+                                 copy=True):
         '''Set an auxiliary coordinate construct.
 
 .. versionadded:: 1.7
@@ -358,12 +200,8 @@ TODO
 TODO
 
         '''
-#        if not replace and id in self.auxiliary_coordinates():
-#            raise ValueError(
-#"Can't insert auxiliary coordinate construct: Identifier {!r} already exists".format(id))
-
         return self.set_construct('auxiliary_coordinate', item,
-                                  key=id, axes=axes, copy=copy)
+                                  id=id, axes=axes, copy=copy)
     #--- End: def
 
     def set_domain_axis(self, domain_axis, id=None, copy=True):
@@ -400,20 +238,12 @@ TODO
 TODO
 
         '''
-#        axes = self.domain_axes()
-#        if (not replace and
-#            key in axes and
-#            axes[key].get_size() != domain_axis.get_size()):
-#            raise ValueError(
-#"Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
-#    key, domain_axis.get_size(), axes[key].get_size()))
-
-        return self.set_construct('domain_axis', domain_axis, key=id,
+        return self.set_construct('domain_axis', domain_axis, id=id,
                                   copy=copy)
     #--- End: def
 
     def set_domain_ancillary(self, item, axes=None, id=None, 
-                             extra_axes=0, copy=True): #, replace=True):
+                             extra_axes=0, copy=True):
         '''Set a domain ancillary construct.
 
 .. versionadded:: 1.7
@@ -456,24 +286,19 @@ TODO
 
 TODO
 
-        '''       
-#        if not replace and key in self.domain_ancillaries():
-#            raise ValueError(
-#"Can't insert domain ancillary construct: Identifier {0!r} already exists".format(key))
-
-        return self.set_construct('domain_ancillary', item, key=id,
+        ''' 
+        return self.set_construct('domain_ancillary', item, id=id,
                                   axes=axes, extra_axes=extra_axes,
                                   copy=copy)
     #--- End: def
 
-    def set_construct(self, construct_type, construct, key=None,
+    def set_construct(self, construct_type, construct, id=None,
                       axes=None, extra_axes=0, replace=True,
                       copy=True):
         '''TODO
         '''
         return self._get_constructs().set_construct(construct_type,
-                                                    construct,
-                                                    key=key,
+                                                    construct, key=id,
                                                     axes=axes,
                                                     extra_axes=extra_axes,
                                                     replace=replace,
@@ -486,7 +311,7 @@ TODO
         return self._get_constructs().set_construct_axes(key, axes)
     #--- End: def
 
-    def set_cell_measure(self, item, axes=None, id=None, copy=True): #, replace=True):
+    def set_cell_measure(self, item, axes=None, id=None, copy=True):
         '''Set a cell measure construct.
 
 .. versionadded:: 1.7
@@ -529,15 +354,11 @@ TODO
 
 TODO
         '''
-#        if not replace and key in self.cell_measures():
-#            raise ValueError(
-#"Can't insert cell measure construct: Identifier {0!r} already exists".format(key))
-
-        return self.set_construct('cell_measure', item, key=id,
+        return self.set_construct('cell_measure', item, id=id,
                                   axes=axes, copy=copy)
     #--- End: def
 
-    def set_coordinate_reference(self, item, id=None, copy=True): #, replace=True):
+    def set_coordinate_reference(self, item, id=None, copy=True):
         '''Set a coordinate reference construct.
 
 .. versionadded:: 1.7
@@ -573,11 +394,11 @@ TODO
 
         '''
         return self.set_construct('coordinate_reference',
-                                  item, key=id, copy=copy)
+                                  item, id=id, copy=copy)
     #--- End: def
 
     def set_dimension_coordinate(self, item, axes=None, id=None,
-                                 copy=True): #, replace=True):
+                                 copy=True):
         '''Set a dimension coordinate construct.
 
 .. versionadded:: 1.7
@@ -621,12 +442,8 @@ TODO
 TODO
 
         '''
-#        if not replace and key in self.dimension_coordinates():
-#            raise ValueError(
-#"Can't insert dimension coordinate construct: Identifier {!r} already exists".format(key))
-
-        return self.set_construct('dimension_coordinate',
-                                  item, key=id, axes=axes, copy=copy)
+        return self.set_construct('dimension_coordinate', item, id=id,
+                                  axes=axes, copy=copy)
     #--- End: def
 
 #--- End: class

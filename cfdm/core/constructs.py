@@ -665,13 +665,17 @@ Parameters:
         return key
     #--- End: def
 
-    def del_construct(self, key):        
+    def del_construct(self, id):        
         '''Remove a construct.
 
 :Parameters:
 
-    key: `str`
+   id: `str`, optional
+        The identifier of the construct.
 
+        *Example:*
+          ``id='auxiliarycoordinate0'``
+  
 :Returns:
 
     out:
@@ -682,13 +686,13 @@ Parameters:
 
 >>> x = f.del_construct('auxiliarycoordinate2')
         '''
-        self._construct_axes.pop(key, None)
+        self._construct_axes.pop(idkey, None)
 
-        construct_type = self._construct_type.pop(key, None)
+        construct_type = self._construct_type.pop(id, None)
         if construct_type is None:
             return
 
-        return self._constructs[construct_type].pop(key, None)
+        return self._constructs[construct_type].pop(id, None)
     #--- End: def
 
     def replace(self, key, construct, axes=None, copy=True):

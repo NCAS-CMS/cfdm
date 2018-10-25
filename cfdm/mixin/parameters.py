@@ -10,13 +10,13 @@ class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
     '''
 
     def __bool__(self):
-        '''
+        '''TODO 
         '''
         return bool(self.parameters())
     #--- End: def
         
     def __nonzero__(self):
-        '''
+        '''TODO 
         '''
         return bool(self.parameters())
     #--- End: def
@@ -31,7 +31,7 @@ class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_construct_type=False):
-        '''True if two instances are equal, False otherwise.
+        '''TODO True if two instances are equal, False otherwise.
 
 :Parameters:
 

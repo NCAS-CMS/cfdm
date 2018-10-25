@@ -5,6 +5,14 @@ cfdm
 
 A python reference implementation of the CF data model.
 
+Documentation
+=============
+
+----------------------------------------------------------------------
+
+See the online [**documentation**](https://ncas-cms.github.io/cfdm)
+for more details.
+
 Description
 ===========
 
@@ -68,14 +76,6 @@ The test scripts are in the ``test`` directory. To run all tests:
 
     python test/run_tests.py
 
-
-Documentation
-=============
-
-----------------------------------------------------------------------
-
-See the online [**documentation**](https://ncas-cms.github.io/cfdm)
-for more details.
 
 ----------------------------------------------------------------------
 

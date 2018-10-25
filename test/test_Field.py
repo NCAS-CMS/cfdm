@@ -98,37 +98,37 @@ class FieldTest(unittest.TestCase):
                                                                  e))
     #--- End: def
 
-    def test_Field___setitem__(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        f = self.f.squeeze()
-        
-        f[...] = 0
-        self.assertTrue((f.get_array() == 0).all())
-
-        f[:, :] = 0
-        self.assertTrue((f.get_array() == 0).all())
-
-
-        for indices in [
-                (slice(None)    , slice(None)),
-                (slice(3, 7)    , slice(None)),
-                (slice(None)    , slice(2, 5)),
-                (slice(3, 7)    , slice(2, 5)),
-                (slice(6, 2, -1), slice(4, 1, -1)),
-                (slice(2, 6)    , slice(4, 1, -1)),
-                ([0, 3, 8]      , [1, 7, 8]),
-                ([7, 4, 1]      , slice(6, 8)),
-        ]:
-            f[...] = 0
-            f[indices] = -1
-            array = f[indices].get_array()
-            self.assertTrue((array == -1).all())
-            
-            values, counts = numpy.unique(f.get_array(), return_counts=True)
-            self.assertTrue(counts[0] == array.size)
-    #--- End: def
+#    def test_Field___setitem__(self):
+#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#            return
+#
+#        f = self.f.squeeze()
+#        
+#        f[...] = 0
+#        self.assertTrue((f.get_array() == 0).all())
+#
+#        f[:, :] = 0
+#        self.assertTrue((f.get_array() == 0).all())
+#
+#
+#        for indices in [
+#                (slice(None)    , slice(None)),
+#                (slice(3, 7)    , slice(None)),
+#                (slice(None)    , slice(2, 5)),
+#                (slice(3, 7)    , slice(2, 5)),
+#                (slice(6, 2, -1), slice(4, 1, -1)),
+#                (slice(2, 6)    , slice(4, 1, -1)),
+#                ([0, 3, 8]      , [1, 7, 8]),
+#                ([7, 4, 1]      , slice(6, 8)),
+#        ]:
+#            f[...] = 0
+#            f[indices] = -1
+#            array = f[indices].get_array()
+#            self.assertTrue((array == -1).all())
+#            
+#            values, counts = numpy.unique(f.get_array(), return_counts=True)
+#            self.assertTrue(counts[0] == array.size)
+#    #--- End: def
 
     def test_Field_auxiliary_coordinates(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

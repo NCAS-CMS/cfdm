@@ -10,7 +10,7 @@ class PropertiesData(Properties):
     '''
 
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        '''TODO x.__getitem__(indices) <==> x[indices]
 
 Returns a subspace.
 
@@ -24,19 +24,19 @@ Returns a subspace.
         return new
     #--- End: def
 
-    def __setitem__(self, indices, value):
-        '''x.__setitem__(indices, value) <==> x[indices]
-
-        '''
-        data = self.get_data(None)
-        if data is None:
-            raise ValueError("Can't set elements when there is no data")    
-
-        data[indices] = value
-    #--- End: def
+#   def __setitem__(self, indices, value):
+#       '''TODO x.__setitem__(indices, value) <==> x[indices]
+#
+#       '''
+#       data = self.get_data(None)
+#       if data is None:
+#           raise ValueError("Can't set elements when there is no data")    
+#
+#       data[indices] = value
+#   #--- End: def
 
     def __str__(self):
-        '''Called by the :py:obj:`str` built-in function.
+        '''Called by the `str` built-in function.
 
 x.__str__() <==> str(x)
 
@@ -62,7 +62,7 @@ x.__str__() <==> str(x)
              _omit_properties=(), _prefix='', _title=None,
              _create_title=True, _level=0, _axes=None,
              _axis_names=None):
-        '''
+        '''TODO
 
 Return a string containing a full description of the instance.
 
@@ -161,7 +161,7 @@ standard_name = 'time'
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''
+        '''TODO
 
 True if two {+variable}s are equal, False otherwise.
 
@@ -272,7 +272,7 @@ True
     #--- End: def
 
     def expand_dims(self, position=0):
-        '''Insert a size 1 axis into the data array.
+        '''TODO Insert a size 1 axis into the data array.
 
 .. versionadded:: 1.6
 
@@ -311,7 +311,7 @@ True
     #--- End: def
     
     def HDF_chunks(self, *chunksizes):
-        '''{+HDF_chunks}
+        '''TODO {+HDF_chunks}
         
 .. versionadded:: 1.6
 
@@ -346,7 +346,7 @@ first axis which is to have a chunk size of 12:
 
     def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
-        '''Return a name for the {+variable}.
+        '''TODO Return a name for the {+variable}.
 
 By default the name is the first found of the following:
 
@@ -481,14 +481,14 @@ None
     #--- End: def
 
     def open(self):
+        '''TODO
         '''
-'''
         if self.has_data():
             self.get_data().open()
     #--- End: def
 
     def squeeze(self, axes=None):
-        '''Remove size 1 dimensions from the data array
+        '''TODO Remove size 1 dimensions from the data array
 
 .. versionadded:: 1.6
 
@@ -527,7 +527,7 @@ None
     #--- End: def
 
     def transpose(self, axes=None):
-        '''
+        '''TODO
 
 .. versionadded:: 1.6
 
@@ -563,7 +563,7 @@ None
     # ----------------------------------------------------------------
     @property
     def dtarray(self):
-        '''An independent numpy array of date-time objects.
+        '''TODO An independent numpy array of date-time objects.
 
 Only applicable for reference time units.
 
@@ -610,6 +610,8 @@ used.
 #    #--- End: def
 
     def _parse_axes(self, axes): #, ndim=None):
+        '''TODO
+        '''
         if axes is None:
             return axes
 
@@ -623,7 +625,7 @@ used.
     
     @property
     def isreftime(self):
-        '''
+        '''TODO
 
 .. versionadded:: 1.6
 

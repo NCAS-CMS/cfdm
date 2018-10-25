@@ -62,6 +62,7 @@ and institution).
     def __init__(self, properties={}, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
+TODO
 
 :Parameters:
 
@@ -88,10 +89,11 @@ and institution).
     #--- End: def
 
     def unlimited(self, *args, **kwargs):
+        '''TODO'''
         return {}
     
     def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
+        '''Called by the `repr` built-in function.
 
 x.__repr__() <==> repr(x)
 
@@ -101,7 +103,7 @@ x.__repr__() <==> repr(x)
     #--- End: def
 
     def __str__(self):
-        '''Called by the :py:obj:`str` built-in function.
+        '''Called by the `str` built-in function.
 
 x.__str__() <==> str(x)
 
@@ -235,7 +237,7 @@ x.__str__() <==> str(x)
     #--- End def
 
     def __getitem__(self, indices):
-        '''f.__getitem__(indices) <==> f[indices]
+        '''TODO f.__getitem__(indices) <==> f[indices]
 
 Return a subspace of the field defined by index values
 
@@ -407,8 +409,7 @@ functionality:
 #    #--- End: def
     
     def _one_line_description(self, axis_names_sizes=None):
-        '''
-        '''
+        '''TODO'''
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_names()
             
@@ -432,7 +433,7 @@ functionality:
     #--- End: def
 
     def _dump_axes(self, axis_names, display=True, _level=0):
-        '''Return a string containing a description of the domain axes of the
+        '''TODO Return a string containing a description of the domain axes of the
 field.
     
 :Parameters:
@@ -480,7 +481,7 @@ field.
 #        return constructs.domain_axis_name(key)
 #    #--- End: def
     def copy(self, data=True):
-        '''
+        '''TODO
         '''
         new = super().copy(data=data)
 
@@ -491,7 +492,7 @@ field.
     #--- End: def
     
     def dump(self, display=True, _level=0, _title='Field'):
-        '''A full description of the field.
+        '''TODOA full description of the field.
 
 The field and its components are described without abbreviation with
 the exception of data arrays, which are abbreviated to their first and
@@ -646,7 +647,7 @@ last values.
                      traceback=False, ignore_data_type=False,
                      ignore_fill_value=False,
                      ignore_construct_type=False):
-        '''
+        '''TODO
         '''
         coordinate_references = self.coordinate_references()
         
@@ -658,7 +659,7 @@ last values.
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''True if two {+variable}s are equal, False otherwise.
+        '''TODOTrue if two {+variable}s are equal, False otherwise.
 
 Two fields are equal if ...
 
@@ -745,7 +746,7 @@ False
     #--- End: def
         
     def expand_dims(self, position=0, axis=None):
-        '''Insert a size 1 axis into the data array.
+        '''TODOInsert a size 1 axis into the data array.
 
 By default default a new size 1 axis is inserted which doesn't yet
 exist, but a unique existing size 1 axis which is not already spanned
@@ -800,7 +801,7 @@ by the data array may be selected.
     #--- End: def
 
     def field(self, key):
-        '''
+        '''TODO
         '''
         c = self.construct(key, copy=False)
     
@@ -847,7 +848,7 @@ by the data array may be selected.
     #--- End: def
     
     def field_ancillaries(self, axes=None, copy=False):
-        '''
+        '''TODO
         '''
         return self._get_constructs().constructs(
             construct_type='field_ancillary',
@@ -855,19 +856,19 @@ by the data array may be selected.
     #--- End: def
     
     def get_global_attributes(self, *default):
-        '''
+        '''TODO
         '''
         return self._get_component('global_attributes', *default)
     #--- End: def
 
     def get_read_report(self, *default):
-        '''
+        '''TODO
         '''
         return self._get_component('read_report', *default)
     #--- End: def
    
     def print_read_report(self, *default):
-        '''
+        '''TODO
         '''
         d = self.get_read_report({'dimensions': None, 
                                   'components': {}})
@@ -891,7 +892,8 @@ by the data array may be selected.
     #--- End: def
    
     def set_global_attributes(self, global_attributes):
-        '''
+        '''TODO
+
 Consider [get|set|del_global_attribute [NO S]
 
 **Examples**
@@ -906,13 +908,13 @@ Consider [get|set|del_global_attribute [NO S]
     #--- End: def
 
     def set_read_report(self, value, copy=True):
-        '''
+        '''TODO
         '''
         self._set_component('read_report', value, copy=copy)
     #--- End: def    
    
     def squeeze(self, axes=None):
-        '''Remove size-1 axes from the data array.
+        '''TODORemove size-1 axes from the data array.
 
 By default all size 1 axes are removed, but particular size 1 axes may
 be selected for removal.
@@ -968,6 +970,64 @@ axes, use the `remove_axes` method.
         return f
     #--- End: def
 
+    def field_ancillaries(self, axes=None, copy=False):
+        '''Return field ancillary constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `get_construct`
+
+:Parameters:
+
+    axes: sequence of `str`, optional
+        TODO
+
+    copy: `bool`, optional
+        If `True` then deep copies of the constructs are returned.
+
+:Returns:
+
+    out: `dict`
+        TODO
+
+**Examples**
+
+>>> f.field_ancillaries()
+TODO
+
+'''
+        return self._get_constructs().constructs(
+            construct_type='field_ancillary', axes=axes, copy=copy)
+    #--- End: def
+    
+    def cell_methods(self, copy=False):
+        '''Return cell method constructs.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `get_construct`
+
+:Parameters:
+
+    copy: `bool`, optional
+        If `True` then deep copies of the constructs are returned.
+
+:Returns:
+
+    out: `OrderDict`
+
+**Examples**
+
+>>> f.cell_methods()
+OrderedDict([('cellmethod0',
+              <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>),
+             ('cellmethod1', <CellMethod: domainaxis1: maximum where sea>)])
+
+        '''
+        return self._get_constructs().constructs(
+            construct_type='cell_method', copy=copy)
+    #--- End: def
+    
 #    def cell_methods(self, copy=False):
 #        '''
 #        '''

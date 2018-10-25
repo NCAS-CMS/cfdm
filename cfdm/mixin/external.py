@@ -2,11 +2,11 @@ from builtins import object
 
 
 class External(object):
-    '''
+    '''TODO
 
     '''
     def get_external(self):
-        '''Whether the construct is external.
+        '''TODO Whether the construct is external.
 
 The construct is assumed to be internal unless sepcifically set to be
 external with the `set_external` method.
@@ -32,7 +32,7 @@ external with the `set_external` method.
     #--- End: def
 
     def set_external(self, value):
-        '''Set whether the construct is external.
+        '''TODO Set whether the construct is external.
 
 The construct is assumed to be internal unless sepcifically set to be
 external with the `set_external` method.

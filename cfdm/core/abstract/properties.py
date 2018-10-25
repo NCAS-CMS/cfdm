@@ -55,14 +55,14 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
             self.properties(properties, copy=copy)
     #--- End: def
         
-    def __deepcopy__(self, memo):
-        '''x.__deepcopy__() -> Deep copy of data.
-
-Used if copy.deepcopy is called on the object.
-
-        '''
-        return self.copy()
-    #--- End: def
+#    def __deepcopy__(self, memo):
+#        '''x.__deepcopy__() -> Deep copy of data.
+#
+#Used if copy.deepcopy is called on the object.
+#
+#        '''
+#        return self.copy()
+#    #--- End: def
 
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
@@ -117,7 +117,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 :Returns:
 
      out:
-        The removed property. If unset then *deault* is returned, if
+        The removed property. If unset then *default* is returned, if
         provided.
 
 **Examples**

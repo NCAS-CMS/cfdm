@@ -7,7 +7,7 @@ class NetCDF(object):
     '''
 
     def _initialise_netcdf(self, source=None):
-        '''
+        '''TODO 
         '''
         if source is None:
              netcdf = {}
@@ -25,7 +25,7 @@ class NetCDF(object):
 
 
 class NetCDFDimension(NetCDF):
-    '''Mixin
+    '''Mixin TODO 
 
     '''
 
@@ -42,7 +42,7 @@ class NetCDFDimension(NetCDF):
 #    #--- End: def
 
     def nc_del_dimension(self, *default):
-        '''
+        '''TODO 
         '''
         try:
             return self._get_component('netcdf').pop('dimension', *default)
@@ -51,7 +51,7 @@ class NetCDFDimension(NetCDF):
     #--- End: def
 
     def nc_get_dimension(self, *default):
-        '''ttttttttt
+        '''ttttttttt TODO 
         '''
         try:
             return self._get_component('netcdf')['dimension']
@@ -64,13 +64,13 @@ class NetCDFDimension(NetCDF):
     #--- End: def
 
     def nc_has_dimension(self):
-        '''
+        '''TODO 
         '''
         return 'dimension' in self._get_component('netcdf')
     #--- End: def
 
     def nc_set_dimension(self, value):
-        '''
+        '''TODO 
         '''
         self._get_component('netcdf')['dimension'] = value
     #--- End: def
@@ -79,7 +79,7 @@ class NetCDFDimension(NetCDF):
 
 
 class NetCDFVariable(NetCDF):
-    '''Mixin
+    '''Mixin TODO 
 
     '''
 
@@ -96,7 +96,7 @@ class NetCDFVariable(NetCDF):
 #    #--- End: def
 
     def nc_del_variable(self, *default):
-        '''
+        '''TODO 
         '''        
         try:
             return self._get_component('netcdf').pop('variable', *default)
@@ -105,7 +105,7 @@ class NetCDFVariable(NetCDF):
     #--- End: def
         
     def nc_get_variable(self, *default):
-        '''ttttttttt
+        '''ttttttttt TODO 
         '''
         try:
             return self._get_component('netcdf')['variable']
@@ -118,13 +118,13 @@ class NetCDFVariable(NetCDF):
     #--- End: def
 
     def nc_has_variable(self):
-        '''
+        '''TODO 
         '''
         return 'variable' in self._get_component('netcdf')
     #--- End: def
 
     def nc_set_variable(self, value):
-        '''
+        '''TODO 
         '''
         self._get_component('netcdf')['variable'] = value
     #--- End: def
@@ -133,11 +133,11 @@ class NetCDFVariable(NetCDF):
 
 
 class NetCDFSampleDimension(NetCDF):
-    '''Mixin
+    '''Mixin TODO 
 
     '''
     def nc_del_sample_dimension(self, *default):
-        '''
+        '''TODO 
         '''        
         try:
             return self._get_component('netcdf').pop('sample_dimension', *default)
@@ -146,7 +146,7 @@ class NetCDFSampleDimension(NetCDF):
     #--- End: def
 
     def nc_get_sample_dimension(self, *default):
-        '''ttttttttt
+        '''ttttttttt TODO 
         '''
         try:
             return self._get_component('netcdf')['sample_dimension']
@@ -159,13 +159,13 @@ class NetCDFSampleDimension(NetCDF):
     #--- End: def
 
     def nc_has_sample_dimension(self):
-        '''
+        '''TODO 
         '''
         return 'sample_dimension' in self._get_component('netcdf')
     #--- End: def
 
     def nc_set_sample_dimension(self, value):
-        '''
+        '''TODO 
         '''
         self._get_component('netcdf')['sample_dimension'] = value
     #--- End: def
@@ -173,11 +173,11 @@ class NetCDFSampleDimension(NetCDF):
 #--- End: class
 
 class NetCDFInstanceDimension(NetCDF):
-    '''Mixin
+    '''Mixin TODO 
 
     '''
     def nc_del_instance_dimension(self,*default):
-        '''
+        '''TODO 
         '''        
         try:
             return self._get_component('netcdf').pop('instance_dimension', *default)
@@ -186,7 +186,7 @@ class NetCDFInstanceDimension(NetCDF):
     #--- End: def
 
     def nc_get_instance_dimension(self, *default):
-        '''ttttttttt
+        '''ttttttttt TODO 
         '''
         try:
             return self._get_component('netcdf')['instance_dimension']
@@ -199,13 +199,13 @@ class NetCDFInstanceDimension(NetCDF):
     #--- End: def
 
     def nc_has_instance_dimension(self):
-        '''
+        '''TODO 
         '''
         return 'instance_dimension' in self._get_component('netcdf')
     #--- End: def
 
     def nc_set_instance_dimension(self, value):
-        '''
+        '''TODO 
         '''
         self._get_component('netcdf')['instance_dimension'] = value
     #--- End: def

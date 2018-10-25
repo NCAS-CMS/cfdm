@@ -16,7 +16,7 @@ class Properties(Container):
 
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
-        '''
+        '''TODO
 
 .. versionadded:: 1.6
 
@@ -61,7 +61,7 @@ class Properties(Container):
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''
+        '''TODO
         '''
         if not super().equals(
                 other, #rtol=rtol, atol=atol,

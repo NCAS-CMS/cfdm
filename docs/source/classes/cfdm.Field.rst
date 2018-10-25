@@ -8,285 +8,144 @@ cfdm.Field
    :no-members:
    :no-inherited-members:
 
-.. _field_cf_properties:
-
-CF Properties
--------------
- 
-.. autosummary::
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.Field.add_offset
-   ~cfdm.Field.calendar
-   ~cfdm.Field.cell_methods
-   ~cfdm.Field.comment
-   ~cfdm.Field.Conventions
-   ~cfdm.Field._FillValue
-   ~cfdm.Field.flag_masks
-   ~cfdm.Field.flag_meanings
-   ~cfdm.Field.flag_values
-   ~cfdm.Field.history
-   ~cfdm.Field.institution
-   ~cfdm.Field.leap_month
-   ~cfdm.Field.leap_year
-   ~cfdm.Field.long_name
-   ~cfdm.Field.missing_value
-   ~cfdm.Field.month_lengths
-   ~cfdm.Field.references
-   ~cfdm.Field.scale_factor
-   ~cfdm.Field.source
-   ~cfdm.Field.standard_error_multiplier
-   ~cfdm.Field.standard_name
-   ~cfdm.Field.title
-   ~cfdm.Field.units
-   ~cfdm.Field.valid_max
-   ~cfdm.Field.valid_min
-   ~cfdm.Field.valid_range
-
-.. rubric:: Setting, retrieving and deleting non-standard (and reserved) CF properties.
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.Field.delprop
-   ~cfdm.Field.getprop
-   ~cfdm.Field.hasprop
-   ~cfdm.Field.properties
-   ~cfdm.Field.setprop
-
-.. _field_methods:
-
 Inspection
 ----------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
 
-   ~cfdm.Field.__repr__
-   ~cfdm.Field.__str__
+   ~cfdm.Field.auxiliary_coordinates
+   ~cfdm.Field.cell_measures
+   ~cfdm.Field.cell_methods
+   ~cfdm.Field.coordinates
+   ~cfdm.Field.coordinate_references
    ~cfdm.Field.constructs
+   ~cfdm.Field.construct_axes
+   ~cfdm.Field.dimension_coordinates
+   ~cfdm.Field.domain_ancillaries
+   ~cfdm.Field.domain_axes
    ~cfdm.Field.dump
-   ~cfdm.Field.files
-   ~cfdm.Field.identity
-   ~cfdm.Field.match
-   ~cfdm.Field.name
+   ~cfdm.Field.field_ancillaries
+   ~cfdm.Field.get_array
+   ~cfdm.Field.get_construct
+   ~cfdm.Field.get_data
+   ~cfdm.Field.get_domain
+   ~cfdm.Field.has_data
+   ~cfdm.Field.get_property
+   ~cfdm.Field.has_property
+   ~cfdm.Field.properties
 
-Domain axes
------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.Field.axes
-   ~cfdm.Field.axes_sizes
-   ~cfdm.Field.axis
-   ~cfdm.Field.axis_name
-   ~cfdm.Field.axis_size
-   ~cfdm.Field.data_axes
-   ~cfdm.Field.insert_axis
-   ~cfdm.Field.item_axes
-   ~cfdm.Field.items_axes
-   ~cfdm.Field.remove_axes
-   ~cfdm.Field.remove_axis
-
-Field items
------------
-
-A field item is a dimension coordinate, auxiliary coordinate, cell
-measure, coordinate reference, domain ancillary or field ancillary
-object.
+.. rubric:: Attributes
    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.Field.insert_aux
-   ~cfdm.Field.insert_cell_methods
-   ~cfdm.Field.insert_dim
-   ~cfdm.Field.insert_domain_anc
-   ~cfdm.Field.insert_field_anc
-   ~cfdm.Field.insert_measure
-   ~cfdm.Field.insert_ref
-   ~cfdm.Field.item
-   ~cfdm.Field.items
-   ~cfdm.Field.remove_item
-   ~cfdm.Field.remove_items
-
-Subspacing
-----------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.Field.__getitem__
- 
-Data array
-----------
-
-.. http://docs.scipy.org/doc/numpy/reference/routines.array-manipulation.html
-
-.. _field_data_array_access:
-
-
-.. rubric:: Data array access
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
    :template: attribute.rst
 
-   ~cfdm.Field.array
    ~cfdm.Field.data
-   ~cfdm.Field.datum
-   ~cfdm.Field.dtarray
-   ~cfdm.Field.dtype
-   ~cfdm.Field.hasdata
-   ~cfdm.Field.ndim
-   ~cfdm.Field.shape
-   ~cfdm.Field.size
-   ~cfdm.Field.varray
+   ~cfdm.Field.domain
 
+Properties
+----------
 
-Units
------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.Field.calendar
-   ~cfdm.Field.units
-   ~cfdm.Field.Units
-
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
 
-   ~cfdm.Field.override_units
-   ~cfdm.Field.override_calendar
+   ~cfdm.Field.del_property
+   ~cfdm.Field.get_property
+   ~cfdm.Field.has_property
+   ~cfdm.Field.properties
+   ~cfdm.Field.set_property
 
-Data array mask
----------------
+Data
+----
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
-
-   ~cfdm.Field.count
-   ~cfdm.Field.hardmask
-   ~cfdm.Field.mask
-
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
 
-   ~cfdm.Field.fill_value
- 
-Order and number of dimensions
-------------------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
+   ~cfdm.Field.del_data
+   ~cfdm.Field.del_data_axes
    ~cfdm.Field.expand_dims
+   ~cfdm.Field.get_array
+   ~cfdm.Field.get_data
+   ~cfdm.Field.get_data_axes
+   ~cfdm.Field.get_dtarray
+   ~cfdm.Field.has_data
+   ~cfdm.Field.set_data
+   ~cfdm.Field.set_data_axes   
    ~cfdm.Field.squeeze
    ~cfdm.Field.transpose
-   ~cfdm.Field.unsqueeze
-
-.. rubric:: Changing data array values
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cfdm.Field.__setitem__
-   ~cfdm.Field.mask_invalid
- 
-Miscellaneous data array operations
------------------------------------
-
+   
+.. rubric:: Attributes
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: attribute.rst
 
-   ~cfdm.Field.insert_data
-   ~cfdm.Field.isscalar
-   ~cfdm.Field.remove_data
+   ~cfdm.Field.data
 
-Comparison
-----------
+Modification
+------------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
 
-
-   ~cfdm.Field.equals
-
-NetCDF methods
---------------
-
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-
-   ~cfdm.Field.nc_del_variable
-   ~cfdm.Field.nc_get_variable
-   ~cfdm.Field.nc_has_variable
-   ~cfdm.Field.nc_set_variable
+   ~cfdm.Field.del_construct
+   ~cfdm.Field.del_data
+   ~cfdm.Field.del_data_axes
+   ~cfdm.Field.del_property
+   ~cfdm.Field.expand_dims
+   ~cfdm.Field.properties
+   ~cfdm.Field.set_auxiliary_coordinate
+   ~cfdm.Field.set_cell_measure
+   ~cfdm.Field.set_cell_method
+   ~cfdm.Field.set_construct_axes
+   ~cfdm.Field.set_coordinate_reference
+   ~cfdm.Field.set_data
+   ~cfdm.Field.set_data_axes
+   ~cfdm.Field.set_dimension_coordinate
+   ~cfdm.Field.set_domain_ancillary
+   ~cfdm.Field.set_domain_axis
+   ~cfdm.Field.set_field_ancillary
+   ~cfdm.Field.set_property
+   ~cfdm.Field.squeeze
+   ~cfdm.Field.transpose
+ 
 
 Miscellaneous
 -------------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
 
-   ~cfdm.Field.attributes
-   ~cfdm.Field.copy 
-   ~cfdm.Field.field
-   ~cfdm.Field.HDF_chunks
-   ~cfdm.Field.unlimited
+   ~cfdm.Field.copy
+   ~cfdm.Field.equals
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: attribute.rst
+Special
+-------
 
-   ~cfdm.Field.Flags
-   ~cfdm.Field.hasbounds
-   ~cfdm.Field.isfield
-   ~cfdm.Field.rank
-   ~cfdm.Field.T
-   ~cfdm.Field.X
-   ~cfdm.Field.Y
-   ~cfdm.Field.Z
-
-Special methods
----------------
+.. rubric:: Methods
 
 .. autosummary::
    :nosignatures:
@@ -294,3 +153,6 @@ Special methods
    :template: method.rst
 
    ~cfdm.Field.__deepcopy__
+   ~cfdm.Field.__getitem__
+   ~cfdm.Field.__repr__
+   ~cfdm.Field.__str__

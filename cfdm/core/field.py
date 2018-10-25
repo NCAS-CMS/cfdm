@@ -209,7 +209,7 @@ initialisation with the `set_data` method.
 **Examples**
 
 >>> d = f.domain
-
+TODO
         '''
         return self.get_domain()
     #--- End: def
@@ -217,32 +217,33 @@ initialisation with the `set_data` method.
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def cell_methods(self, copy=False):
-        '''Return the cell method constructs.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`
-
-:Parameters:
-
-    copy: `bool`, optional
-
-:Returns:
-
-    out: `OrderDict`
-
-**Examples**
-
->>> f.cell_methods()
-OrderedDict([('cellmethod0',
-              <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>),
-             ('cellmethod1', <CellMethod: domainaxis1: maximum where sea>)])
-
-        '''
-        return self._get_constructs().constructs(
-            construct_type='cell_method', copy=copy)
-    #--- End: def
+#    def cell_methods(self, copy=False):
+#        '''Return the cell method constructs.
+#
+#.. versionadded:: 1.7
+#
+#.. seealso:: `constructs`
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#        If `True` then deep copies of the constructs are returned.
+#
+#:Returns:
+#
+#    out: `OrderDict`
+#
+#**Examples**
+#
+#>>> f.cell_methods()
+#OrderedDict([('cellmethod0',
+#              <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>),
+#             ('cellmethod1', <CellMethod: domainaxis1: maximum where sea>)])
+#
+#        '''
+#        return self._get_constructs().constructs(
+#            construct_type='cell_method', copy=copy)
+#    #--- End: def
     
     def del_data_axes(self, *default):
         '''Remove the identifiers of the domain axes spanned by the data
@@ -328,34 +329,60 @@ None
         return self._get_component('data_axes', *default)
     #--- End: def
     
-    def field_ancillaries(self, copy=False):
-        '''Return the field ancillary constructs.
+#    def field_ancillaries(self, copy=False):
+#        '''Return the field ancillary constructs.
+#
+#.. versionadded:: 1.7
+#
+#.. seealso:: `constructs`
+#
+#:Parameters:
+#
+#    copy: `bool`, optional
+#        If `True` then deep copies of the constructs are returned.
+#
+#:Returns:
+#
+#    out: `dict`
+#        TODO
+#
+#**Examples**
+#
+#>>> f.field_ancillaries()
+#TODO
+#
+#
+#'''
+#        return self._get_constructs().constructs(
+#            construct_type='field_ancillary', copy=copy)
+
+    def del_construct(self, id):
+        '''Remove a construct.
+
+If a removed domain axis construct is referenced by a cell method
+construct, then that reference is also removed.
 
 .. versionadded:: 1.7
 
-.. seealso:: `constructs`
+.. seealso:: `get_construct`, `constructs`
 
 :Parameters:
 
-    copy: `bool`, optional
+    id: `str`, optional
+        The identifier of the construct.
 
+        *Example:*
+          ``id='auxiliarycoordinate0'``
+        
 :Returns:
 
-    out: `dict`
+    out: 
+        The removed construct.
 
 **Examples**
 
->>> f.field_ancillaries()
-{}
+TODO
 
-'''
-        return self._get_constructs().constructs(
-            construct_type='field_ancillary', copy=copy)
-
-    def del_construct(self, id):
-        '''TODO
-
-.. versionadded:: 1.7
         '''
         if id in self.domain_axes():
             domain_axis = True
@@ -549,12 +576,12 @@ TODO
 TODO
 
         '''
-        self.set_construct('cell_method', cell_method, key=id,
+        self.set_construct('cell_method', cell_method, id=id,
                            copy=copy)
     #--- End: def
 
     def set_field_ancillary(self, construct, axes=None, id=None,
-                            copy=True): #, replace=False):
+                            copy=True):
         '''Set a field ancillary construct.
 
 .. versionadded:: 1.7
@@ -598,16 +625,8 @@ TODO
 TODO
         
         '''
-#        if replace:
-#            if key is None:
-#                raise ValueError("Must specify which construct to replace")
-#
-#            return self._get_constructs().replace(construct, key, axes=axes,
-#                                                 copy=copy)
-#        #--- End: if
-        
-        return self.set_construct('field_ancillary', construct,
-                                  key=id, axes=axes, copy=copy)
+        return self.set_construct('field_ancillary', construct, id=id,
+                                  axes=axes, copy=copy)
     #--- End: def
 
 #--- End: class

@@ -20,15 +20,28 @@ after initialisation with the `_set_component` method.
         self._components = {}
     #--- End: def
         
+    def __deepcopy__(self, memo):
+        '''Used if `copy.deepcopy` is called on the object.
+
+x.__deepcopy__() <==> copy.deepcopy(x)
+
+        '''
+        return self.copy()
+    #--- End: def
+
     def __repr__(self):
-        '''x.__repr__() <==> repr(x)
+        '''asdasdasUsed if `repr` is called on the object.
+
+x.__repr__() <==> repr(x)
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
     #--- End: def
 
     def __str__(self):
-        '''x.__str__() <==> str(x)
+        '''Used if `str` is called on the object.
+
+x.__str__() <==> str(x)
 
         '''
         out = sorted(self._components)

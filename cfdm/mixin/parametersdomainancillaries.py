@@ -10,13 +10,13 @@ class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Para
     '''
 
     def __bool__(self):
-        '''
+        '''TODO 
         '''
         return (super().__bool__() or bool(self.domain_ancillaries()))
     #--- End: def
         
     def __nonzero__(self):
-        '''
+        '''TODO 
         '''
         return self.__bool__()
     #--- End: def
@@ -35,7 +35,7 @@ class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Para
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_construct_type=False):
-        '''True if two instances are equal, False otherwise.
+        '''TODO True if two instances are equal, False otherwise.
 
 :Parameters:
 
