@@ -43,13 +43,16 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
+TODO
 >>> f.auxiliary_constructs()
 {}
         '''
@@ -65,13 +68,16 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
+TODO
 >>> f.cell_measure()
 {}
         '''
@@ -79,7 +85,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     
     def construct_axes(self, id=None):
         '''Return the identifiers of the domain axes spanned by the construct
-data array.
+data arrays.
 
 .. versionadded:: 1.7
 
@@ -115,7 +121,7 @@ None
     #--- End: def
     
     def constructs(self, copy=False):
-        '''Return the metadata constructs.
+        '''Return metadata constructs.
 
 .. versionadded:: 1.7
 
@@ -124,15 +130,16 @@ None
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
->>> f.constructs()
-{}
+TODO
 
         '''
         return self._get_constructs().constructs(copy=copy)
@@ -148,13 +155,16 @@ None
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
+TODO
 >>> f.coordinate_references()
 {}
         '''
@@ -170,13 +180,16 @@ None
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
+TODO
 >>> f.coordinates()
 {}
         '''
@@ -187,7 +200,7 @@ None
 
     @abc.abstractmethod
     def del_construct(self, id):
-        '''REQUIRES DOCUMENTATION
+        '''TODO
         '''
         raise NotImplementedError()
     #--- End: def
@@ -198,10 +211,12 @@ None
 :Parameters:
 
     id: `str`
+        TODO
 
 :Returns:
 
     out:
+        TODO
 
 **Examples**
 
@@ -224,13 +239,16 @@ None
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
+TODO
 >>> f.dimension_coordinates()
 {}
         '''
@@ -247,13 +265,16 @@ None
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
+TODO
 >>> f.domain_ancillaries()
 {}
         '''
@@ -270,13 +291,16 @@ None
 :Parameters:
 
     copy: `bool`, optional
+        TODO
 
 :Returns:
 
     out: `dict`
+        TODO
 
 **Examples**
 
+TODO
 >>> f.domain_axes()
 {}
         '''
@@ -284,47 +308,160 @@ None
     #--- End: def
         
     def domain_axis_name(self, axis):
-        '''
+        '''TODO WHY DO WE NED THIS HERE?
         '''
         return self._get_constructs().domain_axis_name(axis)
     #--- End: def
     
-    def set_auxiliary_coordinate(self, item, id=None, axes=None,
-                                 copy=True, replace=True):
-        '''Insert an auxiliary coordinate construct.
+    def set_auxiliary_coordinate(self, item, axes=None, id=None,
+                                 copy=True): #, replace=True):
+        '''Set an auxiliary coordinate construct.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
+
+:Parameters:
+
+    item: `AuxiliaryCoordinate`
+        TODO
+
+    axes: sequence of `str`, optional
+        The identifiers of the domain axes spanned by the data array.
+
+        The axes may also be set afterwards with the
+        `set_construct_axes` method.
+
+        *Example:*
+          ``axes=['domainaxis1']``
+        
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
+
+        *Example:*
+          ``id='auxiliarycoordinate0'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
+:Returns:
+
+     out: `str`
+        The identifier of the construct.
+    
+**Examples**
+
+TODO
+
         '''
-        if not replace and id in self.auxiliary_coordinates():
-            raise ValueError(
-"Can't insert auxiliary coordinate construct: Identifier {!r} already exists".format(id))
+#        if not replace and id in self.auxiliary_coordinates():
+#            raise ValueError(
+#"Can't insert auxiliary coordinate construct: Identifier {!r} already exists".format(id))
 
         return self.set_construct('auxiliary_coordinate', item,
                                   key=id, axes=axes, copy=copy)
     #--- End: def
 
-    def set_domain_axis(self, domain_axis, key=None, replace=True, copy=True):
-        '''Insert a domain axis construct.
-        '''
-        axes = self.domain_axes()
-        if (not replace and
-            key in axes and
-            axes[key].get_size() != domain_axis.get_size()):
-            raise ValueError(
-"Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
-    key, domain_axis.get_size(), axes[key].get_size()))
+    def set_domain_axis(self, domain_axis, id=None, copy=True):
+        '''Set a domain axis construct.
 
-        return self.set_construct('domain_axis',
-                                  domain_axis, key=key, copy=copy)
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`
+
+:Parameters:
+
+    item: `DomainAxis`
+        TODO
+        
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
+
+        *Example:*
+          ``id='domainaxis2'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
+:Returns:
+
+     out: `str`
+        The identifier of the construct.
+    
+**Examples**
+
+TODO
+
+        '''
+#        axes = self.domain_axes()
+#        if (not replace and
+#            key in axes and
+#            axes[key].get_size() != domain_axis.get_size()):
+#            raise ValueError(
+#"Can't insert domain axis: Existing domain axis {!r} has different size (got {}, expected {})".format(
+#    key, domain_axis.get_size(), axes[key].get_size()))
+
+        return self.set_construct('domain_axis', domain_axis, key=id,
+                                  copy=copy)
     #--- End: def
 
-    def set_domain_ancillary(self, item, key=None, axes=None,
-                             extra_axes=0, copy=True, replace=True):
-        '''Insert a domain ancillary construct.
-        '''       
-        if not replace and key in self.domain_ancillaries():
-            raise ValueError(
-"Can't insert domain ancillary construct: Identifier {0!r} already exists".format(key))
+    def set_domain_ancillary(self, item, axes=None, id=None, 
+                             extra_axes=0, copy=True): #, replace=True):
+        '''Set a domain ancillary construct.
 
-        return self.set_construct('domain_ancillary', item, key=key,
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
+
+:Parameters:
+
+    item: `DomainAncillary`
+        TODO
+
+    axes: sequence of `str`, optional
+        The identifiers of the domain axes spanned by the data array.
+
+        The axes may also be set afterwards with the
+        `set_construct_axes` method.
+
+        *Example:*
+          ``axes=['domainaxis1', 'domainaxis0']``
+        
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
+
+        *Example:*
+          ``id='domainancillary0'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
+:Returns:
+
+     out: `str`
+        The identifier of the construct.
+    
+**Examples**
+
+TODO
+
+        '''       
+#        if not replace and key in self.domain_ancillaries():
+#            raise ValueError(
+#"Can't insert domain ancillary construct: Identifier {0!r} already exists".format(key))
+
+        return self.set_construct('domain_ancillary', item, key=id,
                                   axes=axes, extra_axes=extra_axes,
                                   copy=copy)
     #--- End: def
@@ -332,7 +469,7 @@ None
     def set_construct(self, construct_type, construct, key=None,
                       axes=None, extra_axes=0, replace=True,
                       copy=True):
-        '''Insert a construct.
+        '''TODO
         '''
         return self._get_constructs().set_construct(construct_type,
                                                     construct,
@@ -344,39 +481,152 @@ None
     #--- End: def
 
     def set_construct_axes(self, key, axes):
-        '''
+        '''TODO
         '''
         return self._get_constructs().set_construct_axes(key, axes)
     #--- End: def
 
-    def set_cell_measure(self, item, key=None, axes=None, copy=True, replace=True):
-        '''
-        '''
-        if not replace and key in self.cell_measures():
-            raise ValueError(
-"Can't insert cell measure construct: Identifier {0!r} already exists".format(key))
+    def set_cell_measure(self, item, axes=None, id=None, copy=True): #, replace=True):
+        '''Set a cell measure construct.
 
-        return self.set_construct('cell_measure', item, key=key,
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
+
+:Parameters:
+
+    item: `CellMeasure`
+        TODO
+
+    axes: sequence of `str`, optional
+        The identifiers of the domain axes spanned by the data array.
+
+        The axes may also be set afterwards with the
+        `set_construct_axes` method.
+
+        *Example:*
+          ``axes=['domainaxis1']``
+        
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
+
+        *Example:*
+          ``id='cellmeasure0'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
+:Returns:
+
+     out: `str`
+        The identifier of the construct.
+    
+**Examples**
+
+TODO
+        '''
+#        if not replace and key in self.cell_measures():
+#            raise ValueError(
+#"Can't insert cell measure construct: Identifier {0!r} already exists".format(key))
+
+        return self.set_construct('cell_measure', item, key=id,
                                   axes=axes, copy=copy)
     #--- End: def
 
-    def set_coordinate_reference(self, item, key=None, axes=None,
-                                    copy=True, replace=True):
-        '''
+    def set_coordinate_reference(self, item, id=None, copy=True): #, replace=True):
+        '''Set a coordinate reference construct.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
+
+:Parameters:
+
+    item: `CoordinateReference`
+        TODO
+
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
+
+        *Example:*
+          ``id='coordinatereference0'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
+:Returns:
+
+     out: `str`
+        The identifier of the construct.
+    
+**Examples**
+
+TODO
+
         '''
         return self.set_construct('coordinate_reference',
-                                  item, key=key, copy=copy)
+                                  item, key=id, copy=copy)
     #--- End: def
 
-    def set_dimension_coordinate(self, item, key=None, axes=None, copy=True, replace=True):
+    def set_dimension_coordinate(self, item, axes=None, id=None,
+                                 copy=True): #, replace=True):
+        '''Set a dimension coordinate construct.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
+
+:Parameters:
+
+    item: `DimensionCoordinate`
+        TODO
+
+    axes: sequence of `str`, optional
+        The identifiers of the domain axes spanned by the data array.
+
+        The axes may also be set afterwards with the
+        `set_construct_axes` method.
+
+        *Example:*
+          ``axes=['domainaxis1']``
+        
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
+
+        *Example:*
+          ``id='dimensioncoordinate1'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
+:Returns:
+
+     out: `str`
+        The identifier of the construct.
+    
+**Examples**
+
+TODO
+
         '''
-        '''
-        if not replace and key in self.dimension_coordinates():
-            raise ValueError(
-"Can't insert dimension coordinate construct: Identifier {!r} already exists".format(key))
+#        if not replace and key in self.dimension_coordinates():
+#            raise ValueError(
+#"Can't insert dimension coordinate construct: Identifier {!r} already exists".format(key))
 
         return self.set_construct('dimension_coordinate',
-                                  item, key=key, axes=axes, copy=copy)
+                                  item, key=id, axes=axes, copy=copy)
     #--- End: def
 
 #--- End: class

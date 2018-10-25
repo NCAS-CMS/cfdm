@@ -161,13 +161,10 @@ frame and consists of the following:
 
 **Examples**
 
+>>> c.coordinate_conversion
+<>
         '''
         return self.get_coordinate_conversion()
-#        if out is None:
-#            out = self._CoordinateConversion()
-#            self.set_coordinate_conversion(out)
-#            
-#        return out
     #--- End: def
         
     @property
@@ -184,14 +181,11 @@ frame and consists of the following:
         The datum.
 
 **Examples**
+
+>>> c.datum
+<>
         '''
         return self.get_datum()
-    
-#        if out is None:
-#            out = self._Datum()
-#            self.set_datum(out)
-#            
-#        return out
     #--- End: def
 
     def coordinates(self, coordinates=None):
@@ -364,8 +358,6 @@ coordinate system.
             self.set_coordinate_conversion(out)
 
         return out
-
-#        return self._get_component('coordinate_conversion', *default)
     #--- End: def
     
     def get_datum(self):
@@ -388,8 +380,6 @@ coordinate system.
             self.set_datum(out)
             
         return out
-    
-#return self._get_component('coordinate_conversion', *default)
     #--- End: def
     
     def has_datum(self):

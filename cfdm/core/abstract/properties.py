@@ -117,7 +117,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 :Returns:
 
      out:
-        The removed property. If unset then *default* is returned, if
+        The removed property. If unset then *deault* is returned, if
         provided.
 
 **Examples**
@@ -292,6 +292,8 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
 to CF-netCDF attributes, such as 'standard_name', 'history', etc.
+
+.. versionadded:: 1.7
 
 .. seealso:: `del_property`, `get_property`, `has_property`, `properties`
 

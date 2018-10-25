@@ -109,8 +109,7 @@ frame and consists of the following:
     #--- End: def
 
     def __init__(self, coordinates=None, datum=None,
-                 coordinate_conversion=None, #domain_ancillaries=None,
-#                 parameters=None,
+                 coordinate_conversion=None,
                  source=None, copy=True):
         '''**Initialization**
 

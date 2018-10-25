@@ -121,14 +121,14 @@ properties.
     # ----------------------------------------------------------------
     @property
     def bounds(self):
-        '''
+        '''TODO
         '''
         return self.get_bounds()
     #--- End: def
 
     @property
     def interior_ring(self):
-        '''
+        '''TODO
         '''
         return self.get_interior_ring()
     #--- End: def
@@ -202,7 +202,7 @@ None
     #--- End: def
 
     def del_geometry(self, *default):
-        '''Delete the geometry type.
+        '''Delete the geometry type. TODO
 
 .. versionadd:: 1.7
 
@@ -255,7 +255,7 @@ None
     #--- End: def
 
     def get_geometry(self, *default):
-        '''Return the bounds type.
+        '''Return the geometry type.
 
 .. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
 
@@ -297,7 +297,7 @@ None
     #--- End: def
 
     def has_bounds(self):
-        '''True if there are bounds.
+        '''True if there are bounds. TODO
         
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
@@ -318,7 +318,7 @@ None
     #--- End: def
 
     def has_geometry(self):
-        '''True if there is a bounds type.
+        '''True if there is a goemetry type. TODO
         
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
@@ -335,7 +335,7 @@ None
     #--- End: def
 
     def has_interior_ring(self):
-        '''True if there are interior_ring.
+        '''True if there are interior_ring. TODO
         
 .. seealso:: `del_interior_ring`, `get_interior_ring`, `has_data`, `set_interior_ring`
 
@@ -385,7 +385,7 @@ None
     #--- End: def
 
     def set_geometry(self, value, copy=True):
-        '''Set the bounds type.
+        '''Set the geometry type.
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 

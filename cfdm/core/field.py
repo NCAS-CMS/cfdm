@@ -97,8 +97,8 @@ initialisation with the `set_data` method.
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-          *Example:*
-             ``properties={'standard_name': 'altitude'}``
+        *Example:*
+           ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
@@ -114,19 +114,19 @@ initialisation with the `set_data` method.
         axes, and metadata constructs then these are copied to the new
         field.
 
-          *Example:*
-            If ``g`` is a `Field` object then ``f = Field(source=g)``
-            is equivalent to ``f = g.copy()``.
+        *Example:*
+          If ``g`` is a `Field` object then ``f = Field(source=g)``
+          is equivalent to ``f = g.copy()``.
 
-          *Example:*
-            If ``dc`` is a `DimensionCoordinate` object then
+        *Example:*
+          If ``dc`` is a `DimensionCoordinate` object then
 
-              >>> f = Field(source=dc)``
+                >>> f = Field(source=dc)
 
-            is equivalent to
+          is equivalent to
 
-              >>> f = Field(properties=dc.properties())
-              >>> f.set_data(dc.get_data(None))
+             >>> f = Field(properties=dc.properties())
+             >>> f.set_data(dc.get_data(None))
 
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -182,7 +182,7 @@ initialisation with the `set_data` method.
     # Private methods
     # ----------------------------------------------------------------
     def _get_constructs(self, *default):
-        '''
+        '''TODO
 .. versionadded:: 1.7
         
         '''
@@ -245,8 +245,28 @@ OrderedDict([('cellmethod0',
     #--- End: def
     
     def del_data_axes(self, *default):
-        '''
+        '''Remove the identifiers of the domain axes spanned by the data
+array.
+
 .. versionadded:: 1.7
+
+.. seealso:: `data`, `get_data_axes`, `set_data_axes`
+
+:Parameters:
+
+    default: optional
+        Return *default* if data axes have not been set.
+
+:Returns:
+
+    out: `tuple` 
+        The removed identifiers of the domain axes spanned by the data
+        array. If unset then *default* is returned, if provided.
+
+**Examples**
+
+TODO
+
         '''
         return self._del_component('data_axes', *default)
     #--- End: def
@@ -265,17 +285,18 @@ OrderedDict([('cellmethod0',
 **Examples**
 
 >>> d = f.get_domain()
-
+TODO
         '''
         return self._Domain.fromconstructs(self._get_constructs())
     #--- End: def
 
     def get_data_axes(self, *default):
-        '''Return the domain axes corresponding to the data array dimensions.
-        
+        '''Return the identifiers of the domain axes spanned by the data
+array.
+
 .. versionadded:: 1.7
 
-.. seealso:: `del_data_axes`, `get_data`, `set_data_axes`
+.. seealso:: `data`, `del_data_axes`, `get_data`, `set_data_axes`
 
 :Parameters:
 
@@ -285,8 +306,8 @@ OrderedDict([('cellmethod0',
 :Returns:
 
     out: `tuple` 
-        The ordered axes of the data array. If there are no data axes
-        then return the value of *default* parameter, if provided.
+        The identifiers of the domain axes spanned by the data
+        array. If unset then *default* is returned, if provided.
 
 **Examples**
 
@@ -362,76 +383,38 @@ None
     #--- End: def
 
     def set_data(self, data, axes, copy=True):
-        '''Insert a data array into the {+variable}.
+        '''Set the data.
+
+The units, calendar and fill value properties of the data object are
+removed prior to insertion.
 
 .. versionadded:: 1.7
+
+.. seealso:: `data`, `del_data`, `get_data`, `has_data`, `set_data_axes`
 
 :Parameters:
 
     data: `Data`
-        The data array to be inserted.
+        The data to be inserted.
 
-    axes: sequence of `str`
-        A list of axis identifiers (``'dimN'``), stating the axes, in
-        order, of the data array.
+    axes: sequence of `str` or `None`, optional
+        The identifiers of the domain axes spanned by the data
+        array. If `None` then the data axes are not set.
 
-        The ``N`` part of each identifier should be replaced by an
-        integer greater then or equal to zero such that either a) each
-        axis identifier is the same as one in the field's domain, or
-        b) if the domain has no axes, arbitrary integers greater then
-        or equal to zero may be used, the only restriction being that
-        the resulting identifiers are unique.
-
-        If an axis of the data array already exists in the domain then
-        the it must have the same size as the domain axis. If it does
-        not exist in the domain then a new axis will be created.
-
-        By default the axes will either be those defined for the data
-        array by the domain or, if these do not exist, the domain axis
-        identifiers whose sizes unambiguously match the data array.
+        The axes may also be set afterwards with the `set_data_axes`
+        method.
 
     copy: `bool`, optional
-        If False then the new data array is not deep copied prior to
-        insertion. By default the new data array is deep copied.
+        If False then do not copy the data prior to insertion. By
+        default the data are copied.
 
-    replace: `bool`, optional
-        If False then raise an exception if there is an existing data
-        array. By default an existing data array is replaced with
-        *data*.
-   
 :Returns:
 
     `None`
 
 **Examples**
 
->>> f.axes()
-{'dim0': 1, 'dim1': 3}
->>> f.set_data(Data([[0, 1, 2]]))
-
->>> f.axes()
-{'dim0': 1, 'dim1': 3}
->>> f.set_data(Data([[0, 1, 2]]), axes=['dim0', 'dim1'])
-
->>> f.axes()
-{}
->>> f.set_data(Data([[0, 1], [2, 3, 4]]))
->>> f.axes()
-{'dim0': 2, 'dim1': 3}
-
->>> f.set_data(Data(4))
-
->>> f.set_data(Data(4), axes=[])
-
->>> f.axes()
-{'dim0': 3, 'dim1': 2}
->>> data = Data([[0, 1], [2, 3, 4]])
->>> f.set_data(data, axes=['dim1', 'dim0'], copy=False)
-
->>> f.set_data(Data([0, 1, 2]))
->>> f.set_data(Data([3, 4, 5]), replace=False)
-ValueError: Can't initialize data: Data already exists
->>> f.set_data(Data([3, 4, 5]))
+TODO
 
         '''
         if axes is not None:
@@ -441,7 +424,25 @@ ValueError: Can't initialize data: Data already exists
     #--- End: def
 
     def set_data_axes(self, value):
-        '''
+        '''Set the identifiers of the domain axes spanned by the data array.
+
+.. versionadded:: 1.7
+
+.. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`
+
+:Parameters:
+
+    value: sequence of `str`
+        The identifiers of the domain axes spanned by the data array.
+
+:Returns:
+
+    `None`
+
+**Examples**
+
+TODO
+
         '''
         domain_axes = self.domain_axes()
         for axis in value:
@@ -513,52 +514,100 @@ ValueError: Can't initialize data: Data already exists
 #        return out
 #    #--- End: def
     
-    def set_cell_method(self, cell_method, key=None, copy=True):
-        '''Insert cell method objects into the {+variable}.
+    def set_cell_method(self, cell_method, id=None, copy=True):
+        '''Set a cell method construct.
 
-.. seealso:: `set_aux`, `set_measure`, `set_ref`,
-             `set_data`, `set_dim`
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
 
 :Parameters:
 
-    cell_method: `CellMethod`
+    item: `CellMethod`
+        TODO
+        
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
 
+        *Example:*
+          ``id='cellmethod0'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
 :Returns:
 
-    `None`
-
+     out: `str`
+        The identifier of the construct.
+    
 **Examples**
 
+TODO
+
         '''
-        self.set_construct('cell_method', cell_method, key=key,
+        self.set_construct('cell_method', cell_method, key=id,
                            copy=copy)
     #--- End: def
 
-    def set_field_ancillary(self, construct, key=None, axes=None,
-                            copy=True, replace=False):
-        '''Insert a field ancillary object into the {+variable}.
-        
-    {+copy_item_in}
-      
-        '''
-        if replace:
-            if key is None:
-                raise ValueError("Must specify which construct to replace")
+    def set_field_ancillary(self, construct, axes=None, id=None,
+                            copy=True): #, replace=False):
+        '''Set a field ancillary construct.
 
-            return self._get_constructs().replace(construct, key, axes=axes,
-                                                 copy=copy)
-        #--- End: if
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
+
+:Parameters:
+
+    item: `FieldAncillary`
+        TODO
+
+    axes: sequence of `str`, optional
+        The identifiers of the domain axes spanned by the data array.
+
+        The axes may also be set afterwards with the
+        `set_construct_axes` method.
+
+        *Example:*
+          ``axes=['domainaxis0', 'domainaxis1']``
+
+    id: `str`, optional
+        The identifier of the construct. If not set then a new, unique
+        identifier is created. If the identifier already exisits then
+        the exisiting construct will be replaced.
+
+        *Example:*
+          ``id='fieldancillary0'``
+        
+    copy: `bool`, optional
+        If False then do not copy the construct prior to insertion. By
+        default it is copied.
+        
+:Returns:
+
+     out: `str`
+        The identifier of the construct.
+    
+**Examples**
+
+TODO
+        
+        '''
+#        if replace:
+#            if key is None:
+#                raise ValueError("Must specify which construct to replace")
+#
+#            return self._get_constructs().replace(construct, key, axes=axes,
+#                                                 copy=copy)
+#        #--- End: if
         
         return self.set_construct('field_ancillary', construct,
-                                  key=key, axes=axes,
-                                  copy=copy)
-    #--- End: def
-
-    def del_data(self):
-        '''
-
-        '''
-        return super().del_data()
+                                  key=id, axes=axes, copy=copy)
     #--- End: def
 
 #--- End: class

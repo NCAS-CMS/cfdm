@@ -136,7 +136,7 @@ False
 
 .. versionadded:: 1.7
 
-.. seealso:: `get_data`, `has_data`, `set_data`
+.. seealso:: `data`, `get_data`, `has_data`, `set_data`
 
 :Parameters:
 
@@ -146,8 +146,8 @@ False
 :Returns: 
 
     out:
-        The removed data. If the data has not been set then the
-        *default* is returned, if provided.
+        The removed data. If unset then *default* is returned, if
+        provided.
 
 **Examples**
 
@@ -164,7 +164,7 @@ False
 None
 
         '''
-        return self._del_component('data')
+        return self._del_component('data', *default)
     #--- End: def
 
     def get_array(self):
@@ -205,21 +205,22 @@ True
     def get_data(self, *default):
         '''Return the data.
 
-Note that the data are returned in a `Data` object. Use the `get_array`
-method to return the data as a `numpy` array.
+Note that the data are returned in a `Data` object. Use the
+`get_array` method to return the data as an independent `numpy` array.
+
+.. versionadded:: 1.7
 
 .. seealso:: `del_data`, `get_array`, `has_data`, `set_data`
 
 :Parameters:
 
     default: optional
-        Return *default* if and only if the data have not been set.
+        Return *default* the data have not been set.
 
 :Returns:
 
-    out: `Data` or *default*
-        The data. If the data has not been set, then the *default*
-        parameter is returned, if provided.
+    out: `Data`
+        The data. If unset then *default* is returned, if provided.
 
 **Examples**
 
@@ -257,16 +258,16 @@ None
     #--- End: def
 
     def has_data(self):
-        '''Whether data has been set.
+        '''Whether data have been set.
         
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
-.. seealso:: `del_data`, `get_data`, `set_data`
+.. seealso:: `data`, `del_data`, `get_data`, `set_data`
 
 :Returns:
 
     out: `bool`
-        True if there are data, otherwise False.
+        True if data have been set, otherwise False.
 
 **Examples**
 
@@ -278,7 +279,6 @@ False
 >> print(f.get_data(None))
 None
 
-
         '''     
         return self._has_component('data')
     #--- End: def
@@ -286,17 +286,17 @@ None
     def set_data(self, data, copy=True):
         '''Set the data.
 
-If the data has units or calendar properties then they are removed
-prior to insertion.
+The units, calendar and fill value properties of the data object are
+removed prior to insertion.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
-.. seealso:: `del_data`, `get_data`, `has_data`
+.. seealso:: `data`, `del_data`, `get_data`, `has_data`
 
 :Parameters:
 
     data: `Data`
-        The data to be inserted.set.
+        The data to be inserted.
 
     copy: `bool`, optional
         If False then do not copy the data prior to insertion. By
