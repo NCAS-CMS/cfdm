@@ -7,6 +7,8 @@ cfdm
 
 Version |release|
 
+**The cfdm library is a complete implementation of the CF data model.**
+
 .. include:: introduction.rst
   
 Contents
@@ -14,9 +16,7 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :includehidden:
-      
-   Introduction <index>
+     
    tutorial
    reference
    subclassing

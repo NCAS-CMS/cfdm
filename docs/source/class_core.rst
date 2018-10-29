@@ -40,6 +40,7 @@ Construct component classes
 
    cfdm.core.Bounds
    cfdm.core.CoordinateConversion
+   cfdm.core.Data
    cfdm.core.Datum
    cfdm.core.Domain
 

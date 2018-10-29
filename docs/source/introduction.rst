@@ -3,9 +3,8 @@
 
 .. _introduction:
 
-	     
-Introduction
-============
+
+
 
 CF conventions
 --------------
@@ -35,8 +34,10 @@ how the cell values represent the variation of the physical quantity
 within the cells of the domain. The domain is defined collectively by
 the following constructs of the CF data model: **domain axis**,
 **dimension coordinate**, **auxiliary coordinate**, **cell measure**,
-**coordinate reference** and **domain ancillary** constructs. See
-https://www.geosci-model-dev.net/10/4619/2017/ for full details.
+**coordinate reference** and **domain ancillary** constructs.
+
+A complete description of the CF data model, including UML diagrams,
+is available at https://www.geosci-model-dev.net/10/4619/2017.
 
 Implementation
 --------------
