@@ -6,16 +6,7 @@ from .. import abstract
 
 
 class Data(abstract.Container):
-    '''
-
-An N-dimensional data array with units and masked values.
-
-* Contains an N-dimensional array.
-
-* Contains the units of the array elements.
-
-* Supports masked arrays, regardless of whether or not it was
-  initialised with a masked array.
+    '''An orthogonal multidimensional array with units.
 
     '''
     def __init__(self, data=None, units=None, calendar=None,

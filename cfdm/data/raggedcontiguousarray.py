@@ -18,7 +18,7 @@ The information needed to uncompress the data is stored in a separate
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, count_array=None):
+                 ndim=None, count_variable=None):
         '''**Initialization**
 
 :Parameters:
@@ -35,10 +35,7 @@ The information needed to uncompress the data is stored in a separate
     ndim: `int`
         The number of uncompressed array dimensions
 
-    sample_axis: `int`
-        The position of the sample dimension in the compressed array.
-
-    count_array: `Count`
+    count_variable: `Count`
         The "count variable" required to uncompress the data, identical
         to the data of a CF-netCDF count variable.
 
@@ -46,7 +43,7 @@ The information needed to uncompress the data is stored in a separate
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
                          compression_type='ragged contiguous',
-                         _count_array=count_array, sample_axis=0)
+                         _count_variable=count_variable, sample_axis=0)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -85,7 +82,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # --------------------------------------------------------
             
         start = 0 
-        for i, n in enumerate(self.count_array.get_array()):
+        for i, n in enumerate(self.count_variable.get_array()):
             n = int(n)
             sample_indices = slice(start, start + n)
             
@@ -102,8 +99,8 @@ indexing (given the restrictions on the type of indices allowed) is:
 
 
     @property
-    def count_array(self):
+    def count_variable(self):
         '''
         '''
-        return self._count_array
+        return self._count_variable
 #--- End: class

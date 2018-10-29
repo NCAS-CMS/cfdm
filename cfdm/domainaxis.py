@@ -8,10 +8,7 @@ from . import core
 class DomainAxis(mixin.NetCDFDimension,
                  mixin.Container,
                  core.DomainAxis):
-        #with_metaclass(
-        #abc.ABCMeta,
-        #type('NewBase', (mixin.Container, structure.DomainAxis), {}))):
-    '''A CF domain axis construct.
+    '''A domain axis construct of the CF data model. 
 
 A domain axis construct specifies the number of points along an
 independent axis of the domain. It comprises a positive integer

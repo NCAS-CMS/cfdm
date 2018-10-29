@@ -19,7 +19,10 @@ if LooseVersion(platform.python_version()) < LooseVersion('2.7.0'):
 from .bounds               import Bounds
 from .constructs           import Constructs
 from .coordinateconversion import CoordinateConversion
+
 from .data.data            import Data
+from .data.numpyarray      import NumpyArray
+
 from .datum                import Datum
 from .domain               import Domain
 from .interiorring         import InteriorRing

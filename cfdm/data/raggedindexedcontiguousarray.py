@@ -22,7 +22,7 @@ belongs to.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, count_array=None, index_array=None):
+                 ndim=None, count_variable=None, index_variable=None):
         '''**Initialization**
 
 :Parameters:
@@ -42,11 +42,11 @@ belongs to.
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    count_array: `Count`
+    count_variable: `Count`
         The "count variable" required to uncompress the data,
         identical to the data of a CF-netCDF count variable.
 
-    index_array: `Index`
+    index_variable: `Index`
         The "index variable" required to uncompress the data,
         identical to the data of a CF-netCDF index variable.
 
@@ -54,8 +54,9 @@ belongs to.
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
                          compression_type='ragged indexed contiguous',
-                         _count_array=count_array,
-                         _index_array=index_array, sample_axis=0)    
+                         _count_variable=count_variable,
+                         _index_variable=index_variable,
+                         sample_axis=0)    
     #--- End: def
 
     def __getitem__(self, indices):
@@ -86,8 +87,8 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
-        count_array = self.count_array.get_array()
-        index_array = self.index_array.get_array()
+        count_array = self.count_variable.get_array()
+        index_array = self.index_variable.get_array()
         
         # Loop over instances
         for i in range(uarray.shape[0]):
@@ -130,14 +131,14 @@ indexing (given the restrictions on the type of indices allowed) is:
     #--- End: def
 
     @property
-    def count_array(self):
+    def count_variable(self):
         '''
         '''
-        return self._count_array
+        return self._count_variable
 
     @property
-    def index_array(self):
+    def index_variable(self):
         '''
         '''
-        return self._index_array
+        return self._index_variable
 #--- End: class

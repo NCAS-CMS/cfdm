@@ -572,7 +572,7 @@ data array shape.
             raise AttributeError("{!r} has no data".format(
                 self.__class__.__name__))
         
-        array = getattr(data, 'count_array', None)
+        array = getattr(data, 'count_variable', None)
         if array is None:
             if default:
                 return default
@@ -661,7 +661,7 @@ used.
             raise AttributeError("{!r} has no data".format(
                 self.__class__.__name__))
 
-        array = getattr(data, 'count_array', None)
+        array = getattr(data, 'count_variable', None)
         if array is None:
             if default:
                 return default
@@ -687,7 +687,7 @@ used.
             raise AttributeError("{!r} has no data".format(
                 self.__class__.__name__))
 
-        array = getattr(data, 'index_array', None)
+        array = getattr(data, 'index_variable', None)
         if array is None:
             if default:
                 return default
@@ -713,7 +713,7 @@ used.
             raise AttributeError("{!r} has no data".format(
                 self.__class__.__name__))
 
-        array = getattr(data, 'list_array', None)
+        array = getattr(data, 'list_variable', None)
         if array is None:
             if default:
                 return default

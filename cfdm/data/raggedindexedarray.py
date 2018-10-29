@@ -18,7 +18,7 @@ sample dimension belongs to.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, index_array=None):
+                 ndim=None, index_variable=None):
         '''**Initialization**
 
 :Parameters:
@@ -35,7 +35,7 @@ sample dimension belongs to.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    index_array: `Index`
+    index_variable: `Index`
         The "index variable" required to uncompress the data,
         identical to the data of a CF-netCDF index variable.
 
@@ -44,7 +44,7 @@ sample dimension belongs to.
                          shape=shape, size=size, ndim=ndim,
                          sample_axis=0,
                          compression_type='ragged indexed',
-                         _index_array=index_array)
+                         _index_variable=index_variable)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -81,7 +81,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # The uncompressed array has dimensions (instance
         # dimension, element dimension).
         # --------------------------------------------------------
-        index_array = self.index_array.get_array()
+        index_array = self.index_variable.get_array()
         
         for i in range(uarray.shape[0]):
             sample_dimension_indices = numpy.where(index_array == i)[0]
@@ -96,8 +96,8 @@ indexing (given the restrictions on the type of indices allowed) is:
     #--- End: def
 
     @property
-    def index_array(self):
+    def index_variable(self):
         '''
         '''
-        return self._index_array
+        return self._index_variable
 #--- End: class

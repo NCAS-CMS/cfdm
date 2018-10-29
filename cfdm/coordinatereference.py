@@ -68,32 +68,24 @@ by a coordinate reference construct which relates the coordinate
 values of the coordinate system to locations in a planetary reference
 frame and consists of the following:
 
-  * The dimension coordinate and auxiliary coordinate constructs that
-    define the coordinate system to which the coordinate reference
-    construct applies. Note that the coordinate values are not
-    relevant to the coordinate reference construct, only their
-    properties.
+  * References to the dimension coordinate and auxiliary coordinate
+    constructs that define the coordinate system to which the
+    coordinate reference construct applies. Note that the coordinate
+    values are not relevant to the coordinate reference construct,
+    only their properties.
 
   * A definition of a datum specifying the zeroes of the dimension and
     auxiliary coordinate constructs which define the coordinate
-    system. The datum may be explicitly indicated via properties, or
-    it may be implied by the metadata of the contained dimension and
-    auxiliary coordinate constructs. Note that the datum may contain
-    the definition of a geophysical surface which corresponds to the
-    zero of a vertical coordinate construct, and this may be required
-    for both horizontal and vertical coordinate systems.
+    system. The datum may be implied by the metadata of the referenced
+    dimension and auxiliary coordinate constructs, or explicitly
+    provided by a `Datum` object.
 
   * A coordinate conversion, which defines a formula for converting
     coordinate values taken from the dimension or auxiliary coordinate
-    constructs to a different coordinate system. A term of the
-    conversion formula can be a scalar or vector parameter which does
-    not depend on any domain axis constructs, may have units (such as
-    a reference pressure value), or may be a descriptive string (such
-    as the projection name "mercator"), or it can be a domain
-    ancillary construct (such as one containing spatially varying
-    orography data). A coordinate reference construct relates the
-    field's coordinate values to locations in a planetary reference
-    frame.
+    constructs to a different coordinate system. A coordinate
+    reference construct relates the coordinate values of the field to
+    locations in a planetary reference frame. The coordinate
+    conversion formula is stored in a `CoordinateConversion` object.
 
     '''
 

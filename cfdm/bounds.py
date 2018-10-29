@@ -7,9 +7,6 @@ from . import core
 class Bounds(mixin.NetCDFVariable,
              mixin.PropertiesData,
              core.Bounds):
-        #with_metaclass(
-        #abc.ABCMeta,
-        #type('NewBase', (mixin.PropertiesData, structure.Bounds), {}))):
     '''A cell bounds array with properties.
 
 An array of cell bounds spans the same domain axes as its coordinate

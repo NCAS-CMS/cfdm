@@ -7,9 +7,6 @@ from . import Constructs
 
 
 class Field(mixin.ConstructAccess, abstract.PropertiesData):
-        #with_metaclass(
-        #abc.ABCMeta,
-        #type('NewBase', (mixin.ConstructAccess, abstract.PropertiesData), {}))):
     '''A CF field construct.
 
 The field construct is central to the CF data model, and includes all
@@ -19,39 +16,16 @@ construct or some element of the CF field construct. The field
 construct contains all the data and metadata which can be extracted
 from the file using the CF conventions.
 
-The field construct consists of a data array (stored in a `Data`
-object) and the definition of its domain, ancillary metadata fields
-defined over the same domain (stored in `FieldAncillary` objects), and
-cell methods constructs to describe how the cell values represent the
-variation of the physical quantity within the cells of the domain
-(stored in `CellMethod` objects).
-
-The domain is implied by other types of construct included in the
-field:
-
-====================  ================================================
-Domain construct      Description
-====================  ================================================
-Domain axis           Independent axes of the domain stored in
-                      `DomainAxis` objects
-
-Dimension coordinate  Domain cell locations stored in
-                      `DimensionCoordinate` objects
-
-Auxiliary coordinate  Domain cell locations stored in
-                      `AuxiliaryCoordinate` objects
-
-Coordinate reference  Domain coordinate systems stored in
-                      `CoordinateReference` objects
-
-Domain ancillary      Cell locations in alternative coordinate systems
-                      stored in `DomainAncillary` objects
-
-Cell measure          Domain cell size or shape stored in
-                      `CellMeasure` objects
-====================  ================================================
-
-All of the constructs contained by the field construct are optional.
+The field construct consists of a data array and the definition of its
+domain (that describes the locations of each cell of the data array),
+field ancillary constructs containing metadata defined over the same
+domain, and cell method constructs to describe how the cell values
+represent the variation of the physical quantity within the cells of
+the domain. The domain is defined collectively by the following
+constructs of the CF data model: domain axis, dimension coordinate,
+auxiliary coordinate, cell measure, coordinate reference and domain
+ancillary constructs. All of the constructs contained by the field
+construct are optional.
 
 The field construct also has optional properties to describe aspects
 of the data that are independent of the domain. These correspond to

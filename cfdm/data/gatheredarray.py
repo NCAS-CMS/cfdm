@@ -11,10 +11,10 @@ from . import abstract
 class GatheredArray(abstract.CompressedArray):
     '''A container for a gathered compressed array.
 
-Compression by gathering combines axes of a multi-dimensional array
-into a new, discrete axis (the "list dimension") whilst omitting the
-missing values and thus reducing the number of values that need to be
-stored.
+Compression by gathering combines axes of an orthogonal
+multi-dimensional array into a new, discrete axis (the "list axis")
+whilst omitting the missing values and thus reducing the number of
+values that need to be stored.
 
 The information needed to uncompress the data is stored in a separate
 variable (the "list variable") that contains the indices needed to
@@ -22,7 +22,7 @@ uncompress the data.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, sample_axis=None, list_array=None):
+                 ndim=None, sample_axis=None, list_variable=None):
         '''**Initialization**
 
 :Parameters:
@@ -42,7 +42,7 @@ uncompress the data.
     sample_axis: `int`
         The position of the compressed axis in the compressed array.
 
-    list_array: `List`
+    list_variable: `List`
         The "list variable" required to uncompress the data, identical
         to the data of a CF-netCDF list variable.
 
@@ -51,7 +51,7 @@ uncompress the data.
                          shape=shape, ndim=ndim, size=size,
                          sample_axis=sample_axis,
                          compression_type='gathered',
-                         _list_array=list_array)
+                         _list_variable=list_variable)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -99,7 +99,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         u_indices      = [slice(None)] * self.ndim        
         
         zeros = [0] * n_compressed_axes
-        for j, b in enumerate(self.list_array.get_array()):
+        for j, b in enumerate(self.list_variable.get_array()):
             sample_indices[sample_axis] = j
             # Note that it is important for this index to be an
             # integer (rather than the slice j:j+1) so that this
@@ -124,16 +124,16 @@ indexing (given the restrictions on the type of indices allowed) is:
     #--- End: def
 
     @property
-    def list_array(self):
+    def list_variable(self):
         '''
         '''
-        return self._list_array
+        return self._list_variable
     #--- End: def
 
     def get_list(self):
         '''
         '''
-        return self._list_array
+        return self._list_variable
     #--- End: def
 
 #--- End: class

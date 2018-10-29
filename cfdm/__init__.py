@@ -24,8 +24,15 @@ if StrictVersion(platform.python_version()) < StrictVersion('2.7.0'):
 
 from .constants        import *
 from .constructs       import Constructs
-from .data.data        import Data
-from .data.netcdfarray import NetCDFArray
+
+from .data.data                         import Data
+from .data.netcdfarray                  import NetCDFArray
+from .data.numpyarray                   import NumpyArray
+from .data.gatheredarray                import GatheredArray
+from .data.raggedcontiguousarray        import RaggedContiguousArray
+from .data.raggedindexedarray           import RaggedIndexedArray
+from .data.raggedindexedcontiguousarray import RaggedIndexedContiguousArray
+
 from .functions        import *
 #from .io.read              import read
 #from .io.write             import write

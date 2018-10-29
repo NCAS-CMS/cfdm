@@ -9,7 +9,8 @@ Classes of the **cfdm** package
 Field construct class
 --------------------
 
-This class represents the field construct of the CF data model.
+This class represents the field construct of the CF data model. It
+inherits directly from `cfdm.core.Field`, its `cfdm.core` counterpart.
 
 .. autosummary::
    :nosignatures:
@@ -17,13 +18,13 @@ This class represents the field construct of the CF data model.
 
    cfdm.Field	              
 
-The `cfdm.Field` class inherits directly from its `cfdm.core`
-counterpart, `cfdm.core.Field`.
-
 Metadata construct classes
 --------------------------
 
-These classes represent the metadata constructs of the CF data  model.
+Each of these classes represent the metadata constructs of the CF data
+model. They inherit directly from their `cfdm.core` counterparts. For
+example, `cfdm.AuxiliaryCoordinate` inherits
+`cfdm.core.AuxiliaryCoordinate`.
 
 .. autosummary::
    :nosignatures:
@@ -38,13 +39,13 @@ These classes represent the metadata constructs of the CF data  model.
    cfdm.DomainAxis
    cfdm.FieldAncillary
 
-These classes inherit directly from their `cfdm.core`
-counterparts. For example, `cfdm.AuxiliaryCoordinate` inherits
-`cfdm.core.AuxiliaryCoordinate`.
-
-
 Construct component classes
 ---------------------------
+
+Each of these classes represents a particular component found in a
+subset of construct classes. They inherit directly from their
+`cfdm.core` counterparts. For example, `cfdm.Bounds` inherits
+`cfdm.core.Bounds`.
 
 .. autosummary::
    :nosignatures:
@@ -55,9 +56,21 @@ Construct component classes
    cfdm.Data
    cfdm.Datum
    cfdm.Domain
+..
 
-These classes inherit directly from their `cfdm.core`
-counterparts. For example, `cfdm.Bounds` inherits `cfdm.core.Bounds`.
+The components may be found in construct classes as follows:
+
+======================  ============================================================
+Component               Parent constructs
+======================  ============================================================
+`Bounds`                `AuxiliaryCoordinate`, `DimensionCoordinate`,
+                        `DomainAncillary`
+`CoordinateConversion`  `CoordinateReference`
+`Data`                  `AuxiliaryCoordinate`, `CellMeasure`, `DimensionCoordinate`,
+                        `DomainAncillary`, `Field`, `FieldAncillary`
+`Datum`                 `CoordinateReference`
+`Domain`                `Field`
+======================  ============================================================
 
 Data classes
 ------------
@@ -80,6 +93,10 @@ counterparts. For example, `cfdm.Data` inherits `cfdm.core.Data`.
 Abstract classes
 ----------------
 
+These classes inherit, directly or indirectly, from their `cfdm.core`
+counterparts. For example `cfdm.data.abstract.Array` inherits
+`cfdm.core.data.abstract.Array`.
+
 .. autosummary::
    :nosignatures:
    :toctree: classes/
@@ -94,10 +111,10 @@ counterparts. For example `cfdm.data.abstract.Array` inherits
 Mixin classes
 -------------
 
-These classes provide the functionality, missing from the `cfdm.core`
-package, to read and write netCDF datasets and to modify field
-constructs in memory. All construct and construct compomnent classes
-also inherit from one or more of these mixin classes.
+Each of these classes provides functionality, that is missing from the
+`cfdm.core` package, to read and write netCDF datasets and to modify
+constructs in memory. All construct and construct component classes
+inherit from one or more of these mixin classes.
 
 .. autosummary::
    :nosignatures:

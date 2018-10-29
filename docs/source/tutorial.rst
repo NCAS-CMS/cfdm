@@ -16,9 +16,9 @@ contents as a list one or more `Field` objects:
 >>> import cfdm
 >>> f = cfdm.read('file.nc')
 
-The `cfdm.read` function has options to define external files that
-contain extra metadata, and to specify which metadata constructs
-should also be returned as independent fields.
+The `cfdm.read` function has options to define files that contain
+:ref:`external variables <external>`, and to specify which metadata
+constructs should also be returned as independent fields.
 
 Inspection
 ----------
@@ -341,27 +341,33 @@ the field's `~cfdm.Field.equals` methods.
 Field creation
 --------------
 
-Exernal variables
------------------
+.. _external:
+
+External variables
+------------------
 
 Discrete sampling geometries
 ----------------------------
 
-When a collection of discrete sampling geomtry (DSG) features has been
-combined using a ragged representation to save space, the field
-contains the domain axes that have been compressed and presents a view
-of the data in their uncompressed, incomplete orthogonal form, even
-though the underlying arrays remain in their ragged representation.
+The CF data model views compressed data arrays in their uncompressed
+form. So, when a collection of discrete sampling geometry (DSG)
+features has been combined using a ragged representation to save
+space, the field contains the domain axis constructs that have been
+compressed and presents a view of the data in its `incomplete
+multidimensional form
+<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_incomplete_multidimensional_array_representation>`_,
+even though the underlying arrays may remain in their ragged
+representation.
 
 Accessing the data by indexing, or by a call to the `!get_array`
 method, always returns data that is uncompressed, i.e. in incomplete
-orthogonal representation. The compressed data may be retrieved with
-the `get_compressed_data` method of a `Data` object. If the elements
-are modified by indexed assignment then the underlying compressed
-array is replaced by its incomplete orthogonal form.
+multidimensional representation. The compressed data may be retrieved
+via the `get_compressed_data` method of a `Data` object. If the
+elements are modified by indexed assignment then the underlying
+compressed array is replaced by its incomplete multidimensional form.
 
 If an underlying array is compressed at the time of writing to disk,
-then it is written as a ragged array.
+then it is written to the file as a ragged array.
 
 A count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is retrieved and set with the
@@ -372,6 +378,29 @@ An index variable that is required to uncompress a indexed, or indexed
 contiguous, ragged array is retrieved and set with the
 `get_index_variable` and `set_index_variable` methods respectively of
 a `Data` object.
+
+.. code:: python
+
+   >>> count = cfdm.Count(data=cf.Data([3, 2]))
+   >>> count.set_property("long_name", "number of obs for this timeseries")
+   >>> compressed_data = numpy.array([1, 3, 4, 3, 6])
+   >>> data = cfdm.RaggedContiguousArray(compressed_array=cfdm.NumpyArray(compressed_data),
+   ...                                   shape=(2, 3), size=6, ndim=2,
+   ...                                   count_array=count)
+   >>> z = cfdm.AuxiliaryCoordinate(data=cf.Data(data))
+   >>> z.properties({'standard_name': 'height',
+   ...               'units': 'km',
+   ...               'positive': 'up'})
+
+
+.. code:: python
+   
+   >>> z.get_array()
+   >>> z.data.get_compression_type()
+   'ragged contiguous'
+   >>> z.data.get_compressed_array()
+
+   >>> z.data.get_count_variable()
 
 This is illustrated with the file **contiguous.nc** (`download`):
 
@@ -415,10 +444,12 @@ This is illustrated with the file **contiguous.nc** (`download`):
    }
 ..
 
+.. code:: python
+   
    >>> c = cfdm.read('contiguous.nc')[0]
    >>> print(c)
    >>> c.get_array()
-   >>> c.data.get_compressed_array().get_array()
+   >>> c.data.get_compressed_????().get_array()
    >>> c.data.get_count_variable().get_array()
 
 Gathering

@@ -3380,7 +3380,7 @@ variable.
             shape=uncompressed_shape,
             size=uncompressed_size,
             sample_axis=sample_axis,
-            list_array=list_variable,
+            list_variable=list_variable,
         )
     #--- End: def
     
@@ -3403,7 +3403,7 @@ netCDF variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            count_array=count_variable)
+            count_variable=count_variable)
     #--- End: def
     
     def _create_ragged_indexed_array(self, ragged_indexed_array,
@@ -3425,7 +3425,7 @@ netCDF variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            index_array=index_variable)
+            index_variable=index_variable)
     #--- End: def
     
     def _create_ragged_indexed_contiguous_array(self,
@@ -3449,8 +3449,8 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            count_array=count_variable,
-            index_array=index_variable)
+            count_variable=count_variable,
+            index_variable=index_variable)
     #--- End: def
     
     def _create_Data(self, array=None, ncvar=None):

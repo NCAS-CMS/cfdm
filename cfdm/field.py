@@ -2,7 +2,6 @@ from __future__ import print_function
 from builtins import (str, super, zip)
 
 import re
-
 from . import mixin
 from . import core
 
@@ -16,26 +15,24 @@ class Field(mixin.NetCDFVariable,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
-#        with_metaclass(abc.ABCMeta, type('NewBase', (mixin.ConstructAccess, mixin.PropertiesData, structure.Field), {}))):
     '''A CF field construct.
 
-The field construct is central to the CF data model. A field
-corresponds to a CF-netCDF data variable with all of its metadata. All
-CF-netCDF elements are mapped to some element of the CF field
-construct, and the field constructs completely contain all the data
-and metadata which can be extracted from the file using the CF
-conventions. 
+The field construct is central to the CF data model, and includes all
+the other constructs. A field corresponds to a CF-netCDF data variable
+with all of its metadata. All CF-netCDF elements are mapped to a field
+construct or some element of the CF field construct. The field
+construct contains all the data and metadata which can be extracted
+from the file using the CF conventions.
 
 The field construct consists of a data array and the definition of its
-domain, ancillary metadata fields defined over the same domain, and
-cell method constructs to describe how the cell values represent the
-variation of the physical quantity within the cells of the
-domain. Because the CF conventions do not mention the concept of the
-domain, we do not regard it as a construct of the data model.
-Instead, the domain is defined collectively by various other
-constructs included in the field. All of the constructs contained by
-the field construct are optional. The only component of the field
-which is mandatory is the data array.
+domain (that describes the locations of each cell of the data array),
+field ancillary constructs containing metadata defined over the same
+domain, and cell method constructs to describe how the cell values
+represent the variation of the physical quantity within the cells of
+the domain. The domain is defined collectively by the following
+constructs of the CF data model: domain axis, dimension coordinate,
+auxiliary coordinate, cell measure, coordinate reference and domain
+ancillary constructs.
 
 The field construct also has optional properties to describe aspects
 of the data that are independent of the domain. These correspond to

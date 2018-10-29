@@ -924,14 +924,14 @@ axes, and possibly other axes, are returned.
 
     def initialise_GatheredArray(self, compressed_array=None,
                                  ndim=None, shape=None, size=None,
-                                 sample_axis=None, list_array=None):
+                                 sample_axis=None, list_variable=None):
         '''
 
         '''
         cls = self.get_class('GatheredArray')
         return cls(compressed_array=compressed_array, ndim=ndim,
                    shape=shape, size=size, sample_axis=sample_axis,
-                   list_array=list_array)
+                   list_variable=list_variable)
     #--- End: def
 
     def initialise_Index(self):
@@ -962,36 +962,40 @@ axes, and possibly other axes, are returned.
 
     def initialise_RaggedContiguousArray(self, compressed_array=None,
                                          ndim=None, shape=None,
-                                         size=None, count_array=None):
+                                         size=None,
+                                         count_variable=None):
         '''
         '''
         cls = self.get_class('RaggedContiguousArray')
         return cls(compressed_array=compressed_array, ndim=ndim,
-                   shape=shape, size=size, count_array=count_array)
+                   shape=shape, size=size,
+                   count_variable=count_variable)
     #--- End: def
 
     def initialise_RaggedIndexedArray(self, compressed_array=None,
                                       ndim=None, shape=None,
-                                      size=None, index_array=None):
+                                      size=None, index_variable=None):
         '''
         '''
         cls = self.get_class('RaggedIndexedArray')
         return cls(compressed_array=compressed_array, ndim=ndim,
-                   shape=shape, size=size, index_array=index_array)
+                   shape=shape, size=size,
+                   index_variable=index_variable)
     #--- End: def
 
     def initialise_RaggedIndexedContiguousArray(self,
                                                 compressed_array=None,
                                                 ndim=None, shape=None,
                                                 size=None,
-                                                count_array=None,
-                                                index_array=None):
+                                                count_variable=None,
+                                                index_variable=None):
         '''
         '''
         cls = self.get_class('RaggedIndexedContiguousArray')
         return cls(compressed_array=compressed_array, ndim=ndim,
-                   shape=shape, size=size, count_array=count_array,
-                   index_array=index_array)
+                   shape=shape, size=size,
+                   count_variable=count_variable,
+                   index_variable=index_variable)
     #--- End: def
 
     def is_climatology(self, coordinate):
