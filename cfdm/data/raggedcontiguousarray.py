@@ -3,9 +3,11 @@ from builtins import super
 import numpy
 
 from . import abstract
+from . import mixin
 
 
-class RaggedContiguousArray(abstract.CompressedArray):
+class RaggedContiguousArray(mixin.RaggedContiguous,
+                            abstract.CompressedArray):
     '''A container for a contiguous ragged compressed array.
 
 A collection of features stored using a contiguous ragged array
@@ -80,9 +82,11 @@ indexing (given the restrictions on the type of indices allowed) is:
         # The uncompressed array has dimensions (instance
         # dimension, element dimension).
         # --------------------------------------------------------
-            
+
+        count_array = self.get_count_variable().get_array()
+        
         start = 0 
-        for i, n in enumerate(self.count_variable.get_array()):
+        for i, n in enumerate(count_array):
             n = int(n)
             sample_indices = slice(start, start + n)
             
@@ -97,10 +101,4 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-
-    @property
-    def count_variable(self):
-        '''
-        '''
-        return self._count_variable
 #--- End: class

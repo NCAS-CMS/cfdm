@@ -98,9 +98,9 @@ class Constructs(core.Constructs):
         return self.constructs(construct_type='coordinate_reference', copy=copy)
     #--- End: def
 
-    def dimension_coordinates(self, axes=None, copy=False):
-        return self.constructs(construct_type='dimension_coordinate', axes=axes, copy=copy)
-    #--- End: def
+#    def dimension_coordinates(self, axes=None, copy=False):
+#        return self.constructs(construct_type='dimension_coordinate', axes=axes, copy=copy)
+#    #--- End: def
 
     def domain_axis_name(self, axis):
         '''Return the canonical name for an axis.
@@ -132,9 +132,10 @@ class Constructs(core.Constructs):
 
         construct_axes = self.construct_axes()
 
-        name = None
-        
-        for key, dim in self.dimension_coordinates().items():
+        dimension_coordinates = self.constructs(construct_type='dimension_coordinate')
+
+        name = None        
+        for key, dim in dimension_coordinates.items():
             if construct_axes[key] == (axis,):
                 # Get the name from a dimension coordinate
                 name = dim.name(ncvar=False, default=None)
@@ -143,8 +144,10 @@ class Constructs(core.Constructs):
         if name is not None:
             return name
 
+        auxiliary_coordinates = self.constructs(construct_type='auxiliary_coordinate')
+        
         found = False
-        for key, aux in self.auxiliary_coordinates().items():
+        for key, aux in auxiliary_coordinates.items():
             if construct_axes[key] == (axis,):
                 if found:
                     name = None

@@ -1,6 +1,6 @@
 from future import standard_library
 standard_library.install_aliases()
-from builtins import str
+from builtins import (str, super)
 #from functools import reduce
 
 import os
@@ -56,6 +56,8 @@ class NetCDFArray(abstract.Array):
 ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
         '''
+        super().__init__()
+        
         self._netcdf = None
         
         # By default, close the netCDF file after data array access

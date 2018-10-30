@@ -61,7 +61,7 @@ indexing (given the restrictions on the type of indices allowed) is:
 'ragged contiguous'
 
         '''
-        return getattr(self, '_compression_type', None)
+        return getattr(self, '_compression_type', None)  #####PPPPPP
 #        return self._get_component('_compression_type', '')
     #--- End: def
 
@@ -130,8 +130,9 @@ True
 Only certain type of indices are allowed. See the *indices* parameter
 for details.
 
-Indexing is similar to numpy indexing. The only difference to numpy
-indexing (given the restrictions on the type of indices allowed) is
+Indexing is similar to numpy indexing. Given the restrictions on the
+type of indices allowed - see the *indicies* parameter - the only
+difference to numpy indexing is
 
   * When two or more dimension's indices are sequences of integers
     then these indices work independently along each dimension

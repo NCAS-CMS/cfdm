@@ -3,9 +3,12 @@ from builtins import (range, super, zip)
 import numpy
 
 from . import abstract
+from . import mixin
 
 
-class RaggedIndexedContiguousArray(abstract.CompressedArray):
+class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
+                                   mixin.RaggedIndexed,
+                                   abstract.CompressedArray):
     '''A container for an indexed contiguous ragged compressed array.
 
 A collection of features, each of which is sequence of (vertical)
@@ -87,8 +90,8 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
-        count_array = self.count_variable.get_array()
-        index_array = self.index_variable.get_array()
+        count_array = self.get_count_variable().get_array()
+        index_array = self.get_index_variable().get_array()
         
         # Loop over instances
         for i in range(uarray.shape[0]):
@@ -129,16 +132,5 @@ indexing (given the restrictions on the type of indices allowed) is:
 
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
-
-    @property
-    def count_variable(self):
-        '''
-        '''
-        return self._count_variable
-
-    @property
-    def index_variable(self):
-        '''
-        '''
-        return self._index_variable
+    
 #--- End: class

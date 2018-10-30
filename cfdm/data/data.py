@@ -557,32 +557,6 @@ data array shape.
         return d
     #--- End: def
 
-    def get_count_data(self, *default):
-        '''
-:Returns:
-
-    out: `Data` or `None`
-
-        '''
-        data = self._get_Array(None)
-        if data is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no data".format(
-                self.__class__.__name__))
-        
-        array = getattr(data, 'count_variable', None)
-        if array is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no count array".format(
-                self.__class__.__name__))
-        
-        return array
-    #--- End: def
-
 #    def compress_by_gathering(self, list_data, compressed_axes, replace_list_data=False
 
 #    def set_list_data(self, list_data, compressed_axes=None,
@@ -648,80 +622,80 @@ used.
 
     def get_count_variable(self, *default):
         '''
-:Returns:
+        :Returns:
 
-    out: `Data` or `None`
+        out: `Data` or `None`
 
         '''
-        data = self._get_Array(None)
-        if data is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no data".format(
-                self.__class__.__name__))
-
-        array = getattr(data, 'count_variable', None)
+        array = self._get_Array(None)
         if array is None:
             if default:
                 return default
 
             raise AttributeError("{!r} has no count variable".format(
                 self.__class__.__name__))
+
+        variable = array.get_count_variable(None)
+        if variable is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("{!r} has no count variable".format(
+                self.__class__.__name__))
         
-        return array
+        return variable
     #--- End: def
 
     def get_index_variable(self, *default):
         '''
-:Returns:
+        :Returns:
 
-    out: `Data` or `None`
+        out: `Data` or `None`
 
         '''
-        data = self._get_Array(None)
-        if data is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no data".format(
-                self.__class__.__name__))
-
-        array = getattr(data, 'index_variable', None)
+        array = self._get_Array(None)
         if array is None:
             if default:
                 return default
 
             raise AttributeError("{!r} has no index variable".format(
                 self.__class__.__name__))
+
+        variable = array.get_index_variable(None)
+        if variable is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("{!r} has no index variable".format(
+                self.__class__.__name__))
         
-        return array
+        return variable
     #--- End: def
 
     def get_list_variable(self, *default):
         '''
-:Returns:
+        :Returns:
 
-    out: `Data` or `None`
+        out: `Data` or `None`
 
         '''
-        data = self._get_Array(None)
-        if data is None:
-            if default:
-                return default
-
-            raise AttributeError("{!r} has no data".format(
-                self.__class__.__name__))
-
-        array = getattr(data, 'list_variable', None)
+        array = self._get_Array(None)
         if array is None:
             if default:
                 return default
 
             raise AttributeError("{!r} has no list variable".format(
                 self.__class__.__name__))
+
+        variable = array.get_list_variable(None)
+        if variable is None:
+            if default:
+                return default[0]
+
+            raise AttributeError("{!r} has no list variable".format(
+                self.__class__.__name__))
         
-        return array
+        return variable
     #--- End: def
 
     def get_sample_axis(self):

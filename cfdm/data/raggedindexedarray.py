@@ -3,9 +3,10 @@ from builtins import (range, super)
 import numpy
 
 from . import abstract
+from . import mixin
 
-
-class RaggedIndexedArray(abstract.CompressedArray):
+class RaggedIndexedArray(mixin.RaggedIndexed,
+                         abstract.CompressedArray):
     '''A container for an indexed ragged compressed array.
 
 A collection of features stored using an indexed ragged array combines
@@ -81,7 +82,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # The uncompressed array has dimensions (instance
         # dimension, element dimension).
         # --------------------------------------------------------
-        index_array = self.index_variable.get_array()
+        index_array = self.get_index_variable().get_array()
         
         for i in range(uarray.shape[0]):
             sample_dimension_indices = numpy.where(index_array == i)[0]
@@ -95,9 +96,4 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-    @property
-    def index_variable(self):
-        '''
-        '''
-        return self._index_variable
 #--- End: class

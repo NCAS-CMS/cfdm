@@ -3,6 +3,8 @@ from builtins import (range, super)
 
 import abc
 
+import numpy
+
 from .array import Array
 
 
@@ -89,6 +91,34 @@ integers.
 
         '''
         raise NotImplementedError()
+    #--- End: def
+
+    def _set_compressed_Array(self, data, copy=True):
+        '''Set the compressed array.
+
+.. versionadded:: 1.7
+
+:Parameters:
+
+    data: `numpy` array_like or subclass of `cfdm.data.Array`
+        The compressed data to be inserted.
+
+:Returns:
+
+    `None`
+
+:Examples:
+
+>>> d._set_compressed_Array(a)
+
+        '''
+        if not isinstance(data, Array):
+            if not isinstance(data, numpy.ndarray):
+                data = numpy.asanyarray(data)
+                
+            data = NumpyArray(data)
+
+        super()._set_Array(data, copy=copy)
     #--- End: def
 
     @property
@@ -247,16 +277,16 @@ True
     #--- End: def
 
     def get_compressed_array(self):
-        '''Return an independent numpy array containing the uncompressed data.
+        '''Return an independent numpy array containing the compressed data.
 
 :Returns:
 
     out: `numpy.ndarray`
-        The uncompressed array.
+        The compressed array.
 
 :Examples:
 
->>> n = a.get_array()
+>>> n = a.get_compressed_array()
 >>> isinstance(n, numpy.ndarray)
 True
 

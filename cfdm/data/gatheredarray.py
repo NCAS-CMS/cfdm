@@ -97,9 +97,11 @@ indexing (given the restrictions on the type of indices allowed) is:
         
         sample_indices = [slice(None)] * compressed_array.ndim
         u_indices      = [slice(None)] * self.ndim        
+
+        list_array = self.get_list_variable().get_array()
         
         zeros = [0] * n_compressed_axes
-        for j, b in enumerate(self.list_variable.get_array()):
+        for j, b in enumerate(list_array):
             sample_indices[sample_axis] = j
             # Note that it is important for this index to be an
             # integer (rather than the slice j:j+1) so that this
@@ -123,17 +125,33 @@ indexing (given the restrictions on the type of indices allowed) is:
         return self.get_subspace(uarray, indices, copy=True)
     #--- End: def
 
-    @property
-    def list_variable(self):
-        '''
-        '''
-        return self._list_variable
-    #--- End: def
+    def get_list_variable(self, *default):
+        '''TODO
 
-    def get_list(self):
+.. versionadded:: 1.7
+
+:Parameters:
+
+    default: optional
+        Return *default* if the list variable has not been set.
+
+:Returns:
+
+    out:
+        TODO
+
+**Examples**
+
+TODO
         '''
-        '''
-        return self._list_variable
+        try:
+            return self._list_variable
+        except AttributeError:
+            if default:
+                return default[0]
+
+            raise AttributeError("{!r} has no list variable".format(
+                self.__class__.__name__))
     #--- End: def
 
 #--- End: class

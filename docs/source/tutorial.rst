@@ -350,19 +350,22 @@ Discrete sampling geometries
 ----------------------------
 
 The CF data model views compressed data arrays in their uncompressed
-form. So, when a collection of discrete sampling geometry (DSG)
-features has been combined using a ragged representation to save
-space, the field contains the domain axis constructs that have been
-compressed and presents a view of the data in its `incomplete
-multidimensional form
+form. So, when a collection of `discrete sampling geometry (DSG)
+<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries>`_
+features has been combined using a compressed ragged representation to
+save space, the field construct contains the domain axis constructs
+that have been compressed and presents a view of the data in its
+uncompressed form, i.e. `incomplete multidimensional form
 <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_incomplete_multidimensional_array_representation>`_,
-even though the underlying arrays may remain in their ragged
+even though the underlying arrays may remain in their compressed
 representation.
 
-Accessing the data by a call to the `!get_array` method returns an
-array that is uncompressed, i.e. in incomplete multidimensional
-representation. The underlying array will, however, remain in its
-compressed form.
+Accessing the data by a call to the `!get_array` method returns a
+numpy array that is uncompressed. The underlying array will, however,
+remain in its compressed form. The underlying compressed array may be
+retrieved as a numpy array with the `get_compressed_array` method of a
+`Data` object.
+
 
 A subspace created by indexing will no longer be compressed,
 i.e. its underlying array will be in incomplete multidimensional
@@ -370,13 +373,9 @@ representation. The original data will, however, retain its underlying
 compressed array.
 
 If the data elements are modified by indexed assignment then the
-underlying compressed array is replaced by its incomplete
-multidimensional form.
+underlying compressed array is replaced by its uncompressed form.
 
-Indexing is based on the incomplete multidimensional form of the data.
-
-The underlying compressed array may be retrieved as a numpy array with
-the `get_compressed_array` method of a `Data` object.
+Indexing is based on the axes of the uncompressed form of the data.
 
 A count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is retrieved with the
@@ -427,9 +426,10 @@ This is illustrated with the file **contiguous.nc** (`download`):
 		:featureType = "timeSeries" ;
    }
 
-Reading and inspecting this file shows data presented in
-two-dimensional form, whilst the underlying array is still in the
-one-dimension ragged representation described in the file:
+Reading and inspecting this file shows the data presented in
+two-dimensional uncompressed form, whilst the underlying array is
+still in the one-dimension ragged representation described in the
+file:
 
 .. code:: python
    
@@ -447,18 +447,18 @@ the first axis of the field construct:
 
 .. code:: python
 	  
-   >>> t = c[1]
+   >>> ts1 = c[1]
 
-   >>> t.get_array()
+   >>> ts1.get_array()
    
-If an underlying array is compressed at the time of writing to disk,
+If the underlying array is compressed at the time of writing to disk,
 then it is written to the file as a ragged array, along with the
-required count or index variables. This means that if a dataset using
-compression is read from disk then it will be written back to disk
-with the same compression, provided that data elements were not
-modified by assignment beforehand. In that case, the compressed
-variables that were modified will be written to an output dataset with
-incomplete multi-dimensional arrays.
+required count or index variables recquired to uncompress it. This
+means that if a dataset using compression is read from disk then it
+will be written back to disk with the same compression, provided that
+data elements were not modified by assignment beforehand. Any
+compressed arrays that were modified will be written to an output
+dataset as incomplete multi-dimensional arrays.
 
 A construct with an underlying compressed array is created by
 initializing the `Data` object with a compressed array that is stored
@@ -473,18 +473,18 @@ underlying contiguous ragged array:
 
    # Define the ragged array values
    ragged_array = numpy.array([1, 3, 4, 3, 6], dtype='float32')
-   # Define count array values
+   # Define the count array values
    count_array = [2, 3]
 
    # Initialise the count variable
-   count = cfdm.Count(data=cf.Data(count_array))
-   count.set_property("long_name", "number of obs for this timeseries")
+   count_variable = cfdm.Count(data=cf.Data(count_array))
+   coun_variablet.set_property("long_name", "number of obs for this timeseries")
 
    # Initialise the contiguous ragged array object
    array = cfdm.RaggedContiguousArray(
                     compressed_array=cfdm.NumpyArray(ragged_array),
                     shape=(2, 3), size=6, ndim=2,
-                    count_array=count)
+                    count_variable=count_variable)
 
    # Initialize the auxiliary coordinate construct with the ragged
    # array and set some properties
@@ -508,10 +508,31 @@ We can now inspect the new axuiliary coordinate construct:
 Gathering
 ---------
 
-When axes have been compressed by gathering, the field contains the
-domain axes that have been compressed and presents a view of the data
-in their uncompressed form, even though the underlying arrays remain
-in their gathered representation.
+The CF data model views compressed data arrays in their uncompressed
+form. So, when axes have been `compressed by gathering
+<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering>`_,
+the field construct contains the domain axes that have been compressed
+and presents a view of the data in their uncompressed form, even
+though the underlying arrays remain in their gathered representation.
+
+Accessing the data by a call to the `!get_array` method returns a
+numpy array that is uncompressed. The underlying array will, however,
+remain in its compressed form. The underlying compressed array may be
+retrieved as a numpy array with the `get_compressed_array` method of a
+`Data` object.
+
+A subspace created by indexing will no longer be compressed,
+i.e. its underlying array will be in incomplete multidimensional
+representation. The original data will, however, retain its underlying
+compressed array.
+
+If the data elements are modified by indexed assignment then the
+underlying compressed array is replaced by its uncompressed form.
+
+Indexing is based on the axes of the uncompressed form of the data.
+
+A list variable that is required to uncompress a gathered array is
+retrieved with the `get_list_variable` method of the `Data` object.
 
 Accessing the data by indexing, or by a call to the `!get_array`
 method, always returns data that is uncompressed. The compressed data
@@ -521,10 +542,6 @@ underlying compressed array is replaced by its uncompressed form.
 
 If an underlying array is compressed at the time of writing to disk,
 then it is written as a gathered array.
-
-A list variable that is required to uncompress a gathered array is
-retrieved and set with the `get_list_variable` and `set_list_variable`
-methods respectively of a `Data` object.
 
 This is illustrated with the file **gathered.nc** (`download`):
 
@@ -560,3 +577,56 @@ This is illustrated with the file **gathered.nc** (`download`):
    >>> c.get_array
    >>> c.data.get_compressed_array().get_array()
    >>> c.data.get_list_variable().get_array()
+
+A construct with an underlying compressed array is created by
+initializing the `Data` object with a compressed array that is stored
+in the specal `GatheredArray` array object. For example, the following
+code creates a simple field construct an underlying gathered array:
+
+.. code:: python
+
+   import numpy
+
+   # Define the gathered values
+   gathered_array = numpy.array([[280, 282.5, 281], [279, 278, 277.5]], dtype='float32')
+   # Define the list array values
+   list_array = [1, 4, 5]
+
+   # Initialise the list variable
+   list_variable = cfdm.List(data=cf.Data(list_array))
+
+   # Initialise the gathered array object
+   array = cfdm.GatheredArray(
+                    compressed_array=cfdm.NumpyArray(gathered_array),
+		    sample_axis=1,
+                    shape=(2, 3, 2), size=12, ndim=3,
+                    list_variable=list_variable)
+
+   # Create the domain axis constructs for the uncompressed array
+   T = cfdm.DomainAxis(2)
+   Y = cfdm.DomainAxis(3)
+   X = cfdm.DomainAxis(2)
+   
+   # Create the field construct with the domain axes and the gathered
+   # array
+   tas = cfdm.Field(properties={'standard_name': 'air_temperature',
+                                'units': 'K'})
+   tas.set_domain_axis(T)
+   tas.set_domain_axis(Y)
+   tas.set_domain_axis(X)
+   tas.set_data(cf.Data(array), axes=[T, Y, X])			      
+
+Note that, because compression by gathering acts on a subset of domain
+axes, it is necessary to state which axis of the gathered array is the
+compressed axis (i.e. the sample axis).
+
+We can now inspect the new axuiliary coordinate construct:
+
+.. code:: python
+   
+   >>> tas.get_array()
+   >>> tas.data.get_compression_type()
+   'gathered'
+   >>> tas.data.get_compressed_array()
+
+   >>> tas.data.get_list_variable()

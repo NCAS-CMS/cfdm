@@ -135,7 +135,7 @@ class DSGTest(unittest.TestCase):
 #        for x in f:
 #            print(x)
 #            a = x.get_array()
-            
+#           
 #        print ('\ng\n')
 #        for x in g:
 #            print(x)

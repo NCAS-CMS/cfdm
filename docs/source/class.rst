@@ -90,26 +90,8 @@ Data classes
 These classes inherit, directly or indirectly, from their `cfdm.core`
 counterparts. For example, `cfdm.Data` inherits `cfdm.core.Data`.
 
-Abstract classes
-----------------
-
-These classes inherit, directly or indirectly, from their `cfdm.core`
-counterparts. For example `cfdm.data.abstract.Array` inherits
-`cfdm.core.data.abstract.Array`.
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.data.abstract.Array
-   cfdm.data.abstract.CompressedArray		
-
-These classes inherit, directly or indirectly, from their `cfdm.core`
-counterparts. For example `cfdm.data.abstract.Array` inherits
-`cfdm.core.data.abstract.Array`.
-
-Mixin classes
--------------
+Construct mixin classes
+-----------------------
 
 Each of these classes provides functionality, that is missing from the
 `cfdm.core` package, to read and write netCDF datasets and to modify
@@ -120,6 +102,8 @@ inherit from one or more of these mixin classes.
    :nosignatures:
    :toctree: classes/
 
+   cfdm.data.mixin.RaggedContiguous
+   cfdm.data.mixin.RaggedIndexed
    cfdm.mixin.ConstructAccess
    cfdm.mixin.Container
    cfdm.mixin.Coordinate
@@ -135,3 +119,29 @@ inherit from one or more of these mixin classes.
    cfdm.mixin.PropertiesDataBounds
 
    
+Data sbstract classes
+----------------------
+
+These classes inherit, directly or indirectly, from their `cfdm.core`
+counterparts. For example `cfdm.data.abstract.Array` inherits
+`cfdm.core.data.abstract.Array`.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cfdm.data.abstract.Array
+   cfdm.data.abstract.CompressedArray		
+
+
+Data mixin classes
+------------------
+
+TODO
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cfdm.data.mixin.RaggedContiguous
+   cfdm.data.mixin.RaggedIndexed

@@ -25,7 +25,7 @@ See `cfdm.core.data.NumpyArray` for an example implementation.
 
         '''
         super().__init__()
-        
+        EDIT HERE
         self.__dict__.update(kwargs)
     #--- End: def
 

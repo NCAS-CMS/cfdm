@@ -3,9 +3,6 @@
 
 .. _introduction:
 
-
-
-
 CF conventions
 --------------
 
@@ -60,5 +57,9 @@ The **cfdm** package can
 
 * create subspaces of field constructs, and
 
-* write field constructs to a netCDF dataset on disk.
+* write field constructs to a netCDF dataset on disk,
 
+* incorporate metadata stored in external files,
+
+* read and write compressed data (i.e. ragged or gathered arrays),
+  whilst presenting a view of the data in its uncompressed form.
