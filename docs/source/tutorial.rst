@@ -359,48 +359,32 @@ multidimensional form
 even though the underlying arrays may remain in their ragged
 representation.
 
-Accessing the data by indexing, or by a call to the `!get_array`
-method, always returns data that is uncompressed, i.e. in incomplete
-multidimensional representation. The compressed data may be retrieved
-via the `get_compressed_data` method of a `Data` object. If the
-elements are modified by indexed assignment then the underlying
-compressed array is replaced by its incomplete multidimensional form.
+Accessing the data by a call to the `!get_array` method returns an
+array that is uncompressed, i.e. in incomplete multidimensional
+representation. The underlying array will, however, remain in its
+compressed form.
 
-If an underlying array is compressed at the time of writing to disk,
-then it is written to the file as a ragged array.
+A subspace created by indexing will no longer be compressed,
+i.e. its underlying array will be in incomplete multidimensional
+representation. The original data will, however, retain its underlying
+compressed array.
+
+If the data elements are modified by indexed assignment then the
+underlying compressed array is replaced by its incomplete
+multidimensional form.
+
+Indexing is based on the incomplete multidimensional form of the data.
+
+The underlying compressed array may be retrieved as a numpy array with
+the `get_compressed_array` method of a `Data` object.
 
 A count variable that is required to uncompress a contiguous, or
-indexed contiguous, ragged array is retrieved and set with the
-`get_count_variable` and `set_count_variable` methods respectively of
-a `Data` object.
+indexed contiguous, ragged array is retrieved with the
+`get_count_variable` method of the `Data` object.
 
 An index variable that is required to uncompress a indexed, or indexed
-contiguous, ragged array is retrieved and set with the
-`get_index_variable` and `set_index_variable` methods respectively of
-a `Data` object.
-
-.. code:: python
-
-   >>> count = cfdm.Count(data=cf.Data([3, 2]))
-   >>> count.set_property("long_name", "number of obs for this timeseries")
-   >>> compressed_data = numpy.array([1, 3, 4, 3, 6])
-   >>> data = cfdm.RaggedContiguousArray(compressed_array=cfdm.NumpyArray(compressed_data),
-   ...                                   shape=(2, 3), size=6, ndim=2,
-   ...                                   count_array=count)
-   >>> z = cfdm.AuxiliaryCoordinate(data=cf.Data(data))
-   >>> z.properties({'standard_name': 'height',
-   ...               'units': 'km',
-   ...               'positive': 'up'})
-
-
-.. code:: python
-   
-   >>> z.get_array()
-   >>> z.data.get_compression_type()
-   'ragged contiguous'
-   >>> z.data.get_compressed_array()
-
-   >>> z.data.get_count_variable()
+contiguous, ragged array is retrieved with the `get_index_variable`
+method of the `Data` object.
 
 This is illustrated with the file **contiguous.nc** (`download`):
 
@@ -442,15 +426,84 @@ This is illustrated with the file **contiguous.nc** (`download`):
 		:Conventions = "CF-1.6" ;
 		:featureType = "timeSeries" ;
    }
-..
+
+Reading and inspecting this file shows data presented in
+two-dimensional form, whilst the underlying array is still in the
+one-dimension ragged representation described in the file:
 
 .. code:: python
    
    >>> c = cfdm.read('contiguous.nc')[0]
    >>> print(c)
+   >>> c.data.get_compression_type()
    >>> c.get_array()
-   >>> c.data.get_compressed_????().get_array()
-   >>> c.data.get_count_variable().get_array()
+   >>> c.data.get_compressed_array()
+   >>> count = c.data.get_count_variable()
+   >>> count
+   >>> count.get_array()
+
+We can easily select the timeseries for the second station by indexing
+the first axis of the field construct:
+
+.. code:: python
+	  
+   >>> t = c[1]
+
+   >>> t.get_array()
+   
+If an underlying array is compressed at the time of writing to disk,
+then it is written to the file as a ragged array, along with the
+required count or index variables. This means that if a dataset using
+compression is read from disk then it will be written back to disk
+with the same compression, provided that data elements were not
+modified by assignment beforehand. In that case, the compressed
+variables that were modified will be written to an output dataset with
+incomplete multi-dimensional arrays.
+
+A construct with an underlying compressed array is created by
+initializing the `Data` object with a compressed array that is stored
+in one of three specal array objects: `RaggedContiguousArray`,
+`RaggedIndexedArray` or `RaggedIndexedContiguousArray`. For example,
+the following code creates an auxiliary coordinate construct with an
+underlying contiguous ragged array:
+
+.. code:: python
+
+   import numpy
+
+   # Define the ragged array values
+   ragged_array = numpy.array([1, 3, 4, 3, 6], dtype='float32')
+   # Define count array values
+   count_array = [2, 3]
+
+   # Initialise the count variable
+   count = cfdm.Count(data=cf.Data(count_array))
+   count.set_property("long_name", "number of obs for this timeseries")
+
+   # Initialise the contiguous ragged array object
+   array = cfdm.RaggedContiguousArray(
+                    compressed_array=cfdm.NumpyArray(ragged_array),
+                    shape=(2, 3), size=6, ndim=2,
+                    count_array=count)
+
+   # Initialize the auxiliary coordinate construct with the ragged
+   # array and set some properties
+   z = cfdm.AuxiliaryCoordinate(
+                    data=cf.Data(array),
+                    properties={'standard_name': 'height',
+                                'units': 'km',
+                                'positive': 'up'})
+
+We can now inspect the new axuiliary coordinate construct:
+
+.. code:: python
+   
+   >>> z.get_array()
+   >>> z.data.get_compression_type()
+   'ragged contiguous'
+   >>> z.data.get_compressed_array()
+
+   >>> z.data.get_count_variable()
 
 Gathering
 ---------
