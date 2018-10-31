@@ -56,35 +56,24 @@ class NetCDFArray(abstract.Array):
 ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
         '''
-        super().__init__()
+        super().__init__(filename=filename, ncvar=ncvar, varid=varid)
         
         self._netcdf = None
         
         # By default, close the netCDF file after data array access
         self._close = True
 
-        if filename is not None:
-#            u = urllib.parse.urlparse(filename)
-#            if u.scheme == '':
-#                filename = os.path.abspath(filename)
-
-            self.filename = filename
-        #--- End: def
-        
-        self._ncvar = ncvar
-        self._varid = varid
-        
         if ndim is not None:
-            self._ndim = ndim
+            self._set_component('ndim', ndim)
         
         if size is not None:
-            self._size = size
+            self._set_component('size', size)
 
         if shape is not None:
-            self._shape = shape
+            self._set_component('shape', shape)
 
         if dtype is not None:
-            self._dtype = dtype
+            self._set_component('dtype', dtype)
     #--- End: def
             
     def __getitem__(self, indices):
@@ -109,13 +98,13 @@ indexing (given the restrictions on the type of indices allowed) is:
         
 #        indices = tuple(self.parse_indices(indices))
         
-        ncvar = self.ncvar
+        ncvar = self.get_ncvar()
         if ncvar is not None:
             # Get the variable by name
             array = netcdf.variables[ncvar][indices]
         else:
             # Get the variable by netCDF ID
-            varid = self.varid
+            varid = self.get_varid()
             for value in netcdf.variables.values():
                 if value._varid == varid:
                     array = value[indices]
@@ -184,13 +173,14 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
 '''      
-        name = self.ncvar
+        name = self.get_ncvar()
         if name is None:
-            name = "varid={0}".format(self.varid)
+            name = "varid={0}".format(self.get_varid())
         else:
             name = "variable={0}".format(name)
 
-        return "file={0} {1} shape={2}".format(self.filename, name, self.shape)
+        return "file={0} {1} shape={2}".format(self.get_filename(),
+                                               name, self.shape)
     #--- End: def
 
     # ----------------------------------------------------------------
@@ -208,7 +198,7 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        return self._dtype
+        return self._get_component('dtype')
     #--- End: def
     
     @property
@@ -238,7 +228,7 @@ dtype('float64')
 >>> a.size
 1
         '''
-        return self._ndim
+        return self._get_component('ndim')
     #--- End: def
     
     @property
@@ -268,7 +258,7 @@ dtype('float64')
 >>> a.size
 1
         '''
-        return self._shape
+        return self._get_component('shape')
     #--- End: def
     
     @property
@@ -299,11 +289,19 @@ dtype('float64')
 1
 
         '''
-        return self._size
+        return self._get_component('size')
     #--- End: def
     
-    @property
-    def ncvar(self):
+    def get_filename(self):
+        '''The name of the netCDF file containing the array.
+
+:Examples:
+TODO
+        '''
+        return self._get_component('filename')
+    #--- End: def
+    
+    def get_ncvar(self):
         '''The name of the netCDF variable containing the array.
 
 :Examples:
@@ -319,11 +317,10 @@ None
 4
 
         '''
-        return self._ncvar    
+        return self._get_component('ncvar')
     #--- End: def
     
-    @property
-    def varid(self):
+    def get_varid(self):
         '''The UNIDATA netCDF interface ID of the variable containing the
 array.
 
@@ -339,7 +336,7 @@ None
 >>> print(self.varid)
 4
         '''
-        return self._varid
+        return self._get_component('varid')
     #--- End: def
     
     # ----------------------------------------------------------------
@@ -393,7 +390,7 @@ True
 :Examples:
 
 >>> netcdf = a.open()
->>> variable = netcdf.variables[self.ncvar]
+>>> variable = netcdf.variables[self.get_ncvar()]
 >>> variable.getncattr('standard_name')
 'eastward_wind'
 
@@ -401,7 +398,7 @@ True
         netcdf = self._netcdf
         if netcdf is None:
             try:        
-                netcdf = netCDF4.Dataset(self.filename, 'r')
+                netcdf = netCDF4.Dataset(self.get_filename(), 'r')
             except RuntimeError as error:
                 raise RuntimeError("{}: {}".format(error, filename))        
 

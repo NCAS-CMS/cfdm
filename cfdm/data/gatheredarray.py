@@ -51,7 +51,7 @@ uncompress the data.
                          shape=shape, ndim=ndim, size=size,
                          sample_axis=sample_axis,
                          compression_type='gathered',
-                         _list_variable=list_variable)
+                         list_variable=list_variable)
     #--- End: def
 
     def __getitem__(self, indices):
@@ -77,13 +77,13 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         
-        compressed_array = self.compressed_array
+        compressed_array = self._get_component('compressed_array')
 
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
         # Initialise the uncomprssed array
-        sample_axis = self.sample_axis
+        sample_axis = self.get_sample_axis()
             
         compressed_axes = self.get_compressed_axes()
         
@@ -144,14 +144,15 @@ indexing (given the restrictions on the type of indices allowed) is:
 
 TODO
         '''
-        try:
-            return self._list_variable
-        except AttributeError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no list variable".format(
-                self.__class__.__name__))
+        return self._get_component('list_variable', *default)
+#        try:
+#            return self._list_variable
+#        except AttributeError:
+#            if default:
+#                return default[0]
+#
+#            raise AttributeError("{!r} has no list variable".format(
+#                self.__class__.__name__))
     #--- End: def
 
 #--- End: class

@@ -25,8 +25,11 @@ See `cfdm.core.data.NumpyArray` for an example implementation.
 
         '''
         super().__init__()
-        EDIT HERE
-        self.__dict__.update(kwargs)
+
+#        self.__dict__.update(kwargs)
+
+        for key, value in kwargs.items():
+            self._set_component(key, value, copy=False)
     #--- End: def
 
     def __array__(self):

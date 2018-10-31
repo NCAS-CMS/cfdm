@@ -61,8 +61,8 @@ indexing (given the restrictions on the type of indices allowed) is:
 'ragged contiguous'
 
         '''
-        return getattr(self, '_compression_type', None)  #####PPPPPP
-#        return self._get_component('_compression_type', '')
+#        return getattr(self, '_compression_type', None)  #####PPPPPP
+        return self._get_component('_compression_type', '')
     #--- End: def
 
     def get_compressed_array(self, *default):
@@ -80,7 +80,7 @@ indexing (given the restrictions on the type of indices allowed) is:
 True
 
         '''
-        return self.compressed_array.get_compressed_array()
+        return self._get_component('compressed_array').get_compressed_array()
     #--- End: def
     
     def get_compressed_axes(self):
@@ -99,7 +99,7 @@ True
         return []
     #--- End: def
 
-    def get_sample_axis(self):
+    def get_sample_axis(self, *default):
         '''The type of compression that has been applied to the array.
 
 :Returns:
@@ -120,7 +120,8 @@ True
 'ragged contiguous'
 
         '''
-        return getattr(self, 'sample_axis', None)
+        return self._get_component('sample_axis', *default)
+#        return getattr(self, 'sample_axis', None)
     #--- End: def
 
     @classmethod

@@ -71,9 +71,9 @@ See `cfdm.data.GatheredArray` for an example implementation.
 
         '''
         super().__init__(compressed_array=compressed_array,
-                         _shape=shape, _size=size, _ndim=ndim,
-                         _sample_axis=sample_axis,
-                         _compression_type=compression_type, **kwargs)
+                         shape=shape, size=size, ndim=ndim,
+                         sample_axis=sample_axis,
+                         compression_type=compression_type, **kwargs)
     #--- End: def
 
     @abc.abstractmethod
@@ -133,7 +133,7 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        return self.compressed_array.dtype
+        return self._get_component('compressed_array').dtype
     #--- End: def
 
     @property
@@ -164,15 +164,15 @@ dtype('float64')
 1
 
         '''
-        return self._ndim
+        return self._get_component('ndim')
     #--- End: def
 
-    @property
-    def sample_axis(self):
-        '''
-        '''
-        return self._sample_axis
-    #--- End: def
+#    @property
+#    def sample_axis(self):
+#        '''
+#        '''
+#        return self._get_component('sample_axis')
+#    #--- End: def
 
     @property
     def shape(self):
@@ -202,7 +202,7 @@ dtype('float64')
 1
 
         '''
-        return self._shape
+        return self._get_component('shape')
     #--- End: def
 
     @property
@@ -233,7 +233,7 @@ dtype('float64')
 1
 
         '''
-        return self._size
+        return self._get_component('size')
     #--- End: def
 
     def get_compressed_axes(self):
@@ -254,8 +254,10 @@ dtype('float64')
 [1, 2]
 
         '''
-        sample_axis = self.sample_axis
-        return list(range(sample_axis, self.ndim - (self.compressed_array.ndim - sample_axis - 1)))
+        sample_axis = self.get_sample_axis()
+        compressed_ndim = self._get_component('compressed_array').ndim
+        
+        return list(range(sample_axis, self.ndim - (compressed_ndim - sample_axis - 1)))
     #--- End: def
 
     def get_array(self):
@@ -291,7 +293,7 @@ True
 True
 
         '''
-        return self.compressed_array.get_array()
+        return self._get_component('compressed_array').get_array()
     #--- End: def
 
 #--- End: class

@@ -33,7 +33,8 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        return self.array.dtype
+#        return self.array.dtype
+        return self._get_component('array').dtype
     #--- End: def
 
     @property
@@ -64,7 +65,7 @@ dtype('float64')
 1
 
         '''
-        return self.array.ndim
+        return self._get_component('array').ndim
     #--- End: def
     
     @property
@@ -95,7 +96,7 @@ dtype('float64')
 1
 
 '''
-        return self.array.shape
+        return self._get_component('array').shape
     #--- End: def
     
     @property
@@ -125,7 +126,7 @@ dtype('float64')
 >>> a.size
 1
         '''
-        return self.array.size
+        return self._get_component('array').size
     #--- End: def
     
     def get_array(self):
@@ -143,7 +144,7 @@ dtype('float64')
 True
 
         '''
-        array = self.array
+        array = self._get_component('array')
         
         if not array.ndim and numpy.ma.isMA(array):
             # This is because numpy.ma.copy doesn't work for

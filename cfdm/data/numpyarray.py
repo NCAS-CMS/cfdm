@@ -25,7 +25,8 @@ indexing (given the restrictions on the type of indices allowed) is:
     (similar to the way vector subscripts work in Fortran).
 
         '''
-        return self.get_subspace(self.array, indices, copy=True)
+        return self.get_subspace(self._get_component('array'), indices,
+                                 copy=True)
     #--- End: def
 
 #--- End: class

@@ -24,14 +24,15 @@ class RaggedContiguous(object):
 
 TODO
         '''
-        try:
-            return self._count_variable
-        except AttributeError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no count variable".format(
-                self.__class__.__name__))
+        return self._get_component('count_variable', *default)
+#        try:
+#            return self._count_variable
+#        except AttributeError:
+#            if default:
+#                return default[0]
+#
+#            raise AttributeError("{!r} has no count variable".format(
+#                self.__class__.__name__))
     #--- End: def
 
 #--- End: class
@@ -61,14 +62,15 @@ class RaggedIndexed(object):
 TODO
 
         '''
-        try:
-            return self._index_variable
-        except AttributeError:
-            if default:
-                return default[0]
-
-            raise AttributeError("{!r} has no index variable".format(
-                self.__class__.__name__))
+        return self._get_component('index_variable', *default)
+#        try:
+#            return self._index_variable
+#        except AttributeError:
+#            if default:
+#                return default[0]
+#
+#            raise AttributeError("{!r} has no index variable".format(
+#                self.__class__.__name__))
     #--- End: def
     
 #--- End: class
