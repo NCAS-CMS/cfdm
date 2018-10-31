@@ -43,9 +43,9 @@ sample dimension belongs to.
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
-                         sample_axis=0,
+                         compressed_dimension=0,
                          compression_type='ragged indexed',
-                         _index_variable=index_variable)
+                         index_variable=index_variable)
     #--- End: def
 
     def __getitem__(self, indices):

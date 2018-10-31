@@ -449,7 +449,7 @@ axes, and possibly other axes, are returned.
     def get_sample_dimension_position(self, construct):
         '''
         '''
-        return construct.get_data().get_sample_axis()
+        return construct.get_data().get_compressed_dimension()
     #--- End: def
 
     def nc_get_instance_dimension(self, index, *default):
@@ -924,13 +924,15 @@ axes, and possibly other axes, are returned.
 
     def initialise_GatheredArray(self, compressed_array=None,
                                  ndim=None, shape=None, size=None,
-                                 sample_axis=None, list_variable=None):
+                                 compressed_dimension=None,
+                                 list_variable=None):
         '''
 
         '''
         cls = self.get_class('GatheredArray')
         return cls(compressed_array=compressed_array, ndim=ndim,
-                   shape=shape, size=size, sample_axis=sample_axis,
+                   shape=shape, size=size,
+                   compressed_dimension=compressed_dimension,
                    list_variable=list_variable)
     #--- End: def
 

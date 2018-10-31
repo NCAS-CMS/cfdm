@@ -42,8 +42,9 @@ belongs to.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    sample_axis: `int`
-        The position of the compressed axis in the compressed array.
+    compressed_dimension: `int`
+        The position of the compressed dimension in the compressed
+        array.
 
     count_variable: `Count`
         The "count variable" required to uncompress the data,
@@ -57,9 +58,9 @@ belongs to.
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
                          compression_type='ragged indexed contiguous',
-                         _count_variable=count_variable,
-                         _index_variable=index_variable,
-                         sample_axis=0)    
+                         count_variable=count_variable,
+                         index_variable=index_variable,
+                         compressed_dimension=0)    
     #--- End: def
 
     def __getitem__(self, indices):

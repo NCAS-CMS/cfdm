@@ -120,26 +120,26 @@ class DSGTest(unittest.TestCase):
             if g.get_property('long_name') == 'temp3':
                 break
 
-        print(g.get_array())
-        print(repr(g.data.get_list_variable().get_array()))
-        print(g.data.get_list_variable().get_array())
-        print('compression_type=',g.data.get_compression_type())
-        print(g.data.get_compressed_axes())
-        print(g.data.shape)
+#        print(g.get_array())
+#        print(repr(g.data.get_list_variable().get_array()))
+#        print(g.data.get_list_variable().get_array())
+#        print('compression_type=',g.data.get_compression_type())
+#        print(g.data.get_compressed_axes())
+#        print(g.data.shape)
 
         cfdm.write(f, 'delme.nc', _debug=False)
         g = cfdm.read('delme.nc', _debug=False)
         self.assertTrue(len(g) == len(f))
       
-        print ('\nf\n')
-        for x in f:
-            print(x)
-            a = x.get_array()
-           
-        print ('\ng\n')
-        for x in g:
-            print(x)
-            a = x.get_array()
+#        print ('\nf\n')
+#        for x in f:
+#            print(x)
+#            a = x.get_array()
+#           
+#        print ('\ng\n')
+#        for x in g:
+#            print(x)
+#            a = x.get_array()
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))

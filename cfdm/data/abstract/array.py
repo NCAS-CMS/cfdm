@@ -39,7 +39,6 @@ indexing (given the restrictions on the type of indices allowed) is:
         raise NotImplementedError()
     #--- End: def
 
-#    @property
     def get_compression_type(self):
         '''The type of compression that has been applied to the array.
 
@@ -62,7 +61,7 @@ indexing (given the restrictions on the type of indices allowed) is:
 
         '''
 #        return getattr(self, '_compression_type', None)  #####PPPPPP
-        return self._get_component('_compression_type', '')
+        return self._get_component('compression_type', '')
     #--- End: def
 
     def get_compressed_array(self, *default):
@@ -99,28 +98,19 @@ True
         return []
     #--- End: def
 
-    def get_sample_axis(self, *default):
-        '''The type of compression that has been applied to the array.
+    def get_compressed_dimension(self, *default):
+        '''TODO
 
 :Returns:
 
     out: `str`
-        The compression type. An empty string means that no
-        compression has been applied.
+        TODO
 
 :Examples:
 
->>> c.compression_type
-''
-
->>> c.compression_type
-'gathered'
-
->>> c.compression_type
-'ragged contiguous'
-
+TODO
         '''
-        return self._get_component('sample_axis', *default)
+        return self._get_component('compressed_dimension', *default)
 #        return getattr(self, 'sample_axis', None)
     #--- End: def
 

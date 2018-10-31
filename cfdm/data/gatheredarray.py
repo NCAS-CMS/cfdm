@@ -22,7 +22,8 @@ uncompress the data.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, sample_axis=None, list_variable=None):
+                 ndim=None, compressed_dimension=None,
+                 list_variable=None):
         '''**Initialization**
 
 :Parameters:
@@ -39,8 +40,9 @@ uncompress the data.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    sample_axis: `int`
-        The position of the compressed axis in the compressed array.
+    compressed_dimension: `int`
+        The position of the compressed dimension in the compressed
+        array.
 
     list_variable: `List`
         The "list variable" required to uncompress the data, identical
@@ -49,7 +51,7 @@ uncompress the data.
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, ndim=ndim, size=size,
-                         sample_axis=sample_axis,
+                         compressed_dimension=compressed_dimension,
                          compression_type='gathered',
                          list_variable=list_variable)
     #--- End: def
@@ -83,7 +85,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
 
         # Initialise the uncomprssed array
-        sample_axis = self.get_sample_axis()
+        compressed_dimension = self.get_compressed_dimension()
             
         compressed_axes = self.get_compressed_axes()
         
@@ -102,7 +104,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         
         zeros = [0] * n_compressed_axes
         for j, b in enumerate(list_array):
-            sample_indices[sample_axis] = j
+            sample_indices[compressed_dimension] = j
             # Note that it is important for this index to be an
             # integer (rather than the slice j:j+1) so that this
             # dimension is dropped from

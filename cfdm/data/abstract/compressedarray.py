@@ -34,14 +34,15 @@ being derived from the compressed array):
   * Number of elements in the uncompressed array (see `size`)
 
   * The sample axis, i.e. which axis in the compressed array
-    represents two or more uncompressed axes (see `sample_axis`)
+    represents two or more uncompressed axes (see
+    `get_compressed_dimension`)
 
 See `cfdm.data.GatheredArray` for an example implementation.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
-                 ndim=None, sample_axis=None, compression_type=None,
-                 **kwargs):
+                 ndim=None, compressed_dimension=None,
+                 compression_type=None, **kwargs):
         '''**Initialization**
 
 :Parameters:
@@ -59,8 +60,9 @@ See `cfdm.data.GatheredArray` for an example implementation.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    sample_axis: `int`
-        The position of the compressed axis in the compressed array.
+    compressed_dimension: `int`
+        The position of the compressed dimension in the compressed
+        array.
 
     compression_type: `str`
         The type of compression.        
@@ -72,7 +74,7 @@ See `cfdm.data.GatheredArray` for an example implementation.
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
-                         sample_axis=sample_axis,
+                         compressed_dimension=compressed_dimension,
                          compression_type=compression_type, **kwargs)
     #--- End: def
 
@@ -167,13 +169,6 @@ dtype('float64')
         return self._get_component('ndim')
     #--- End: def
 
-#    @property
-#    def sample_axis(self):
-#        '''
-#        '''
-#        return self._get_component('sample_axis')
-#    #--- End: def
-
     @property
     def shape(self):
         '''Shape of the uncompressed data.
@@ -254,10 +249,10 @@ dtype('float64')
 [1, 2]
 
         '''
-        sample_axis = self.get_sample_axis()
+        compressed_dimension = self.get_compressed_dimension()
         compressed_ndim = self._get_component('compressed_array').ndim
         
-        return list(range(sample_axis, self.ndim - (compressed_ndim - sample_axis - 1)))
+        return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
     #--- End: def
 
     def get_array(self):

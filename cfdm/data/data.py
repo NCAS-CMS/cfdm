@@ -698,16 +698,16 @@ used.
         return variable
     #--- End: def
 
-    def get_sample_axis(self):
+    def get_compressed_dimension(self):
         '''
         '''        
         a = self._get_Array(None)
 
-        sample_axis = a.get_sample_axis()
-        if sample_axis is None:
-            raise ValueError("not compressed: can't get sample axis")
+        compressed_dimension = a.get_compressed_dimension()
+        if compressed_dimension is None:
+            raise ValueError("not compressed: can't get compressed dimension")
 
-        return sample_axis
+        return compressed_dimension
     #--- End: def
 
     

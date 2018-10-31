@@ -2951,11 +2951,11 @@ variable's netCDF dimensions.
                         uncompressed_shape = tuple(
                             [g['internal_dimension_sizes'][dim]
                              for dim in self._ncdimensions(ncvar)])
-                        sample_axis = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
+                        compressed_dimension = g['variable_dimensions'][ncvar].index(c['sample_dimension'])
                         array = self._create_gathered_array(
                             gathered_array=array,
                             uncompressed_shape=uncompressed_shape,
-                            sample_axis=sample_axis,
+                            compressed_dimension=compressed_dimension,
                             list_variable=c['list_variable'])
                     elif 'ragged_indexed_contiguous' in c:
                         # --------------------------------------------
@@ -3356,7 +3356,8 @@ dimensions are returned.
 
     def _create_gathered_array(self, gathered_array=None,
                                uncompressed_shape=None,
-                               sample_axis=None, list_variable=None):
+                               compressed_dimension=None,
+                               list_variable=None):
         '''Create a `Data` object for a compressed-by-gathering netCDF
 variable.
 
@@ -3379,7 +3380,7 @@ variable.
             ndim=uncompressed_ndim,
             shape=uncompressed_shape,
             size=uncompressed_size,
-            sample_axis=sample_axis,
+            compressed_dimension=compressed_dimension,
             list_variable=list_variable,
         )
     #--- End: def

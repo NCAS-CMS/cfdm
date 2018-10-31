@@ -598,7 +598,7 @@ code creates a simple field construct an underlying gathered array:
    # Initialise the gathered array object
    array = cfdm.GatheredArray(
                     compressed_array=cfdm.NumpyArray(gathered_array),
-		    sample_axis=1,
+		    compressed_dimension=1,
                     shape=(2, 3, 2), size=12, ndim=3,
                     list_variable=list_variable)
 
@@ -616,9 +616,9 @@ code creates a simple field construct an underlying gathered array:
    tas.set_domain_axis(X)
    tas.set_data(cf.Data(array), axes=[T, Y, X])			      
 
-Note that, because compression by gathering acts on a subset of domain
-axes, it is necessary to state which axis of the gathered array is the
-compressed axis (i.e. the sample axis).
+Note that, because compression by gathering acts on a subset of the
+array dimensions, it is necessary to state the position of the
+compressed dimension in the compressed array.
 
 We can now inspect the new axuiliary coordinate construct:
 

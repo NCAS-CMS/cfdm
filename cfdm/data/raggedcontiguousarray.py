@@ -45,7 +45,8 @@ The information needed to uncompress the data is stored in a separate
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
                          compression_type='ragged contiguous',
-                         count_variable=count_variable, sample_axis=0)
+                         count_variable=count_variable,
+                         compressed_dimension=0)
     #--- End: def
 
     def __getitem__(self, indices):
