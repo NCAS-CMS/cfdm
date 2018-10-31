@@ -25,7 +25,7 @@ The information needed to uncompress the data is stored in a separate
 
 :Parameters:
 
-    compressed_array: `Data`
+    compressed_array: subclass of `Array`
         The compressed data.
 
     shape: `tuple`
@@ -72,7 +72,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         
-        compressed_array = self._get_component('compressed_array')
+        compressed_array = self._get_compressed_Array()
 
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
@@ -94,7 +94,7 @@ indexing (given the restrictions on the type of indices allowed) is:
             u_indices = (i,
                          slice(0, sample_indices.stop - sample_indices.start))
             
-            uarray[u_indices] = compressed_array[sample_indices]
+            uarray[u_indices] = compressed_array[(sample_indices,)]
             
             start += n
         #--- End: for

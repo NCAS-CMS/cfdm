@@ -60,7 +60,6 @@ indexing (given the restrictions on the type of indices allowed) is:
 'ragged contiguous'
 
         '''
-#        return getattr(self, '_compression_type', None)  #####PPPPPP
         return self._get_component('compression_type', '')
     #--- End: def
 
@@ -111,7 +110,6 @@ True
 TODO
         '''
         return self._get_component('compressed_dimension', *default)
-#        return getattr(self, 'sample_axis', None)
     #--- End: def
 
     @classmethod
@@ -167,12 +165,12 @@ difference to numpy indexing is
     out: `numpy.ndarray`
 
         '''
-#        if indices is not Ellipsis:
-        if indices is Ellipsis:
-            pass
-        elif not isinstance(indices, tuple):
-            array = array[indices]
-        else:
+        if indices is not Ellipsis:
+#        if indices is Ellipsis:
+#            pass
+#        elif not isinstance(indices, tuple):
+#            array = array[indices]
+#        else:
             axes_with_list_indices = [i for i, x in enumerate(indices)
                                       if not isinstance(x, slice)]
             n_axes_with_list_indices = len(axes_with_list_indices)

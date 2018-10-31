@@ -151,10 +151,11 @@ integers.
 
         '''
         if not isinstance(array, Array):
-            if not isinstance(array, numpy.ndarray):
-                data = numpy.asanyarray(array)
-                
-            array = NumpyArray(array)
+            raise TypeError("asdads  0000000000000000000")
+#            if not isinstance(array, numpy.ndarray):
+#                data = numpy.asanyarray(array)
+#                
+#            array = NumpyArray(array)
 
         if copy:
             array = array.copy()

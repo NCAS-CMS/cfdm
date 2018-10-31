@@ -60,23 +60,15 @@ implementation = CFDMImplementation(version = __version__,
                                     RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
                                     )
 
-def read(filename, external_files=(), verbose=False,
-         ignore_read_error=False, uncompress=True, field=None,
-          _debug=False,
+def read(filename, external_files=(), field=None, _debug=False,
          _implementation=implementation):
-    '''Read fields from netCDF files.
+    '''Read fields from a netCDF datraset.
 
-Files may be on disk or on a OPeNDAP server.
+The dataset may be on disk or on a OPeNDAP server.
 
-Any amount of netCDF files may be read.
+.. versionadded:: 1.7
 
-.. versionadded:: 1.6
-
-.. seealso:: `write`
-
-:Examples 1:
-
->>> f = cfdm.read('file.nc')
+.. seealso:: `cfdm.write`
 
 :Parameters:
 
@@ -88,87 +80,65 @@ Any amount of netCDF files may be read.
           ====================  ======================================
           Expansion             Description
           ====================  ======================================
-          Tilde                 An initial component of ``~`` or
-                                ``~user`` is replaced by that *user*'s
-                                home directory.
+          Tilde                 An initial ``~`` or ``~user`` is
+                                replaced by that *user*'s home
+                                directory.
            
-          Environment variable  Substrings of the form ``$name`` or
+          Environment variable  Occurences of the form ``$name`` or
                                 ``${name}`` are replaced by the value
                                 of environment variable *name*.
           ====================  ======================================
 
-          *Example:*
-            If the environment variable ``MYSELF`` has been set to
-            ``david``, then ``'~$MYSELF/data.nc'`` is equivalent to
-            ``'~david/data.nc'``.
+        *Example:*
+          If the environment variable ``MYSELF`` has been set to
+          ``david``, then ``'~$MYSELF/data.nc'`` is equivalent to
+          ``'~david/data.nc'``.
+    
+    external_files: (sequence of) `str`, optional
+
   
-    verbose: `bool`, optional
-        If True then print information to stdout.
-    
-    ignore_read_error: `bool`, optional
-        If True then ignore any file which raises an IOError whilst
-        being read, as would be the case for an empty file, unknown
-        file format, etc. By default the IOError is raised.
-    
     field: (sequence of) `str`, optional
-        Create independent fields from field components. The *field*
-        parameter may be one, or a sequence, of:
+        Create extra, independent fields from field metadata
+        constructs. The *field* parameter may be one, or a sequence,
+        of:
 
-          ======================  ====================================
-          *field*                 Field components
-          ======================  ====================================
-          ``'field_ancillary'``   Field ancillary objects
-          ``'domain_ancillary'``  Domain ancillary objects
-          ``'dimension'``         Dimension coordinate objects
-          ``'auxiliary'``         Auxiliary coordinate objects
-          ``'measure'``           Cell measure objects
-          ``'all'``               All of the above
-          ======================  ====================================
+          ==========================  ================================
+          *field*                     Field components
+          ==========================  ================================
+          ``'field_ancillary'``       Field ancillary constructs
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ==========================  ================================
 
-            *Example:*
-              To create fields from auxiliary coordinate objects:
-              ``field='auxiliary'`` or ``field=['auxiliary']``.
+        *Example:*
+          To create fields from auxiliary coordinate constructs:
+          ``field='auxiliary_coordinate'`` or
+          ``field=['auxiliary_coordinate']``.
 
-            *Example:*
-              To create fields from domain ancillary and cell measure
-              objects: ``field=['domain_ancillary', 'measure']``.
+        *Example:*
+          To create fields from domain ancillary and cell measure
+          constructs: ``field=['domain_ancillary', 'cell_measure']``.
+
+        An extra field created via the *field* parameter will have a
+        domain limited to that which can be inferred from the
+        corresponding netCDF variable, without the connections that
+        are defined by the parent netCDF data variable. It is possbile
+        to create independent fields from metadata constructs that do
+        incorporate as much of the parent field's domain as possible
+        by using the `~cfdm.Field.field` method of the returned
+        fields, instead of setting the *field* parameter.
 
 :Returns:
     
     out: `list`
-        A list of the fields found in the input file(s). The list may
-        be empty.
+        A list of the fields found in the dataset. The list may be
+        empty.
 
-:Examples 2:
+**Examples:**
 
->>> f = cf.read('file*.nc')
->>> f
-[<CF Field: pmsl(30, 24)>,
- <CF Field: z-squared(17, 30, 24)>,
- <CF Field: temperature(17, 30, 24)>,
- <CF Field: temperature_wind(17, 29, 24)>]
-
->>> cf.read('file*.nc')[0:2]
-[<CF Field: pmsl(30, 24)>,
- <CF Field: z-squared(17, 30, 24)>]
-
->>> cf.read('file*.nc')[-1]
-<CF Field: temperature_wind(17, 29, 24)>
-
->>> cf.read('file*.nc', select='units:K)
-[<CF Field: temperature(17, 30, 24)>,
- <CF Field: temperature_wind(17, 29, 24)>]
-
->>> cf.read('file*.nc', select='ncvar%ta')
-<CF Field: temperature(17, 30, 24)>
-
->>> cf.read('file*.nc', select={'standard_name': '.*pmsl*', 'units':['K', 'Pa']})
-<CF Field: pmsl(30, 24)>
-
->>> cf.read('file*.nc', select={'units':['K', 'Pa']})
-[<CF Field: pmsl(30, 24)>,
- <CF Field: temperature(17, 30, 24)>,
- <CF Field: temperature_wind(17, 29, 24)>]
+TODO
 
     '''
     # Parse the field parameter
@@ -188,35 +158,16 @@ Any amount of netCDF files may be read.
     # ----------------------------------------------------------------
     # Read the fields in the file
     # ----------------------------------------------------------------
-    fields = _read_a_file(filename,
-                          external_files=external_files,
-                          ignore_read_error=ignore_read_error,
-                          verbose=verbose,
-                          field=field,
-                          uncompress=uncompress,
-                          _debug=_debug,
-                          _implementation=_implementation)
-    
-    if verbose:
-        print("Read {0} field{1} from file {2}".format( 
-            len(fields), _plural(field_counter), filename))
-   
-    return fields
-#--- End: def
-
-def _plural(n):
-    '''Return a suffix which reflects a word's plurality.
-
-    '''
-    return 's' if n !=1 else ''
+    return  _read_a_file(filename,
+                         external_files=external_files,
+                         field=field,
+                         _debug=_debug,
+                         _implementation=_implementation)
 #--- End: def
 
 def _read_a_file(filename,
                  external_files=(),
-                 ignore_read_error=False,
-                 verbose=False,
                  field=(),
-                 uncompress=True,
                  _debug=False,
                  _implementation=None):
     '''Read the contents of a single file into a field list.
@@ -225,14 +176,6 @@ def _read_a_file(filename,
 
     filename: `str`
         The file name.
-
-    ignore_read_error: `bool`, optional
-        If True then return an empty field list if reading the file
-        produces an IOError, as would be the case for an empty file,
-        unknown file format, etc. By default the IOError is raised.
-    
-    verbose: `bool`, optional
-        If True then print information to stdout.
     
 :Returns:
 
@@ -250,8 +193,7 @@ def _read_a_file(filename,
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external_files=external_files,
-                             field=field, verbose=verbose,
-                             uncompress=uncompress, _debug=_debug)
+                             field=field, _debug=_debug)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 

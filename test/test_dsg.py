@@ -110,7 +110,7 @@ class DSGTest(unittest.TestCase):
         self.test_only = []
     #--- End: def
     
-    def test_DSG_CONTIGUOUS(self):
+    def test_DSG_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -144,7 +144,7 @@ class DSGTest(unittest.TestCase):
         
     #--- End: def        
 
-    def test_DSG_INDEXED(self):
+    def test_DSG_indexed(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -175,7 +175,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], traceback=True))
     #--- End: def        
 
-    def test_DSG_INDEXED_CONTIGUOUS(self):  
+    def test_DSG_indexed_contiguous(self):  
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -210,6 +210,50 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], traceback=True))
     #--- End: def        
 
+    def test_DSG_create_contiguous(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+        
+        # Define the ragged array values
+        ragged_array = numpy.array([1, 3, 4, 3, 6], dtype='float32')
+        # Define the count array values
+        count_array = [2, 3]
+        
+        # Initialise the count variable
+        count_variable = cfdm.Count(data=cfdm.Data(count_array))
+        count_variable.set_property('long_name', 'number of obs for this timeseries')
+        
+        # Initialise the contiguous ragged array object
+        array = cfdm.RaggedContiguousArray(
+            compressed_array=cfdm.NumpyArray(ragged_array),
+            shape=(2, 3), size=6, ndim=2,
+            count_variable=count_variable)
+        
+        # Initialize the auxiliary coordinate construct with the ragged
+        # array and set some properties
+        z = cfdm.AuxiliaryCoordinate(
+            data=cfdm.Data(array),
+            properties={'standard_name': 'height',
+                        'units': 'km',
+                        'positive': 'up'})
+        
+        self.assertTrue((z.get_array() == numpy.ma.masked_array(
+            data=[[1.0, 3.0, 99],
+                  [4.0, 3.0, 6.0]],
+            mask=[[False, False,  True],
+                  [False, False, False]],
+            fill_value=1e+20,
+            dtype='float32')).all())
+        
+        self.assertTrue(z.data.get_compression_type() == 'ragged contiguous')
+        
+        self.assertTrue((z.data.get_compressed_array() == numpy.array(
+            [1., 3., 4., 3., 6.], dtype='float32')).all())
+        
+        self.assertTrue((z.data.get_count_variable().get_array() == numpy.array(
+            [2, 3])).all())
+    #--- End: def
+    
 #--- End: class
 
 
@@ -218,4 +262,4 @@ if __name__ == '__main__':
     cfdm.environment()
     print()
     unittest.main(verbosity=2)
-
+    

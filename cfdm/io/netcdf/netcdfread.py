@@ -222,9 +222,10 @@ contents and any file suffix is not not considered.
             return False
     #--- End: def
 
-    def read(self, filename, field=None, default_version=None, verbose=False,
-             uncompress=True, external_files=(), extra_read_vars=None,
+    def read(self, filename, field=None, default_version=None,
+             external_files=None, extra_read_vars=None,
              _scan_only=False, _debug=False):
+#    uncompress=True, ):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
 
@@ -265,9 +266,6 @@ ancillaries, field ancillaries).
               To create fields from domain ancillary and cell measure
               objects: ``field=['domain_ancillary', 'cell_measure']``.
 
-    verbose: `bool`, optional
-        If True then print information to stdout.
-    
 :Returns:
 
     out: `list`
@@ -307,9 +305,9 @@ ancillaries, field ancillaries).
             #
             'compression': {},
             # Flag on whether or not to uncompress compressed variables
-            'uncompress' : uncompress,
+#            'uncompress' : uncompress,
             # Chatty?
-            'verbose': verbose,
+#            'verbose': verbose,
             # Debug  print statements?
             '_debug': _debug   ,
             
@@ -352,9 +350,6 @@ ancillaries, field ancillaries).
             # attribute
             'external_variables': set(),
 
-            # External file names
-            'external_files' : set(external_files),
-            
             # External variables that are actually referenced from
             # within the parent file
             'referenced_external_variables': set(),
@@ -398,19 +393,26 @@ ancillaries, field ancillaries).
             'field_ancillary'     : self.implementation.get_field_ancillaries,
         }
 
+        # Parse external_files parameter
+        if external_files:
+            print ('AAA', external_files)
+            if isinstance(external_files, basestring):
+                external_files = (external_files,)
+        else:
+            external_files = ()
+
+        g['external_files'] = set(external_files)
+
+        # Parse field parameter
         if field:
-            try:
-                iter(field)
-            except TypeError:
-                raise ValueError(
-                    "Can't read: Bad parameter value: field={!r}".format(field))
-            
+            if isinstance(field, str):
+                field = (field,)
+
             for f in field:
                 if f not in g['get_constructs']:
                     raise ValueError(
                         "Can't read: Bad parameter value: field={!r}".format(field))            
         #--- End: if
-        
         g['field'] = field
                 
         g['filename'] = filename
@@ -676,7 +678,8 @@ ancillaries, field ancillaries).
             if _debug:
                 print('    External variables:', sorted(g['external_variables']))
                 print('    External files    :', g['external_files'])
-                
+
+            print ('XXX', g['external_files'])
             if g['external_files'] and g['external_variables']:
                 self._get_variables_from_external_files(netcdf_external_variables)
         #--- End: if
@@ -688,7 +691,7 @@ ancillaries, field ancillaries).
         all_fields = OrderedDict()
         for ncvar in g['variables']:
             if ncvar not in g['do_not_create_field']:
-                all_fields[ncvar] = self._create_field(ncvar, verbose=verbose)
+                all_fields[ncvar] = self._create_field(ncvar) #, verbose=verbose)
         #--- End: for
         
         # ------------------------------------------------------------
@@ -1736,7 +1739,7 @@ variable should be pre-filled with missing values.
         #--- End: if
     #--- End: def
 
-    def _create_field(self, field_ncvar, verbose=False):
+    def _create_field(self, field_ncvar): #, verbose=False):
         '''Create a field for a given netCDF variable.
     
 :Parameters:
@@ -1834,9 +1837,8 @@ variable should be pre-filled with missing values.
                 if ncdim in g['dimension_coordinate']:
                     coord = self._copy_construct('dimension_coordinate', field_ncvar, ncdim)
                 else:
-                    coord = self._create_dimension_coordinate(field_ncvar, ncdim,
-                                                              f,
-                                                              verbose=verbose)
+                    coord = self._create_dimension_coordinate(field_ncvar, ncdim, f)
+#                                                              verbose=verbose)
                     g['dimension_coordinate'][ncdim] = coord
                 
                 domain_axis = self._create_domain_axis(
@@ -1924,9 +1926,8 @@ variable should be pre-filled with missing values.
                 if ncvar in g['auxiliary_coordinate']:
                     coord = g['auxiliary_coordinate'][ncvar].copy()
                 else:
-                    coord = self._create_auxiliary_coordinate(field_ncvar, ncvar,
-                                                              f,
-                                                              verbose=verbose)
+                    coord = self._create_auxiliary_coordinate(field_ncvar, ncvar, f)
+#                                                              verbose=verbose)
                     g['auxiliary_coordinate'][ncvar] = coord
      
                 # --------------------------------------------------------
@@ -2044,8 +2045,8 @@ variable should be pre-filled with missing values.
                         field_ncvar,
                         ncvar,
                         f,
-                        bounds=bounds,
-                        verbose=verbose)
+                        bounds=bounds)
+#                        verbose=verbose)
                 
                 if len(axes) == len(self._ncdimensions(ncvar)):
                     domain_ancillaries.append((ncvar, domain_anc, axes))
@@ -2418,45 +2419,45 @@ variable's netCDF dimensions.
     #--- End: def
         
     def _create_auxiliary_coordinate(self, field_ncvar, ncvar, 
-                                     f, bounds=None, verbose=False):
+                                     f, bounds=None): #, verbose=False):
         '''
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar,
                                               f=f,
                                               auxiliary=True,
-                                              bounds=bounds,
-                                              verbose=verbose)
+                                              bounds=bounds)
+#                                              verbose=verbose)
     #--- End: def
 
     def _create_dimension_coordinate(self, field_ncvar, ncvar, f,
-                                     bounds=None, verbose=False):
+                                     bounds=None): #, verbose=False):
         '''
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar,
                                               f=f,
                                               dimension=True,
-                                              bounds=bounds,
-                                              verbose=verbose)
+                                              bounds=bounds)
+#                                              verbose=verbose)
     #--- End: def
 
     def _create_domain_ancillary(self, field_ncvar, ncvar, 
-                                 f, bounds=None, verbose=False):
+                                 f, bounds=None): #, verbose=False):
         '''
         '''
         return self._create_bounded_construct(field_ncvar=field_ncvar,
                                               ncvar=ncvar,
                                               f=f,
                                               domain_ancillary=True,
-                                              bounds=bounds,
-                                              verbose=verbose)
+                                              bounds=bounds)
+#                                              verbose=verbose)
     #--- End: def
 
     def _create_bounded_construct(self, field_ncvar, ncvar, f,
                                   dimension=False, auxiliary=False,
                                   domain_ancillary=False, bounds=None,
-                                  has_coordinates=True, verbose=False):
+                                  has_coordinates=True): #, verbose=False):
         '''Create a variable which might have bounds.
     
 :Parameters:
@@ -2920,7 +2921,7 @@ variable's netCDF dimensions.
         
         if ((uncompress_override is not None and not uncompress_override) or
             not compression or 
-            not g['uncompress'] or
+#            not g['uncompress'] or
             not set(compression).intersection(dimensions)):
             # --------------------------------------------------------
             # The array is not compressed (or not to be uncompressed)

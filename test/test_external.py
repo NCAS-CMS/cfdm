@@ -47,7 +47,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         # External file contains other variables
         f = cfdm.read(self.parent_file,
-                      external_files=[self.combined_file],
+                      external_files=self.combined_file,
                       _debug=False)
 
 #        print ('\nParent + Combined:\n')

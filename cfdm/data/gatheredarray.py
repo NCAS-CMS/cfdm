@@ -7,7 +7,6 @@ import numpy
 
 from . import abstract
 
-
 class GatheredArray(abstract.CompressedArray):
     '''A container for a gathered compressed array.
 
@@ -104,11 +103,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         
         zeros = [0] * n_compressed_axes
         for j, b in enumerate(list_array):
-            sample_indices[compressed_dimension] = j
-            # Note that it is important for this index to be an
-            # integer (rather than the slice j:j+1) so that this
-            # dimension is dropped from
-            # compressed_array[sample_indices]
+            sample_indices[compressed_dimension] = slice(j, j+1)
                 
             # Note that it is important for indices a and b to be
             # integers (rather than the slices a:a+1 and b:b+1) so
@@ -121,7 +116,7 @@ indexing (given the restrictions on the type of indices allowed) is:
             #--- End: for                    
             u_indices[compressed_axes[-1]] = b
 
-            compressed = compressed_array[tuple(sample_indices)].get_array()
+            compressed = compressed_array[tuple(sample_indices)]
             sample_indices[compressed_dimension] = 0
             compressed = compressed[tuple(sample_indices)]
             

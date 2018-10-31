@@ -252,7 +252,7 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, _debug=True, field=['domain_ancillary'])
+        g = cfdm.read(self.filename, _debug=True, field='domain_ancillary')
         for x in g:
             x.print_read_report()
 

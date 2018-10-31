@@ -24,7 +24,7 @@ sample dimension belongs to.
 
 :Parameters:
 
-    compressed_array: `Data`
+    compressed_array: subclass of `Array`
         The compressed array.
 
     shape: `tuple`
@@ -71,7 +71,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         
-        compressed_array = self._get_component('compressed_array')
+        compressed_array = self._get_compressed_Array()
 
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
@@ -86,11 +86,11 @@ indexing (given the restrictions on the type of indices allowed) is:
         
         for i in range(uarray.shape[0]):
             sample_dimension_indices = numpy.where(index_array == i)[0]
-            
+
             u_indices = (i, #slice(i, i+1),
                          slice(0, len(sample_dimension_indices)))
             
-            uarray[u_indices] = compressed_array[sample_dimension_indices]
+            uarray[u_indices] = compressed_array[(sample_dimension_indices,)]
         #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)

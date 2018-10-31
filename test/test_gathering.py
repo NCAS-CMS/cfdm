@@ -145,6 +145,68 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(g[i].equals(f[i], traceback=True))
     #--- End: def        
 
+    def test_GATHERING_create(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Define the gathered values
+        gathered_array = numpy.array([[280, 282.5, 281], [279, 278, 277.5]],
+                                     dtype='float32')
+        # Define the list array values
+        list_array = [1, 4, 5]
+        
+        # Initialise the list variable
+        list_variable = cfdm.List(data=cfdm.Data(list_array))
+        
+        # Initialise the gathered array object
+        array = cfdm.GatheredArray(
+            compressed_array=cfdm.NumpyArray(gathered_array),
+	    compressed_dimension=1,
+            shape=(2, 3, 2), size=12, ndim=3,
+            list_variable=list_variable)
+        
+        # Create the field construct with the domain axes and the gathered
+        # array
+        tas = cfdm.Field(properties={'standard_name': 'air_temperature',
+                                     'units': 'K'})
+        
+        # Create the domain axis constructs for the uncompressed array
+        T = tas.set_domain_axis(cfdm.DomainAxis(2))
+        Y = tas.set_domain_axis(cfdm.DomainAxis(3))
+        X = tas.set_domain_axis(cfdm.DomainAxis(2))
+        
+        # Set the data for the field
+        tas.set_data(cfdm.Data(array), axes=[T, Y, X])			      
+        
+   
+        self.assertTrue((tas.get_array() == numpy.ma.masked_array(
+            data=[[[1, 280.0],
+                   [1, 1],
+                   [282.5, 281.0]],
+                  
+                  [[1, 279.0],
+                   [1, 1],
+                   [278.0, 277.5]]],
+            mask=[[[ True, False],
+                   [ True,  True],
+                   [False, False]],
+                  
+                  [[ True, False],
+                   [ True,  True],
+                   [False, False]]],
+            fill_value=1e+20,
+            dtype='float32')).all())
+        
+        self.assertTrue(tas.data.get_compression_type() == 'gathered')
+        
+        self.assertTrue((tas.data.get_compressed_array() == numpy.array(
+            [[280. , 282.5, 281. ],
+             [279. , 278. , 277.5]], dtype='float32')).all())
+        
+        self.assertTrue((tas.data.get_list_variable().get_array() == numpy.array(
+            [1, 4, 5])).all())
+    #--- End: def
+
     def _make_gathered_file(self):
         def _jj(shape, list_values):
             array = numpy.ma.masked_all(shape)

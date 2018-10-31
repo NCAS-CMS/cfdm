@@ -463,9 +463,9 @@ dataset as incomplete multi-dimensional arrays.
 A construct with an underlying compressed array is created by
 initializing the `Data` object with a compressed array that is stored
 in one of three specal array objects: `RaggedContiguousArray`,
-`RaggedIndexedArray` or `RaggedIndexedContiguousArray`. For example,
-the following code creates an auxiliary coordinate construct with an
-underlying contiguous ragged array:
+`RaggedIndexedArray` or `RaggedIndexedContiguousArray`. The following
+code creates an auxiliary coordinate construct with an underlying
+contiguous ragged array:
 
 .. code:: python
 
@@ -592,8 +592,8 @@ This is illustrated with the file **gathered.nc** (`download`):
 
 A construct with an underlying compressed array is created by
 initializing the `Data` object with a compressed array that is stored
-in the specal `GatheredArray` array object. For example, the following
-code creates a simple field construct an underlying gathered array:
+in the specal `GatheredArray` array object. The following code creates
+a simple field construct an underlying gathered array:
 
 .. code:: python
 
@@ -610,7 +610,7 @@ code creates a simple field construct an underlying gathered array:
 
    # Initialise the gathered array object
    array = cfdm.GatheredArray(
-                    compressed_array=cfdm.Data(gathered_array),
+                    compressed_array=cfdm.NumpyArray(gathered_array),
 		    compressed_dimension=1,
                     shape=(2, 3, 2), size=12, ndim=3,
                     list_variable=list_variable)
@@ -632,7 +632,7 @@ Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
 compressed dimension in the compressed array.
 
-We can now inspect the new axuiliary coordinate construct:
+We can now inspect the new field construct:
 
 .. code:: python
    
