@@ -80,7 +80,7 @@ class Data(abstract.Container):
             self._set_Array(data, copy=copy)
     #--- End: def
 
-    def __array__(self):
+    def __array__(self, *dtype):
         '''The numpy array interface.
 
 :Returns: 
@@ -89,7 +89,11 @@ class Data(abstract.Container):
         An independent numpy array of the data.
 
         '''
-        return self.get_array()
+        array = self.get_array()
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
     #--- End: def
 
     def __deepcopy__(self, memo):

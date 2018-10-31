@@ -48,8 +48,8 @@ See `cfdm.data.GatheredArray` for an example implementation.
 :Parameters:
 
     compressed_array:
-        The compressed array. May be any object that exposes the
-        `cfdm.data.abstract.Array` interface.
+        The compressed array. May a numpy array or any object that
+        exposes the `cfdm.Array` interface.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -72,10 +72,11 @@ See `cfdm.data.GatheredArray` for an example implementation.
         compressed array.
 
         '''
-        super().__init__(compressed_array=compressed_array,
-                         shape=shape, size=size, ndim=ndim,
+        super().__init__(shape=shape, size=size, ndim=ndim,
                          compressed_dimension=compressed_dimension,
                          compression_type=compression_type, **kwargs)
+
+        self._set_compressed_Array(compressed_array)
     #--- End: def
 
     @abc.abstractmethod
@@ -95,14 +96,49 @@ integers.
         raise NotImplementedError()
     #--- End: def
 
-    def _set_compressed_Array(self, data, copy=True):
+    def _get_compressed_Array(self, *default):
+        '''TODO
+
+:Examples 1:
+
+>>> a = d.get_data()
+
+:Parameters:
+
+    default: *optional*
+        If there is no data then *default* if returned if set.
+
+:Returns:
+
+    out:
+        The data. If the data has not been set then *default* is
+        returned, if set.
+
+:Examples 2:
+
+>>> a = d.get_data(None)
+
+        '''
+        array = self._get_component('compressed_Array', None)
+
+        if array is None:
+            if default:
+                return default[0]     
+
+            raise AttributeError("{!r} has no data".format(
+                self.__class__.__name__))
+        
+        return array   
+    #--- End: def
+
+    def _set_compressed_Array(self, array, copy=True):
         '''Set the compressed array.
 
 .. versionadded:: 1.7
 
 :Parameters:
 
-    data: `numpy` array_like or subclass of `cfdm.data.Array`
+    array: `numpy` array_like or subclass of `cfdm.data.Array`
         The compressed data to be inserted.
 
 :Returns:
@@ -114,13 +150,16 @@ integers.
 >>> d._set_compressed_Array(a)
 
         '''
-        if not isinstance(data, Array):
-            if not isinstance(data, numpy.ndarray):
-                data = numpy.asanyarray(data)
+        if not isinstance(array, Array):
+            if not isinstance(array, numpy.ndarray):
+                data = numpy.asanyarray(array)
                 
-            data = NumpyArray(data)
+            array = NumpyArray(array)
 
-        super()._set_Array(data, copy=copy)
+        if copy:
+            array = array.copy()
+
+        self._set_component('compressed_Array', array, copy=False)
     #--- End: def
 
     @property
@@ -135,7 +174,7 @@ dtype('float64')
 <type 'numpy.dtype'>
 
         '''
-        return self._get_component('compressed_array').dtype
+        return self._get_compressed_Array().dtype
     #--- End: def
 
     @property
@@ -250,7 +289,7 @@ dtype('float64')
 
         '''
         compressed_dimension = self.get_compressed_dimension()
-        compressed_ndim = self._get_component('compressed_array').ndim
+        compressed_ndim = self._get_compressed_Array().ndim
         
         return list(range(compressed_dimension, self.ndim - (compressed_ndim - compressed_dimension - 1)))
     #--- End: def
@@ -288,7 +327,7 @@ True
 True
 
         '''
-        return self._get_component('compressed_array').get_array()
+        return self._get_compressed_Array().get_array()
     #--- End: def
 
 #--- End: class

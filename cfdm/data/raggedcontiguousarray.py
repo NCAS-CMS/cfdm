@@ -25,8 +25,8 @@ The information needed to uncompress the data is stored in a separate
 
 :Parameters:
 
-    compressed_array: subclass of `Array`
-        The compressed array.
+    compressed_array: `Data`
+        The compressed data.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -38,14 +38,14 @@ The information needed to uncompress the data is stored in a separate
         The number of uncompressed array dimensions
 
     count_variable: `Count`
-        The "count variable" required to uncompress the data, identical
-        to the data of a CF-netCDF count variable.
+        The count variable required to uncompress the data,
+        corresponding to a CF-netCDF count variable.
 
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
-                         compression_type='ragged contiguous',
                          count_variable=count_variable,
+                         compression_type='ragged contiguous',
                          compressed_dimension=0)
     #--- End: def
 

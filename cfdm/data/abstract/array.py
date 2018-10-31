@@ -167,7 +167,12 @@ difference to numpy indexing is
     out: `numpy.ndarray`
 
         '''
-        if indices is not Ellipsis:
+#        if indices is not Ellipsis:
+        if indices is Ellipsis:
+            pass
+        elif not isinstance(indices, tuple):
+            array = array[indices]
+        else:
             axes_with_list_indices = [i for i, x in enumerate(indices)
                                       if not isinstance(x, slice)]
             n_axes_with_list_indices = len(axes_with_list_indices)

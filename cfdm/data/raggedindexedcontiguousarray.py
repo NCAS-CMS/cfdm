@@ -30,7 +30,7 @@ belongs to.
 
 :Parameters:
 
-    compressed_array: subclass of `Array`
+    compressed_array: `Data`
         The compressed array.
 
     shape: `tuple`
@@ -42,24 +42,20 @@ belongs to.
     ndim: `int`
         The number of uncompressed array dimensions
 
-    compressed_dimension: `int`
-        The position of the compressed dimension in the compressed
-        array.
-
     count_variable: `Count`
-        The "count variable" required to uncompress the data,
-        identical to the data of a CF-netCDF count variable.
+        The count variable required to uncompress the data,
+        corresponding to a CF-netCDF count variable.
 
     index_variable: `Index`
-        The "index variable" required to uncompress the data,
-        identical to the data of a CF-netCDF index variable.
+        The index variable required to uncompress the data,
+        corresponding to a CF-netCDF CF-netCDF index variable.
 
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
-                         compression_type='ragged indexed contiguous',
                          count_variable=count_variable,
                          index_variable=index_variable,
+                         compression_type='ragged indexed contiguous',
                          compressed_dimension=0)    
     #--- End: def
 

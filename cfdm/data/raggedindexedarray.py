@@ -24,7 +24,7 @@ sample dimension belongs to.
 
 :Parameters:
 
-    compressed_array: subclass of `Array`
+    compressed_array: `Data`
         The compressed array.
 
     shape: `tuple`
@@ -37,15 +37,15 @@ sample dimension belongs to.
         The number of uncompressed array dimensions
 
     index_variable: `Index`
-        The "index variable" required to uncompress the data,
-        identical to the data of a CF-netCDF index variable.
+        The index variable required to uncompress the data,
+        corresponding to a CF-netCDF index variable.
 
         '''
         super().__init__(compressed_array=compressed_array,
                          shape=shape, size=size, ndim=ndim,
+                         index_variable=index_variable,
                          compressed_dimension=0,
-                         compression_type='ragged indexed',
-                         index_variable=index_variable)
+                         compression_type='ragged indexed')
     #--- End: def
 
     def __getitem__(self, indices):

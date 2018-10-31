@@ -32,7 +32,7 @@ See `cfdm.core.data.NumpyArray` for an example implementation.
             self._set_component(key, value, copy=False)
     #--- End: def
 
-    def __array__(self):
+    def __array__(self, *dtype):
         '''The numpy array interface.
 
 :Returns: 
@@ -47,7 +47,11 @@ See `cfdm.core.data.NumpyArray` for an example implementation.
 True
 
         '''
-        return self.get_array()
+        array = self.get_array()
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
     #--- End: def
 
     def __deepcopy__(self, memo):

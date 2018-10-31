@@ -469,7 +469,7 @@ underlying contiguous ragged array:
 
 .. code:: python
 
-   import numpy
+   import cfdm, numpy
 
    # Define the ragged array values
    ragged_array = numpy.array([1, 3, 4, 3, 6], dtype='float32')
@@ -477,19 +477,19 @@ underlying contiguous ragged array:
    count_array = [2, 3]
 
    # Initialise the count variable
-   count_variable = cfdm.Count(data=cf.Data(count_array))
-   coun_variablet.set_property("long_name", "number of obs for this timeseries")
+   count_variable = cfdm.Count(data=cfdm.Data(count_array))
+   count_variable.set_property('long_name', 'number of obs for this timeseries')
 
    # Initialise the contiguous ragged array object
    array = cfdm.RaggedContiguousArray(
-                    compressed_array=cfdm.NumpyArray(ragged_array),
+                    compressed_array=cfdm.Data(ragged_array),
                     shape=(2, 3), size=6, ndim=2,
                     count_variable=count_variable)
 
    # Initialize the auxiliary coordinate construct with the ragged
    # array and set some properties
    z = cfdm.AuxiliaryCoordinate(
-                    data=cf.Data(array),
+                    data=cfdm.Data(array),
                     properties={'standard_name': 'height',
                                 'units': 'km',
                                 'positive': 'up'})
@@ -498,12 +498,24 @@ We can now inspect the new axuiliary coordinate construct:
 
 .. code:: python
    
+   >>> z
+   <AuxiliaryCoordinate: height(2, 3) km>
    >>> z.get_array()
+   masked_array(
+     data=[[1.0, 3.0, --],
+           [4.0, 3.0, 6.0]],
+     mask=[[False, False,  True],
+           [False, False, False]],
+     fill_value=1e+20,
+     dtype=float32)
    >>> z.data.get_compression_type()
    'ragged contiguous'
    >>> z.data.get_compressed_array()
-
+   array([1., 3., 4., 3., 6.], dtype=float32)
    >>> z.data.get_count_variable()
+   <Count: long_name:number of obs for this timeseries(2) >
+   >>> z.data.get_count_variable().get_array()
+   array([2, 3])
 
 Gathering
 ---------
@@ -585,36 +597,36 @@ code creates a simple field construct an underlying gathered array:
 
 .. code:: python
 
-   import numpy
+   import cfdm, numpy
 
    # Define the gathered values
-   gathered_array = numpy.array([[280, 282.5, 281], [279, 278, 277.5]], dtype='float32')
+   gathered_array = numpy.array([[280, 282.5, 281], [279, 278, 277.5]],
+                                dtype='float32')
    # Define the list array values
    list_array = [1, 4, 5]
 
    # Initialise the list variable
-   list_variable = cfdm.List(data=cf.Data(list_array))
+   list_variable = cfdm.List(data=cfdm.Data(list_array))
 
    # Initialise the gathered array object
    array = cfdm.GatheredArray(
-                    compressed_array=cfdm.NumpyArray(gathered_array),
+                    compressed_array=cfdm.Data(gathered_array),
 		    compressed_dimension=1,
                     shape=(2, 3, 2), size=12, ndim=3,
                     list_variable=list_variable)
 
-   # Create the domain axis constructs for the uncompressed array
-   T = cfdm.DomainAxis(2)
-   Y = cfdm.DomainAxis(3)
-   X = cfdm.DomainAxis(2)
-   
    # Create the field construct with the domain axes and the gathered
    # array
    tas = cfdm.Field(properties={'standard_name': 'air_temperature',
                                 'units': 'K'})
-   tas.set_domain_axis(T)
-   tas.set_domain_axis(Y)
-   tas.set_domain_axis(X)
-   tas.set_data(cf.Data(array), axes=[T, Y, X])			      
+
+   # Create the domain axis constructs for the uncompressed array
+   T = tas.set_domain_axis(cfdm.DomainAxis(2))
+   Y = tas.set_domain_axis(cfdm.DomainAxis(3))
+   X = tas.set_domain_axis(cfdm.DomainAxis(2))
+
+   # Set the data for the field
+   tas.set_data(cfdm.Data(array), axes=[T, Y, X])			      
 
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
@@ -625,8 +637,30 @@ We can now inspect the new axuiliary coordinate construct:
 .. code:: python
    
    >>> tas.get_array()
+   masked_array(
+     data=[[[--, 280.0],
+            [--, --],
+            [282.5, 281.0]],
+     
+           [[--, 279.0],
+            [--, --],
+            [278.0, 277.5]]],
+     mask=[[[ True, False],
+            [ True,  True],
+            [False, False]],
+     
+           [[ True, False],
+            [ True,  True],
+            [False, False]]],
+     fill_value=1e+20,
+     dtype=float32)
    >>> tas.data.get_compression_type()
    'gathered'
    >>> tas.data.get_compressed_array()
-
+   array([[280. , 282.5, 281. ],
+          [279. , 278. , 277.5]], dtype=float32)
    >>> tas.data.get_list_variable()
+   <List: (3) >
+   >>> tas.data.get_list_variable().get_array()
+   array([1, 4, 5])
+ 

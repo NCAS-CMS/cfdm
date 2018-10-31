@@ -767,7 +767,7 @@ used.
                 continue
     
             if isinstance(index, int):
-                # E.g. index is 43 -> slice(43, 44, 1)
+                # E.g. 43 -> slice(43, 44, 1)
                 if index < 0: 
                     index += size
     
@@ -795,14 +795,14 @@ used.
                 else:
                     len_index = len(index)
                     if len_index == 1:
-                        # E.g. index is [3] -> slice(3, 4, 1)
+                        # E.g. [3] -> slice(3, 4, 1)
                         index = index[0]
                         if index < 0:
                             index += size
                         
                         index = slice(index, index+1, 1)
                     else:
-                        # E.g. index is [1, 3, 4] -> [1, 3, 4]
+                        # E.g. [1, 3, 4] -> [1, 3, 4]
                         pass
             #--- End: if
             

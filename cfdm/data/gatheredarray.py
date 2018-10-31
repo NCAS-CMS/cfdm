@@ -52,8 +52,8 @@ uncompress the data.
         super().__init__(compressed_array=compressed_array,
                          shape=shape, ndim=ndim, size=size,
                          compressed_dimension=compressed_dimension,
-                         compression_type='gathered',
-                         list_variable=list_variable)
+                         list_variable=list_variable,
+                         compression_type='gathered')
     #--- End: def
 
     def __getitem__(self, indices):
@@ -79,7 +79,7 @@ indexing (given the restrictions on the type of indices allowed) is:
         # Method: Uncompress the entire array and then subspace it
         # ------------------------------------------------------------
         
-        compressed_array = self._get_component('compressed_array')
+        compressed_array = self._get_compressed_Array()
 
         # Initialise the un-sliced uncompressed array
         uarray = numpy.ma.masked_all(self.shape, dtype=self.dtype)
@@ -110,6 +110,9 @@ indexing (given the restrictions on the type of indices allowed) is:
             # dimension is dropped from
             # compressed_array[sample_indices]
                 
+            # Note that it is important for indices a and b to be
+            # integers (rather than the slices a:a+1 and b:b+1) so
+            # that these dimensions are dropped from uarray[u_indices]
             u_indices[compressed_axes[0]:compressed_axes[-1]+1] = zeros
             for i, z in zip(compressed_axes[:-1], partial_uncompressed_shapes):
                 if b >= z:
@@ -117,11 +120,12 @@ indexing (given the restrictions on the type of indices allowed) is:
                     u_indices[i] = a
             #--- End: for                    
             u_indices[compressed_axes[-1]] = b
-            # Note that it is important for indices a and b to be
-            # integers (rather than the slices a:a+1 and b:b+1) so
-            # that these dimensions are dropped from uarray[u_indices]
 
-            uarray[tuple(u_indices)] = compressed_array[tuple(sample_indices)]
+            compressed = compressed_array[tuple(sample_indices)].get_array()
+            sample_indices[compressed_dimension] = 0
+            compressed = compressed[tuple(sample_indices)]
+            
+            uarray[tuple(u_indices)] = compressed
         #--- End: for
 
         return self.get_subspace(uarray, indices, copy=True)
@@ -147,14 +151,6 @@ indexing (given the restrictions on the type of indices allowed) is:
 TODO
         '''
         return self._get_component('list_variable', *default)
-#        try:
-#            return self._list_variable
-#        except AttributeError:
-#            if default:
-#                return default[0]
-#
-#            raise AttributeError("{!r} has no list variable".format(
-#                self.__class__.__name__))
     #--- End: def
 
 #--- End: class
