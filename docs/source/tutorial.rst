@@ -10,15 +10,16 @@ The field construct defined by the CF data model is represented by a
 Reading from disk
 -----------------
 
-The `cfdm.read` function reads a netCDF file from disk and returns its
-contents as a list one or more `Field` objects:
+The `cfdm.read` function reads a netCDF file from disk or from an
+OPeNDAP URL and returns its contents as a list one or more `Field`
+objects:
 
 >>> import cfdm
 >>> f = cfdm.read('file.nc')
 
-The `cfdm.read` function has options to define files that contain
-:ref:`external variables <external>`, and to specify which metadata
-constructs should also be returned as independent fields.
+The `cfdm.read` function has optional parameters to define files that
+contain :ref:`external variables <external>`, and to specify which
+metadata constructs should also be returned as independent fields.
 
 Inspection
 ----------
@@ -29,19 +30,23 @@ detail.
 The built-in `repr` function returns a short, one-line description of
 the field:
 
->>> f
-[<Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
- <Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
+   >>> f
+   TODO
+   [<Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
+    <Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
+   >>> f[0]
+   TODO
+   <Field: air_temperature(time(12), latitude(64), longitude(128)) K>
 
 This gives the identity of the field (that has the standard name
-"air_temperature"), the identities and sizes of the domain axes
-spanned by the field's data array (time, latitude and longitude with
-sizes 12, 64 and 128 respectively) and the units of the field's data
-(K).
+"air_temperature"), the identities and sizes of the domain axis
+constructs spanned by the field's data array (time, latitude and
+longitude with sizes 12, 64 and 128 respectively) and the units of the
+field's data (K).
 
 The built-in `str` function returns the same information as the the
 one-line output, along with short descriptions of the field's other
-components:
+metadata constructs:
 
    >>> print(f[0])
    air_temperature field summary
@@ -54,17 +59,20 @@ components:
                   : height(1) = [2.0] m
 
 This shows that the field also has a cell method and four dimension
-coordinates, one of which (height) is a coordinate for a size 1 domain
-axis that is not a dimension of the field's data array. The units and
-first and last values of all data arrays are given and relative time
-values are translated into strings.
+coordinate constructs, one of which (height) is a coordinate for a
+size 1 domain axis that is not a dimension of the field's data
+array. The units and first and last values of all data arrays are
+given and relative time values are translated into strings.
 
-The field's `~cfdm.Field.dump` method describes each component's
-properties, as well as the first and last values of the field's data
-array::
+The field's `~cfdm.Field.dump` method gives all properties of all
+constructs as well as the first and last values of the field's data
+array
+
+.. code:: python
 
    >>> g = f[0]
    >>> g.dump()
+   TODO
    ======================
    Field: air_temperature
    ======================
@@ -83,8 +91,8 @@ array::
    title = 'model output prepared for IPCC AR4'
 
    Dimension coordinate: time
-       Data(time(12)) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap calendar
-       Bounds(time(12), 2) = [[ 450-11-01 00:00:00, ...,  451-11-01 00:00:00]] noleap calendar
+       Data(time(12)) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap
+       Bounds(time(12), 2) = [[ 450-11-01 00:00:00, ...,  451-11-01 00:00:00]] noleap
        axis = 'T'
        long_name = 'time'
        standard_name = 'time'
@@ -118,9 +126,9 @@ method:
 
    >>> f.properties()
 
-Individual properties may be accessed with the `~Field.del_property`,
-`~Field.get_property`, `~Field.has_property`, and
-`~Field.set_property` methods:
+Individual properties may be accessed and modified with the
+`~Field.del_property`, `~Field.get_property`, `~Field.has_property`,
+and `~Field.set_property` methods:
 
    >>> f.has_property('standard_name')
    True
@@ -134,10 +142,12 @@ Individual properties may be accessed with the `~Field.del_property`,
    >>> f.get_property('standard_name', 'not set')
    'air_temperature'
 
-All properties may be removed and completed replace with another
-collection by providing the new properties to the `~Field.properties`
-method:
+All properties may be completely replaced with another collection by
+providing the new properties to the `~Field.properties` method:
 
+
+.. code:: python
+	  
    >>> original = f.properties({'foo': 'bar', 'units': 'm s-1'}
    >>> f.properties()
    {'foo': 'bar',
@@ -146,21 +156,29 @@ method:
    {'foo': 'bar',
     'units': 'm s-1'}
    >>> f.properties()
-   
+   TODO
+   >>> f.properties({})
+   TODO
+   >>> f.properties()
+   {}
+
+.. _data:
+
 Data
 ----
 
-The field's data array is stored in a `Data` object, that is accessed
+The field's data array is stored in a `Data` object that is accessed
 with the `~Field.get_data` method:
 
    >>> f.get_data()
-   <>
+   TODO
 
 The data may be retrieved as an independent `numpy` array with the
 `~Field.get_array` method:
 
    >>> f.get_array()
-
+   TODO
+   
 The file also has a `~Field.data` attribute that is an alias for the
 `~Field.get_data` method, which makes it easier to access attributes
 and methods of the `Data` object:
@@ -174,22 +192,27 @@ and methods of the `Data` object:
    >>> f.data.size
    34534534
 
-Indexing the `Data` object creates new, independent `Data`
-object. Indexing is similar to `numpy` indexing, the only difference
-being:
+.. _data_assignment:
+
+Assignment
+^^^^^^^^^^
+
+Data array elements are changed by assigning to indices of the `Data`
+object. The indexing rules are similar to the `numpy indexing rules
+<https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
+the only differences being:
+
+* An integer index i takes the i-th element but does not reduce the
+  rank of the output array by one.
 
 * When two or more dimension's indices are sequences of integers then
   these indices work independently along each dimension (similar to
   the way vector subscripts work in Fortran). This is the same as
-  indexing a `netCDF.Variable` object.
-..
+  indexing on a `netCDF.Variable` object.
 
-   >>> f.data[0, 1, 2]
-   >>> f.data[0, ::-2, 2]
-    
-Data array elements are changed by assigning to indices of the `Data`
-object. The value being assigned must be broadcastable to the shape
-defined by the indices, using the same broadcasting rules as `numpy`:
+The value being assigned must be broadcastable to the shape defined by
+the indices, using the `numpy broadcasting rules
+<https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_.
 
    >>> import numpy
    >>> f.data[:, 0] = -99
@@ -200,20 +223,34 @@ defined by the indices, using the same broadcasting rules as `numpy`:
       
 Data elements may be set to missing data by assigning the `numpy` mask object:
 
-   >>> f[...] = numpy.ma.masked
+   >>> f.data[...] = numpy.ma.masked
 
 Subspacing
 ----------
 
 Creation of a new field that spans a subspace of the original domain
-is achieved by indexing the field directly, using the same indexing
-rules as for assignment to the data array:
+is achieved by indexing the field directly. The new subspace contains
+the same properties and similar metadata constructs to the original
+field, but the latter are also subspaced when they span domain axes
+tha have been changed. The indexing rules are the same as for
+:ref:`data array assignnment <data_assignment>`.
 
-   >>> g = f[:, ::-1, 2]
+.. code:: python
+
+   >>> g = f[..., ::-1, 2]
    >>> print(g)
+   TODO
+   >>> f.data[0, [1, 3], [2, 4, 5]]
+   >>> print(g)
+   TODO
+   
+The `Data` object may also be indexed with the same indexing rules to
+produce a new, independent `Data` object.
 
-The new subspace contains similar constructs to the original field, but
-these are also subspaced when they span the altered axes.
+   >>> f.data[..., ::-1, 2]
+   <DATA TODO>
+
+.. _constructs:
 
 Constructs
 ----------
@@ -238,50 +275,60 @@ cfdm class             Description                     CF data model construct
                        variation within cells
 =====================  ==============================  =======================
 
-The metadata constructs of the field (i.e all of the constructs
+The metadata constructs of the field (i.e. all of the constructs
 contained by the field construct) are returned by the
 `~Field.constructs` method, that provides a dictionary of the
-constructs keyed by an internal identifier:
+constructs, keyed by a unique internal identifiers:
 
    >>> f.constructs()
+   TODO
    
 The `~Field.constructs` method has options to fileter the constructs
 by their type, their property and other attribute values, and by the
 domain axes that are spanned by the data array:
 
-   >>> f.constructs(description='long_name:asdasdasdas')
-   >>> f.constructs(description='dimaneioncoordinate2')
+.. code:: python
+	  
+   >>> f.constructs('long_name:asdasdasdas')
+   TODO
    >>> f.constructs(construct_type='dimension_coordinate')
+   TODO
    >>> f.constructs(axes=['domainaxis1'])
-   >>> f.constructs(description='latitude',
-                    construct_type='dimension_coordinate'
-                    axes=['domainaxis1'])
+   TODO
+   >>> f.constructs('latitude',
+                 construct_type='dimension_coordinate'
+                 axes=['domainaxis1'])
+   TODO
+   
+We can also use the field's internal identifier to select constructs
+(e.g. "dimensioncoordinate1"), which is useful if a construct is not
+identifiable from its descriptive properties.
 
-Note that we can also use the field's internal identifier to select
-constructs (e.g. "dimensioncoordinate1"), which is useful if a
-construct is not identifiable from its descriptive properties. 
+   >>> f.constructs('TODO')
 
 An individual construct may be returned without its identifier with
-the `~Field.construct` method:
+the field's `~Field.construct` method:
 
    >>> f.construct(description='latitude')
-   <>
+   <TODO>
 
 Where applicable, the classes representing metadata constructs share
-the same API as the field. For example, this means that the class for
-any construct that has a data array will have a `!get_array` method to
-access the data as a numpy array:
+the same API as the field. This means, for instance, that the class
+for any construct that has a data array will have a `!get_array`
+method to access the data as a numpy array:
 
    >>> lon = f.construct('longitude')
    >>> lon
-   <>
+   <TODO>
    >>> lon.set_property('long_name', 'Longitude')
    >>> lon.properties()
+   TODO
    >>> lon.data[2] = 3453453454
    >>> lon.get_array()
+   TODO
 
-Other `cfdm` classes are required to represent certain components of
-CF data model constructs:
+Other `cfdm` classes are used to represent construct components that
+do not fall into the categories of "properties" nor "data":
 
 ======================  ==============================  ======================
 cfdm class              Description                     cfdm parent classes
@@ -298,13 +345,6 @@ cfdm class              Description                     cfdm parent classes
 		        to a different coordinate
 			system.
 
-`Data`                  A container for the data        `Field`,
-                        array.                          `DimensionCoordinate`,
-                                                        `AuxiliaryCoordinate`,
-                                                        `DomainAncillary`,
-							`CellMeasure`,
-							`FieldAncillary`
-			
 `Datum`                 The zeroes                      `CoordinateReference`
                         of the dimension
                         and auxiliary coordinate
@@ -323,9 +363,9 @@ The `cfdm.write` function writes fields to a netCDF file on disk:
 
    >>> cfdm.write(f, 'new_file.nc')
 
-The `cfdm.write` function has options to set the format, netCDF
-compression, endian, and HDF chunk size of the ouput file; as well as
-options that modify output data types, and which specify which
+The `cfdm.write` function has optional parameters to set the format,
+netCDF compression, endian, and HDF chunk size of the ouput file; as
+well as options that modify output data types, and which specify which
 properties should be global attributes.
 
 Equality
@@ -346,16 +386,106 @@ Field creation
 External variables
 ------------------
 
+External variables named are those referred to in the dataset, but
+which are not present in it. Instead these variables are stored in
+other, exgtrnal files. These variables may be incorporated into the
+field constructs of the parent dataset, as if they were present in it,
+simply by providing the external file names to the `cfdm.read` function.
+
+This is illustrated with the files **parent.nc** (`download`) and
+**external.nc** (`download`):
+
+.. code:: bash
+   
+   $ ncdump -h parent.nc
+   netcdf parent {
+   dimensions:
+   	grid_latitude = 10 ;
+   	grid_longitude = 9 ;
+   variables:
+   	double latitude(grid_latitude) ;
+   		latitude:units = "degrees_north" ;
+   		latitude:standard_name = "latitude" ;
+   	double longitude(grid_longitude) ;
+   		longitude:units = "degrees_east" ;
+   		longitude:standard_name = "longitude" ;
+   	double eastward_wind(latitude, longitude) ;
+   		eastward_wind:standard_name = "eastward_wind" ;
+   		eastward_wind:cell_measures = "area: areacella" ;
+   		eastward_wind:units = "m s-1" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.7" ;
+   		:external_variables = "areacella" ;
+   }
+
+   $ ncdump -h external.nc
+   netcdf external {
+   dimensions:
+   	latitude = 10 ;
+   	longitude = 9 ;
+   variables:
+   	double areacella(longitude, latitude) ;
+   		areacella:units = "m2" ;
+   		areacella:measure = "area" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.7" ;
+   }
+
+Firstly, the file may be read without specifying the external file. In
+this case a cell measure construct is still created, but without any
+metadata or data.
+
+.. code:: python
+
+   >>> f = cfdm.read('parent.nc')[0]
+   >>> print(f)
+   TODO
+   >>> c = f.construct('measure%area')
+   >>> c
+   TODO
+   >>> c.is_external()
+   True
+   >>> c.nc_get_variable()
+   'areacella'
+   >>> c.get_array()
+   TODO
+
+Secondly, the file may be read with specifying the external file. In
+this case a cell measure construct is still created with all of the
+metadata or data, as if had been present in the parent dataset.
+
+.. code:: python
+   
+   >>> g = cfdm.read('parent.nc', external_files='external.nc')[0]
+   >>> prin(g)
+   TODO
+   >>> c = g.construct('measure%area')
+   >>> c
+   TODO
+   >>> c.is_external()
+   False
+   >>> c.nc_get_variable()
+   'areacella'
+   >>> c.get_array()
+   TODO
+   
+If the field in the first case is written to disk using `cfdm.write`,
+then the netCDF variable name ("areacella") of the cell measure
+construct will be listed by a global "external_variables" attribute.
+   
 Discrete sampling geometries
 ----------------------------
 
-The CF data model views compressed data arrays in their uncompressed
-form. So, when a collection of `discrete sampling geometry (DSG)
+The CF data model views data arrays that have been compressed by
+convention in their uncompressed form. So, when a collection of
+`discrete sampling geometry (DSG)
 <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries>`_
 features has been combined using a compressed ragged representation to
 save space, the field construct contains the domain axis constructs
 that have been compressed and presents a view of the data in its
-uncompressed form, i.e. `incomplete multidimensional form
+uncompressed form, i.e. in `incomplete multidimensional form
 <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_incomplete_multidimensional_array_representation>`_,
 even though the underlying arrays may remain in their compressed
 representation.
@@ -363,8 +493,8 @@ representation.
 Accessing the data by a call to the `!get_array` method returns a
 numpy array that is uncompressed. The underlying array will, however,
 remain in its compressed form. The underlying compressed array may be
-retrieved as a numpy array with the `get_compressed_array` method of a
-`Data` object.
+retrieved as a numpy array with the `get_compressed_array` method of
+the `Data` object.
 
 
 A subspace created by indexing will no longer be compressed,
@@ -378,12 +508,12 @@ underlying compressed array is replaced by its uncompressed form.
 Indexing is based on the axes of the uncompressed form of the data.
 
 A count variable that is required to uncompress a contiguous, or
-indexed contiguous, ragged array is retrieved with the
-`get_count_variable` method of the `Data` object.
+indexed contiguous, ragged array is stored in a `Count` object and is
+retrieved with the `get_count_variable` method of the `Data` object.
 
 An index variable that is required to uncompress a indexed, or indexed
-contiguous, ragged array is retrieved with the `get_index_variable`
-method of the `Data` object.
+contiguous, ragged array is stored in an `Index` object and is
+retrieved with the `get_index_variable` method of the `Data` object.
 
 This is illustrated with the file **contiguous.nc** (`download`):
 
@@ -443,22 +573,24 @@ file:
    >>> count.get_array()
 
 We can easily select the timeseries for the second station by indexing
-the first axis of the field construct:
+the first (i.e. station) axis of the field construct:
 
 .. code:: python
 	  
    >>> ts1 = c[1]
-
+   TODO
    >>> ts1.get_array()
+   TODO
    
-If the underlying array is compressed at the time of writing to disk,
-then it is written to the file as a ragged array, along with the
-required count or index variables recquired to uncompress it. This
-means that if a dataset using compression is read from disk then it
-will be written back to disk with the same compression, provided that
-data elements were not modified by assignment beforehand. Any
-compressed arrays that were modified will be written to an output
-dataset as incomplete multi-dimensional arrays.
+If the underlying array is compressed at the time of writing to disk
+with the `cfdm.write` function, then it is written to the file as a
+ragged array, along with the required count or index variables
+required to uncompress it. This means that if a dataset using
+compression is read from disk then it will be written back to disk
+with the same compression, provided that no data elements have been
+modified by assignment. Any compressed arrays that have been modified
+will be written to an output dataset as incomplete multidimensional
+arrays.
 
 A construct with an underlying compressed array is created by
 initializing the `Data` object with a compressed array that is stored
@@ -520,8 +652,9 @@ We can now inspect the new axuiliary coordinate construct:
 Gathering
 ---------
 
-The CF data model views compressed data arrays in their uncompressed
-form. So, when axes have been `compressed by gathering
+The CF data model views data arrays that have been compressed by
+convention in their uncompressed form. So, when axes have been
+`compressed by gathering
 <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering>`_,
 the field construct contains the domain axes that have been compressed
 and presents a view of the data in their uncompressed form, even
@@ -544,16 +677,8 @@ underlying compressed array is replaced by its uncompressed form.
 Indexing is based on the axes of the uncompressed form of the data.
 
 A list variable that is required to uncompress a gathered array is
-retrieved with the `get_list_variable` method of the `Data` object.
-
-Accessing the data by indexing, or by a call to the `!get_array`
-method, always returns data that is uncompressed. The compressed data
-may be retrieved with the `get_compressed_data` method of a `Data`
-object. If the elements are modified by indexed assignment then the
-underlying compressed array is replaced by its uncompressed form.
-
-If an underlying array is compressed at the time of writing to disk,
-then it is written as a gathered array.
+stored in a `List` object and is retrieved with the
+`get_list_variable` method of the `Data` object.
 
 This is illustrated with the file **gathered.nc** (`download`):
 
@@ -590,6 +715,15 @@ This is illustrated with the file **gathered.nc** (`download`):
    >>> c.data.get_compressed_array().get_array()
    >>> c.data.get_list_variable().get_array()
 
+If the underlying array is compressed at the time of writing to disk
+with the `cfdm.write` function, then it is written to the file as a
+gathered array, along with the required list variable required to
+uncompress it. This means that if a dataset using compression is read
+from disk then it will be written back to disk with the same
+compression, provided that no data elements have been modified by
+assignment. Any compressed arrays that have been modified will be
+written to an output dataset without compression.
+   
 A construct with an underlying compressed array is created by
 initializing the `Data` object with a compressed array that is stored
 in the specal `GatheredArray` array object. The following code creates
