@@ -200,16 +200,73 @@ Constructs are returned as values of a dictionary, keyed by unique
 internal identifiers.
 
 By default all constructs are returned, but a subset may be selected
-via the optional parameters.
+via the optional parameters. If multiple parameters are specified,
+then the constructs that satisfy all of the criteria are returned.
+
+.. versionadded:: 1.7
+
+.. seealso:: `del_construct`, `get_construct`, `set_construct`
 
 :Parameters:
 
     description: `str`, optional
+        Return only the constructs which have the given property, or
+        other attribute, value.
+
+        The description may be one of:
+
+        * The value of the standard name property on its own. 
+
+            *Example:*
+              ``description='air_pressure'`` will return constructs
+              that that have a "standard_name" property with the value
+              "air_pressure".
+
+        * The value of any property prefixed by the property name and
+          a colon. 
+
+            *Example:*
+              ``description='positive:up'`` will return constructs
+              that that have a "positive" property with the value
+              "up".
+
+            *Example:*
+              ``description='foo:bar'`` will return constructs
+              that that have a "foo" property with the value
+              "bar".
+
+            *Example:*
+              ``description='standard_name:air_pressure'`` will return
+              constructs that that have a "standard_name" property
+              with the value "air_pressure".
+
+        * The measure of a cell measure constructs, prefixed by
+          "measure%"
+
+            *Example:*
+              ``description='measure%area'`` will return area cell
+              measure constructs.
+
+        * The netCDF variable name, prefixed by "ncvar%"
+
+            *Example:*
+              ``description='ncvar%lat'`` will return constructs with
+              netCDF variable name "lat".
+
+        * The netCDF dimension name, prefixed by "ncdim%"
+
+            *Example:*
+              ``description='ncdim%time'`` will return domain axis
+              constructs with netCDF dimension name "time".
 
     id: `str`, optional
+        Return only the construct with the given internal identifier.
+
+        *Example:*
+          ``id='fieldancillary0'``
 
     construct_type: `str`, optional
-        Only return constructs of the given type. Valid types are:
+        Return only constructs of the given type. Valid types are:
 
           ==========================  ================================
           *construct_type*            Constructs
@@ -239,6 +296,8 @@ via the optional parameters.
           ``axes=['domainaxis0', 'domainaxis1']``
 
     copy: `bool`, optional
+        If True then return copies of the constructs, rather than the
+        actual construct objects contained in the field.
 
 :Returns:
 
