@@ -22,8 +22,8 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-          *Example:*
-             ``properties={'standard_name': 'altitude'}``
+        *Example:*
+           ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
@@ -84,7 +84,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     out:
         The deep copy.
 
-**Examples**
+**Examples:**
 
 >>> g = f.copy()
 
@@ -101,15 +101,16 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. versionadded:: 1.7
 
-.. seealso:: `get_property`, `has_property`, `properties`, `set_property`
+.. seealso:: `get_property`, `has_property`, `properties`,
+             `set_property`
 
 :Parameters:
 
     prop: `str`
         The name of the property to be removed.
 
-          *Example:*
-             ``prop='long_name'``
+        *Example:*
+           ``prop='long_name'``
 
     default: optional
         Return *default* if the property has not been set.
@@ -120,7 +121,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
         The removed property. If unset then *default* is returned, if
         provided.
 
-**Examples**
+**Examples:**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')
@@ -154,8 +155,8 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
     prop: `str`
         The name of the property to be returned.
 
-          *Example:*
-             ``prop='standard_name'``
+        *Example:*
+           ``prop='standard_name'``
 
     default: optional
         Return *default* if the property has not been set.
@@ -166,7 +167,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
         The value of the property. If unset then *default* is
         returned, if provided.
 
-**Examples**
+**Examples:**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')
@@ -207,12 +208,15 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
     prop: `str`
         The name of the property.
 
+        *Example:*
+           ``prop='long_name'``
+
 :Returns:
 
      out: `bool`
         True if the property has been set, otherwise False.
 
-**Examples**
+**Examples:**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')
@@ -239,6 +243,8 @@ A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
 to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
+.. versionadded:: 1.7
+
 .. seealso:: `del_property`, `get_property`, `has_property`,
              `set_property`
 
@@ -250,11 +256,11 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
         dictionary. If the dictionary is empty then all properties
         will be removed.
 
-          *Example:*
-             ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
+        *Example:*
+          ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
         
-          *Example:*
-             ``properties={}``        
+        *Example:*
+          ``properties={}``        
 
     copy: `bool`, optional
         If False then any property values provided by the *properties*
@@ -267,10 +273,17 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
         The properties prior to being changed, or the current
         properties if no changes were specified.
 
-**Examples**
+**Examples:**
 
->>> p = f.properties({'standard_name': 'altitude', 'foo': 'bar'},
-...                  copy=False)
+>>> p = f.properties({'standard_name': 'altitude', 'foo': 'bar'})
+>>> f.properties()
+{'standard_name': 'altitude',
+ 'foo': 'bar'}
+>>> f.properties({})
+{'standard_name': 'altitude',
+ 'foo': 'bar'}
+>>> f.properties()
+{}
 
         '''
         out = self._get_component('properties').copy()
@@ -295,7 +308,8 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. versionadded:: 1.7
 
-.. seealso:: `del_property`, `get_property`, `has_property`, `properties`
+.. seealso:: `del_property`, `get_property`, `has_property`,
+             `properties`
 
 :Parameters:
 
@@ -309,7 +323,7 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
      `None`
 
-**Examples**
+**Examples:**
 
 >>> f.set_property('project', 'CMIP7')
 >>> f.has_property('project')

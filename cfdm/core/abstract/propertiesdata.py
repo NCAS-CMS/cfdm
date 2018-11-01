@@ -21,8 +21,8 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
-          *Example:*
-             ``properties={'standard_name': 'altitude'}``
+        *Example:*
+           ``properties={'standard_name': 'altitude'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
@@ -74,8 +74,8 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
 ``f.data`` is equivalent to ``f.get_data()`` 
 
-Note that the data are returned in a `Data` object. Use the `get_array`
-method to return the data as a `numpy` array.
+Note that the data are returned in a `Data` object. Use the
+`get_array` method to return the data as a `numpy` array.
 
 .. versionadded:: 1.7
 
@@ -85,15 +85,19 @@ method to return the data as a `numpy` array.
 :Returns:
 
     out: `Data`
-        The data.
+        The data object.
 
-**Examples**
+**Examples:**
 
+>>> d = cfdm.Data(range(10))
+>>> f.set_data(d)
 >>> f.has_data()
 True
 >>> d = f.data
->>> f.data.ndim
-3
+>>> d
+<Data: [0, ..., 9]>
+>>> f.data.shape
+(10,)
 
         '''
         return self.get_data()
@@ -120,7 +124,7 @@ True
     out:
         The deep copy.
 
-**Examples**
+**Examples:**
 
 >>> g = f.copy()
 >>> g = f.copy(data=False)
@@ -141,26 +145,30 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if the data has not been set.
+        Return *default* if the data object has not been set.
 
 :Returns: 
 
-    out:
-        The removed data. If unset then *default* is returned, if
-        provided.
+    out: 
+        The removed `Data` object. If unset then *default* is
+        returned, if provided.
 
-**Examples**
+**Examples:**
 
+>>> d = cfdm.Data(range(10))
+>>> f.set_data(d)
 >>> f.has_data()
 True
->>> print f.get_data()
-[0, ..., 9] m
+>>> f.get_data()
+<Data: [0, ..., 9]>
 >>> d = f.del_data()
->>> print d
-[0, ..., 9] m
+>>> d
+<Data: [0, ..., 9]>
 >>> f.has_data()
 False
->>> print f.del_data()
+>>> print(f.get_data(None))
+None
+>>> print(f.del_data(None))
 None
 
         '''
@@ -168,31 +176,33 @@ None
     #--- End: def
 
     def get_array(self):
-        '''Return a numpy array copy the data.
+        '''Return an numpy array copy the data.
 
 Use the `get_data` method to return the data as a `Data` object.
 
-.. seealso:: `get_data`
+.. versionadded:: 1.7
+
+.. seealso:: `data`, `get_data`
 
 :Returns:
 
     out: `numpy.ndarray`
-        An independent numpy array of the data.
+        An numpy array copy of the data.
 
-**Examples**
+**Examples:**
 
->>> d = Data([1, 2, 3.0], 'km')
+>>> d = Data([1, 2, 3.0])
 >>> array = d.get_array()
 >>> isinstance(array, numpy.ndarray)
 True
->>> print array
-[ 1.  2.  3.]
+>>> array
+array([ 1.  2.  3.])
 >>> d[0] = -99 
->>> print array[0] 
+>>> array[0] 
 1.0
 >>> array[0] = 88
->>> print d[0]
--99.0 km
+>>> d[0]
+-99.0
 
         '''
         data = self.get_data(None)
@@ -210,27 +220,35 @@ Note that the data are returned in a `Data` object. Use the
 
 .. versionadded:: 1.7
 
-.. seealso:: `del_data`, `get_array`, `has_data`, `set_data`
+.. seealso:: `data`, `del_data`, `get_array`, `has_data`, `set_data`
 
 :Parameters:
 
     default: optional
-        Return *default* the data have not been set.
+        Return *default* if a data object has not been set.
 
 :Returns:
 
-    out: `Data`
-        The data. If unset then *default* is returned, if provided.
+    out: 
+        The data object. If unset then *default* is returned, if
+        provided.
 
-**Examples**
+**Examples:**
 
->>> d = f.get_data()
+>>> d = cfdm.Data(range(10))
+>>> f.set_data(d)
 >>> f.has_data()
 True
+>>> f.get_data()
+<Data: [0, ..., 9]>
 >>> d = f.del_data()
+>>> d
+<Data: [0, ..., 9]>
 >>> f.has_data()
 False
->> print(f.get_data(None))
+>>> print(f.get_data(None))
+None
+>>> print(f.del_data(None))
 None
 
         '''
@@ -258,7 +276,7 @@ None
     #--- End: def
 
     def has_data(self):
-        '''Whether data have been set.
+        '''Whether a data object has been set.
         
 .. versionadded:: 1.7
 
@@ -267,16 +285,24 @@ None
 :Returns:
 
     out: `bool`
-        True if data have been set, otherwise False.
+        True if a data object has been set, otherwise False.
 
-**Examples**
+**Examples:**
 
+>>> d = cfdm.Data(range(10))
+>>> f.set_data(d)
 >>> f.has_data()
 True
+>>> f.get_data()
+<Data: [0, ..., 9]>
 >>> d = f.del_data()
+>>> d
+<Data: [0, ..., 9]>
 >>> f.has_data()
 False
->> print(f.get_data(None))
+>>> print(f.get_data(None))
+None
+>>> print(f.del_data(None))
 None
 
         '''     
@@ -296,7 +322,7 @@ removed prior to insertion.
 :Parameters:
 
     data: `Data`
-        The data to be inserted.
+        The data object to be inserted.
 
     copy: `bool`, optional
         If False then do not copy the data prior to insertion. By
@@ -306,9 +332,23 @@ removed prior to insertion.
 
     `None`
 
-**Examples**
+**Examples:**
 
->>> f.set_data(d, copy=False)
+>>> d = cfdm.Data(range(10))
+>>> f.set_data(d)
+>>> f.has_data()
+True
+>>> f.get_data()
+<Data: [0, ..., 9]>
+>>> d = f.del_data()
+>>> d
+<Data: [0, ..., 9]>
+>>> f.has_data()
+False
+>>> print(f.get_data(None))
+None
+>>> print(f.del_data(None))
+None
 
         '''
         if copy:

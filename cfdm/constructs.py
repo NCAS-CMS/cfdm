@@ -43,7 +43,34 @@ class Constructs(core.Constructs):
 
     def constructs(self, description=None, id=None, axes=None,
                    construct_type=None, copy=False):
-        '''TODO
+        '''Return the metadata constructs
+
+Constructs are returned as values of a dictionary, keyed by a unique
+internal identifiers.
+
+By default all constructs are returned, but a subset may be selected
+via the optional parameters.
+
+:Parameters:
+
+    description: `str`, optional
+
+    id: `str`, optional
+
+    construct_type: `str`, optional
+
+    axes: sequence of `str`, optional
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples:**
+
+>>> f.constructs()
+TODO
         '''
         out = super().constructs(construct_type=construct_type,
                                  copy=copy)

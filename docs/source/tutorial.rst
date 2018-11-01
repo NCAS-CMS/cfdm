@@ -125,7 +125,8 @@ Properties of the field may be retrieved with the `~Field.properties`
 method:
 
    >>> f.properties()
-
+   TODO
+   
 Individual properties may be accessed and modified with the
 `~Field.del_property`, `~Field.get_property`, `~Field.has_property`,
 and `~Field.set_property` methods:
@@ -207,8 +208,8 @@ the only differences being:
 
 * When two or more dimension's indices are sequences of integers then
   these indices work independently along each dimension (similar to
-  the way vector subscripts work in Fortran). This is the same as
-  indexing on a `netCDF.Variable` object.
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a `netCDF4.Variable` object.
 
 The value being assigned must be broadcastable to the shape defined by
 the indices, using the `numpy broadcasting rules
@@ -278,7 +279,7 @@ cfdm class             Description                     CF data model construct
 The metadata constructs of the field (i.e. all of the constructs
 contained by the field construct) are returned by the
 `~Field.constructs` method, that provides a dictionary of the
-constructs, keyed by a unique internal identifiers:
+constructs, keyed by unique internal identifiers:
 
    >>> f.constructs()
    TODO

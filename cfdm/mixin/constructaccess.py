@@ -194,7 +194,61 @@ TODO
 
     def constructs(self, description=None, id=None, axes=None,
                    construct_type=None, copy=False):
-        '''TODO 
+        '''Return the metadata constructs
+
+Constructs are returned as values of a dictionary, keyed by unique
+internal identifiers.
+
+By default all constructs are returned, but a subset may be selected
+via the optional parameters.
+
+:Parameters:
+
+    description: `str`, optional
+
+    id: `str`, optional
+
+    construct_type: `str`, optional
+        Only return constructs of the given type. Valid types are:
+
+          ==========================  ================================
+          *construct_type*            Constructs
+          ==========================  ================================
+          ``'field_ancillary'``       Field ancillary constructs
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'cell_method'``           Cell method constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ==========================  ================================
+
+        *Example:*
+          ``construct_type='dimension_coordinate'``
+
+    axes: sequence of `str`, optional
+        Only return constructs which have data that spans any one or
+        more of the given domain axes, in any order. Domain axes are
+        specified by their unique internal identifiers.
+
+        *Example:*
+          ``axes=['domainaxis2']``
+
+        *Example:*
+          ``axes=['domainaxis0', 'domainaxis1']``
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `dict`
+
+**Examples:**
+
+>>> f.constructs()
+TODO
+
         '''
         return self._get_constructs().constructs(
             description=description, id=id,
