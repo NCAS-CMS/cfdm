@@ -197,7 +197,7 @@ class create_fieldTest_2(unittest.TestCase):
                     'NETCDF3_64BIT',
                     'NETCDF4',
                     'NETCDF4_CLASSIC'):
-            cfdm.write(f, self.filename, fmt=fmt,_debug=True)
+            cfdm.write(f, self.filename, fmt=fmt, verbose=True)
 
             g = cfdm.read(self.filename, _debug=True)
             for x in g:

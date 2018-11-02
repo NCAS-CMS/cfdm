@@ -1803,7 +1803,8 @@ variable should be pre-filled with missing values.
         # Store the field's netCDF variable name
         self.implementation.nc_set_variable(f, field_ncvar)
 
-        f.set_global_attributes(g['global_attributes'])
+#        f.set_global_attributes(g['global_attributes'])
+        self.implementation.nc_set_global_attributes(f, g['global_attributes'])
 
         # Map netCDF dimension names to domain axis names.
         # 

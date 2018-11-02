@@ -7,7 +7,8 @@ from .coordinate                  import Coordinate
 from .parameters                  import Parameters
 from .parametersdomainancillaries import ParametersDomainAncillaries
 
-from .netcdf                      import (NetCDFDimension,
+from .netcdf                      import (NetCDFDataVariable,
+                                          NetCDFDimension,
                                           NetCDFInstanceDimension,
                                           NetCDFSampleDimension,
                                           NetCDFVariable)

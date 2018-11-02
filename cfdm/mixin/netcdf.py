@@ -46,7 +46,7 @@ class NetCDFDimension(NetCDF):
         '''
         try:
             return self._get_component('netcdf').pop('dimension', *default)
-        except keyError:
+        except KeyError:
             raise AttributeError("{!r} object has no netCDF dimension name".format(self.__class__.__name__))
     #--- End: def
 
@@ -100,7 +100,7 @@ class NetCDFVariable(NetCDF):
         '''        
         try:
             return self._get_component('netcdf').pop('variable', *default)
-        except keyError:
+        except KeyError:
             raise AttributeError("{!r} object has no netCDF variable name".format(self.__class__.__name__))
     #--- End: def
         
@@ -141,7 +141,7 @@ class NetCDFSampleDimension(NetCDF):
         '''        
         try:
             return self._get_component('netcdf').pop('sample_dimension', *default)
-        except keyError:
+        except KeyError:
             raise AttributeError("{!r} object has no netCDF sample dimension name".format(self.__class__.__name__))
     #--- End: def
 
@@ -181,7 +181,7 @@ class NetCDFInstanceDimension(NetCDF):
         '''        
         try:
             return self._get_component('netcdf').pop('instance_dimension', *default)
-        except keyError:
+        except KeyError:
             raise AttributeError("{!r} object has no netCDF instance dimension name".format(self.__class__.__name__))
     #--- End: def
 
@@ -208,6 +208,41 @@ class NetCDFInstanceDimension(NetCDF):
         '''TODO 
         '''
         self._get_component('netcdf')['instance_dimension'] = value
+    #--- End: def
+
+#--- End: class
+
+
+class NetCDFDataVariable(NetCDF):
+    '''Mixin TODO 
+
+    '''
+    def nc_global_attributes(self, attributes=None):
+        '''TODO
+        '''
+        out = self._get_component('netcdf').get('global_attributes')
+        
+        if out is None:
+            out = ()
+
+        if attributes:
+            self._get_component('netcdf')['global_attributes'] = tuple(attributes)
+
+        return list(out)
+    #--- End: def
+    
+    def nc_unlimited_axes(self, axes=None):
+        '''TODO 
+        '''
+        out = self._get_component('netcdf').get('unlimited_axes')
+
+        if out is None:
+            out = ()
+
+        if axes:
+            self._get_component('netcdf')['unlimited_axes'] = tuple(axes)
+
+        return list(out)
     #--- End: def
 
 #--- End: class

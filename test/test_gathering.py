@@ -127,7 +127,7 @@ class DSGTest(unittest.TestCase):
 #        print(g.data.get_compressed_axes())
 #        print(g.data.shape)
 
-        cfdm.write(f, 'delme.nc', _debug=False)
+        cfdm.write(f, 'delme.nc', verbose=False)
         g = cfdm.read('delme.nc', _debug=False)
         self.assertTrue(len(g) == len(f))
       

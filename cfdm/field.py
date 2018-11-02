@@ -11,7 +11,8 @@ from . import Domain
 _debug = False
        
 
-class Field(mixin.NetCDFVariable,
+class Field(mixin.NetCDFDataVariable,
+            mixin.NetCDFVariable,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
@@ -81,14 +82,9 @@ TODO
         
         self._initialise_netcdf(source)
     
-        self._set_component('unlimited' , 'TO DO', copy=False)
         self._set_component('HDFgubbins', 'TO DO', copy=False)
     #--- End: def
 
-    def unlimited(self, *args, **kwargs):
-        '''TODO'''
-        return {}
-    
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -471,18 +467,20 @@ field.
             return string
     #--- End: def
 
+
 #    def domain_axis_name(self, key):
 #        '''
 #        '''
 #        constructs = self._get_constructs()
 #        return constructs.domain_axis_name(key)
 #    #--- End: def
+
     def copy(self, data=True):
         '''TODO
         '''
         new = super().copy(data=data)
 
-        new.set_global_attributes(self.get_global_attributes(()))
+#        new.set_global_attributes(self.get_global_attributes(()))
         new.set_read_report(self.get_read_report({}))
 
         return new
@@ -851,12 +849,12 @@ by the data array may be selected.
             construct_type='field_ancillary',
             axes=axes, copy=copy)
     #--- End: def
-    
-    def get_global_attributes(self, *default):
-        '''TODO
-        '''
-        return self._get_component('global_attributes', *default)
-    #--- End: def
+
+#    def get_global_attributes(self, *default):
+#        '''TODO
+#        '''
+#        return self._get_component('global_attributes', *default)
+#    #--- End: def
 
     def get_read_report(self, *default):
         '''TODO
@@ -888,21 +886,21 @@ by the data array may be selected.
         #--- End: for
     #--- End: def
    
-    def set_global_attributes(self, global_attributes):
-        '''TODO
-
-Consider [get|set|del_global_attribute [NO S]
-
-**Examples**
-
->>> f.set_global_attributes(['project', 'experiment'])
->>> f.get_global_attributes()
-('project', 'experiment')
-
-        '''
-        self._set_component('global_attributes',
-                            set(global_attributes), copy=False)
-    #--- End: def
+#    def set_global_attributes(self, global_attributes):
+#        '''TODO
+#
+#Consider [get|set|del_global_attribute [NO S]
+#
+#**Examples**
+#
+#>>> f.set_global_attributes(['project', 'experiment'])
+#>>> f.get_global_attributes()
+#('project', 'experiment')
+#
+#        '''
+#        self._set_component('global_attributes',
+#                            set(global_attributes), copy=False)
+#    #--- End: def
 
     def set_read_report(self, value, copy=True):
         '''TODO

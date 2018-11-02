@@ -1,12 +1,7 @@
-from ..                    import __version__
-
+from .. import __version__
 from .. import (CoordinateReference,
                 Field,
                 Data)
-
-#from ..coordinatereference import CoordinateReference
-#from ..field               import Field
-#from ..data                import Data
 
 from . import CFDMImplementation
 
@@ -18,16 +13,28 @@ implementation = CFDMImplementation(version=__version__,
                                     Field=Field,
                                     Data=Data)
 
-
-#netcdf = NetCDFWrite(implementation)
-
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
-          verbose=False, mode='w', least_significant_digit=None,
-          endian='native', compress=0, fletcher32=False,
-          no_shuffle=False, variable_attributes=None, datatype=None,
-          HDF_chunksizes=None, unlimited=None, _debug=False,
-          _implementation=implementation):
+          datatype=None, variable_attributes=None,
+          least_significant_digit=None, endian='native', compress=0,
+          fletcher32=False, no_shuffle=False, HDF_chunksizes=None,
+          verbose=False, _implementation=implementation):
     '''Write fields to a netCDF file.
+
+**File format**
+
+All of the file formats supported by the `netCDF4 package
+<http://unidata.github.io/netcdf4-python>`_ are supported:
+NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, NETCDF3_64BIT_DATA,
+NETCDF4_CLASSIC, and NETCDF4. See the *fmt* parameter for details.
+
+**Dimension and variable names**
+
+Each construct has a `!nc_get_variable` method, except a domain axis
+construct which has a `!nc_get_dimension` method
+
+**Global attributes**
+
+
     
 NetCDF dimension and variable names will be taken, if present, from
 variables' `!ncvar` attributes and the domain axis `!ncdim`
@@ -39,69 +46,55 @@ Output netCDF file global properties are those which occur in the set
 of CF global properties and non-standard data variable properties and
 which have equal values across all input fields.
 
-.. seealso:: `read`
+.. versionadded:: 1.7
 
-:Examples 1:
-
->>> write(f, new_file.nc')
+.. seealso:: `cfdm.read`
 
 :Parameters:
 
-    fields: (arbitrarily nested sequence of) `cf.Field` or `cf.FieldList`
-        The field or fields to write to the file.
+    fields: (sequence of) `Field`
+        The field constructs to write to the file.
 
     filename: `str`
-        The output netCDF file. Various type of expansion are applied
-        to the file names:
-        
-          ====================  ======================================
-          Expansion             Description
-          ====================  ======================================
-          Tilde                 An initial component of ``~`` or
-                                ``~user`` is replaced by that user's
-                                home directory.
-           
-          Environment variable  Substrings of the form ``$name`` or
-                                ``${name}`` are replaced by the value
-                                of environment variable ``name``.
-          ====================  ======================================
-    
-        Where more than one type of expansion is used in the same
-        string, they are applied in the order given in the above
-        table.
+        The output netCDF file name. Various type of expansion are
+        applied to the file names.
 
-          *Example:*
-            If the environment variable ``MYSELF`` has been set to the
-            ``'david'``, then ``'~$MYSELF/out.nc'`` is equivalent to
-            ``'~david/out.nc'``.
+        Relative paths are allowed, and standard tilde and shell
+        parameter expansions are applied to the string.
+
+        *Example:*
+          The file ``file.nc`` in the user's home directory can be
+          described by any of the following: ``'$HOME/file.nc'``,
+          ``'${HOME}/file.nc'``, ``'~/file.nc'``,
+          ``'~/tmp/../file.nc'`` or, most simply but assuming that the
+          current working directory is ``$HOME``, ``'file.nc'``.
   
     fmt: `str`, optional
         The format of the output file. One of:
 
-           ==========================  ===============================
-           *fmt*                       Output file type
-           ==========================  ===============================
-           ``'NETCDF4'``               NetCDF4 format file. This is
-                                       the default.       
-    
-           ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
-                                       (see below) 
-    
-           ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file#
-                                       (limited to file sizes less
-                                       than 2 Gb).
-
-           ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                       file
-
-           ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                       file with extensions (see
-                                       below)
-
-           ``'NETCDF3_64BIT'``         An alias for
-                                       ``'NETCDF3_64BIT_OFFSET'``
-           ==========================  ===============================
-
+          ==========================  ===============================
+          *fmt*                       Output file type
+          ==========================  ===============================
+          ``'NETCDF4'``               NetCDF4 format file. This is
+                                      the default.       
+          
+          ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
+                                      (see below) 
+          
+          ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
+                                      (limited to file sizes less
+                                      than 2 Gb).
+          
+          ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
+                                      file
+          
+          ``'NETCDF3_64BIT'``         An alias for
+                                      ``'NETCDF3_64BIT_OFFSET'``
+          
+          ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
+                                      file with extensions (see
+                                      below)
+          ==========================  ===============================
 
         By default the format is ``'NETCDF4'``.
 
@@ -112,7 +105,7 @@ which have equal values across all input fields.
         except ``'NETCDF3_CLASSIC'``.
 
         ``'NETCDF3_64BIT_DATA'`` is a format that requires version
-        4.4.0 or newer of the C library (use `cf.environment` to see
+        4.4.0 or newer of the C library (use `cfdm.environment` to see
         which version if the netCDF-C library is in use). It extends
         the ``'NETCDF3_64BIT_OFFSET'`` binary format to allow for
         unsigned/64 bit integer data types and 64-bit dimension sizes.
@@ -127,52 +120,66 @@ which have equal values across all input fields.
         use the new features of the version 4 API.
 
     overwrite: `bool`, optional
-        If False then raise an exception if the output file
-        pre-exists. By default a pre-existing output file is over
-        written.
+        If False then raise an error if the output file pre-exists. By
+        default a pre-existing output file is overwritten.
 
-    verbose : `bool`, optional
-        If True then print one-line summaries of each field written.
+    datatype: `dict`, optional
+        Specify data type conversions to be applied prior to writing
+        data to disk. This may be useful as a crude means of packing,
+        or because the output format does not support a particular
+        data type (for example, netCDF3 classic files do not support
+        64-bit integers). By default, input data types are
+        preserved. Any data type conversion is only applied to the
+        arrays on disk, and not to the input fields themselves.
 
-    mode: `str`, optional
-        Specify the mode of write access for the output file. One of:
+        Data types conversions are defined by `numpy.dtype` objects in
+        a dictionary whose keys are input data types with values of
+        output data types.
 
-           =======  =====================================================
-           mode     Description
-           =======  =====================================================
-           ``'w'``  Open a new file for writing to. If it exists and
-                    *overwrite* is True then the file is deleted prior to
-                    being recreated.
-           =======  =====================================================
+        *Example:*
+
+          To convert 64-bit integers to 32-bit integers:
+          ``datatype={numpy.dtype('int64'): numpy.dtype('int32')}``.
        
-        By default the file is opened with write access mode ``'w'``.
-
     endian: `str`, optional
         The endian-ness of the output file. Valid values are
         ``'little'``, ``'big'`` or ``'native'``. By default the output
-        is native endian.
+        is native endian. See the `netCDF4 package
+        <http://unidata.github.io/netcdf4-python>`_ for more details.
+
+        *Example:*
+          ``endian='big'``
 
     compress: `int`, optional
         Regulate the speed and efficiency of compression. Must be an
         integer between ``0`` and ``9``. ``0`` means no compression;
         ``1`` is the fastest, but has the lowest compression ratio;
         ``9`` is the slowest but best compression ratio. The default
-        value is ``0``. An exception is raised if compression is
-        requested for a netCDF3 output file format.
+        value is ``0``. An error is raised if compression is requested
+        for a netCDF3 output file format. See the `netCDF4 package
+        <http://unidata.github.io/netcdf4-python>`_ for more details.
+
+        *Example:*
+          ``compress=4``
     
     least_significant_digit: `int`, optional
-        Truncate the input field data arrays. For a positive integer,
-        N the precision that is retained in the compressed data is '10
-        to the power -N'. For example, a value of ``2`` will retain a
-        precision of 0.01. In conjunction with the *compress*
+        Truncate the input field data arrays. For a given positive
+        integer, N the precision that is retained in the compressed
+        data is 10 to the power -N. For example, a value of 2 will
+        retain a precision of 0.01. In conjunction with the *compress*
         parameter this produces 'lossy', but significantly more
-        efficient compression.
-    
+        efficient compression. See the `netCDF4 package
+        <http://unidata.github.io/netcdf4-python>`_ for more details.
+
+        *Example:*
+          ``least_significant_digit=3``
+
     fletcher32: `bool`, optional
         If True then the Fletcher-32 HDF5 checksum algorithm is
         activated to detect compression errors. Ignored if *compress*
-        is ``0``.
- 
+        is ``0``. See the `netCDF4 package
+        <http://unidata.github.io/netcdf4-python>`_ for details.
+
     no_shuffle: `bool`, optional
         If True then the HDF5 shuffle filter (which de-interlaces a
         block of data before compression by reordering the bytes by
@@ -181,35 +188,9 @@ which have equal values across all input fields.
         on) is turned off. By default the filter is applied because if
         the data array values are not all wildly different, using the
         filter can make the data more easily compressible.  Ignored if
-        *compress* is ``0``.
-
-    datatype: `dict`, optional
-        Specify data type conversions to be applied prior to writing
-        data to disk. Arrays with data types which are not specified
-        remain unchanged. By default, input data types are
-        preserved. Data types defined by `numpy.dtype` objects in a
-        dictionary whose are input data types with values of output
-        data types.
-
-          *Example:*
-            To convert 64-bit floats and 64-bit integers to their
-            32-bit counterparts: ``datatype={numpy.dtype('float64'):
-            numpy.dtype('float32'), numpy.dtype('int64'):
-            numpy.dtype('int32')}``.
-       
-   single: `bool`, optional
-        Write 64-bit floats as 32-bit floats and 64-bit integers as
-        32-bit integers. By default, input data types are
-        preserved. Note that ``single=True`` is exactly equivalent to
-        ``datatype={numpy.dtype('float64'): numpy.dtype('float32'),
-        numpy.dtype('int64'): numpy.dtype('int32')}``.
-       
-    double: `bool`, optional
-        Write 32-bit floats as 64-bit floats and 32-bit integers as
-        64-bit integers. By default, input data types are
-        preserved. Note that ``double=True`` is exactly equivalent to
-        ``datatype={numpy.dtype('float32'): numpy.dtype('float64'),
-        numpy.dtype('int32'): numpy.dtype('int64')}``.
+        the *compress* parameter is ``0`` (which is its default
+        value). See the `netCDF4 package
+        <http://unidata.github.io/netcdf4-python>`_ for more details.
 
     HDF_chunksizes: `dict`, optional
         Manually specify HDF5 chunks for the field data arrays.
@@ -247,32 +228,17 @@ which have equal values across all input fields.
         closely as possible the size and shape of the data block that
         users will read from the file.
 
-    unlimited: sequence of `str`, optional
-        Create unlimited dimensions (dimensions that can be appended
-        to). A dimension is identified by either a standard name; one
-        of T, Z, Y, X denoting time, height or horixontal axes
-        repsectively (as defined by the CF conventions); or the value
-        of an arbitrary CF property preceeded by the property name and
-        a colon.
+    verbose: `bool`, optional
+        If True then print a summary of how constructs map to output
+        netCDF variables and dimensions.
 
 :Returns:
 
     `None`
 
-:Examples 2:
+**Examples:**
 
->>> f
-[<CF Field: air_pressure(30, 24)>,
- <CF Field: u_compnt_of_wind(19, 29, 24)>,
- <CF Field: v_compnt_of_wind(19, 29, 24)>,
- <CF Field: potential_temperature(19, 30, 24)>]
->>> write(f, 'file')
-
->>> cf.write([f, g], 'file.nc', verbose=True)
-[<CF Field: air_pressure(30, 24)>,
- <CF Field: u_compnt_of_wind(19, 29, 24)>,
- <CF Field: v_compnt_of_wind(19, 29, 24)>,
- <CF Field: potential_temperature(19, 30, 24)>]
+TODO
 
     '''
     # ----------------------------------------------------------------
@@ -280,14 +246,12 @@ which have equal values across all input fields.
     # ----------------------------------------------------------------
     netcdf = NetCDFWrite(_implementation)
 
-         
     if fields:
         netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
-                     verbose=verbose, mode=mode,
+                     datatype=datatype,
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      no_shuffle=no_shuffle, fletcher32=fletcher32,
                      variable_attributes=variable_attributes,
-                     datatype=datatype, HDF_chunks=HDF_chunksizes,
-                     unlimited=unlimited, _debug=_debug)
+                     HDF_chunks=HDF_chunksizes, verbose=verbose)
 #--- End: def

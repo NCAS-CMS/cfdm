@@ -453,15 +453,27 @@ axes, and possibly other axes, are returned.
     #--- End: def
 
     def nc_get_instance_dimension(self, index, *default):
-        '''
+        '''TODO
         '''
         return index.nc_get_instance_dimension(index, *default)
     #--- End: def
     
     def nc_get_sample_dimension(self, count, *default):
-        '''
+        '''TODO
         '''
         return count.nc_get_sample_dimension(count, *default)
+    #--- End: def
+
+    def nc_get_unlimited_axes(self, field):
+        '''TODO
+        '''
+        return field.nc_unlimited_axes()
+    #--- End: def
+    
+    def nc_set_global_attributes(self, field, attributes):
+        '''TODO
+        '''
+        return field.nc_global_attributes(attributes)
     #--- End: def
     
     def equal_constructs(self, construct0, construct1,

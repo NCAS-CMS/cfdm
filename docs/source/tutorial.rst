@@ -284,9 +284,9 @@ constructs, keyed by unique internal identifiers:
    >>> f.constructs()
    TODO
    
-The `~Field.constructs` method has options to fileter the constructs
-by their type, their property and other attribute values, and by the
-domain axes that are spanned by the data array:
+The `~Field.constructs` method has options to filter the constructs by
+their type, property and other attribute values, and by the domain
+axes that are spanned by the data array:
 
 .. code:: python
 	  
@@ -297,28 +297,29 @@ domain axes that are spanned by the data array:
    >>> f.constructs(axes=['domainaxis1'])
    TODO
    >>> f.constructs('latitude',
-                 construct_type='dimension_coordinate'
-                 axes=['domainaxis1'])
+   ...              construct_type='dimension_coordinate'
+   ...              axes=['domainaxis1'])
    TODO
    
-We can also use the field's internal identifier to select constructs
-(e.g. "dimensioncoordinate1"), which is useful if a construct is not
-identifiable from its descriptive properties.
+We can also use the field's internal identifier to select constructs,
+which is useful if a construct is not otherwise identifiable by
+othermeans.
 
-   >>> f.constructs('TODO')
-
+   >>> f.constructs(id='dimensioncoordinate1')
+   TODO
+   
 An individual construct may be returned without its identifier with
-the field's `~Field.construct` method:
+the field's `~Field.get_construct` method:
 
-   >>> f.construct(description='latitude')
-   <TODO>
+   >>> f.get_construct('latitude')
+   TODO
 
 Where applicable, the classes representing metadata constructs share
 the same API as the field. This means, for instance, that the class
 for any construct that has a data array will have a `!get_array`
 method to access the data as a numpy array:
 
-   >>> lon = f.construct('longitude')
+   >>> lon = f.get_construct('longitude')
    >>> lon
    <TODO>
    >>> lon.set_property('long_name', 'Longitude')
@@ -329,7 +330,7 @@ method to access the data as a numpy array:
    TODO
 
 Other `cfdm` classes are used to represent construct components that
-do not fall into the categories of "properties" nor "data":
+do are neither "properties" nor "data":
 
 ======================  ==============================  ======================
 cfdm class              Description                     cfdm parent classes

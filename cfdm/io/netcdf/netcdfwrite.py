@@ -396,7 +396,7 @@ metadata construct.
         The field's domain axis identifier.
 
     unlimited: `bool`, optional
-        If true then create an unlimited dimension. By default
+        If True then create an unlimited dimension. By default
         dimensions are not unlimited.
 
     size: `int`, optional
@@ -408,10 +408,10 @@ metadata construct.
         
         '''
         g = self.write_vars
-        _debug = g['_debug']
-
+        verbose = g['verbose']
+        
         if axis is not None:        
-            if g['verbose'] or _debug:
+            if verbose:
                 domain_axis = self.implementation.get_domain_axes(f)[axis]
                 print('    Writing', repr(domain_axis), 'to netCDF dimension:', ncdim)
 
@@ -435,7 +435,7 @@ metadata construct.
                 error = str(error)
                 if error == 'NetCDF: NC_UNLIMITED size already in use':
                     raise RuntimeError(
-message+" Only one unlimited dimension allowed. Consider using a netCDF4 format.")
+message+" In a {} file only one unlimited dimension is allowed. Consider using a netCDF4 format.".format(g['netcdf'].file_format))
                     
                 raise RuntimeError(message)
         else:
@@ -530,7 +530,7 @@ a new netCDF dimension for the bounds.
             
             # Create a new dimension,  ##if it is not a scalar coordinate
 #            if self.implementation.get_data_ndim(coord) > 0:
-            unlimited = self.unlimited(f, axis)
+            unlimited = self._unlimited(f, axis)
             self._write_dimension(ncvar, f, axis, unlimited=unlimited)
     
             ncdimensions = self._netcdf_dimensions(f, key, coord)
@@ -822,7 +822,7 @@ name.
             # create it now.
             ncdim_to_size = g['ncdim_to_size']
             if ncdim not in ncdim_to_size:
-                if g['verbose'] or g['_debug']:
+                if g['verbose']:
                     print('    Writing size', size, 'netCDF dimension for bounds:', ncdim)
                     
                 ncdim_to_size[ncdim] = size
@@ -1182,7 +1182,7 @@ measure will not be written.
         '''
         g = self.write_vars
 
-        _debug = g['_debug']
+        verbose = g['verbose']
         
         if self._already_in_file(ref):
             # Use existing grid_mapping variable
@@ -1194,7 +1194,7 @@ measure will not be written.
             default = cc_parameters.get('grid_mapping_name', 'grid_mapping')
             ncvar = self._create_netcdf_variable_name(ref, default=default)
 
-            if g['verbose'] or _debug:
+            if verbose:
                 print('    Writing', repr(ref), 'to netCDF variable:', ncvar)
 
 #            args = [ncvar, 'S1', ()]
@@ -1292,9 +1292,9 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         '''
         g = self.write_vars
                 
-        _debug = g['_debug']
+        verbose = g['verbose']
         
-        if g['verbose'] or _debug:
+        if verbose:
             print('    Writing {!r}'.format(cfvar), end='')
      
         # ------------------------------------------------------------
@@ -1318,7 +1318,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                 ncdimensions = original_ncdimensions + (ncdim,)
         #--- End: if
         
-        if g['verbose'] or _debug:
+        if verbose:
             print(' to netCDF variable: {}({})'.format(ncvar, ', '.join(ncdimensions)))
 
         # ------------------------------------------------------------
@@ -1342,7 +1342,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
     #    if chunksizes == [None] * cfvar.get_data().ndim:
     #        chunksizes = None
     #
-    #    if _debug:
+    #    if verbose:
     #        print '  chunksizes:', chunksizes
 
         # ------------------------------------------------------------
@@ -1377,7 +1377,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
 
             if error == 'NetCDF: NC_UNLIMITED in the wrong index':            
                 raise RuntimeError(
-message+". Unlimited dimension must be the first (leftmost) dimension of the variable. Consider using a netCDF4 format.")
+                    message+". In a {} file the unlimited dimension must be the first (leftmost) dimension of the variable. Consider using a netCDF4 format.".format(g['netcdf'].file_format))
                     
             raise RuntimeError(message)
 #        else:
@@ -1444,7 +1444,7 @@ message+". Unlimited dimension must be the first (leftmost) dimension of the var
             array = self.implementation.get_array(data)
 
         # Convert data type
-        new_dtype = g['datatype'].get(array.dtype, None)
+        new_dtype = g['datatype'].get(array.dtype)
         if new_dtype is not None:
             array = array.astype(new_dtype)  
 
@@ -1536,8 +1536,8 @@ extra trailing dimension.
         '''
         g = self.write_vars
         
-        _debug = g['_debug']
-        if _debug:
+        verbose = g['verbose']
+        if verbose:
             print('  Writing', repr(f)+':')
 
         xxx = []
@@ -1566,7 +1566,7 @@ extra trailing dimension.
         # Type of compression applied to the field
         compression_type = self.implementation.get_compression_type(f)
         g['compression_type'] = compression_type
-        if _debug:
+        if verbose:
             print('    Compression = {!r}'.format(g['compression_type']))
         # 
         g['sample_ncdim']     = {}
@@ -1772,7 +1772,7 @@ extra trailing dimension.
                         domain_axis = self.implementation.get_domain_axes(f)[axis] 
                         ncdim = self.implementation.nc_get_dimension(domain_axis, 'dim')
                         ncdim = self._netcdf_name(ncdim)
-                        unlimited = self.unlimited(f, axis)
+                        unlimited = self._unlimited(f, axis)
                         self._write_dimension(ncdim, f, axis, unlimited=unlimited)
                         
                         xxx.append({(ncdim, axis_size0): spanning_constructs})
@@ -1975,7 +1975,7 @@ extra trailing dimension.
                     g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
                         ncvar=ncvar, formula_terms=formula_terms))
             
-                if g['_debug']:
+                if g['verbose']:
                     print('    Writing formula_terms to netCDF variable', ncvar+':', repr(formula_terms))
     
                 # Add the formula_terms attribute to the parent
@@ -1988,7 +1988,7 @@ extra trailing dimension.
                         g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
                             ncvar=bounds_ncvar, formula_terms=bounds_formula_terms))
 
-                    if g['_debug']:
+                    if g['verbose']:
                         print('    Writing formula_terms to netCDF bounds variable', bounds_ncvar+':', repr(bounds_formula_terms))
             #--- End: if
                         
@@ -2029,7 +2029,7 @@ extra trailing dimension.
         # Cell measures
         if cell_measures:
             cell_measures = ' '.join(cell_measures)
-            if _debug:
+            if verbose:
                 print('    Writing cell_measures to netCDF variable', ncvar+':', cell_measures)
                 
             extra['cell_measures'] = cell_measures
@@ -2037,7 +2037,7 @@ extra trailing dimension.
         # Auxiliary/scalar coordinates
         if coordinates:
             coordinates = ' '.join(coordinates)
-            if _debug:
+            if verbose:
                 print('    Writing attribute to netCDF variable {}: coordinates={!r}'.format(ncvar, str(coordinates)))
                 
             extra['coordinates'] = coordinates
@@ -2045,7 +2045,7 @@ extra trailing dimension.
         # Grid mapping
         if grid_mapping:
             grid_mapping = ' '.join(grid_mapping)
-            if _debug:
+            if verbose:
                 print('    Writing grid_mapping to netCDF variable', ncvar+':', grid_mapping)
                 
             extra['grid_mapping'] = grid_mapping
@@ -2053,7 +2053,7 @@ extra trailing dimension.
         # Ancillary variables
         if ancillary_variables:
             ancillary_variables = ' '.join(ancillary_variables)
-            if _debug:
+            if verbose:
                 print('    Writing ancillary_variables to netCDF variable', ncvar+':', ancillary_variables)
 
             extra['ancillary_variables'] = ancillary_variables
@@ -2085,7 +2085,7 @@ extra trailing dimension.
                 cell_methods_strings.append(self.implementation.get_cell_method_string(cm))
 
             cell_methods = ' '.join(cell_methods_strings)
-            if _debug:
+            if verbose:
                 print('    Writing cell_methods to netCDF variable', ncvar+':', cell_methods)
 
             extra['cell_methods'] = cell_methods
@@ -2113,7 +2113,7 @@ extra trailing dimension.
         if not self.implementation.has_datum(ref):
             return
 
-        if g['_debug']:
+        if g['verbose']:
             print('    Datum =', self.implementation.get_datum(ref))
             
 #        domain_ancillaries = API.get_datum_ancillaries(ref)
@@ -2143,7 +2143,7 @@ extra trailing dimension.
         if count[0] == 1:
             # Add the vertical coordinate to an existing
             # horizontal coordinate reference
-            if g['_debug']:
+            if g['verbose']:
                 print('    Adding', coord_key, 'to', grid_mapping)
                         
             grid_mapping = count[1]
@@ -2152,7 +2152,7 @@ extra trailing dimension.
         else:
             # Create a new horizontal coordinate reference for
             # the vertical datum
-            if g['_debug']:
+            if g['verbose']:
                 print('WHAT??')
             new_grid_mapping = self.implementation.initialise_CoordinateReference(
                 coordinates=[coord_key],
@@ -2161,8 +2161,8 @@ extra trailing dimension.
             g['grid_mapping_refs'].append(new_grid_mapping)
     #--- End: def
                             
-    def unlimited(self, field, axis):
-        '''
+    def _unlimited(self, field, axis):
+        '''TODO
 
 :Parameters:
   
@@ -2175,19 +2175,7 @@ extra trailing dimension.
     out: `bool`
 
         '''
-        g = self.write_vars
-
-        unlimited = field.unlimited().get(axis)
-    
-        if unlimited is None:
-            unlimited = False
-            for u in g['unlimited']:
-                if field.axis(u, key=True) == axis:
-                    unlimited = True
-                    break
-        #--- End: if
-        
-        return unlimited
+        return axis in self.implementation.nc_get_unlimited_axes(field)
     #--- End: def
     
     def _write_global_attributes(self, fields):
@@ -2348,12 +2336,11 @@ write them to the netCDF4.Dataset.
 #    #--- End: def
 
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
-              verbose=False, mode='w', least_significant_digit=None,
-              endian='native', compress=0, fletcher32=False,
-              no_shuffle=False, datatype=None, scalar=True,
-              variable_attributes=None, global_attributes=None,
-              HDF_chunks=None, unlimited=None, extra_write_vars=None,
-              _debug=False):
+              mode='w', least_significant_digit=None, endian='native',
+              compress=0, fletcher32=False, no_shuffle=False,
+              datatype=None, scalar=True, variable_attributes=None,
+              global_attributes=None, HDF_chunks=None,
+              extra_write_vars=None, verbose=False):
         '''Write fields to a netCDF file.
         
 NetCDF dimension and variable names will be taken from variables'
@@ -2469,7 +2456,7 @@ and auxiliary coordinate roles for different data variables.
  <CF Field: v_compnt_of_wind(19, 29, 24)>,
  <CF Field: potential_temperature(19, 30, 24)>]
         '''    
-        if _debug:
+        if verbose:
             print('Writing to', fmt)
 
         # ------------------------------------------------------------
@@ -2509,11 +2496,8 @@ and auxiliary coordinate roles for different data variables.
                                        'leap_year', 'leap_month'),
             # Data type conversions to be applied prior to writing
             'datatype': {},
-            #
-            'unlimited': (),
             # Print statements
             'verbose': False,
-            '_debug' : False,
 
             'xxx': [],
 
@@ -2567,9 +2551,6 @@ and auxiliary coordinate roles for different data variables.
 
         g['datatype'].update(dtype_conversions)
 
-        if unlimited:
-            g['unlimited'] = unlimited
-    
         # -------------------------------------------------------
         # Compression/endian
         # -------------------------------------------------------
@@ -2583,7 +2564,6 @@ and auxiliary coordinate roles for different data variables.
         g['least_significant_digit'] = least_significant_digit
         
         g['verbose'] = verbose
-        g['_debug']  = _debug        
         
         g['fmt'] = fmt
 
@@ -2594,7 +2574,6 @@ and auxiliary coordinate roles for different data variables.
                 fields = tuple(fields)
             except TypeError:
                 raise TypeError("'fields' parameter must be a (sequence of) Field")
-
             
         # -------------------------------------------------------
         # Scalar coordinate variables
@@ -2604,12 +2583,9 @@ and auxiliary coordinate roles for different data variables.
         # ---------------------------------------------------------------
         # Still here? Open the output netCDF file.
         # ---------------------------------------------------------------
-    #    if mode != 'w':
-    #        raise ValueError("Can only set mode='w' at the moment")
-    
         filename = os.path.expanduser(os.path.expandvars(filename))
         
-        if mode == 'w' and os.path.isfile(filename):
+        if os.path.isfile(filename):
             if not overwrite:
                 raise IOError(
                     "Can't write to an existing file unless overwrite=True: {}".format(
@@ -2625,6 +2601,7 @@ and auxiliary coordinate roles for different data variables.
         # ------------------------------------------------------------
         # Open the netCDF file to be written
         # ------------------------------------------------------------
+        mode = 'w'
         g['filename'] = filename
         g['netcdf'] = self.file_open(filename, mode, fmt)
     
@@ -2666,7 +2643,7 @@ and auxiliary coordinate roles for different data variables.
     #
     #        f.HDF_chunks(chunks)
     
-            if g['_debug']:            
+            if g['verbose']:            
                 print('  HDF chunks :', 'PASS FOR NOW') #f.HDF_chunks()
             
             # Write the field

@@ -183,7 +183,120 @@ TODO
     
     def get_construct(self, description=None, id=None, axes=None,
                       construct_type=None, copy=False):
-        '''TODO 
+        '''Return a metadata construct.
+
+The construct is selected via optional parameters. If multiple
+parameters are specified, then the unique construct that satisfies
+*all* of the given criteria is returned. An error is raised if
+multiple constructs satisfy all of the given criteria.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `set_construct`
+
+:Parameters:
+
+    description: `str`, optional
+        Select constructs that have the given property, or other
+        attribute, value.
+
+        The description may be one of:
+
+        * The value of the standard name property on its own. 
+
+            *Example:*
+              ``description='air_pressure'`` will select constructs
+              that have a "standard_name" property with the value
+              "air_pressure".
+
+        * The value of any property prefixed by the property name and
+          a colon. 
+
+            *Example:*
+              ``description='positive:up'`` will select constructs
+              that have a "positive" property with the value "up".
+
+            *Example:*
+              ``description='foo:bar'`` will select constructs that
+              have a "foo" property with the value "bar".
+
+            *Example:*
+              ``description='standard_name:air_pressure'`` will select
+              constructs that have a "standard_name" property with the
+              value "air_pressure".
+
+        * The measure of a cell measure constructs, prefixed by
+          "measure%"
+
+            *Example:*
+              ``description='measure%area'`` will select "area" cell
+              measure constructs.
+
+        * The netCDF variable name, prefixed by "ncvar%"
+
+            *Example:*
+              ``description='ncvar%lat'`` will select constructs with
+              netCDF variable name "lat".
+
+        * The netCDF dimension name of domain axis constructs,
+          prefixed by "ncdim%"
+
+            *Example:*
+              ``description='ncdim%time'`` will select domain axis
+              constructs with netCDF dimension name "time".
+
+    id: `str`, optional
+        Select the construct with the given internal identifier.
+
+        *Example:*
+          ``id='domainancillary0'``
+
+    construct_type: `str`, optional
+        Select constructs of the given type. Valid types are:
+
+          ==========================  ================================
+          *construct_type*            Constructs
+          ==========================  ================================
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
+          ==========================  ================================
+
+        *Example:*
+          ``construct_type='dimension_coordinate'``
+
+        Note that a `Domain` object never contains cell method nor
+        field ancillary constructs.
+
+    axes: sequence of `str`, optional
+        Select constructs which have data that spans any one or more
+        of the given domain axes, in any order. Domain axes are
+        specified by their unique internal identifiers.
+
+        *Example:*
+          ``axes=['domainaxis2']``
+
+        *Example:*
+          ``axes=['domainaxis0', 'domainaxis1']``
+
+    copy: `bool`, optional
+        If True then return a copy of the unique selected
+        construct. By default the construct is not copied.
+
+:Returns:
+
+    out: `dict`
+
+**Examples:**
+
+>>> f.constructs()
+TODO
+
         '''
         return self._get_constructs().get_construct(
             description=description, id=id,
@@ -201,7 +314,7 @@ internal identifiers.
 
 By default all constructs are returned, but a subset may be selected
 via the optional parameters. If multiple parameters are specified,
-then the constructs that satisfy all of the criteria are returned.
+then the constructs that satisfy *all* of the criteria are returned.
 
 .. versionadded:: 1.7
 
@@ -210,83 +323,85 @@ then the constructs that satisfy all of the criteria are returned.
 :Parameters:
 
     description: `str`, optional
-        Return only the constructs which have the given property, or
-        other attribute, value.
+        Select constructs that have the given property, or other
+        attribute, value.
 
         The description may be one of:
 
         * The value of the standard name property on its own. 
 
             *Example:*
-              ``description='air_pressure'`` will return constructs
-              that that have a "standard_name" property with the value
+              ``description='air_pressure'`` will select constructs
+              that have a "standard_name" property with the value
               "air_pressure".
 
         * The value of any property prefixed by the property name and
           a colon. 
 
             *Example:*
-              ``description='positive:up'`` will return constructs
-              that that have a "positive" property with the value
-              "up".
+              ``description='positive:up'`` will select constructs
+              that have a "positive" property with the value "up".
 
             *Example:*
-              ``description='foo:bar'`` will return constructs
-              that that have a "foo" property with the value
-              "bar".
+              ``description='foo:bar'`` will select constructs that
+              have a "foo" property with the value "bar".
 
             *Example:*
-              ``description='standard_name:air_pressure'`` will return
-              constructs that that have a "standard_name" property
-              with the value "air_pressure".
+              ``description='standard_name:air_pressure'`` will select
+              constructs that have a "standard_name" property with the
+              value "air_pressure".
 
         * The measure of a cell measure constructs, prefixed by
           "measure%"
 
             *Example:*
-              ``description='measure%area'`` will return area cell
+              ``description='measure%area'`` will select "area" cell
               measure constructs.
 
         * The netCDF variable name, prefixed by "ncvar%"
 
             *Example:*
-              ``description='ncvar%lat'`` will return constructs with
+              ``description='ncvar%lat'`` will select constructs with
               netCDF variable name "lat".
 
-        * The netCDF dimension name, prefixed by "ncdim%"
+        * The netCDF dimension name of domain axis constructs,
+          prefixed by "ncdim%"
 
             *Example:*
-              ``description='ncdim%time'`` will return domain axis
+              ``description='ncdim%time'`` will select domain axis
               constructs with netCDF dimension name "time".
 
     id: `str`, optional
-        Return only the construct with the given internal identifier.
+        Select the construct with the given internal identifier.
 
         *Example:*
-          ``id='fieldancillary0'``
+          ``id='domainancillary0'``
 
     construct_type: `str`, optional
-        Return only constructs of the given type. Valid types are:
+        Select constructs of the given type. Valid types are:
 
           ==========================  ================================
           *construct_type*            Constructs
           ==========================  ================================
-          ``'field_ancillary'``       Field ancillary constructs
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
           ``'domain_axis'``           Domain axis constructs
           ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
           ``'cell_measure'``          Cell measure constructs
-          ``'cell_method'``           Cell method constructs
           ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
           ==========================  ================================
 
         *Example:*
           ``construct_type='dimension_coordinate'``
 
+        Note that a `Domain` object never contains cell method nor
+        field ancillary constructs.
+
     axes: sequence of `str`, optional
-        Only return constructs which have data that spans any one or
-        more of the given domain axes, in any order. Domain axes are
+        Select constructs which have data that spans any one or more
+        of the given domain axes, in any order. Domain axes are
         specified by their unique internal identifiers.
 
         *Example:*
@@ -296,8 +411,8 @@ then the constructs that satisfy all of the criteria are returned.
           ``axes=['domainaxis0', 'domainaxis1']``
 
     copy: `bool`, optional
-        If True then return copies of the constructs, rather than the
-        actual construct objects contained in the field.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 

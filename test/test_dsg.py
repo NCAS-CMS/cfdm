@@ -128,7 +128,7 @@ class DSGTest(unittest.TestCase):
 #        for x in f:
 #            print(x)
             
-        cfdm.write(f, 'delme.nc', _debug=False)
+        cfdm.write(f, 'delme.nc', verbose=False)
         g = cfdm.read('delme.nc')
         
 #        print ('\ng\n')
@@ -162,7 +162,7 @@ class DSGTest(unittest.TestCase):
 #        for x in f:
 #            print(x)
             
-        cfdm.write(f, 'delme.nc', _debug=False)
+        cfdm.write(f, 'delme.nc', verbose=False)
         g = cfdm.read('delme.nc')
         
 #        print ('\ng\n')
@@ -197,7 +197,7 @@ class DSGTest(unittest.TestCase):
 #        for x in f:
 #            print(x)
             
-        cfdm.write(f, 'delme.nc', _debug=False)
+        cfdm.write(f, 'delme.nc', verbose=False)
         g = cfdm.read('delme.nc', _debug=False)
         
 #        print ('\ng\n')
