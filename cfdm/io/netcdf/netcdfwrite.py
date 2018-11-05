@@ -1152,8 +1152,7 @@ measure will not be written.
             self._set_external_variables(ncvar)
 
             # Create a new field to write out to the external file
-            if g['external_file'] is not None:
-                
+            if g['external_file'] is not None:                
                 self._create_external(field=field, construct_id=key,
                                       ncvar=ncvar, ncdimensions=ncdimensions)
         else:
@@ -2278,51 +2277,36 @@ write them to the netCDF4.Dataset.
         
         '''
         g = self.write_vars
-        
-#        # Data variable properties, as defined in Appendix A, without
-#        # those which are not simple.
-#        data_properties = set(('add_offset',
-#                               'cell_methods',
-#                               '_FillValue',
-#                               'flag_masks',
-#                               'flag_meanings',
-#                               'flag_values',
-#                               'long_name',
-#                               'missing_value',
-#                               'scale_factor',
-#                               'standard_error_multiplier',
-#                               'standard_name',
-#                               'units',
-#                               'valid_max',
-#                               'valid_min',
-#                               'valid_range',
-#                               ))
-    
-        # Global properties, as defined in Appendix A
-#        global_properties = set()
 
-
+        # ------------------------------------------------------------
+        # Initialize the global attributes with those requested to be
+        # such
+        # ------------------------------------------------------------
         global_attributes = g['global_attributes']
-                                               
+
+        # ------------------------------------------------------------
+        # Add in the standard "description of file contents"
+        # attributes
+        # ------------------------------------------------------------
         global_attributes.update(constants.description_of_file_contents_attributes)
-    
-        
-#        # Put all non-standard CF properties (i.e. those not in the
-#        # data_properties set) into the global_attributes set, but
-#        # omitting those which have been requested to be on variables.
-#        for f in fields:
-#            for attr in set(f.properties()) - global_properties: # - g['variable_attributes']:
-#                if attr not in data_properties:
-#                    global_properties.add(attr)
-#        #--- End: for
 
+        # ------------------------------------------------------------
+        # Add properties that have been marked as global on each field
+        # ------------------------------------------------------------
+        for f in fields:
+            f_global = self.implementation.nc_get_global_attributes(f)
+            global_attributes.update(f_global)
+
+        # ------------------------------------------------------------
+        # Remove attributes that have been specifically requested not
+        # to be global attributes
+        # ------------------------------------------------------------
         global_attributes.difference(g['variable_attributes'])
-
-#        for x in g['variable_attributes']:
-#            global_properties.discard(x)
-        
-        # Remove properties from the new global_properties set which
-        # have different values in different fields
+            
+        # ------------------------------------------------------------
+        # Remove global attributes that have different values for
+        # different fields
+        # ------------------------------------------------------------
         f0 = fields[0]
         for prop in tuple(global_attributes):
             if not self.implementation.has_property(f0, prop):
@@ -2338,13 +2322,15 @@ write them to the netCDF4.Dataset.
                         global_attributes.remove(prop)
                         break
         #--- End: for
-    
-        # Write the global properties to the file
+
+        # ------------------------------------------------------------
+        # Write the global attributes to the file
+        # ------------------------------------------------------------
         g['netcdf'].setncattr('Conventions', self.implementation.get_version())
         
         for attr in global_attributes - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self.implementation.get_property(f0, attr)) 
-    
+            
         g['global_attributes'] = global_attributes
     #--- End: def
 
@@ -2422,10 +2408,10 @@ write them to the netCDF4.Dataset.
 #    #--- End: def
 
     def write(self, fields, filename, fmt='NETCDF4', overwrite=True,
-              variable_attributes=None, external_file=None,
-              datatype=None, least_significant_digit=None,
-              endian='native', compress=0, fletcher32=False,
-              no_shuffle=False, scalar=True, global_attributes=None,
+              global_attributes=None, variable_attributes=None,
+              external_file=None, datatype=None,
+              least_significant_digit=None, endian='native',
+              compress=0, fletcher32=False, shuffle=True, scalar=True,
               HDF_chunks=None, extra_write_vars=None, verbose=False):
         '''Write fields to a netCDF file.
         
@@ -2554,7 +2540,6 @@ and auxiliary coordinate roles for different data variables.
             'ncvar_names': set(()),
             # Set of global or non-standard CF properties which have
             # identical values across all input fields.
-#            'global_properties': set(()), 
             'variable_attributes': set(()),
             'global_attributes': set(()),
             'bounds': {},
@@ -2577,7 +2562,6 @@ and auxiliary coordinate roles for different data variables.
             'count_variable_sample_dimension': {},
             'index_variable_sample_dimension': {},
 
-            'external_file'     : external_file,
             'external_variables': '',
             'external_fields'   : [],
         }
@@ -2633,8 +2617,8 @@ and auxiliary coordinate roles for different data variables.
         g['netcdf_compression'].update(
             {'zlib'       : zlib,
              'complevel'  : compress,
-             'fletcher32' : fletcher32,
-             'shuffle'    : not no_shuffle,
+             'fletcher32' : bool(fletcher32),
+             'shuffle'    : bool(shuffle),
             })
         g['endian'] = endian
         g['least_significant_digit'] = least_significant_digit
@@ -2661,6 +2645,13 @@ and auxiliary coordinate roles for different data variables.
         # ---------------------------------------------------------------
         filename = os.path.expanduser(os.path.expandvars(filename))
         
+        if external_file is not None:
+            external_file = os.path.expanduser(os.path.expandvars(external_file))
+            if os.path.realpath(external_file) == os.path.realpath(filename):
+                raise ValueError("Can't set filename and external_file to the same path")
+        #--- End: if
+        g['external_file'] = external_file
+
         if os.path.isfile(filename):
             if not overwrite:
                 raise IOError(
@@ -2746,7 +2737,7 @@ and auxiliary coordinate roles for different data variables.
                        endian='native',
                        compress=compress,
                        fletcher32=fletcher32,
-                       no_shuffle=no_shuffle,
+                       shuffle=shuffle,
                        HDF_chunks=HDF_chunks,
                        verbose=verbose)            
     #--- End: def

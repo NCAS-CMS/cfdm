@@ -14,37 +14,48 @@ implementation = CFDMImplementation(version=__version__,
                                     Data=Data)
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
-          variable_attributes=None, external_file=None, datatype=None,
+          global_attributes=None, variable_attributes=None,
+          external_file=None, datatype=None,
           least_significant_digit=None, endian='native', compress=0,
-          fletcher32=False, no_shuffle=False, HDF_chunksizes=None,
+          fletcher32=False, shuffle=True, HDF_chunksizes=None,
           verbose=False, _implementation=implementation):
     '''Write fields to a netCDF file.
 
 **File format**
 
-All of the file formats supported by the `netCDF4 package
-<http://unidata.github.io/netcdf4-python>`_ are supported:
-NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, NETCDF3_64BIT_DATA,
-NETCDF4_CLASSIC, and NETCDF4. See the *fmt* parameter for details.
+See the *fmt* parameter for details on which netCDF file formats are
+supported.
 
-**Dimension and variable names**
+**NetCDF variable and dimension names**
 
-Each construct has a `!nc_get_variable` method, except a domain axis
-construct which has a `!nc_get_dimension` method
+These names are stored from fields read a from dataset, or may be set
+manually. They are used when writing the field to the file. If a name
+has not been set then one will be constructed. The names may be
+modified internally to prevent duplication in the file.
 
-**Global attributes**
+Each construct, or construct component, that corresponds to a netCDF
+variable has the following methods to get, set and remove a netCDF
+variable name: `!nc_get_variable`, `!nc_set_variable` and
+`!nc_del_variable` method
 
+The domain axis construct has the following methods to get, set and
+remove a netCDF dimension name: `~cfdm.DomainAxis.nc_get_dimension`,
+`~cfdm.DomainAxis.nc_set_dimension` and
+`~cfdm.DomainAxis.nc_del_dimension`.
 
-    
-NetCDF dimension and variable names will be taken, if present, from
-variables' `!ncvar` attributes and the domain axis `!ncdim`
-attributes, otherwise they are inferred from standard names or set to
-defaults. NetCDF names may be automatically given a numerical suffix
-to avoid duplication.
+**NetCDF attributes**
 
-Output netCDF file global properties are those which occur in the set
-of CF global properties and non-standard data variable properties and
-which have equal values across all input fields.
+Field construct properties may be written as netCDF global attributes
+or netCDF data variable attributes. See the *global_attributes* and
+*variable_attributes* parameters for details.
+
+**External variables**
+
+Constructs marked as external may be omitted from the file and referred
+to via the netCDF "external_variables" global attribute. In addition,
+omitted constructs may be written to an external file. Constructs that
+may be external have the following methods to get and set their
+external status: `!nc_get_external` and `!nc_set_external`.
 
 .. versionadded:: 1.7
 
@@ -113,7 +124,7 @@ which have equal values across all input fields.
         ``'NETCDF4_CLASSIC'`` files use the version 4 disk format
         (HDF5), but omits features not found in the version 3
         API. They can be read by HDF5 clients. They can also be read
-        by netCDF 3 clients only if they have been relinked against
+        by netCDF 3 clients only if they have been re-linked against
         the netCDF4 library.
 
         ``'NETCDF4'`` files use the version 4 disk format (HDF5) and
@@ -123,11 +134,60 @@ which have equal values across all input fields.
         If False then raise an error if the output file pre-exists. By
         default a pre-existing output file is overwritten.
 
-    variable_attributes: (sequence of) `str`, optional
-        TODO
+    global_attributes: (sequence of) `str`, optional
+         Create netCDF global attributes from the given field
+         construct properties, rather than netCDF data variable
+         attributes.
 
-    external_file: `str`, optional
-        TODO
+         These attributes are in addition to the following properties,
+         which are created as netCDF global attributes by default:
+         
+           * the `description of file contents
+             <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents>`_
+             properties, and
+
+           * properties flagged as global on any of the fields being
+             written (see `cfdm.Field.nc_global_properties` for
+             details).
+
+         Note that it is not possible to create a netCDF global
+         attribute from a property that has different values for
+         different fields being written. In this case the property
+         will not be written as a netCDF global attribute, even if it
+         has been specified by the *global_attributes* parameter or is
+         one of the default properties, but will appear as an
+         attribute on the netCDF data variable corresponding to each
+         field construct that contains the property.
+
+         *Example:*
+            ``global_attributes='project'``
+
+         *Example:*
+            ``global_attributes=['project', 'experiment']``
+
+    variable_attributes: (sequence of) `str`, optional
+         Create netCDF data variable attributes from the given field
+         properties, rather than netCDF global attributes.
+
+         By default, all properties other than those which are created
+         as netCDF global attributes (see the *global_attributes*
+         parameter), are created as attributes netCDF data variables.
+
+         If the same property is named by both the
+         *variable_attributes* and *global_attributes* parameters,
+         then the former takes precedence.
+
+         *Example:*
+            ``variable_attributes='project'``
+
+         *Example:*
+            ``variable_attributes=['project', 'doi']``
+
+
+    external_file: `str`, optional   
+        Write constructs that are marked as external, and have data,
+        to the named external file. Ignored if there are no such
+        constructs .
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing
@@ -186,16 +246,16 @@ which have equal values across all input fields.
         is ``0``. See the `netCDF4 package
         <http://unidata.github.io/netcdf4-python>`_ for details.
 
-    no_shuffle: `bool`, optional
-        If True then the HDF5 shuffle filter (which de-interlaces a
-        block of data before compression by reordering the bytes by
-        storing the first byte of all of a variable's values in the
-        chunk contiguously, followed by all the second bytes, and so
-        on) is turned off. By default the filter is applied because if
-        the data array values are not all wildly different, using the
-        filter can make the data more easily compressible.  Ignored if
-        the *compress* parameter is ``0`` (which is its default
-        value). See the `netCDF4 package
+    shuffle: `bool`, optional
+        If True (the default) then the HDF5 shuffle filter (which
+        de-interlaces a block of data before compression by reordering
+        the bytes by storing the first byte of all of a variable's
+        values in the chunk contiguously, followed by all the second
+        bytes, and so on) is turned off. By default the filter is
+        applied because if the data array values are not all wildly
+        different, using the filter can make the data more easily
+        compressible.  Ignored if the *compress* parameter is ``0``
+        (which is its default value). See the `netCDF4 package
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
     HDF_chunksizes: `dict`, optional
@@ -254,10 +314,12 @@ TODO
 
     if fields:
         netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
+                     global_attributes=global_attributes,
                      variable_attributes=variable_attributes,
-                     external_file=external_file, datatype=datatype,
+                     external_file=external_file,
+                     datatype=datatype,
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
-                     no_shuffle=no_shuffle, fletcher32=fletcher32,
+                     shuffle=shuffle, fletcher32=fletcher32,
                      HDF_chunks=HDF_chunksizes, verbose=verbose)
 #--- End: def

@@ -14,9 +14,16 @@ The field construct defined by the CF data model is represented by a
 Reading from disk
 -----------------
 
-The `cfdm.read` function reads a netCDF file from disk or from an
-OPeNDAP URL and returns its contents as a list one or more `Field`
-objects:
+The `cfdm.read` function reads a `netCDF
+<https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk or
+from an `OPeNDAP URL
+<https://www.unidata.ucar.edu/software/netcdf/docs/dap_accessing_data.html>`_
+[#opendap]_ and returns its contents as a list one or more `Field`
+objects.
+
+For example, to read the file **file.nc** (:download:`download
+<../netcdf_files/file.nc>`) [#files]_:
+
 
 >>> import cfdm
 >>> f = cfdm.read('file.nc')
@@ -28,6 +35,8 @@ The `cfdm.read` function has optional parameters to
 * specify which netCDF variables which correspond to metadata
   constructs should also be returned as independent fields.
 
+All formats of netCDF3 and netCDF4 files can be read.
+  
 .. _inspection:
   
 Inspection
@@ -35,6 +44,8 @@ Inspection
 
 The contents of a field may be inspected at three different levels of
 detail.
+
+.. rubric:: 1: Minimal
 
 The built-in `repr` function returns a short, one-line description of
 the field:
@@ -52,6 +63,8 @@ This gives the identity of the field (that has the standard name
 constructs spanned by the field's data array (time, latitude and
 longitude with sizes 12, 64 and 128 respectively) and the units of the
 field's data (K).
+
+.. rubric:: 2: Medium
 
 The built-in `str` function returns the same information as the the
 one-line output, along with short descriptions of the field's other
@@ -72,6 +85,8 @@ coordinate constructs, one of which (height) is a coordinate for a
 size 1 domain axis that is not a dimension of the field's data
 array. The units and first and last values of all data arrays are
 given and relative time values are translated into strings.
+
+.. rubric:: 3: Full
 
 The field's `~cfdm.Field.dump` method gives all properties of all
 constructs as well as the first and last values of the field's data
@@ -204,15 +219,15 @@ and methods of the `Data` object:
 
 .. _data_assignment:
 
-Assignment
-^^^^^^^^^^
+Data assignment
+^^^^^^^^^^^^^^^
 
 Data array elements are changed by assigning to indices of the `Data`
 object. The indexing rules are similar to the `numpy indexing rules
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only differences being:
 
-* **When two or more dimension's indices are sequences of integers
+* **When two or more dimensions' indices are sequences of integers
   then these indices work independently along each dimension (similar
   to the way vector subscripts work in Fortran). This is the same
   behaviour as indexing on a** `Variable` **object of the** `netCDF4
@@ -241,11 +256,11 @@ is achieved by indexing the field directly. The new subspace contains
 the same properties and similar metadata constructs to the original
 field, but the latter are also subspaced when they span domain axes
 that have been changed. The indexing rules are the same as for
-:ref:`data array assignment <data_assignment>`, with the additional
-rule that:
+:ref:`data assignment <data_assignment>`, with the additional rule
+that:
      
 * **An integer index i takes the i-th element but does not reduce the
-  rank of the output array by one.**
+  rank of the output data by one.**
 
 .. code:: python
 
@@ -345,8 +360,8 @@ to access its data as a numpy array:
 Construct components
 ^^^^^^^^^^^^^^^^^^^^
 
-Other `cfdm` classes are used to represent construct components that
-are neither "properties" nor "data":
+Other classes are used to represent construct components that are
+neither "properties" nor "data":
 
 ======================  ==============================  ======================
 cfdm class              Description                     cfdm parent classes
@@ -373,8 +388,7 @@ cfdm class              Description                     cfdm parent classes
                         array elements.
 ======================  ==============================  ======================
 
-Where applicable, these classes also share the same API as the
-field:
+Where applicable, these classes also share the same API as the field:
 
 .. code:: python
 	  
@@ -408,15 +422,16 @@ The `cfdm.write` function writes fields to a netCDF file on disk:
 
 The `cfdm.write` function has optional parameters to
 
-* specify which attributes should, where possibleor should not, be global attributes,
+* TODO specify which attributes should, where possibleor should not, be global attributes,
   
-* specify which attributes should, or should not, be global attributes,
+* TODO specify which attributes should, or should not, be global attributes,
   
 * create :ref:`external variables <external>` in an external file,
 
 * change the data type of output data arrays,
   
-* set the output netCDF format,
+* set the output netCDF format (all netCDF3 and netCDF4 formats are
+  possible),
 
 * apply netCDF compression,
 
@@ -457,8 +472,8 @@ if they had actually been stored in the same file, simply by providing
 the external file names to the `cfdm.read` function.
 
 This is illustrated with the files **parent.nc** (:download:`download
-<netcdf_files/parent.nc>`) and **external.nc** (:download:`download
-<netcdf_files/external.nc>`) [#f1]_.
+<../netcdf_files/parent.nc>`) and **external.nc** (:download:`download
+<../netcdf_files/external.nc>`) [#files]_:
 
 .. code:: bash
    
@@ -475,16 +490,16 @@ This is illustrated with the files **parent.nc** (:download:`download
    		longitude:units = "degrees_east" ;
    		longitude:standard_name = "longitude" ;
    	double eastward_wind(latitude, longitude) ;
+   		eastward_wind:units = "m s-1" ;
    		eastward_wind:standard_name = "eastward_wind" ;
    		eastward_wind:cell_measures = "area: areacella" ;
-   		eastward_wind:units = "m s-1" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "1.7" ;
    		:external_variables = "areacella" ;
    }
 
-   $ ncdump -h external.nc
+   $ ncdump -h external.nc 
    netcdf external {
    dimensions:
    	latitude = 10 ;
@@ -495,7 +510,7 @@ This is illustrated with the files **parent.nc** (:download:`download
    		areacella:standard_name = "cell_area" ;
    
    // global attributes:
-   		:Conventions = "CF-1.7" ;
+   		:Conventions = "1.7" ;
    }
 
 The dataset in **parent.nc** may be read without specifying the
@@ -511,7 +526,8 @@ is still created, but one without any metadata or data:
    Data            : eastward_wind(latitude(10), longitude(9)) m s-1
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
-   Cell measures   : measure%area() TODO: no barackets
+   Cell measures   : measure%area (external variable: ncvar%areacella)
+
    >>> c = f.get_construct('measure%area')
    >>> c
    <CellMeasure: measure%area >
@@ -540,14 +556,14 @@ been present in the parent dataset:
    >>> g = cfdm.read('parent.nc', external_files='external.nc')[0]
    >>> print(g)
    Field: eastward_wind (ncvar%eastward_wind)
-    ------------------------------------------
-    Data            : eastward_wind(latitude(10), longitude(9)) m s-1
-    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
-                    : longitude(9) = [0.0, ..., 8.0] degrees
-    Cell measures   : measure%area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> c = g.get_construct('measure%area')
+   ------------------------------------------
+   Data            : eastward_wind(latitude(10), longitude(9)) m s-1
+   Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
+                   : longitude(9) = [0.0, ..., 8.0] degrees
+   Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
+   >>> c = g.get_construct('cell_area')
    >>> c
-   <CellMeasure: measure%area(9, 10) m2>
+   <CellMeasure: cell_area(9, 10) m2>
    >>> c.nc_get_external()
    False
    >>> c.nc_get_variable()
@@ -898,8 +914,12 @@ We can now inspect the new field construct:
 
 ----
 
-.. [#f1] These files may be also found in the
-         `docs/source/netcdf_files
-         <https://github.com/NCAS-CMS/cfdm/tree/master/docs/source/netcdf_files>`_
-         directory of the installation.
+.. rubric:: Footnotes
+	    
+.. [#opendap] Requires the netCDF-4 C library to have been compiled
+              with OPeNDAP support enabled.
+
+.. [#files] Tutorial files may be also found in the `docs/netcdf_files
+            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/netcdf_files>`_
+            directory of the installation.
 

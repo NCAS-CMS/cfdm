@@ -151,8 +151,16 @@ x.__str__() <==> str(x)
                 # Dimension coordinate
                 axis = self.construct_axes(key)[0]
                 name = variable.name(ncvar=True, default=key)
-                name += '({0})'.format(variable.get_data().size)
-
+                if variable.has_data():
+                    name += '({0})'.format(variable.get_data().size)
+                elif hasattr(variable, 'nc_get_external'):
+                    if variable.nc_get_external():
+                        ncvar = variable.nc_get_variable(None)
+                        if ncvar is not None:
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                        else:
+                            x.append(' (external variable)')
+                            
                 if variable is None:
                     return name
                           
@@ -163,12 +171,22 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                shape = [axis_names[axis] for axis in self.construct_axes(key)]
-                shape = str(tuple(shape)).replace("'", "")
-                shape = shape.replace(',)', ')')
                 x = [variable.name(ncvar=True, default=key)]
-                x.append(shape)
-                    
+
+                if variable.has_data():
+                    shape = [axis_names[axis] for axis in self.construct_axes(key)]
+                    shape = str(tuple(shape)).replace("'", "")
+                    shape = shape.replace(',)', ')')
+                    x.append(shape)
+                elif hasattr(variable, 'nc_get_external'):
+                    if variable.nc_get_external():
+                        ncvar = variable.nc_get_variable(None)
+                        if ncvar is not None:
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                        else:
+                            x.append(' (external variable)')
+            #--- End: if
+                
             if variable.has_data():
                 x.append(' = {0}'.format(variable.get_data()))
                 
@@ -480,13 +498,12 @@ field.
         '''
         new = super().copy(data=data)
 
-#        new.set_global_attributes(self.get_global_attributes(()))
         new.set_read_report(self.get_read_report({}))
 
         return new
     #--- End: def
     
-    def dump(self, display=True, _level=0, _title='Field'):
+    def dump(self, display=True, _level=0, _title=None):
         '''TODOA full description of the field.
 
 The field and its components are described without abbreviation with
@@ -835,12 +852,6 @@ TODO
             axes=axes, copy=copy)
     #--- End: def
 
-#    def get_global_attributes(self, *default):
-#        '''TODO
-#        '''
-#        return self._get_component('global_attributes', *default)
-#    #--- End: def
-
     def get_read_report(self, *default):
         '''TODO
         '''
@@ -871,22 +882,6 @@ TODO
         #--- End: for
     #--- End: def
    
-#    def set_global_attributes(self, global_attributes):
-#        '''TODO
-#
-#Consider [get|set|del_global_attribute [NO S]
-#
-#**Examples**
-#
-#>>> f.set_global_attributes(['project', 'experiment'])
-#>>> f.get_global_attributes()
-#('project', 'experiment')
-#
-#        '''
-#        self._set_component('global_attributes',
-#                            set(global_attributes), copy=False)
-#    #--- End: def
-
     def set_read_report(self, value, copy=True):
         '''TODO
         '''

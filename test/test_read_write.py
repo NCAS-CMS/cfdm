@@ -96,15 +96,15 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(self.filename)[0]
         for fmt in ('NETCDF4',
                     'NETCDF4_CLASSIC'):
-            for no_shuffle in (True, False):
+            for shuffle in (True, False):
                 for compress in range(10):
                     cfdm.write(f, tmpfile, fmt=fmt,
                                compress=compress,
-                               no_shuffle=no_shuffle)
+                               shuffle=shuffle)
                     g = cfdm.read(tmpfile)[0]
                     self.assertTrue(
                         f.equals(g, traceback=True),
-                        'Bad read/write with lossless compression: {}, {}, {}'.format(fmt, compress, no_shuffle))
+                        'Bad read/write with lossless compression: {}, {}, {}'.format(fmt, compress, shuffle))
         #--- End: for
     #--- End: def
 

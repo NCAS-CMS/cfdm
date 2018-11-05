@@ -71,7 +71,13 @@ Return a string containing a full description of the cell measure.
 
         if self.nc_get_external():
             if not (self.has_data() or self.properties()):
-                _title += ' (external variable: {0})'.format(self.nc_get_variable(''))
+
+                ncvar = self.nc_get_variable(None)
+                if ncvar is not None:
+                    ncvar = 'ncvar%'+ncvar
+                else:
+                    ncvar = ''
+                _title += ' (external variable: {0})'.format(ncvar)
                 
         return super().dump( display=display, field=field, key=key,
                              _omit_properties=_omit_properties,
@@ -170,25 +176,44 @@ None
 
         '''
         out = []
-        
-        if custom is None:
-            n = self.get_measure(None)
-            if n is not None:
-                out.append('measure%{}'.format(n))
 
-            custom = ()
+        if custom is None:
+            n = self.get_property('standard_name', None)
+            if n is not None:
+                out.append(n)
+
+            if all_names or not out:
+                n = self.get_measure(None)
+                if n is not None:
+                    out.append('measure%{}'.format(n))
+
+            custom = ('cf_role', 'long_name')
+            
+        if all_names or not out:
+            for prop in custom:
+                n = self.get_property(prop, None)
+                if n is not None:
+                    out.append('{0}:{1}'.format(prop, n))
+                    if not all_names:
+                        break
+        #--- End: if
         
-        if all_names:    
-            out += super().name(default=default,
-                                ncvar=ncvar,
-                                custom=custom,
-                                all_names=all_names)
+        if ncvar and (all_names or not out):
+            n = self.nc_get_variable(None)
+            if n is not None:
+                out.append('ncvar%{0}'.format(n))
+        #--- End: if
+
+        if all_names:
+            if default is not None:
+                out.append(default)
+                
             return out
         
         if out:
             return out[-1]
 
-        return default    
+        return default
     #--- End: def
 
 #--- End: class

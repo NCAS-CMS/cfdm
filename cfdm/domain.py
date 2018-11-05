@@ -269,7 +269,8 @@ last values.
         for key, value in sorted(self.dimension_coordinates().items()):
             string.append('')
             string.append(value.dump(display=False, _level=_level,
-                                     _title='Dimension coordinate: {0}'.format(construct_name[key]),
+                                     _title='Dimension coordinate: {0}'.format(
+                                         construct_name[key]),
                                      _axes=self.construct_axes(key),
                                      _axis_names=axis_to_name))
             
@@ -277,7 +278,8 @@ last values.
         for key, value in sorted(self.auxiliary_coordinates().items()):
             string.append('')
             string.append(value.dump(display=False, _level=_level,
-                                     _title='Auxiliary coordinate: {0}'.format(construct_name[key]),
+                                     _title='Auxiliary coordinate: {0}'.format(
+                                         construct_name[key]),
                                      _axes=self.construct_axes(key),
                                      _axis_names=axis_to_name))
 
@@ -285,7 +287,8 @@ last values.
         for key, value in sorted(self.domain_ancillaries().items()):
             string.append('') 
             string.append(value.dump(display=False, _level=_level,
-                                     _title='Domain ancillary: {0}'.format(construct_name[key]),
+                                     _title='Domain ancillary: {0}'.format(
+                                         construct_name[key]),
                                      _axes=self.construct_axes(key),
                                      _axis_names=axis_to_name))
             
@@ -293,7 +296,8 @@ last values.
         for key, value in sorted(self.coordinate_references().items()):
             string.append('')
             string.append(value.dump(display=False, _level=_level,
-                                     _title='Coordinate reference: {0}'.format(construct_name[key]),
+                                     _title='Coordinate reference: {0}'.format(
+                                         construct_name[key]),
                                      _construct_names=construct_name,
                                      _auxiliary_coordinates=tuple(self.auxiliary_coordinates()),
                                      _dimension_coordinates=tuple(self.dimension_coordinates())))

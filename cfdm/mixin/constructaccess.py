@@ -180,7 +180,16 @@ TODO
         return self._get_constructs().constructs(
             construct_type='cell_measure', axes=axes, copy=copy)
     #--- End: def
-    
+
+
+    def del_construct(self, *args, **kwargs):
+
+        c = self.constructs(*args, **kwargs)
+        if len(c) == 1:
+            cid, _ = c.popitem()
+            return self._get_constructs().del_construct(id=cid)
+    #--- End: def
+
     def get_construct(self, description=None, id=None, axes=None,
                       construct_type=None, copy=False):
         '''Return a metadata construct.
