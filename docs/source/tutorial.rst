@@ -456,9 +456,9 @@ however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the `cfdm.read` function.
 
-This is illustrated with the files
-**parent.nc**   (:download:`download <netcdf_files/parent.nc>`) and
-**external.nc** (:download:`download <netcdf_files/external.nc>`) [#f1]_.
+This is illustrated with the files **parent.nc** (:download:`download
+<netcdf_files/parent.nc>`) and **external.nc** (:download:`download
+<netcdf_files/external.nc>`) [#f1]_.
 
 .. code:: bash
    
@@ -898,7 +898,8 @@ We can now inspect the new field construct:
 
 ----
 
-.. [#f1] These files may be also found in the `docs/source/
+.. [#f1] These files may be also found in the
+         `docs/source/netcdf_files
          <https://github.com/NCAS-CMS/cfdm/tree/master/docs/source/netcdf_files>`_
          directory of the installation.
 
