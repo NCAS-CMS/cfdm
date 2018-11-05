@@ -686,7 +686,7 @@ Parameters:
 
 >>> x = f.del_construct('auxiliarycoordinate2')
         '''
-        self._construct_axes.pop(idkey, None)
+        self._construct_axes.pop(id, None)
 
         construct_type = self._construct_type.pop(id, None)
         if construct_type is None:

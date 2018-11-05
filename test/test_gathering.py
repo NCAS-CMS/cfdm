@@ -112,7 +112,7 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.filename, _debug=False)
+        f = cfdm.read(self.filename, verbose=False)
 
         self.assertTrue(len(f) == 3)
 
@@ -128,7 +128,7 @@ class DSGTest(unittest.TestCase):
 #        print(g.data.shape)
 
         cfdm.write(f, 'delme.nc', verbose=False)
-        g = cfdm.read('delme.nc', _debug=False)
+        g = cfdm.read('delme.nc', verbose=False)
         self.assertTrue(len(g) == len(f))
       
 #        print ('\nf\n')

@@ -224,8 +224,7 @@ contents and any file suffix is not not considered.
 
     def read(self, filename, field=None, default_version=None,
              external_files=None, extra_read_vars=None,
-             _scan_only=False, _debug=False):
-#    uncompress=True, ):
+             _scan_only=False, verbose=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
 
@@ -304,8 +303,8 @@ ancillaries, field ancillaries).
             'formula_terms': {},
             #
             'compression': {},
-            # Debug  print statements?
-            '_debug': _debug   ,
+            # Verbose?
+            'verbose': verbose,
             
             'read_report': {None: {'components': {}}},
             'component_report' : {},
@@ -418,7 +417,7 @@ ancillaries, field ancillaries).
         nc = self.file_open(filename)
         g['nc'] = nc
         
-        if _debug:
+        if verbose:
             print('Reading netCDF file:', filename)
             print('    Input netCDF dataset =',nc)
     
@@ -442,7 +441,7 @@ ancillaries, field ancillaries).
         #--- End: for
         
         g['global_attributes'] = global_attributes
-        if _debug:
+        if verbose:
             print('    global attributes:', g['global_attributes'])
 
         # ------------------------------------------------------------
@@ -540,7 +539,7 @@ ancillaries, field ancillaries).
 
         g['internal_dimension_sizes'] = internal_dimension_sizes
 
-        if _debug:
+        if verbose:
             print('    netCDF dimensions:', internal_dimension_sizes)
     
         # ------------------------------------------------------------
@@ -670,7 +669,7 @@ ancillaries, field ancillaries).
         # Get external variables (>= CF-1.7)
         # ------------------------------------------------------------
         if g['file_version'] >= g['version']['1.7']:
-            if _debug:
+            if verbose:
                 print('    External variables:', sorted(g['external_variables']))
                 print('    External files    :', g['external_files'])
 
@@ -714,7 +713,7 @@ ancillaries, field ancillaries).
                 fields[ncvar] = f
         #--- End: for
         
-        if _debug:
+        if verbose:
             print('Referenced netCDF variables:\n   ', end=' ')
             print('\n    '.join([ncvar for  ncvar in all_fields
                                  if not self._is_unreferenced(ncvar)]))
@@ -796,7 +795,7 @@ ancillaries, field ancillaries).
             
         for external_file in external_files:
             external_read_vars = self.read(external_file, _scan_only=True,
-                                           _debug=False)
+                                           verbose=False)
             # Reset self.read_vars
             self.read_vars = read_vars
             
@@ -865,8 +864,8 @@ ancillaries, field ancillaries).
         '''
         '''
         g = self.read_vars
-        _debug = g['_debug']
-        if _debug:
+        verbose = g['verbose']
+        if verbose:
             print('        List variable: compress =', compress)
     
         gathered_ncdimension = g['variable_dimensions'][ncvar][0]
@@ -906,8 +905,8 @@ ancillaries, field ancillaries).
         '''
         g = self.read_vars        
 
-        _debug = g['_debug']
-        if _debug:
+        verbose = g['verbose']
+        if verbose:
             print('    count variable: sample_dimension =', sample_dimension)
 
         instance_dimension = g['variable_dimensions'][ncvar][0] 
@@ -924,7 +923,7 @@ ancillaries, field ancillaries).
             element_dimension = 'profile'
         else:
             element_dimension = 'element'
-        if _debug:        
+        if verbose:        
             print('    featureType =', g['featureType'])
 
         element_dimension = self._set_ragged_contiguous_parameters(
@@ -963,8 +962,8 @@ variable should be pre-filled with missing values.
         '''
         g = self.read_vars
                 
-        _debug = g['_debug']
-        if _debug:
+        verbose = g['verbose']
+        if verbose:
             print('    index variable: instance_dimension =', instance_dimension)
 
         # Read the data of the index variable
@@ -982,7 +981,7 @@ variable should be pre-filled with missing values.
             element_dimension = 'trajectory'
         else:
             element_dimension = 'element'
-        if _debug:        
+        if verbose:        
             print('    featureType =', g['featureType'])
 
         element_dimension = self._set_ragged_indexed_parameters(
@@ -1019,7 +1018,7 @@ variable should be pre-filled with missing values.
 #            element_dimension = 'trajectory'
 #        else:
 #            element_dimension = 'element'
-#        if _debug:        
+#        if verbose:        
 #            print '    featureType =', g['featureType']
 #    
 #        base = element_dimension
@@ -1043,7 +1042,7 @@ variable should be pre-filled with missing values.
 #    
 #        g['new_dimensions'][element_dimension] = element_dimension_size
 #        
-#        if _debug:
+#        if verbose:
 #            print "    Created g['compression'][{!r}]['ragged_indexed']".format(
 #                indexed_sample_dimension)
     
@@ -1066,13 +1065,13 @@ variable should be pre-filled with missing values.
     '''
         g = self.read_vars
                 
-        _debug = g['_debug']
-        if _debug:
+        verbose = g['verbose']
+        if verbose:
             print('Pre-processing indexed and contiguous compression')
             print(g['compression'])
         profile_dimension = g['compression'][sample_dimension]['ragged_contiguous']['profile_dimension']
     
-        if _debug:
+        if verbose:
             print('    sample_dimension  :', sample_dimension)
             print('    instance_dimension:', instance_dimension)
             print('    profile_dimension :', profile_dimension)
@@ -1091,7 +1090,7 @@ variable should be pre-filled with missing values.
         element_dimension_1_size = int(profiles_per_instance.max())
         element_dimension_2_size = int(self.implementation.get_data_max(elements_per_profile)) #int(elements_per_profile.max())
         
-        if _debug:
+        if verbose:
             print("    Creating g['compression'][{!r}]['ragged_indexed_contiguous']".format(
                 sample_dimension))
             
@@ -1107,7 +1106,7 @@ variable should be pre-filled with missing values.
             'element_dimension_2_size': element_dimension_2_size,
         }
     
-        if _debug:
+        if verbose:
             print('    Implied dimensions: {} -> {}'.format(
                 sample_dimension,
                 g['compression'][sample_dimension]['ragged_indexed_contiguous']['implied_ncdimensions']))
@@ -1138,8 +1137,8 @@ variable should be pre-filled with missing values.
     '''
         g = self.read_vars        
         
-        _debug = g['_debug']
-        if _debug:
+        verbose = g['verbose']
+        if verbose:
             print('    Geometry container =', ncvar)
             
         g['geometries'][ncvar] = {'geometry_type': attributes[ncvar].get('geometry_type')}
@@ -1155,7 +1154,7 @@ variable should be pre-filled with missing values.
         parsed_node_count       = self._split_string_by_white_space(ncvar, node_count)
         parsed_part_node_count  = self._split_string_by_white_space(ncvar, part_node_count)
 
-        if _debug:
+        if verbose:
             print('    node_coordinates =', node_coordinates)
             print('    interior_ring    =', interior_ring)
             print('    node_count       =', node_count)
@@ -1334,7 +1333,7 @@ variable should be pre-filled with missing values.
         instance_dimension_size = self.implementation.get_data_size(elements_per_instance)
         element_dimension_size  = int(self.implementation.get_data_max(elements_per_instance))
         
-#        if g['_debug']:
+#        if g['verbose']:
 #            print('    contiguous array implied shape:', (instance_dimension_size,element_dimension_size))
     
         # Make sure that the element dimension name is unique
@@ -1358,7 +1357,7 @@ variable should be pre-filled with missing values.
             'instance_dimension_size': instance_dimension_size,
         }
         
-        if g['_debug']:
+        if g['verbose']:
             print("    Creating g['compression'][{!r}]['ragged_contiguous']".format(
                 sample_dimension))
 
@@ -1431,7 +1430,7 @@ variable should be pre-filled with missing values.
     
         g['new_dimensions'][element_dimension] = element_dimension_size
         
-        if g['_debug']:
+        if g['verbose']:
             print("    Created g['compression'][{!r}]['ragged_indexed']".format(
                 indexed_sample_dimension))
     
@@ -1760,8 +1759,8 @@ variable should be pre-filled with missing values.
         g['read_report'][field_ncvar] = {'dimensions': dimensions,
                                          'components': {}}
         
-        _debug = g['_debug']
-        if _debug:
+        verbose = g['verbose']
+        if verbose:
             print('Converting netCDF variable {}({}) to a Field:'.format(
                 field_ncvar, ', '.join(dimensions)))
 
@@ -1770,7 +1769,7 @@ variable should be pre-filled with missing values.
         field_properties = g['global_attributes'].copy()
         field_properties.update(g['variable_attributes'][field_ncvar])
 
-        if _debug:
+        if verbose:
             print('    netCDF attributes:', field_properties)
         
         # Take cell_methods out of the data variable's properties
@@ -1840,12 +1839,12 @@ variable should be pre-filled with missing values.
                 domain_axis = self._create_domain_axis(
                     self.implementation.get_construct_data_size(coord),
                     ncdim)
-                if _debug:
+                if verbose:
                     print('    [0] Inserting', repr(domain_axis))
                 axis = self.implementation.set_domain_axis(field=f, construct=domain_axis,
                                            copy=False)
 
-                if _debug:
+                if verbose:
                     print('    [1] Inserting', repr(coord))
                 dim = self.implementation.set_dimension_coordinate(field=f, construct=coord,
                                                    axes=[axis], copy=False)
@@ -1870,7 +1869,7 @@ variable should be pre-filled with missing values.
                     size = g['internal_dimension_sizes'][ncdim]
 
                 domain_axis = self._create_domain_axis(size, ncdim)
-                if _debug:
+                if verbose:
                     print('    [2] Inserting', repr(domain_axis))
                 axis = self.implementation.set_domain_axis(field=f, construct=domain_axis,
                                            copy=False)
@@ -1893,7 +1892,7 @@ variable should be pre-filled with missing values.
         #--- End: for
 
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)        
-        if _debug:
+        if verbose:
             print('    [3] Inserting', repr(data))
 
         self.implementation.set_data(f, data, axes=data_axes, copy=False)
@@ -1938,7 +1937,7 @@ variable should be pre-filled with missing values.
                         # turn it into a 1-d, size 1 auxiliary coordinate
                         # construct.
                         domain_axis = self._create_domain_axis(1)
-                        if _debug:
+                        if verbose:
                             print('    [4] Inserting', repr(domain_axis))
                         dim = self.implementation.set_domain_axis(f, domain_axis)
                         dimensions = [dim]
@@ -1960,13 +1959,13 @@ variable should be pre-filled with missing values.
                     
                     domain_axis = self._create_domain_axis(
                         self.implementation.get_construct_data_size(coord))
-                    if _debug:
+                    if verbose:
                         print('    [5] Inserting', repr(domain_axis))
                     axis = self.implementation.set_domain_axis(field=f,
                                                                construct=domain_axis,
                                                                copy=False)
                     
-                    if _debug:
+                    if verbose:
                         print('    [5] Inserting', repr(coord))
                     dim = self.implementation.set_dimension_coordinate(f, coord,
                                                                        axes=[axis],
@@ -1984,7 +1983,7 @@ variable should be pre-filled with missing values.
                     del g['auxiliary_coordinate'][ncvar]
                 else:
                     # Insert auxiliary coordinate
-                    if _debug:
+                    if verbose:
                         print('    [6] Inserting', repr(coord))
                     aux = self.implementation.set_auxiliary_coordinate(
                         f, coord, axes=dimensions, copy=False)
@@ -2062,7 +2061,7 @@ variable should be pre-filled with missing values.
                
             # Still here? Create a formula terms coordinate reference.
             for ncvar, domain_anc, axes in domain_ancillaries:
-                if _debug:
+                if verbose:
                     print('    [7] Inserting', repr(domain_anc))
                     
                 da_key = self.implementation.set_domain_ancillary(field=f,
@@ -2105,7 +2104,7 @@ variable should be pre-filled with missing values.
                                                     grid_mapping,
                                                     parsed_grid_mapping)
             if not cf_compliant:
-                if _debug:
+                if verbose:
                     print('        Bad grid_mapping:', grid_mapping)
             else:
                 for x in parsed_grid_mapping:
@@ -2157,7 +2156,7 @@ variable should be pre-filled with missing values.
                             if vcoord in coordinates:
                                 # Add the datum to an already existing
                                 # vertical coordinate reference
-                                if _debug:
+                                if verbose:
                                     print('    [ ] Inserting {!r} into {!r}'.format(datum, vcr))
                                 self.implementation.set_datum(coordinate_reference=vcr,
                                                               datum=datum)
@@ -2218,7 +2217,7 @@ variable should be pre-filled with missing values.
                         cell = self._create_cell_measure(measure, ncvar)
                         g['cell_measure'][ncvar] = cell
         
-                    if _debug:
+                    if verbose:
                         print('    [8] Inserting', repr(cell))
 
                     key = self.implementation.set_cell_measure(
@@ -2247,7 +2246,7 @@ variable should be pre-filled with missing values.
                         for axis in properties.pop('axes')]
                                 
                 cell_method = self._create_cell_method(axes, properties)
-                if _debug:
+                if verbose:
                     print('    [ ] Inserting', repr(cell_method))
                         
                 self.implementation.set_cell_method(field=f, construct=cell_method,
@@ -2278,7 +2277,7 @@ variable should be pre-filled with missing values.
                         g['field_ancillary'][ncvar] = field_anc
                         
                     # Insert the field ancillary
-                    if _debug:
+                    if verbose:
                         print('    [9] Inserting', repr(field_anc))
                     key = self.implementation.set_field_ancillary(field=f,
                                                      construct=field_anc,
@@ -2288,7 +2287,7 @@ variable should be pre-filled with missing values.
                     ncvar_to_key[ncvar] = key
         #--- End: if
 
-        if _debug:
+        if verbose:
             print('    Field properties:', f.properties())
         
         # Add the structural read report to the field
@@ -2361,7 +2360,7 @@ variable should be pre-filled with missing values.
         e = g['component_report'].setdefault(variable, {})
         e.setdefault(ncvar, []).append(d)
 
-        if g['_debug']:
+        if g['verbose']:
             if dimensions is None:
                 dimensions = ''
             else:
@@ -2674,7 +2673,7 @@ variable's netCDF dimensions.
     
         if ncvar in g['external_variables']:
             # The cell measure variable is in an unknown external file
-            self.implementation.set_external(construct=cell_measure)
+            self.implementation.nc_set_external(construct=cell_measure)
         else:
             # The cell measure variable is in this file or in a known
             # external file
@@ -3653,19 +3652,21 @@ Checks that
                                   conformance='7.2.requirement.3')
                 ok = False
                 continue
-                
-            dimensions = self._ncdimensions(ncvar)
-            if (not unknown_external and
-                not self._dimensions_are_subset(ncvar, dimensions, parent_dimensions)):
-                # The cell measure variable's dimensions do NOT span a
-                # subset of the parent variable's dimensions.
-                self._add_message(field_ncvar, ncvar,
-                                  message=incorrect_dimensions,
-                                  attribute=attribute,
-                                  dimensions=g['dimensons'][ncvar],
-                                  conformance='7.2.requirement.4')
-                ok = False
-                continue
+
+#            print ('unkown_external=', unknown_external)
+            if not unknown_external:
+                dimensions = self._ncdimensions(ncvar)
+                if (not unknown_external and
+                    not self._dimensions_are_subset(ncvar, dimensions, parent_dimensions)):
+                    # The cell measure variable's dimensions do NOT span a
+                    # subset of the parent variable's dimensions.
+                    self._add_message(field_ncvar, ncvar,
+                                      message=incorrect_dimensions,
+                                      attribute=attribute,
+                                      dimensions=g['dimensons'][ncvar],
+                                      conformance='7.2.requirement.4')
+                    ok = False
+                    continue
         #--- End: for
 
         return ok
@@ -3695,7 +3696,7 @@ Checks that
         missing_variable      = ('Ancillary variable', 'is not in file')
         incorrect_dimensions  = ('Ancillary variable', 'spans incorrect dimensions')
         
-        _debug = self.read_vars['_debug']
+        verbose = self.read_vars['verbose']
 
         g = self.read_vars
         
@@ -3704,7 +3705,7 @@ Checks that
                                   message=incorrectly_formatted,
                                   attribute=attribute)
 
-            if _debug:
+            if verbose:
                 print('    Error processing netCDF variable {}: {}'.format(
                     field_ncvar, d['message']))                
 

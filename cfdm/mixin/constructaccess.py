@@ -307,14 +307,15 @@ TODO
 
     def constructs(self, description=None, id=None, axes=None,
                    construct_type=None, copy=False):
-        '''Return the metadata constructs
+        '''Return metadata constructs
 
 Constructs are returned as values of a dictionary, keyed by unique
 internal identifiers.
 
-By default all constructs are returned, but a subset may be selected
-via the optional parameters. If multiple parameters are specified,
-then the constructs that satisfy *all* of the criteria are returned.
+By default all metadata constructs are returned, but a subset may be
+selected via the optional parameters. If multiple parameters are
+specified, then the constructs that satisfy *all* of the criteria are
+returned.
 
 .. versionadded:: 1.7
 
@@ -351,7 +352,7 @@ then the constructs that satisfy *all* of the criteria are returned.
               constructs that have a "standard_name" property with the
               value "air_pressure".
 
-        * The measure of a cell measure constructs, prefixed by
+        * The measure of cell measure constructs, prefixed by
           "measure%"
 
             *Example:*

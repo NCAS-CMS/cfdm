@@ -208,7 +208,7 @@ class create_fieldTest(unittest.TestCase):
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=True)
 #        f.dump()
 
-        g = cfdm.read(self.filename, _debug=True) #, squeeze=True)
+        g = cfdm.read(self.filename, verbose=True) #, squeeze=True)
 #        g[0].dump()
 #        sys.exit(0)
         for x in g:
@@ -254,7 +254,7 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, _debug=True, field=['domain_ancillary'])
+        g = cfdm.read(self.filename, verbose=True, field=['domain_ancillary'])
         for x in g:
             x.print_read_report()
 

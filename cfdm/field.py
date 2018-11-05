@@ -539,55 +539,6 @@ last values.
 
         name = self._unique_construct_names()
 
-#        # Domain axes
-#        axes = self._dump_axes(axis_to_name, display=False, _level=_level)
-#        if axes:
-#            string.append('')
-#            string.append(axes)
-#          
-#        # Dimension coordinates
-##        name = self._unique_construct_names('dimension_coordinates')
-#        for key, value in sorted(self.dimension_coordinates().items()):
-#            string.append('')
-#            string.append(
-#                value.dump(display=False,
-#                           field=self, key=key, _level=_level,
-#                           _title='Dimension coordinate: {0}'.format(name[key])))
-#            
-#        # Auxiliary coordinates
-##        name = self._unique_construct_names('auxiliary_coordinates')
-#        for key, value in sorted(self.auxiliary_coordinates().items()):
-#            string.append('')
-#            string.append(
-#                value.dump(display=False, field=self, 
-#                           key=key, _level=_level,
-#                           _title='Auxiliary coordinate: {0}'.format(name[key])))
-#
-#        # Domain ancillaries
-##        name = self._unique_construct_names('domain_ancillaries')
-#        for key, value in sorted(self.domain_ancillaries().items()):
-#            string.append('') 
-#            string.append(
-#                value.dump(display=False, field=self, key=key, _level=_level,
-#                           _title='Domain ancillary: {0}'.format(name[key])))
-#            
-#        # Coordinate references
-##        name = self._unique_construct_names('coordinate_references')
-#        for key, value in sorted(self.coordinate_references().items()):
-#            string.append('')
-#            string.append(
-#                value.dump(display=False, field=self, key=key, _level=_level,
-#                           _title='Coordinate reference: {0}'.format(name[key])))
-#
-#        # Cell measures
-##        name = self._unique_construct_names('cell_measures')
-#        for key, value in sorted(self.cell_measures().items()):
-#            string.append('')
-#            string.append(
-#                value.dump(display=False, field=self, key=key, _level=_level,
-#                           _title='Cell measure: {0}'.format(name[key])))
-
-
         # Simple properties
         properties = self.properties()
         if properties:
@@ -620,7 +571,6 @@ last values.
 
         # Field ancillaries
         for key, value in sorted(self.field_ancillaries().items()):
-                # value.dump(display=False, field=self,     key=key, _level=_level))
             string.append(value.dump(display=False,
                                      _axes=self.construct_axes(key),
                                      _axis_names=axis_to_name,
@@ -795,49 +745,84 @@ by the data array may be selected.
         return f
     #--- End: def
 
-    def field(self, key):
+    def create_field(self, id, domain=True):
         '''TODO
+
+:Parameters:
+
+    id: `str`
+        TODO
+
+    domain: `bool`, optional
+        TODO
+
+:Returns:
+
+    out: `Field`
+        TODO
+
+**Examples:**
+
+TODO
         '''
-        c = self.construct(key, copy=False)
+        c = self.get_construct(id=id, copy=False)
     
-        f = type(self)(properties=c.properties(), copy=True)
+        # ------------------------------------------------------------
+        # Create a new field with the properties and data from the
+        # construct
+        # ------------------------------------------------------------
+        f = type(self)(source=c, copy=True)
 
-        data_axes = self.construct_axes(key)
-        for domain_axis in data_axes:
-            f.set_domain_axis(self.domain_axes()[domain_axis],
-                              key=domain_axis, copy=True)
+        # ------------------------------------------------------------
+        # Add domain axes
+        # ------------------------------------------------------------
+        data_axes = self.construct_axes(id)
+        if data_axes:
+            for domain_axis in data_axes:
+                f.set_domain_axis(self.domain_axes()[domain_axis],
+                                  id=domain_axis, copy=True)
+        #--- End: if
 
-        f.set_data(c.get_data(), axes=data_axes, copy=True)
+        # ------------------------------------------------------------
+        # Set the data axes
+        # ------------------------------------------------------------
+        if data_axes is not None:
+            f.set_data_axes(axes=data_axes)
 
-        for construct_type in ('dimensioncoordinate', 'auxiliarycoordinate', 'cellmeasure'):
-            for ckey, con in self.constructs(construct_type=construct_type,
-                                             axes=data_axes,
-                                             copy=False).items():
-                axes = self.construct_axes().get(ckey)
-                if axes is None:
-                    continue
+        # ------------------------------------------------------------
+        # Add a more complete domain
+        # ------------------------------------------------------------
+        if domain:
+            for construct_type in ('dimensioncoordinate', 'auxiliarycoordinate', 'cellmeasure'):
+                for ckey, con in self.constructs(construct_type=construct_type,
+                                                 axes=data_axes,
+                                                 copy=False).items():
+                    axes = self.construct_axes().get(ckey)
+                    if axes is None:
+                        continue
 
-                if set(axes).issubset(data_axes):
-                    f.set_construct(self.construct_type(ckey), con, key=ckey,
-                                    axes=axes, copy=True)
-        #--- End: for
-        
-        # Add coordinate references which span a subset of the item's
-        # axes
-        for rkey, ref in self.coordinate_references().items():
-            ok = True
-            for ckey in (tuple(ref.coordinates()) +
-                         tuple(ref.datum.ancillaries().values()),
-                         tuple(ref.coordinate_conversion.ancillaries().values())):
-                axes = self.construct_axes()[ckey]
-                if not set(axes).issubset(data_axes):
-                    ok = False
-                    break
+                    if set(axes).issubset(data_axes):
+                        f.set_construct(self.construct_type(ckey), con, id=ckey,
+                                        axes=axes, copy=True)
             #--- End: for
-            
-            if ok:
-                f.set_coordinate_reference(ref, key=rkey, copy=True)
-        #--- End: for
+        
+            # Add coordinate references which span a subset of the item's
+            # axes
+            for rkey, ref in self.coordinate_references().items():
+                ok = True
+                for ckey in (tuple(ref.coordinates()) +
+                             tuple(ref.datum.ancillaries().values()),
+                             tuple(ref.coordinate_conversion.ancillaries().values())):
+                    axes = self.construct_axes()[ckey]
+                    if not set(axes).issubset(data_axes):
+                        ok = False
+                        break
+                #--- End: for
+                
+                if ok:
+                    f.set_coordinate_reference(ref, id=rkey, copy=True)
+            #--- End: for
+        #--- End: if
               
         return f
     #--- End: def

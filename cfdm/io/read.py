@@ -60,7 +60,7 @@ implementation = CFDMImplementation(version = __version__,
                                     RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
                                     )
 
-def read(filename, external_files=None, field=None, _debug=False,
+def read(filename, external_files=None, field=None, verbose=False,
          _implementation=implementation):
     '''Read fields from a dataset.
 
@@ -170,14 +170,14 @@ TODO
     return  _read_a_file(filename,
                          external_files=external_files,
                          field=field,
-                         _debug=_debug,
+                         verbose=verbose,
                          _implementation=_implementation)
 #--- End: def
 
 def _read_a_file(filename,
                  external_files=(),
                  field=(),
-                 _debug=False,
+                 verbose=False,
                  _implementation=None):
     '''Read the contents of a single file into a field list.
 
@@ -202,7 +202,7 @@ def _read_a_file(filename,
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external_files=external_files,
-                             field=field, _debug=_debug)
+                             field=field, verbose=verbose)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 

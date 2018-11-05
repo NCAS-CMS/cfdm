@@ -129,6 +129,12 @@ class CFDMImplementation(Implementation):
         return construct.copy()
     #--- End: def
 
+    def create_field(self, field=None, construct_id=None):
+        '''TODO
+        '''
+        return field.create_field(id=construct_id, domain=False)
+    #--- End: def
+        
     def del_property(self, construct, prop):
         '''
 
@@ -243,10 +249,10 @@ AttributeError: Field doesn't have property 'standard_name'
         return [data_axes[i] for i in self.get_data_compressed_axes(data)]
     #--- End: def
 
-    def get_compression_type(self, field):
+    def get_compression_type(self, construct):
         '''
         '''
-        return field.get_data().get_compression_type()
+        return construct.get_data().get_compression_type()
     #--- End: def
         
     def get_construct_axes(self, field, key):
@@ -523,17 +529,13 @@ axes, and possibly other axes, are returned.
         return construct.data.size
     #--- End: def
    
-    def get_external(self, parent):
+    def nc_get_external(self, parent):
         '''Return whether a construct is external.
-
-:Examples 1:
 
 :Parameters:
 
     parent: 
         The object
-
-    default: optional
 
 :Returns:
 
@@ -542,7 +544,10 @@ axes, and possibly other axes, are returned.
 
 :Examples 2:
         '''
-        return parent.get_external()
+        if not hasattr(parent, 'nc_get_external'):
+            return False
+        
+        return parent.nc_get_external()
     #--- End: def
     
     def get_field_ancillaries(self, field):
@@ -1267,10 +1272,10 @@ also be provided.
         return field.set_domain_axis(construct, copy=copy)
     #--- End: def
 
-    def set_external(self, construct):
+    def nc_set_external(self, construct):
         '''
         '''
-        construct.set_external(True)
+        construct.nc_set_external(True)
     #--- End: def
 
     def set_field_ancillary(self, field, construct, axes, copy=True):

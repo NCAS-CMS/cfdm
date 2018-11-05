@@ -18,73 +18,10 @@ class ExternalVariableTest(unittest.TestCase):
         
         self.test_only = []
     #--- End: def
-    
-    def test_EXTERNAL(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        # External file contains only the cell measure variable
-        f = cfdm.read(self.parent_file,
-                      external_files=[self.external_file],
-                      _debug=False)
-
-        c = cfdm.read(self.combined_file, _debug=False)
-
-#        print ('\nParent + External:\n')
-#        for x in f:
-#            print(x)
-##            print (x.get_read_report())
-#
-#        print ('\nCombined:\n')
-#        for x in c:
-#            print(x)
-
-        self.assertTrue(len(f) == 1)
-        self.assertTrue(len(c) == 1)
-
-        for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], traceback=True))
-
-        # External file contains other variables
-        f = cfdm.read(self.parent_file,
-                      external_files=self.combined_file,
-                      _debug=False)
-
-#        print ('\nParent + Combined:\n')
-#        for x in f:
-#            print(x)
-#
-#        print ('\nCombined:\n')
-#        for x in c:
-#            print(x)
-
-        self.assertTrue(len(f) == 1)
-        self.assertTrue(len(c) == 1)
-
-        for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], traceback=True))
-
-        # Two external files
-        f = cfdm.read(self.parent_file,
-                      external_files=[self.external_file, self.external_missing_file],
-                      _debug=False)
-
-#        print ('\nParent + External + External Missing:\n')
-#        for x in f:
-#            print(x)
-#
-#        print ('\nCombined:\n')
-#        for x in c:
-#            print(x)
-
-        self.assertTrue(len(f) == 1)
-        self.assertTrue(len(c) == 1)
-
-        for i in range(len(f)):
-            self.assertTrue(c[i].equals(f[i], traceback=True))
-    #--- End: def        
 
     def _make_files(self):
+        '''
+        '''
         def _pp(filename, parent=False, external=False, combined=False, external_missing=False):
             '''
             '''
@@ -138,7 +75,7 @@ class ExternalVariableTest(unittest.TestCase):
                 areacella = nc.createVariable(dimensions=('grid_longitude', 'grid_latitude'),
                                               datatype='f8',
                                               varname='areacella')
-                areacella.setncatts({'units': 'm2', 'measure': 'area'})
+                areacella.setncatts({'units': 'm2', 'standard_name': 'cell_area'})
                 areacella[...] = numpy.arange(90).reshape(9, 10) + 100000.5
                 
             nc.close
@@ -160,6 +97,132 @@ class ExternalVariableTest(unittest.TestCase):
 
         return parent_file, external_file, combined_file, external_missing_file
     #--- End: def
+
+    def test_EXTERNAL_READ(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Read the parent fielsd on its own, without the external file
+        f = cfdm.read(self.parent_file)
+        self.assertTrue(len(f) == 1)
+        f = f[0]
+
+        cell_measure = f.get_construct('measure%area')
+
+        self.assertTrue(cell_measure.nc_get_external())
+        self.assertTrue(cell_measure.nc_get_variable() == 'areacella')
+        self.assertTrue(cell_measure.properties() == {})
+        self.assertFalse(cell_measure.has_data())
+        
+        # External file contains only the cell measure variable
+        f = cfdm.read(self.parent_file,
+                      external_files=[self.external_file],
+                      verbose=False)
+        
+        c = cfdm.read(self.combined_file, verbose=False)
+
+#        print ('\nParent + External:\n')
+#        for x in f:
+#            print(x)
+##            print (x.get_read_report())
+#
+#        print ('\nCombined:\n')
+#        for x in c:
+#            print(x)
+
+        self.assertTrue(len(f) == 1)
+        self.assertTrue(len(c) == 1)
+
+        for i in range(len(f)):
+            self.assertTrue(c[i].equals(f[i], traceback=True))
+
+        # External file contains other variables
+        f = cfdm.read(self.parent_file,
+                      external_files=self.combined_file,
+                      verbose=False)
+
+#        print ('\nParent + Combined:\n')
+#        for x in f:
+#            print(x)
+#
+#        print ('\nCombined:\n')
+#        for x in c:
+#            print(x)
+
+        self.assertTrue(len(f) == 1)
+        self.assertTrue(len(c) == 1)
+
+        for i in range(len(f)):
+            self.assertTrue(c[i].equals(f[i], traceback=True))
+
+        # Two external files
+        f = cfdm.read(self.parent_file,
+                      external_files=[self.external_file, self.external_missing_file],
+                      verbose=False)
+
+#        print ('\nParent + External + External Missing:\n')
+#        for x in f:
+#            print(x)
+#
+#        print ('\nCombined:\n')
+#        for x in c:
+#            print(x)
+
+        self.assertTrue(len(f) == 1)
+        self.assertTrue(len(c) == 1)
+
+        for i in range(len(f)):
+            self.assertTrue(c[i].equals(f[i], traceback=True))
+    #--- End: def        
+   
+    def test_EXTERNAL_WRITE(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        parent   = cfdm.read(self.parent_file)
+        combined = cfdm.read(self.combined_file)
+        
+        # External file contains only the cell measure variable
+        f = cfdm.read(self.parent_file,
+                      external_files=self.external_file)
+
+        cfdm.write(f, 'delme.nc')
+
+        g = cfdm.read('delme.nc')
+
+        self.assertTrue(len(g) == len(combined))
+
+        for i in range(len(g)):
+            self.assertTrue(combined[i].equals(g[i], traceback=True))
+
+        cell_measure = g[0].get_construct('measure%area')
+
+        self.assertFalse(cell_measure.nc_get_external())
+        cell_measure.nc_set_external(True)
+        self.assertTrue(cell_measure.nc_get_external())
+        self.assertTrue(cell_measure.properties())
+        self.assertTrue(cell_measure.has_data())
+
+        self.assertTrue(g[0].get_construct('measure%area').nc_get_external())
+
+        cfdm.write(g, 'delme_parent.nc', external_file='delme_external.nc',
+                   verbose=False)
+
+        h = cfdm.read('delme_parent.nc', verbose=False)
+
+        self.assertTrue(len(h) == len(parent))
+
+        for i in range(len(h)):
+            self.assertTrue(parent[i].equals(h[i], traceback=True))
+
+        h = cfdm.read('delme_external.nc')
+        external = cfdm.read(self.external_file)
+
+        self.assertTrue(len(h) == len(external))
+
+        for i in range(len(h)):
+            self.assertTrue(external[i].equals(h[i], traceback=True))
+    #--- End: def        
     
 #--- End: class
 

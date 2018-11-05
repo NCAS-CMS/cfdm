@@ -28,19 +28,6 @@ class NetCDFDimension(NetCDF):
     '''Mixin TODO 
 
     '''
-
-#    def _initialise_ncdim_from(self, source):
-#        '''
-#        '''
-#        try:
-#            ncdim = source.nc_get_dimension(None)
-#        except AttributeError:
-#            ncdim = None##
-#
-#        if ncdim is not None:
-#            self.nc_set_dimension(ncdim)
-#    #--- End: def
-
     def nc_del_dimension(self, *default):
         '''TODO 
         '''
@@ -82,19 +69,6 @@ class NetCDFVariable(NetCDF):
     '''Mixin TODO 
 
     '''
-
-#    def _initialise_ncvar_from(self, source):
-#        '''
-#        '''
-#        try:
-#            ncvar = source.nc_get_variable(None)
-#        except AttributeError:
-#            ncvar = None
-#
-#        if ncvar is not None:
-#            self.nc_set_variable(ncvar)
-#    #--- End: def
-
     def nc_del_variable(self, *default):
         '''TODO 
         '''        
@@ -243,7 +217,74 @@ class NetCDFDataVariable(NetCDF):
             self._get_component('netcdf')['unlimited_axes'] = tuple(axes)
 
         return list(out)
+#--- End: def
+
+
+class NetCDFExternal(NetCDF):
+    '''TODO
+
+    '''
+    def nc_get_external(self):
+        '''TODO Whether the construct is external.
+
+The construct is assumed to be internal unless sepcifically set to be
+external with the `set_external` method.
+
+.. versionadded:: 1.7
+
+.. seealso:: `nc_set_external`
+
+:Returns:
+
+    out: `bool`
+        TODO
+
+**Examples:**
+
+>>> is_external = 'Yes' if c.nc_get_external() else 'No'
+>>> c.nc_set_external(True)
+>>> c.nc_get_external()
+True
+>>> c.nc_set_external(False)
+>>> c.nc_get_external()
+False
+        '''
+        return self._get_component('netcdf').get('external', False)
     #--- End: def
+
+    def nc_set_external(self, value):
+        '''TODO
+
+The construct is assumed to be internal unless sepcifically set to be
+external with the `set_external` method.
+
+.. versionadded:: 1.7
+
+.. seealso:: `nc_get_external`
+
+:Parameters:
+
+    value: `bool`
+        TODO
+
+:Returns:
+
+     `None`
+
+**Examples:**
+
+>>> is_external = 'Yes' if c.nc_get_external() else 'No'
+>>> c.nc_set_external(True)
+>>> c.nc_get_external()
+True
+>>> c.nc_set_external(False)
+>>> c.nc_get_external()
+False
+
+        '''
+        self._get_component('netcdf')['external'] = bool(value)
+    #--- End: def
+
 
 #--- End: class
 

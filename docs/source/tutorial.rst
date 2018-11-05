@@ -1,11 +1,15 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. _tutorial:
+
 Tutorial
 ========
 
 The field construct defined by the CF data model is represented by a
 `Field` object.
+
+.. _read:
 
 Reading from disk
 -----------------
@@ -17,10 +21,15 @@ objects:
 >>> import cfdm
 >>> f = cfdm.read('file.nc')
 
-The `cfdm.read` function has optional parameters to define files that
-contain :ref:`external variables <external>`, and to specify which
-metadata constructs should also be returned as independent fields.
+The `cfdm.read` function has optional parameters to
 
+* provide files that contain :ref:`external variables <external>`, and
+
+* specify which netCDF variables which correspond to metadata
+  constructs should also be returned as independent fields.
+
+.. _inspection:
+  
 Inspection
 ----------
 
@@ -144,7 +153,7 @@ and `~Field.set_property` methods:
    'air_temperature'
 
 All properties may be completely replaced with another collection by
-providing the new properties to the `~Field.properties` method:
+providing a new set of properties to the `~Field.properties` method:
 
 
 .. code:: python
@@ -180,7 +189,7 @@ The data may be retrieved as an independent `numpy` array with the
    >>> f.get_array()
    TODO
    
-The file also has a `~Field.data` attribute that is an alias for the
+The field also has a `~Field.data` attribute that is an alias for the
 `~Field.get_data` method, which makes it easier to access attributes
 and methods of the `Data` object:
 
@@ -203,13 +212,11 @@ object. The indexing rules are similar to the `numpy indexing rules
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only differences being:
 
-* An integer index i takes the i-th element but does not reduce the
-  rank of the output array by one.
-
-* When two or more dimension's indices are sequences of integers then
-  these indices work independently along each dimension (similar to
-  the way vector subscripts work in Fortran). This is the same
-  behaviour as indexing on a `netCDF4.Variable` object.
+* **When two or more dimension's indices are sequences of integers
+  then these indices work independently along each dimension (similar
+  to the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a** `Variable` **object of the** `netCDF4
+  package <http://unidata.github.io/netcdf4-python>`_\ **.**
 
 The value being assigned must be broadcastable to the shape defined by
 the indices, using the `numpy broadcasting rules
@@ -233,8 +240,12 @@ Creation of a new field that spans a subspace of the original domain
 is achieved by indexing the field directly. The new subspace contains
 the same properties and similar metadata constructs to the original
 field, but the latter are also subspaced when they span domain axes
-tha have been changed. The indexing rules are the same as for
-:ref:`data array assignnment <data_assignment>`.
+that have been changed. The indexing rules are the same as for
+:ref:`data array assignment <data_assignment>`, with the additional
+rule that:
+     
+* **An integer index i takes the i-th element but does not reduce the
+  rank of the output array by one.**
 
 .. code:: python
 
@@ -278,14 +289,14 @@ cfdm class             Description                     CF data model construct
 
 The metadata constructs of the field (i.e. all of the constructs
 contained by the field construct) are returned by the
-`~Field.constructs` method, that provides a dictionary of the
+`~Field.constructs` method that provides a dictionary of the
 constructs, keyed by unique internal identifiers:
 
    >>> f.constructs()
    TODO
    
 The `~Field.constructs` method has options to filter the constructs by
-their type, property and other attribute values, and by the domain
+their type, property (and other attribute) values, and by which domain
 axes that are spanned by the data array:
 
 .. code:: python
@@ -301,24 +312,26 @@ axes that are spanned by the data array:
    ...              axes=['domainaxis1'])
    TODO
    
-We can also use the field's internal identifier to select constructs,
-which is useful if a construct is not otherwise identifiable by
-othermeans.
+An internal identifier may also be used to select constructs, which is
+useful if a construct is not identifiable by other means.
 
    >>> f.constructs(id='dimensioncoordinate1')
    TODO
    
-An individual construct may be returned without its identifier with
-the field's `~Field.get_construct` method:
+An individual construct may be returned, without its identifier, with
+the field's `~Field.get_construct` method (which supports the same
+filtering as techniques as above):
 
    >>> f.get_construct('latitude')
    TODO
 
-Where applicable, the classes representing metadata constructs share
-the same API as the field. This means, for instance, that the class
-for any construct that has a data array will have a `!get_array`
-method to access the data as a numpy array:
+Where applicable, the classes for metadata constructs share the same
+API as the field. This means, for instance, that a class that has a
+data array (such as `DomainAncillary`) will have a `!get_array` method
+to access its data as a numpy array:
 
+.. code:: python
+	  
    >>> lon = f.get_construct('longitude')
    >>> lon
    <TODO>
@@ -329,8 +342,11 @@ method to access the data as a numpy array:
    >>> lon.get_array()
    TODO
 
+Construct components
+^^^^^^^^^^^^^^^^^^^^
+
 Other `cfdm` classes are used to represent construct components that
-do are neither "properties" nor "data":
+are neither "properties" nor "data":
 
 ======================  ==============================  ======================
 cfdm class              Description                     cfdm parent classes
@@ -357,7 +373,32 @@ cfdm class              Description                     cfdm parent classes
                         array elements.
 ======================  ==============================  ======================
 
+Where applicable, these classes also share the same API as the
+field:
 
+.. code:: python
+	  
+   >>> lon = f.get_construct('longitude')
+   >>> bounds = lon.get_bounds()
+   >>> bounds
+   TODO
+   >>> bounds.properties()
+   TODO
+   >>> bounds.get_data()
+   TODO
+   >>> f.domain.get_construct('longitude')
+   TODO
+   >>> crs = f.get_construct(TODO)
+   >>> crs.datum
+   TODO
+   >>> crs.datum.parameters()
+   TODO
+   >>> crs = f.get_construct(TODO)
+   >>> crs.coordinate_conversion
+   TODO
+
+.. _write:
+   
 Writing to disk
 ---------------
 
@@ -365,10 +406,25 @@ The `cfdm.write` function writes fields to a netCDF file on disk:
 
    >>> cfdm.write(f, 'new_file.nc')
 
-The `cfdm.write` function has optional parameters to set the format,
-netCDF compression, endian, and HDF chunk size of the ouput file; as
-well as options that modify output data types, and which specify which
-properties should be global attributes.
+The `cfdm.write` function has optional parameters to
+
+* specify which attributes should, where possibleor should not, be global attributes,
+  
+* specify which attributes should, or should not, be global attributes,
+  
+* create :ref:`external variables <external>` in an external file,
+
+* change the data type of output data arrays,
+  
+* set the output netCDF format,
+
+* apply netCDF compression,
+
+* set the endian-ness of the output data, and
+
+* set the HDF chunk size
+
+.. _equality:
 
 Equality
 --------
@@ -377,8 +433,13 @@ Whether or not two fields are the same is ascertained with either of
 the field's `~cfdm.Field.equals` methods.
 
    >>> g = cfdm.read('new_file.nc')
-   >>> f[0].equals(g[0])
+   >>> f.equals(g[0])
    True
+   >>> g.data[0, 0, 0] = -99
+   >>> g.set_property('long_name') = 'foo'
+   >>> f.equals(g[0])
+   False
+   
 
 Field creation
 --------------
@@ -389,26 +450,28 @@ External variables
 ------------------
 
 External variables named are those referred to in the dataset, but
-which are not present in it. Instead these variables are stored in
-other, exgtrnal files. These variables may be incorporated into the
-field constructs of the parent dataset, as if they were present in it,
-simply by providing the external file names to the `cfdm.read` function.
+which are not present in it. Instead such variables are stored in
+other files known as "external files". External variables may,
+however, be incorporated into the field constructs of the dataset, as
+if they had actually been stored in the same file, simply by providing
+the external file names to the `cfdm.read` function.
 
-This is illustrated with the files **parent.nc** (`download`) and
-**external.nc** (`download`):
+This is illustrated with the files
+**parent.nc**   (:download:`download <netcdf_files/parent.nc>`) and
+**external.nc** (:download:`download <netcdf_files/external.nc>`) [#f1]_.
 
 .. code:: bash
    
    $ ncdump -h parent.nc
    netcdf parent {
    dimensions:
-   	grid_latitude = 10 ;
-   	grid_longitude = 9 ;
+   	latitude = 10 ;
+   	longitude = 9 ;
    variables:
-   	double latitude(grid_latitude) ;
+   	double latitude(latitude) ;
    		latitude:units = "degrees_north" ;
    		latitude:standard_name = "latitude" ;
-   	double longitude(grid_longitude) ;
+   	double longitude(longitude) ;
    		longitude:units = "degrees_east" ;
    		longitude:standard_name = "longitude" ;
    	double eastward_wind(latitude, longitude) ;
@@ -429,53 +492,86 @@ This is illustrated with the files **parent.nc** (`download`) and
    variables:
    	double areacella(longitude, latitude) ;
    		areacella:units = "m2" ;
-   		areacella:measure = "area" ;
+   		areacella:standard_name = "cell_area" ;
    
    // global attributes:
    		:Conventions = "CF-1.7" ;
    }
 
-Firstly, the file may be read without specifying the external file. In
-this case a cell measure construct is still created, but without any
-metadata or data.
+The dataset in **parent.nc** may be read without specifying the
+external file **external.nc**. In this case a cell measure construct
+is still created, but one without any metadata or data:
 
 .. code:: python
 
    >>> f = cfdm.read('parent.nc')[0]
    >>> print(f)
-   TODO
-   >>> c = f.construct('measure%area')
+   Field: eastward_wind (ncvar%eastward_wind)
+   ------------------------------------------
+   Data            : eastward_wind(latitude(10), longitude(9)) m s-1
+   Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
+                   : longitude(9) = [0.0, ..., 8.0] degrees
+   Cell measures   : measure%area() TODO: no barackets
+   >>> c = f.get_construct('measure%area')
    >>> c
-   TODO
-   >>> c.is_external()
+   <CellMeasure: measure%area >
+   >>> c.nc_get_external()
    True
    >>> c.nc_get_variable()
    'areacella'
-   >>> c.get_array()
-   TODO
+   >>> c.properties()
+   {}
+   >>> c.has_data()
+   False
 
-Secondly, the file may be read with specifying the external file. In
-this case a cell measure construct is still created with all of the
-metadata or data, as if had been present in the parent dataset.
+If this field were to be written to disk using `cfdm.write`, then the
+output file would be identical to the original **parent.nc** file,
+i.e. the netCDF variable name of the cell measure construct
+("areacella") would be listed by the "external_variables" global
+attribute.
+
+The dataset may also be read with specifying the external file. In
+this case a cell measure construct is created with all of the metadata
+or data from the external file, as if the cell measure variable had
+been present in the parent dataset:
 
 .. code:: python
    
    >>> g = cfdm.read('parent.nc', external_files='external.nc')[0]
-   >>> prin(g)
-   TODO
-   >>> c = g.construct('measure%area')
+   >>> print(g)
+   Field: eastward_wind (ncvar%eastward_wind)
+    ------------------------------------------
+    Data            : eastward_wind(latitude(10), longitude(9)) m s-1
+    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
+                    : longitude(9) = [0.0, ..., 8.0] degrees
+    Cell measures   : measure%area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
+   >>> c = g.get_construct('measure%area')
    >>> c
-   TODO
-   >>> c.is_external()
+   <CellMeasure: measure%area(9, 10) m2>
+   >>> c.nc_get_external()
    False
    >>> c.nc_get_variable()
    'areacella'
-   >>> c.get_array()
-   TODO
+   >>> c.properties()
+   {'standard_name': 'cell_area', 'units': 'm2'}
+   >>> c.get_data()
+   <Data: [[100000.5, ..., 100089.5]] m2>
    
-If the field in the first case is written to disk using `cfdm.write`,
-then the netCDF variable name ("areacella") of the cell measure
-construct will be listed by a global "external_variables" attribute.
+If this field were to be written to disk using `cfdm.write` then, by
+default, the cell measure construct, with all of its metadata and
+data, would be written to the output file, along with all of the other
+constructs. There would be no "external_variables" global attribute.
+
+In order to write a construct to an external file, and refer to it
+with the "external_variables" global attribute in the parent output
+file, simply set the status of the construct to "external" and provide
+an external file name to the `cfdm.write` function:
+
+.. code:: python
+
+   >>> c.nc_set_external(True)
+   False
+   >>> cfdm.write(g, 'new_parent.nc', external_file='new_external.nc')
    
 Discrete sampling geometries
 ----------------------------
@@ -595,8 +691,8 @@ will be written to an output dataset as incomplete multidimensional
 arrays.
 
 A construct with an underlying compressed array is created by
-initializing the `Data` object with a compressed array that is stored
-in one of three specal array objects: `RaggedContiguousArray`,
+initialising the `Data` object with a compressed array that is stored
+in one of three special array objects: `RaggedContiguousArray`,
 `RaggedIndexedArray` or `RaggedIndexedContiguousArray`. The following
 code creates an auxiliary coordinate construct with an underlying
 contiguous ragged array:
@@ -628,7 +724,7 @@ contiguous ragged array:
                                 'units': 'km',
                                 'positive': 'up'})
 
-We can now inspect the new axuiliary coordinate construct:
+We can now inspect the new auxiliary coordinate construct:
 
 .. code:: python
    
@@ -728,7 +824,7 @@ written to an output dataset without compression.
    
 A construct with an underlying compressed array is created by
 initializing the `Data` object with a compressed array that is stored
-in the specal `GatheredArray` array object. The following code creates
+in the special `GatheredArray` array object. The following code creates
 a simple field construct an underlying gathered array:
 
 .. code:: python
@@ -799,4 +895,10 @@ We can now inspect the new field construct:
    <List: (3) >
    >>> tas.data.get_list_variable().get_array()
    array([1, 4, 5])
- 
+
+----
+
+.. [#f1] These files may be also found in the `docs/source/
+         <https://github.com/NCAS-CMS/cfdm/tree/master/docs/source/netcdf_files>`_
+         directory of the installation.
+

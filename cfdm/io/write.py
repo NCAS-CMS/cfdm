@@ -14,7 +14,7 @@ implementation = CFDMImplementation(version=__version__,
                                     Data=Data)
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
-          datatype=None, variable_attributes=None,
+          variable_attributes=None, external_file=None, datatype=None,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, no_shuffle=False, HDF_chunksizes=None,
           verbose=False, _implementation=implementation):
@@ -122,6 +122,12 @@ which have equal values across all input fields.
     overwrite: `bool`, optional
         If False then raise an error if the output file pre-exists. By
         default a pre-existing output file is overwritten.
+
+    variable_attributes: (sequence of) `str`, optional
+        TODO
+
+    external_file: `str`, optional
+        TODO
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing
@@ -248,10 +254,10 @@ TODO
 
     if fields:
         netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
-                     datatype=datatype,
+                     variable_attributes=variable_attributes,
+                     external_file=external_file, datatype=datatype,
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      no_shuffle=no_shuffle, fletcher32=fletcher32,
-                     variable_attributes=variable_attributes,
                      HDF_chunks=HDF_chunksizes, verbose=verbose)
 #--- End: def

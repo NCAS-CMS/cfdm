@@ -9,11 +9,10 @@ from .parametersdomainancillaries import ParametersDomainAncillaries
 
 from .netcdf                      import (NetCDFDataVariable,
                                           NetCDFDimension,
+                                          NetCDFExternal,
                                           NetCDFInstanceDimension,
                                           NetCDFSampleDimension,
                                           NetCDFVariable)
-
-from .external                    import External
 
 from .constructaccess             import ConstructAccess
 

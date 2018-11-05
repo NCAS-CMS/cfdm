@@ -24,6 +24,7 @@ def _get_version():
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("../../cfdm/__init__.py"),
                      re.MULTILINE).group(1)
+#--- End: def
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
