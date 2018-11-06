@@ -26,7 +26,7 @@ For example, to read the file **file.nc** (:download:`download
 
 
 >>> import cfdm
->>> f = cfdm.read('file.nc')
+>>> x = cfdm.read('file.nc')
 
 The `cfdm.read` function has optional parameters to
 
@@ -50,19 +50,18 @@ detail.
 The built-in `repr` function returns a short, one-line description of
 the field:
 
-   >>> f
-   TODO
-   [<Field: air_temperature(time(12), latitude(64), longitude(128)) K>,
-    <Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
-   >>> f[0]
-   TODO
-   <Field: air_temperature(time(12), latitude(64), longitude(128)) K>
-
-This gives the identity of the field (that has the standard name
-"air_temperature"), the identities and sizes of the domain axis
-constructs spanned by the field's data array (time, latitude and
-longitude with sizes 12, 64 and 128 respectively) and the units of the
-field's data (K).
+   >>> x
+   [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+   >>> q = x[0]
+   >>> t = x[1]
+   >>> q
+   <Field: specific_humidity(latitude(5), longitude(8)) 1>
+   
+This gives the identity of the field (e.g. "specific_humidity"), the
+identities and sizes of the domain axis constructs spanned by the
+field's data array (latitude and longitude with sizes 5 and 8
+respectively) and the units of the field's data ("1").
 
 .. rubric:: 2: Medium
 
@@ -70,86 +69,194 @@ The built-in `str` function returns the same information as the the
 one-line output, along with short descriptions of the field's other
 metadata constructs:
 
-   >>> print(f[0])
-   air_temperature field summary
-   -----------------------------
-   Data           : air_temperature(time(1200), latitude(64), longitude(128)) K
-   Cell methods   : time: mean (interval: 1.0 month)
-   Axes           : time(12) = [ 450-11-01 00:00:00, ...,  451-10-16 12:00:00] noleap
-                  : latitude(64) = [-87.8638000488, ..., 87.8638000488] degrees_north
-                  : longitude(128) = [0.0, ..., 357.1875] degrees_east
-                  : height(1) = [2.0] m
+.. code:: python
 
-This shows that the field also has a cell method and four dimension
-coordinate constructs, one of which (height) is a coordinate for a
-size 1 domain axis that is not a dimension of the field's data
-array. The units and first and last values of all data arrays are
-given and relative time values are translated into strings.
+   >>> print(q)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: time(1) = [2019-01-01 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+      
+   >>> print(t)
+   Field: air_temperature (ncvar%ta)
+   ---------------------------------
+   Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+   Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+   Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.81, ..., 0.78]] K
+   Dimension coords: time(1) = [2019-01-01 00:00:00]
+                   : atmosphere_hybrid_height_coordinate(1) = [1.5]
+                   : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                   : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                   : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Coord references: atmosphere_hybrid_height_coordinate
+                   : rotated_latitude_longitude
+   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 79.8]] m
+
+This shows the same one-line summary of the field as before, with
+one-line summaries of all of the metadata constructs, which include
+the first and last values of their data arrays.
 
 .. rubric:: 3: Full
 
 The field's `~cfdm.Field.dump` method gives all properties of all
-constructs as well as the first and last values of the field's data
-array
+constructs and includes other construct components, such as coordinate
+bounds, as well as the first and last values of the field's data array:
 
 .. code:: python
 
-   >>> g = f[0]
-   >>> g.dump()
-   TODO
-   ======================
-   Field: air_temperature
-   ======================
-   Axes:
-       height(1)
-       latitude(64)
-       longitude(128)
-       time(12)
+   >>> q.dump()
+   ----------------------------------
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Conventions = 'CF-1.7'
+   project = 'research'
+   standard_name = 'specific_humidity'
+   units = '1'
    
-   Data(time(12), latitude(64), longitude(128)) = [[[236.512756348, ..., 256.93371582]]] K
-   cell_methods = time: mean (interval: 1.0 month)
+   Data(latitude(5), longitude(8)) = [[0.003, ..., 0.032]] 1
    
-   experiment_id = 'pre-industrial control experiment'
-   long_name = 'Surface Air Temperature'
-   standard_name = 'air_temperature'
-   title = 'model output prepared for IPCC AR4'
-
-   Dimension coordinate: time
-       Data(time(12)) = [ 450-11-16 00:00:00, ...,  451-10-16 12:00:00] noleap
-       Bounds(time(12), 2) = [[ 450-11-01 00:00:00, ...,  451-11-01 00:00:00]] noleap
-       axis = 'T'
-       long_name = 'time'
-       standard_name = 'time'
+   Cell Method: area: mean
+   
+   Domain Axis: latitude(5)
+   Domain Axis: longitude(8)
+   Domain Axis: time(1)
    
    Dimension coordinate: latitude
-       Data(latitude(64)) = [-87.8638000488, ..., 87.8638000488] degrees_north
-       Bounds(latitude(64), 2) = [[-90.0, ..., 90.0]] degrees_north
-       axis = 'Y'
-       long_name = 'latitude'
        standard_name = 'latitude'
+       units = 'degrees_north'
+       Data(latitude(5)) = [-75.0, ..., 75.0] degrees_north
+       Bounds:Data(latitude(5), 2) = [[-90.0, ..., 90.0]]
    
    Dimension coordinate: longitude
-       Data(longitude(128)) = [0.0, ..., 357.1875] degrees_east
-       Bounds(longitude(128), 2) = [[-1.40625, ..., 358.59375]] degrees_east
-       axis = 'X'
-       long_name = 'longitude'
        standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(longitude(8)) = [22.5, ..., 337.5] degrees_east
+       Bounds:Data(longitude(8), 2) = [[0.0, ..., 360.0]]
    
-   Dimension coordinate: height
-       Data(height(1)) = [2.0] m
-       axis = 'Z'
-       long_name = 'height'
-       positive = 'up'
-       standard_name = 'height'
+   Dimension coordinate: time
+       standard_name = 'time'
+       units = 'days since 2018-12-01'
+       Data(time(1)) = [2019-01-01 00:00:00]
+  
+   >>> t.dump()
+   ---------------------------------
+   Field: air_temperature (ncvar%ta)
+   ---------------------------------
+   Conventions = 'CF-1.7'
+   project = 'research'
+   standard_name = 'air_temperature'
+   units = 'K'
+   
+   Data(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) = [[[0.0, ..., 89.0]]] K
+   
+   Cell Method: grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees)
+   Cell Method: time(1): maximum
+   
+   Field Ancillary: air_temperature standard_error
+       standard_name = 'air_temperature standard_error'
+       units = 'K'
+       Data(grid_latitude(10), grid_longitude(9)) = [[0.81, ..., 0.78]] K
+   
+   Domain Axis: atmosphere_hybrid_height_coordinate(1)
+   Domain Axis: grid_latitude(10)
+   Domain Axis: grid_longitude(9)
+   Domain Axis: time(1)
+   
+   Dimension coordinate: atmosphere_hybrid_height_coordinate
+       computed_standard_name = 'altitude'
+       standard_name = 'atmosphere_hybrid_height_coordinate'
+       Data(atmosphere_hybrid_height_coordinate(1)) = [1.5]
+       Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[1.0, 2.0]]
+   
+   Dimension coordinate: grid_latitude
+       standard_name = 'grid_latitude'
+       units = 'degrees'
+       Data(grid_latitude(10)) = [2.2, ..., -1.76] degrees
+       Bounds:Data(grid_latitude(10), 2) = [[2.42, ..., -1.98]]
+   
+   Dimension coordinate: grid_longitude
+       standard_name = 'grid_longitude'
+       units = 'degrees'
+       Data(grid_longitude(9)) = [-4.7, ..., -1.18] degrees
+       Bounds:Data(grid_longitude(9), 2) = [[-4.92, ..., -0.96]]
+   
+   Dimension coordinate: time
+       standard_name = 'time'
+       units = 'days since 2018-12-01'
+       Data(time(1)) = [2019-01-01 00:00:00]
+   
+   Auxiliary coordinate: latitude
+       standard_name = 'latitude'
+       units = 'degrees_N'
+       Data(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+   
+   Auxiliary coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_E'
+       Data(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+   
+   Auxiliary coordinate: long_name:Grid latitude name
+       long_name = 'Grid latitude name'
+       Data(grid_latitude(10)) = [--, ..., kappa]
+   
+   Domain ancillary: ncvar%a
+       units = 'm'
+       Data(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+       Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[5.0, 15.0]]
+   
+   Domain ancillary: ncvar%b
+       Data(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+       Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[14.0, 26.0]]
+   
+   Domain ancillary: surface_altitude
+       standard_name = 'surface_altitude'
+       units = 'm'
+       Data(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 79.8]] m
+   
+   Coordinate reference: atmosphere_hybrid_height_coordinate
+       Coordinate conversion:computed_standard_name = altitude
+       Coordinate conversion:standard_name = atmosphere_hybrid_height_coordinate
+       Coordinate conversion:a = Domain Ancillary: ncvar%a
+       Coordinate conversion:b = Domain Ancillary: ncvar%b
+       Coordinate conversion:orog = Domain Ancillary: surface_altitude
+       Datum:earth_radius = 6371007
+       Dimension Coordinate: atmosphere_hybrid_height_coordinate
+   
+   Coordinate reference: rotated_latitude_longitude
+       Coordinate conversion:grid_mapping_name = rotated_latitude_longitude
+       Coordinate conversion:grid_north_pole_latitude = 38.0
+       Coordinate conversion:grid_north_pole_longitude = 190.0
+       Datum:earth_radius = 6371007
+       Dimension Coordinate: grid_longitude
+       Dimension Coordinate: grid_latitude
+       Auxiliary Coordinate: longitude
+       Auxiliary Coordinate: latitude
+   
+   Cell measure: measure%area
+       units = 'km2'
+       Data(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
 
+.. _properties:
+       
 Properties
 ----------
 
 Properties of the field may be retrieved with the `~Field.properties`
 method:
 
-   >>> f.properties()
-   TODO
+   >>> t.properties()
+   {'Conventions': 'CF-1.7',
+    'project': 'research',
+    'standard_name': 'air_temperature',
+    'units': 'K'}
    
 Individual properties may be accessed and modified with the
 `~Field.del_property`, `~Field.get_property`, `~Field.has_property`,
@@ -170,22 +277,23 @@ and `~Field.set_property` methods:
 All properties may be completely replaced with another collection by
 providing a new set of properties to the `~Field.properties` method:
 
-
 .. code:: python
 	  
-   >>> original = f.properties({'foo': 'bar', 'units': 'm s-1'}
-   >>> f.properties()
-   {'foo': 'bar',
-    'units': 'm s-1'}
-   >>> f.properties(original)
-   {'foo': 'bar',
-    'units': 'm s-1'}
-   >>> f.properties()
-   TODO
-   >>> f.properties({})
-   TODO
-   >>> f.properties()
-   {}
+   >>> original = t.properties({'foo': 'bar', 'units': 'K'})
+   >>> original
+   {'Conventions': 'CF-1.7',
+    'project': 'research',
+    'standard_name': 'air_temperature',
+    'units': 'K'}
+   >>> t.properties()
+   {'foo': 'bar', 'units': 'K'}
+   >>> t.properties(original)
+   {'foo': 'bar', 'units': 'K'}
+   >>> t.properties()
+   {'Conventions': 'CF-1.7',
+    'project': 'research',
+    'standard_name': 'air_temperature',
+    'units': 'K'}
 
 .. _data:
 
@@ -195,27 +303,36 @@ Data
 The field's data array is stored in a `Data` object that is accessed
 with the `~Field.get_data` method:
 
-   >>> f.get_data()
-   TODO
+   >>> t.get_data()
+   <Data: [[[262.8, ..., 269.7]]] K>
 
-The data may be retrieved as an independent `numpy` array with the
-`~Field.get_array` method:
+The data may be retrieved as an independent (possibly masked) `numpy`
+array with the `~Field.get_array` method:
 
-   >>> f.get_array()
-   TODO
+   >>> t.get_array()
+   array([[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
+           [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
+           [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
+           [261.7 260.6 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
+           [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
+           [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+           [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
+           [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
+           [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
+           [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]])
    
 The field also has a `~Field.data` attribute that is an alias for the
 `~Field.get_data` method, which makes it easier to access attributes
 and methods of the `Data` object:
 
-   >>> f.data.dtype
-   asasdasdasd
-   >>> f.data.ndim
+   >>> t.data.dtype
+   dtype('float64')
+   >>> t.data.ndim
    3
-   >>> f.data.shape
-   ()
-   >>> f.data.size
-   34534534
+   >>> t.data.shape
+   (1, 10, 9)
+   >>> t.data.size
+   90
 
 .. _data_assignment:
 
@@ -238,11 +355,11 @@ the indices, using the `numpy broadcasting rules
 <https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_.
 
    >>> import numpy
-   >>> f.data[:, 0] = -99
-   >>> f.data[:, 0] = range()
-   >>> f.data[:, 0] = numpy.array()
-   >>> d = f.data
-   >>> f.data[:, 0] = d[0, 1]
+   >>> TODO f.data[:, 0] = -99
+   >>> TODO f.data[:, 0] = range()
+   >>> TODO f.data[:, 0] = numpy.array()
+   >>> TODO d = f.data
+   >>> TODO f.data[:, 0] = d[0, 1]
       
 Data elements may be set to missing data by assigning the `numpy` mask object:
 
