@@ -16,7 +16,7 @@ class Field(mixin.NetCDFDataVariable,
             mixin.ConstructAccess,
             mixin.PropertiesData,
             core.Field):
-    '''A CF field construct.
+    '''A field construct of the CF data model.
 
 The field construct is central to the CF data model, and includes all
 the other constructs. A field corresponds to a CF-netCDF data variable

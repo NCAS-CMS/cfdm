@@ -3,8 +3,8 @@
 
 .. _class:
 
-Classes of the **cfdm.core** package
-====================================
+**Classes** of the **cfdm.core** package
+========================================
 
 Field construct class
 ---------------------

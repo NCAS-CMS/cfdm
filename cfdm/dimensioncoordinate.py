@@ -38,7 +38,7 @@ indicated by the cell method constructs.
     def __init__(self, properties={}, data=None, bounds=None,
                  geometry=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
-        '''
+        '''**Initialisation**
         '''
         super().__init__(properties=properties, data=data,
                          bounds=bounds, geometry=geometry,

@@ -3,14 +3,13 @@
 
 .. _class:
 
-Classes of the **cfdm** package
-===============================
+**Classes** of the **cfdm** package
+===================================
 
 Field construct class
 --------------------
 
-This class represents the field construct of the CF data model. It
-inherits directly from `cfdm.core.Field`, its `cfdm.core` counterpart.
+This class represents the field construct of the CF data model.
 
 .. autosummary::
    :nosignatures:
@@ -22,9 +21,7 @@ Metadata construct classes
 --------------------------
 
 Each of these classes represent the metadata constructs of the CF data
-model. They inherit directly from their `cfdm.core` counterparts. For
-example, `cfdm.AuxiliaryCoordinate` inherits
-`cfdm.core.AuxiliaryCoordinate`.
+model.
 
 .. autosummary::
    :nosignatures:
@@ -42,10 +39,9 @@ example, `cfdm.AuxiliaryCoordinate` inherits
 Construct component classes
 ---------------------------
 
+
 Each of these classes represents a particular component found in a
-subset of construct classes. They inherit directly from their
-`cfdm.core` counterparts. For example, `cfdm.Bounds` inherits
-`cfdm.core.Bounds`.
+subset of construct classes.
 
 .. autosummary::
    :nosignatures:
@@ -72,6 +68,31 @@ Component               Parent constructs
 `Domain`                `Field`
 ======================  ============================================================
 
+Construct mixin classes
+-----------------------
+
+Each of these classes provides functionality to read and write netCDF
+datasets and to modify constructs in memory.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cfdm.mixin.ConstructAccess
+   cfdm.mixin.Container
+   cfdm.mixin.Coordinate
+   cfdm.mixin.NetCDFDataVariable
+   cfdm.mixin.NetCDFDimension,
+   cfdm.mixin.NetCDFExternal
+   cfdm.mixin.NetCDFInstanceDimension,
+   cfdm.mixin.NetCDFSampleDimension,
+   cfdm.mixin.NetCDFVariable
+   cfdm.mixin.Parameters
+   cfdm.mixin.ParametersDomainAncillaries
+   cfdm.mixin.Properties
+   cfdm.mixin.PropertiesData
+   cfdm.mixin.PropertiesDataBounds
+   
 Data classes
 ------------
 
@@ -87,44 +108,8 @@ Data classes
    cfdm.RaggedIndexedArray
    cfdm.RaggedIndexedContiguousArray
 
-These classes inherit, directly or indirectly, from their `cfdm.core`
-counterparts. For example, `cfdm.Data` inherits `cfdm.core.Data`.
-
-Construct mixin classes
------------------------
-
-Each of these classes provides functionality, that is missing from the
-`cfdm.core` package, to read and write netCDF datasets and to modify
-constructs in memory. All construct and construct component classes
-inherit from one or more of these mixin classes.
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.data.mixin.RaggedContiguous
-   cfdm.data.mixin.RaggedIndexed
-   cfdm.mixin.ConstructAccess
-   cfdm.mixin.Container
-   cfdm.mixin.Coordinate
-   cfdm.mixin.External
-   cfdm.mixin.NetCDFDimension,
-   cfdm.mixin.NetCDFInstanceDimension,
-   cfdm.mixin.NetCDFSampleDimension,
-   cfdm.mixin.NetCDFVariable
-   cfdm.mixin.Parameters
-   cfdm.mixin.ParametersDomainAncillaries
-   cfdm.mixin.Properties
-   cfdm.mixin.PropertiesData
-   cfdm.mixin.PropertiesDataBounds
-
-   
-Data sbstract classes
+Data abstract classes
 ----------------------
-
-These classes inherit, directly or indirectly, from their `cfdm.core`
-counterparts. For example `cfdm.data.abstract.Array` inherits
-`cfdm.core.data.abstract.Array`.
 
 .. autosummary::
    :nosignatures:
@@ -145,3 +130,4 @@ TODO
 
    cfdm.data.mixin.RaggedContiguous
    cfdm.data.mixin.RaggedIndexed
+
