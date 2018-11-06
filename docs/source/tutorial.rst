@@ -9,10 +9,38 @@ Tutorial
 The field construct defined by the CF data model is represented by a
 `Field` object.
 
+The field construct consists of descriptive properties that apply to
+field as a whole, a data array, and a variety of "metadata constructs"
+that describe the locations of each cell of the data array, and
+describe the physical nature of the datum in each cell
+the )sppp, **field ancillary** constructs containing metadata defined
+over the same **domain**, and **cell method** constructs to describe
+how the cell values represent the variation of the physical quantity
+within the cells of the domain. The domain is defined collectively by
+the following constructs of the CF data model: **domain axis**,
+**dimension coordinate**, **auxiliary coordinate**, **cell measure**,
+**coordinate reference** and **domain ancillary** constructs.
+
+
+Metadata constructs of the field are all of the constructs that serve
+to describe the field construct that contains them. Each metadata
+construct of the CF data model has a corresponding `cfdm` class:
+
+
+The field construct consists of a data array and the definition of its
+domain (that describes the locations of each cell of the data array),
+field ancillary constructs containing metadata defined over the same
+domain, and cell method constructs to describe how the cell values
+represent the variation of the physical quantity within the cells of
+the domain. The domain is defined collectively by the following
+constructs of the CF data model: domain axis, dimension coordinate,
+auxiliary coordinate, cell measure, coordinate reference and domain
+ancillary constructs.
+
 .. _read:
 
-Reading from disk
------------------
+Reading datasets
+----------------
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk or
@@ -22,22 +50,32 @@ from an `OPeNDAP URL
 objects.
 
 For example, to read the file **file.nc** (:download:`download
-<../netcdf_files/file.nc>`) [#files]_:
+<../netcdf_files/file.nc>`, 9kB) [#files]_:
 
 .. code:: python
 
    >>> import cfdm
    >>> x = cfdm.read('file.nc')
+   >>> type(x)
+   list
+
+All formats of netCDF3 and netCDF4 files can be read.
 
 The `cfdm.read` function has optional parameters to
 
 * provide files that contain :ref:`external variables <external>`, and
 
-* specify which netCDF variables which correspond to metadata
-  constructs should also be returned as independent fields.
+* return "metadata" netCDF variables (i.e. those that are referenced
+  from CF-netCDF data variables) as independent fields.
 
-All formats of netCDF3 and netCDF4 files can be read.
-  
+*Note on performance*
+  Descriptive properties are always read into memory, but `lazy
+  loading <https://en.wikipedia.org/wiki/Lazy_loading>`_ is employed
+  for all data arrays, which means that no data is read into memory
+  until the data is required for inspection or to modify the array
+  contents. This maximises the number of fields that may be read
+  within a session, and makes the read operation very fast.
+
 .. _inspection:
   
 Inspection
@@ -101,7 +139,7 @@ metadata constructs:
                    : rotated_latitude_longitude
    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 79.8]] m
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
 
 This shows the same one-line summary of the field as before, with
 one-line summaries of all of the metadata constructs, which include
@@ -222,7 +260,7 @@ bounds, as well as the first and last values of the field's data array:
    Domain ancillary: surface_altitude
        standard_name = 'surface_altitude'
        units = 'm'
-       Data(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 79.8]] m
+       Data(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
    
    Coordinate reference: atmosphere_hybrid_height_coordinate
        Coordinate conversion:computed_standard_name = altitude
@@ -330,7 +368,7 @@ array with the `~Field.get_array` method:
      [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
      [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
      [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
-     [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]])
+     [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
    
 The field also has a `~Field.data` attribute that is an alias for the
 `~Field.get_data` method, which makes it easier to access attributes
@@ -388,7 +426,7 @@ Assignment
 ^^^^^^^^^^
 
 Data array elements are changed by assigning to indices of the `Data`
-object, using the :ref:`indexing rules <indexing>` defined here.
+object, using the :ref:`cfdm indexing rules <indexing>`.
 
 The value being assigned must be broadcastable to the shape defined by
 the indices, using the `numpy broadcasting rules
@@ -449,19 +487,56 @@ first latitude of the original, and with a reversed longitude axis:
    Dimension coords: time(1) = [2019-01-01 00:00:00]
                    : latitude(1) = [-75.0] degrees_north
                    : longitude(8) = [337.5, ..., 22.5] degrees_east
-		   
+	
+.. _write:
+   
+Writing to disk
+---------------
+
+The `cfdm.write` function writes a field, or sequence of fields, to a
+netCDF file on disk:
+
+.. code:: python
+
+   >>> q
+   <Field: specific_humidity(latitude(5), longitude(8)) 1>
+   >>> cfdm.write(q, 'q_file.nc')
+   >>> f
+   [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+   >>> cfdm.write(f, 'new_file.nc')
+
+The `cfdm.write` function has optional parameters to
+
+* TODO specify which attributes should, where possibleor should not, be global attributes,
+  
+* TODO specify which attributes should, or should not, be global attributes,
+  
+* create :ref:`external variables <external>` in an external file,
+
+* change the data type of output data arrays,
+  
+* set the output netCDF format (all netCDF3 and netCDF4 formats are
+  possible),
+
+* apply netCDF compression,
+
+* set the endian-ness of the output data, and
+
+* set the HDF chunk size
+	   
 .. _constructs:
 
-Constructs
-----------
+Metadata constructs
+-------------------
 
-Each construct of the CF data model has a corresponding `cfdm` class:
+Metadata constructs of the field are all of the constructs that serve
+to describe the field construct that contains them. Each metadata
+construct of the CF data model has a corresponding `cfdm` class:
 
 =====================  ==============================  =======================
 cfdm class             Description                     CF data model construct
 =====================  ==============================  =======================
-`Field`                Scientific data discretised     Field               
-                       within a domain		                         
 `DomainAxis`           Independent axes of the domain  Domain axis         
 `DimensionCoordinate`  Domain cell locations           Dimension coordinate
 `AuxiliaryCoordinate`  Domain cell locations           Auxiliary coordinate
@@ -475,10 +550,10 @@ cfdm class             Description                     CF data model construct
                        variation within cells
 =====================  ==============================  =======================
 
-The metadata constructs of the field (i.e. all of the constructs
-contained by the field construct) are returned by the
-`~Field.constructs` method that provides a dictionary of the
-constructs, keyed by unique internal identifiers:
+The metadata constructs of the field are returned by the
+`~Field.constructs` method that provides a dictionary of the metadata
+constructs, each of which is keyed by a unique identifier called a
+"construct identifier".
 
 .. code:: python
 
@@ -512,39 +587,75 @@ constructs, keyed by unique internal identifiers:
     'domainaxis3': <DomainAxis: 1>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
-The `~Field.constructs` method has options to filter the constructs by
-their type, property (and other attribute) values, and by which domain
-axes that are spanned by the data array:
+The construct identifiers are generally generated by internally by the
+field object and are
+
+* **robust** (each metadata construct within a field is guaranteed to
+  have a unique identifier),
+
+* **arbitrary** (no semantic meaning should be attached to the the
+  identifier and the same identifier could refer to different metadata
+  constructs in different fields), and
+
+* **unstable** (the identifiers could be different each time the field
+  is created).
+
+The `~Field.constructs` method has optional parameters to filter the
+metadata constructs by their type, property (and other attribute)
+values, and which domain axes are spanned by the data array:
 
 .. code:: python
 	  
-   >>> f.constructs('long_name:asdasdasdas')
-   TODO
-   >>> f.constructs(construct_type='dimension_coordinate')
-   TODO
-   >>> f.constructs(axes=['domainaxis1'])
-   TODO
-   >>> f.constructs('latitude',
-   ...              construct_type='dimension_coordinate'
-   ...              axes=['domainaxis1'])
-   TODO
+   >>> t.constructs('air_temperature standard_error')
+   {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+   >>> t.constructs(construct_type='dimension_coordinate')
+   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+   >>> t.constructs(axes=['domainaxis1'])
+   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+    'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+    'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+    'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+   >>> t.constructs(construct_type='dimension_coordinate', axes=['domainaxis1'])
+   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
+   >>> t.constructs('ncvar%b')
+   {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
+   >>> t.constructs('wavelength')
+   {}
    
-An internal identifier may also be used to select constructs, which is
-useful if a construct is not identifiable by other means.
+The construct identifier may also be used to select a metadata
+construct, which is useful if the construct is not identifiable by
+other means:
 
 .. code:: python
 
-   >>> f.constructs(id='dimensioncoordinate1')
-   TODO
+   >>> t.constructs(cid='domainancillary2')
+   {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
+   >>> t.constructs('cid%cellmethod0')
+   {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
+   >>> t.constructs(cid='auxiliarycoordinate999')
+   {}
    
-An individual construct may be returned, without its identifier, with
-the field's `~Field.get_construct` method (which supports the same
-filtering as techniques as above):
+An individual metadata construct may be returned, without its
+identifier, with the field's `~Field.get_construct` method, which
+supports the same filtering option as above:
 
 .. code:: python
 
-   >>> f.get_construct('latitude')
-   TODO
+   >>> t.get_construct('latitude')
+   <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
+   >>> t.get_construct('units:km2')
+   <CellMeasure: measure%area(9, 10) km2>
+   >>> t.constructs('units:degrees')
+   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
+   >>> t.get_construct('units:degrees')
+   ValueError: More than one construct meets criteria
 
 Which domain axes are spanned by a metadata construct's data is found
 with the field's `~Field.construct_axes` method:
@@ -568,9 +679,6 @@ with the field's `~Field.construct_axes` method:
 The domain axes spanned by a metadata construct's data may be changed
 with field's `~Field.set_construct_axes` method.
 
-Metadata constructs
-^^^^^^^^^^^^^^^^^^^
-
 Where applicable, the classes for metadata constructs share the same
 API as the field. This means, for instance, that a class that has a
 data array (such as `DomainAncillary`) will have a `!get_array` method
@@ -588,14 +696,14 @@ to access its data as a numpy array:
     'standard_name': 'longitude'}   
    >>> lon.data[2]
    <Data: [112.5] degrees_east>
-   >>> lon.data[2] = 125   
+   >>> lon.data[2] = 133.33
    >>> print(lon.get_array())
-   [22.5 67.5 125.0 157.5 202.5 247.5 292.5 337.5]
+   [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
-Other construct components
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Construct components
+^^^^^^^^^^^^^^^^^^^^
 
-Other classes are used to represent construct components that are
+Other classes are required to represent construct components that are
 neither "properties" nor "data":
 
 ======================  ==============================  ======================
@@ -618,9 +726,6 @@ cfdm class              Description                     cfdm parent classes
                         and auxiliary coordinate
 			constructs which define a
 			coordinate system.
-
-`Domain`                The locations of the data       `Field`
-                        array elements.
 ======================  ==============================  ======================
 
 Where applicable, these classes also share the same API as the field:
@@ -645,8 +750,6 @@ Where applicable, these classes also share the same API as the field:
     [-2.28 -1.84]
     [-1.84 -1.4 ]
     [-1.4  -0.96]]
-   >>> t.domain.get_construct('longitude')
-   <AuxiliaryCoordinate: longitude(9, 10) degrees_E>
    >>> crs = t.get_construct('rotated_latitude_longitude')
    >>> crs.datum
    <Datum: Parameters: earth_radius>
@@ -659,35 +762,71 @@ Where applicable, these classes also share the same API as the field:
     'b': 'domainancillary1',
     'orog': 'domainancillary2'}
 
-.. _write:
-   
-Writing to disk
----------------
+.. _domain:    
 
-The `cfdm.write` function writes fields to a netCDF file on disk:
+Domain
+------
+
+The `Domain` class represents the (abstract) domain of the CF data
+model, that describes the locations of the field construct's data. The
+domain object may be accessed with the field's `~Field.get_domain`
+method:
 
 .. code:: python
 
-   >>> cfdm.write(f, 'new_file.nc')
+   >>> domain = t.get_domain()
+   >>> domain
+   <Domain: [1, 1, 9, 10]>
+   >>> print(domain)
+   TODO
+   >>> description = domain.dump(display=False)
 
-The `cfdm.write` function has optional parameters to
+Any changes to domain object are seen by the parent field, and vice
+versa. The field also has a `~Field.domain` attribute that is an alias
+for the `~Field.get_domain` method, which makes it easier to access
+attributes and methods of the domain object:
 
-* TODO specify which attributes should, where possibleor should not, be global attributes,
-  
-* TODO specify which attributes should, or should not, be global attributes,
-  
-* create :ref:`external variables <external>` in an external file,
+.. code:: python
 
-* change the data type of output data arrays,
-  
-* set the output netCDF format (all netCDF3 and netCDF4 formats are
-  possible),
+   >>> t.domain.get_construct('latitude').set_property('test', 'set by domain')
+   >>> t.get_construct('latitude').get_property('test')
+   'set by domain'
+   >>> t.get_construct('latitude').set_property('test', 'set by field')
+   >>> t.domain.get_construct('latitude').get_property('test')
+   'set by field'
+   >>> t.domain.get_construct('latitude').del_property('test')
+   'set by field'
+   >>> t.get_construct('latitude').has_property('test')
+   False
 
-* apply netCDF compression,
+.. _copying:
 
-* set the endian-ness of the output data, and
+Copying
+-------
 
-* set the HDF chunk size
+A field may be copied with its `~Field.copy` method. This produces a
+deep copy, i.e. the new field is completely independent of the original field.
+
+.. code:: python
+
+   >>> u = t.copy()
+   >>> u.del_construct('grid_latitude')
+   <DimensionCoordinate: grid_latitude(10) degrees>
+   >>> t.has_construct('grid_latitude')
+   True
+
+Equivalently, the `copy.deepcopy` function may be used:
+
+   >>> import copy
+   >>> u = copy.deepcopy(t)
+
+*Note on performance*
+  Data objects within the field are copied with a `copy-on-write
+  <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This
+  means that a copy of a field takes up very lttle extra memory, even
+  when the original field contains very large data arrays, and the
+  copy operation is very fast. At the time of copying, it is
+  essentially only the descriptive properties that are duplicated.
 
 .. _equality:
 
@@ -699,6 +838,11 @@ the field's `~cfdm.Field.equals` methods.
 
 .. code:: python
 
+   >>> t.equals(t)
+   True
+   >>> t.equals(t.copy())
+   True
+   >>> g = cfdm.read('new_file.nc')
    >>> g = cfdm.read('new_file.nc')
    >>> f.equals(g[0])
    True
@@ -706,26 +850,88 @@ the field's `~cfdm.Field.equals` methods.
    >>> g.set_property('long_name') = 'foo'
    >>> f.equals(g[0])
    False
+
+Equality is strict by default. This means that for two fields to be
+considered equal they must have corresponding metadata constructs and
+for each pair of field and metadata constructs:
+
+* The properties must be the same (with the exception of the field
+  construct's "Conventions" property, which is never checked), and 
+
+* if there are data arrays then they must have same shape, data type
+  and be element-wise equal.
+
+Two numerical data elements :math:`a` and :math:`b` are considered
+equal if :math:`|a - b| \le atol + rtol|b|`, where :math:`atol` (the
+tolerance on absolute differences) and :math:`rtol` (the tolerance on
+relative differences) are positive, typically very small numbers. By
+default both are set to the system epsilon (the difference between 1
+and the least value greater than 1 that is representable as a
+float). Their default settings may be inspected and changed with the
+`cfdm.ATOL` and `cfdm.RTOL` functions:
+
+.. code:: python
+
+   >>> import sys
+   >>> sys.float_info.epsilon
+   2.220446049250313e-16
+   >>> cfdm.ATOL()
+   2.220446049250313e-16
+   >>> original = cfdm.RTOL(0.00001)
+   >>> cfdm.RTOL()
+   1e-05
+   >>> cfdm.RTOL(original)
+   1e-05
+   >>> cfdm.RTOL()
+   2.220446049250313e-16
    
+Attributes that do not constitute part of the CF data model are, by
+default, not checked on any construct. These include, but are not
+limited to, netCDF variable and netCDF dimension names.
+
+The `~Field.equals` function has optional parameters for relaxing the
+criteria for considering two fields to be equal:
+
+* Named properties may be omitted from the comparison.
+
+* The fill value may be omitted. TODO 
+
+* The data type of arrays may be ignored (i.e. arrays with different
+  data types but equal elements will be accepted as being the same)
+
+* The tolerances on absolute and relative differences for numerical
+  comparisons may be temporarily changed, without changing the default
+  settings.
+
+* Attributes that are not part of the CF data model may be considered.
+
+.. _field_creation:
 
 Field creation
 --------------
+
+
+.. _netcdf:
+
+NeCDF interface
+---------------
+
 
 .. _external:
 
 External variables
 ------------------
 
-External variables named are those referred to in the dataset, but
-which are not present in it. Instead such variables are stored in
-other files known as "external files". External variables may,
-however, be incorporated into the field constructs of the dataset, as
-if they had actually been stored in the same file, simply by providing
-the external file names to the `cfdm.read` function.
+External variables are those referred to in the dataset, but which are
+not present in it. Instead such variables are stored in other files
+known as "external files". External variables may, however, be
+incorporated into the field constructs of the dataset, as if they had
+actually been stored in the same file, simply by providing the
+external file names to the `cfdm.read` function.
 
 This is illustrated with the files **parent.nc** (:download:`download
-<../netcdf_files/parent.nc>`) and **external.nc** (:download:`download
-<../netcdf_files/external.nc>`) [#files]_:
+<../netcdf_files/parent.nc>`, 2kB) and **external.nc**
+(:download:`download <../netcdf_files/external.nc>`, 1kB) [#files]_:
 
 .. code:: bash
    
@@ -1012,8 +1218,8 @@ We can now inspect the new auxiliary coordinate construct:
    array([1., 3., 4., 3., 6.], dtype=float32)
    >>> z.data.get_count_variable()
    <Count: long_name:number of obs for this timeseries(2) >
-   >>> z.data.get_count_variable().get_array()
-   array([2, 3])
+   >>> print(z.data.get_count_variable().get_array())
+   [2, 3]
 
 Gathering
 ---------
@@ -1172,8 +1378,8 @@ We can now inspect the new field construct:
           [279. , 278. , 277.5]], dtype=float32)
    >>> tas.data.get_list_variable()
    <List: (3) >
-   >>> tas.data.get_list_variable().get_array()
-   array([1, 4, 5])
+   >>> print(tas.data.get_list_variable().get_array())
+   [1, 4, 5]
 
 ----
 

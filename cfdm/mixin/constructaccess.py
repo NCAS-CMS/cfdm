@@ -219,7 +219,7 @@ multiple constructs satisfy all of the given criteria.
               "air_pressure".
 
         * The value of any property prefixed by the property name and
-          a colon. 
+          a colon (``:``).
 
             *Example:*
               ``description='positive:up'`` will select constructs
@@ -234,31 +234,42 @@ multiple constructs satisfy all of the given criteria.
               constructs that have a "standard_name" property with the
               value "air_pressure".
 
-        * The measure of a cell measure constructs, prefixed by
-          "measure%"
+        * The measure of cell measure constructs, prefixed by
+          ``measure%``.
 
             *Example:*
               ``description='measure%area'`` will select "area" cell
               measure constructs.
 
-        * The netCDF variable name, prefixed by "ncvar%"
+        * A construct identifier, prefixed by ``cid%`` (see also the
+          *cid* parameter).
+
+            *Example:* 
+              ``description='cid%cellmethod1'`` will select cell
+              method construct with construct identifier
+              "cellmethod1". This is equivalent to
+              ``cid='cellmethod1'``.
+
+        * The netCDF variable name, prefixed by ``ncvar%``.
 
             *Example:*
               ``description='ncvar%lat'`` will select constructs with
               netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
-          prefixed by "ncdim%"
+          prefixed by ``ncdim%``.
 
             *Example:*
               ``description='ncdim%time'`` will select domain axis
               constructs with netCDF dimension name "time".
 
-    id: `str`, optional
-        Select the construct with the given internal identifier.
+    cid: `str`, optional
+        Select the construct with the given construct identifier.
 
         *Example:*
-          ``cid='domainancillary0'``
+          ``cid='domainancillary0'`` will the domain ancillary
+          construct with construct identifier "domainancillary1". This
+          is equivalent to ``description='cid%domainancillary0'``.
 
     construct_type: `str`, optional
         Select constructs of the given type. Valid types are:
@@ -346,7 +357,7 @@ returned.
               "air_pressure".
 
         * The value of any property prefixed by the property name and
-          a colon. 
+          a colon (``:``).
 
             *Example:*
               ``description='positive:up'`` will select constructs
@@ -362,30 +373,41 @@ returned.
               value "air_pressure".
 
         * The measure of cell measure constructs, prefixed by
-          "measure%"
+          ``measure%``.
 
             *Example:*
               ``description='measure%area'`` will select "area" cell
               measure constructs.
 
-        * The netCDF variable name, prefixed by "ncvar%"
+        * A construct identifier, prefixed by ``cid%`` (see also the
+          *cid* parameter).
+
+            *Example:* 
+              ``description='cid%cellmethod1'`` will select cell
+              method construct with construct identifier
+              "cellmethod1". This is equivalent to
+              ``cid='cellmethod1'``.
+
+        * The netCDF variable name, prefixed by ``ncvar%``.
 
             *Example:*
               ``description='ncvar%lat'`` will select constructs with
               netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
-          prefixed by "ncdim%"
+          prefixed by ``ncdim%``.
 
             *Example:*
               ``description='ncdim%time'`` will select domain axis
               constructs with netCDF dimension name "time".
 
-    id: `str`, optional
-        Select the construct with the given internal identifier.
+    cid: `str`, optional
+        Select the construct with the given construct identifier.
 
         *Example:*
-          ``cid='domainancillary0'``
+          ``cid='domainancillary0'`` will the domain ancillary
+          construct with construct identifier "domainancillary1". This
+          is equivalent to ``description='cid%domainancillary0'``.
 
     construct_type: `str`, optional
         Select constructs of the given type. Valid types are:
@@ -786,7 +808,7 @@ TODO
         *Example:*
           ``axes=['domainaxis1', 'domainaxis0']``
         
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.

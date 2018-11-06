@@ -6,8 +6,8 @@
 Functions of the **cfdm** package
 =================================
 
-Reading and writing functions
------------------------------
+Reading and writing
+-------------------
 
 .. autosummary::
    :nosignatures:
@@ -17,8 +17,20 @@ Reading and writing functions
    cfdm.read 
    cfdm.write
 
-Miscellaneous functions
------------------------
+Constants
+---------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: function.rst
+
+   cfdm.ATOL
+   cfdm.RTOL
+
+
+Miscellaneous 
+--------------
 
 .. autosummary::
    :nosignatures:

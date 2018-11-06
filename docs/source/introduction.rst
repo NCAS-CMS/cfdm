@@ -23,15 +23,16 @@ encoding.
 
 The **field** construct, which corresponds to a CF-netCDF data
 variable with all of its metadata, is central to the CF data
-model. The field construct consists of a data array and the definition
-of its domain (that describes the locations of each cell of the data
-array), **field ancillary** constructs containing metadata defined
-over the same **domain**, and **cell method** constructs to describe
-how the cell values represent the variation of the physical quantity
-within the cells of the domain. The domain is defined collectively by
-the following constructs of the CF data model: **domain axis**,
-**dimension coordinate**, **auxiliary coordinate**, **cell measure**,
-**coordinate reference** and **domain ancillary** constructs.
+model. The field construct consists of descriptive properties, a data
+array, the definition of its domain (that describes the locations of
+each cell of the data array), **field ancillary** constructs
+containing metadata defined over the same **domain**, and **cell
+method** constructs to describe how the cell values represent the
+variation of the physical quantity within the cells of the domain. The
+domain is defined collectively by the following constructs of the CF
+data model: **domain axis**, **dimension coordinate**, **auxiliary
+coordinate**, **cell measure**, **coordinate reference** and **domain
+ancillary** constructs.
 
 A complete description of the CF data model, including UML diagrams,
 is available at https://www.geosci-model-dev.net/10/4619/2017.

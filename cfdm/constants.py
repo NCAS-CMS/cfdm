@@ -16,9 +16,8 @@ import numpy
 #	    The value of absolute tolerance for testing numerically
 #	    tolerant equality.
 #
-#        RTOL : float
-#	    The value of relative tolerance for testing numerically
-#	    tolerant equality.
+#        RTOL : float The value of relative tolerance for testing
+#	    numerically tolerant equality.
 #
 #        TEMPDIR : str
 #	    The location to store temporary files. By default it is

@@ -322,9 +322,9 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 `RTOL functions respectively. ``atol`` is the absolute difference and
 ``rtol*abs(y)`` is the relative difference.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
-.. seealso:: `RTOL`
+.. seealso:: `cfdm.RTOL`
 
 :Parameters:
 
@@ -360,14 +360,19 @@ def RTOL(*arg):
     '''The factor used to calculate the relative difference when testing
 for numerically tolerant equality.
 
+Two numbers :math:`a` and :math:`b` are considered equal if :math:`|a
+- b| \le atol + rtol|b|`, where :math:`atol` and :math:`rtol` are
+positive, typically very small numbers. By default both are set to the
+system epsilon.
+
 Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 + rtol*abs(y)``, where the atol and rtol are set by the `ATOL` and
 `RTOL functions respectively. ``atol`` is the absolute difference and
 ``rtol*abs(y)`` is the relative difference.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
-.. seealso:: `ATOL`
+.. seealso:: `cfdm.ATOL`
 
 :Parameters:
 

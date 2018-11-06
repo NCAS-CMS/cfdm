@@ -99,19 +99,19 @@ TODO
         #--- End: if
 
         if description is not None:
-#            (prefix, _, key) = description.partition('%')
-#            if prefix == 'cid':
-#                construct = out.get(key)
-#                if construct is not None:
-#                    out = {key: construct}
-#                else:
-#                    out = {}
-#            else:
-            (prefix, _, value) = description.partition(':')
-            custom = (prefix,) if value else None
-            for key, construct in tuple(out.items()):
-                if description not in construct.name(custom=custom, all_names=True):
-                    del out[key]
+            (prefix, _, key) = description.partition('%')
+            if prefix == 'cid':
+                construct = out.get(key)
+                if construct is not None:
+                    out = {key: construct}
+                else:
+                    out = {}
+            else:
+                (prefix, _, value) = description.partition(':')
+                custom = (prefix,) if value else None
+                for key, construct in tuple(out.items()):
+                    if description not in construct.name(custom=custom, all_names=True):
+                        del out[key]
         #--- End: if
             
         return out

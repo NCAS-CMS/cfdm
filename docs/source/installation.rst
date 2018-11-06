@@ -19,17 +19,18 @@ The `cfdm` package requires:
 
 * **future** version 0.16.0 or newer.
 
-Anaconda
---------
+conda
+-----
 
-Install `Anaconda <https://www.anaconda.com/download>`_ for Python 2
+To install `cfdm` using `conda <https://conda.io/docs/>`_, first
+install `Anaconda <https://www.anaconda.com/download>`_ for Python 2
 or Python 3, then on type on the command line:
 
 .. code:: bash
 
    conda install -c ncas cfdm
 
-Pip
+pip
 ---
 
 To install `cfdm` using `pip <https://pypi.org/project/pip/>`_, type
