@@ -94,7 +94,10 @@ class NetCDFWrite(IOWrite):
                 ncvar = '{0}_{1}'.format(base, counter)
         else:
             ncvar = base
-    
+
+
+        ncvar = ncvar.replace(' ', '_')
+            
         ncvar_names.add(ncvar)
     
         return ncvar
@@ -1440,8 +1443,8 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             error = str(error)
             if error == 'NetCDF: Not a valid data type or _FillValue type mismatch':
                 raise ValueError(
-"Can't write {} data from {!r} to a {} file. Consider using a netCDF4 format or use the 'single' or 'datatype' parameters or change the datatype before writing.".format(
-    cfvar.dtype.name, cfvar, g['netcdf'].file_format))
+"Can't write {} data from {!r} to a {} file. Consider using a netCDF4 format, or use the 'datatype' parameter, or change the datatype before writing.".format(
+    cfvar.data.dtype.name, cfvar, g['netcdf'].file_format))
                 
             message = "Can't create variable in {} file from {} ({})".format(
                 g['netcdf'].file_format, cfvar, error)
@@ -2326,7 +2329,7 @@ write them to the netCDF4.Dataset.
         # ------------------------------------------------------------
         # Write the global attributes to the file
         # ------------------------------------------------------------
-        g['netcdf'].setncattr('Conventions', self.implementation.get_version())
+        g['netcdf'].setncattr('Conventions', 'CF-'+self.implementation.get_version())
         
         for attr in global_attributes - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self.implementation.get_property(f0, attr)) 
