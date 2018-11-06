@@ -33,9 +33,9 @@ def _get_version():
 
 version      = _get_version()
 packages     = ['cfdm']
-etc_files    = [f for f in find_package_data_files('cfdm/etc')]
+#etc_files    = [f for f in find_package_data_files('cfdm/etc')]
 
-package_data = etc_files
+#package_data = etc_files
 
 long_description = """
 
@@ -62,13 +62,13 @@ Code license
 setup(name = "cfdm",
       long_description = long_description,
       version      = version,
-      description  = "A reference implementation of the CF data model",
+      description  = "A complete implementation of the CF data model",
       author       = "David Hassell",
       maintainer   = "David Hassell",
       maintainer_email  = "david.hassell@ncas.ac.uk",
       author_email = "david.hassell@ncas.ac.uk",
-      url          = "https://bitbucket.org/cfpython/cfdm",
-      download_url = "",
+      url          = "https://github.com/NCAS-CMS/cfdm",
+      download_url = "https://pypi.org/project/cfdm",
       platforms    = ["Linux", "MacOS", "Windows"],
       keywords     = ['cf','netcdf','data','science',
                       'oceanography','meteorology','climate'],
@@ -82,12 +82,13 @@ setup(name = "cfdm",
                       "Programming Language :: Python :: 3",
                       ],
       packages     = ['cfdm',
+                      'cfdm.core',
                       'cfdm.data',
                       'cfdm.io',
-                      'cfdm.structure',
                       'cfdm.mixin'],
-      package_data = {'cfdm': package_data},
+#      package_data = {'cfdm': package_data},
       requires     = ['netCDF4 (>=1.4)',
-                      'numpy (>=1.13)',
+                      'numpy (>=1.11)',
+                      'future (>=0.16.0)',
                       ],
   )

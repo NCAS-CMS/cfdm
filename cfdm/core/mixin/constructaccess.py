@@ -34,7 +34,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     def array_constructs(self, copy=False):
         return self._get_constructs().array_constructs(copy=copy)
  
-    def construct_axes(self, id=None):
+    def construct_axes(self, cid=None):
         '''Return the identifiers of the domain axes spanned by the construct
 data arrays.
 
@@ -44,7 +44,7 @@ data arrays.
 
 :Parameters:
 
-    id: `str`
+    cid: `str`
         The identifier of the construct.
 
 :Returns:
@@ -62,13 +62,13 @@ data arrays.
 None
 
         '''
-        return self._get_constructs().construct_axes(id=id)
+        return self._get_constructs().construct_axes(cid=cid)
     #--- End: def
     
-    def construct_type(self, id):
+    def construct_type(self, cid):
         '''TODO
         '''                
-        return self._get_constructs().construct_type(id)
+        return self._get_constructs().construct_type(cid)
     #--- End: def
     
     def constructs(self, copy=False):
@@ -97,7 +97,7 @@ TODO
     #--- End: def
     
     @abc.abstractmethod
-    def del_construct(self, id):
+    def del_construct(self, cid):
         '''Remove a construct.
 
 .. versionadded:: 1.7
@@ -106,11 +106,11 @@ TODO
 
 :Parameters:
 
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct.
 
         *Example:*
-          ``id='auxiliarycoordinate0'``
+          ``cid='auxiliarycoordinate0'``
         
 :Returns:
 
@@ -125,12 +125,12 @@ TODO
         raise NotImplementedError()
     #--- End: def
 
-    def get_construct(self, id):
+    def get_construct(self, cid):
         '''Return a metadata construct.
 
 :Parameters:
 
-    id: `str`
+    cid: `str`
         TODO
 
 :Returns:
@@ -146,7 +146,7 @@ TODO
 >>> f.get_construct('dimensioncoordinate99', 'Not set')
 'Not set'
         '''
-        return self._get_constructs().get_construct(id)
+        return self._get_constructs().get_construct(cid)
     #--- End: def
 
     def domain_axis_name(self, axis):
@@ -155,7 +155,7 @@ TODO
         return self._get_constructs().domain_axis_name(axis)
     #--- End: def
     
-#    def set_auxiliary_coordinate(self, item, axes=None, id=None,
+#    def set_auxiliary_coordinate(self, item, axes=None, cid=None,
 #                                 copy=True):
 #        '''Set an auxiliary coordinate construct.
 #
@@ -292,7 +292,7 @@ TODO
 #                                  copy=copy)
 #    #--- End: def
 
-    def set_construct(self, construct_type, construct, id=None,
+    def set_construct(self, construct_type, construct, cid=None,
                       axes=None, #replace=True,
                       copy=True):
         '''Set a metadata construct.
@@ -319,13 +319,13 @@ TODO
         *Example:*
           ``axes=['domainaxis1']``
         
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='cellmeasure0'``
+          ``cid='cellmeasure0'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -342,14 +342,14 @@ TODO
 
         '''
         return self._get_constructs().set_construct(construct_type,
-                                                    construct, key=id,
+                                                    construct, cid=cid,
                                                     axes=axes,
 #                                                    extra_axes=extra_axes,
 #                                                    replace=replace,
                                                     copy=copy)
     #--- End: def
 
-    def set_construct_axes(self, id, axes):
+    def set_construct_axes(self, cid, axes):
         '''Set the domain axes spanned by a construct data array.
 
 .. versionadded:: 1.7
@@ -359,11 +359,11 @@ TODO
 
 :Parameters:
 
-    id: `str`
+    cid: `str`
         The identifier of the construct.
 
         *Example:*
-          ``id='cellmeasure0'``
+          ``cid='cellmeasure0'``
         
      axes: sequence of `str`
         The identifiers of the domain axes spanned by the data array.
@@ -380,7 +380,7 @@ TODO
 TODO
 
         '''
-        return self._get_constructs().set_construct_axes(id, axes)
+        return self._get_constructs().set_construct_axes(cid, axes)
     #--- End: def
 
 #    def set_cell_measure(self, item, axes=None, id=None, copy=True):

@@ -24,9 +24,10 @@ objects.
 For example, to read the file **file.nc** (:download:`download
 <../netcdf_files/file.nc>`) [#files]_:
 
+.. code:: python
 
->>> import cfdm
->>> x = cfdm.read('file.nc')
+   >>> import cfdm
+   >>> x = cfdm.read('file.nc')
 
 The `cfdm.read` function has optional parameters to
 
@@ -49,6 +50,8 @@ detail.
 
 The built-in `repr` function returns a short, one-line description of
 the field:
+
+.. code:: python
 
    >>> x
    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
@@ -252,6 +255,8 @@ Properties
 Properties of the field may be retrieved with the `~Field.properties`
 method:
 
+.. code:: python
+
    >>> t.properties()
    {'Conventions': 'CF-1.7',
     'project': 'research',
@@ -261,6 +266,8 @@ method:
 Individual properties may be accessed and modified with the
 `~Field.del_property`, `~Field.get_property`, `~Field.has_property`,
 and `~Field.set_property` methods:
+
+.. code:: python
 
    >>> f.has_property('standard_name')
    True
@@ -303,27 +310,33 @@ Data
 The field's data array is stored in a `Data` object that is accessed
 with the `~Field.get_data` method:
 
+.. code:: python
+
    >>> t.get_data()
    <Data: [[[262.8, ..., 269.7]]] K>
 
 The data may be retrieved as an independent (possibly masked) `numpy`
 array with the `~Field.get_array` method:
 
-   >>> t.get_array()
-   array([[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
-           [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
-           [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
-           [261.7 260.6 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
-           [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
-           [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
-           [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
-           [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
-           [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
-           [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]])
+.. code:: python
+
+   >>> print(t.get_array())
+   [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
+     [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
+     [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
+     [261.7 260.6 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
+     [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
+     [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+     [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
+     [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
+     [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
+     [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]])
    
 The field also has a `~Field.data` attribute that is an alias for the
 `~Field.get_data` method, which makes it easier to access attributes
 and methods of the `Data` object:
+
+.. code:: python
 
    >>> t.data.dtype
    dtype('float64')
@@ -334,15 +347,18 @@ and methods of the `Data` object:
    >>> t.data.size
    90
 
-.. _data_assignment:
+.. _indexing:
 
-Data assignment
-^^^^^^^^^^^^^^^
+Indexing
+^^^^^^^^
 
-Data array elements are changed by assigning to indices of the `Data`
-object. The indexing rules are similar to the `numpy indexing rules
+A `Data` object is indexed with rules that are very similiar to the
+`numpy indexing rules
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only differences being:
+
+* **An integer index i takes the i-th element but does not reduce the
+  rank by one.**
 
 * **When two or more dimensions' indices are sequences of integers
   then these indices work independently along each dimension (similar
@@ -350,20 +366,55 @@ the only differences being:
   behaviour as indexing on a** `Variable` **object of the** `netCDF4
   package <http://unidata.github.io/netcdf4-python>`_\ **.**
 
+.. code:: python
+	    
+   >>> d = t.data
+   >>> d.shape
+   (1, 10, 9)
+   >>> d[:, :, 1].shape
+   (1, 10, 1)
+   >>> d[:, 0].shape
+   (1, 1, 9)
+   >>> d[..., 6:3:-1, 3:6].shape
+   (1, 3, 3)
+   >>> d[0, [2, 9], [4, 8]].shape
+   (1, 2, 2)
+   >>> d[0, :, -2].shape
+   (1, 10, 1)
+  
+.. _data_assignment:
+
+Assignment
+^^^^^^^^^^
+
+Data array elements are changed by assigning to indices of the `Data`
+object, using the :ref:`indexing rules <indexing>` defined here.
+
 The value being assigned must be broadcastable to the shape defined by
 the indices, using the `numpy broadcasting rules
 <https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_.
 
-   >>> import numpy
-   >>> TODO f.data[:, 0] = -99
-   >>> TODO f.data[:, 0] = range()
-   >>> TODO f.data[:, 0] = numpy.array()
-   >>> TODO d = f.data
-   >>> TODO f.data[:, 0] = d[0, 1]
-      
-Data elements may be set to missing data by assigning the `numpy` mask object:
+.. code:: python
 
-   >>> f.data[...] = numpy.ma.masked
+   >>> import numpy
+   >>> t.data[:, :, 1] = -99
+   >>> t.data[:, 0] = range(9)
+   >>> t.data[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
+   >>> t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-22, -33], [-44, -55]])
+   >>> t.data[0, :, -2] = numpy.ma.masked
+   >>> print(t.get_array())
+   [[[  0.0   1.0   2.0   3.0   4.0   5.0   6.0 --   8.0]
+     [272.7 -99.0 279.5 278.9 263.8 263.3 274.2 -- 279.5]
+     [269.7 -99.0 273.4 274.2 -22.0 270.2 280.0 -- -33.0]
+     [261.7 -99.0 270.8 260.3 265.6 279.4 276.9 -- 260.6]
+     [264.2 -99.0 262.5 -12.0 -11.0 -10.0 270.4 -- 275.3]
+     [263.9 -99.0 272.1 -15.0 -14.0 -13.0 260.0 -- 270.2]
+     [273.8 -99.0 268.5 -18.0 -17.0 -16.0 270.6 -- 270.6]
+     [267.9 -99.0 279.8 260.3 261.2 275.3 271.2 -- 268.9]
+     [270.9 -99.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]
+     [276.4 -99.0 276.3 266.1 -44.0 268.1 277.0 -- -55.0]]]
+
+.. _subspacing:
 
 Subspacing
 ----------
@@ -372,28 +423,33 @@ Creation of a new field that spans a subspace of the original domain
 is achieved by indexing the field directly. The new subspace contains
 the same properties and similar metadata constructs to the original
 field, but the latter are also subspaced when they span domain axes
-that have been changed. The indexing rules are the same as for
-:ref:`data assignment <data_assignment>`, with the additional rule
-that:
-     
-* **An integer index i takes the i-th element but does not reduce the
-  rank of the output data by one.**
+that have been changed. The :ref:`indexing rules <indexing>` are the
+same as for the `Data` object.
 
+In this example a new field is created whose domain spans only the
+first latitude of the original, and with a reversed longitude axis:
+     
 .. code:: python
 
-   >>> g = f[..., ::-1, 2]
-   >>> print(g)
-   TODO
-   >>> f.data[0, [1, 3], [2, 4, 5]]
-   >>> print(g)
-   TODO
-   
-The `Data` object may also be indexed with the same indexing rules to
-produce a new, independent `Data` object.
+   >>> print(q)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: time(1) = [2019-01-01 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
 
-   >>> f.data[..., ::-1, 2]
-   <DATA TODO>
-
+   >>> new = q[0, ::-1]
+   >>> print(new)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(1), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: time(1) = [2019-01-01 00:00:00]
+                   : latitude(1) = [-75.0] degrees_north
+                   : longitude(8) = [337.5, ..., 22.5] degrees_east
+		   
 .. _constructs:
 
 Constructs
@@ -424,9 +480,38 @@ contained by the field construct) are returned by the
 `~Field.constructs` method that provides a dictionary of the
 constructs, keyed by unique internal identifiers:
 
-   >>> f.constructs()
-   TODO
-   
+.. code:: python
+
+   >>> q.constructs()
+   {'cellmethod0': <CellMethod: area: mean>,
+    'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+    'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+    'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+    'domainaxis0': <DomainAxis: 5>,
+    'domainaxis1': <DomainAxis: 8>,
+    'domainaxis2': <DomainAxis: 1>}
+   >>> t.constructs()
+   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+    'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+    'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+    'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+    'cellmethod1': <CellMethod: domainaxis3: maximum>,
+    'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+    'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+    'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+    'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+    'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+    'domainaxis0': <DomainAxis: 1>,
+    'domainaxis1': <DomainAxis: 10>,
+    'domainaxis2': <DomainAxis: 9>,
+    'domainaxis3': <DomainAxis: 1>,
+    'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+
 The `~Field.constructs` method has options to filter the constructs by
 their type, property (and other attribute) values, and by which domain
 axes that are spanned by the data array:
@@ -447,6 +532,8 @@ axes that are spanned by the data array:
 An internal identifier may also be used to select constructs, which is
 useful if a construct is not identifiable by other means.
 
+.. code:: python
+
    >>> f.constructs(id='dimensioncoordinate1')
    TODO
    
@@ -454,8 +541,35 @@ An individual construct may be returned, without its identifier, with
 the field's `~Field.get_construct` method (which supports the same
 filtering as techniques as above):
 
+.. code:: python
+
    >>> f.get_construct('latitude')
    TODO
+
+Which domain axes are spanned by a metadata construct's data is found
+with the field's `~Field.construct_axes` method:
+
+.. code:: python
+
+   >>> t.construct_axes()
+   {'auxiliarycoordinate0': ('domainaxis1', 'domainaxis2'),
+    'auxiliarycoordinate1': ('domainaxis2', 'domainaxis1'),
+    'auxiliarycoordinate2': ('domainaxis1',),
+    'cellmeasure0': ('domainaxis2', 'domainaxis1'),
+    'dimensioncoordinate0': ('domainaxis0',),
+    'dimensioncoordinate1': ('domainaxis1',),
+    'dimensioncoordinate2': ('domainaxis2',),
+    'dimensioncoordinate3': ('domainaxis3',),
+    'domainancillary0': ('domainaxis0',),
+    'domainancillary1': ('domainaxis0',),
+    'domainancillary2': ('domainaxis1', 'domainaxis2'),
+    'fieldancillary0': ('domainaxis1', 'domainaxis2')}
+
+The domain axes spanned by a metadata construct's data may be changed
+with field's `~Field.set_construct_axes` method.
+
+Metadata constructs
+^^^^^^^^^^^^^^^^^^^
 
 Where applicable, the classes for metadata constructs share the same
 API as the field. This means, for instance, that a class that has a
@@ -463,19 +577,23 @@ data array (such as `DomainAncillary`) will have a `!get_array` method
 to access its data as a numpy array:
 
 .. code:: python
-	  
-   >>> lon = f.get_construct('longitude')
+
+   >>> lon = q.get_construct('longitude')   
    >>> lon
-   <TODO>
+   <DimensionCoordinate: longitude(8) degrees_east>
    >>> lon.set_property('long_name', 'Longitude')
    >>> lon.properties()
-   TODO
-   >>> lon.data[2] = 3453453454
-   >>> lon.get_array()
-   TODO
+   {'units': 'degrees_east',
+    'long_name': 'Longitude',
+    'standard_name': 'longitude'}   
+   >>> lon.data[2]
+   <Data: [112.5] degrees_east>
+   >>> lon.data[2] = 125   
+   >>> print(lon.get_array())
+   [22.5 67.5 125.0 157.5 202.5 247.5 292.5 337.5]
 
-Construct components
-^^^^^^^^^^^^^^^^^^^^
+Other construct components
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Other classes are used to represent construct components that are
 neither "properties" nor "data":
@@ -509,24 +627,37 @@ Where applicable, these classes also share the same API as the field:
 
 .. code:: python
 	  
-   >>> lon = f.get_construct('longitude')
+   >>> lon = t.get_construct('grid_longitude')
    >>> bounds = lon.get_bounds()
    >>> bounds
-   TODO
+   <Bounds: ncvar%grid_longitude_bounds(9, 2) >
    >>> bounds.properties()
-   TODO
+   {}
    >>> bounds.get_data()
-   TODO
-   >>> f.domain.get_construct('longitude')
-   TODO
-   >>> crs = f.get_construct(TODO)
+   <Data(9, 2): [[-4.92, ..., -0.96]]>
+   >>> print(bounds.get_array())
+   [[-4.92 -4.48]
+    [-4.48 -4.04]
+    [-4.04 -3.6 ]
+    [-3.6  -3.16]
+    [-3.16 -2.72]
+    [-2.72 -2.28]
+    [-2.28 -1.84]
+    [-1.84 -1.4 ]
+    [-1.4  -0.96]]
+   >>> t.domain.get_construct('longitude')
+   <AuxiliaryCoordinate: longitude(9, 10) degrees_E>
+   >>> crs = t.get_construct('rotated_latitude_longitude')
    >>> crs.datum
-   TODO
+   <Datum: Parameters: earth_radius>
    >>> crs.datum.parameters()
-   TODO
-   >>> crs = f.get_construct(TODO)
-   >>> crs.coordinate_conversion
-   TODO
+   {'earth_radius': 6371007}
+   >>> crs = t.get_construct('atmosphere_hybrid_height_coordinate',
+   ...                       construct_type='coordinate_reference')
+   >>> crs.coordinate_conversion.domain_ancillaries()
+   {'a': 'domainancillary0',
+    'b': 'domainancillary1',
+    'orog': 'domainancillary2'}
 
 .. _write:
    
@@ -534,6 +665,8 @@ Writing to disk
 ---------------
 
 The `cfdm.write` function writes fields to a netCDF file on disk:
+
+.. code:: python
 
    >>> cfdm.write(f, 'new_file.nc')
 
@@ -563,6 +696,8 @@ Equality
 
 Whether or not two fields are the same is ascertained with either of
 the field's `~cfdm.Field.equals` methods.
+
+.. code:: python
 
    >>> g = cfdm.read('new_file.nc')
    >>> f.equals(g[0])
@@ -612,7 +747,7 @@ This is illustrated with the files **parent.nc** (:download:`download
    		eastward_wind:cell_measures = "area: areacella" ;
    
    // global attributes:
-   		:Conventions = "1.7" ;
+   		:Conventions = "CF-1.7" ;
    		:external_variables = "areacella" ;
    }
 
@@ -627,7 +762,7 @@ This is illustrated with the files **parent.nc** (:download:`download
    		areacella:standard_name = "cell_area" ;
    
    // global attributes:
-   		:Conventions = "1.7" ;
+   		:Conventions = "CF-1.7" ;
    }
 
 The dataset in **parent.nc** may be read without specifying the
@@ -938,13 +1073,24 @@ This is illustrated with the file **gathered.nc** (`download`):
    // global attributes:
  		:Conventions = "CF-1.7" ;
    }
-..
+
+Reading and inspecting this file shows the data presented in
+three-dimensional uncompressed form, whilst the underlying array is
+still in the two-dimensional gathered representation described in the
+file:
+
+.. code:: python
 
    >>> c = cfdm.read('gathered.nc')[0]
+   TODO
    >>> print(c)
+   TODO
    >>> c.get_array
+   TODO
    >>> c.data.get_compressed_array().get_array()
+   TODO
    >>> c.data.get_list_variable().get_array()
+   TODO
 
 If the underlying array is compressed at the time of writing to disk
 with the `cfdm.write` function, then it is written to the file as a

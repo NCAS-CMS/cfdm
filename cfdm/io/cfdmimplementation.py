@@ -132,7 +132,7 @@ class CFDMImplementation(Implementation):
     def create_field(self, field=None, construct_id=None):
         '''TODO
         '''
-        return field.create_field(id=construct_id, domain=False)
+        return field.create_field(cid=construct_id, domain=False)
     #--- End: def
         
     def del_property(self, construct, prop):

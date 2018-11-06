@@ -14,7 +14,7 @@ class Constructs(core.Constructs):
 #        return self.constructs(construct_type='auxiliary_coordinate', axes=axes, copy=copy)
 #    #--- End: def
 
-    def get_construct(self, description=None, id=None, construct_type=None,
+    def get_construct(self, description=None, cid=None, construct_type=None,
                       axes=None, copy=False):
         '''Return a metadata construct.
 
@@ -27,7 +27,7 @@ class Constructs(core.Constructs):
 **Examples**
 
         '''
-        out = self.constructs(description=description, id=id,
+        out = self.constructs(description=description, cid=cid,
                               construct_type=construct_type,
                               axes=axes, copy=copy)
 
@@ -41,7 +41,7 @@ class Constructs(core.Constructs):
         return construct
     #--- End: def
 
-    def constructs(self, description=None, id=None, axes=None,
+    def constructs(self, description=None, cid=None, axes=None,
                    construct_type=None, copy=False):
         '''Return the metadata constructs
 
@@ -55,7 +55,7 @@ via the optional parameters.
 
     description: `str`, optional
 
-    id: `str`, optional
+    cid: `str`, optional
 
     construct_type: `str`, optional
 
@@ -75,10 +75,10 @@ TODO
         out = super().constructs(construct_type=construct_type,
                                  copy=copy)
 
-        if id is not None:
-            construct = out.get(id)
+        if cid is not None:
+            construct = out.get(cid)
             if construct is not None:
-                out = {id: construct}
+                out = {cid: construct}
             else:
                 out = {}
 
@@ -89,10 +89,10 @@ TODO
         if axes is not None:
             axes = set(axes)
             construct_axes = self.construct_axes()
-            for id in tuple(out):
-                x = construct_axes.get(id)
+            for cid in tuple(out):
+                x = construct_axes.get(cid)
                 if x is None or not axes.intersection(x):
-                    del out[id]
+                    del out[cid]
                 
             if not out:
                 return out
@@ -100,7 +100,7 @@ TODO
 
         if description is not None:
 #            (prefix, _, key) = description.partition('%')
-#            if prefix == 'id':
+#            if prefix == 'cid':
 #                construct = out.get(key)
 #                if construct is not None:
 #                    out = {key: construct}

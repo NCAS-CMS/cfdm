@@ -54,15 +54,15 @@ class Constructs(object):
             d = {}            
             for construct_type in source._array_constructs:
                 if construct_type in self._ignore:
-                    for key in source._constructs[construct_type]:
-                        self._construct_axes.pop(key, None)
-                        self._construct_type.pop(key, None)
+                    for cid in source._constructs[construct_type]:
+                        self._construct_axes.pop(cid, None)
+                        self._construct_type.pop(cid, None)
                     continue
                 
                 if copy:
                     new_v = {}
-                    for key, construct in source._constructs[construct_type].items():
-                        new_v[key] = construct.copy(data=_use_data)
+                    for cid, construct in source._constructs[construct_type].items():
+                        new_v[cid] = construct.copy(data=_use_data)
                 else:
                     new_v = source._constructs[construct_type].copy()
                     
@@ -71,14 +71,14 @@ class Constructs(object):
             
             for construct_type in source._non_array_constructs:
                 if construct_type in self._ignore:
-                    for key in source._constructs[construct_type]:
-                        self._construct_type.pop(key, None)
+                    for cid in source._constructs[construct_type]:
+                        self._construct_type.pop(cid, None)
                     continue
                 
                 if copy:
                     new_v = {}
-                    for key, construct in source._constructs[construct_type].items():
-                        new_v[key] = construct.copy()
+                    for cid, construct in source._constructs[construct_type].items():
+                        new_v[cid] = construct.copy()
                 else:
                     new_v = source._constructs[construct_type].copy()
 
@@ -178,10 +178,10 @@ class Constructs(object):
         return 'TODO'
     #--- End: def
     
-    def construct_type(self, key):
+    def construct_type(self, cid):
         '''TODO
         '''
-        x = self._construct_type.get(key)
+        x = self._construct_type.get(cid)
         if x in self._ignore:
             return
         
@@ -194,10 +194,10 @@ class Constructs(object):
         return construct_type.replace('_', ' ')
     #--- End: def
 
-    def _set_construct_axes(self, key, axes):
+    def _set_construct_axes(self, cid, axes):
         '''TODO
         '''
-        self._construct_axes[key] = tuple(axes)
+        self._construct_axes[cid] = tuple(axes)
     #--- End: def
 
     def construct_types(self):
@@ -228,10 +228,10 @@ class Constructs(object):
         if axes:
             spans_axes = set(axes)
             construct_axes = self.construct_axes()
-            for key, construct in list(out.items()):
-                x = construct_axes[key]
+            for cid, construct in list(out.items()):
+                x = construct_axes[cid]
                 if not spans_axes.intersection(x):
-                    del out[key]
+                    del out[cid]
         #--- End: def
 
         return out
@@ -299,12 +299,12 @@ class Constructs(object):
         return out
     #--- End: def
     
-    def construct_axes(self, id=None):
+    def construct_axes(self, cid=None):
         '''TODO
 
 :Parameters:
 
-    key: `str`, optional
+    cid: `str`, optional
 
     axes: sequence of `str`, optional
 
@@ -332,7 +332,7 @@ None
 ('dim0', 'dim1')
 
 '''
-        if id is None:
+        if cid is None:
             # Return all of the constructs' axes
             if not self._ignore:
                 return self._construct_axes.copy()
@@ -350,10 +350,10 @@ None
         #--- End: if
         
         # Return a particular construct's axes
-        if self._ignore and self.construct_type(id) is None:
-            id = None
+        if self._ignore and self.construct_type(cid) is None:
+            cid = None
 
-        return self._construct_axes.get(id)
+        return self._construct_axes.get(cid)
     #--- End: def
 
 
@@ -366,13 +366,14 @@ None
 #
 #        return construct_type
 
-    def set_construct_axes(self, key, axes):
+    def set_construct_axes(self, cid, axes):
         '''TODO
         '''
-        if self.construct_type(key) is None:
-            raise ValueError("Can't set axes of non-existent key")
+        if self.construct_type(cid) is None:
+            raise ValueError(
+                "Can't set axes for non-existent construct identifier: {}".format(cid))
 
-        self._set_construct_axes(key, axes)
+        self._set_construct_axes(cid, axes)
     #--- End: def
 
     def copy(self, data=True):
@@ -497,12 +498,12 @@ None
         return self.constructs(construct_type='domain_axis', copy=copy)
     #--- End: def
     
-    def get_construct(self, id):
+    def get_construct(self, cid):
         '''Return a metadata construct.
 
 Parameters:	
 
-    id: `str`
+    cid: `str`
 
 :Returns:	
 
@@ -517,7 +518,7 @@ Parameters:
 'Not set'
 
         '''
-        construct_type = self.construct_type(id)
+        construct_type = self.construct_type(cid)
         if construct_type is None:
             if default:
                 return default[0]
@@ -528,14 +529,14 @@ Parameters:
             d = {}
             
         try:            
-            return d[id]
+            return d[cid]
         except KeyError:
 #            if default:
 #                return default[0]
             raise ValueError("Can't get construct!!!!!!")
     #--- End: def
     
-    def set_construct(self, construct_type, construct, key=None,
+    def set_construct(self, construct_type, construct, cid=None,
                       axes=None, #extra_axes=0, #replace=True,
                       copy=True):
         '''Insert a construct.
@@ -562,13 +563,13 @@ Parameters:
         '''
         construct_type = self._check_construct_type(construct_type)
                                                 
-        if key is None:
+        if cid is None:
             # Create a new construct identifier
-            key = self.new_identifier(construct_type)
-#        elif not replace and key in self._constructs[construct_type]:
+            cid = self.new_identifier(construct_type)
+#        elif not replace and cid in self._constructs[construct_type]:
 #            raise ValueError(
 #"Can't set {} construct: Identifier {!r} already exists".format(
-#    self._construct_type_description(construct_type), key))
+#    self._construct_type_description(construct_type), cid))
     
         if construct_type in self._array_constructs:
             #---------------------------------------------------------
@@ -598,21 +599,21 @@ Parameters:
 "Can't set {!r}: Data array shape of {} does not match the shape required by domain axes {}: {}".format(
     construct, construct.data.shape, tuple(axes), axes_shape))
 
-            self._set_construct_axes(key, axes)
+            self._set_construct_axes(cid, axes)
         #--- End: if
 
         # Record the construct type
-        self._construct_type[key] = construct_type
+        self._construct_type[cid] = construct_type
 
         if copy:
             # Create a deep copy of the construct
             construct = construct.copy()
 
         # Insert (a copy of) the construct
-        self._constructs[construct_type][key] = construct
+        self._constructs[construct_type][cid] = construct
 
         # Return the identifier of the construct
-        return key
+        return cid
     #--- End: def
 
     def new_identifier(self, construct_type):
@@ -665,16 +666,16 @@ Parameters:
         return key
     #--- End: def
 
-    def del_construct(self, id):        
+    def del_construct(self, cid):        
         '''Remove a construct.
 
 :Parameters:
 
-   id: `str`, optional
+   cid: `str`, optional
         The identifier of the construct.
 
         *Example:*
-          ``id='auxiliarycoordinate0'``
+          ``cid='auxiliarycoordinate0'``
   
 :Returns:
 
@@ -686,31 +687,31 @@ Parameters:
 
 >>> x = f.del_construct('auxiliarycoordinate2')
         '''
-        self._construct_axes.pop(id, None)
+        self._construct_axes.pop(cid, None)
 
-        construct_type = self._construct_type.pop(id, None)
+        construct_type = self._construct_type.pop(cid, None)
         if construct_type is None:
             return
 
-        return self._constructs[construct_type].pop(id, None)
+        return self._constructs[construct_type].pop(cid, None)
     #--- End: def
 
-    def replace(self, key, construct, axes=None, copy=True):
+    def replace(self, cid, construct, axes=None, copy=True):
         '''TODO
 
 .. note:: No checks on the axes are done!!!!!
 '''
-        construct_type = self.construct_types().get(key)
+        construct_type = self.construct_types().get(cid)
         if construct_type is None:
-            raise ValueError("Can't replace non-existent construct {!r}".format(key))
+            raise ValueError("Can't replace non-existent construct {!r}".format(cid))
 
         if axes is not None and construct_type in self._array_constructs:        
-            self._set_construct_axes(key, axes)
+            self._set_construct_axes(cid, axes)
 
         if copy:
             construct = construct.copy()
             
-        self._constructs[construct_type][key] = construct
+        self._constructs[construct_type][cid] = construct
     #--- End: def
     
     def view(self, ignore=()):

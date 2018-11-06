@@ -187,10 +187,10 @@ TODO
         c = self.constructs(*args, **kwargs)
         if len(c) == 1:
             cid, _ = c.popitem()
-            return self._get_constructs().del_construct(id=cid)
+            return self._get_constructs().del_construct(cid=cid)
     #--- End: def
 
-    def get_construct(self, description=None, id=None, axes=None,
+    def get_construct(self, description=None, cid=None, axes=None,
                       construct_type=None, copy=False):
         '''Return a metadata construct.
 
@@ -258,7 +258,7 @@ multiple constructs satisfy all of the given criteria.
         Select the construct with the given internal identifier.
 
         *Example:*
-          ``id='domainancillary0'``
+          ``cid='domainancillary0'``
 
     construct_type: `str`, optional
         Select constructs of the given type. Valid types are:
@@ -308,13 +308,13 @@ TODO
 
         '''
         return self._get_constructs().get_construct(
-            description=description, id=id,
+            description=description, cid=cid,
             construct_type=construct_type,
             axes=axes,
             copy=copy)
     #--- End: def
 
-    def constructs(self, description=None, id=None, axes=None,
+    def constructs(self, description=None, cid=None, axes=None,
                    construct_type=None, copy=False):
         '''Return metadata constructs
 
@@ -385,7 +385,7 @@ returned.
         Select the construct with the given internal identifier.
 
         *Example:*
-          ``id='domainancillary0'``
+          ``cid='domainancillary0'``
 
     construct_type: `str`, optional
         Select constructs of the given type. Valid types are:
@@ -435,7 +435,7 @@ TODO
 
         '''
         return self._get_constructs().constructs(
-            description=description, id=id,
+            description=description, cid=cid,
             construct_type=construct_type, axes=axes, copy=copy)
     #--- End: def
 
@@ -541,7 +541,7 @@ TODO
         return self._get_constructs().domain_axis_name(axis)
     #--- End: def
     
-    def set_cell_measure(self, item, axes=None, id=None, copy=True):
+    def set_cell_measure(self, item, axes=None, cid=None, copy=True):
         '''Set a cell measure construct.
 
 .. versionadded:: 1.7
@@ -563,13 +563,13 @@ TODO
         *Example:*
           ``axes=['domainaxis1']``
         
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='cellmeasure0'``
+          ``cid='cellmeasure0'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -584,11 +584,11 @@ TODO
 
 TODO
         '''
-        return self.set_construct('cell_measure', item, id=id,
+        return self.set_construct('cell_measure', item, cid=cid,
                                   axes=axes, copy=copy)
     #--- End: def
 
-    def set_coordinate_reference(self, item, id=None, copy=True):
+    def set_coordinate_reference(self, item, cid=None, copy=True):
         '''Set a coordinate reference construct.
 
 .. versionadded:: 1.7
@@ -601,13 +601,13 @@ TODO
     item: `CoordinateReference`
         TODO
 
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='coordinatereference0'``
+          ``cid='coordinatereference0'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -624,10 +624,10 @@ TODO
 
         '''
         return self.set_construct('coordinate_reference',
-                                  item, id=id, copy=copy)
+                                  item, cid=cid, copy=copy)
     #--- End: def
 
-    def set_dimension_coordinate(self, item, axes=None, id=None,
+    def set_dimension_coordinate(self, item, axes=None, cid=None,
                                  copy=True):
         '''Set a dimension coordinate construct.
 
@@ -650,13 +650,13 @@ TODO
         *Example:*
           ``axes=['domainaxis1']``
         
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='dimensioncoordinate1'``
+          ``cid='dimensioncoordinate1'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -672,11 +672,11 @@ TODO
 TODO
 
         '''
-        return self.set_construct('dimension_coordinate', item, id=id,
+        return self.set_construct('dimension_coordinate', item, cid=cid,
                                   axes=axes, copy=copy)
     #--- End: def
     
-    def set_auxiliary_coordinate(self, item, axes=None, id=None,
+    def set_auxiliary_coordinate(self, item, axes=None, cid=None,
                                  copy=True):
         '''Set an auxiliary coordinate construct.
 
@@ -699,13 +699,13 @@ TODO
         *Example:*
           ``axes=['domainaxis1']``
         
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='auxiliarycoordinate0'``
+          ``cid='auxiliarycoordinate0'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -722,10 +722,10 @@ TODO
 
     '''
         return self.set_construct('auxiliary_coordinate', item,
-                                  id=id, axes=axes, copy=copy)
+                                  cid=cid, axes=axes, copy=copy)
     #--- End: def
 
-    def set_domain_axis(self, domain_axis, id=None, copy=True):
+    def set_domain_axis(self, domain_axis, cid=None, copy=True):
         '''Set a domain axis construct.
 
 .. versionadded:: 1.7
@@ -737,13 +737,13 @@ TODO
     item: `DomainAxis`
         TODO
         
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='domainaxis2'``
+          ``cid='domainaxis2'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -759,11 +759,11 @@ TODO
 TODO
 
         '''
-        return self.set_construct('domain_axis', domain_axis, id=id,
+        return self.set_construct('domain_axis', domain_axis, cid=cid,
                                   copy=copy)
     #--- End: def
 
-    def set_domain_ancillary(self, item, axes=None, id=None, copy=True):
+    def set_domain_ancillary(self, item, axes=None, cid=None, copy=True):
 #                             extra_axes=0, copy=True):
         '''Set a domain ancillary construct.
 
@@ -792,7 +792,7 @@ TODO
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='domainancillary0'``
+          ``cid='domainancillary0'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -808,7 +808,7 @@ TODO
 TODO
 
         ''' 
-        return self.set_construct('domain_ancillary', item, id=id,
+        return self.set_construct('domain_ancillary', item, cid=cid,
                                   axes=axes, #extra_axes=extra_axes,
                                   copy=copy)
     #--- End: def

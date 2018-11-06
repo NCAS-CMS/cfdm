@@ -61,5 +61,6 @@ The **cfdm** package can
 
 * incorporate metadata stored in external files,
 
-* read and write compressed data (i.e. ragged or gathered arrays),
-  whilst presenting a view of the data in its uncompressed form.
+* read and write data that has been compressed by convention
+  (i.e. ragged or gathered arrays), whilst presenting a view of the
+  data in its uncompressed form.

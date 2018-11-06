@@ -236,8 +236,8 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
             
         # Domain ancillary variables
-        x = [_print_item(self, key, anc, False)
-             for key, anc in sorted(self.domain_ancillaries().items())]
+        x = [_print_item(self, cid, anc, False)
+             for cid, anc in sorted(self.domain_ancillaries().items())]
         if x:
             string.append('Domain ancils   : {}'.format(
                 '\n                : '.join(x)))
@@ -335,15 +335,15 @@ functionality:
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
-        for key, construct in new.array_constructs().items():
-            data = self.get_construct(id=key).get_data(None)
+        for cid, construct in new.array_constructs().items():
+            data = self.get_construct(cid=cid).get_data(None)
             if data is None:
                 # This construct has no data
                 continue
 
             needs_slicing = False
             dice = []
-            for axis in new.construct_axes(key):
+            for axis in new.construct_axes(cid):
                 if axis in data_axes:
                     needs_slicing = True
                     dice.append(indices[data_axes.index(axis)])
@@ -362,10 +362,10 @@ functionality:
         # Replace domain axes
         domain_axes = new.domain_axes()
         new_constructs = new._get_constructs()
-        for key, size in zip(data_axes, new.get_data().shape):
-            domain_axis = domain_axes[key].copy()
+        for cid, size in zip(data_axes, new.get_data().shape):
+            domain_axis = domain_axes[cid].copy()
             domain_axis.set_size(size)
-            new_constructs.replace(key, domain_axis)
+            new_constructs.replace(cid, domain_axis)
 
         return new
     #--- End: def
@@ -762,12 +762,12 @@ by the data array may be selected.
         return f
     #--- End: def
 
-    def create_field(self, id, domain=True):
+    def create_field(self, cid, domain=True):
         '''TODO
 
 :Parameters:
 
-    id: `str`
+    cid: `str`
         TODO
 
     domain: `bool`, optional
@@ -782,7 +782,7 @@ by the data array may be selected.
 
 TODO
         '''
-        c = self.get_construct(id=id, copy=False)
+        c = self.get_construct(cid=cid, copy=False)
     
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
@@ -793,11 +793,11 @@ TODO
         # ------------------------------------------------------------
         # Add domain axes
         # ------------------------------------------------------------
-        data_axes = self.construct_axes(id)
+        data_axes = self.construct_axes(cid)
         if data_axes:
             for domain_axis in data_axes:
                 f.set_domain_axis(self.domain_axes()[domain_axis],
-                                  id=domain_axis, copy=True)
+                                  cid=domain_axis, copy=True)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -811,33 +811,34 @@ TODO
         # ------------------------------------------------------------
         if domain:
             for construct_type in ('dimensioncoordinate', 'auxiliarycoordinate', 'cellmeasure'):
-                for ckey, con in self.constructs(construct_type=construct_type,
+                for ccid, con in self.constructs(construct_type=construct_type,
                                                  axes=data_axes,
                                                  copy=False).items():
-                    axes = self.construct_axes().get(ckey)
+                    axes = self.construct_axes().get(ccid)
                     if axes is None:
                         continue
 
                     if set(axes).issubset(data_axes):
-                        f.set_construct(self.construct_type(ckey), con, id=ckey,
-                                        axes=axes, copy=True)
+                        f.set_construct(self.construct_type(ccid),
+                                        con, cid=ccid, axes=axes,
+                                        copy=True)
             #--- End: for
         
             # Add coordinate references which span a subset of the item's
             # axes
-            for rkey, ref in self.coordinate_references().items():
+            for rcid, ref in self.coordinate_references().items():
                 ok = True
-                for ckey in (tuple(ref.coordinates()) +
+                for ccid in (tuple(ref.coordinates()) +
                              tuple(ref.datum.ancillaries().values()),
                              tuple(ref.coordinate_conversion.ancillaries().values())):
-                    axes = self.construct_axes()[ckey]
+                    axes = self.construct_axes()[ccid]
                     if not set(axes).issubset(data_axes):
                         ok = False
                         break
                 #--- End: for
                 
                 if ok:
-                    f.set_coordinate_reference(ref, id=rkey, copy=True)
+                    f.set_coordinate_reference(ref, cid=rcid, copy=True)
             #--- End: for
         #--- End: if
               
@@ -1064,7 +1065,7 @@ OrderedDict([('cellmethod0',
 #        return out
 #    #--- End: def
 
-    def set_cell_method(self, cell_method, id=None, copy=True):
+    def set_cell_method(self, cell_method, cid=None, copy=True):
         '''Set a cell method construct.
 
 .. versionadded:: 1.7
@@ -1077,13 +1078,13 @@ OrderedDict([('cellmethod0',
     item: `CellMethod`
         TODO
         
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='cellmethod0'``
+          ``cid='cellmethod0'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -1099,11 +1100,11 @@ OrderedDict([('cellmethod0',
 TODO
 
         '''
-        self.set_construct('cell_method', cell_method, id=id,
+        self.set_construct('cell_method', cell_method, cid=cid,
                            copy=copy)
     #--- End: def
 
-    def set_field_ancillary(self, construct, axes=None, id=None,
+    def set_field_ancillary(self, construct, axes=None, cid=None,
                             copy=True):
         '''Set a field ancillary construct.
 
@@ -1126,13 +1127,13 @@ TODO
         *Example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct. If not set then a new, unique
         identifier is created. If the identifier already exisits then
         the exisiting construct will be replaced.
 
         *Example:*
-          ``id='fieldancillary0'``
+          ``cid='fieldancillary0'``
         
     copy: `bool`, optional
         If False then do not copy the construct prior to insertion. By
@@ -1148,7 +1149,7 @@ TODO
 TODO
         
         '''
-        return self.set_construct('field_ancillary', construct, id=id,
+        return self.set_construct('field_ancillary', construct, cid=cid,
                                   axes=axes, copy=copy)
     #--- End: def
     
