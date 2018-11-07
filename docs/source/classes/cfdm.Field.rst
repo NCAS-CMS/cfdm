@@ -143,6 +143,23 @@ Miscellaneous
    ~cfdm.Field.copy
    ~cfdm.Field.equals
 
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~Field.nc_global_attributes
+   ~Field.nc_unlimited_axes
+   ~Field.nc_del_variable
+   ~Field.nc_get_variable
+   ~Field.nc_has_variable
+   ~Field.nc_set_variable 
+
 Special
 -------
 
@@ -150,7 +167,7 @@ Special
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../generated/
    :template: method.rst
 
    ~cfdm.Field.__deepcopy__

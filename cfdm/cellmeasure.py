@@ -1,6 +1,6 @@
 from __future__ import print_function
 from builtins import super
-
+#primordial Enter Shikari - Take My Country Back
 from . import mixin
 from . import core
 
@@ -69,7 +69,7 @@ Return a string containing a full description of the cell measure.
             name = self.name(default=self.get_property('units', ''))
             _title = 'Cell Measure: ' + name
 
-        if self.nc_get_external():
+        if self.nc_external():
             if not (self.has_data() or self.properties()):
 
                 ncvar = self.nc_get_variable(None)

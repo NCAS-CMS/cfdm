@@ -101,26 +101,12 @@ Data classes
    :toctree: classes/
 
    cfdm.Data
-   cfdm.GatheredArray
    cfdm.NetCDFArray
    cfdm.NumpyArray
-   cfdm.RaggedContiguousArray
-   cfdm.RaggedIndexedArray
-   cfdm.RaggedIndexedContiguousArray
-
-Data abstract classes
-----------------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
    cfdm.data.abstract.Array
-   cfdm.data.abstract.CompressedArray		
 
-
-Data mixin classes
-------------------
+Data compression classses
+-------------------------
 
 TODO
 
@@ -128,6 +114,14 @@ TODO
    :nosignatures:
    :toctree: classes/
 
+   cfdm.GatheredArray
+   cfdm.RaggedContiguousArray
+   cfdm.RaggedIndexedArray
+   cfdm.RaggedIndexedContiguousArray
+   cfdm.Count
+   cfdm.Index
+   cfdm.List
+   cfdm.data.abstract.CompressedArray		
    cfdm.data.mixin.RaggedContiguous
    cfdm.data.mixin.RaggedIndexed
 

@@ -934,7 +934,118 @@ TODO
 NeCDF interface
 ---------------
 
-TODO
+The logical CF data model is independent of netCDF, but the CF
+conventions are conventions to enable processing and sharing of
+datasets stored in netCDF files. Therefore, the `cfdm` package
+includes methods for recording and editing netCDF elements that are
+not part of the CF model, but are nonetheless often required to
+interpret and create CF-netCDF datasets.
+
+When a netCDF dataset is read, netCDF elements (such as dimension and
+variable names, and some attribute values) that cannot be stored as
+part of the CF data model are recorded on the relevant `cfdm`
+objects. This allows them to be used when writing fields to a new
+netCDF dataset, and also makes them accessible for construct
+identification.
+
+These netCDF elements are accesed with methods that all start with
+`!nc_`. For example, the `Field` class has the following methods
+
+=============================  =======================================
+Field method                   Description
+=============================  =======================================
+`~Field.nc_get_variable`       TODO
+`~Field.nc_set_variable`       TODO
+`~Field.nc_del_variable`       TODO
+`~Field.nc_has_variable`       TODO
+`~Field.nc_global_attributes`  TODO
+`~Field.nc_unlimited_axes`     TODO
+=============================  =======================================
+
+
+.. code:: python
+
+   >>> q.nc_get_variable()
+   'q'
+   >>> q.nc_global_attributes()
+   {'project', 'Conventions'}
+   >>> q.nc_unlimited_axes()
+   set()
+   >>> q.nc_set_variable('humidity')
+   >>> q.nc_get_variable()
+   'humidity'
+
+The complete collection of netCDF interface methods is:
+
+=============================  =======================================
+Method                         Classes
+=============================  =======================================
+`!nc_del_variable`             `Field`, `DimensionCoordinate`,
+                               `AuxiliaryCoordinate`, `CellMeasure`,
+                               `DomainAncillary`, `FieldAncillary`,
+                               `CoordinateReference`,  `Bounds`,
+			       `Count`, `Index`, `List`
+			       				
+`!nc_get_variable`             `Field`, `DimensionCoordinate`,
+                               `AuxiliaryCoordinate`, `CellMeasure`,
+                               `DomainAncillary`, `FieldAncillary`,
+                               `CoordinateReference`, `Bounds`,
+			       `Count`, `Index`, `List`
+			       
+`!nc_has_variable`             `Field`, `DimensionCoordinate`,
+                               `AuxiliaryCoordinate`, `CellMeasure`,
+                               `DomainAncillary`, `FieldAncillary`,
+                               `CoordinateReference`, `Bounds`,
+			       `Count`, `Index`, `List`
+			       
+`!nc_set_variable`             `Field`, `DimensionCoordinate`,
+                               `AuxiliaryCoordinate`, `CellMeasure`,
+                               `DomainAncillary`, `FieldAncillary`,
+                               `CoordinateReference`, `Bounds`,
+			       `Count`, `Index`, `List`
+
+`!nc_global_attributes`	       `Field`
+
+`!nc_unlimited_axes`	       `Field`
+
+`!nc_del_dimension`            `DomainAxis`  
+			       
+`!nc_get_dimension`	       `DomainAxis`
+			       
+`!nc_has_dimension`	       `DomainAxis`
+			       
+`!nc_set_dimension`	       `DomainAxis`
+			       
+`!nc_external`                 `CellMeasure`
+
+`!del_instance_dimension`      `Index`
+
+`!get_instance_dimension`      `Index`
+
+`!has_instance_dimension`      `Index`
+
+`!set_instance_dimension`      `Index`
+
+`!nc_del_sample_dimension`     `Count`, `Index`
+
+`!nc_get_sample_dimension`     `Count`, `Index`    
+
+`!nc_has_sample_dimension`     `Count`, `Index`    
+
+`!nc_set_sample_dimension`     `Count`, `Index`    
+=============================  =======================================
+
+.. code:: python
+
+   >>> lon = q.get_construct('ncvar%lon')
+   >>> lon
+   <DimensionCoordinate: longitude(8) degrees_east>
+   >>> lon.nc_get_variable()
+   'lon'
+   >>> axis = g.get_construct('ncdim%time')
+   <DomainAxis: 1>
+   >>> axis.nc_get_dimension()
+   'time'
 
 .. _external:
 

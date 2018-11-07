@@ -550,10 +550,10 @@ axes, and possibly other axes, are returned.
 
 :Examples 2:
         '''
-        if not hasattr(parent, 'nc_get_external'):
+        if not hasattr(parent, 'nc_external'):
             return False
         
-        return parent.nc_get_external()
+        return parent.nc_external()
     #--- End: def
     
     def get_field_ancillaries(self, field):
@@ -1281,7 +1281,7 @@ also be provided.
     def nc_set_external(self, construct):
         '''
         '''
-        construct.nc_set_external(True)
+        construct.nc_external(True)
     #--- End: def
 
     def set_field_ancillary(self, field, construct, axes, copy=True):

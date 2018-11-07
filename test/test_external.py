@@ -109,7 +109,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         cell_measure = f.get_construct('measure%area')
 
-        self.assertTrue(cell_measure.nc_get_external())
+        self.assertTrue(cell_measure.nc_external())
         self.assertTrue(cell_measure.nc_get_variable() == 'areacella')
         self.assertTrue(cell_measure.properties() == {})
         self.assertFalse(cell_measure.has_data())
@@ -197,13 +197,13 @@ class ExternalVariableTest(unittest.TestCase):
 
         cell_measure = g[0].get_construct('measure%area')
 
-        self.assertFalse(cell_measure.nc_get_external())
-        cell_measure.nc_set_external(True)
-        self.assertTrue(cell_measure.nc_get_external())
+        self.assertFalse(cell_measure.nc_external())
+        cell_measure.nc_external(True)
+        self.assertTrue(cell_measure.nc_external())
         self.assertTrue(cell_measure.properties())
         self.assertTrue(cell_measure.has_data())
 
-        self.assertTrue(g[0].get_construct('measure%area').nc_get_external())
+        self.assertTrue(g[0].get_construct('measure%area').nc_external())
 
         cfdm.write(g, 'delme_parent.nc', external_file='delme_external.nc',
                    verbose=False)

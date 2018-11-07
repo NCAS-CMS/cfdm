@@ -197,12 +197,12 @@ class NetCDFDataVariable(NetCDF):
         out = self._get_component('netcdf').get('global_attributes')
         
         if out is None:
-            out = ()
+            out = set()
 
         if attributes:
             self._get_component('netcdf')['global_attributes'] = tuple(attributes)
 
-        return list(out)
+        return set(out)
     #--- End: def
     
     def nc_unlimited_axes(self, axes=None):
@@ -211,12 +211,12 @@ class NetCDFDataVariable(NetCDF):
         out = self._get_component('netcdf').get('unlimited_axes')
 
         if out is None:
-            out = ()
+            out = set()
 
         if axes:
             self._get_component('netcdf')['unlimited_axes'] = tuple(axes)
 
-        return list(out)
+        return set(out)
 #--- End: def
 
 
