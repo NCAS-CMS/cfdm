@@ -199,48 +199,51 @@ x.__str__() <==> str(x)
             string.append('Field ancils    : {}'.format(
                 '\n                : '.join(x)))
 
-        x = []
-        for key in tuple(non_spanning_axes) + data_axes:
-            for dc_key, dim in list(self.dimension_coordinates().items()):
-                if self.construct_axes()[dc_key] == (key,):
-                    name = dim.name(default='id%{0}'.format(dc_key), ncvar=True)
-                    y = '{0}({1})'.format(name, dim.get_data().size)
-                    if y != axis_names[key]:
-                        y = '{0}({1})'.format(name, axis_names[key])
-                    if dim.has_data():
-                        y += ' = {0}'.format(dim.get_data())
-                        
-                    x.append(y)
-        #--- End: for
-        string.append('Dimension coords: {}'.format('\n                : '.join(x)))
-
-        # Auxiliary coordinates
-        x = [_print_item(self, aux, v, False) 
-             for aux, v in sorted(self.auxiliary_coordinates().items())]
-        if x:
-            string.append('Auxiliary coords: {}'.format(
-                '\n                : '.join(x)))
         
-        # Cell measures
-        x = [_print_item(self, msr, v, False)
-             for msr, v in sorted(self.cell_measures().items())]
-        if x:
-            string.append('Cell measures   : {}'.format(
-                '\n                : '.join(x)))
-            
-        # Coordinate references
-        x = sorted([str(ref) for ref in list(self.coordinate_references().values())])
-        if x:
-            string.append('Coord references: {}'.format(
-                '\n                : '.join(x)))
-            
-        # Domain ancillary variables
-        x = [_print_item(self, cid, anc, False)
-             for cid, anc in sorted(self.domain_ancillaries().items())]
-        if x:
-            string.append('Domain ancils   : {}'.format(
-                '\n                : '.join(x)))
-                                      
+
+        string.append(str(self.domain))
+#        x = []
+#        for key in tuple(non_spanning_axes) + data_axes:
+#            for dc_key, dim in list(self.dimension_coordinates().items()):
+#                if self.construct_axes()[dc_key] == (key,):
+#                    name = dim.name(default='id%{0}'.format(dc_key), ncvar=True)
+#                    y = '{0}({1})'.format(name, dim.get_data().size)
+#                    if y != axis_names[key]:
+#                        y = '{0}({1})'.format(name, axis_names[key])
+#                    if dim.has_data():
+#                        y += ' = {0}'.format(dim.get_data())
+#                        
+#                    x.append(y)
+#        #--- End: for
+#        string.append('Dimension coords: {}'.format('\n                : '.join(x)))
+#
+#        # Auxiliary coordinates
+#        x = [_print_item(self, aux, v, False) 
+#             for aux, v in sorted(self.auxiliary_coordinates().items())]
+#        if x:
+#            string.append('Auxiliary coords: {}'.format(
+#                '\n                : '.join(x)))
+#        
+#        # Cell measures
+#        x = [_print_item(self, msr, v, False)
+#             for msr, v in sorted(self.cell_measures().items())]
+#        if x:
+#            string.append('Cell measures   : {}'.format(
+#                '\n                : '.join(x)))
+#            
+#        # Coordinate references
+#        x = sorted([str(ref) for ref in list(self.coordinate_references().values())])
+#        if x:
+#            string.append('Coord references: {}'.format(
+#                '\n                : '.join(x)))
+#            
+#        # Domain ancillary variables
+#        x = [_print_item(self, cid, anc, False)
+#             for cid, anc in sorted(self.domain_ancillaries().items())]
+#        if x:
+#            string.append('Domain ancils   : {}'.format(
+#                '\n                : '.join(x)))
+#                                      
         string.append('')
         
         return '\n'.join(string)

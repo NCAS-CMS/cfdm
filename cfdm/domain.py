@@ -54,8 +54,10 @@ x.__repr__() <==> repr(x)
 
         '''
         shape = sorted([domain_axis.get_size() for domain_axis in list(self.domain_axes().values())])
-
-        return '<{0}: {1}>'.format(self.__class__.__name__, shape)
+        shape = str(shape)
+        shape = shape[1:-1]
+        
+        return '<{0}: {{{1}}}>'.format(self.__class__.__name__, shape)
     #--- End: def
 
     def __str__(self):
@@ -64,42 +66,23 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-#        title = "Field: {0}".format(self.name(''))
-#
-#        # Append the netCDF variable name
-#        ncvar = self.ncvar()
-#        if ncvar is not None:
-#            title += " (ncvar%{0})".format(ncvar)
-#        
-#        string = [title]
-#        string.append(''.ljust(len(string[0]), '-'))
-
-        string = []
-        
-        axis_name = self.domain_axis_name
-
-        # Axes
-#        data_axes = self.data_axes()
-#        if data_axes is None:
-#            data_axes = ()
-#        non_spanning_axes = set(self.domain_axes()).difference(data_axes)
-
-        axis_names = {}
-        for key, domain_axis in self.domain_axes().items():
-            axis_names[key] = '{0}({1})'.format(axis_name(key),
-                                                domain_axis.get_size())
-        
-        axis_to_name = {}
         def _print_item(self, key, variable, dimension_coord):
             '''Private function called by __str__'''
             
             if dimension_coord:
                 # Dimension coordinate
-                name = "{0}({1})".format(axis_name(key), self.domain_axes()[key].get_size())
-                axis_to_name[key] = name
-                
-                variable = self.constructs().get(key, None)
-                
+                axis = self.construct_axes(key)[0]
+                name = variable.name(ncvar=True, default=key)
+                if variable.has_data():
+                    name += '({0})'.format(variable.get_data().size)
+                elif hasattr(variable, 'nc_get_external'):
+                    if variable.nc_get_external():
+                        ncvar = variable.nc_get_variable(None)
+                        if ncvar is not None:
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                        else:
+                            x.append(' (external variable)')
+                            
                 if variable is None:
                     return name
                           
@@ -110,45 +93,49 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                shape = [axis_names[axis] for axis in self.construct_axes(key)]
-                shape = str(tuple(shape)).replace("'", "")
-                shape = shape.replace(',)', ')')
-                x = [variable.name(key)]
-                x.append(shape)
-                    
-            if variable.hasdata:
-#                if variable.isreftime:
-#                    x.append(' = {}'.format(variable.data.asdata(variable.dtarray)))
-#                else:
-                x.append(' = {}'.format(variable.get_data()))
+                x = [variable.name(ncvar=True, default=key)]
+
+                if variable.has_data():
+                    shape = [axis_names[axis] for axis in self.construct_axes(key)]
+                    shape = str(tuple(shape)).replace("'", "")
+                    shape = shape.replace(',)', ')')
+                    x.append(shape)
+                elif hasattr(variable, 'nc_get_external'):
+                    if variable.nc_get_external():
+                        ncvar = variable.nc_get_variable(None)
+                        if ncvar is not None:
+                            x.append(' (external variable: ncvar%{})'.format(ncvar))
+                        else:
+                            x.append(' (external variable)')
+            #--- End: if
+                
+            if variable.has_data():
+                x.append(' = {0}'.format(variable.get_data()))
                 
             return ''.join(x)
         #--- End: def
                           
-        # Dimension coordinates
+        string = []
+        
+        axis_name = self.domain_axis_name
+
+        axis_names = self._unique_domain_axis_names()
+        
         x = []
-        for key in self.domain_axes():
-            for k, dim in list(self.dimension_coordinates().items()):
-                if self.construct_axes()[k] == (key,):
-                    name = dim.name(default='id%{0}'.format(k))
-                    y = '{0}({1})'.format(name, dim.size)
-                    if y != axis_names[key]:
-                        y = '{0}({1})'.format(name, axis_names[key])
-                    if dim.hasdata:
+        for axis_cid in sorted(self.domain_axes()):
+            for cid, dim in list(self.dimension_coordinates().items()):
+                if self.construct_axes()[cid] == (axis_cid,):
+                    name = dim.name(default='cid%{0}'.format(cid), ncvar=True)
+                    y = '{0}({1})'.format(name, dim.get_data().size)
+                    if y != axis_names[axis_cid]:
+                        y = '{0}({1})'.format(name, axis_names[axis_cid])
+                    if dim.has_data():
                         y += ' = {0}'.format(dim.get_data())
-                    x.append(y)   
+                        
+                    x.append(y)
+        #--- End: for
         string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
-        
-#        x1 = [_print_item(self, dim, None, True)
-#              for dim in sorted(non_spanning_axes)]
-#        x2 = [_print_item(self, dim, None, True)
-#              for dim in data_axes]
-#        x = x1 + x2
-#        if x:
-#            string.append('Axes           : {}'.format(
-#                '\n               : '.join(x)))
-                          
         # Auxiliary coordinates
         x = [_print_item(self, aux, v, False) 
              for aux, v in sorted(self.auxiliary_coordinates().items())]
@@ -164,15 +151,14 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
             
         # Coordinate references
-        x = sorted([ref.name(default='')
-                    for ref in list(self.coordinate_references().values())])
+        x = sorted([str(ref) for ref in list(self.coordinate_references().values())])
         if x:
             string.append('Coord references: {}'.format(
                 '\n                : '.join(x)))
             
         # Domain ancillary variables
-        x = [_print_item(self, key, anc, False)
-             for key, anc in sorted(self.domain_ancillaries().items())]
+        x = [_print_item(self, cid, anc, False)
+             for cid, anc in sorted(self.domain_ancillaries().items())]
         if x:
             string.append('Domain ancils   : {}'.format(
                 '\n                : '.join(x)))

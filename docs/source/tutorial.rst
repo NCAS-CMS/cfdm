@@ -785,9 +785,21 @@ method:
 
    >>> domain = t.get_domain()
    >>> domain
-   <Domain: [1, 1, 9, 10]>
+   <Domain: {1, 1, 9, 10}>
    >>> print(domain)
-   TODO
+   Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                   : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                   : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                   : time(1) = [2019-01-01 00:00:00]
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                   : locfdm/ng_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Coord references: atmosphere_hybrid_height_coordinate
+                   : rotated_latitude_longitude
+   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
    >>> description = domain.dump(display=False)
 
 Any changes to domain object are seen by the parent field, and vice
@@ -1524,7 +1536,8 @@ We can now inspect the new field construct:
 .. [#opendap] Requires the netCDF-4 C library to have been compiled
               with OPeNDAP support enabled.
 
-.. [#files] Tutorial files may be also found in the `docs/netcdf_files
+.. [#files] The tutorial files may be also found in the
+            `docs/netcdf_files
             <https://github.com/NCAS-CMS/cfdm/tree/master/docs/netcdf_files>`_
-            directory of the installation.
+            directory.
 
