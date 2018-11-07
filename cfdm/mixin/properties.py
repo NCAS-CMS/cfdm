@@ -18,7 +18,7 @@ class Properties(Container):
                          _omit_properties=None):
         '''TODO
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -31,7 +31,7 @@ class Properties(Container):
 
     out: `str`
 
-:Examples:
+**Examples:**
 
 '''
         indent0 = '    ' * _level
@@ -62,6 +62,14 @@ class Properties(Container):
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
         '''TODO
+
+..versionadded:: 1.7
+
+:Parameters:
+
+:Returns:
+
+**Examples:**
         '''
         if not super().equals(
                 other, #rtol=rtol, atol=atol,

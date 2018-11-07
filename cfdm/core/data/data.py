@@ -109,7 +109,15 @@ Used if copy.deepcopy is called on the object.
         '''x.__repr__() <==> repr(x)
 
         '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
+        try:        
+            shape = self.shape
+        except AttributeError:
+            shape = ''
+        else:
+            shape = str(shape)
+            shape = shape.replace(',)', ')')
+            
+        return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
     #--- End: def
 
     def __str__(self):

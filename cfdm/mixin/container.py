@@ -67,7 +67,15 @@ class Container(object):
     def equals(self, other, #rtol=None, atol=None,
                traceback=False,
                ignore_construct_type=False):
-        '''TODO
+        '''TODOTODO
+
+..versionadded:: 1.7
+
+:Parameters:
+
+:Returns:
+
+**Examples:**
         '''
         # Check for object identity
         if self is other:

@@ -161,53 +161,15 @@ standard_name = 'time'
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''TODO
+        '''TODOTODO
 
-True if two {+variable}s are equal, False otherwise.
-
-.. versionadded:: 1.6
+..versionadded:: 1.7
 
 :Parameters:
 
-    other: n 
-        The object to compare for equality.
+:Returns:
 
-    {+atol}
-
-    {+rtol}
-
-    ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
-
-    traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        {+variable}s differ.
-
-    ignore_properties: `tuple`, optional
-        The names of CF properties to omit from the comparison.
-
-:Returns: 
-
-    out: `bool`
-        Whether or not the two {+variable}s are equal.
-
-:Examples:
-
->>> f.equals(f)
-True
->>> g = f + 1
->>> f.equals(g)
-False
->>> g -= 1
->>> f.equals(g)
-True
->>> f.setprop('name', 'name0')
->>> g.setprop('name', 'name1')
->>> f.equals(g)
-False
->>> f.equals(g, ignore=['name'])
-True
+**Examples:**
 
 '''
         # ------------------------------------------------------------

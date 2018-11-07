@@ -174,7 +174,15 @@ bounds.
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''TODO
+        '''TODOTODO
+
+..versionadded:: 1.7
+
+:Parameters:
+
+:Returns:
+
+**Examples:**
         '''
 #        if rtol is None:
 #            rtol = RTOL()

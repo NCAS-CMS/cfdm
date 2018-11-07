@@ -57,21 +57,20 @@ and institution).
 #        return obj
     #--- End: def
 
-    def __init__(self, properties={}, source=None, copy=True,
+    def __init__(self, properties=None, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
-TODO
 
 :Parameters:
 
     properties: `dict`, optional
-        Provide the new field with CF properties from the dictionary's
+        TODO Provide the new field with CF properties from the dictionary's
         key/value pairs.
 
-    source: 
+    source: TODO
 
     copy: `bool`, optional
-        If False then do not deep copy arguments prior to
+        TODO If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
 
         '''        

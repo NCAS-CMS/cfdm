@@ -88,7 +88,7 @@ There are three extensions to the `numpy` indexing functionality:
         The fill value of the data. By default, or if None, the numpy
         fill value appropriate to the array's data type will be used.
 
-:Examples:
+**Examples:**
 
 >>> d = Data(5)
 >>> d = Data([1,2,3])
@@ -208,8 +208,9 @@ may be unmasked by simple assignment. For example:
 
 .. seealso:: `__getitem__`, `masked`, `parse_indices`, `_set_subspace`
 
-:Examples:
+**Examples:**
 
+TODO
         '''
         indices = self.parse_indices(indices)
                 
@@ -365,7 +366,7 @@ masked
 
     out: `tuple`
 
-:Examples:
+**Examples:**
 
         '''
         ndim = self.ndim
@@ -404,7 +405,7 @@ masked
 
     `None`
 
-:Examples:
+**Examples:**
 
 >>> d._set_Array(a)
 
@@ -495,7 +496,7 @@ masked
     out: 
         The deep copy.
 
-:Examples:
+**Examples:**
 
 >>> e = d.copy()
 
@@ -511,7 +512,7 @@ masked
 Insert a new size 1 axis, corresponding to a given position in the
 data array shape.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `squeeze`, `transpose`, `unsqueeze`
 
@@ -530,7 +531,7 @@ data array shape.
 
     out: `Data`
 
-:Examples:
+**Examples:**
 
         '''
         # Parse position
@@ -587,11 +588,11 @@ Only applicable for reference time units.
 If the calendar has not been set then the CF default calendar will be
 used.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `array`
 
-:Examples:
+**Examples:**
 
         '''
         array = self.get_array()
@@ -722,7 +723,7 @@ used.
     
     out: `list`
     
-:Examples:
+**Examples:**
     
     '''
         shape = self.shape
@@ -828,7 +829,7 @@ Missing data array elements are omitted from the calculation.
     out: `Data`
         Maximum of the data along the specified axes.
 
-:Examples:
+**Examples:**
 
         '''
         # Parse the axes. By default flattened input is used.
@@ -871,7 +872,7 @@ Missing data array elements are omitted from the calculation.
     out: `Data`
         Minimum of the data along the specified axes.
 
-:Examples:
+**Examples:**
 
         '''            
         # Parse the axes. By default flattened input is used.
@@ -989,7 +990,7 @@ Missing data array elements are omitted from the calculation.
 By default all size 1 axes are removed, but particular axes may be
 selected with the keyword arguments.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `expand_dims`, `transpose`, `unsqueeze`
 
@@ -1023,7 +1024,7 @@ selected with the keyword arguments.
     out: `Data`
         The squeezed data.
 
-:Examples:
+**Examples:**
 
 >>> v.shape
 (1,)
@@ -1103,7 +1104,7 @@ Missing data array elements are omitted from the calculation.
     out: `Data`
         The sum of the data along the specified axes.
 
-:Examples:
+**Examples:**
 
         '''
         # Parse the axes. By default flattened input is used.
@@ -1133,7 +1134,7 @@ Missing data array elements are omitted from the calculation.
     def transpose(self, axes=None):
         '''Permute the axes of the data array.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 .. seealso:: `expand_dims`, `squeeze`, `unsqueeze`
 
@@ -1152,7 +1153,7 @@ Missing data array elements are omitted from the calculation.
 
     out: `Data`
 
-:Examples:
+**Examples:**
 
 >>> d.shape
 (19, 73, 96)
@@ -1323,7 +1324,7 @@ Return a string containing a full description of the instance.
     out: `None` or `str`
         A string containing the description.
 
-:Examples:
+**Examples:**
 
 '''
         if prefix is None:
@@ -1389,7 +1390,7 @@ Two `Data` objects are equal if
     out: bool
         Whether or not the two `Data` objects are equals.
 
-:Examples:
+**Examples:**
 
 >>> d.equals(d)
 True
@@ -1522,14 +1523,14 @@ False
 The unique elements are sorted into a one dimensional array. with no
 missing values.
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
 :Returns:
 
     out: `Data`
         The unique elements.
 
-:Examples:
+**Examples:**
 
 >>> d = Data([[4, 2, 1], [1, 2, 3]], 'metre')
 >>> d.unique()

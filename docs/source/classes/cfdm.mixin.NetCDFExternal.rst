@@ -10,9 +10,7 @@ cfdm.mixin.NetCDFExternal
    .. autosummary::
       :nosignatures:
 	 
-      ~NetCDFExternal.nc_get_external
-      ~NetCDFExternal.nc_set_external
-      ~NetCDFExternal.next
+      ~NetCDFExternal.nc_external
    
    
 
