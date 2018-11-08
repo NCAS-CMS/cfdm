@@ -18,8 +18,11 @@ implementation, the :ref:`cfdm.core <class_core>` package, that
 includes no functionality beyond that mandated by the CF data
 model. This core implementation provides the basis for an extended
 implementation, the :ref:`cfdm <class_extended>` package, that allows
-the reading and writing of netCDF datasets, as well as having a more
-user-friendly API.
+the reading and writing of netCDF datasets, as well as having
+comprehensive inspection capabilities and a more user-friendly API.
+
+Here is an example of a simple field created with the :ref:`cfdm.core
+<class_core>` package:
 
 .. code:: python
 
@@ -27,10 +30,15 @@ user-friendly API.
    >>> import cfdm
    >>> f = cfdm.core.Field(properties={'standard_name': 'altitude'})
    >>> axis = f.set_construct('domain_axis', cfdm.core.DomainAxis(1))
-   >>> f.set_data(cfdm.core.NumpyArray(numpy.array([115.])), axes=[axis]) TODO AttributeError: 'Field' object has no attribute 'domain_axes'
-
+   >>> data = cfdm.core.Data(cfdm.core.NumpyArray(numpy.array([115.])))
+   >>> f.set_data(data, axes=[axis])
+   >>> print(f.get_array())
+   [115.]
    >>> print(f)
-   constructs, properties TODO -> get rid of __repr__?
+   <cfdm.core.field.Field object at 0x7faf6ac23510>
+
+The same field may be created with the :ref:`cfdm <class_extended>`
+package:
 
 .. code:: python
 
@@ -38,7 +46,9 @@ user-friendly API.
    >>> f = cfdm.Field(properties={'standard_name': 'altitude'})
    >>> axis = f.set_domain_axis(cfdm.DomainAxis(1))
    >>> f.set_data(cfdm.Data([115.]), axes=[axis])
-   >>> prin(f)
+   >>> print(f.get_array())
+   [115.]
+   >>> print(f)
    Field: altitude
    ---------------
    Data            : altitude(cfdm%domainaxis0(1)) TODO (cfdm%)

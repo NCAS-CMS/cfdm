@@ -71,7 +71,7 @@ None
         return self._get_constructs().construct_type(cid)
     #--- End: def
     
-    def constructs(self, copy=False):
+    def constructs(self, construct_type=None, copy=False):
         '''Return metadata constructs.
 
 .. versionadded:: 1.7
@@ -79,6 +79,8 @@ None
 .. seealso:: `construct_axes`
 
 :Parameters:
+
+    construct_type: TODO
 
     copy: `bool`, optional
         If `True` then deep copies of the constructs are returned.
@@ -93,7 +95,8 @@ None
 TODO
 
         '''
-        return self._get_constructs().constructs(copy=copy)
+        return self._get_constructs().constructs(construct_type=construct_type,
+                                                 copy=copy)
     #--- End: def
     
     @abc.abstractmethod

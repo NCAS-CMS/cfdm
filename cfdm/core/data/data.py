@@ -128,19 +128,8 @@ Used if copy.deepcopy is called on the object.
     #--- End: def
     
     # ----------------------------------------------------------------
-    # Private methods
-    # ----------------------------------------------------------------
-    
-    # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-#    @property
-#    def data(self):
-#        '''Return 
-#        '''
-#        return self
-#    #--- End: def
-    
     @property
     def dtype(self):
         '''Data-type of the data elements.

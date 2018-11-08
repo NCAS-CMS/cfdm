@@ -426,22 +426,22 @@ the indices, using the `numpy broadcasting rules
 .. code:: python
 
    >>> import numpy
-   >>> t.data[:, :, 1] = -99
+   >>> t.data[:, :, 1] = -10
    >>> t.data[:, 0] = range(9)
    >>> t.data[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
-   >>> t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-22, -33], [-44, -55]])
+   >>> t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-2, -3]])
    >>> t.data[0, :, -2] = numpy.ma.masked
    >>> print(t.get_array())
    [[[  0.0   1.0   2.0   3.0   4.0   5.0   6.0 --   8.0]
-     [272.7 -99.0 279.5 278.9 263.8 263.3 274.2 -- 279.5]
-     [269.7 -99.0 273.4 274.2 -22.0 270.2 280.0 -- -33.0]
-     [261.7 -99.0 270.8 260.3 265.6 279.4 276.9 -- 260.6]
-     [264.2 -99.0 262.5 -12.0 -11.0 -10.0 270.4 -- 275.3]
-     [263.9 -99.0 272.1 -15.0 -14.0 -13.0 260.0 -- 270.2]
-     [273.8 -99.0 268.5 -18.0 -17.0 -16.0 270.6 -- 270.6]
-     [267.9 -99.0 279.8 260.3 261.2 275.3 271.2 -- 268.9]
-     [270.9 -99.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]
-     [276.4 -99.0 276.3 266.1 -44.0 268.1 277.0 -- -55.0]]]
+     [272.7 -10.0 279.5 278.9 263.8 263.3 274.2 -- 279.5]
+     [269.7 -10.0 273.4 274.2  -2.0 270.2 280.0 --  -3.0]
+     [261.7 -10.0 270.8 260.3 265.6 279.4 276.9 -- 260.6]
+     [264.2 -10.0 262.5  -3.0  -2.0  -1.0 270.4 -- 275.3]
+     [263.9 -10.0 272.1  -6.0  -5.0  -4.0 260.0 -- 270.2]
+     [273.8 -10.0 268.5  -9.0  -8.0  -7.0 270.6 -- 270.6]
+     [267.9 -10.0 279.8 260.3 261.2 275.3 271.2 -- 268.9]
+     [270.9 -10.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]
+     [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0 --  -3.0]]]
 
 .. _subspacing:
 
@@ -499,23 +499,145 @@ netCDF file on disk:
 
 The `cfdm.write` function has optional parameters to
 
-* TODO specify which attributes should, where possibleor should not, be global attributes,
-  
-* TODO specify which attributes should, or should not, be global attributes,
-  
-* create :ref:`external variables <external>` in an external file,
-
-* change the data type of output data arrays,
-  
 * set the output netCDF format (all netCDF3 and netCDF4 formats are
-  possible),
+  possible);
 
-* apply netCDF compression,
+* specify which field construct properties should become netCDF data
+  variable attributes and which should, if possible, become netCDF
+  global attributes;
+  
+* create :ref:`external variables <external>` in an external file;
 
-* set the endian-ness of the output data, and
+* change the data type of output data arrays;
+  
+* apply netCDF compression;
 
-* set the HDF chunk size
-	   
+* set the endian-ness of the output data; and
+
+ Also
+
+* TODO unlimited
+  
+* TODO set the HDF chunk size
+
+.. _field_creation:
+
+Field creation
+--------------
+
+The following code creates field construct properties and data and
+domain axis, cell method and dimension coordinate metadata constructs
+(data values have been generated with dummy values using
+`numpy.arange`):
+
+.. code:: python
+
+   import numpy
+   import cfdm
+
+   # Initialise the field
+   Q = cfdm.Field(properties={'project': 'research',
+                              'standard_name': 'specific_humidity',
+                              'units': '1'})
+			      
+   # Domain Axes
+   domain_axisT = cfdm.DomainAxis(1)
+   domain_axisY = cfdm.DomainAxis(5)
+   domain_axisX = cfdm.DomainAxis(8)
+
+   axisT = Q.set_domain_axis(domain_axisT)
+   axisY = Q.set_domain_axis(domain_axisY)
+   axisX = Q.set_domain_axis(domain_axisX)
+
+   # Data
+   data = cfdm.Data(numpy.arange(40.).reshape(5, 8))
+   Q.set_data(data, axes=[axisY, axisX])
+
+   # Cell Methods
+   cell_method1 = cfdm.CellMethod(axes=['area'], properties={'method': 'mean'})
+   cell_method2 = cfdm.CellMethod(axes=[axisT], properties={'method': 'maximum'})
+
+   Q.set_cell_method(cell_method1)
+   Q.set_cell_method(cell_method2)
+
+   # Dimension Coordinates
+   dimT = cfdm.DimensionCoordinate(properties={'standard_name': 'time',
+                                               'units': 'days since 2018-12-01'},
+                                   data=cfdm.Data([15.5]),
+                                   bounds=cfdm.Bounds(data=cfdm.Data([[0,31.]])))
+				   
+   dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
+		                               'units': 'degrees_north'},
+                                   data=cfdm.Data(numpy.arange(5.)))
+
+   dimX = cfdm.DimensionCoordinate(properties={'standard_name': 'longitude',
+		                               'units': 'degrees_east'},
+                                   data=cfdm.Data(numpy.arange(8.)))
+
+   Q.set_dimension_coordinate(dimT, axes=[axisT])		   
+   Q.set_dimension_coordinate(dimY, axes=[axisY])		   
+   Q.set_dimension_coordinate(dimX, axes=[axisX])		   
+
+The new field construct may now be inspected:
+   
+.. code:: python
+
+   >>> Q.dump()
+   ------------------------
+   Field: specific_humidity
+   ------------------------
+   project = 'research'
+   standard_name = 'specific_humidity'
+   units = '1'
+   
+   Data(latitude(5), longitude(8)) = [[0.0, ..., 39.0]] 1
+   
+   Cell Method: area: mean
+   Cell Method: time(1): maximum
+   
+   Domain Axis: latitude(5)
+   Domain Axis: longitude(8)
+   Domain Axis: time(1)
+   
+   Dimension coordinate: time
+       standard_name = 'time'
+       units = 'days since 2018-12-01'
+       Data(time(1)) = [2018-12-16 12:00:00]
+       Bounds:Data(time(1), 2) = [[2018-12-01 00:00:00, 2019-01-01 00:00:00]]
+   
+   Dimension coordinate: latitude
+       standard_name = 'latitude'
+       units = 'degrees_north'
+       Data(latitude(5)) = [0.0, ..., 4.0] degrees_north
+   
+   Dimension coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(longitude(8)) = [0.0, ..., 7.0] degrees_east
+
+It is not necessary to set the "Conventions" property, because this is
+automatically included in output files as a netCDF global attribute
+corresponding to the version number (e.g. ``'1.7'``) of :ref:`cfdm
+<class_extended>` being used.
+
+If this field were to be written to a netCDF dataset then, in the
+absence pre-defined names, default netCDF variable and dimension names
+would be automatically generated (based on standard names where they
+exist). Setting bespoke names is, however, easily done with the
+:ref:`netCDF interface <netcdf_interface>`:
+
+.. code:: python
+
+   Q.nc_set_variable('q')
+
+   domain_axisT.nc.set_dimension('t')
+   domain_axisY.nc.set_dimension('y')
+   domain_axisX.nc.set_dimension('x')
+
+   dimT.nc_set_variable('t')
+   dimY.nc_set_variable('y')
+   dimX.nc_set_variable('x')
+
 .. _constructs:
 
 Metadata constructs
@@ -523,23 +645,24 @@ Metadata constructs
 
 Metadata constructs of the field are all of the constructs that serve
 to describe the field construct that contains them. Each metadata
-construct of the CF data model has a corresponding `cfdm` class:
+construct of the CF data model has a corresponding :ref:`cfdm
+<class_extended>` class:
 
-=====================  ==============================  =======================
-cfdm class             Description                     CF data model construct
-=====================  ==============================  =======================
-`DomainAxis`           Independent axes of the domain  Domain axis         
-`DimensionCoordinate`  Domain cell locations           Dimension coordinate
-`AuxiliaryCoordinate`  Domain cell locations           Auxiliary coordinate
-`CoordinateReference`  Domain coordinate systems       Coordinate reference
-`DomainAncillary`      Cell locations in alternative   Domain ancillary
-                       coordinate systems
-`CellMeasure`          Domain cell size or shape       Cell measure
-`FieldAncillary`       Ancillary metadata which vary   Field ancillary
-                       within the domain
-`CellMethod`           Describes how data represent    Cell method
-                       variation within cells
-=====================  ==============================  =======================
+=======================  ==============================  =====================  
+CF data model construct  Description                     cfdm class             
+=======================  ==============================  =====================  
+Domain axis              Independent axes of the domain  `DomainAxis`           
+Dimension coordinate     Domain cell locations           `DimensionCoordinate`  
+Auxiliary coordinate     Domain cell locations           `AuxiliaryCoordinate`  
+Coordinate reference     Domain coordinate systems       `CoordinateReference`  
+Domain ancillary         Cell locations in alternative   `DomainAncillary`      
+                         coordinate systems		                       
+Cell measure             Domain cell size or shape       `CellMeasure`          
+Field ancillary          Ancillary metadata which vary   `FieldAncillary`       
+                         within the domain		                       
+Cell method              Describes how data represent    `CellMethod`           
+                         variation within cells		                       
+=======================  ==============================  =====================  
 
 The metadata constructs of the field are returned by the
 `~Field.constructs` method that provides a dictionary of the metadata
@@ -637,14 +760,14 @@ access, and for when a construct is not identifiable by other means.
 
    >>> t.constructs(cid='domainancillary2')
    {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
-   >>> t.constructs('cid%cellmethod0')
-   {'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>}
+   >>> t.constructs('cid%cellmethod1')
+   {'cellmethod1': <CellMethod: domainaxis3: maximum>}
    >>> t.constructs(cid='auxiliarycoordinate999')
    {}
    
-An individual metadata construct may be returned, without its
-construct identifier, with the field's `~Field.get_construct` method,
-which supports the same filtering options as above:
+An individual metadata construct may be returned without its construct
+identifier via the field's `~Field.get_construct` method, which
+supports the same filtering options as above:
 
 .. code:: python
 
@@ -709,8 +832,8 @@ method to access its data as a numpy array:
    >>> print(lon.get_array())
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
-Construct components
-^^^^^^^^^^^^^^^^^^^^
+Components
+^^^^^^^^^^
 
 Other classes are required to represent construct components that are
 neither "properties" nor "data":
@@ -934,34 +1057,29 @@ criteria for considering two fields to be equal:
 
 * Attributes that are not part of the CF data model may be considered.
 
-.. _field_creation:
-
-Field creation
---------------
-
-TODO
-
-.. _netcdf:
+.. _netcdf_interface:
 
 NeCDF interface
 ---------------
 
 The logical CF data model is independent of netCDF, but the CF
-conventions are conventions to enable processing and sharing of
-datasets stored in netCDF files. Therefore, the `cfdm` package
-includes methods for recording and editing netCDF elements that are
-not part of the CF model, but are nonetheless often required to
-interpret and create CF-netCDF datasets.
+conventions are designed to enable the processing and sharing of
+datasets stored in netCDF files. Therefore, the :ref:`cfdm
+<class_extended>` package includes methods for recording and editing
+netCDF elements that are not part of the CF model, but are nonetheless
+often required to interpret and create CF-netCDF datasets. See the
+section on :ref:`philosophy <philosophy>` for a further discussion.
 
 When a netCDF dataset is read, netCDF elements (such as dimension and
-variable names, and some attribute values) that cannot be stored as
-part of the CF data model are recorded on the relevant `cfdm`
-objects. This allows them to be used when writing fields to a new
-netCDF dataset, and also makes them accessible for construct
-identification.
+variable names, some attribute values, and even some entire variables)
+that do not have a place in the CF data model are stored within the
+relevant :ref:`cfdm <class_extended>` objects. This allows them to be
+used when writing fields to a new netCDF dataset, and also makes them
+accessible for construct identification.
 
-These netCDF elements are accesed with methods that all start with
-`!nc_`. For example, the `Field` class has the following methods
+Each :ref:`cfdm <class_extended>` class has methods to access any such
+netCDF elements which it requires. For example, the `Field` class has
+the following methods:
 
 =============================  =======================================
 Field method                   Description
@@ -974,6 +1092,7 @@ Field method                   Description
 `~Field.nc_unlimited_axes`     TODO
 =============================  =======================================
 
+For example:
 
 .. code:: python
 
@@ -989,63 +1108,71 @@ Field method                   Description
 
 The complete collection of netCDF interface methods is:
 
-=============================  =======================================
-Method                         Classes
-=============================  =======================================
-`!nc_del_variable`             `Field`, `DimensionCoordinate`,
-                               `AuxiliaryCoordinate`, `CellMeasure`,
-                               `DomainAncillary`, `FieldAncillary`,
-                               `CoordinateReference`,  `Bounds`,
-			       `Count`, `Index`, `List`
-			       				
-`!nc_get_variable`             `Field`, `DimensionCoordinate`,
-                               `AuxiliaryCoordinate`, `CellMeasure`,
-                               `DomainAncillary`, `FieldAncillary`,
-                               `CoordinateReference`, `Bounds`,
-			       `Count`, `Index`, `List`
-			       
-`!nc_has_variable`             `Field`, `DimensionCoordinate`,
-                               `AuxiliaryCoordinate`, `CellMeasure`,
-                               `DomainAncillary`, `FieldAncillary`,
-                               `CoordinateReference`, `Bounds`,
-			       `Count`, `Index`, `List`
-			       
-`!nc_set_variable`             `Field`, `DimensionCoordinate`,
-                               `AuxiliaryCoordinate`, `CellMeasure`,
-                               `DomainAncillary`, `FieldAncillary`,
-                               `CoordinateReference`, `Bounds`,
-			       `Count`, `Index`, `List`
+============================  =======================================  =====================================
+Method                        Classes                                  NetCDF element
+============================  =======================================  =====================================
+`!nc_del_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`,  `Bounds`,
+			      `Count`, `Index`, `List`
+			      				
+`!nc_get_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`, `Bounds`,
+			      `Count`, `Index`, `List`
+			      
+`!nc_has_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`, `Bounds`,
+			      `Count`, `Index`, `List`
+			      
+`!nc_set_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`, `Bounds`,
+			      `Count`, `Index`, `List`
 
-`!nc_global_attributes`	       `Field`
+`!nc_del_dimension`           `DomainAxis`                             Dimension name
+			      
+`!nc_get_dimension`	      `DomainAxis`                             Dimension name
+			      			                    
+`!nc_has_dimension`	      `DomainAxis`                             Dimension name
+			      			                    
+`!nc_set_dimension`	      `DomainAxis`                             Dimension name
+			      
+`!nc_global_attributes`	      `Field`                                  Global attributes
 
-`!nc_unlimited_axes`	       `Field`
+`!nc_unlimited_axes`	      `Field`                                  Unlimited dimensions
 
-`!nc_del_dimension`            `DomainAxis`  
-			       
-`!nc_get_dimension`	       `DomainAxis`
-			       
-`!nc_has_dimension`	       `DomainAxis`
-			       
-`!nc_set_dimension`	       `DomainAxis`
-			       
-`!nc_external`                 `CellMeasure`
+`!nc_external`                `CellMeasure`                            External variable status
 
-`!del_instance_dimension`      `Index`
+`!nc_del_instance_dimension`  `Index`                                  Instance dimension of a ragged array
 
-`!get_instance_dimension`      `Index`
+`!nc_get_instance_dimension`  `Index`                                  Instance dimension of a ragged array
 
-`!has_instance_dimension`      `Index`
+`!nc_has_instance_dimension`  `Index`                                  Instance dimension of a ragged array
 
-`!set_instance_dimension`      `Index`
+`!nc_set_instance_dimension`  `Index`                                  Instance dimension of a ragged array
+  
+`!nc_del_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
 
-`!nc_del_sample_dimension`     `Count`, `Index`
+`!nc_get_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
+    
+`!nc_has_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array   
 
-`!nc_get_sample_dimension`     `Count`, `Index`    
+`!nc_set_sample_dimension`    `Count`, `Index`                         Sample  dimension of a ragged array
+    
+`!get_count_variable`         `Data`                                   Count variable of a ragged array 
 
-`!nc_has_sample_dimension`     `Count`, `Index`    
+`!get_index_variable`         `Data`                                   Index variable of a ragged array 
 
-`!nc_set_sample_dimension`     `Count`, `Index`    
-=============================  =======================================
+`!get_list_variable`          `Data`                                   List variable of a gathered array 
+============================  =======================================  =====================================
+
+For example:
 
 .. code:: python
 
@@ -1059,6 +1186,8 @@ Method                         Classes
    >>> axis.nc_get_dimension()
    'time'
 
+
+   
 .. _external:
 
 External variables

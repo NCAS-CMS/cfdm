@@ -40,13 +40,13 @@ is available at https://www.geosci-model-dev.net/10/4619/2017.
 Implementation
 --------------
 
-The **cfdm** library implements the CF data model for its internal
-data structures and so is able to process any CF-compliant dataset. It
-is, however, not strict about CF compliance so that partially
-conformant datasets may be modified in memory as well as ingested from
-existing datasets, or written to new datasets.
+The :ref:`cfdm <class_extended>` library implements the CF data model
+for its internal data structures and so is able to process any
+CF-compliant dataset. It is, however, not strict about CF compliance
+so that partially conformant datasets may be modified in memory as
+well as ingested from existing datasets, or written to new datasets.
 
-The **cfdm** package can
+The :ref:`cfdm <class_extended>` package can
 
 * read netCDF datasets into field constructs,
 

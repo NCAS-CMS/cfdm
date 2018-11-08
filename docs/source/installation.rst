@@ -9,22 +9,23 @@ Installation
 Dependencies
 ------------
 
-The `cfdm` package requires:
+The :ref:`cfdm <class_extended>` package requires:
 
 * **Python** version 2.7 or 3 or newer,
 
 * **numpy** version 1.11 or newer,
 
-* **netCDF4** version 1.4.0 or newer, and 
+* **netCDF4** version 1.4.0 or newer, and
 
 * **future** version 0.16.0 or newer.
 
 conda
 -----
 
-To install `cfdm` using `conda <https://conda.io/docs/>`_, first
-install `Anaconda <https://www.anaconda.com/download>`_ for Python 2
-or Python 3, then on type on the command line:
+To install :ref:`cfdm <class_extended>` using `conda
+<https://conda.io/docs/>`_, first install `Anaconda
+<https://www.anaconda.com/download>`_ for Python 2 or Python 3, then
+on type on the command line:
 
 .. code:: bash
 
@@ -33,8 +34,8 @@ or Python 3, then on type on the command line:
 pip
 ---
 
-To install `cfdm` using `pip <https://pypi.org/project/pip/>`_, type
-on the command line:
+To install :ref:`cfdm <class_extended>` using `pip
+<https://pypi.org/project/pip/>`_, type on the command line:
 
 .. code:: bash
 
@@ -46,7 +47,8 @@ Source
 
 To install from source:
 
-1. Download the `cfdm` package from https://pypi.org/project/cfdm
+1. Download the :ref:`cfdm <class_extended>` package from
+   https://pypi.org/project/cfdm
 
 2. Unpack the library:
 
@@ -57,19 +59,21 @@ To install from source:
 
 3. Install the package:
   
-  * To install the `cfdm` package to a central location:
+  * To install the :ref:`cfdm <class_extended>` package to a central
+    location:
 
     .. code:: bash
 	 
        python setup.py install
 
-  * To install the `cfdm` package locally to the user in a default location:
+  * To install the :ref:`cfdm <class_extended>` package locally to the user in a default location:
 
     .. code:: bash
 
        python setup.py install --user
 
-  * To install the `cfdm` package in the <directory> of your choice:
+  * To install the :ref:`cfdm <class_extended>` package in the
+    <directory> of your choice:
 
     .. code:: bash
 

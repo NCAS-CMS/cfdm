@@ -70,7 +70,7 @@ capability.
     def dump(self, display=True, field=None, key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,
              _omit_properties=None, _axes=None, _axis_names=None):
-        '''
+        '''TODO
         '''
         if _create_title and _title is None: 
             _title = 'Bounds: ' + self.name(default='')
@@ -83,4 +83,23 @@ capability.
                             _axis_names=_axis_names)
     #--- End: def
     
+    def name(self, default=None, ncvar=True, custom=None,
+             all_names=False):
+        '''TODO
+
+        '''
+        inherited_properties = self._get_component('inherited_properties', None)
+        if inherited_properties:
+            properties = inherited_properties.copy()
+            properties.update(self.properties())
+
+            bounds = self.copy()
+            bounds.properties(properties)
+            self = bounds
+            
+        return super().name(default=default, ncvar=ncvar,
+                            custom=custom,
+                            all_names=all_names)
+    #--- End: def
+
 #--- End: class

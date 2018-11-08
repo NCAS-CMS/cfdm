@@ -23,8 +23,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
 **File format**
 
-See the *fmt* parameter for details on which netCDF file formats are
-supported.
+See the *fmt* parameter for details on which output netCDF file
+formats are supported.
 
 **NetCDF variable and dimension names**
 
@@ -51,11 +51,19 @@ or netCDF data variable attributes. See the *global_attributes* and
 
 **External variables**
 
-Constructs marked as external may be omitted from the file and referred
-to via the netCDF "external_variables" global attribute. In addition,
-omitted constructs may be written to an external file. Constructs that
-may be external have the following methods to get and set their
-external status: `!nc_get_external` and `!nc_set_external`.
+Constructs marked as external may be omitted from the file and
+referred to via the netCDF "external_variables" global attribute. In
+addition, omitted constructs may be written to an external
+file. Constructs that are allowed to be external have the following
+method to get and set their external status: `!nc_external`.
+
+**NetCDF unlimited dimensions**
+
+TODO
+
+**HDF chunksizes**
+
+TODO
 
 .. versionadded:: 1.7
 
@@ -94,7 +102,7 @@ external status: `!nc_get_external` and `!nc_set_external`.
           
           ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
                                       (limited to file sizes less
-                                      than 2 Gb).
+                                      than 2GB).
           
           ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
                                       file
@@ -112,7 +120,7 @@ external status: `!nc_get_external` and `!nc_set_external`.
         Note that the netCDF3 formats may be considerably slower than
         any of the other options.
 
-        All formats support large files (i.e. those greater than 2 Gb)
+        All formats support large files (i.e. those greater than 2GB)
         except ``'NETCDF3_CLASSIC'``.
 
         ``'NETCDF3_64BIT_DATA'`` is a format that requires version
@@ -124,7 +132,7 @@ external status: `!nc_get_external` and `!nc_set_external`.
         ``'NETCDF4_CLASSIC'`` files use the version 4 disk format
         (HDF5), but omits features not found in the version 3
         API. They can be read by HDF5 clients. They can also be read
-        by netCDF 3 clients only if they have been re-linked against
+        by netCDF3 clients only if they have been re-linked against
         the netCDF4 library.
 
         ``'NETCDF4'`` files use the version 4 disk format (HDF5) and
@@ -147,7 +155,7 @@ external status: `!nc_get_external` and `!nc_set_external`.
              properties, and
 
            * properties flagged as global on any of the fields being
-             written (see `cfdm.Field.nc_global_properties` for
+             written (see `cfdm.Field.nc_global_attributes` for
              details).
 
          Note that it is not possible to create a netCDF global
@@ -169,13 +177,13 @@ external status: `!nc_get_external` and `!nc_set_external`.
          Create netCDF data variable attributes from the given field
          properties, rather than netCDF global attributes.
 
-         By default, all properties other than those which are created
-         as netCDF global attributes (see the *global_attributes*
-         parameter), are created as attributes netCDF data variables.
+         By default, all properties that are not created as netCDF
+         global propoerties are created as attributes netCDF data
+         variables. See the *global_attributes* parameter for details.
 
-         If the same property is named by both the
-         *variable_attributes* and *global_attributes* parameters,
-         then the former takes precedence.
+         If a property is named by the *variable_attributes* parameter
+         then it will always be created as a netCDF data variable
+         attribute.
 
          *Example:*
             ``variable_attributes='project'``
@@ -296,7 +304,7 @@ external status: `!nc_get_external` and `!nc_set_external`.
 
     verbose: `bool`, optional
         If True then print a summary of how constructs map to output
-        netCDF variables and dimensions.
+        netCDF dimensions, variables and attributes.
 
 :Returns:
 
