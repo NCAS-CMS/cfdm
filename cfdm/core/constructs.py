@@ -461,42 +461,42 @@ None
         return out
     #--- End: def
 
-    def domain_axes(self, copy=False):
-        '''TODO
-
-:Parameters:
-
-    copy: 
-
-**Examples**
-
->>> d = f.domain_axes()
->>> d
-{'domainaxis1': <DomainAxis: 106>,
- 'domainaxis0': <DomainAxis: 111>}
->>> d['domainaxis0'].set_size(73)
->>> f.domain_axes()
-{'domainaxis1': <DomainAxis: 106>,
- 'domainaxis0': <DomainAxis: 73>}
-
->>> d['domainaxis0'].set_size(73)
->>> f.domain_axes()
-{'domainaxis1': <DomainAxis: 106>,
- 'domainaxis0': <DomainAxis: 73>}
-
->>> d = f.domain_axes(copy=True)
->>> d
-{'domainaxis1': <DomainAxis: 106>,
- 'domainaxis0': <DomainAxis: 73>}
->>> d['domainaxis0'].set_size(111)
->>> f.domain_axes()
-{'domainaxis1': <DomainAxis: 106>,
- 'domainaxis0': <DomainAxis: 73>}
-
-     
-        '''
-        return self.constructs(construct_type='domain_axis', copy=copy)
-    #--- End: def
+#    def domain_axes(self, copy=False):
+#        '''TODO
+#
+#:Parameters:
+#
+#    copy: 
+#
+#**Examples**
+#
+#>>> d = f.domain_axes()
+#>>> d
+#{'domainaxis1': <DomainAxis: 106>,
+# 'domainaxis0': <DomainAxis: 111>}
+#>>> d['domainaxis0'].set_size(73)
+#>>> f.domain_axes()
+#{'domainaxis1': <DomainAxis: 106>,
+# 'domainaxis0': <DomainAxis: 73>}
+#
+#>>> d['domainaxis0'].set_size(73)
+#>>> f.domain_axes()
+#{'domainaxis1': <DomainAxis: 106>,
+# 'domainaxis0': <DomainAxis: 73>}
+#
+#>>> d = f.domain_axes(copy=True)
+#>>> d
+#{'domainaxis1': <DomainAxis: 106>,
+# 'domainaxis0': <DomainAxis: 73>}
+#>>> d['domainaxis0'].set_size(111)
+#>>> f.domain_axes()
+#{'domainaxis1': <DomainAxis: 106>,
+# 'domainaxis0': <DomainAxis: 73>}
+#
+#     
+#        '''
+#        return self.constructs(construct_type='domain_axis', copy=copy)
+#    #--- End: def
     
     def get_construct(self, cid):
         '''Return a metadata construct.
@@ -580,7 +580,7 @@ Parameters:
 "Can't set {} construct: Must specify the domain axes for the data array".format(
     self._construct_type_description(construct_type)))
 
-            domain_axes = self.domain_axes()
+            domain_axes = self.constructs(construct_type='domain_axis')
 
             axes_shape = []
             for axis in axes:

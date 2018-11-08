@@ -152,7 +152,7 @@ TODO
 
 
         '''
-        domain_axes = self.domain_axes()
+        domain_axes = self.constructs(construct_type='domain_axis')
         
         if axis not in domain_axes:
             return default
@@ -536,8 +536,10 @@ TODO
         # ------------------------------------------------------------
         # Domain axes
         # ------------------------------------------------------------
-        self_sizes  = [d.get_size() for d in self.domain_axes().values()]
-        other_sizes = [d.get_size() for d in other.domain_axes().values()]
+        self_sizes  = [d.get_size()
+                       for d in self.constructs(construct_type='domain_axis').values()]
+        other_sizes = [d.get_size()
+                       for d in other.constructs(construct_type='domain_axis').values()]
         
         if sorted(self_sizes) != sorted(other_sizes):
             # There is not a 1-1 correspondence between axis sizes

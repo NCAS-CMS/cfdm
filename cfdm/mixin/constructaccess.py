@@ -151,6 +151,20 @@ TODO
             construct_type='domain_ancillary', axes=axes, copy=copy)
     #--- End: def
     
+    def domain_axes(self, copy=False):
+        '''TODO
+
+:Parameters:
+
+    copy: 
+
+**Examples**
+
+TODO     
+        '''
+        return self.constructs(construct_type='domain_axis', copy=copy)
+    #--- End: def
+    
     def cell_measures(self, axes=None, copy=False):
         '''Return cell measure constructs.
 

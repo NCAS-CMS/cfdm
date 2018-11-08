@@ -330,7 +330,7 @@ None
 #        return self._get_constructs().constructs(
 #            construct_type='field_ancillary', copy=copy)
 
-    def del_construct(self, id):
+    def del_construct(self, cid):
         '''Remove a construct.
 
 If a removed domain axis construct is referenced by a cell method
@@ -342,11 +342,11 @@ construct, then that reference is also removed.
 
 :Parameters:
 
-    id: `str`, optional
+    cid: `str`, optional
         The identifier of the construct.
 
         *Example:*
-          ``id='auxiliarycoordinate0'``
+          ``cid='auxiliarycoordinate0'``
         
 :Returns:
 
@@ -358,27 +358,26 @@ construct, then that reference is also removed.
 TODO
 
         '''
-        if id in self.domain_axes():
+        if cid in self.constructs(construct_type='domain_axis'):
             domain_axis = True
-            if id in self.get_data_axes(()):
+            if cid in self.get_data_axes(()):
                 raise ValueError(
-"Can't remove domain axis {!r} that is spanned by the field's data".format(id))
-
-            # Remove reference to removed domain axis construct in
+"Can't remove domain axis {!r} that is spanned by the field's data".format(cid))
+            # Remove reference to a removed domain axis construct in
             # cell method constructs
-            for cm_key, cm in self.cell_methods().items():
+            for _, cm in self.constructs(construct_type='cell_method').items():
                 axes = cm.get_axes()
-                if id not in axes:
+                if cid not in axes:
                     continue
                 
                 axes = list(axes)
-                axes.remove(id)
+                axes.remove(cid)
                 cm.set_axes(axes)
         #--- End: if
         
-        x = self.domain.del_construct(id)
+        x = self.domain.del_construct(cid)
         if x is None:
-            x = self._get_constructs().del_construct(id)
+            x = self._get_constructs().del_construct(cid)
             
         return x
     #--- End: def
@@ -448,7 +447,7 @@ TODO
 TODO
 
         '''
-        domain_axes = self.domain_axes()
+        domain_axes = self.constructs(construct_type='domain_axis')
         for axis in axes:
             if axis not in domain_axes:
                 raise ValueError(
