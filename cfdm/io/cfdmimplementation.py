@@ -473,7 +473,7 @@ axes, and possibly other axes, are returned.
     def nc_get_unlimited_axes(self, field):
         '''TODO
         '''
-        return field.nc_unlimited_axes()
+        return field.nc_unlimited_dimensions()
     #--- End: def
     
     def nc_get_global_attributes(self, field):

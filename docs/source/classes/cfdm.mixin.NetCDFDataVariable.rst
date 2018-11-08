@@ -12,7 +12,7 @@ cfdm.mixin.NetCDFDataVariable
       :nosignatures:
 
       ~NetCDFDataVariable.nc_global_attributes
-      ~NetCDFDataVariable.nc_unlimited_axes
+      ~NetCDFDataVariable.nc_unlimited_dimensions
    
    
 

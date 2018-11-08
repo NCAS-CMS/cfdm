@@ -82,7 +82,7 @@ datasets and to modify constructs in memory.
    cfdm.mixin.Container
    cfdm.mixin.Coordinate
    cfdm.mixin.NetCDFDataVariable
-   cfdm.mixin.NetCDFDimension,
+   cfdm.mixin.NetCDFDimension
    cfdm.mixin.NetCDFExternal
    cfdm.mixin.NetCDFInstanceDimension,
    cfdm.mixin.NetCDFSampleDimension,

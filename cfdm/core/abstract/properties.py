@@ -139,7 +139,8 @@ A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
 to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
-.. seealso:: `del_property`, `has_property`, `properties`, `set_property`
+.. seealso:: `del_property`, `has_property`, `properties`,
+             `set_property`
 
 :Parameters:
 
@@ -242,7 +243,6 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 :Parameters:
 
     properties: `dict`, optional   
-
         Replace all existing properties with those specified in the
         dictionary. If the dictionary is empty then all properties
         will be removed.

@@ -178,7 +178,7 @@ TODO
          properties, rather than netCDF global attributes.
 
          By default, all properties that are not created as netCDF
-         global propoerties are created as attributes netCDF data
+         global properties are created as attributes netCDF data
          variables. See the *global_attributes* parameter for details.
 
          If a property is named by the *variable_attributes* parameter

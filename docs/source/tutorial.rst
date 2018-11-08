@@ -630,9 +630,9 @@ exist). Setting bespoke names is, however, easily done with the
 
    Q.nc_set_variable('q')
 
-   domain_axisT.nc.set_dimension('t')
-   domain_axisY.nc.set_dimension('y')
-   domain_axisX.nc.set_dimension('x')
+   domain_axisT.nc_set_dimension('t')
+   domain_axisY.nc_set_dimension('y')
+   domain_axisX.nc_set_dimension('x')
 
    dimT.nc_set_variable('t')
    dimY.nc_set_variable('y')
@@ -1081,16 +1081,24 @@ Each :ref:`cfdm <class_extended>` class has methods to access any such
 netCDF elements which it requires. For example, the `Field` class has
 the following methods:
 
-=============================  =======================================
-Field method                   Description
-=============================  =======================================
-`~Field.nc_get_variable`       TODO
-`~Field.nc_set_variable`       TODO
-`~Field.nc_del_variable`       TODO
-`~Field.nc_has_variable`       TODO
-`~Field.nc_global_attributes`  TODO
-`~Field.nc_unlimited_axes`     TODO
-=============================  =======================================
+================================  ====================================
+Field method                      Description
+================================  ====================================
+`~Field.nc_get_variable`          Return the netCDF variable name
+`~Field.nc_set_variable`          Set the netCDF variable name
+`~Field.nc_del_variable`          Remove the netCDF variable name
+
+`~Field.nc_has_variable`          Whether the netCDF variable name has
+                                  been set
+
+`~Field.nc_global_attributes`     Return or replace the selection of
+                                  properties to be written as netCDF
+                                  global attributes
+
+`~Field.nc_unlimited_dimensions`  Return or replace the selection of
+                                  domain axis constructs to be written
+                                  as netCDF unlimited dimensions
+================================  ====================================
 
 For example:
 
@@ -1100,7 +1108,7 @@ For example:
    'q'
    >>> q.nc_global_attributes()
    {'project', 'Conventions'}
-   >>> q.nc_unlimited_axes()
+   >>> q.nc_unlimited_dimensions()
    set()
    >>> q.nc_set_variable('humidity')
    >>> q.nc_get_variable()
@@ -1145,7 +1153,7 @@ Method                        Classes                                  NetCDF el
 			      
 `!nc_global_attributes`	      `Field`                                  Global attributes
 
-`!nc_unlimited_axes`	      `Field`                                  Unlimited dimensions
+`!nc_unlimited_dimensions`    `Field`                                  Unlimited dimensions
 
 `!nc_external`                `CellMeasure`                            External variable status
 
@@ -1407,8 +1415,8 @@ file:
 
 .. code:: python
    
-   >>> c = cfdm.read('contiguous.nc')[0]
-   >>> print(c)
+   >>> h = cfdm.read('contiguous.nc')[0]
+   >>> print(h)
    Field: specific_humidity (ncvar%humidity)
    -----------------------------------------
    Data            : specific_humidity(ncdim%station(4), ncdim%timeseries(9))
@@ -1418,17 +1426,17 @@ file:
                    : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east
                    : height(ncdim%station(4)) = [0.5, ..., 345.0] m
                    : cf_role:timeseries_id(ncdim%station(4)) = [station1, ..., station4]
-   >>> c.data.get_compression_type()
+   >>> h.data.get_compression_type()
    'ragged contiguous'
-   >>> print(c.get_array())
+   >>> print(h.get_array())
    [[0.0    1.0    2.0     --     --   -- -- -- --] TODO
     [1.0   11.0   21.0   31.0   41.0 51.0 61.0 -- --]
     [2.0  102.0  202.0  302.0  402.0 -- -- -- --]
     [3.0 1003.0 2003.0 3003.0 4003.0 5003.0 6003.0 7003.0 8003.0]]
-   >>> print(c.data.get_compressed_array())
+   >>> print(h.data.get_compressed_array())
    [0.0 1.0 2.0 1.0 11.0 21.0 31.0 41.0 51.0 61.0 2.0 102.0 202.0 302.0 402.0 TODOm
     3.0 1003.0 2003.0 3003.0 4003.0 5003.0 6003.0 7003.0 8003.0]
-   >>> count = c.data.get_count_variable()
+   >>> count = h.data.get_count_variable()
    >>> count
    <Count: long_name:number of observations for this station(4) >
    >>> print(count.get_array())
@@ -1572,15 +1580,15 @@ file:
 
 .. code:: python
 
-   >>> c = cfdm.read('gathered.nc')[0]
+   >>> h = cfdm.read('gathered.nc')[0]
    TODO
-   >>> print(c)
+   >>> print(h)
    TODO
-   >>> c.get_array
+   >>> h.get_array
    TODO
-   >>> c.data.get_compressed_array().get_array()
+   >>> h.data.get_compressed_array().get_array()
    TODO
-   >>> c.data.get_list_variable().get_array()
+   >>> h.data.get_list_variable().get_array()
    TODO
 
 If the underlying array is compressed at the time of writing to disk
