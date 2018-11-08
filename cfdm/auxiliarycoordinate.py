@@ -36,7 +36,7 @@ indicated by the cell method constructs.
     def __init__(self, properties={}, data=None, bounds=None,
                  geometry=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
-        '''
+        '''TODO
         '''
         super().__init__(properties=properties, data=data,
                          bounds=bounds, geometry=geometry,
@@ -51,7 +51,7 @@ indicated by the cell method constructs.
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None, _axes=None,
              _axis_names=None):
-        '''Return a string containing a full description of the auxiliary
+        '''TODO Return a string containing a full description of the auxiliary
 coordinate object.
 
 :Parameters:

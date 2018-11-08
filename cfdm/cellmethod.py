@@ -27,7 +27,7 @@ that the method was applied only over El Nino years).
     '''
 
     def dump(self, display=True, _title=None, _level=0):
-        '''
+        '''TODO
         
 Return a string containing a full description of the instance.
 
@@ -251,7 +251,7 @@ corresponding dimension or dimensions.
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''
+        '''TODO
 
 True if two cell methods are equal, False otherwise.
 
@@ -445,7 +445,7 @@ The `!axes` attribute is ignored in the comparison.
 
     def name(self, default=None, ncvar=False, custom=None,
              all_names=False):
-        '''Return a name for the {+variable}.
+        '''TODO Return a name for the {+variable}.
 
 By default the name is the first found of the following:
 

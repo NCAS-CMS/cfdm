@@ -1,7 +1,7 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-.. _class:
+.. _class_core:
 
 **Classes** of the **cfdm.core** package
 ========================================

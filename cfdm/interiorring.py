@@ -25,7 +25,7 @@ indexes the geometries for each cell.
     '''
     def __init__(self, properties={}, data=None, source=None,
                  copy=True, _use_data=True):
-        '''
+        '''TODO
         '''
         super().__init__(properties=properties, data=data,
                          source=source, copy=copy,
@@ -37,7 +37,7 @@ indexes the geometries for each cell.
     def dump(self, display=True, field=None, key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,
              _omit_properties=None):
-        '''
+        '''TODO
         '''
         if _create_title and _title is None: 
             _title = 'Interior Ring: ' + self.name(default='')

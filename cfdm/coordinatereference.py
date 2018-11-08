@@ -198,13 +198,11 @@ frame and consists of the following:
     #--- End: def
    
     def __str__(self):
-        '''
-
-The built-in function `str`
+        '''The built-in function `str`
 
 x.__str__() <==> str(x)
 
-'''    
+        '''    
         return self.name(default=self.nc_get_variable(''))
     #--- End: def
 
