@@ -11,6 +11,16 @@ class Container(object):
     
     '''
     
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+x.__repr__() <==> repr(x)
+
+        '''
+        return '<{0}: {1}>'.format(self.__class__.__name__,
+                                   str(self))
+    #--- End: def
+
     @classmethod
     def _equals(self, x, y, rtol=None, atol=None, **kwargs):
         '''TODO

@@ -313,14 +313,16 @@ def parse_indices(shape, indices):
 #
 ##--- End: def
 
-def ATOL(*arg):
-    '''The absolute difference when testing for numerically tolerant
-equality.
+def ATOL(*atol):
+    '''The tolerance on absolute differences when testing for numerically
+tolerant equality.
 
 Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
-+ rtol*abs(y)``, where the atol and rtol are set by the `ATOL` and
-`RTOL functions respectively. ``atol`` is the absolute difference and
-``rtol*abs(y)`` is the relative difference.
++ rtol*abs(y)``, where atol (the tolerance on absolute differences)
+and rtol (the tolerance on relative differences) are positive,
+typically very small numbers. By default both are set to the system
+epsilon (the difference between 1 and the least value greater than 1
+that is representable as a float).
 
 .. versionadded:: 1.7
 
@@ -328,7 +330,7 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 
 :Parameters:
 
-    arg: `float`, optional
+    atol: `float`, optional
         The new value of absolute tolerance. The default is to not
         change the current value.
 
@@ -341,34 +343,31 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 **Examples**
 
 >>> ATOL()
-1e-08
+2.220446049250313e-16
 >>> old = ATOL(1e-10)
 >>> ATOL(old)
 1e-10
 >>> ATOL()
-1e-08
+2.220446049250313e-16
 
     '''
     old = CONSTANTS['ATOL']
-    if arg:
-        CONSTANTS['ATOL'] = arg[0]
+    if atol:
+        CONSTANTS['ATOL'] = atol[0]
 
     return old
 #--- End: def
 
-def RTOL(*arg):    
-    '''The factor used to calculate the relative difference when testing
-for numerically tolerant equality.
-
-Two numbers :math:`a` and :math:`b` are considered equal if :math:`|a
-- b| \le atol + rtol|b|`, where :math:`atol` and :math:`rtol` are
-positive, typically very small numbers. By default both are set to the
-system epsilon.
+def RTOL(*rtol):    
+    '''The tolerance on relative differences when testing for numerically
+tolerant equality.
 
 Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
-+ rtol*abs(y)``, where the atol and rtol are set by the `ATOL` and
-`RTOL functions respectively. ``atol`` is the absolute difference and
-``rtol*abs(y)`` is the relative difference.
++ rtol*abs(y)``, where atol (the tolerance on absolute differences)
+and rtol (the tolerance on relative differences) are positive,
+typically very small numbers. By default both are set to the system
+epsilon (the difference between 1 and the least value greater than 1
+that is representable as a float).
 
 .. versionadded:: 1.7
 
@@ -376,7 +375,7 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 
 :Parameters:
 
-    arg: `float`, optional
+    rtol: `float`, optional
         The new value of relative tolerance. The default is to not
         change the current value.
 
@@ -388,18 +387,18 @@ Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
 
 **Examples**
 
->>> RTOL()
-1.0000000000000001e-05
+>>> cfdm.RTOL()
+2.220446049250313e-16
 >>> old = RTOL(1e-10)
 >>> RTOL(old)
 1e-10
->>> RTOL()
-1.0000000000000001e-05
+>>> cfdm.RTOL()
+2.220446049250313e-16
 
     '''
     old = CONSTANTS['RTOL']
-    if arg:
-        CONSTANTS['RTOL'] = arg[0]
+    if rtol:
+        CONSTANTS['RTOL'] = rtol[0]
 
     return old
 #--- End: def

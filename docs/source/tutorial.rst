@@ -510,15 +510,13 @@ The `cfdm.write` function has optional parameters to
 
 * change the data type of output data arrays;
   
-* apply netCDF compression;
+* apply netCDF compression and packing; and
 
-* set the endian-ness of the output data; and
+* set the endian-ness of the output data.
 
- Also
-
-* TODO unlimited
-  
-* TODO set the HDF chunk size
+It is also possible to create netCDF unlimited dimensions and set the
+HDF5 chunk size using the field's `nc_unlimited_dimensions` and
+`nc_chunksize` methods.
 
 .. _field_creation:
 
@@ -1002,13 +1000,11 @@ Whether or not two fields are the equal is tested with the field's
    True
    >>> t.equals(t.copy())
    True
-   >>> g = cfdm.read('new_file.nc') TODO
-   >>> g = cfdm.read('new_file.nc')
-   >>> f.equals(g[0])
-   True
-   >>> g.data[0, 0, 0] = -99
-   >>> g.set_property('long_name') = 'foo'
-   >>> f.equals(g[0])
+   >>> t.equals(q)
+   False
+   >>> t.equals(q, traceback=True)
+   Field: Different units: 'K', '1'
+   Field: Different properties
    False
 
 Equality is strict by default. This means that for two fields to be
@@ -1034,6 +1030,8 @@ float). Their default settings may be inspected and changed with the
 
    >>> cfdm.ATOL()
    2.220446049250313e-16
+   >>> cfdm.RTOL()
+   2.220446049250313e-16
    >>> original = cfdm.RTOL(0.00001)
    >>> cfdm.RTOL()
    1e-05
@@ -1042,25 +1040,24 @@ float). Their default settings may be inspected and changed with the
    >>> cfdm.RTOL()
    2.220446049250313e-16
    
-Attributes that do not constitute part of the CF data model are, by
-default, not checked on any construct. These include, but are not
-limited to, netCDF variable and netCDF dimension names.
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked on any
+construct.
 
 The `~Field.equals` function has optional parameters for relaxing the
 criteria for considering two fields to be equal:
 
-* Named properties may be omitted from the comparison.
+* named properties may be omitted from the comparison,
 
-* The fill value may be omitted. TODO 
+* the missing data value may be ignored,
 
-* The data type of arrays may be ignored (i.e. arrays with different
-  data types but equal elements will be accepted as being the same)
+* the data type of arrays may be ignored (i.e. arrays with different
+  data types but equal elements will be accepted as being the same),
+  and
 
-* The tolerances on absolute and relative differences for numerical
+* the tolerances on absolute and relative differences for numerical
   comparisons may be temporarily changed, without changing the default
   settings.
-
-* Attributes that are not part of the CF data model may be considered.
 
 .. _netcdf_interface:
 
@@ -1435,7 +1432,7 @@ file:
     0.11 0.03 0.14 0.16 0.02 0.09 0.1 0.04 0.11]
    >>> count_variable = h.data.get_count_variable()
    >>> count_variable
-   TODO
+   <Count: long_name:number of observations for this station(4) >
    >>> print(count_variable.get_array())
    [3 7 5 9]
 
@@ -1533,7 +1530,7 @@ We can now inspect the new field construct:
    [280.  282.5 281.  279.  278.  279.5]
    >>> count_variable = tas.data.get_count_variable()
    >>> count_variable
-   TODO
+   <Count: long_name:number of obs for this timeseries(2) >
    >>> print(count_variable.get_array())
    [2 4]
 
@@ -1676,23 +1673,24 @@ We can now inspect the new field construct:
    >>> tas
    <Field: air_temperature(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) K>
    >>> print(tas.get_array())
-   [[[--   , 280.0],
-     [--   , --   ],
-     [282.5, 281.0]],
-     
-    [[--   , 279.0],
-     [--   , --   ],
-     [278.0, 277.5]]],
+   [[[--    280.0]
+     [--    --   ]
+     [282.5 281.0]]
+   
+    [[--    279.0]
+     [--    --   ]
+     [278.0 277.5]]]
    >>> tas.data.get_compression_type()
    'gathered'
    >>> print(tas.data.get_compressed_array())
-   [[280. , 282.5, 281. ],
-    [279. , 278. , 277.5]]
+   [[ 280.   282.5  281. ]
+    [ 279.   278.   277.5]]
    >>> list_variable = tas.data.get_list_variable()
    >>> list_variable 
-   TODO
+   <List: (3) >
    >>> print(list_variable.get_array())
-   [1, 4, 5]
+   [1 4 5]
+
 
 ----
 
