@@ -265,7 +265,7 @@ reference object.
 #                else:
 #                    value = ''
                 string.append('{0}Coordinate conversion:{1} = Domain Ancillary: {2}'.format(
-                    indent1, term, _construct_names.get(key, 'cfdm%{}'.format(key))))
+                    indent1, term, _construct_names.get(key, 'cid%{}'.format(key))))
         else:
             for term, value in sorted(coordinate_conversion.ancillaries.items()):
                 string.append("{0}Coordinate conversion:{1} = {2}".format(
@@ -304,7 +304,7 @@ reference object.
 #                   string.append('{0}{1}'.format(indent1, coord))
         if _construct_names:
             for key in sorted(self.coordinates(), reverse=True):
-                coord = '{}'.format(_construct_names.get(key, 'cfdm%{}'.format(key)))
+                coord = '{}'.format(_construct_names.get(key, 'cid%{}'.format(key)))
                 if key in _dimension_coordinates:
                     coord = 'Dimension Coordinate: '+coord
                 elif key in _auxiliary_coordinates:

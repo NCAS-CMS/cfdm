@@ -193,7 +193,7 @@ TODO
             return 'ncdim%{0}'.format(ncdim)
 
         # Get the name from the identifier
-        return 'cfdm%{0}'.format(axis)
+        return 'cid%{0}'.format(axis)
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,

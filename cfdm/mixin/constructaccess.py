@@ -21,7 +21,7 @@ object.
             name_to_keys = {}
         
             for key, construct in d.items():
-                name = construct.name(default='cfdm%'+key)
+                name = construct.name(default='cid%'+key)
                 name_to_keys.setdefault(name, []).append(key)
                 key_to_name[key] = name
     

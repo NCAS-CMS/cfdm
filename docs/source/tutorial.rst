@@ -1348,16 +1348,13 @@ remain in its compressed form. The underlying compressed array may be
 retrieved as a numpy array with the `get_compressed_array` method of
 the `Data` object.
 
-
-A subspace created by indexing will no longer be compressed,
-i.e. its underlying array will be in incomplete multidimensional
-representation. The original data will, however, retain its underlying
-compressed array.
+A subspace created by indexing (based on the axes of the uncompressed
+form of the data) will no longer be compressed, i.e. its underlying
+array will be in incomplete multidimensional representation. The
+original data will, however, retain its underlying compressed form.
 
 If the data elements are modified by indexed assignment then the
 underlying compressed array is replaced by its uncompressed form.
-
-Indexing is based on the axes of the uncompressed form of the data.
 
 A count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is stored in a `Count` object and is
@@ -1373,7 +1370,6 @@ This is illustrated with the file **contiguous.nc**
 .. code:: bash
    
    $ ncdump -h contiguous.nc
-   netcdf contiguous {
    dimensions:
    	station = 4 ;
    	obs = 24 ;
@@ -1430,28 +1426,44 @@ file:
    >>> h.data.get_compression_type()
    'ragged contiguous'
    >>> print(h.get_array())
-   [[0.0    1.0    2.0     --     --   -- -- -- --] TODO
-    [1.0   11.0   21.0   31.0   41.0 51.0 61.0 -- --]
-    [2.0  102.0  202.0  302.0  402.0 -- -- -- --]
-    [3.0 1003.0 2003.0 3003.0 4003.0 5003.0 6003.0 7003.0 8003.0]]
+   [[0.12 0.05 0.18   --   --   --   --   --   --]
+    [0.05 0.11 0.2  0.15 0.08 0.04 0.06   --   --]
+    [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
+    [0.11 0.03 0.14 0.16 0.02 0.09 0.1  0.04 0.11]]
    >>> print(h.data.get_compressed_array())
-   [0.0 1.0 2.0 1.0 11.0 21.0 31.0 41.0 51.0 61.0 2.0 102.0 202.0 302.0 402.0 TODOm
-    3.0 1003.0 2003.0 3003.0 4003.0 5003.0 6003.0 7003.0 8003.0]
-   >>> count = h.data.get_count_variable()
-   >>> count
-   <Count: long_name:number of observations for this station(4) >
-   >>> print(count.get_array())
-   [3, 7, 5, 9]
+   [0.12 0.05 0.18 0.05 0.11 0.2 0.15 0.08 0.04 0.06 0.15 0.19 0.15 0.17 0.07
+    0.11 0.03 0.14 0.16 0.02 0.09 0.1 0.04 0.11]
+   >>> count_variable = h.data.get_count_variable()
+   >>> count_variable
+   TODO
+   >>> print(count_variable.get_array())
+   [3 7 5 9]
 
 We can easily select the timeseries for the second station by indexing
 the "station" axis of the field construct:
 
 .. code:: python
 	  
-   >>> station = c[1]
-   TODO
+   >>> station = h[1]
+   >>> station
+   <Field: specific_humidity(ncdim%station(1), ncdim%timeseries(9))>
    >>> print(station.get_array())
-   TODO
+   [[0.05 0.11 0.2 0.15 0.08 0.04 0.06 -- --]]
+
+The underlying array of orginal data remains in compressed form until
+data array elements are modified:
+   
+   >>> h.data.get_compression_type()
+   'ragged contiguous'
+   >>> h.data[1, 2] = -9
+   >>> print(h.get_array())
+   [[0.12 0.05 0.18   --   --   --   --   --   --]
+    [0.05 0.11 -9.0 0.15 0.08 0.04 0.06   --   --]
+    [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
+    [0.11 0.03 0.14 0.16 0.02 0.09 0.1  0.04 0.11]]
+   >>> h.data.get_compression_type()
+   ''
+
    
 If the underlying array is compressed at the time of writing to disk
 with the `cfdm.write` function, then it is written to the file as a
@@ -1467,57 +1479,63 @@ A construct with an underlying compressed array is created by
 initialising the `Data` object with a compressed array that is stored
 in one of three special array objects: `RaggedContiguousArray`,
 `RaggedIndexedArray` or `RaggedIndexedContiguousArray`. The following
-code creates an auxiliary coordinate construct with an underlying
-contiguous ragged array:
-
-TODO replace e.g. witha a fIle, and use count.set_propoerty
+code creates a simple field construct with an underlying contiguous
+ragged array:
 
 .. code:: python
 
    import numpy
    import cfdm
-
+   
    # Define the ragged array values
-   ragged_array = numpy.array([10, 30, 40, 30, 60], dtype='float32')
+   ragged_array = numpy.array([280, 282.5, 281, 279, 278, 279.5],
+                              dtype='float32')
 
    # Define the count array values
-   count_array = [2, 3]
+   count_array = [2, 4]
 
-   # Initialise the count variable
+   # Create the count variable
    count_variable = cfdm.Count(data=cfdm.Data(count_array))
    count_variable.set_property('long_name', 'number of obs for this timeseries')
 
-   # Initialise the contiguous ragged array object
+   # Create the contiguous ragged array object
    array = cfdm.RaggedContiguousArray(
-                    compressed_array=cfdm.Data(ragged_array),
-                    shape=(2, 3), size=6, ndim=2,
+                    compressed_array=cfdm.NumpyArray(ragged_array),
+                    shape=(2, 4), size=8, ndim=2,
                     count_variable=count_variable)
 
-   # Initialize the auxiliary coordinate construct with the ragged
-   # array and set some properties
-   z = cfdm.AuxiliaryCoordinate(
-                    data=cfdm.Data(array),
-                    properties={'standard_name': 'height',
-                                'units': 'km',
-                                'positive': 'up'})
+   # Create the field construct with the domain axes and the ragged
+   # array
+   tas = cfdm.Field()
+   tas.properties({'standard_name': 'air_temperature',
+	           'units': 'K'})
+   
+   # Create the domain axis constructs for the uncompressed array
+   X = tas.set_domain_axis(cfdm.DomainAxis(4))
+   Y = tas.set_domain_axis(cfdm.DomainAxis(2))
+   
+   # Set the data for the field
+   tas.set_data(cfdm.Data(array), axes=[Y, X])
 
-We can now inspect the new auxiliary coordinate construct:
+				
+We can now inspect the new field construct:
 
 .. code:: python
    
-   >>> z
-   <AuxiliaryCoordinate: height(2, 3) km>
-   >>> print(z.get_array())
-   [[10.0, 30.0, -- ],
-    [40.0, 30.0, 60.0]]
-   >>> z.data.get_compression_type()
+   >>> tas
+   <Field: air_temperature(cid%domainaxis1(2), cid%domainaxis0(4)) K>
+   >>> print(tas.get_array())
+   [[280.0 282.5    --    --]
+    [281.0 279.0 278.0 279.5]]
+   >>> tas.data.get_compression_type()
    'ragged contiguous'
-   >>> print(z.data.get_compressed_array())
-   [10., 30., 40., 30., 60.]
-   >>> z.data.get_count_variable()
-   <Count: long_name:number of obs for this timeseries(2) >
-   >>> print(z.data.get_count_variable().get_array())
-   [2, 3]
+   >>> print(tas.data.get_compressed_array())
+   [280.  282.5 281.  279.  278.  279.5]
+   >>> count_variable = tas.data.get_count_variable()
+   >>> count_variable
+   TODO
+   >>> print(count_variable.get_array())
+   [2 4]
 
 Gathering
 ---------
@@ -1607,12 +1625,13 @@ written to an output dataset without compression.
    
 A construct with an underlying compressed array is created by
 initializing the `Data` object with a compressed array that is stored
-in the special `GatheredArray` array object. The following code creates
-a simple field construct an underlying gathered array:
+in the special `GatheredArray` array object. The following code
+creates a simple field construct with an underlying gathered array:
 
 .. code:: python
 
-   import cfdm, numpy
+   import numpy	  
+   import cfdm
 
    # Define the gathered values
    gathered_array = numpy.array([[280, 282.5, 281], [279, 278, 277.5]],
@@ -1621,10 +1640,10 @@ a simple field construct an underlying gathered array:
    # Define the list array values
    list_array = [1, 4, 5]
 
-   # Initialise the list variable
+   # Create the list variable
    list_variable = cfdm.List(data=cfdm.Data(list_array))
 
-   # Initialise the gathered array object
+   # Create the gathered array object
    array = cfdm.GatheredArray(
                     compressed_array=cfdm.NumpyArray(gathered_array),
 		    compressed_dimension=1,
@@ -1654,8 +1673,8 @@ We can now inspect the new field construct:
 
 .. code:: python
    
-   >>> print(tas)
-   TODO
+   >>> tas
+   <Field: air_temperature(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) K>
    >>> print(tas.get_array())
    [[[--   , 280.0],
      [--   , --   ],
@@ -1669,9 +1688,10 @@ We can now inspect the new field construct:
    >>> print(tas.data.get_compressed_array())
    [[280. , 282.5, 281. ],
     [279. , 278. , 277.5]]
-   >>> tas.data.get_list_variable()
-   <List: (3) >
-   >>> print(tas.data.get_list_variable().get_array())
+   >>> list_variable = tas.data.get_list_variable()
+   >>> list_variable 
+   TODO
+   >>> print(list_variable.get_array())
    [1, 4, 5]
 
 ----
