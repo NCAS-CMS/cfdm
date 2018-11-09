@@ -764,6 +764,14 @@ access, and for when a construct is not identifiable by other means.
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
    >>> t.constructs(cid='auxiliarycoordinate999')
    {}
+
+Selection is also possible via the :ref:`netCDF interface
+<netcdf_interface>`:
+
+.. code:: python
+
+   >>> t.constructs('ncvar%lon')
+   {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
    
 An individual metadata construct may be returned without its construct
 identifier via the field's `~Field.get_construct` method, which
@@ -925,7 +933,7 @@ method:
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
    >>> description = domain.dump(display=False)
 
-Any changes to domain object are seen by the parent field, and vice
+Changes to domain object are seen by the parent field, and vice
 versa. (This is because the domain is essentially a "view" of the
 relevant metadata constructs contined in the field construct.) The
 field also has a `~Field.domain` attribute that is an alias for the
@@ -994,7 +1002,7 @@ Whether or not two fields are the equal is tested with the field's
    True
    >>> t.equals(t.copy())
    True
-   >>> g = cfdm.read('new_file.nc')
+   >>> g = cfdm.read('new_file.nc') TODO
    >>> g = cfdm.read('new_file.nc')
    >>> f.equals(g[0])
    True
@@ -1005,7 +1013,7 @@ Whether or not two fields are the equal is tested with the field's
 
 Equality is strict by default. This means that for two fields to be
 considered equal they must have corresponding metadata constructs and
-for each pair of field and metadata constructs:
+for each pair of constructs:
 
 * The properties must be the same (with the exception of the field
   construct's "Conventions" property, which is never checked), and 
@@ -1024,9 +1032,6 @@ float). Their default settings may be inspected and changed with the
 
 .. code:: python
 
-   >>> import sys
-   >>> sys.float_info.epsilon
-   2.220446049250313e-16
    >>> cfdm.ATOL()
    2.220446049250313e-16
    >>> original = cfdm.RTOL(0.00001)
@@ -1071,13 +1076,13 @@ often required to interpret and create CF-netCDF datasets. See the
 section on :ref:`philosophy <philosophy>` for a further discussion.
 
 When a netCDF dataset is read, netCDF elements (such as dimension and
-variable names, some attribute values, and even some entire variables)
-that do not have a place in the CF data model are stored within the
-relevant :ref:`cfdm <class_extended>` objects. This allows them to be
-used when writing fields to a new netCDF dataset, and also makes them
-accessible for construct identification.
+variable names, and some attribute values) that do not have a place in
+the CF data model are stored within the relevant :ref:`cfdm
+<class_extended>` objects. This allows them to be used when writing
+fields to a new netCDF dataset, and also makes them accessible for
+construct identification.
 
-Each :ref:`cfdm <class_extended>` class has methods to access any such
+Each :ref:`cfdm <class_extended>` class has methods to access the
 netCDF elements which it requires. For example, the `Field` class has
 the following methods:
 
@@ -1172,13 +1177,9 @@ Method                        Classes                                  NetCDF el
 `!nc_has_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array   
 
 `!nc_set_sample_dimension`    `Count`, `Index`                         Sample  dimension of a ragged array
-    
-`!get_count_variable`         `Data`                                   Count variable of a ragged array 
-
-`!get_index_variable`         `Data`                                   Index variable of a ragged array 
-
-`!get_list_variable`          `Data`                                   List variable of a gathered array 
 ============================  =======================================  =====================================
+
+..        `!get_count_variable`         `Data`                                   Count variable of a ragged array     `!get_index_variable`         `Data`                                   Index variable of a ragged array    `!get_list_variable`          `Data`                                   List variable of a gathered array 
 
 For example:
 
@@ -1202,7 +1203,7 @@ External variables
 ------------------
 
 External variables are those referred to in the dataset, but which are
-not present in it. Instead such variables are stored in other files
+not present in it. Instead, such variables are stored in other files
 known as "external files". External variables may, however, be
 incorporated into the field constructs of the dataset, as if they had
 actually been stored in the same file, simply by providing the
@@ -1298,16 +1299,16 @@ present in the parent dataset:
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> cm = g.get_construct('cell_area')
-   >>> cm
+   >>> area = g.get_construct('cell_area')
+   >>> area
    <CellMeasure: cell_area(9, 10) m2>
-   >>> cm.nc_external()
+   >>> area.nc_external()
    False
-   >>> cm.nc_get_variable()
+   >>> area.nc_get_variable()
    'areacella'
-   >>> cm.properties()
+   >>> area.properties()
    {'standard_name': 'cell_area', 'units': 'm2'}
-   >>> cm.get_data()
+   >>> area.get_data()
    <Data(9, 10): [[100000.5, ..., 100089.5]] m2>
    
 If this field were to be written to disk using `cfdm.write` then by
@@ -1315,23 +1316,23 @@ default the cell measure construct, with all of its metadata and data,
 would be written to the named output file, along with all of the other
 constructs. There would be no "external_variables" global attribute.
 
-In order to write a construct to an external file, and refer to it
-with the "external_variables" global attribute in the parent output
-file, simply set the status of the construct to "external" and provide
-an external file name to the `cfdm.write` function:
+In order to write a metadata construct to an external file, and refer
+to it with the "external_variables" global attribute in the parent
+output file, simply set the status of the construct to "external" and
+provide an external file name to the `cfdm.write` function:
 
 .. code:: python
 
-   >>> cm.nc_external(True)
+   >>> area.nc_external(True)
    False
    >>> cfdm.write(g, 'new_parent.nc', external_file='new_external.nc')
    
 Discrete sampling geometries
 ----------------------------
 
-The CF data model views data arrays that have been compressed by
-convention in their uncompressed form. So, when a collection of
-`discrete sampling geometry (DSG)
+The CF data model views arrays that are compressed by removing
+unwanted missing data in their uncompressed form. So, when a
+collection of `discrete sampling geometry (DSG)
 <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries>`_
 features has been combined using a compressed ragged representation to
 save space, the field construct contains the domain axis constructs
@@ -1362,7 +1363,7 @@ A count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is stored in a `Count` object and is
 retrieved with the `get_count_variable` method of the `Data` object.
 
-An index variable that is required to uncompress a indexed, or indexed
+An index variable that is required to uncompress an indexed, or indexed
 contiguous, ragged array is stored in an `Index` object and is
 retrieved with the `get_index_variable` method of the `Data` object.
 
@@ -1440,16 +1441,16 @@ file:
    >>> count
    <Count: long_name:number of observations for this station(4) >
    >>> print(count.get_array())
-   [3 7 5 9][3 7 5 9]
+   [3, 7, 5, 9]
 
 We can easily select the timeseries for the second station by indexing
-the first (i.e. station) axis of the field construct:
+the "station" axis of the field construct:
 
 .. code:: python
 	  
-   >>> ts1 = c[1]
+   >>> station = c[1]
    TODO
-   >>> print(ts1.get_array())
+   >>> print(station.get_array())
    TODO
    
 If the underlying array is compressed at the time of writing to disk
@@ -1469,12 +1470,16 @@ in one of three special array objects: `RaggedContiguousArray`,
 code creates an auxiliary coordinate construct with an underlying
 contiguous ragged array:
 
+TODO replace e.g. witha a fIle, and use count.set_propoerty
+
 .. code:: python
 
-   import cfdm, numpy
+   import numpy
+   import cfdm
 
    # Define the ragged array values
-   ragged_array = numpy.array([1, 3, 4, 3, 6], dtype='float32')
+   ragged_array = numpy.array([10, 30, 40, 30, 60], dtype='float32')
+
    # Define the count array values
    count_array = [2, 3]
 
@@ -1503,12 +1508,12 @@ We can now inspect the new auxiliary coordinate construct:
    >>> z
    <AuxiliaryCoordinate: height(2, 3) km>
    >>> print(z.get_array())
-   [[1.0, 3.0, -- ],
-    [4.0, 3.0, 6.0]]
+   [[10.0, 30.0, -- ],
+    [40.0, 30.0, 60.0]]
    >>> z.data.get_compression_type()
    'ragged contiguous'
    >>> print(z.data.get_compressed_array())
-   [1., 3., 4., 3., 6.]
+   [10., 30., 40., 30., 60.]
    >>> z.data.get_count_variable()
    <Count: long_name:number of obs for this timeseries(2) >
    >>> print(z.data.get_count_variable().get_array())
@@ -1517,9 +1522,9 @@ We can now inspect the new auxiliary coordinate construct:
 Gathering
 ---------
 
-The CF data model views data arrays that have been compressed by
-convention in their uncompressed form. So, when axes have been
-`compressed by gathering
+The CF data model views arrays that are compressed by removing
+unwanted missing data in their uncompressed form. So, when axes have
+been `compressed by gathering
 <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering>`_,
 the field construct contains the domain axes that have been compressed
 and presents a view of the data in their uncompressed form, even
@@ -1612,6 +1617,7 @@ a simple field construct an underlying gathered array:
    # Define the gathered values
    gathered_array = numpy.array([[280, 282.5, 281], [279, 278, 277.5]],
                                 dtype='float32')
+
    # Define the list array values
    list_array = [1, 4, 5]
 
@@ -1640,7 +1646,9 @@ a simple field construct an underlying gathered array:
 
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
-compressed dimension in the compressed array.
+compressed dimension in the compressed array (with the
+*compressed_dimension* parameter of the `GatheredArray`
+initialisation).
 
 We can now inspect the new field construct:
 
