@@ -1575,7 +1575,7 @@ This is illustrated with the file **gathered.nc** (`download`):
    	time = 2 ;
    	lat = 4 ;
    	lon = 5 ;
-	list = 3 ;
+   	landpoint = 7 ;
    variables:
    	double time(time) ;
    		time:standard_name = "time" ;
@@ -1583,14 +1583,17 @@ This is illustrated with the file **gathered.nc** (`download`):
    	double lat(lat) ;
    		lat:standard_name = "latitude" ;
    		lat:units = "degrees_north" ;
-   	int list(list) ;
-   		list:compress = "lat lon" ;
-   	double pr(time, list) ;
-		pr:standard_name = "precipitation_flux" ;
-		pr:units = "kg m2 s-1" ;
-		
+   	double lon(lon) ;
+   		lon:standard_name = "longitude" ;
+   		lon:units = "degrees_east" ;
+   	int landpoint(landpoint) ;
+   		landpoint:compress = "lat lon" ;
+   	double pr(time, landpoint) ;
+   		pr:standard_name = "precipitation_flux" ;
+   		pr:units = "kg m2 s-1" ;
+   
    // global attributes:
- 		:Conventions = "CF-1.7" ;
+   		:Conventions = "CF-1.7" ;
    }
 
 Reading and inspecting this file shows the data presented in
@@ -1600,16 +1603,32 @@ file:
 
 .. code:: python
 
-   >>> h = cfdm.read('gathered.nc')[0]
-   TODO
-   >>> print(h)
-   TODO
-   >>> h.get_array
-   TODO
-   >>> h.data.get_compressed_array().get_array()
-   TODO
-   >>> h.data.get_list_variable().get_array()
-   TODO
+   >>> p = cfdm.read('gathered.nc')[0]
+   >>> print(p)
+   Field: precipitation_flux (ncvar%pr)
+   ------------------------------------
+   Data            : precipitation_flux(time(2), latitude(4), longitude(5)) kg m2 s-1
+   Dimension coords: time(2) = [2000-02-01 00:00:00, 2000-03-01 00:00:00]
+                   : latitude(4) = [-90.0, ..., -75.0] degrees_north
+                   : longitude(5) = [0.0, ..., 40.0] degrees_east
+   >>> print(p.get_array())
+   [[[--       0.000122 0.0008   --       --      ]
+     [0.000177 --       0.000175 0.00058  --      ]
+     [--       --       --       --       --      ]
+     [--       0.000206 --       0.0007   --      ]]
+					  	 
+    [[--       0.000202 0.000174 --       --      ]
+     [0.00084  --       0.000201 0.0057   --      ]
+     [--       --       --       --       --      ]
+     [--       0.000223 --       0.000102 --      ]]]
+   >>> print(p.data.get_compressed_array())
+   [[0.000122 0.0008   0.000177 0.000175 0.00058 0.000206 0.0007  ]
+    [0.000202 0.000174 0.00084  0.000201 0.0057  0.000223 0.000102]]
+   >>> list_variable = p.data.get_list_variable()
+   >>> list_variable
+   <List: ncvar%landpoint(7) >
+   >>> print(list_variable.get_array())
+   [1 2 5 7 8 16 18]
 
 If the underlying array is compressed at the time of writing to disk
 with the `cfdm.write` function, then it is written to the file as a
