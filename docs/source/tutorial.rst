@@ -740,19 +740,23 @@ with dummy values using `numpy.arange`):
    import numpy
    import cfdm
 
+   # Initialize the field
    tas = cfdm.Field(
 	   properties={'project': 'research',
 	               'standard_name': 'air_temperature',
-                       'units'': 'K'})
+                       'units': 'K'})
 
+   # Create and set domain axes
    axis_T = tas.set_domain_axis(cfdm.DomainAxis(1))
    axis_Z = tas.set_domain_axis(cfdm.DomainAxis(1))
    axis_Y = tas.set_domain_axis(cfdm.DomainAxis(10))
    axis_X = tas.set_domain_axis(cfdm.DomainAxis(9))
 
+   # Set the field data
    tas.set_data(cfdm.Data(numpy.arange(90.).reshape(10, 9),
-	                  axes=[axis_Y, axis_X])
+                axes=[axis_Y, axis_X]))
 
+   # Create and set the cell methods
    cell_method1 = cfdm.CellMethod(
              axes=[axis_Y, axis_X],
              properties={'method': 'mean',
@@ -766,37 +770,45 @@ with dummy values using `numpy.arange`):
    tas.set_cell_method(cell_method1)
    tas.set_cell_method(cell_method1)
 
+   # Create and set the field ancillaries
    field_ancillary = cfdm.FieldAncillary(
                 properties={'standard_name': 'air_temperature standard_error',
                              'units': 'K'},
                 data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
 
+   tas.set_field_ancillary(field_ancillary, axes=[axis_Y, axis_X])
+		
+   # Create and set the dimension coordinates
    dimension_coordinate_T = cfdm.DimensionCoordinate(
                      	      properties={'standard_name': 'time',
                                           'units': 'days since 2018-12-01'},
-	                      data=cfdm.Data([15.5]))
+	                      data=cfdm.Data([15.5]),
 	                      bounds=cfdm.Bounds(cfdm.Data([0, 31])))
 
-   # TODO computed s.n. here?
    dimension_coordinate_Z = cfdm.DimensionCoordinate(
-	    properties={'computed_standard_name': 'altitude',
-                        'standard_name': 'atmosphere_hybrid_height_coordinate',
-            data = cfdm.Data(1.5),
-            bounds=cfdm.Bounds(cfdm.Data([[1.0, 2.0]])))
+	   properties={'computed_standard_name': 'altitude',
+                       'standard_name': 'atmosphere_hybrid_height_coordinate'},
+           data = cfdm.Data([1.5]),
+           bounds=cfdm.Bounds(cfdm.Data([[1.0, 2.0]])))
        
    dimension_coordinate_Y = cfdm.DimensionCoordinate(
 	        properties={'standard_name': 'grid_latitude',
 		            'units': 'degrees'},
-	        data=cfdm.Data(numpy.arange(10.))
+	        data=cfdm.Data(numpy.arange(10.)),
 	        bounds=cfdm.Bounds(cfdm.Data(numpy.arange(20).reshape(10, 2))))
 
    dimension_coordinate_X = cfdm.DimensionCoordinate(
                 properties={'standard_name': 'grid_longitude',
                             'units': 'degrees'},
-	        data=cfdm.Data(numpy.arange(9.))
+	        data=cfdm.Data(numpy.arange(9.)),
 	        bounds=cfdm.Bounds(cfdm.Data(numpy.arange(18).reshape(9, 2))))
 
-   # Create auxiliary coordinates
+   tas.set_dimension_coordinate(dimension_coordinate_T, axes=[axis_T])
+   tas.set_dimension_coordinate(dimension_coordinate_Z, axes=[axis_Z])
+   tas.set_dimension_coordinate(dimension_coordinate_Y, axes=[axis_Y])
+   tas.set_dimension_coordinate(dimension_coordinate_X, axes=[axis_X])
+      
+   # Create and set the auxiliary coordinates
    auxiliary_coordinate_lat = cfdm.AuxiliaryCoordinate(
                          properties={'standard_name': 'latitude',
                                      'units': 'degrees_north'},
@@ -813,7 +825,13 @@ with dummy values using `numpy.arange`):
                           properties={'long_name': 'Grid latitude name'},
                           data=cfdm.Data(array))
 
-   # Create domain ancillaries
+   tas.set_auxiliary_coordinate(dimension_coordinate_lat,
+	                        axes=[axis_Y, axis_X])
+   tas.set_auxiliary_coordinate(dimension_coordinate_lon,
+	                        axes=[axis_X, axis_Y])
+   tas.set_auxiliary_coordinate(dimension_coordinate_name, axes=[axis_Y])
+
+   # Create and set domain ancillaries
    domain_ancaillary_a = cfdm.DomainAncillary(
  	                   properties={'units': 'm'},
 	                   data=cfdm.Data([10.]),
@@ -829,7 +847,11 @@ with dummy values using `numpy.arange`):
                                           'units': 'm'},
 	                      data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
 
-   # Coordinate references
+   tas.set_domain_ancillary(domain_ancillary_a, axes=[axis_Z])
+   tas.set_domain_ancillary(domain_ancillary_b, axes=[axis_Z])
+   tas.set_domain_ancillary(domain_ancillary_orog, axes=[axis_Y, axis_X])
+
+   # Create and set the coordinate references
    datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
 
    horizontal_crs = cfdm.CoordinateReference(datum=datum,
@@ -839,7 +861,6 @@ with dummy values using `numpy.arange`):
                                    auxiliary_coordinate_lat,
 				   auxiliary_coordinate_lon])
 
-   # TODO why computed s.n. here? 
    coordinate_conversion = cfdm.CoordinateConversion(
             parameters={'standard_name', 'atmosphere_hybrid_height_coordinate',
                         'computed_standard_name': 'altitude'},
@@ -851,10 +872,17 @@ with dummy values using `numpy.arange`):
        	             coordinate_conversion=coordinate_conversion,
          	     coordinates=[dimension_coordinate_Z])
 
-   # Cell meausres
+
+   tas.set_coordinate_reference(horizontal_crs)
+   tas.set_coordinate_reference(vertical_crs)
+
+   # Create and set the cell measures
    cell_meausure = cfdm.CellMeasure(measure='area',
             	     properties={'units': 'km2'},
-                     data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))	  
+                     data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
+
+   tas.set_cell_measure(cel_meausre, axes=[axis_Y, axis_X])
+   
 .. _constructs:
 
 Metadata constructs
