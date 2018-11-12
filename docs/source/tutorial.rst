@@ -518,371 +518,6 @@ It is also possible to create netCDF unlimited dimensions and set the
 HDF5 chunk size using the field's `nc_unlimited_dimensions` and
 `nc_chunksize` methods.
 
-.. _field_creation:
-
-Field creation
---------------
-
-Creation of a field construct has three stages:
-
-**Stage 1:** The field construct is created without metadata constructs.
-
-..
-   
-**Stage 2:** Metadata constructs are created independently.
-
-..
-
-**Stage 3:** The metatdata constructs are inserted into the field
-constuct with and cross-references to other, related metadata
-construct (for example, an auxiliary coordinate construct is related
-to an ordered list of the domain axis constructs which correspond to
-its data array dimensions).
-
-There are two equivalent approaches to stages **1** and **2** Either
-as much of the content as possible is specified during object
-instantiation:
-
-.. code:: python
-
-   >>> x = cfdm.Field(properties={'standard_name': 'precipitation_flux'})
-   >>> x
-   <Field: precipitation_flux>
-   >>> dc = cfdm.DimensionCoordinate(properties='long_name': 'Longitude'},
-   ...                               data=cfdm.Data([0, 1, 2..]))
-   >>> dc
-   <DimensionCoordinate: long_name:Longitude(3) >
-   >>> fa = cfdm.FieldAncillary(
-   ...        properties={'standard_name': 'precipitation_flux status_flag'},
-   ...        data=cfdm.Data(numpy.array([0, 0, 2], dtype='int8')))
-   >>> fa
-   <FieldAncillary: precipitation_flux status_flag(3) >
-
-or else some or all content is added after instantiation via object
-methods:
-
-.. code:: python
-
-   >>> x = cfdm.Field()
-   >>> x
-   <Field: >
-   >>> x.set_property('standard_name', 'precipitation_flux')
-   >>> x
-   <Field: precipitation_flux>
-   >>> dc = cfdm.DimensionCoordinate()
-   >>> dc
-   <DimensionCoordinate:  >
-   >>> dc.set_property('long_name', 'Longitude')
-   >>> dc.set_data(cfdm.Data([1, 2, 3.]))
-   <DimensionCoordinate: long_name:Longitude(3) >
-   >>> fa = cfdm.FieldAncillary(
-   ...        data=cfdm.Data(numpy.array([0, 0, 2], dtype='int8')))
-   >>> fa
-   <FieldAncillary: (3) >
-   >>> fa.set_property('standard_name', 'precipitation_flux status_flag')
-   >>> fa
-   <FieldAncillary: precipitation_flux status_flag(3) >
-
-For stage **3**, the field class has the follow methods for setting
-metadata constructs and mapping data array dimensions to domain axes
-constructs:
-
-=============================================  =====================================
-Field method for setting a metadata construct  Description
-=============================================  =====================================
-`~Field.set_auxiliary_coordinate`              Set an auxiliary coordinate construct
-`~Field.set_cell_measure`                      Set an cell measure construct
-`~Field.set_cell_method`                       Set a cell method construct
-`~Field.set_coordinate_reference`              Set a coordinate reference construct
-`~Field.set_dimension_coordinate`              Set a dimension coordinate construct
-`~Field.set_domain_ancillary`                  Set a domain ancillary
-`~Field.set_domain_axis`                       Set a domain axis construct
-`~Field.set_field_ancillary`                   Set a field ancillary construct
-=============================================  =====================================
-
-The following code creates a field construct with properties and data
-and domain axis, cell method and dimension coordinate metadata
-constructs (data arrays have been generated with dummy values using
-`numpy.arange`).
-
-.. code:: python
-
-   import numpy
-   import cfdm
-
-   # Initialise the field with properties
-   Q = cfdm.Field(properties={'project': 'research',
-                              'standard_name': 'specific_humidity',
-                              'units': '1'})
-			      
-   # Create the domain axes
-   domain_axisT = cfdm.DomainAxis(1)
-   domain_axisY = cfdm.DomainAxis(5)
-   domain_axisX = cfdm.DomainAxis(8)
-
-   # Insert the domain axes into the field. The set_domain_axis method
-   # returns the domain axis construct identifier that will be used
-   # later to specify which domain axis corresponds to which dimension
-   # coordinate construct.  
-   axisT = Q.set_domain_axis(domain_axisT)
-   axisY = Q.set_domain_axis(domain_axisY)
-   axisX = Q.set_domain_axis(domain_axisX)
-
-   # Field data
-   data = cfdm.Data(numpy.arange(40.).reshape(5, 8))
-   Q.set_data(data, axes=[axisY, axisX])
-
-   # Create the cell methods
-   cell_method1 = cfdm.CellMethod(axes=['area'], properties={'method': 'mean'})
-
-   cell_method2 = cfdm.CellMethod()
-   cell_method2.set_axes([axisT])
-   cell_method2.properties({'method': 'maximum'})
-
-   # Insert the cell methods into the field
-   Q.set_cell_method(cell_method1)
-   Q.set_cell_method(cell_method2)
-
-   # Create the dimension Coordinates
-   dimT = cfdm.DimensionCoordinate(
-            properties={'standard_name': 'time',
-                        'units': 'days since 2018-12-01'},
-            data=cfdm.Data([15.5]),
-            bounds=cfdm.Bounds(data=cfdm.Data([[0,31.]])))
-				   
-   dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
-		                               'units': 'degrees_north'})
-   array = numpy.arange(5.)
-   dimY.set_data(cfdm.Data(array))
-   bounds_array = numpy.empty((5, 2))
-   bounds_array[:, 0] = array - 0.5
-   bounds_array[:, 1] = array + 0.5
-   bounds = cfdm.Bounds(data=cfdm.Data(bounds_array))
-   dimY.set_bounds(bounds)
-
-   dimX = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(8.)))
-   dimX.properties({'standard_name': 'longitude',
-                    'units': 'degrees_east'})
-  
-   # Insert the dimension coordinates into the field, specifying to
-   # which domain axis each one corresponds
-   Q.set_dimension_coordinate(dimT, axes=[axisT])
-   Q.set_dimension_coordinate(dimY, axes=[axisY])
-   Q.set_dimension_coordinate(dimX, axes=[axisX])
-
-The new field construct may now be inspected:
-   
-.. code:: python
-
-   >>> Q.dump()
-   ------------------------
-   Field: specific_humidity
-   ------------------------
-   project = 'research'
-   standard_name = 'specific_humidity'
-   units = '1'
-   
-   Data(latitude(5), longitude(8)) = [[0.0, ..., 39.0]] 1
-   
-   Cell Method: area: mean
-   Cell Method: time(1): maximum
-   
-   Domain Axis: latitude(5)
-   Domain Axis: longitude(8)
-   Domain Axis: time(1)
-   
-   Dimension coordinate: time
-       standard_name = 'time'
-       units = 'days since 2018-12-01'
-       Data(time(1)) = [2018-12-16 12:00:00]
-       Bounds:Data(time(1), 2) = [[2018-12-01 00:00:00, 2019-01-01 00:00:00]]
-   
-   Dimension coordinate: latitude
-       standard_name = 'latitude'
-       units = 'degrees_north'
-       Data(latitude(5)) = [0.0, ..., 4.0] degrees_north
-       Bounds:Data(latitude(5), 2) = [[-0.5, ..., 4.5]] degrees_north
-   
-   Dimension coordinate: longitude
-       standard_name = 'longitude'
-       units = 'degrees_east'
-       Data(longitude(8)) = [0.0, ..., 7.0] degrees_east
-
-It is not necessary to set the field "Conventions" property, because
-this is automatically included in output files as a netCDF global
-attribute corresponding to the version number (e.g. ``'1.7'``) of
-:ref:`cfdm <class_extended>` being used.
-
-If this field were to be written to a netCDF dataset then, in the
-absence of pre-defined names, default netCDF variable and dimension
-names would be automatically generated (based on standard names where
-they exist). Setting bespoke names is, however, easily done with the
-:ref:`netCDF interface <netcdf_interface>`:
-
-.. code:: python
-
-   Q.nc_set_variable('q')
-
-   domain_axisT.nc_set_dimension('time')
-   domain_axisY.nc_set_dimension('lat')
-   domain_axisX.nc_set_dimension('lon')
-
-   dimT.nc_set_variable('time')
-   dimY.nc_set_variable('lat')
-   dimX.nc_set_variable('lon')
-
-Here is a complete example, that creates a field that contains every
-type of metadata construct (again, data arrays have been generated
-with dummy values using `numpy.arange`):
-
-.. code:: python
-
-   import numpy
-   import cfdm
-
-   # Initialize the field
-   tas = cfdm.Field(
-	   properties={'project': 'research',
-	               'standard_name': 'air_temperature',
-                       'units': 'K'})
-
-   # Create and set domain axes
-   axis_T = tas.set_domain_axis(cfdm.DomainAxis(1))
-   axis_Z = tas.set_domain_axis(cfdm.DomainAxis(1))
-   axis_Y = tas.set_domain_axis(cfdm.DomainAxis(10))
-   axis_X = tas.set_domain_axis(cfdm.DomainAxis(9))
-
-   # Set the field data
-   tas.set_data(cfdm.Data(numpy.arange(90.).reshape(10, 9),
-                axes=[axis_Y, axis_X]))
-
-   # Create and set the cell methods
-   cell_method1 = cfdm.CellMethod(
-             axes=[axis_Y, axis_X],
-             properties={'method': 'mean',
-                         'where': 'land',
-	      		 'intervals': [cfdm.Data(0.1, units='degrees')]})
-				
-   cell_method2 = cfdm.CellMethod(
-                    axes=[axis_T],
-	            properties={'method': 'maximum'})
-   
-   tas.set_cell_method(cell_method1)
-   tas.set_cell_method(cell_method1)
-
-   # Create and set the field ancillaries
-   field_ancillary = cfdm.FieldAncillary(
-                properties={'standard_name': 'air_temperature standard_error',
-                             'units': 'K'},
-                data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
-
-   tas.set_field_ancillary(field_ancillary, axes=[axis_Y, axis_X])
-		
-   # Create and set the dimension coordinates
-   dimension_coordinate_T = cfdm.DimensionCoordinate(
-                     	      properties={'standard_name': 'time',
-                                          'units': 'days since 2018-12-01'},
-	                      data=cfdm.Data([15.5]),
-	                      bounds=cfdm.Bounds(cfdm.Data([0, 31])))
-
-   dimension_coordinate_Z = cfdm.DimensionCoordinate(
-	   properties={'computed_standard_name': 'altitude',
-                       'standard_name': 'atmosphere_hybrid_height_coordinate'},
-           data = cfdm.Data([1.5]),
-           bounds=cfdm.Bounds(cfdm.Data([[1.0, 2.0]])))
-       
-   dimension_coordinate_Y = cfdm.DimensionCoordinate(
-	        properties={'standard_name': 'grid_latitude',
-		            'units': 'degrees'},
-	        data=cfdm.Data(numpy.arange(10.)),
-	        bounds=cfdm.Bounds(cfdm.Data(numpy.arange(20).reshape(10, 2))))
-
-   dimension_coordinate_X = cfdm.DimensionCoordinate(
-                properties={'standard_name': 'grid_longitude',
-                            'units': 'degrees'},
-	        data=cfdm.Data(numpy.arange(9.)),
-	        bounds=cfdm.Bounds(cfdm.Data(numpy.arange(18).reshape(9, 2))))
-
-   tas.set_dimension_coordinate(dimension_coordinate_T, axes=[axis_T])
-   tas.set_dimension_coordinate(dimension_coordinate_Z, axes=[axis_Z])
-   tas.set_dimension_coordinate(dimension_coordinate_Y, axes=[axis_Y])
-   tas.set_dimension_coordinate(dimension_coordinate_X, axes=[axis_X])
-      
-   # Create and set the auxiliary coordinates
-   auxiliary_coordinate_lat = cfdm.AuxiliaryCoordinate(
-                         properties={'standard_name': 'latitude',
-                                     'units': 'degrees_north'},
-                         data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
-
-   auxiliary_coordinate_lon = cfdm.AuxiliaryCoordinate(
-                         properties={'standard_name': 'longitude',
-   		                     'units': 'degrees_east'},
-	                 data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
-
-   array = numpy.ma.array(list('abcdefghij')
-   array[0] = numpy.ma.masked
-   auxiliary_coordinate_name = cfdm.AuxiliaryCoordinate(
-                          properties={'long_name': 'Grid latitude name'},
-                          data=cfdm.Data(array))
-
-   tas.set_auxiliary_coordinate(dimension_coordinate_lat,
-	                        axes=[axis_Y, axis_X])
-   tas.set_auxiliary_coordinate(dimension_coordinate_lon,
-	                        axes=[axis_X, axis_Y])
-   tas.set_auxiliary_coordinate(dimension_coordinate_name, axes=[axis_Y])
-
-   # Create and set domain ancillaries
-   domain_ancaillary_a = cfdm.DomainAncillary(
- 	                   properties={'units': 'm'},
-	                   data=cfdm.Data([10.]),
-                           bounds=cfdm.Bounds(cfdm.Data([[[5.0, 15.0]]))))
-
-   domain_ancaillary_b = cfdm.DomainAncillary(
-	                   properties={'units': '1'},
-      	                   data=cfdm.Data([20.]),
-	                   bounds=cfdm.Bounds(cfdm.Data([[[14, 26.]]))))
-
-   domain_ancaillary_orog = cfdm.DomainAncillary(
-                      	      properties={'standard_name': 'surface_altitude',
-                                          'units': 'm'},
-	                      data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
-
-   tas.set_domain_ancillary(domain_ancillary_a, axes=[axis_Z])
-   tas.set_domain_ancillary(domain_ancillary_b, axes=[axis_Z])
-   tas.set_domain_ancillary(domain_ancillary_orog, axes=[axis_Y, axis_X])
-
-   # Create and set the coordinate references
-   datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
-
-   horizontal_crs = cfdm.CoordinateReference(datum=datum,
-    	              coordinate_conversion=coordinate_conversion,
-	              coordinates=[dimension_coordinate_X,
-                                   dimension_coordinate_Y,
-                                   auxiliary_coordinate_lat,
-				   auxiliary_coordinate_lon])
-
-   coordinate_conversion = cfdm.CoordinateConversion(
-            parameters={'standard_name', 'atmosphere_hybrid_height_coordinate',
-                        'computed_standard_name': 'altitude'},
-            domain_ancillaries={'a': domain_ancillary_a,
-                                'b': domain_ancillary_a,
-                            	'orog': domain_ancillary_orog})
-
-    vertical_crs = cfdm.CoordinateReference(datum=datum,
-       	             coordinate_conversion=coordinate_conversion,
-         	     coordinates=[dimension_coordinate_Z])
-
-
-   tas.set_coordinate_reference(horizontal_crs)
-   tas.set_coordinate_reference(vertical_crs)
-
-   # Create and set the cell measures
-   cell_meausure = cfdm.CellMeasure(measure='area',
-            	     properties={'units': 'km2'},
-                     data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
-
-   tas.set_cell_measure(cel_meausre, axes=[axis_Y, axis_X])
-   
 .. _constructs:
 
 Metadata constructs
@@ -1146,6 +781,431 @@ Where applicable, these classes also share the same API as the field:
    {'a': 'domainancillary0',
     'b': 'domainancillary1',
     'orog': 'domainancillary2'}
+
+.. _field_creation:
+
+Field creation
+--------------
+
+Creation of a field construct has three stages:
+
+**Stage 1:** The field construct is created without metadata constructs.
+
+..
+   
+**Stage 2:** Metadata constructs are created independently.
+
+..
+
+**Stage 3:** The metadata constructs are inserted into the field
+construct with cross-references to other, related metadata constructs
+(for example, an auxiliary coordinate construct is related to an
+ordered list of the domain axis constructs which correspond to its
+data array dimensions).
+
+There are two equivalent approaches to stages **1** and **2**.
+
+Either as much of the content as possible is specified during object
+instantiation:
+
+.. code:: python
+
+   >>> x = cfdm.Field(properties={'standard_name': 'precipitation_flux'})
+   >>> x
+   <Field: precipitation_flux>
+   >>> dc = cfdm.DimensionCoordinate(properties='long_name': 'Longitude'},
+   ...                               data=cfdm.Data([0, 1, 2..]))
+   >>> dc
+   <DimensionCoordinate: long_name:Longitude(3) >
+   >>> fa = cfdm.FieldAncillary(
+   ...        properties={'standard_name': 'precipitation_flux status_flag'},
+   ...        data=cfdm.Data(numpy.array([0, 0, 2], dtype='int8')))
+   >>> fa
+   <FieldAncillary: precipitation_flux status_flag(3) >
+
+or else some or all content is added after instantiation via object
+methods:
+
+.. code:: python
+
+   >>> x = cfdm.Field()
+   >>> x
+   <Field: >
+   >>> x.set_property('standard_name', 'precipitation_flux')
+   >>> x
+   <Field: precipitation_flux>
+   >>> dc = cfdm.DimensionCoordinate()
+   >>> dc
+   <DimensionCoordinate:  >
+   >>> dc.set_property('long_name', 'Longitude')
+   >>> dc.set_data(cfdm.Data([1, 2, 3.]))
+   <DimensionCoordinate: long_name:Longitude(3) >
+   >>> fa = cfdm.FieldAncillary(
+   ...        data=cfdm.Data(numpy.array([0, 0, 2], dtype='int8')))
+   >>> fa
+   <FieldAncillary: (3) >
+   >>> fa.set_property('standard_name', 'precipitation_flux status_flag')
+   >>> fa
+   <FieldAncillary: precipitation_flux status_flag(3) >
+
+For stage **3**, the field class has the following methods for setting
+metadata constructs and mapping data array dimensions to domain axes
+constructs:
+
+=============================================  ======================================================================
+Field method for setting a metadata construct  Description
+=============================================  ======================================================================
+`~Field.set_domain_axis`                       Set a domain axis construct
+`~Field.set_cell_method`                       Set a cell method construct
+`~Field.set_field_ancillary`                   Set a field ancillary construct and the axes spanned by its data
+`~Field.set_auxiliary_coordinate`              Set an auxiliary coordinate construct and the axes spanned by its data
+`~Field.set_cell_measure`                      Set an cell measure construct and the axes spanned by its data
+`~Field.set_dimension_coordinate`              Set a dimension coordinate construct and the axes spanned by its data
+`~Field.set_domain_ancillary`                  Set a domain ancillary and the axes spanned by its data
+`~Field.set_coordinate_reference`              Set a coordinate reference construct
+=============================================  ======================================================================
+
+These methods all return the field's construct identifier, which can
+be used when other metadata constructs are added to the field (e.g. to
+specify which domain axis constructs correspond to a data array), or
+when other metadata constructs are created (e.g. to identify the
+domain ancillary constructs forming part of a coordinate reference
+construct's definition):
+
+.. code:: python
+	  
+   >>> longitude_axis = x.set_domain_axis(cfdm.DomainAxis(3))
+   >>> longitude_axis
+   'domainaxis0'
+   >>> cid = x.set_dimension_coordinate(dc, axes=[longitude_axis])
+   >>> cid
+   'dimensioncoordinate0'
+   >>> cm = cfdm.CellMethod(axes=[longitude_axis],
+   ...                      properties={'method': 'minimum'})
+   >>> x.set_cell_method(cm)
+   'cellmethod0'
+   
+In general, the order in which metadata constructs are added to the
+field does not matter except when a metadata construct is required by
+another, in which case the former must be added to the field first so
+that its construct identifier is available to the latter.
+
+One other restriction is that cell method constructs must be set in
+the relative order in which their methods were applied to the data.
+
+The following code creates a field construct with properties and data
+and domain axis, cell method and dimension coordinate metadata
+constructs (data arrays have been generated with dummy values using
+`numpy.arange`).
+
+.. code:: python
+
+   import numpy
+   import cfdm
+
+   # Initialise the field with properties
+   Q = cfdm.Field(properties={'project': 'research',
+                              'standard_name': 'specific_humidity',
+                              'units': '1'})
+			      
+   # Create the domain axes
+   domain_axisT = cfdm.DomainAxis(1)
+   domain_axisY = cfdm.DomainAxis(5)
+   domain_axisX = cfdm.DomainAxis(8)
+
+   # Insert the domain axes into the field. The set_domain_axis method
+   # returns the domain axis construct identifier that will be used
+   # later to specify which domain axis corresponds to which dimension
+   # coordinate construct.  
+   axisT = Q.set_domain_axis(domain_axisT)
+   axisY = Q.set_domain_axis(domain_axisY)
+   axisX = Q.set_domain_axis(domain_axisX)
+
+   # Field data
+   data = cfdm.Data(numpy.arange(40.).reshape(5, 8))
+   Q.set_data(data, axes=[axisY, axisX])
+
+   # Create the cell methods
+   cell_method1 = cfdm.CellMethod(axes=['area'], properties={'method': 'mean'})
+
+   cell_method2 = cfdm.CellMethod()
+   cell_method2.set_axes([axisT])
+   cell_method2.properties({'method': 'maximum'})
+
+   # Insert the cell methods into the field
+   Q.set_cell_method(cell_method1)
+   Q.set_cell_method(cell_method2)
+
+   # Create the dimension Coordinates
+   dimT = cfdm.DimensionCoordinate(
+            properties={'standard_name': 'time',
+                        'units': 'days since 2018-12-01'},
+            data=cfdm.Data([15.5]),
+            bounds=cfdm.Bounds(data=cfdm.Data([[0,31.]])))
+				   
+   dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
+		                               'units': 'degrees_north'})
+   array = numpy.arange(5.)
+   dimY.set_data(cfdm.Data(array))
+   bounds_array = numpy.empty((5, 2))
+   bounds_array[:, 0] = array - 0.5
+   bounds_array[:, 1] = array + 0.5
+   bounds = cfdm.Bounds(data=cfdm.Data(bounds_array))
+   dimY.set_bounds(bounds)
+
+   dimX = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(8.)))
+   dimX.properties({'standard_name': 'longitude',
+                    'units': 'degrees_east'})
+  
+   # Insert the dimension coordinates into the field, specifying to
+   # which domain axis each one corresponds
+   Q.set_dimension_coordinate(dimT, axes=[axisT])
+   Q.set_dimension_coordinate(dimY, axes=[axisY])
+   Q.set_dimension_coordinate(dimX, axes=[axisX])
+
+The new field construct may now be inspected:
+   
+.. code:: python
+
+   >>> Q.dump()
+   ------------------------
+   Field: specific_humidity
+   ------------------------
+   project = 'research'
+   standard_name = 'specific_humidity'
+   units = '1'
+   
+   Data(latitude(5), longitude(8)) = [[0.0, ..., 39.0]] 1
+   
+   Cell Method: area: mean
+   Cell Method: time(1): maximum
+   
+   Domain Axis: latitude(5)
+   Domain Axis: longitude(8)
+   Domain Axis: time(1)
+   
+   Dimension coordinate: time
+       standard_name = 'time'
+       units = 'days since 2018-12-01'
+       Data(time(1)) = [2018-12-16 12:00:00]
+       Bounds:Data(time(1), 2) = [[2018-12-01 00:00:00, 2019-01-01 00:00:00]]
+   
+   Dimension coordinate: latitude
+       standard_name = 'latitude'
+       units = 'degrees_north'
+       Data(latitude(5)) = [0.0, ..., 4.0] degrees_north
+       Bounds:Data(latitude(5), 2) = [[-0.5, ..., 4.5]] degrees_north
+   
+   Dimension coordinate: longitude
+       standard_name = 'longitude'
+       units = 'degrees_east'
+       Data(longitude(8)) = [0.0, ..., 7.0] degrees_east
+
+It is not necessary to set the field "Conventions" property, because
+this is automatically included in output files as a netCDF global
+attribute corresponding to the version number (e.g. ``'1.7'``) of
+:ref:`cfdm <class_extended>` being used.
+
+If this field were to be written to a netCDF dataset then, in the
+absence of pre-defined names, default netCDF variable and dimension
+names would be automatically generated (based on standard names where
+they exist). Setting bespoke names is, however, easily done with the
+:ref:`netCDF interface <netcdf_interface>`:
+
+.. code:: python
+
+   Q.nc_set_variable('q')
+
+   domain_axisT.nc_set_dimension('time')
+   domain_axisY.nc_set_dimension('lat')
+   domain_axisX.nc_set_dimension('lon')
+
+   dimT.nc_set_variable('time')
+   dimY.nc_set_variable('lat')
+   dimX.nc_set_variable('lon')
+
+Here is a complete example, that creates a field that contains every
+type of metadata construct (again, data arrays have been generated
+with dummy values using `numpy.arange`):
+
+.. code:: python
+
+   import numpy
+   import cfdm
+
+   # Initialize the field
+   tas = cfdm.Field(
+	   properties={'project': 'research',
+	               'standard_name': 'air_temperature',
+                       'units': 'K'})
+
+   # Create and set domain axes
+   axis_T = tas.set_domain_axis(cfdm.DomainAxis(1))
+   axis_Z = tas.set_domain_axis(cfdm.DomainAxis(1))
+   axis_Y = tas.set_domain_axis(cfdm.DomainAxis(10))
+   axis_X = tas.set_domain_axis(cfdm.DomainAxis(9))
+
+   # Set the field data
+   tas.set_data(cfdm.Data(numpy.arange(90.).reshape(10, 9)),
+                axes=[axis_Y, axis_X])
+
+   # Create and set the cell methods
+   cell_method1 = cfdm.CellMethod(
+             axes=[axis_Y, axis_X],
+             properties={'method': 'mean',
+                         'where': 'land',
+	      		 'intervals': [cfdm.Data(0.1, units='degrees')]})
+				
+   cell_method2 = cfdm.CellMethod(
+                    axes=[axis_T],
+	            properties={'method': 'maximum'})
+   
+   tas.set_cell_method(cell_method1)
+   tas.set_cell_method(cell_method2)
+
+   # Create and set the field ancillaries
+   field_ancillary = cfdm.FieldAncillary(
+                properties={'standard_name': 'air_temperature standard_error',
+                             'units': 'K'},
+                data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
+
+   tas.set_field_ancillary(field_ancillary, axes=[axis_Y, axis_X])
+		
+   # Create and set the dimension coordinates
+   dimension_coordinate_T = cfdm.DimensionCoordinate(
+                     	      properties={'standard_name': 'time',
+                                          'units': 'days since 2018-12-01'},
+	                      data=cfdm.Data([15.5]),
+	                      bounds=cfdm.Bounds(data=cfdm.Data([[0., 31]])))
+
+   dimension_coordinate_Z = cfdm.DimensionCoordinate(
+	   properties={'computed_standard_name': 'altitude',
+                       'standard_name': 'atmosphere_hybrid_height_coordinate'},
+           data = cfdm.Data([1.5]),
+           bounds=cfdm.Bounds(data=cfdm.Data([[1.0, 2.0]])))
+       
+   dimension_coordinate_Y = cfdm.DimensionCoordinate(
+	   properties={'standard_name': 'grid_latitude',
+	                'units': 'degrees'},
+	   data=cfdm.Data(numpy.arange(10.)),
+           bounds=cfdm.Bounds(data=cfdm.Data(numpy.arange(20).reshape(10, 2))))
+
+   dimension_coordinate_X = cfdm.DimensionCoordinate(
+           properties={'standard_name': 'grid_longitude',
+                       'units': 'degrees'},
+	   data=cfdm.Data(numpy.arange(9.)),
+	   bounds=cfdm.Bounds(data=cfdm.Data(numpy.arange(18).reshape(9, 2))))
+
+   tas.set_dimension_coordinate(dimension_coordinate_T, axes=[axis_T])
+   tas.set_dimension_coordinate(dimension_coordinate_Z, axes=[axis_Z])
+   tas.set_dimension_coordinate(dimension_coordinate_Y, axes=[axis_Y])
+   tas.set_dimension_coordinate(dimension_coordinate_X, axes=[axis_X])
+      
+   # Create and set the auxiliary coordinates
+   auxiliary_coordinate_lat = cfdm.AuxiliaryCoordinate(
+                         properties={'standard_name': 'latitude',
+                                     'units': 'degrees_north'},
+                         data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
+
+   auxiliary_coordinate_lon = cfdm.AuxiliaryCoordinate(
+                         properties={'standard_name': 'longitude',
+   		                     'units': 'degrees_east'},
+	                 data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
+
+   array = numpy.ma.array(list('abcdefghij'))
+   array[0] = numpy.ma.masked
+   auxiliary_coordinate_name = cfdm.AuxiliaryCoordinate(
+                          properties={'long_name': 'Grid latitude name'},
+                          data=cfdm.Data(array))
+
+   tas.set_auxiliary_coordinate(auxiliary_coordinate_lat,
+	                        axes=[axis_Y, axis_X])
+   tas.set_auxiliary_coordinate(auxiliary_coordinate_lon,
+	                        axes=[axis_X, axis_Y])
+   tas.set_auxiliary_coordinate(auxiliary_coordinate_name, axes=[axis_Y])
+
+   # Create and set domain ancillaries
+   domain_ancillary_a = cfdm.DomainAncillary(
+ 	                  properties={'units': 'm'},
+	                  data=cfdm.Data([10.]),
+                          bounds=cfdm.Bounds(data=cfdm.Data([[5., 15.]])))
+
+   domain_ancillary_b = cfdm.DomainAncillary(
+	                  properties={'units': '1'},
+      	                  data=cfdm.Data([20.]),
+	                  bounds=cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
+
+   domain_ancillary_orog = cfdm.DomainAncillary(
+                     	     properties={'standard_name': 'surface_altitude',
+                                          'units': 'm'},
+	                     data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
+
+   tas.set_domain_ancillary(domain_ancillary_a, axes=[axis_Z])
+   tas.set_domain_ancillary(domain_ancillary_b, axes=[axis_Z])
+   tas.set_domain_ancillary(domain_ancillary_orog, axes=[axis_Y, axis_X])
+
+   # Create and set the coordinate references
+   datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
+
+   coordinate_conversion_h = cfdm.CoordinateConversion(
+                 parameters={'grid_mapping_name': 'rotated_latitude_longitude',
+                             'grid_north_pole_latitude': 38.0,
+                             'grid_north_pole_longitude': 190.0})
+
+   horizontal_crs = cfdm.CoordinateReference(
+                      datum=datum,
+    	              coordinate_conversion=coordinate_conversion_h,
+	              coordinates=[dimension_coordinate_X,
+                                   dimension_coordinate_Y,
+                                   auxiliary_coordinate_lat,
+				   auxiliary_coordinate_lon])
+
+   coordinate_conversion_v = cfdm.CoordinateConversion(
+            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
+                        'computed_standard_name': 'altitude'},
+            domain_ancillaries={'a': domain_ancillary_a,
+                                'b': domain_ancillary_a,
+                            	'orog': domain_ancillary_orog})
+
+   vertical_crs = cfdm.CoordinateReference(
+                    datum=datum,
+     	            coordinate_conversion=coordinate_conversion_v,
+        	    coordinates=[dimension_coordinate_Z])
+
+   tas.set_coordinate_reference(horizontal_crs)
+   tas.set_coordinate_reference(vertical_crs)
+
+   # Create and set the cell measures
+   cell_measure = cfdm.CellMeasure(measure='area',
+                    properties={'units': 'km2'},
+                    data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
+
+   tas.set_cell_measure(cell_measure, axes=[axis_X, axis_Y])
+
+The new field construct may now be inspected:
+
+.. code:: python
+
+   >>> print(tas)
+   Field: air_temperature
+   ----------------------
+   Data            : air_temperature(grid_latitude(10), grid_longitude(9)) K
+   Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+   Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] K
+   Dimension coords: time(1) = [2018-12-16 12:00:00]
+                   : atmosphere_hybrid_height_coordinate(1) = [1.5]
+                   : grid_latitude(10) = [0.0, ..., 9.0] degrees
+                   : grid_longitude(9) = [0.0, ..., 8.0] degrees
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] degrees_north
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] degrees_east
+                   : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., j]
+   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
+   Coord references: atmosphere_hybrid_height_coordinate
+                   : rotated_latitude_longitude
+   Domain ancils   : domainancillary0(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : domainancillary1(atmosphere_hybrid_height_coordinate(1)) = [20.0] 1
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m
+
 
 .. _domain:    
 
@@ -1812,7 +1872,8 @@ A list variable that is required to uncompress a gathered array is
 stored in a `List` object and is retrieved with the
 `get_list_variable` method of the `Data` object.
 
-This is illustrated with the file **gathered.nc** (`download`):
+This is illustrated with the file **gathered.nc** (:download:`download
+<../netcdf_files/gathered.nc>`, 1kB) [#files]_:
 
 .. code:: bash
    
