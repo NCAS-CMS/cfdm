@@ -794,6 +794,7 @@ ancillaries, field ancillaries).
         found = []
             
         for external_file in external_files:
+            print('external_file=',external_file)
             external_read_vars = self.read(external_file, _scan_only=True,
                                            verbose=False)
             # Reset self.read_vars

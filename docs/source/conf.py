@@ -49,6 +49,7 @@ extensions = ['sphinx.ext.autodoc',
 #              'sphinx.ext.inheritance_diagram',
               'sphinx.ext.intersphinx',
               'sphinx.ext.doctest',
+              'sphinx.ext.githubpages',
               ]
 
 # Boolean indicating whether to scan all found documents for
@@ -82,6 +83,14 @@ intersphinx_mapping = {
     'scipy':      ('http://docs.scipy.org/doc/scipy/reference', None),
     'netCDF4':    ('http://unidata.github.io/netcdf4-python', None),
     }
+
+# This extension is meant to help with the common pattern of having
+# many external links that point to URLs on one and the same site,
+# e.g. links to bug trackers, version control web interfaces, or
+# simply subpages in other websites. It does so by providing aliases
+# to base URLs, so that you only need to give the subpage name when
+# creating a link.
+# extlinks = {'CF': ('http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#%s', 'cf')}
 
 # The name of the default domain. Can also be None to disable a
 # default domain. The default is 'py'.

@@ -51,7 +51,8 @@ All formats of netCDF3 and netCDF4 files can be read.
 
 The `cfdm.read` function has optional parameters to
 
-* provide files that contain :ref:`external variables <external>`, and
+* provide files that contain :ref:`external variables
+  <external_variables>`, and
 
 * return "metadata" netCDF variables (i.e. those that are referenced
   from CF-netCDF data variables) as independent fields.
@@ -72,7 +73,8 @@ Inspection
 The contents of a field may be inspected at three different levels of
 detail.
 
-.. rubric:: 1: Minimal detail
+Minimal detail
+^^^^^^^^^^^^^^
 
 The built-in `repr` function returns a short, one-line description of
 the field:
@@ -91,7 +93,8 @@ identities and sizes of the domain axis constructs spanned by the
 field's data array (latitude and longitude with sizes 5 and 8
 respectively) and the units of the field's data ("1").
 
-.. rubric:: 2: Medium detail
+Medium detail
+^^^^^^^^^^^^^
 
 The built-in `str` function returns the same information as the the
 one-line output, along with short descriptions of the field's other
@@ -132,7 +135,8 @@ This shows the same one-line summary of the field as before, with
 one-line summaries of all of the metadata constructs, which include
 the first and last values of their data arrays.
 
-.. rubric:: 3: Full detail
+Full detail
+^^^^^^^^^^^
 
 The field's `~cfdm.Field.dump` method gives all properties of all
 constructs and includes other construct components, such as coordinate
@@ -294,16 +298,16 @@ and `~Field.set_property` methods:
 
 .. code:: python
 
-   >>> f.has_property('standard_name')
+   >>> t.has_property('standard_name')
    True
-   >>> f.get_property('standard_name')
+   >>> t.get_property('standard_name')
    'air_temperature'
-   >>> f.del_property('standard_name')
+   >>> t.del_property('standard_name')
    'air_temperature'
-   >>> f.get_property('standard_name', 'not set')
+   >>> t.get_property('standard_name', 'not set')
    'not set'
-   >>> f.set_property('standard_name', 'air_temperature')
-   >>> f.get_property('standard_name', 'not set')
+   >>> t.set_property('standard_name', 'air_temperature')
+   >>> t.get_property('standard_name', 'not set')
    'air_temperature'
 
 All properties may be completely replaced with another collection by
@@ -492,7 +496,7 @@ netCDF file on disk:
    >>> q
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
    >>> cfdm.write(q, 'q_file.nc')
-   >>> f
+   >>> x
    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
    >>> cfdm.write(f, 'new_file.nc')
@@ -506,7 +510,8 @@ The `cfdm.write` function has optional parameters to
   variable attributes and which should, if possible, become netCDF
   global attributes;
   
-* create :ref:`external variables <external>` in an external file;
+* create :ref:`external variables <external_variables>` in an external
+  file;
 
 * change the data type of output data arrays;
   
@@ -601,10 +606,12 @@ metadata constructs by
 
 * property value,
 
-* other attribute value (such as netCDF variable name),
+* whether or the data array spans particular domain axes, 
   
-* whether or the data array spans particular domain axes, and
-
+* netCDF variable name,
+  
+* netCDF dimension name, and 
+  
 * construct identifier.  
 
 .. code:: python
@@ -810,11 +817,11 @@ instantiation:
 
 .. code:: python
 
-   >>> x = cfdm.Field(properties={'standard_name': 'precipitation_flux'})
-   >>> x
+   >>> p = cfdm.Field(properties={'standard_name': 'precipitation_flux'})
+   >>> p
    <Field: precipitation_flux>
-   >>> dc = cfdm.DimensionCoordinate(properties='long_name': 'Longitude'},
-   ...                               data=cfdm.Data([0, 1, 2..]))
+   >>> dc = cfdm.DimensionCoordinate(properties={'long_name': 'Longitude'},
+   ...                               data=cfdm.Data([0, 1, 2.]))
    >>> dc
    <DimensionCoordinate: long_name:Longitude(3) >
    >>> fa = cfdm.FieldAncillary(
@@ -828,11 +835,11 @@ methods:
 
 .. code:: python
 
-   >>> x = cfdm.Field()
-   >>> x
+   >>> p = cfdm.Field()
+   >>> p
    <Field: >
-   >>> x.set_property('standard_name', 'precipitation_flux')
-   >>> x
+   >>> p.set_property('standard_name', 'precipitation_flux')
+   >>> p
    <Field: precipitation_flux>
    >>> dc = cfdm.DimensionCoordinate()
    >>> dc
@@ -865,30 +872,30 @@ Field method for setting a metadata construct  Description
 `~Field.set_coordinate_reference`              Set a coordinate reference construct
 =============================================  ======================================================================
 
-These methods all return the field's construct identifier, which can
-be used when other metadata constructs are added to the field (e.g. to
-specify which domain axis constructs correspond to a data array), or
-when other metadata constructs are created (e.g. to identify the
-domain ancillary constructs forming part of a coordinate reference
-construct's definition):
+These methods all return a construct identifier which can be used when
+other metadata constructs are added to the field (e.g. to specify
+which domain axis constructs correspond to a data array), or when
+other metadata constructs are created (e.g. to identify the domain
+ancillary constructs forming part of a coordinate reference
+construct):
 
 .. code:: python
 	  
-   >>> longitude_axis = x.set_domain_axis(cfdm.DomainAxis(3))
+   >>> longitude_axis = p.set_domain_axis(cfdm.DomainAxis(3))
    >>> longitude_axis
    'domainaxis0'
-   >>> cid = x.set_dimension_coordinate(dc, axes=[longitude_axis])
+   >>> cid = p.set_dimension_coordinate(dc, axes=[longitude_axis])
    >>> cid
    'dimensioncoordinate0'
    >>> cm = cfdm.CellMethod(axes=[longitude_axis],
    ...                      properties={'method': 'minimum'})
-   >>> x.set_cell_method(cm)
+   >>> p.set_cell_method(cm)
    'cellmethod0'
    
 In general, the order in which metadata constructs are added to the
-field does not matter except when a metadata construct is required by
-another, in which case the former must be added to the field first so
-that its construct identifier is available to the latter.
+field does not matter except when one metadata construct is required
+by another, in which case the former must be added to the field first
+so that its construct identifier is available to the latter.
 
 One other restriction is that cell method constructs must be set in
 the relative order in which their methods were applied to the data.
@@ -1009,8 +1016,8 @@ attribute corresponding to the version number (e.g. ``'1.7'``) of
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
-they exist). Setting bespoke names is, however, easily done with the
-:ref:`netCDF interface <netcdf_interface>`:
+they exist). The setting of bespoke names is, however, easily done
+with the :ref:`netCDF interface <netcdf_interface>`:
 
 .. code:: python
 
@@ -1024,7 +1031,7 @@ they exist). Setting bespoke names is, however, easily done with the
    dimY.nc_set_variable('lat')
    dimX.nc_set_variable('lon')
 
-Here is a complete example, that creates a field that contains every
+Here is a complete example which creates a field that contains every
 type of metadata construct (again, data arrays have been generated
 with dummy values using `numpy.arange`):
 
@@ -1247,13 +1254,13 @@ and methods of the domain object:
 
 .. code:: python
 
-   >>> t.domain.get_construct('latitude').set_property('test', 'set by domain')
+   >>> domain.get_construct('latitude').set_property('test', 'set by domain')
    >>> t.get_construct('latitude').get_property('test')
    'set by domain'
    >>> t.get_construct('latitude').set_property('test', 'set by field')
-   >>> t.domain.get_construct('latitude').get_property('test')
+   >>> domain.get_construct('latitude').get_property('test')
    'set by field'
-   >>> t.domain.get_construct('latitude').del_property('test')
+   >>> domain.get_construct('latitude').del_property('test')
    'set by field'
    >>> t.get_construct('latitude').has_property('test')
    False
@@ -1276,17 +1283,19 @@ deep copy, i.e. the new field is completely independent of the original field.
 
 Equivalently, the `copy.deepcopy` function may be used:
 
-   >>> import copy
+.. code:: python
+
+>>> import copy
    >>> u = copy.deepcopy(t)
 
 Metadata constructs may be individually copied in the same manner:
 
 .. code:: python
 
-   >>> orog = f.get_construct('surface_altitude').copy()
+   >>> orog = t.get_construct('surface_altitude').copy()
 
 *Note on performance*
-  Data objects within the field are copied with a `copy-on-write
+  `Data` objects within the field are copied with a `copy-on-write
   <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This
   means that a copy of a field takes up very little extra memory, even
   when the original field contains very large data arrays, and the
@@ -1298,7 +1307,7 @@ Metadata constructs may be individually copied in the same manner:
 Equality
 --------
 
-Whether or not two fields are the equal is tested with the field's
+Whether or not two fields are equal is tested with the field's
 `~cfdm.Field.equals` method.
 
 .. code:: python
@@ -1318,8 +1327,8 @@ Equality is strict by default. This means that for two fields to be
 considered equal they must have corresponding metadata constructs and
 for each pair of constructs:
 
-* The properties must be the same (with the exception of the field
-  construct's "Conventions" property, which is never checked), and 
+* the properties must be the same (with the exception of the field
+  construct's "Conventions" property, which is never checked), and
 
 * if there are data arrays then they must have same shape, data type
   and be element-wise equal.
@@ -1330,8 +1339,8 @@ tolerance on absolute differences) and :math:`rtol` (the tolerance on
 relative differences) are positive, typically very small numbers. By
 default both are set to the system epsilon (the difference between 1
 and the least value greater than 1 that is representable as a
-float). Their default settings may be inspected and changed with the
-`cfdm.ATOL` and `cfdm.RTOL` functions:
+float). Their values may be inspected and changed with the `cfdm.ATOL`
+and `cfdm.RTOL` functions:
 
 .. code:: python
 
@@ -1351,7 +1360,7 @@ NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
 
-The `~Field.equals` function has optional parameters for relaxing the
+The `~Field.equals` function has optional parameters for modifying the
 criteria for considering two fields to be equal:
 
 * named properties may be omitted from the comparison,
@@ -1368,8 +1377,8 @@ criteria for considering two fields to be equal:
 
 .. _netcdf_interface:
 
-NeCDF interface
----------------
+NetCDF interface
+----------------
 
 The logical CF data model is independent of netCDF, but the CF
 conventions are designed to enable the processing and sharing of
@@ -1381,10 +1390,10 @@ section on :ref:`philosophy <philosophy>` for a further discussion.
 
 When a netCDF dataset is read, netCDF elements (such as dimension and
 variable names, and some attribute values) that do not have a place in
-the CF data model are stored within the relevant :ref:`cfdm
-<class_extended>` objects. This allows them to be used when writing
-fields to a new netCDF dataset, and also makes them accessible for
-construct identification.
+the CF data model are, nevertheless, stored within the relevant
+:ref:`cfdm <class_extended>` objects. This allows them to be used when
+writing fields to a new netCDF dataset, and also makes them accessible
+for construct identification.
 
 Each :ref:`cfdm <class_extended>` class has methods to access the
 netCDF elements which it requires. For example, the `Field` class has
@@ -1408,8 +1417,6 @@ Field method                      Description
                                   domain axis constructs to be written
                                   as netCDF unlimited dimensions
 ================================  ====================================
-
-For example:
 
 .. code:: python
 
@@ -1483,10 +1490,6 @@ Method                        Classes                                  NetCDF el
 `!nc_set_sample_dimension`    `Count`, `Index`                         Sample  dimension of a ragged array
 ============================  =======================================  =====================================
 
-..        `!get_count_variable`         `Data`                                   Count variable of a ragged array     `!get_index_variable`         `Data`                                   Index variable of a ragged array    `!get_list_variable`          `Data`                                   List variable of a gathered array 
-
-For example:
-
 .. code:: python
 
    >>> lon = q.get_construct('ncvar%lon')
@@ -1501,14 +1504,14 @@ For example:
 
 
    
-.. _external:
+.. _external_variables:
 
 External variables
 ------------------
 
-External variables are those referred to in the dataset, but which are
-not present in it. Instead, such variables are stored in other files
-known as "external files". External variables may, however, be
+`External variables`_ are those referred to in the dataset, but which
+are not present in it. Instead, such variables are stored in other
+files known as "external files". External variables may, however, be
 incorporated into the field constructs of the dataset, as if they had
 actually been stored in the same file, simply by providing the
 external file names to the `cfdm.read` function.
@@ -1561,8 +1564,8 @@ is still created, but one without any metadata or data:
 
 .. code:: python
 
-   >>> f = cfdm.read('parent.nc')[0]
-   >>> print(f)
+   >>> u = cfdm.read('parent.nc')[0]
+   >>> print(u)
    Field: eastward_wind (ncvar%eastward_wind)
    ------------------------------------------
    Data            : eastward_wind(latitude(10), longitude(9)) m s-1
@@ -1570,16 +1573,16 @@ is still created, but one without any metadata or data:
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : measure%area (external variable: ncvar%areacella)
 
-   >>> cm = f.get_construct('measure%area')
-   >>> cm
+   >>> area = u.get_construct('measure%area')
+   >>> area
    <CellMeasure: measure%area >
-   >>> cm.nc_external()
+   >>> area.nc_external()
    True
-   >>> cm.nc_get_variable()
+   >>> area.nc_get_variable()
    'areacella'
-   >>> cm.properties()
+   >>> area.properties()
    {}
-   >>> cm.has_data()
+   >>> area.has_data()
    False
 
 If this field were to be written to disk using `cfdm.write`, then the
@@ -1636,15 +1639,12 @@ Discrete sampling geometries
 
 The CF data model views arrays that are compressed by removing
 unwanted missing data in their uncompressed form. So, when a
-collection of `discrete sampling geometry (DSG)
-<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries>`_
-features has been combined using a compressed ragged representation to
-save space, the field construct contains the domain axis constructs
-that have been compressed and presents a view of the data in its
-uncompressed form, i.e. in `incomplete multidimensional form
-<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_incomplete_multidimensional_array_representation>`_,
-even though the underlying arrays may remain in their compressed
-representation.
+collection of `discrete sampling geometry (DSG)`_ features has been
+combined using a compressed ragged representation to save space, the
+field construct contains the domain axis constructs that have been
+compressed and presents a view of the data in its uncompressed form,
+i.e. in `incomplete multidimensional form`_, even though the
+underlying arrays may remain in their compressed representation.
 
 Accessing the data by a call to the `!get_array` method returns a
 numpy array that is uncompressed. The underlying array will, however,
@@ -1727,13 +1727,13 @@ file:
                    : longitude(ncdim%station(4)) = [-23.0, ..., 178.0] degrees_east
                    : height(ncdim%station(4)) = [0.5, ..., 345.0] m
                    : cf_role:timeseries_id(ncdim%station(4)) = [station1, ..., station4]
-   >>> h.data.get_compression_type()
-   'ragged contiguous'
    >>> print(h.get_array())
    [[0.12 0.05 0.18   --   --   --   --   --   --]
     [0.05 0.11 0.2  0.15 0.08 0.04 0.06   --   --]
     [0.15 0.19 0.15 0.17 0.07   --   --   --   --]
     [0.11 0.03 0.14 0.16 0.02 0.09 0.1  0.04 0.11]]
+   >>> h.data.get_compression_type()
+   'ragged contiguous'
    >>> print(h.data.get_compressed_array())
    [0.12 0.05 0.18 0.05 0.11 0.2 0.15 0.08 0.04 0.06 0.15 0.19 0.15 0.17 0.07
     0.11 0.03 0.14 0.16 0.02 0.09 0.1 0.04 0.11]
@@ -1757,6 +1757,8 @@ the "station" axis of the field construct:
 The underlying array of original data remains in compressed form until
 data array elements are modified:
    
+.. code:: python
+
    >>> h.data.get_compression_type()
    'ragged contiguous'
    >>> h.data[1, 2] = -9
@@ -1846,11 +1848,10 @@ Gathering
 
 The CF data model views arrays that are compressed by removing
 unwanted missing data in their uncompressed form. So, when axes have
-been `compressed by gathering
-<http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering>`_,
-the field construct contains the domain axes that have been compressed
-and presents a view of the data in their uncompressed form, even
-though the underlying arrays remain in their gathered representation.
+been `compressed by gathering`_, the field construct contains the
+domain axes that have been compressed and presents a view of the data
+in their uncompressed form, even though the underlying arrays remain
+in their gathered representation.
 
 Accessing the data by a call to the `!get_array` method returns a
 numpy array that is uncompressed. The underlying array will, however,
@@ -1929,6 +1930,8 @@ file:
      [0.00084  --       0.000201 0.0057   --      ]
      [--       --       --       --       --      ]
      [--       0.000223 --       0.000102 --      ]]]
+   >>> p.data.get_compression_type()
+   'gathered'
    >>> print(p.data.get_compressed_array())
    [[0.000122 0.0008   0.000177 0.000175 0.00058 0.000206 0.0007  ]
     [0.000202 0.000174 0.00084  0.000201 0.0057  0.000223 0.000102]]
@@ -2031,3 +2034,10 @@ We can now inspect the new field construct:
             <https://github.com/NCAS-CMS/cfdm/tree/master/docs/netcdf_files>`_
             directory.
 
+	    
+.. External links to the CF conventions
+   
+.. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables
+.. _discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries
+.. _incomplete multidimensional form: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_incomplete_multidimensional_array_representation
+.. _compressed by gathering:          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering
