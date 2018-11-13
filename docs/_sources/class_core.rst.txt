@@ -53,7 +53,7 @@ Data classes
 
    cfdm.core.Data
    cfdm.core.NumpyArray
-   cfdm.core.Array
+   cfdm.core.data.abstract.Array
 
 Construct abstract base classes
 -------------------------------

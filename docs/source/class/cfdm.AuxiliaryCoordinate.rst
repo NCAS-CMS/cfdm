@@ -1,65 +1,131 @@
-cfdm\.AuxiliaryCoordinate
-=========================
-
 .. currentmodule:: cfdm
+.. default-role:: obj
 
-.. autoclass:: AuxiliaryCoordinate
+cfdm.AuxiliaryCoordinate
+========================
 
-   
-   .. automethod:: __init__
+.. autoclass:: cfdm.AuxiliaryCoordinate
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. rubric:: Methods
+Inspection
+----------
 
-   .. autosummary::
-   
-      ~AuxiliaryCoordinate.HDF_chunks
-      ~AuxiliaryCoordinate.__init__
-      ~AuxiliaryCoordinate.copy
-      ~AuxiliaryCoordinate.del_bounds
-      ~AuxiliaryCoordinate.del_data
-      ~AuxiliaryCoordinate.del_extent_array
-      ~AuxiliaryCoordinate.del_extent_parameter
-      ~AuxiliaryCoordinate.del_ncvar
-      ~AuxiliaryCoordinate.del_property
-      ~AuxiliaryCoordinate.del_topology_array
-      ~AuxiliaryCoordinate.del_topology_parameter
-      ~AuxiliaryCoordinate.dump
-      ~AuxiliaryCoordinate.equals
-      ~AuxiliaryCoordinate.expand_dims
-      ~AuxiliaryCoordinate.extent_arrays
-      ~AuxiliaryCoordinate.extent_parameters
-      ~AuxiliaryCoordinate.fill_value
-      ~AuxiliaryCoordinate.get_array
-      ~AuxiliaryCoordinate.get_bounds
-      ~AuxiliaryCoordinate.get_data
-      ~AuxiliaryCoordinate.get_extent_array
-      ~AuxiliaryCoordinate.get_extent_parameter
-      ~AuxiliaryCoordinate.get_ncvar
-      ~AuxiliaryCoordinate.get_property
-      ~AuxiliaryCoordinate.get_topology_array
-      ~AuxiliaryCoordinate.get_topology_parameter
-      ~AuxiliaryCoordinate.has_bounds
-      ~AuxiliaryCoordinate.has_data
-      ~AuxiliaryCoordinate.has_property
-      ~AuxiliaryCoordinate.name
-      ~AuxiliaryCoordinate.open
-      ~AuxiliaryCoordinate.properties
-      ~AuxiliaryCoordinate.set_bounds
-      ~AuxiliaryCoordinate.set_data
-      ~AuxiliaryCoordinate.set_extent_array
-      ~AuxiliaryCoordinate.set_extent_parameter
-      ~AuxiliaryCoordinate.set_ncvar
-      ~AuxiliaryCoordinate.set_property
-      ~AuxiliaryCoordinate.set_topology_array
-      ~AuxiliaryCoordinate.set_topology_parameter
-      ~AuxiliaryCoordinate.squeeze
-      ~AuxiliaryCoordinate.topology_arrays
-      ~AuxiliaryCoordinate.topology_parameters
-      ~AuxiliaryCoordinate.transpose
-   
-   
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
+   ~cfdm.AuxiliaryCoordinate.dump
+   ~cfdm.AuxiliaryCoordinate.get_array
+   ~cfdm.AuxiliaryCoordinate.get_bounds
+   ~cfdm.AuxiliaryCoordinate.get_data
+   ~cfdm.AuxiliaryCoordinate.has_data
+   ~cfdm.AuxiliaryCoordinate.get_property
+   ~cfdm.AuxiliaryCoordinate.has_property
+   ~cfdm.AuxiliaryCoordinate.properties
+
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.AuxiliaryCoordinate.data
+
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.del_property
+   ~cfdm.AuxiliaryCoordinate.get_property
+   ~cfdm.AuxiliaryCoordinate.has_property
+   ~cfdm.AuxiliaryCoordinate.properties
+   ~cfdm.AuxiliaryCoordinate.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.del_data
+   ~cfdm.AuxiliaryCoordinate.expand_dims
+   ~cfdm.AuxiliaryCoordinate.get_array
+   ~cfdm.AuxiliaryCoordinate.get_bounds
+   ~cfdm.AuxiliaryCoordinate.get_data
+   ~cfdm.AuxiliaryCoordinate.get_dtarray
+   ~cfdm.AuxiliaryCoordinate.has_data
+   ~cfdm.AuxiliaryCoordinate.set_data
+   ~cfdm.AuxiliaryCoordinate.squeeze
+   ~cfdm.AuxiliaryCoordinate.transpose
    
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.AuxiliaryCoordinate.data
+   ~cfdm.AuxiliaryCoordinate.bounds
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.del_data
+   ~cfdm.AuxiliaryCoordinate.del_property
+   ~cfdm.AuxiliaryCoordinate.expand_dims
+   ~cfdm.AuxiliaryCoordinate.properties
+   ~cfdm.AuxiliaryCoordinate.set_data
+   ~cfdm.AuxiliaryCoordinate.set_property
+   ~cfdm.AuxiliaryCoordinate.squeeze
+   ~cfdm.AuxiliaryCoordinate.transpose
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.copy
+   ~cfdm.AuxiliaryCoordinate.equals
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.AuxiliaryCoordinate.__deepcopy__
+   ~cfdm.AuxiliaryCoordinate.__getitem__
+   ~cfdm.AuxiliaryCoordinate.__repr__
+   ~cfdm.AuxiliaryCoordinate.__str__

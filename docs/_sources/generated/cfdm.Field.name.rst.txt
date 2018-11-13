@@ -1,7 +1,0 @@
-cfdm.Field.name
-===============
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.name

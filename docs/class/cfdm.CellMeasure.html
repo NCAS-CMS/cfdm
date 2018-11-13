@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CellMethod" href="cfdm.CellMethod.html" />
-    <link rel="prev" title="cfdm.AuxiliaryCoordinate" href="cfdm.AuxiliaryCoordinate.html" />
+    <link rel="next" title="cfdm.CellMeasure.dump" href="../method/cfdm.CellMeasure.dump.html" />
+    <link rel="prev" title="cfdm.AuxiliaryCoordinate.__str__" href="../method/cfdm.AuxiliaryCoordinate.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html">Reference manual</a><ul>
   <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
-      <li>Previous: <a href="cfdm.AuxiliaryCoordinate.html" title="previous chapter">cfdm.AuxiliaryCoordinate</a></li>
-      <li>Next: <a href="cfdm.CellMethod.html" title="next chapter">cfdm.CellMethod</a></li>
+      <li>Previous: <a href="../method/cfdm.AuxiliaryCoordinate.__str__.html" title="previous chapter">cfdm.AuxiliaryCoordinate.__str__</a></li>
+      <li>Next: <a href="../method/cfdm.CellMeasure.dump.html" title="next chapter">cfdm.CellMeasure.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -103,11 +103,10 @@ with the measure, e.g. square metres. It is assumed that the metric
 does not depend on axes of the domain which are not spanned by the
 array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.</p>
-<dl class="method">
-<dt id="cfdm.CellMeasure.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/cellmeasure.py#cellmeasure.py-32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+</dd></dl>
 
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -115,1302 +114,207 @@ cell measure variables correspond to cell measure constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.HDF_chunks" title="cfdm.CellMeasure.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_chunks</span></code></a>(*chunksizes)</td>
-<td>TODO {+HDF_chunks}</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.__init__" title="cfdm.CellMeasure.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([measure,&nbsp;properties,&nbsp;data,&nbsp;…])</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.copy" title="cfdm.CellMeasure.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([data])</td>
-<td>Return a deep copy.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.del_data" title="cfdm.CellMeasure.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>(*default)</td>
-<td>Remove the data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.del_measure" title="cfdm.CellMeasure.del_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_measure</span></code></a>(*default)</td>
-<td>Remove the measure.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure.del_ncvar</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.del_property" title="cfdm.CellMeasure.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a>(prop,&nbsp;*default)</td>
-<td>Remove a property.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.dump" title="cfdm.CellMeasure.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a>([display,&nbsp;_omit_properties,&nbsp;field,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.dump.html#cfdm.CellMeasure.dump" title="cfdm.CellMeasure.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
 <td>Return a string containing a full description of the cell measure.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.equals" title="cfdm.CellMeasure.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>(other[,&nbsp;rtol,&nbsp;atol,&nbsp;traceback,&nbsp;…])</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.expand_dims" title="cfdm.CellMeasure.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a>([position])</td>
-<td>TODO Insert a size 1 axis into the data array.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure.fill_value</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.get_array" title="cfdm.CellMeasure.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_array.html#cfdm.CellMeasure.get_array" title="cfdm.CellMeasure.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an numpy array copy the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.get_data" title="cfdm.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a>(*default)</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CellMeasure.get_bounds</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_data.html#cfdm.CellMeasure.get_data" title="cfdm.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.get_measure" title="cfdm.CellMeasure.get_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></a>(*default)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure.get_ncvar</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.get_property" title="cfdm.CellMeasure.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a>(prop,&nbsp;*default)</td>
-<td>Return a property.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.has_measure" title="cfdm.CellMeasure.has_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_measure</span></code></a>()</td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_property.html#cfdm.CellMeasure.get_property" title="cfdm.CellMeasure.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<td>Return a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.has_property" title="cfdm.CellMeasure.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a>(prop)</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_property.html#cfdm.CellMeasure.has_property" title="cfdm.CellMeasure.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.name" title="cfdm.CellMeasure.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a>([default,&nbsp;ncvar,&nbsp;custom,&nbsp;all_names])</td>
-<td>Return a name for the cell measure.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.open" title="cfdm.CellMeasure.open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open</span></code></a>()</td>
-<td>TODO</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>([properties,&nbsp;copy])</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.properties.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a>(data[,&nbsp;copy])</td>
-<td>Set the data.</td>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.CellMeasure.data.html#cfdm.CellMeasure.data" title="cfdm.CellMeasure.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a>(measure[,&nbsp;copy])</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CellMeasure.bounds</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure.set_ncvar</span></code></td>
-<td></td>
+</tbody>
+</table>
+</div>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.del_property.html#cfdm.CellMeasure.del_property" title="cfdm.CellMeasure.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a>(prop,&nbsp;value[,&nbsp;copy])</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_property.html#cfdm.CellMeasure.get_property" title="cfdm.CellMeasure.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<td>Return a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_property.html#cfdm.CellMeasure.has_property" title="cfdm.CellMeasure.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<td>Whether a property has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.properties.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.CellMeasure.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>([axes])</td>
+</tbody>
+</table>
+</div>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.del_data.html#cfdm.CellMeasure.del_data" title="cfdm.CellMeasure.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.expand_dims.html#cfdm.CellMeasure.expand_dims" title="cfdm.CellMeasure.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<td>TODO Insert a size 1 axis into the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_array.html#cfdm.CellMeasure.get_array" title="cfdm.CellMeasure.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<td>Return an numpy array copy the data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CellMeasure.get_bounds</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_data.html#cfdm.CellMeasure.get_data" title="cfdm.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
+<td>Return the data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CellMeasure.get_dtarray</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<td>Whether a data object has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<td>Set the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
 <td>TODO Remove size 1 dimensions from the data array</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<td>TODO</td>
+</tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="cfdm.CellMeasure.HDF_chunks">
-<code class="descname">HDF_chunks</code><span class="sig-paren">(</span><em>*chunksizes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-275"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.HDF_chunks" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO {+HDF_chunks}</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.CellMeasure.data.html#cfdm.CellMeasure.data" title="cfdm.CellMeasure.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<td>Return the data.</td>
 </tr>
 </tbody>
 </table>
-<p>To define chunks which are the full size for each axis except for the
-first axis which is to have a chunk size of 12:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old_chunks</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}({</span><span class="mi">0</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
-</pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="modification">
+<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">{+chunksizes}</p>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.del_data.html#cfdm.CellMeasure.del_data" title="cfdm.CellMeasure.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>dict</cite></dt>
-<dd><p class="first last">The chunk sizes prior to the new setting, or the current
-current sizes if no new values are specified.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.del_property.html#cfdm.CellMeasure.del_property" title="cfdm.CellMeasure.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.expand_dims.html#cfdm.CellMeasure.expand_dims" title="cfdm.CellMeasure.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<td>TODO Insert a size 1 axis into the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.properties.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<td>Set the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<td>Set a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<td>TODO Remove size 1 dimensions from the data array</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<td>TODO</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-109"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a deep copy.</p>
-<p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>data: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the data. By default the data is
-copied.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.copy.html#cfdm.CellMeasure.copy" title="cfdm.CellMeasure.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The deep copy.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.equals.html#cfdm.CellMeasure.equals" title="cfdm.CellMeasure.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-</pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.del_data">
-<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.del_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the data.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>get_data</cite>, <cite>has_data</cite>, <cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the data object has not been set.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.__deepcopy__.html#cfdm.CellMeasure.__deepcopy__" title="cfdm.CellMeasure.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: </dt>
-<dd><p class="first last">The removed <cite>Data</cite> object. If unset then <em>default</em> is
-returned, if provided.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.__getitem__.html#cfdm.CellMeasure.__getitem__" title="cfdm.CellMeasure.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
+<td>TODO x.__getitem__(indices) &lt;==&gt; x[indices]</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.__repr__.html#cfdm.CellMeasure.__repr__" title="cfdm.CellMeasure.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.__str__.html#cfdm.CellMeasure.__str__" title="cfdm.CellMeasure.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.del_measure">
-<code class="descname">del_measure</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/cellmeasure.py#core/cellmeasure.py-95"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.del_measure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the measure.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_measure</cite>, <cite>has_measure</cite>, <cite>properties</cite>, <cite>set_measure</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the property has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The removed measure. If unset then <em>default</em> is returned, if
-provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.del_property">
-<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.del_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_property</cite>, <cite>has_property</cite>, <cite>properties</cite>,
-<cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first">The name of the property to be removed.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">prop='long_name'</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the property has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The removed property. If unset then <em>default</em> is returned, if
-provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.dump">
-<code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>_omit_properties=None</em>, <em>field=None</em>, <em>key=None</em>, <em>_level=0</em>, <em>_title=None</em>, <em>_axes=None</em>, <em>_axis_names=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/cellmeasure.py#cellmeasure.py-46"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string containing a full description of the cell measure.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>display <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd><p class="first last">If False then return the description as a string. By default
-the description is printed, i.e. <code class="docutils literal notranslate"><span class="pre">c.dump()</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">print</span> <span class="pre">c.dump(display=False)</span></code>.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">None or str</span></dt>
-<dd><p class="first last">A string containing the description.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.equals">
-<code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_construct_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/cellmeasure.py#cellmeasure.py-88"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.equals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.expand_dims">
-<code class="descname">expand_dims</code><span class="sig-paren">(</span><em>position=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-236"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.expand_dims" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Insert a size 1 axis into the data array.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>squeeze</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>position: <cite>int</cite>, optional    </dt>
-<dd><p class="first last">Specify the position amongst the data array axes where the new
-axis is to be inserted. By default the new axis is inserted at
-position 0, the slowest varying position.</p>
-</dd>
-</dl>
-<p>{+copy}</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><cite>None</cite></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}(</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.get_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an numpy array copy the data.</p>
-<p>Use the <cite>get_data</cite> method to return the data as a <cite>Data</cite> object.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>get_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>numpy.ndarray</cite></dt>
-<dd><p class="first last">An numpy array copy of the data.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get_array</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span>
-<span class="go">array([ 1.  2.  3.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
-<span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">88</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="go">-99.0</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.get_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the data.</p>
-<p>Note that the data are returned in a <cite>Data</cite> object. Use the
-<cite>get_array</cite> method to return the data as an independent <cite>numpy</cite> array.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>del_data</cite>, <cite>get_array</cite>, <cite>has_data</cite>, <cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if a data object has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: </dt>
-<dd><p class="first last">The data object. If unset then <em>default</em> is returned, if
-provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.get_measure">
-<code class="descname">get_measure</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/cellmeasure.py#core/cellmeasure.py-125"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.get_measure" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.get_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>has_property</cite>, <cite>properties</cite>,
-<cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first">The name of the property to be returned.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">prop='standard_name'</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the property has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The value of the property. If unset then <em>default</em> is
-returned, if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.has_data">
-<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.has_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether a data object has been set.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>del_data</cite>, <cite>get_data</cite>, <cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if a data object has been set, otherwise False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.has_measure">
-<code class="descname">has_measure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/cellmeasure.py#core/cellmeasure.py-119"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.has_measure" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.has_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether a property has been set.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>properties</cite>, <cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first">The name of the property.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">prop='long_name'</span></code></p>
-</dd>
-</dl>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if the property has been set, otherwise False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.name">
-<code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncvar=False</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/cellmeasure.py#cellmeasure.py-114"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a name for the cell measure.</p>
-<p>By default the name is the first found of the following:</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li>The <cite>!measure</cite> attribute.</li>
-<li>The <cite>standard_name</cite> CF property.</li>
-<li>The <cite>!id</cite> attribute.</li>
-<li>The <cite>long_name</cite> CF property, preceeded by the string
-<code class="docutils literal notranslate"><span class="pre">'long_name:'</span></code>.</li>
-<li>The <cite>!ncvar</cite> attribute, preceeded by the string <code class="docutils literal notranslate"><span class="pre">'ncvar:'</span></code>.</li>
-<li>The value of the <em>default</em> parameter.</li>
-</ol>
-</div></blockquote>
-<p>Note that <code class="docutils literal notranslate"><span class="pre">c.name(identity=True)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">c.identity()</span></code>.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>identity</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default <span class="classifier-delimiter">:</span> <span class="classifier"><em>optional</em></span></dt>
-<dd><p class="first last">If no name can be found then return the value of the <em>default</em>
-parameter. By default the default is None.</p>
-</dd>
-<dt>identity <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd><p class="first last">If True then 3. and 4. are not considered as possible names.</p>
-</dd>
-<dt>ncvar <span class="classifier-delimiter">:</span> <span class="classifier">bool, optional</span></dt>
-<dd><p class="first last">If True then 1., 2., 3. and 4. are not considered as possible
-names.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd><p class="first last">A  name for the cell measure.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;temperature of the air&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ncvar</span> <span class="o">=</span> <span class="s1">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
-<span class="go">&#39;air_temperature&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
-<span class="go">&#39;long_name:temperature of the air&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">long_name</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
-<span class="go">&#39;ncvar:tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">ncvar</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;no_name&#39;</span><span class="p">)</span>
-<span class="go">&#39;no_name&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="s1">&#39;no_name&#39;</span><span class="p">)</span>
-<span class="go">&#39;air_temperature&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.nc_del_variable">
-<code class="descname">nc_del_variable</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-200"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.nc_del_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the netCDF variable name.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_get_variable</cite>, <cite>nc_has_variable</cite>, <cite>nc_set_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the netCDF variable name has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>str</cite></dt>
-<dd><p class="first last">The removed netCDF variable name. If unset then <em>default</em> is
-returned, if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.nc_external">
-<code class="descname">nc_external</code><span class="sig-paren">(</span><em>*external</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-564"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.nc_external" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Whether the construct is external.</p>
-<p>The construct is assumed to be internal unless sepcifically set to be
-external with the <cite>set_external</cite> method.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">TODO</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_external</span> <span class="o">=</span> <span class="s1">&#39;Yes&#39;</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">nc_get_external</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;No&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">nc_set_external</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">nc_get_external</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">nc_set_external</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">nc_get_external</span><span class="p">()</span>
-<span class="go">False</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.nc_get_variable">
-<code class="descname">nc_get_variable</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-243"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.nc_get_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the netCDF variable name.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_del_variable</cite>, <cite>nc_has_variable</cite>, <cite>nc_set_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the netCDF variable name has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>str</cite></dt>
-<dd><p class="first last">The netCDF variable name. If unset then <em>default</em> is returned,
-if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.nc_has_variable">
-<code class="descname">nc_has_variable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-288"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.nc_has_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether the netCDF variable name has been set.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_del_variable</cite>, <cite>nc_get_variable</cite>, <cite>nc_set_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if the netCDF variable name has been set, otherwise
-False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.nc_set_variable">
-<code class="descname">nc_set_variable</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-321"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.nc_set_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the netCDF variable name.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_del_variable</cite>, <cite>nc_get_variable</cite>, <cite>nc_has_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>value: <cite>str</cite></dt>
-<dd><p class="first last">The value for the netCDF variable name.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.open">
-<code class="descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-445"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.open" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-231"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.properties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return or replace all properties.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>has_property</cite>,
-<cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>properties: <cite>dict</cite>, optional   </dt>
-<dd><p class="first">Replace all existing properties with those specified in the
-dictionary. If the dictionary is empty then all properties
-will be removed.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude',</span> <span class="pre">'foo':</span> <span class="pre">'bar'}</span></code></p>
-</dd>
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={}</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then any property values provided by the <em>properties</em>
-parameter are not copied before insertion. By default they are
-deep copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>dict</cite></dt>
-<dd><p class="first last">The properties prior to being changed, or the current
-properties if no changes were specified.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
-<span class="go">{&#39;standard_name&#39;: &#39;altitude&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">({})</span>
-<span class="go">{&#39;standard_name&#39;: &#39;altitude&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
-<span class="go">{}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.set_data">
-<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.set_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the data.</p>
-<p>The units, calendar and fill value properties of the data object are
-removed prior to insertion.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>del_data</cite>, <cite>get_data</cite>, <cite>has_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>data: <cite>Data</cite></dt>
-<dd><p class="first last">The data object to be inserted.</p>
-</dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the data prior to insertion. By
-default the data are copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.set_measure">
-<code class="descname">set_measure</code><span class="sig-paren">(</span><em>measure</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/cellmeasure.py#core/cellmeasure.py-131"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.set_measure" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.set_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>has_property</cite>,
-<cite>properties</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first last">The name of the property to be set.</p>
-</dd>
-<dt>value:</dt>
-<dd><p class="first last">The value for the property.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.squeeze">
-<code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-452"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.squeeze" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Remove size 1 dimensions from the data array</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>expand_dims</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes: (sequence of) <cite>int</cite>, optional</dt>
-<dd><p class="first last">The size 1 axes to remove. By default, all size 1 axes are
-removed. Size 1 axes for removal are identified by their
-integer positions in the data array.</p>
-</dd>
-</dl>
-<p>{+copy}</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out: <cite>{+Variable}</cite></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}(</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.CellMeasure.transpose">
-<code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-491"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure.transpose" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>squeeze</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body">{+copy}</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">out:</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.CellMeasure.data">
-<code class="descname">data</code><a class="headerlink" href="#cfdm.CellMeasure.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the data.</p>
-<p><code class="docutils literal notranslate"><span class="pre">f.data</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">f.get_data()</span></code></p>
-<p>Note that the data are returned in a <cite>Data</cite> object. Use the
-<cite>get_array</cite> method to return the data as a <cite>numpy</cite> array.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_data</cite>, <cite>get_array</cite>, <cite>get_data</cite>, <cite>has_data</cite>,
-<cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>Data</cite></dt>
-<dd><p class="first last">The data object.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(10,)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.CellMeasure.dtarray">
-<code class="descname">dtarray</code><a class="headerlink" href="#cfdm.CellMeasure.dtarray" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO An independent numpy array of date-time objects.</p>
-<p>Only applicable for reference time units.</p>
-<p>If the calendar has not been set then the CF default calendar will be
-used.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>array</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.CellMeasure.isreftime">
-<code class="descname">isreftime</code><a class="headerlink" href="#cfdm.CellMeasure.isreftime" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 
 

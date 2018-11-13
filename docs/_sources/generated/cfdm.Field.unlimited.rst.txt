@@ -1,7 +1,0 @@
-cfdm.Field.unlimited
-====================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.Field.unlimited

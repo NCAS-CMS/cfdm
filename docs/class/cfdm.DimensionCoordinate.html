@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.DimensionCoordinate.dump" href="../generated/cfdm.DimensionCoordinate.dump.html" />
+    <link rel="next" title="cfdm.DimensionCoordinate.dump" href="../method/cfdm.DimensionCoordinate.dump.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -48,7 +48,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html">Reference manual</a><ul>
   <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
-      <li>Next: <a href="../generated/cfdm.DimensionCoordinate.dump.html" title="next chapter">cfdm.DimensionCoordinate.dump</a></li>
+      <li>Next: <a href="../method/cfdm.DimensionCoordinate.dump.html" title="next chapter">cfdm.DimensionCoordinate.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -100,7 +100,7 @@ constructs.</p>
 <p>The dimension coordinate construct consists of a data array of the
 coordinate values which spans a subset of the domain axis constructs,
 an optional array of cell bounds recording the extents of each cell
-(stored in a <a class="reference internal" href="../classes/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> object), and properties to describe the
+(stored in a <a class="reference internal" href="cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> object), and properties to describe the
 coordinates. An array of cell bounds spans the same domain axes as its
 coordinate array, with the addition of an extra dimension whose size
 is that of the number of vertices of each cell. This extra dimension
@@ -120,25 +120,28 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.dump.html#cfdm.DimensionCoordinate.dump" title="cfdm.DimensionCoordinate.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.dump.html#cfdm.DimensionCoordinate.dump" title="cfdm.DimensionCoordinate.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
 <td>Return a string containing a full description of the auxiliary coordinate object.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.get_array.html#cfdm.DimensionCoordinate.get_array" title="cfdm.DimensionCoordinate.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_array.html#cfdm.DimensionCoordinate.get_array" title="cfdm.DimensionCoordinate.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an numpy array copy the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.get_data.html#cfdm.DimensionCoordinate.get_data" title="cfdm.DimensionCoordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_bounds.html#cfdm.DimensionCoordinate.get_bounds" title="cfdm.DimensionCoordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_data.html#cfdm.DimensionCoordinate.get_data" title="cfdm.DimensionCoordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.has_data.html#cfdm.DimensionCoordinate.has_data" title="cfdm.DimensionCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.has_data.html#cfdm.DimensionCoordinate.has_data" title="cfdm.DimensionCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.get_property.html#cfdm.DimensionCoordinate.get_property" title="cfdm.DimensionCoordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_property.html#cfdm.DimensionCoordinate.get_property" title="cfdm.DimensionCoordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.has_property.html#cfdm.DimensionCoordinate.has_property" title="cfdm.DimensionCoordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.has_property.html#cfdm.DimensionCoordinate.has_property" title="cfdm.DimensionCoordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.properties.html#cfdm.DimensionCoordinate.properties" title="cfdm.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.properties.html#cfdm.DimensionCoordinate.properties" title="cfdm.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
 </tbody>
@@ -150,8 +153,11 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.data.html#cfdm.DimensionCoordinate.data" title="cfdm.DimensionCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DimensionCoordinate.data.html#cfdm.DimensionCoordinate.data" title="cfdm.DimensionCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.DimensionCoordinate.bounds.html#cfdm.DimensionCoordinate.bounds" title="cfdm.DimensionCoordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+<td>TODO</td>
 </tr>
 </tbody>
 </table>
@@ -165,19 +171,19 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.del_property.html#cfdm.DimensionCoordinate.del_property" title="cfdm.DimensionCoordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.del_property.html#cfdm.DimensionCoordinate.del_property" title="cfdm.DimensionCoordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
 <td>Remove a property.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.get_property.html#cfdm.DimensionCoordinate.get_property" title="cfdm.DimensionCoordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_property.html#cfdm.DimensionCoordinate.get_property" title="cfdm.DimensionCoordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.has_property.html#cfdm.DimensionCoordinate.has_property" title="cfdm.DimensionCoordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.has_property.html#cfdm.DimensionCoordinate.has_property" title="cfdm.DimensionCoordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.properties.html#cfdm.DimensionCoordinate.properties" title="cfdm.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.properties.html#cfdm.DimensionCoordinate.properties" title="cfdm.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.set_property.html#cfdm.DimensionCoordinate.set_property" title="cfdm.DimensionCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.set_property.html#cfdm.DimensionCoordinate.set_property" title="cfdm.DimensionCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
 </tbody>
@@ -192,31 +198,34 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.del_data.html#cfdm.DimensionCoordinate.del_data" title="cfdm.DimensionCoordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.del_data.html#cfdm.DimensionCoordinate.del_data" title="cfdm.DimensionCoordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
 <td>Remove the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.expand_dims.html#cfdm.DimensionCoordinate.expand_dims" title="cfdm.DimensionCoordinate.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.expand_dims.html#cfdm.DimensionCoordinate.expand_dims" title="cfdm.DimensionCoordinate.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.get_array.html#cfdm.DimensionCoordinate.get_array" title="cfdm.DimensionCoordinate.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_array.html#cfdm.DimensionCoordinate.get_array" title="cfdm.DimensionCoordinate.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an numpy array copy the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.get_data.html#cfdm.DimensionCoordinate.get_data" title="cfdm.DimensionCoordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_bounds.html#cfdm.DimensionCoordinate.get_bounds" title="cfdm.DimensionCoordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.get_data.html#cfdm.DimensionCoordinate.get_data" title="cfdm.DimensionCoordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DimensionCoordinate.get_dtarray</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DimensionCoordinate.get_dtarray</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.has_data.html#cfdm.DimensionCoordinate.has_data" title="cfdm.DimensionCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.has_data.html#cfdm.DimensionCoordinate.has_data" title="cfdm.DimensionCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.set_data.html#cfdm.DimensionCoordinate.set_data" title="cfdm.DimensionCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.set_data.html#cfdm.DimensionCoordinate.set_data" title="cfdm.DimensionCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.squeeze.html#cfdm.DimensionCoordinate.squeeze" title="cfdm.DimensionCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.squeeze.html#cfdm.DimensionCoordinate.squeeze" title="cfdm.DimensionCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.transpose.html#cfdm.DimensionCoordinate.transpose" title="cfdm.DimensionCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.transpose.html#cfdm.DimensionCoordinate.transpose" title="cfdm.DimensionCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
 <td>TODO  Permute the dimensions of the data.</td>
 </tr>
 </tbody>
@@ -228,7 +237,7 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.data.html#cfdm.DimensionCoordinate.data" title="cfdm.DimensionCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DimensionCoordinate.data.html#cfdm.DimensionCoordinate.data" title="cfdm.DimensionCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
 </tbody>
@@ -243,28 +252,28 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.del_data.html#cfdm.DimensionCoordinate.del_data" title="cfdm.DimensionCoordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.del_data.html#cfdm.DimensionCoordinate.del_data" title="cfdm.DimensionCoordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
 <td>Remove the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.del_property.html#cfdm.DimensionCoordinate.del_property" title="cfdm.DimensionCoordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.del_property.html#cfdm.DimensionCoordinate.del_property" title="cfdm.DimensionCoordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
 <td>Remove a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.expand_dims.html#cfdm.DimensionCoordinate.expand_dims" title="cfdm.DimensionCoordinate.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.expand_dims.html#cfdm.DimensionCoordinate.expand_dims" title="cfdm.DimensionCoordinate.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.properties.html#cfdm.DimensionCoordinate.properties" title="cfdm.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.properties.html#cfdm.DimensionCoordinate.properties" title="cfdm.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.set_data.html#cfdm.DimensionCoordinate.set_data" title="cfdm.DimensionCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.set_data.html#cfdm.DimensionCoordinate.set_data" title="cfdm.DimensionCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.set_property.html#cfdm.DimensionCoordinate.set_property" title="cfdm.DimensionCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.set_property.html#cfdm.DimensionCoordinate.set_property" title="cfdm.DimensionCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.squeeze.html#cfdm.DimensionCoordinate.squeeze" title="cfdm.DimensionCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.squeeze.html#cfdm.DimensionCoordinate.squeeze" title="cfdm.DimensionCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.transpose.html#cfdm.DimensionCoordinate.transpose" title="cfdm.DimensionCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.transpose.html#cfdm.DimensionCoordinate.transpose" title="cfdm.DimensionCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
 <td>TODO  Permute the dimensions of the data.</td>
 </tr>
 </tbody>
@@ -279,10 +288,10 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.copy.html#cfdm.DimensionCoordinate.copy" title="cfdm.DimensionCoordinate.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.copy.html#cfdm.DimensionCoordinate.copy" title="cfdm.DimensionCoordinate.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cfdm.DimensionCoordinate.equals.html#cfdm.DimensionCoordinate.equals" title="cfdm.DimensionCoordinate.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.equals.html#cfdm.DimensionCoordinate.equals" title="cfdm.DimensionCoordinate.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>TODOTODO</td>
 </tr>
 </tbody>
@@ -297,16 +306,16 @@ indicated by the cell method constructs.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../classes/generated/cfdm.DimensionCoordinate.__deepcopy__.html#cfdm.DimensionCoordinate.__deepcopy__" title="cfdm.DimensionCoordinate.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.__deepcopy__.html#cfdm.DimensionCoordinate.__deepcopy__" title="cfdm.DimensionCoordinate.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
 <td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/generated/cfdm.DimensionCoordinate.__getitem__.html#cfdm.DimensionCoordinate.__getitem__" title="cfdm.DimensionCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.__getitem__.html#cfdm.DimensionCoordinate.__getitem__" title="cfdm.DimensionCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>x.__getitem__(indices) &lt;==&gt; x[indices]</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/generated/cfdm.DimensionCoordinate.__repr__.html#cfdm.DimensionCoordinate.__repr__" title="cfdm.DimensionCoordinate.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.__repr__.html#cfdm.DimensionCoordinate.__repr__" title="cfdm.DimensionCoordinate.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/generated/cfdm.DimensionCoordinate.__str__.html#cfdm.DimensionCoordinate.__str__" title="cfdm.DimensionCoordinate.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DimensionCoordinate.__str__.html#cfdm.DimensionCoordinate.__str__" title="cfdm.DimensionCoordinate.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>

@@ -1,65 +1,131 @@
-cfdm\.DomainAncillary
-=====================
-
 .. currentmodule:: cfdm
+.. default-role:: obj
 
-.. autoclass:: DomainAncillary
+cfdm.DomainAncillary
+========================
 
-   
-   .. automethod:: __init__
+.. autoclass:: cfdm.DomainAncillary
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. rubric:: Methods
+Inspection
+----------
 
-   .. autosummary::
-   
-      ~DomainAncillary.HDF_chunks
-      ~DomainAncillary.__init__
-      ~DomainAncillary.copy
-      ~DomainAncillary.del_bounds
-      ~DomainAncillary.del_data
-      ~DomainAncillary.del_extent_array
-      ~DomainAncillary.del_extent_parameter
-      ~DomainAncillary.del_ncvar
-      ~DomainAncillary.del_property
-      ~DomainAncillary.del_topology_array
-      ~DomainAncillary.del_topology_parameter
-      ~DomainAncillary.dump
-      ~DomainAncillary.equals
-      ~DomainAncillary.expand_dims
-      ~DomainAncillary.extent_arrays
-      ~DomainAncillary.extent_parameters
-      ~DomainAncillary.fill_value
-      ~DomainAncillary.get_array
-      ~DomainAncillary.get_bounds
-      ~DomainAncillary.get_data
-      ~DomainAncillary.get_extent_array
-      ~DomainAncillary.get_extent_parameter
-      ~DomainAncillary.get_ncvar
-      ~DomainAncillary.get_property
-      ~DomainAncillary.get_topology_array
-      ~DomainAncillary.get_topology_parameter
-      ~DomainAncillary.has_bounds
-      ~DomainAncillary.has_data
-      ~DomainAncillary.has_property
-      ~DomainAncillary.name
-      ~DomainAncillary.open
-      ~DomainAncillary.properties
-      ~DomainAncillary.set_bounds
-      ~DomainAncillary.set_data
-      ~DomainAncillary.set_extent_array
-      ~DomainAncillary.set_extent_parameter
-      ~DomainAncillary.set_ncvar
-      ~DomainAncillary.set_property
-      ~DomainAncillary.set_topology_array
-      ~DomainAncillary.set_topology_parameter
-      ~DomainAncillary.squeeze
-      ~DomainAncillary.topology_arrays
-      ~DomainAncillary.topology_parameters
-      ~DomainAncillary.transpose
-   
-   
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
+   ~cfdm.DomainAncillary.dump
+   ~cfdm.DomainAncillary.get_array
+   ~cfdm.DomainAncillary.get_bounds
+   ~cfdm.DomainAncillary.get_data
+   ~cfdm.DomainAncillary.has_data
+   ~cfdm.DomainAncillary.get_property
+   ~cfdm.DomainAncillary.has_property
+   ~cfdm.DomainAncillary.properties
+
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.DomainAncillary.data
+
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.del_property
+   ~cfdm.DomainAncillary.get_property
+   ~cfdm.DomainAncillary.has_property
+   ~cfdm.DomainAncillary.properties
+   ~cfdm.DomainAncillary.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.del_data
+   ~cfdm.DomainAncillary.expand_dims
+   ~cfdm.DomainAncillary.get_array
+   ~cfdm.DomainAncillary.get_bounds
+   ~cfdm.DomainAncillary.get_data
+   ~cfdm.DomainAncillary.get_dtarray
+   ~cfdm.DomainAncillary.has_data
+   ~cfdm.DomainAncillary.set_data
+   ~cfdm.DomainAncillary.squeeze
+   ~cfdm.DomainAncillary.transpose
    
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.DomainAncillary.bounds
+   ~cfdm.DomainAncillary.data
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.del_data
+   ~cfdm.DomainAncillary.del_property
+   ~cfdm.DomainAncillary.expand_dims
+   ~cfdm.DomainAncillary.properties
+   ~cfdm.DomainAncillary.set_data
+   ~cfdm.DomainAncillary.set_property
+   ~cfdm.DomainAncillary.squeeze
+   ~cfdm.DomainAncillary.transpose
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.copy
+   ~cfdm.DomainAncillary.equals
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAncillary.__deepcopy__
+   ~cfdm.DomainAncillary.__getitem__
+   ~cfdm.DomainAncillary.__repr__
+   ~cfdm.DomainAncillary.__str__

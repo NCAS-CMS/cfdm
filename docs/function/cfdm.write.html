@@ -100,9 +100,9 @@ variable has the following methods to get, set and remove a netCDF
 variable name: <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code> and
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code> method</p>
 <p>The domain axis construct has the following methods to get, set and
-remove a netCDF dimension name: <a class="reference internal" href="../classes/cfdm.DomainAxis.html#cfdm.DomainAxis.nc_get_dimension" title="cfdm.DomainAxis.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a>,
-<a class="reference internal" href="../classes/cfdm.DomainAxis.html#cfdm.DomainAxis.nc_set_dimension" title="cfdm.DomainAxis.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a> and
-<a class="reference internal" href="../classes/cfdm.DomainAxis.html#cfdm.DomainAxis.nc_del_dimension" title="cfdm.DomainAxis.nc_del_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></a>.</p>
+remove a netCDF dimension name: <a class="reference internal" href="../class/cfdm.DomainAxis.html#cfdm.DomainAxis.nc_get_dimension" title="cfdm.DomainAxis.nc_get_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></a>,
+<a class="reference internal" href="../class/cfdm.DomainAxis.html#cfdm.DomainAxis.nc_set_dimension" title="cfdm.DomainAxis.nc_set_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></a> and
+<a class="reference internal" href="../class/cfdm.DomainAxis.html#cfdm.DomainAxis.nc_del_dimension" title="cfdm.DomainAxis.nc_del_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></a>.</p>
 <p><strong>NetCDF attributes</strong></p>
 <p>Field construct properties may be written as netCDF global attributes
 or netCDF data variable attributes. See the <em>global_attributes</em> and
@@ -122,14 +122,14 @@ method to get and set their external status: <code class="xref py py-obj docutil
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../generated/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>fields: (sequence of) <a class="reference internal" href="../classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
+<dt>fields: (sequence of) <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
 <dd><p class="first last">The field constructs to write to the file.</p>
 </dd>
 <dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
@@ -196,7 +196,7 @@ any of the other options.</p>
 <p>All formats support large files (i.e. those greater than 2GB)
 except <code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> is a format that requires version
-4.4.0 or newer of the C library (use <a class="reference internal" href="../generated/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a> to see
+4.4.0 or newer of the C library (use <a class="reference internal" href="cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a> to see
 which version if the netCDF-C library is in use). It extends
 the <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code> binary format to allow for
 unsigned/64 bit integer data types and 64-bit dimension sizes.</p>

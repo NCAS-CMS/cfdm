@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.DomainAxis" href="cfdm.DomainAxis.html" />
-    <link rel="prev" title="cfdm.DimensionCoordinate.__str__" href="generated/cfdm.DimensionCoordinate.__str__.html" />
+    <link rel="next" title="cfdm.DomainAncillary.dump" href="../method/cfdm.DomainAncillary.dump.html" />
+    <link rel="prev" title="cfdm.DimensionCoordinate.__str__" href="../method/cfdm.DimensionCoordinate.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html">Reference manual</a><ul>
   <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
-      <li>Previous: <a href="generated/cfdm.DimensionCoordinate.__str__.html" title="previous chapter">cfdm.DimensionCoordinate.__str__</a></li>
-      <li>Next: <a href="cfdm.DomainAxis.html" title="next chapter">cfdm.DomainAxis</a></li>
+      <li>Previous: <a href="../method/cfdm.DimensionCoordinate.__str__.html" title="previous chapter">cfdm.DimensionCoordinate.__str__</a></li>
+      <li>Next: <a href="../method/cfdm.DomainAncillary.dump.html" title="next chapter">cfdm.DomainAncillary.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -94,19 +94,17 @@ system. It is referenced by a term of a coordinate conversion formula
 of a coordinate reference construct. It contains a data array which
 depends on zero or more of the domain axes.</p>
 <p>It also contains an optional array of cell bounds, stored in a
-<cite>Bounds</cite> object, recording the extents of each cell (only applicable
+<a class="reference internal" href="cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a> object, recording the extents of each cell (only applicable
 if the array contains coordinate data), and properties to describe the
 data.</p>
 <p>An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.</p>
 <p>TODO</p>
-<dl class="method">
-<dt id="cfdm.DomainAncillary.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/domainancillary.py#domainancillary.py-28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
 </dd></dl>
 
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -114,1590 +112,207 @@ number of vertices of each cell.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.HDF_chunks" title="cfdm.DomainAncillary.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_chunks</span></code></a>(*chunksizes)</td>
-<td>TODO {+HDF_chunks}</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.__init__" title="cfdm.DomainAncillary.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([properties,&nbsp;data,&nbsp;bounds,&nbsp;…])</td>
-<td>TODO</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.copy" title="cfdm.DomainAncillary.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([data])</td>
-<td>Return a deep copy.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.del_bounds" title="cfdm.DomainAncillary.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a>(*default)</td>
-<td>Remove the bounds.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.del_data" title="cfdm.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>(*default)</td>
-<td>Remove the data.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.del_extent_array</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.del_extent_parameter</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.del_ncvar</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.del_property" title="cfdm.DomainAncillary.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a>(prop,&nbsp;*default)</td>
-<td>Remove a property.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.del_topology_array</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.del_topology_parameter</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.dump" title="cfdm.DomainAncillary.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a>([display,&nbsp;_omit_properties,&nbsp;field,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.dump.html#cfdm.DomainAncillary.dump" title="cfdm.DomainAncillary.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
 <td>TODO Return a string containing a full description of the domain ancillary object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.equals" title="cfdm.DomainAncillary.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>(other[,&nbsp;rtol,&nbsp;atol,&nbsp;traceback,&nbsp;…])</td>
-<td>TODOTODO</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.expand_dims" title="cfdm.DomainAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a>(position)</td>
-<td>TODO</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.extent_arrays</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.extent_parameters</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.fill_value</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.get_array" title="cfdm.DomainAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_array.html#cfdm.DomainAncillary.get_array" title="cfdm.DomainAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an numpy array copy the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.get_bounds" title="cfdm.DomainAncillary.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a>(*default)</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_bounds.html#cfdm.DomainAncillary.get_bounds" title="cfdm.DomainAncillary.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
 <td>Return the bounds.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.get_data" title="cfdm.DomainAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a>(*default)</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_data.html#cfdm.DomainAncillary.get_data" title="cfdm.DomainAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.get_extent_array</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.get_extent_parameter</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.get_ncvar</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.get_property" title="cfdm.DomainAncillary.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a>(prop,&nbsp;*default)</td>
-<td>Return a property.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.get_topology_array</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.get_topology_parameter</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.has_bounds" title="cfdm.DomainAncillary.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a>()</td>
-<td>True if there are bounds.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.has_data" title="cfdm.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_data.html#cfdm.DomainAncillary.has_data" title="cfdm.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.has_property" title="cfdm.DomainAncillary.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a>(prop)</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_property.html#cfdm.DomainAncillary.get_property" title="cfdm.DomainAncillary.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<td>Return a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_property.html#cfdm.DomainAncillary.has_property" title="cfdm.DomainAncillary.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.name" title="cfdm.DomainAncillary.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a>([default,&nbsp;ncvar,&nbsp;custom,&nbsp;all_names])</td>
-<td>TODO Return a name for the {+variable}.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.open" title="cfdm.DomainAncillary.open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open</span></code></a>()</td>
-<td>TODO</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>([properties,&nbsp;copy])</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.set_bounds" title="cfdm.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a>(bounds[,&nbsp;copy])</td>
-<td>Set the bounds.</td>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.data.html#cfdm.DomainAncillary.data" title="cfdm.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a>(data[,&nbsp;copy])</td>
-<td>Set the data.</td>
+</tbody>
+</table>
+</div>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_property.html#cfdm.DomainAncillary.del_property" title="cfdm.DomainAncillary.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.set_extent_array</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_property.html#cfdm.DomainAncillary.get_property" title="cfdm.DomainAncillary.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<td>Return a property.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.set_extent_parameter</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_property.html#cfdm.DomainAncillary.has_property" title="cfdm.DomainAncillary.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<td>Whether a property has been set.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.set_ncvar</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.set_property" title="cfdm.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a>(prop,&nbsp;value[,&nbsp;copy])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_property.html#cfdm.DomainAncillary.set_property" title="cfdm.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.set_topology_array</span></code></td>
-<td></td>
+</tbody>
+</table>
+</div>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_data.html#cfdm.DomainAncillary.del_data" title="cfdm.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.set_topology_parameter</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>([axes])</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.expand_dims.html#cfdm.DomainAncillary.expand_dims" title="cfdm.DomainAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.topology_arrays</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_array.html#cfdm.DomainAncillary.get_array" title="cfdm.DomainAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<td>Return an numpy array copy the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_bounds.html#cfdm.DomainAncillary.get_bounds" title="cfdm.DomainAncillary.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_data.html#cfdm.DomainAncillary.get_data" title="cfdm.DomainAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
+<td>Return the data.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAncillary.get_dtarray</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary.topology_parameters</span></code></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_data.html#cfdm.DomainAncillary.has_data" title="cfdm.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>([axes])</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_data.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<td>Set the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.transpose.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
 <td>TODO  Permute the dimensions of the data.</td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="cfdm.DomainAncillary.HDF_chunks">
-<code class="descname">HDF_chunks</code><span class="sig-paren">(</span><em>*chunksizes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-275"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.HDF_chunks" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO {+HDF_chunks}</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.bounds.html#cfdm.DomainAncillary.bounds" title="cfdm.DomainAncillary.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.data.html#cfdm.DomainAncillary.data" title="cfdm.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<td>Return the data.</td>
 </tr>
 </tbody>
 </table>
-<p>To define chunks which are the full size for each axis except for the
-first axis which is to have a chunk size of 12:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old_chunks</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}({</span><span class="mi">0</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
-</pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="modification">
+<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">{+chunksizes}</p>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_data.html#cfdm.DomainAncillary.del_data" title="cfdm.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>dict</cite></dt>
-<dd><p class="first last">The chunk sizes prior to the new setting, or the current
-current sizes if no new values are specified.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_property.html#cfdm.DomainAncillary.del_property" title="cfdm.DomainAncillary.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.expand_dims.html#cfdm.DomainAncillary.expand_dims" title="cfdm.DomainAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_data.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<td>Set the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_property.html#cfdm.DomainAncillary.set_property" title="cfdm.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<td>Set a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.transpose.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<td>TODO  Permute the dimensions of the data.</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-139"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a deep copy.</p>
-<p><code class="docutils literal notranslate"><span class="pre">c.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(c)</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>data: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the data, bounds nor interior ring
-arrays. By default they are copied.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.copy.html#cfdm.DomainAncillary.copy" title="cfdm.DomainAncillary.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The deep copy.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.equals.html#cfdm.DomainAncillary.equals" title="cfdm.DomainAncillary.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<td>TODOTODO</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-</pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.del_bounds">
-<code class="descname">del_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-168"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.del_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the bounds.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_data</cite>, <cite>get_bounds</cite>, <cite>has_bounds</cite>, <cite>set_bounds</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the bounds has not been set.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__deepcopy__.html#cfdm.DomainAncillary.__deepcopy__" title="cfdm.DomainAncillary.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The removed bounds. If the bounds has not been set then the
-<em>default</em> is returned, if provided.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__getitem__.html#cfdm.DomainAncillary.__getitem__" title="cfdm.DomainAncillary.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
+<td>x.__getitem__(indices) &lt;==&gt; x[indices]</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__repr__.html#cfdm.DomainAncillary.__repr__" title="cfdm.DomainAncillary.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__str__.html#cfdm.DomainAncillary.__str__" title="cfdm.DomainAncillary.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
-</pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">d</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.del_data">
-<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.del_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the data.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>get_data</cite>, <cite>has_data</cite>, <cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the data object has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: </dt>
-<dd><p class="first last">The removed <cite>Data</cite> object. If unset then <em>default</em> is
-returned, if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.del_geometry">
-<code class="descname">del_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.del_geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the geometry type. TODO</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_geometry</cite>, <cite>has_geometry</cite>, <cite>set_geometry</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the geometry type has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out:</p>
-<blockquote class="last">
-<div><p>The removed geometry type. If the geometry type has not been
-set then the <em>default</em> is returned, if provided.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.del_part_ncdim">
-<code class="descname">del_part_ncdim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-287"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.del_part_ncdim" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.del_property">
-<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.del_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_property</cite>, <cite>has_property</cite>, <cite>properties</cite>,
-<cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first">The name of the property to be removed.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">prop='long_name'</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the property has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The removed property. If unset then <em>default</em> is returned, if
-provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.dump">
-<code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>_omit_properties=None</em>, <em>field=None</em>, <em>key=''</em>, <em>_level=0</em>, <em>_title=None</em>, <em>_axes=None</em>, <em>_axis_names=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/domainancillary.py#domainancillary.py-43"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Return a string containing a full description of the domain
-ancillary object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>display: <cite>bool</cite>, optional</dt>
-<dd><p class="first">If False then return the description as a string. By default</p>
-<p class="last">the description is printed, i.e. <code class="docutils literal notranslate"><span class="pre">f.dump()</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">print</span> <span class="pre">f.dump(display=False)</span></code>.</p>
-</dd>
-</dl>
-<p>field: <cite>Field</cite>, optional</p>
-<p>key: <cite>str</cite>, optional</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>None</cite> or <cite>str</cite></dt>
-<dd><p class="first last">A string containing the description.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.equals">
-<code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_construct_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.equals" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODOTODO</p>
-<p>..versionadded:: 1.7</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.expand_dims">
-<code class="descname">expand_dims</code><span class="sig-paren">(</span><em>position</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.expand_dims" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an numpy array copy the data.</p>
-<p>Use the <cite>get_data</cite> method to return the data as a <cite>Data</cite> object.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>get_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>numpy.ndarray</cite></dt>
-<dd><p class="first last">An numpy array copy of the data.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get_array</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span>
-<span class="go">array([ 1.  2.  3.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
-<span class="go">1.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">88</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="go">-99.0</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_bounds">
-<code class="descname">get_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-229"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the bounds.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_array</cite>, <cite>get_data</cite>, <cite>has_bounds</cite>, <cite>set_bounds</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if and only if the bounds have not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The bounds. If the bounds have not been set, then return the
-value of <em>default</em> parameter if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="s1">&#39;No bounds&#39;</span><span class="p">)</span>
-<span class="go">&#39;No bounds&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the data.</p>
-<p>Note that the data are returned in a <cite>Data</cite> object. Use the
-<cite>get_array</cite> method to return the data as an independent <cite>numpy</cite> array.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>del_data</cite>, <cite>get_array</cite>, <cite>has_data</cite>, <cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if a data object has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: </dt>
-<dd><p class="first last">The data object. If unset then <em>default</em> is returned, if
-provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_geometry">
-<code class="descname">get_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-272"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the geometry type.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_array</cite>, <cite>get_data</cite>, <cite>has_bounds</cite>, <cite>set_bounds</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if and only if the bounds have not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">out:</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_interior_ring">
-<code class="descname">get_interior_ring</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-292"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_interior_ring" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the interior_ring.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_interior_ring</cite>, <cite>get_bounds</cite>, <cite>has_interior_ring</cite>,
-<cite>set_interior_ring</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if and only if the HHHh have not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">out:</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_interior_ring</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_node_ncdim">
-<code class="descname">get_node_ncdim</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-317"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_node_ncdim" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_part_ncdim">
-<code class="descname">get_part_ncdim</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-323"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_part_ncdim" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.get_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>has_property</cite>, <cite>properties</cite>,
-<cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first">The name of the property to be returned.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">prop='standard_name'</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the property has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The value of the property. If unset then <em>default</em> is
-returned, if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.has_bounds">
-<code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-314"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if there are bounds. TODO</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_bounds</cite>, <cite>get_bounds</cite>, <cite>has_data</cite>, <cite>set_bounds</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if there are bounds, otherwise False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="s1">&#39;Has bounds&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.has_data">
-<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether a data object has been set.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>del_data</cite>, <cite>get_data</cite>, <cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if a data object has been set, otherwise False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.has_geometry">
-<code class="descname">has_geometry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-335"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if there is a goemetry type. TODO</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_bounds</cite>, <cite>get_bounds</cite>, <cite>has_data</cite>, <cite>set_bounds</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">out: <cite>bool</cite></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">has_geometry</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.has_interior_ring">
-<code class="descname">has_interior_ring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-352"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_interior_ring" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if there are interior_ring. TODO</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_interior_ring</cite>, <cite>get_interior_ring</cite>, <cite>has_data</cite>, <cite>set_interior_ring</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if there are interior_ring, otherwise False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">has_interior_ring</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">has_interior_ring</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="s1">&#39;Has interior_ring&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.has_part_ncdim">
-<code class="descname">has_part_ncdim</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-329"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_part_ncdim" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.has_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether a property has been set.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>properties</cite>, <cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first">The name of the property.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">prop='long_name'</span></code></p>
-</dd>
-</dl>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if the property has been set, otherwise False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.name">
-<code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncvar=True</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-309"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Return a name for the {+variable}.</p>
-<p>By default the name is the first found of the following:</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li>The <cite>standard_name</cite> CF property.</li>
-<li>The <cite>long_name</cite> CF property, preceeded by the string
-<code class="docutils literal notranslate"><span class="pre">'long_name:'</span></code>.</li>
-</ol>
-<ol class="arabic simple" start="2">
-<li>The <cite>cf_role</cite> CF property, preceeded by the string
-<code class="docutils literal notranslate"><span class="pre">'cf_role:'</span></code>.</li>
-<li>If the <em>ncvar</em> parameter is True, the netCDF variable name (as
-returned by the <cite>get_ncvar</cite> method), preceeded by the string
-<code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</li>
-<li>The value of the <em>default</em> parameter.</li>
-</ol>
-</div></blockquote>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples 1:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;NO NAME&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">If no name can be found then return the value of the <em>default</em>
-parameter. By default the default is <cite>None</cite>.</p>
-</dd>
-</dl>
-<p>ncvar: <cite>bool</cite>, optional</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
-<dt>out:</dt>
-<dd><p class="first last">The name.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Examples 2:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">,</span> <span class="s1">&#39;temperature of the air&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ncvar</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-<span class="go">&#39;air_temperature&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-<span class="go">&#39;long_name:temperature of the air&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-<span class="go">&#39;ncvar%tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">ncvar</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}(</span><span class="s1">&#39;no_name&#39;</span><span class="p">)</span>
-<span class="go">&#39;no_name&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}(</span><span class="s1">&#39;no_name&#39;</span><span class="p">)</span>
-<span class="go">&#39;air_temperature&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.nc_del_variable">
-<code class="descname">nc_del_variable</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-200"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.nc_del_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the netCDF variable name.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_get_variable</cite>, <cite>nc_has_variable</cite>, <cite>nc_set_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the netCDF variable name has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>str</cite></dt>
-<dd><p class="first last">The removed netCDF variable name. If unset then <em>default</em> is
-returned, if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.nc_get_variable">
-<code class="descname">nc_get_variable</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-243"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.nc_get_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the netCDF variable name.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_del_variable</cite>, <cite>nc_has_variable</cite>, <cite>nc_set_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the netCDF variable name has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>str</cite></dt>
-<dd><p class="first last">The netCDF variable name. If unset then <em>default</em> is returned,
-if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.nc_has_variable">
-<code class="descname">nc_has_variable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-288"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.nc_has_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether the netCDF variable name has been set.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_del_variable</cite>, <cite>nc_get_variable</cite>, <cite>nc_set_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">True if the netCDF variable name has been set, otherwise
-False.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.nc_set_variable">
-<code class="descname">nc_set_variable</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/netcdf.py#mixin/netcdf.py-321"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.nc_set_variable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the netCDF variable name.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>nc_del_variable</cite>, <cite>nc_get_variable</cite>, <cite>nc_has_variable</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>value: <cite>str</cite></dt>
-<dd><p class="first last">The value for the netCDF variable name.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;tas&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">()</span>
-<span class="go">&#39;tas&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_has_variable</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">nc_del_variable</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.open">
-<code class="descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdata.py#mixin/propertiesdata.py-445"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.open" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-231"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.properties" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return or replace all properties.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>has_property</cite>,
-<cite>set_property</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>properties: <cite>dict</cite>, optional   </dt>
-<dd><p class="first">Replace all existing properties with those specified in the
-dictionary. If the dictionary is empty then all properties
-will be removed.</p>
-<dl class="last docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude',</span> <span class="pre">'foo':</span> <span class="pre">'bar'}</span></code></p>
-</dd>
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={}</span></code></p>
-</dd>
-</dl>
-</dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then any property values provided by the <em>properties</em>
-parameter are not copied before insertion. By default they are
-deep copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>dict</cite></dt>
-<dd><p class="first last">The properties prior to being changed, or the current
-properties if no changes were specified.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
-<span class="go">{&#39;standard_name&#39;: &#39;altitude&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">({})</span>
-<span class="go">{&#39;standard_name&#39;: &#39;altitude&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
-<span class="go">{}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.set_bounds">
-<code class="descname">set_bounds</code><span class="sig-paren">(</span><em>bounds</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-372"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.set_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the bounds.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>data: <cite>Bounds</cite></dt>
-<dd><p class="first last">The bounds to be inserted.</p>
-</dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the bounds prior to insertion. By
-default the bounds are copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.set_data">
-<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.set_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the data.</p>
-<p>The units, calendar and fill value properties of the data object are
-removed prior to insertion.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>data</cite>, <cite>del_data</cite>, <cite>get_data</cite>, <cite>has_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>data: <cite>Data</cite></dt>
-<dd><p class="first last">The data object to be inserted.</p>
-</dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the data prior to insertion. By
-default the data are copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.set_geometry">
-<code class="descname">set_geometry</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-402"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.set_geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the geometry type.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body">value: <cite>str</cite></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><cite>None</cite></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.set_interior_ring">
-<code class="descname">set_interior_ring</code><span class="sig-paren">(</span><em>interior_ring</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-420"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.set_interior_ring" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the interior_ring.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>interior_ring: <cite>InteriorRing</cite></dt>
-<dd><p class="first last">The interior_ring to be inserted.</p>
-</dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the interior_ring prior to insertion. By
-default the interior_ring are copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_interior_ring</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.set_node_ncdim">
-<code class="descname">set_node_ncdim</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-335"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.set_node_ncdim" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Set the netCDF name of the dimension of a node coordinate variable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.set_part_ncdim">
-<code class="descname">set_part_ncdim</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-342"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.set_part_ncdim" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Set the netCDF name of the dimension of the part_node_count
-variable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.set_property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>has_property</cite>,
-<cite>properties</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <cite>str</cite></dt>
-<dd><p class="first last">The name of the property to be set.</p>
-</dd>
-<dt>value:</dt>
-<dd><p class="first last">The value for the property.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">&#39;CMIP7&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
-<span class="go">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-<span class="go">None</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.squeeze">
-<code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-350"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.squeeze" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.DomainAncillary.transpose">
-<code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/propertiesdatabounds.py#mixin/propertiesdatabounds.py-374"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary.transpose" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO  Permute the dimensions of the data.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>expand_dims</cite>, <cite>squeeze</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes: (sequence of) <cite>int</cite>, optional</dt>
-<dd><p class="first last">The new order of the data array. By default, reverse the
-dimensions’ order, otherwise the axes are permuted according
-to the values given. The values of the sequence comprise the
-integer positions of the dimensions in the data array in the
-desired order.</p>
-</dd>
-</dl>
-<p>{+copy}</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out : <cite>{+Variable}</cite></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">ndim</span>
-<span class="go">3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="p">{</span><span class="o">+</span><span class="n">name</span><span class="p">}([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.DomainAncillary.bounds">
-<code class="descname">bounds</code><a class="headerlink" href="#cfdm.DomainAncillary.bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.DomainAncillary.data">
-<code class="descname">data</code><a class="headerlink" href="#cfdm.DomainAncillary.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the data.</p>
-<p><code class="docutils literal notranslate"><span class="pre">f.data</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">f.get_data()</span></code></p>
-<p>Note that the data are returned in a <cite>Data</cite> object. Use the
-<cite>get_array</cite> method to return the data as a <cite>numpy</cite> array.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>del_data</cite>, <cite>get_array</cite>, <cite>get_data</cite>, <cite>has_data</cite>,
-<cite>set_data</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>Data</cite></dt>
-<dd><p class="first last">The data object.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(10,)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.DomainAncillary.dtarray">
-<code class="descname">dtarray</code><a class="headerlink" href="#cfdm.DomainAncillary.dtarray" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO An independent numpy array of date-time objects.</p>
-<p>Only applicable for reference time units.</p>
-<p>If the calendar has not been set then the CF default calendar will be
-used.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>array</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.DomainAncillary.interior_ring">
-<code class="descname">interior_ring</code><a class="headerlink" href="#cfdm.DomainAncillary.interior_ring" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cfdm.DomainAncillary.isreftime">
-<code class="descname">isreftime</code><a class="headerlink" href="#cfdm.DomainAncillary.isreftime" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.6.</span></p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 
 

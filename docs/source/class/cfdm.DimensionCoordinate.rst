@@ -15,11 +15,12 @@ Inspection
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.dump
    ~cfdm.DimensionCoordinate.get_array
+   ~cfdm.DimensionCoordinate.get_bounds
    ~cfdm.DimensionCoordinate.get_data
    ~cfdm.DimensionCoordinate.has_data
    ~cfdm.DimensionCoordinate.get_property
@@ -30,10 +31,11 @@ Inspection
    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cfdm.DimensionCoordinate.data
+   ~cfdm.DimensionCoordinate.bounds
 
 Properties
 ----------
@@ -42,7 +44,7 @@ Properties
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.del_property
@@ -58,12 +60,13 @@ Data
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.del_data
    ~cfdm.DimensionCoordinate.expand_dims
    ~cfdm.DimensionCoordinate.get_array
+   ~cfdm.DimensionCoordinate.get_bounds
    ~cfdm.DimensionCoordinate.get_data
    ~cfdm.DimensionCoordinate.get_dtarray
    ~cfdm.DimensionCoordinate.has_data
@@ -75,7 +78,7 @@ Data
    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cfdm.DimensionCoordinate.data
@@ -87,7 +90,7 @@ Modification
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.del_data
@@ -106,7 +109,7 @@ Miscellaneous
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.copy
@@ -119,7 +122,7 @@ Special
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.__deepcopy__

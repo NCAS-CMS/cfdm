@@ -7,23 +7,13 @@ cfdm.CoordinateReference
 .. autoclass:: cfdm.CoordinateReference
    :no-members:
    :no-inherited-members:
-
-Attributes
-----------
- 
-.. autosummary::
-   :toctree: ../generated/
-   :template: attribute.rst
-	      
-   ~CoordinateReference.coordinate_conversion
-   ~CoordinateReference.datum
    
 Methods
 -------
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~CoordinateReference.coordinates
@@ -43,7 +33,16 @@ Methods
    ~CoordinateReference.set_coordinate
    ~CoordinateReference.set_datum
    ~CoordinateReference.set_ncvar
-   
+
+Attributes
+----------
+ 
+.. autosummary::
+   :toctree: ../attribute/
+   :template: attribute.rst
+	      
+   ~CoordinateReference.coordinate_conversion
+   ~CoordinateReference.datum
    
 
    
