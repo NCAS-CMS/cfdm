@@ -9,23 +9,18 @@
 Field construct class
 --------------------
 
-This class represents the field construct of the CF data model.
-
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.Field	              
 
 Metadata construct classes
 --------------------------
 
-Each of these classes represent the metadata constructs of the CF data
-model.
-
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.AuxiliaryCoordinate
    cfdm.CellMeasure
@@ -39,44 +34,55 @@ model.
 Construct component classes
 ---------------------------
 
-
-Each of these classes represents a particular component found in a
-subset of construct classes.
-
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
+   cfdm.Domain
    cfdm.Bounds
    cfdm.CoordinateConversion
    cfdm.Data
    cfdm.Datum
-   cfdm.Domain
-..
 
-The components may be found in construct classes as follows:
+Data classes
+------------
 
-======================  ============================================================
-Component               Parent constructs
-======================  ============================================================
-`Bounds`                `AuxiliaryCoordinate`, `DimensionCoordinate`,
-                        `DomainAncillary`
-`CoordinateConversion`  `CoordinateReference`
-`Data`                  `AuxiliaryCoordinate`, `CellMeasure`, `DimensionCoordinate`,
-                        `DomainAncillary`, `Field`, `FieldAncillary`
-`Datum`                 `CoordinateReference`
-`Domain`                `Field`
-======================  ============================================================
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.Data
+   cfdm.NetCDFArray
+   cfdm.NumpyArray
+   cfdm.Array
+
+Data compression classses
+-------------------------
+
+Classes that support the creation and storage of compressed arrays.
+
+.. autosummary::
+   :nosignatures:
+   :toctree: class/
+
+   cfdm.GatheredArray
+   cfdm.RaggedContiguousArray
+   cfdm.RaggedIndexedArray
+   cfdm.RaggedIndexedContiguousArray
+   cfdm.Count
+   cfdm.Index
+   cfdm.List
+
 
 Construct mixin classes
 -----------------------
 
-Each of these classes provides functionality to read and write netCDF
-datasets and to modify constructs in memory.
+Classes that provide additional functionality that is shared by
+multiple construct classes.
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.mixin.ConstructAccess
    cfdm.mixin.Container
@@ -93,35 +99,3 @@ datasets and to modify constructs in memory.
    cfdm.mixin.PropertiesData
    cfdm.mixin.PropertiesDataBounds
    
-Data classes
-------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.Data
-   cfdm.NetCDFArray
-   cfdm.NumpyArray
-   cfdm.data.abstract.Array
-
-Data compression classses
--------------------------
-
-TODO
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.GatheredArray
-   cfdm.RaggedContiguousArray
-   cfdm.RaggedIndexedArray
-   cfdm.RaggedIndexedContiguousArray
-   cfdm.Count
-   cfdm.Index
-   cfdm.List
-   cfdm.data.abstract.CompressedArray		
-   cfdm.data.mixin.RaggedContiguous
-   cfdm.data.mixin.RaggedIndexed
-

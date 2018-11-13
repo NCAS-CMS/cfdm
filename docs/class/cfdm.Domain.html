@@ -1,0 +1,1612 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cfdm.Domain &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.Bounds" href="cfdm.Bounds.html" />
+    <link rel="prev" title="cfdm.FieldAncillary" href="cfdm.FieldAncillary.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html">Subclassing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../reference.html">Reference manual</a><ul>
+  <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
+      <li>Previous: <a href="cfdm.FieldAncillary.html" title="previous chapter">cfdm.FieldAncillary</a></li>
+      <li>Next: <a href="cfdm.Bounds.html" title="next chapter">cfdm.Bounds</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/class/cfdm.Domain.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-domain">
+<h1>cfdm.Domain<a class="headerlink" href="#cfdm-domain" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cfdm.Domain">
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Domain</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/domain.py#domain.py-10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
+<p>A CF Domain construct.</p>
+<p>The domain is defined collectively by the following constructs, all of
+which are optional:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Construct</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Domain axis</td>
+<td>Independent axes of the domain stored in
+<cite>DomainAxis</cite> objects</td>
+</tr>
+<tr class="row-odd"><td>Dimension coordinate</td>
+<td>Domain cell locations stored in
+<cite>DimensionCoordinate</cite> objects</td>
+</tr>
+<tr class="row-even"><td>Auxiliary coordinate</td>
+<td>Domain cell locations stored in
+<cite>AuxiliaryCoordinate</cite> objects</td>
+</tr>
+<tr class="row-odd"><td>Coordinate reference</td>
+<td>Domain coordinate systems stored in
+<cite>CoordinateReference</cite> objects</td>
+</tr>
+<tr class="row-even"><td>Domain ancillary</td>
+<td>Cell locations in alternative coordinate systems
+stored in <cite>DomainAncillary</cite> objects</td>
+</tr>
+<tr class="row-odd"><td>Cell measure</td>
+<td>Domain cell size or shape stored in
+<cite>CellMeasure</cite> objects</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>source: optional</dt>
+<dd><p class="first last">Initialise the domain from the constructs of <em>source</em>,
+ignoring any cell method or field ancillary constructs.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not deep copy arguments prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cfdm.Domain.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/domain.py#core/domain.py-60"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>source: optional</dt>
+<dd><p class="first last">Initialise the domain from the constructs of <em>source</em>,
+ignoring any cell method or field ancillary constructs.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not deep copy arguments prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.__init__" title="cfdm.Domain.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([source,&nbsp;copy,&nbsp;_use_data])</td>
+<td><strong>Initialization</strong></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">array_constructs</span></code>([copy])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.auxiliary_coordinates" title="cfdm.Domain.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a>([axes,&nbsp;copy])</td>
+<td>Return auxiliary coordinate constructs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.cell_measures" title="cfdm.Domain.cell_measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measures</span></code></a>([axes,&nbsp;copy])</td>
+<td>Return cell measure constructs.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.construct</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.construct_axes" title="cfdm.Domain.construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_axes</span></code></a>([cid])</td>
+<td>Return the identifiers of the domain axes spanned by the construct data arrays.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.construct_type" title="cfdm.Domain.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a>(cid)</td>
+<td>TODO</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.constructs" title="cfdm.Domain.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>([description,&nbsp;cid,&nbsp;axes,&nbsp;…])</td>
+<td>Return metadata constructs</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.coordinate_references" title="cfdm.Domain.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a>([copy])</td>
+<td>Return coordinate reference constructs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.coordinates" title="cfdm.Domain.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a>([axes,&nbsp;copy])</td>
+<td>Return dimension and auxiliary coordinate constructs.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.copy" title="cfdm.Domain.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.del_construct" title="cfdm.Domain.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.dimension_coordinates" title="cfdm.Domain.dimension_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinates</span></code></a>([axes,&nbsp;copy])</td>
+<td>Return dimension coordinate constructs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.domain_ancillaries" title="cfdm.Domain.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a>([axes,&nbsp;copy])</td>
+<td>Return domain ancillary constructs.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.domain_axes" title="cfdm.Domain.domain_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axes</span></code></a>([copy])</td>
+<td>Return domain axis constructs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.domain_axis_name" title="cfdm.Domain.domain_axis_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis_name</span></code></a>(key)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.dump" title="cfdm.Domain.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a>([display,&nbsp;_level,&nbsp;_title])</td>
+<td>A full description of the domain.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.equals" title="cfdm.Domain.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>(other[,&nbsp;rtol,&nbsp;atol,&nbsp;traceback,&nbsp;…])</td>
+<td>True if two {+variable}s are equal, False otherwise.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.fromconstructs" title="cfdm.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a>(constructs)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.get_construct" title="cfdm.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>([description,&nbsp;cid,&nbsp;axes,&nbsp;…])</td>
+<td>Return a metadata construct.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_auxiliary_coordinate" title="cfdm.Domain.set_auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_auxiliary_coordinate</span></code></a>(item[,&nbsp;axes,&nbsp;cid,&nbsp;copy])</td>
+<td>Set an auxiliary coordinate construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_cell_measure" title="cfdm.Domain.set_cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_measure</span></code></a>(item[,&nbsp;axes,&nbsp;cid,&nbsp;copy])</td>
+<td>Set a cell measure construct.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_construct" title="cfdm.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>(construct_type,&nbsp;construct[,&nbsp;…])</td>
+<td>Set a metadata construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_construct_axes" title="cfdm.Domain.set_construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_axes</span></code></a>(cid,&nbsp;axes)</td>
+<td>Set the domain axes spanned by a construct data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_coordinate_reference" title="cfdm.Domain.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a>(item[,&nbsp;cid,&nbsp;copy])</td>
+<td>Set a coordinate reference construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_dimension_coordinate" title="cfdm.Domain.set_dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dimension_coordinate</span></code></a>(item[,&nbsp;axes,&nbsp;cid,&nbsp;copy])</td>
+<td>Set a dimension coordinate construct.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_domain_ancillary" title="cfdm.Domain.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a>(item[,&nbsp;axes,&nbsp;cid,&nbsp;copy])</td>
+<td>Set a domain ancillary construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Domain.html#cfdm.Domain.set_domain_axis" title="cfdm.Domain.set_domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_axis</span></code></a>(domain_axis[,&nbsp;cid,&nbsp;copy])</td>
+<td>Set a domain axis construct.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cfdm.Domain.auxiliary_coordinates">
+<code class="descname">auxiliary_coordinates</code><span class="sig-paren">(</span><em>axes=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-513"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.auxiliary_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return auxiliary coordinate constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If <cite>True</cite> then deep copies of the constructs are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO
+&gt;&gt;&gt; f.auxiliary_constructs()
+{}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.cell_measures">
+<code class="descname">cell_measures</code><span class="sig-paren">(</span><em>axes=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-168"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.cell_measures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return cell measure constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If <cite>True</cite> then deep copies of the constructs are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO
+&gt;&gt;&gt; f.cell_measure()
+{}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.construct_axes">
+<code class="descname">construct_axes</code><span class="sig-paren">(</span><em>cid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/mixin/constructaccess.py#core/mixin/constructaccess.py-37"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.construct_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the identifiers of the domain axes spanned by the construct
+data arrays.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>cid: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>tuple</cite> or <cite>None</cite></dt>
+<dd><p class="first last">The identifiers of the domain axes spanned by the construct’s
+data array. If the construct does not have a data array then
+<cite>None</cite> is returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct_axes</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate0&#39;</span><span class="p">)</span>
+<span class="go">(&#39;domainaxis1&#39;, &#39;domainaxis0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">construct_axes</span><span class="p">(</span><span class="s1">&#39;auxiliarycoordinate99&#39;</span><span class="p">))</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.construct_type">
+<code class="descname">construct_type</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/mixin/constructaccess.py#core/mixin/constructaccess.py-68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.construct_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.constructs">
+<code class="descname">constructs</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-342"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.constructs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return metadata constructs</p>
+<p>Constructs are returned as values of a dictionary, keyed by unique
+internal identifiers.</p>
+<p>By default all metadata constructs are returned, but a subset may be
+selected via the optional parameters. If multiple parameters are
+specified, then the constructs that satisfy <em>all</em> of the criteria are
+returned.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>del_construct</cite>, <cite>get_construct</cite>, <cite>set_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>description: <cite>str</cite>, optional</dt>
+<dd><p class="first">Select constructs that have the given property, or other
+attribute, value.</p>
+<p>The description may be one of:</p>
+<ul class="last">
+<li><p class="first">The value of the standard name property on its own.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs
+that have a “standard_name” property with the value
+“air_pressure”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The value of any property prefixed by the property name and
+a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs
+that have a “positive” property with the value “up”.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that
+have a “foo” property with the value “bar”.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
+constructs that have a “standard_name” property with the
+value “air_pressure”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The measure of cell measure constructs, prefixed by
+<code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='measure%area'</span></code> will select “area” cell
+measure constructs.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">A construct identifier, prefixed by <code class="docutils literal notranslate"><span class="pre">cid%</span></code> (see also the
+<em>cid</em> parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em> </dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%cellmethod1'</span></code> will select cell
+method construct with construct identifier
+“cellmethod1”. This is equivalent to
+<code class="docutils literal notranslate"><span class="pre">cid='cellmethod1'</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with
+netCDF variable name “lat”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The netCDF dimension name of domain axis constructs,
+prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncdim%time'</span></code> will select domain axis
+constructs with netCDF dimension name “time”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">Select the construct with the given construct identifier.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary0'</span></code> will the domain ancillary
+construct with construct identifier “domainancillary1”. This
+is equivalent to <code class="docutils literal notranslate"><span class="pre">description='cid%domainancillary0'</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>construct_type: <cite>str</cite>, optional</dt>
+<dd><p class="first">Select constructs of the given type. Valid types are:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>construct_type</em></th>
+<th class="head">Constructs</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'domain_ancillary'</span></code></td>
+<td>Domain ancillary constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'dimension_coordinate'</span></code></td>
+<td>Dimension coordinate constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'domain_axis'</span></code></td>
+<td>Domain axis constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'auxiliary_coordinate'</span></code></td>
+<td>Auxiliary coordinate constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_measure'</span></code></td>
+<td>Cell measure constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'coordinate_reference'</span></code></td>
+<td>Coordinate reference constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_method'</span></code></td>
+<td>Cell method constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'field_ancillary'</span></code></td>
+<td>Field ancillary constructs</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type='dimension_coordinate'</span></code></p>
+</dd>
+</dl>
+<p class="last">Note that a <cite>Domain</cite> object never contains cell method nor
+field ancillary constructs.</p>
+</dd>
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first">Select constructs which have data that spans any one or more
+of the given domain axes, in any order. Domain axes are
+specified by their unique internal identifiers.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis2']</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then return copies of the constructs. By default the
+constructs are not copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">out: <cite>dict</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">()</span>
+<span class="go">TODO</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.coordinate_references">
+<code class="descname">coordinate_references</code><span class="sig-paren">(</span><em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.coordinate_references" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return coordinate reference constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If <cite>True</cite> then deep copies of the constructs are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO
+&gt;&gt;&gt; f.coordinate_references()
+{}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.coordinates">
+<code class="descname">coordinates</code><span class="sig-paren">(</span><em>axes=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-93"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dimension and auxiliary coordinate constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If <cite>True</cite> then deep copies of the constructs are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO
+&gt;&gt;&gt; f.coordinates()
+{}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/domain.py#core/domain.py-127"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.del_construct">
+<code class="descname">del_construct</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-199"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.del_construct" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.dimension_coordinates">
+<code class="descname">dimension_coordinates</code><span class="sig-paren">(</span><em>axes=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-544"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.dimension_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dimension coordinate constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If <cite>True</cite> then deep copies of the constructs are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO
+&gt;&gt;&gt; f.dimension_coordinates()
+{}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.domain_ancillaries">
+<code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><em>axes=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-124"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return domain ancillary constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If <cite>True</cite> then deep copies of the constructs are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO
+&gt;&gt;&gt; f.domain_ancillaries()
+{}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.domain_axes">
+<code class="descname">domain_axes</code><span class="sig-paren">(</span><em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-478"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.domain_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return domain axis constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If <cite>True</cite> then deep copies of the constructs are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO
+&gt;&gt;&gt; f.domain_axes()
+{}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.domain_axis_name">
+<code class="descname">domain_axis_name</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/domain.py#domain.py-207"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.domain_axis_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.dump">
+<code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>_level=0</em>, <em>_title=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/domain.py#domain.py-214"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>A full description of the domain.</p>
+<p>The domain components are described without abbreviation with the
+exception of data arrays, which are abbreviated to their first and
+last values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>display: <cite>bool</cite>, optional</dt>
+<dd><p class="first">If False then return the description as a string. By default
+the description is printed.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">f.dump()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">print</span>
+<span class="pre">f.dump(display=False)</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>None</cite> or <cite>str</cite></dt>
+<dd><p class="first last">If <em>display</em> is True then the description is printed and
+<cite>None</cite> is returned. Otherwise the description is returned as a
+string.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.equals">
+<code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_construct_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/domain.py#domain.py-311"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if two {+variable}s are equal, False otherwise.</p>
+<p>Two fields are equal if …</p>
+<p>Note that a {+variable} may be equal to a single element field list,
+for example <code class="docutils literal notranslate"><span class="pre">f.equals(f[0:1])</span></code> and <code class="docutils literal notranslate"><span class="pre">f[0:1].equals(f)</span></code> are always
+True.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>cf.FieldList.equals</cite>, <cite>cf.FieldList.set_equals</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>other: <cite>object</cite></dt>
+<dd><p class="first last">The object to compare for equality.</p>
+</dd>
+</dl>
+<p>{+atol}</p>
+<p>{+rtol}</p>
+<dl class="docutils">
+<dt>ignore_fill_value: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then data arrays with different fill values are
+considered equal. By default they are considered unequal.</p>
+</dd>
+<dt>traceback: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then print a traceback highlighting where the two
+{+variable}s differ.</p>
+</dd>
+<dt>ignore: <cite>tuple</cite>, optional</dt>
+<dd><p class="first last">The names of CF properties to omit from the comparison. By
+default, the CF Conventions property is omitted.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>bool</cite></dt>
+<dd><p class="first last">Whether or not the two {+variable}s are equal.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Conventions</span>
+<span class="go">&#39;CF-1.0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s1">&#39;CF-1.6&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>In the following example, two fields differ only by the long name of
+their time coordinates. The traceback shows that they differ in their
+domains, that they differ in their time coordinates and that the long
+name could not be matched.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">long_name</span> <span class="o">+=</span> <span class="s1">&#39; different&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">Domain: Different coordinate: &lt;CF Coordinate: time(12)&gt;</span>
+<span class="go">Field: Different domain properties: &lt;CF Domain: (128, 1, 12, 64)&gt;, &lt;CF Domain: (128, 1, 12, 64)&gt;</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="cfdm.Domain.fromconstructs">
+<em class="property">classmethod </em><code class="descname">fromconstructs</code><span class="sig-paren">(</span><em>constructs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/domain.py#core/domain.py-158"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.fromconstructs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body">constructs: <cite>Constructs</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">out: <cite>Domain</cite></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">fromconstructs</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">_get_constructs</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.get_construct">
+<code class="descname">get_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-207"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.get_construct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a metadata construct.</p>
+<p>The construct is selected via optional parameters. If multiple
+parameters are specified, then the unique construct that satisfies
+<em>all</em> of the given criteria is returned. An error is raised if
+multiple constructs satisfy all of the given criteria.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>set_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>description: <cite>str</cite>, optional</dt>
+<dd><p class="first">Select constructs that have the given property, or other
+attribute, value.</p>
+<p>The description may be one of:</p>
+<ul class="last">
+<li><p class="first">The value of the standard name property on its own.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs
+that have a “standard_name” property with the value
+“air_pressure”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The value of any property prefixed by the property name and
+a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs
+that have a “positive” property with the value “up”.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that
+have a “foo” property with the value “bar”.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
+constructs that have a “standard_name” property with the
+value “air_pressure”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The measure of cell measure constructs, prefixed by
+<code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='measure%area'</span></code> will select “area” cell
+measure constructs.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">A construct identifier, prefixed by <code class="docutils literal notranslate"><span class="pre">cid%</span></code> (see also the
+<em>cid</em> parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em> </dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%cellmethod1'</span></code> will select cell
+method construct with construct identifier
+“cellmethod1”. This is equivalent to
+<code class="docutils literal notranslate"><span class="pre">cid='cellmethod1'</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with
+netCDF variable name “lat”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The netCDF dimension name of domain axis constructs,
+prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncdim%time'</span></code> will select domain axis
+constructs with netCDF dimension name “time”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">Select the construct with the given construct identifier.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary0'</span></code> will the domain ancillary
+construct with construct identifier “domainancillary1”. This
+is equivalent to <code class="docutils literal notranslate"><span class="pre">description='cid%domainancillary0'</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>construct_type: <cite>str</cite>, optional</dt>
+<dd><p class="first">Select constructs of the given type. Valid types are:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>construct_type</em></th>
+<th class="head">Constructs</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'domain_ancillary'</span></code></td>
+<td>Domain ancillary constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'dimension_coordinate'</span></code></td>
+<td>Dimension coordinate constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'domain_axis'</span></code></td>
+<td>Domain axis constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'auxiliary_coordinate'</span></code></td>
+<td>Auxiliary coordinate constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_measure'</span></code></td>
+<td>Cell measure constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'coordinate_reference'</span></code></td>
+<td>Coordinate reference constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_method'</span></code></td>
+<td>Cell method constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'field_ancillary'</span></code></td>
+<td>Field ancillary constructs</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type='dimension_coordinate'</span></code></p>
+</dd>
+</dl>
+<p class="last">Note that a <cite>Domain</cite> object never contains cell method nor
+field ancillary constructs.</p>
+</dd>
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first">Select constructs which have data that spans any one or more
+of the given domain axes, in any order. Domain axes are
+specified by their unique internal identifiers.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis2']</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then return a copy of the unique selected
+construct. By default the construct is not copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">out: <cite>dict</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">()</span>
+<span class="go">TODO</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_auxiliary_coordinate">
+<code class="descname">set_auxiliary_coordinate</code><span class="sig-paren">(</span><em>item</em>, <em>axes=None</em>, <em>cid=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-715"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_auxiliary_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set an auxiliary coordinate construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite>,
+<cite>set_construct_axes</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>item: <cite>AuxiliaryCoordinate</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifiers of the domain axes spanned by the data array.</p>
+<p>The axes may also be set afterwards with the
+<cite>set_construct_axes</cite> method.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifier of the construct. If not set then a new, unique
+identifier is created. If the identifier already exisits then
+the exisiting construct will be replaced.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='auxiliarycoordinate0'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy the construct prior to insertion. By
+default it is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_cell_measure">
+<code class="descname">set_cell_measure</code><span class="sig-paren">(</span><em>item</em>, <em>axes=None</em>, <em>cid=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-580"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_cell_measure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a cell measure construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite>,
+<cite>set_construct_axes</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>item: <cite>CellMeasure</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifiers of the domain axes spanned by the data array.</p>
+<p>The axes may also be set afterwards with the
+<cite>set_construct_axes</cite> method.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifier of the construct. If not set then a new, unique
+identifier is created. If the identifier already exisits then
+the exisiting construct will be replaced.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='cellmeasure0'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy the construct prior to insertion. By
+default it is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_construct">
+<code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct_type</em>, <em>construct</em>, <em>cid=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/mixin/constructaccess.py#core/mixin/constructaccess.py-298"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_construct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a metadata construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite>,
+<cite>set_construct_axes</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>item: </dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifiers of the domain axes spanned by the data
+array. Ignored for constructs that can not have a data array,
+i.e. domain axis, cell method and coordinate reference
+constructs.</p>
+<p>The axes may also be set afterwards with the
+<cite>set_construct_axes</cite> method.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifier of the construct. If not set then a new, unique
+identifier is created. If the identifier already exisits then
+the exisiting construct will be replaced.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='cellmeasure0'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy the construct prior to insertion. By
+default it is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_construct_axes">
+<code class="descname">set_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/mixin/constructaccess.py#core/mixin/constructaccess.py-355"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_construct_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the domain axes spanned by a construct data array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite>,
+<cite>set_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>cid: <cite>str</cite></dt>
+<dd><blockquote class="first">
+<div><p>The identifier of the construct.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='cellmeasure0'</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="last docutils">
+<dt>axes: sequence of <cite>str</cite></dt>
+<dd><p class="first">The identifiers of the domain axes spanned by the data array.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><cite>None</cite></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_coordinate_reference">
+<code class="descname">set_coordinate_reference</code><span class="sig-paren">(</span><em>item</em>, <em>cid=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-627"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_coordinate_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a coordinate reference construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite>,
+<cite>set_construct_axes</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>item: <cite>CoordinateReference</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifier of the construct. If not set then a new, unique
+identifier is created. If the identifier already exisits then
+the exisiting construct will be replaced.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='coordinatereference0'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy the construct prior to insertion. By
+default it is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_dimension_coordinate">
+<code class="descname">set_dimension_coordinate</code><span class="sig-paren">(</span><em>item</em>, <em>axes=None</em>, <em>cid=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-666"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_dimension_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a dimension coordinate construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite>,
+<cite>set_construct_axes</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>item: <cite>DimensionCoordinate</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifiers of the domain axes spanned by the data array.</p>
+<p>The axes may also be set afterwards with the
+<cite>set_construct_axes</cite> method.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifier of the construct. If not set then a new, unique
+identifier is created. If the identifier already exisits then
+the exisiting construct will be replaced.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='dimensioncoordinate1'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy the construct prior to insertion. By
+default it is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_domain_ancillary">
+<code class="descname">set_domain_ancillary</code><span class="sig-paren">(</span><em>item</em>, <em>axes=None</em>, <em>cid=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-802"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a domain ancillary construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite>,
+<cite>set_construct_axes</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>item: <cite>DomainAncillary</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>axes: sequence of <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifiers of the domain axes spanned by the data array.</p>
+<p>The axes may also be set afterwards with the
+<cite>set_construct_axes</cite> method.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis1',</span> <span class="pre">'domainaxis0']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifier of the construct. If not set then a new, unique
+identifier is created. If the identifier already exisits then
+the exisiting construct will be replaced.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary0'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy the construct prior to insertion. By
+default it is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.Domain.set_domain_axis">
+<code class="descname">set_domain_axis</code><span class="sig-paren">(</span><em>domain_axis</em>, <em>cid=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/constructaccess.py#mixin/constructaccess.py-764"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.set_domain_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a domain axis construct.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>constructs</cite>, <cite>del_construct</cite>, <cite>get_construct</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>item: <cite>DomainAxis</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>cid: <cite>str</cite>, optional</dt>
+<dd><p class="first">The identifier of the construct. If not set then a new, unique
+identifier is created. If the identifier already exisits then
+the exisiting construct will be replaced.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainaxis2'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy the construct prior to insertion. By
+default it is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>str</cite></dt>
+<dd><p class="first last">The identifier of the construct.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/class/cfdm.Domain.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -22,6 +22,7 @@ lat = f.get_construct('grid_latitude')
 data = numpy.array([  2.2, 1.76, 1.32, 0.88,  0.44,  0.0, -0.44,  -0.88,  -1.32, -1.76])
 data = numpy.around(data, 2)
 lat.set_data(cfdm.Data(data))
+lat.nc_set_variable('lat')
 
 bounds = numpy.empty((10, 2))
 bounds[:, 0] = data + 0.22
@@ -30,17 +31,20 @@ bounds = numpy.around(bounds, 2)
 b = cfdm.Bounds()
 b.set_data(cfdm.Data(bounds))
 lat.set_bounds(b)
+lat.bounds.nc_set_variable('lat_bnds')
 
 lon = f.get_construct('grid_longitude')
 data = numpy.array([-4.7, -4.26, -3.820, -3.38, -2.94, -2.5, -2.06, -1.620, -1.18])
 data = numpy.around(data, 2)
 lon.set_data(cfdm.Data(data))
+lon.nc_set_variable('lon')
 
 bounds = numpy.empty((9, 2))
 bounds[:, 0] = data - 0.22
 bounds[:, 1] = data + 0.22
 bounds = numpy.around(bounds, 2)
 lon.get_bounds().set_data(cfdm.Data(bounds))
+lon.bounds.nc_set_variable('lon_bnds')
 
 lat = f.get_construct('latitude')
 data = numpy.array([[ 53.941,  53.987,  54.029,  54.066,  54.099,  54.127,  54.15 ,

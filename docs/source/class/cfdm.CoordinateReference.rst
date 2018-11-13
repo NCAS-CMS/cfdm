@@ -1,0 +1,51 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+cfdm.CoordinateReference
+========================
+
+.. autoclass:: cfdm.CoordinateReference
+   :no-members:
+   :no-inherited-members:
+
+Attributes
+----------
+ 
+.. autosummary::
+   :toctree: ../generated/
+   :template: attribute.rst
+	      
+   ~CoordinateReference.coordinate_conversion
+   ~CoordinateReference.datum
+   
+Methods
+-------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~CoordinateReference.coordinates
+   ~CoordinateReference.copy
+   ~CoordinateReference.del_coordinate
+   ~CoordinateReference.del_coordinate_conversion
+   ~CoordinateReference.del_datum
+   ~CoordinateReference.del_ncvar
+   ~CoordinateReference.dump
+   ~CoordinateReference.equals
+   ~CoordinateReference.get_coordinate_conversion
+   ~CoordinateReference.get_datum
+   ~CoordinateReference.get_ncvar
+   ~CoordinateReference.has_coordinate_conversion
+   ~CoordinateReference.has_datum
+   ~CoordinateReference.name
+   ~CoordinateReference.set_coordinate
+   ~CoordinateReference.set_datum
+   ~CoordinateReference.set_ncvar
+   
+   
+
+   
+   
+   

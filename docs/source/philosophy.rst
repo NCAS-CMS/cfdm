@@ -63,3 +63,8 @@ efficient for the experienced user. The :ref:`cfdm <class_extended>`
 package has aimed for an API that more at the verbose end of the
 spectrum: in general it does not use abbreviations for method and
 parameter names, and each method performs a sole function.
+
+The :ref:`cfdm <class_extended>` package is *not* (and not meant to
+be) a general analysis package so it can't, for example, regrid field
+constructs to new domains, perform statistical collapses, combine
+field constructs arithmetically, etc.

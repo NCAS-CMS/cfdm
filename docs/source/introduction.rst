@@ -3,6 +3,12 @@
 
 .. _introduction:
 
+.. toctree::
+   :maxdepth: 1
+
+Introduction
+============
+
 CF conventions
 --------------
 
@@ -17,22 +23,57 @@ https://www.unidata.ucar.edu/software/netcdf) files and libraries.
 CF data model
 -------------
 
-The CF data model identifies the fundamental elements of CF and
-shows how they relate to each other, independently of the netCDF
-encoding.
+The CF data model identifies the fundamental elements ("constructs")
+of CF and shows how they relate to each other, independently of the
+netCDF encoding.
 
-The **field** construct, which corresponds to a CF-netCDF data
-variable with all of its metadata, is central to the CF data
-model. The field construct consists of descriptive properties, a data
-array, the definition of its domain (that describes the locations of
-each cell of the data array), **field ancillary** constructs
-containing metadata defined over the same **domain**, and **cell
-method** constructs to describe how the cell values represent the
-variation of the physical quantity within the cells of the domain. The
-domain is defined collectively by the following constructs of the CF
-data model: **domain axis**, **dimension coordinate**, **auxiliary
-coordinate**, **cell measure**, **coordinate reference** and **domain
-ancillary** constructs.
+The **field** construct defined by the CF data model, which
+corresponds to a CF-netCDF data variable with all of its metadata, is
+the central construct that includes all of the other constructs. It
+consists of
+
+- descriptive properties that apply to field construct as a whole
+  (e.g. the standard name),
+
+- a data array, and
+
+- "metadata constructs" that describe
+  
+  - the locations of each cell of the data array (i.e. the domain),
+    and
+
+  - the physical nature of each cell's datum.
+
+The domain is defined collectively by
+
+* **domain axis** constructs (corresponding to CF-netCDF dimensions or
+  scalar coordinate variables),
+
+* **dimension coordinate** constructs (corresponding to CF-netCDF
+  coordinate variables or numeric scalar coordinate variables),
+
+* **auxiliary coordinate** constructs (corresponding to CF-netCDF
+  auxiliary coordinate variables and non-numeric scalar coordinate
+  variables),
+
+* **coordinate reference** constructs (corresponding to CF-netCDF grid
+  mapping variables or the formula_terms attribute of a coordinate
+  variable),
+
+* **domain ancillary** constructs (corresponding to CF-netCDF
+  variables named by the formula_terms attribute of a coordinate
+  variable), and
+
+* **cell measure** constructs (corresponding to CF-netCDF cell measure
+  variables).
+  
+The physical nature of individual data values are described by 
+
+* **field ancillary** constructs (corresponding to CF-netCDF ancillary
+  variables), and
+
+* **cell method** constructs (corresponding to a CF-netCDF
+  cell_methods attribute of data variable).
 
 A complete description of the CF data model, including UML diagrams,
 is available at https://www.geosci-model-dev.net/10/4619/2017.
@@ -43,8 +84,8 @@ Implementation
 The :ref:`cfdm <class_extended>` library implements the CF data model
 for its internal data structures and so is able to process any
 CF-compliant dataset. It is, however, not strict about CF compliance
-so that partially conformant datasets may be modified in memory as
-well as ingested from existing datasets, or written to new datasets.
+so that partially conformant datasets may be modified in memory, as
+well as ingested from existing datasets and written to new datasets.
 
 The :ref:`cfdm <class_extended>` package can
 
@@ -54,11 +95,11 @@ The :ref:`cfdm <class_extended>` package can
 
 * inspect field constructs,
 
-* modify field construct metadata and data in memory,
+* modify field construct metadata and data,
 
-* create subspaces of field constructs, and
+* create subspaces of field constructs,
 
-* write field constructs to a netCDF dataset on disk,
+* write field constructs to netCDF datasets on disk,
 
 * incorporate metadata stored in external files,
 

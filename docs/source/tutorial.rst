@@ -6,25 +6,6 @@
 Tutorial
 ========
 
-The field construct defined by the CF data model consists of
-
-* descriptive properties that apply to field construct as a whole
-
-* a data array, and
-
-* a variety of "metadata constructs" that describe
-
-  * the locations of each cell of the data array,
-
-  * the physical nature of each cell's datum.
-
-The field construct is represented by the `Field` class.
-
-The :ref:`metadata constructs <constructs>` comprise `DomainAxis`,
-`DimensionCoordinate`, `AuxiliaryCoordinate`, `CoordinateReference`,
-`DomainAncillary`, `CellMeasure`, `FieldAncillary`, and `CellMethod`
-classes.
-
 .. _read:
 
 Reading datasets
@@ -32,10 +13,9 @@ Reading datasets
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
-from an `OPeNDAP URL
-<https://www.unidata.ucar.edu/software/netcdf/docs/dap_accessing_data.html>`_
-[#opendap]_, and returns the contents as a list zero or more `Field`
-objects.
+from an `OPeNDAP <https://www.opendap.org/>`_ URL [#opendap2]_, and
+returns the contents as a list of zero or more `Field` class
+instances, each of which represents a field construct [#language]_.
 
 For example, to read the file **file.nc** (:download:`download
 <../netcdf_files/file.nc>`, 9kB) [#files]_:
@@ -70,14 +50,13 @@ The `cfdm.read` function has optional parameters to
 Inspection
 ----------
 
-The contents of a field may be inspected at three different levels of
-detail.
+The contents of a field construct may be inspected at three different
+levels of detail.
 
 Minimal detail
 ^^^^^^^^^^^^^^
 
-The built-in `repr` function returns a short, one-line description of
-the field:
+The built-in `repr` function returns a short, one-line description:
 
 .. code:: python
 
@@ -97,7 +76,7 @@ Medium detail
 ^^^^^^^^^^^^^
 
 The built-in `str` function returns similar information as the
-one-line output, along with short descriptions of the field's metadata
+one-line output, along with short descriptions of the metadata
 constructs, which include the first and last values of their data
 arrays:
 
@@ -136,9 +115,8 @@ Full detail
 ^^^^^^^^^^^
 
 The `~cfdm.Field.dump` method of the field construct gives all
-properties of all constructs, includes other construct components
-(such as coordinate bounds), and shows the first and last values of
-all data arrays:
+properties of all constructs, including metadata constructs and their
+components, and shows the first and last values of all data arrays:
 
 .. code:: python
 
@@ -280,7 +258,7 @@ Properties
 ----------
 
 Descriptive properties that apply to field construct as a whole may be
-retrieved with the `~Field.properties` of the field constuct:
+retrieved with the `~Field.properties` method:
 
 .. code:: python
 
@@ -336,8 +314,8 @@ providing a new set of properties to the `~Field.properties` method:
 Data
 ----
 
-The field construct's data array is stored in a `Data` object that is
-accessed with the `~Field.get_data` method:
+The field construct's data array is stored in a `Data` class instance
+that is accessed with the `~Field.get_data` method:
 
 .. code:: python
 
@@ -363,7 +341,7 @@ The data array may be retrieved as an independent (possibly masked)
    
 The field construct also has a `~Field.data` attribute that is an
 alias for the `~Field.get_data` method, which makes it easier to
-access attributes and methods of the `Data` object:
+access attributes and methods of the `Data` instance:
 
 .. code:: python
 
@@ -381,7 +359,7 @@ access attributes and methods of the `Data` object:
 Indexing
 ^^^^^^^^
 
-Indexing a `Data` object follows rules that are very similar to the
+Indexing a `Data` instance follows rules that are very similar to the
 `numpy indexing rules
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only differences being:
@@ -419,7 +397,7 @@ Assignment
 ^^^^^^^^^^
 
 Data array elements are changed by assigning to elements selected by
-inexing the `Data` object, using the :ref:`cfdm indexing rules
+inexing the `Data` instance using the :ref:`cfdm indexing rules
 <indexing>`.
 
 The value, or values, being assigned must be broadcastable to the
@@ -451,13 +429,13 @@ shape defined by the indices, using the `numpy broadcasting rules
 Subspacing
 ----------
 
-Creation of a new field construct that spans a subspace of the
+Creation of a new field construct which spans a subspace of the
 original domain is achieved by indexing the field directly (rather
-than its `Data` object). The new subspace contains the same properties
-and similar metadata constructs to the original field, but the latter
-are also subspaced when they span domain axes that have been
-changed. Subspacing uses the same :ref:`cfdm indexing rules
-<indexing>` that apply to the `Data` object.
+than its `Data` instance). The new subspace contains the same
+properties and similar metadata constructs to the original field, but
+the latter are also subspaced when they span domain axes that have
+been changed. Subspacing uses the same :ref:`cfdm indexing rules
+<indexing>` that apply to the `Data` class.
 
 In this example a new field is created whose domain spans the first
 latitude of the original, and with a reversed longitude axis:
@@ -502,7 +480,7 @@ variable names, and some attribute values) that do not have a place in
 the CF data model are, nevertheless, stored within the appropriate
 :ref:`cfdm <class_extended>` objects. This allows them to be used when
 writing field constructs to a new netCDF dataset, and also makes them
-accessible for construct identification <TODO LINK>.
+accessible for metadata construct identification <TODO LINK>.
 
 Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:
@@ -598,18 +576,6 @@ Method                        Classes                                  NetCDF el
 `!nc_set_sample_dimension`    `Count`, `Index`                         Sample  dimension of a ragged array
 ============================  =======================================  =====================================
 
-.. code:: python
-
-   >>> lon = q.get_construct('ncvar%lon')
-   >>> lon
-   <DimensionCoordinate: longitude(8) degrees_east>
-   >>> lon.nc_get_variable()
-   'lon'
-   >>> axis = g.get_construct('ncdim%time')
-   <DomainAxis: 1>
-   >>> axis.nc_get_dimension()
-   'time'
-
 .. _write:
    
 Writing to disk
@@ -627,8 +593,6 @@ new netCDF file on disk:
    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
    >>> cfdm.write(f, 'new_file.nc')
-
-<TODO say something abount netCDF names>
 
 The `cfdm.write` function has optional parameters to
 
@@ -648,19 +612,25 @@ The `cfdm.write` function has optional parameters to
 
 * set the endian-ness of the output data.
 
-It is also possible to create netCDF unlimited dimensions and set the
-HDF5 chunk size using the `nc_unlimited_dimensions` and `nc_chunksize`
-methods of the field construct.
+Output netCDF variable and dimension names read from a netCDF dataset
+are stored in the resulting field constructs, and may also be set
+manually with the `!nc_set_variable` and `nc_set_dimension`
+methods. If a name has not been set then one will be generated
+internally (usually based on the standard name if it exists).
+
+It is possible to create netCDF unlimited dimensions and set the HDF5
+chunk size using the `nc_unlimited_dimensions` and
+`~Field.nc_chunksize` methods of the field construct.
 
 .. _constructs:
 
 Metadata constructs
 -------------------
 
-Metadata constructs of the field are all of the constructs that serve
-to describe the field construct that contains them. Each metadata
-construct of the CF data model has a corresponding :ref:`cfdm
-<class_extended>` class:
+The metadata constructs are all of the constructs that serve to
+describe the field construct that contains them. Each CF data model
+metadata construct has a corresponding :ref:`cfdm <class_extended>`
+class:
 
 =======================  ==============================  =====================  
 CF data model construct  Description                     cfdm class             
@@ -718,11 +688,11 @@ constructs, each of which is keyed by a unique identifier called a
 The construct identifiers are usually generated internally by the
 field construct and are
 
-* *robust* (each metadata construct within a field construct is
-  guaranteed to have a unique identifier),
+* *robust* (each metadata construct is guaranteed to have a unique
+  identifier within its parent field construct),
 
 * *arbitrary* (no semantic meaning should be attached to the
-  identifier and the same identifier will usually refer to different
+  identifier, and the same identifier will usually refer to different
   metadata constructs in different field constructs), and
 
 * *unstable* (the identifiers could be different each time the field
@@ -731,7 +701,7 @@ field construct and are
 The `~Field.constructs` method has optional parameters to filter the
 metadata constructs by
 
-* construct type,
+* metadata construct type,
 
 * property value,
 
@@ -769,8 +739,9 @@ metadata constructs by
    >>> t.constructs('wavelength')
    {}
    
-Selection by construct identifier is useful for systematic construct
-access, and for when a construct is not identifiable by other means.
+Selection by construct identifier is useful for systematic metadata
+construct access, and for when a metadata construct is not
+identifiable by other means.
 
 .. code:: python
 
@@ -781,9 +752,10 @@ access, and for when a construct is not identifiable by other means.
    >>> t.constructs(cid='auxiliarycoordinate999')
    {}
 
-An individual metadata construct may be returned without its construct
-identifier via the `~Field.get_construct` method of the field
-construct, which supports the same filtering options as above:
+An individual metadata construct may be returned, without its
+construct identifier, via the `~Field.get_construct` method of the
+field construct, which supports the same filtering options as the
+`~Field.constructs` method:
 
 .. code:: python
 
@@ -819,18 +791,13 @@ found with the `~Field.construct_axes` method of the field construct:
     'domainancillary2': ('domainaxis1', 'domainaxis2'),
     'fieldancillary0': ('domainaxis1', 'domainaxis2')}
 
-The domain axis constructs spanned by a metadata construct's data are
-usually set during :ref:`field creation <field_creation>`, but may be
-changed at any time with the `~Field.set_construct_axes` method of the
-field construct.
-
 
 Properties and data
 ^^^^^^^^^^^^^^^^^^^
 
-Where applicable, the classes for metadata constructs share the same
-API as the field construct. This means, for instance, that any class
-that has a data array (such as `AuxiliaryCoordinate`) will have a
+Where applicable, metadata constructs share the same API as the field
+construct. This means, for instance, that any construct that has a
+data array (such as auxiliary coordinate construct) will have a
 `!get_array` method to access its data as an independent numpy array:
 
 .. code:: python
@@ -852,8 +819,8 @@ that has a data array (such as `AuxiliaryCoordinate`) will have a
 Components
 ^^^^^^^^^^
 
-Other classes are required to represent construct components that are
-neither "properties" nor "data":
+Other classes are required to represent metadata construct components
+that are neither "properties" nor "data":
 
 ======================  ==============================  ======================
 cfdm class              Description                     cfdm parent classes
@@ -928,9 +895,9 @@ Creation of a field construct has three stages:
 
 **Stage 3:** The metadata constructs are inserted into the field
 construct with cross-references to other, related metadata constructs
-(for example, an auxiliary coordinate construct is related to an
-ordered list of the domain axis constructs which correspond to its
-data array dimensions).
+if required (for example, an auxiliary coordinate construct is related
+to an ordered list of the domain axis constructs which correspond to
+its data array dimensions).
 
 There are two equivalent approaches to stages **1** and **2**.
 
@@ -994,7 +961,7 @@ Field method for setting a metadata construct  Description
 `~Field.set_coordinate_reference`              Set a coordinate reference construct
 =============================================  ======================================================================
 
-These methods all return a construct identifier for the metadata
+These methods all return the construct identifier for the metadata
 construct which can be used when other metadata constructs are added
 to the field (e.g. to specify which domain axis constructs correspond
 to a data array), or when other metadata constructs are created
@@ -1021,6 +988,10 @@ so that its construct identifier is available to the latter.
 
 One other restriction is that cell method constructs must be set in
 the relative order in which their methods were applied to the data.
+
+The domain axis constructs spanned by a metadata construct's data may
+be changed after insertion with the `~Field.set_construct_axes` method
+of the field construct.
 
 The following code creates a field construct with properties; data;
 and domain axis, cell method and dimension coordinate metadata
@@ -1342,10 +1313,10 @@ Domain
 ------
 
 
-The abstract domain of the CF data model describes the locations of
-the field construct's data and is represented by the `Domain`
-class. The domain object may be accessed with the `~Field.get_domain`
-method of the field construct:
+The domain of the CF data model describes the locations of the field
+construct's data and is represented by the `Domain` class. The domain
+instance may be accessed with the `~Field.get_domain` method of the
+field construct:
 
 .. code:: python
 
@@ -1368,12 +1339,12 @@ method of the field construct:
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
    >>> description = domain.dump(display=False)
 
-Changes to domain are seen by the field construct, and vice
-versa. (This is because the domain is essentially a "view" of the
-relevant metadata constructs contained in the field construct.) The
+Changes to domain instance are seen by the field construct, and vice
+versa. This is because the domain instance is merely "view" of the
+relevant metadata constructs contained in the field construct. The
 field construct also has a `~Field.domain` attribute that is an alias
 for the `~Field.get_domain` method, which makes it easier to access
-attributes and methods of the domain:
+attributes and methods of the domain instance:
 
 .. code:: python
 
@@ -1419,20 +1390,20 @@ Metadata constructs may be copied individually in the same manner:
    >>> orog = t.get_construct('surface_altitude').copy()
 
 *Note on performance*
-  `Data` objects within the field are copied with a `copy-on-write
+  `Data` instances within the field are copied with a `copy-on-write
   <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This
   means that a copy of a field takes up very little extra memory, even
-  when the original field contains very large data arrays, and the
-  copy operation is fast---at the time of copying, it is essentially
-  only the descriptive properties that are duplicated.
+  when the original field construct contains very large data arrays,
+  and the copy operation is fast---at the time of copying, it is
+  essentially only the descriptive properties that are duplicated.
 
 .. _equality:
 
 Equality
 --------
 
-Whether or not two fields constructs are equal is tested with either
-field construct's `~cfdm.Field.equals` method.
+Whether or not two fields constructs are the same is tested with
+either field construct's `~Field.equals` method.
 
 .. code:: python
 
@@ -1451,8 +1422,9 @@ Equality is strict by default. This means that for two field
 constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:
 
-* the properties must be the same (with the exception of the field
-  construct's "Conventions" property, which is never checked), and
+* the descriptive properties must be the same (with the exception of
+  the field construct's "Conventions" property, which is never
+  checked), and
 
 * if there are data arrays then they must have same shape, data type
   and be element-wise equal.
@@ -1647,7 +1619,7 @@ Accessing the data by a call to the `!get_array` method returns a
 numpy array that is uncompressed. The underlying array will, however,
 remain in its compressed form. The underlying compressed array may be
 retrieved as a numpy array with the `get_compressed_array` method of
-the `Data` object.
+the `Data` instance.
 
 A subspace created by indexing (based on the axes of the uncompressed
 form of the data) will no longer be compressed, i.e. its underlying
@@ -1657,13 +1629,13 @@ original data will, however, retain its underlying compressed form.
 If the data elements are modified by indexed assignment then the
 underlying compressed array is replaced by its uncompressed form.
 
-A count variable that is required to uncompress a contiguous, or
+The count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is stored in a `Count` object and is
-retrieved with the `get_count_variable` method of the `Data` object.
+retrieved with the `get_count_variable` method of the `Data` instance.
 
-An index variable that is required to uncompress an indexed, or indexed
-contiguous, ragged array is stored in an `Index` object and is
-retrieved with the `get_index_variable` method of the `Data` object.
+The index variable that is required to uncompress an indexed, or
+indexed contiguous, ragged array is stored in an `Index` object and is
+retrieved with the `get_index_variable` method of the `Data` instance.
 
 This is illustrated with the file **contiguous.nc**
 (:download:`download <../netcdf_files/contiguous.nc>`, 2kB) [#files]_:
@@ -1779,7 +1751,7 @@ will be written to an output dataset as incomplete multidimensional
 arrays.
 
 A construct with an underlying compressed array is created by
-initialising the `Data` object with a compressed array that is stored
+initialising a `Data` instance with a compressed array that is stored
 in one of three special array objects: `RaggedContiguousArray`,
 `RaggedIndexedArray` or `RaggedIndexedContiguousArray`. The following
 code creates a simple field construct with an underlying contiguous
@@ -1853,8 +1825,8 @@ in their gathered representation.
 Accessing the data by a call to the `!get_array` method returns a
 numpy array that is uncompressed. The underlying array will, however,
 remain in its compressed form. The underlying compressed array may be
-retrieved as a numpy array with the `get_compressed_array` method of a
-`Data` object.
+retrieved as a numpy array with the `get_compressed_array` method of
+the `Data` instance
 
 A subspace created by indexing will no longer be compressed,
 i.e. its underlying array will be in incomplete multidimensional
@@ -1866,9 +1838,9 @@ underlying compressed array is replaced by its uncompressed form.
 
 Indexing is based on the axes of the uncompressed form of the data.
 
-A list variable that is required to uncompress a gathered array is
+The list variable that is required to uncompress a gathered array is
 stored in a `List` object and is retrieved with the
-`get_list_variable` method of the `Data` object.
+`get_list_variable` method of the `Data` instance.
 
 This is illustrated with the file **gathered.nc** (:download:`download
 <../netcdf_files/gathered.nc>`, 1kB) [#files]_:
@@ -1948,7 +1920,7 @@ assignment. Any compressed arrays that have been modified will be
 written to an output dataset without compression.
    
 A construct with an underlying compressed array is created by
-initializing the `Data` object with a compressed array that is stored
+initializing a `Data` instance with a compressed array that is stored
 in the special `GatheredArray` array object. The following code
 creates a simple field construct with an underlying gathered array:
 
@@ -2022,16 +1994,28 @@ We can now inspect the new field construct:
 ----
 
 .. rubric:: Footnotes
-	    
-.. [#opendap] Requires the netCDF-4 C library to have been compiled
-              with OPeNDAP support enabled.
 
+.. [#opendap2] Requires the netCDF-4 C library to have been compiled
+               with OPeNDAP support enabled.
+
+.. [#language] In the terminology of the CF data model, a "construct"
+               is an abstract concept which is distinct from its
+               realization, e.g. a `Field` instance is not, strictly
+               speaking, a field construct. However, the distinction
+               is moot and the descriptive language used in this
+               tutorial is greatly simplified by allowing the term
+               "construct" to mean "class instance" (e.g. "field
+               construct" means "`Field` instance"), and this
+               convention is apllied throughout this tutorial. The
+               phrase "CF data model construct" is used on occasions
+               when the original abstract meaning is intended.
+	     	    
 .. [#files] The tutorial files may be also found in the
             `docs/netcdf_files
-            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/netcdf_files>`_
+            <https://github.com/NCAS-CMS/cfdm/master/docs/netcdf_files>`_
             directory.
 
-	    
+
 .. External links to the CF conventions
    
 .. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables

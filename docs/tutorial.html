@@ -91,28 +91,13 @@
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>The field construct defined by the CF data model consists of</p>
-<ul class="simple">
-<li>descriptive properties that apply to field construct as a whole</li>
-<li>a data array, and</li>
-<li>a variety of “metadata constructs” that describe<ul>
-<li>the locations of each cell of the data array,</li>
-<li>the physical nature of each cell’s datum.</li>
-</ul>
-</li>
-</ul>
-<p>The field construct is represented by the <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> class.</p>
-<p>The <a class="reference internal" href="#constructs"><span class="std std-ref">metadata constructs</span></a> comprise <a class="reference internal" href="classes/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a>,
-<a class="reference internal" href="classes/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>, <a class="reference internal" href="classes/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="classes/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>,
-<a class="reference internal" href="classes/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>, <a class="reference internal" href="classes/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>, and <a class="reference internal" href="classes/cfdm.CellMethod.html#cfdm.CellMethod" title="cfdm.CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMethod</span></code></a>
-classes.</p>
 <div class="section" id="reading-datasets">
 <span id="read"></span><h2>Reading datasets<a class="headerlink" href="#reading-datasets" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="generated/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function reads a <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> file from disk, or
-from an <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/docs/dap_accessing_data.html">OPeNDAP URL</a>
-<a class="footnote-reference" href="#opendap" id="id2">[1]</a>, and returns the contents as a list zero or more <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>
-objects.</p>
-<p>For example, to read the file <strong>file.nc</strong> (<a class="reference download internal" href="_downloads/file.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id3">[2]</a>:</p>
+from an <a class="reference external" href="https://www.opendap.org/">OPeNDAP</a> URL <a class="footnote-reference" href="#opendap2" id="id2">[1]</a>, and
+returns the contents as a list of zero or more <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> class
+instances, each of which represents a field construct <a class="footnote-reference" href="#language" id="id3">[2]</a>.</p>
+<p>For example, to read the file <strong>file.nc</strong> (<a class="reference download internal" href="_downloads/file.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id4">[3]</a>:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -137,13 +122,12 @@ within a session, and makes the read operation fast.</dd>
 </dl>
 </div>
 <div class="section" id="inspection">
-<span id="id4"></span><h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
-<p>The contents of a field may be inspected at three different levels of
-detail.</p>
+<span id="id5"></span><h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p>The contents of a field construct may be inspected at three different
+levels of detail.</p>
 <div class="section" id="minimal-detail">
 <h3>Minimal detail<a class="headerlink" href="#minimal-detail" title="Permalink to this headline">¶</a></h3>
-<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function returns a short, one-line description of
-the field:</p>
+<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function returns a short, one-line description:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">[&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
 <span class="go"> &lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;]</span>
@@ -160,7 +144,7 @@ respectively) and the units of the data (“1”).</p>
 <div class="section" id="medium-detail">
 <h3>Medium detail<a class="headerlink" href="#medium-detail" title="Permalink to this headline">¶</a></h3>
 <p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function returns similar information as the
-one-line output, along with short descriptions of the field’s metadata
+one-line output, along with short descriptions of the metadata
 constructs, which include the first and last values of their data
 arrays:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
@@ -196,10 +180,9 @@ arrays:</p>
 </div>
 <div class="section" id="full-detail">
 <h3>Full detail<a class="headerlink" href="#full-detail" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="generated/cfdm.Field.dump.html#cfdm.Field.dump" title="cfdm.Field.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method of the field construct gives all
-properties of all constructs, includes other construct components
-(such as coordinate bounds), and shows the first and last values of
-all data arrays:</p>
+<p>The <a class="reference internal" href="method/cfdm.Field.dump.html#cfdm.Field.dump" title="cfdm.Field.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method of the field construct gives all
+properties of all constructs, including metadata constructs and their
+components, and shows the first and last values of all data arrays:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
 <span class="go">----------------------------------</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
@@ -336,9 +319,9 @@ all data arrays:</p>
 </div>
 </div>
 <div class="section" id="properties">
-<span id="id5"></span><h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <p>Descriptive properties that apply to field construct as a whole may be
-retrieved with the <a class="reference internal" href="generated/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> of the field constuct:</p>
+retrieved with the <a class="reference internal" href="method/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> method:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
 <span class="go"> &#39;project&#39;: &#39;research&#39;,</span>
@@ -347,8 +330,8 @@ retrieved with the <a class="reference internal" href="generated/cfdm.Field.prop
 </pre></div>
 </div>
 <p>Individual properties may be accessed and modified with the
-<a class="reference internal" href="generated/cfdm.Field.del_property.html#cfdm.Field.del_property" title="cfdm.Field.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.get_property.html#cfdm.Field.get_property" title="cfdm.Field.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a>, <a class="reference internal" href="generated/cfdm.Field.has_property.html#cfdm.Field.has_property" title="cfdm.Field.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a>,
-and <a class="reference internal" href="generated/cfdm.Field.set_property.html#cfdm.Field.set_property" title="cfdm.Field.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods:</p>
+<a class="reference internal" href="method/cfdm.Field.del_property.html#cfdm.Field.del_property" title="cfdm.Field.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a>, <a class="reference internal" href="method/cfdm.Field.get_property.html#cfdm.Field.get_property" title="cfdm.Field.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a>, <a class="reference internal" href="method/cfdm.Field.has_property.html#cfdm.Field.has_property" title="cfdm.Field.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a>,
+and <a class="reference internal" href="method/cfdm.Field.set_property.html#cfdm.Field.set_property" title="cfdm.Field.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
@@ -363,7 +346,7 @@ and <a class="reference internal" href="generated/cfdm.Field.set_property.html#c
 </pre></div>
 </div>
 <p>The properties may be completely replaced with another collection by
-providing a new set of properties to the <a class="reference internal" href="generated/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> method:</p>
+providing a new set of properties to the <a class="reference internal" href="method/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> method:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">original</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">properties</span><span class="p">({</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">original</span>
 <span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
@@ -385,15 +368,15 @@ providing a new set of properties to the <a class="reference internal" href="gen
 </div>
 </div>
 <div class="section" id="data">
-<span id="id6"></span><h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
-<p>The field construct’s data array is stored in a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object that is
-accessed with the <a class="reference internal" href="generated/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a> method:</p>
+<span id="id7"></span><h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p>The field construct’s data array is stored in a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> class instance
+that is accessed with the <a class="reference internal" href="method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a> method:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
 <span class="go">&lt;Data(1, 10, 9): [[[262.8, ..., 269.7]]] K&gt;</span>
 </pre></div>
 </div>
 <p>The data array may be retrieved as an independent (possibly masked)
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array with the <a class="reference internal" href="generated/cfdm.Field.get_array.html#cfdm.Field.get_array" title="cfdm.Field.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a> method:</p>
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array with the <a class="reference internal" href="method/cfdm.Field.get_array.html#cfdm.Field.get_array" title="cfdm.Field.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a> method:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
 <span class="go">[[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]</span>
 <span class="go">  [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]</span>
@@ -408,8 +391,8 @@ accessed with the <a class="reference internal" href="generated/cfdm.Field.get_d
 </pre></div>
 </div>
 <p>The field construct also has a <a class="reference internal" href="generated/cfdm.Field.data.html#cfdm.Field.data" title="cfdm.Field.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a> attribute that is an
-alias for the <a class="reference internal" href="generated/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a> method, which makes it easier to
-access attributes and methods of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object:</p>
+alias for the <a class="reference internal" href="method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a> method, which makes it easier to
+access attributes and methods of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
 <span class="go">dtype(&#39;float64&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span>
@@ -421,8 +404,8 @@ access attributes and methods of the <a class="reference internal" href="classes
 </pre></div>
 </div>
 <div class="section" id="indexing">
-<span id="id7"></span><h3>Indexing<a class="headerlink" href="#indexing" title="Permalink to this headline">¶</a></h3>
-<p>Indexing a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object follows rules that are very similar to the
+<span id="id8"></span><h3>Indexing<a class="headerlink" href="#indexing" title="Permalink to this headline">¶</a></h3>
+<p>Indexing a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance follows rules that are very similar to the
 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html">numpy indexing rules</a>,
 the only differences being:</p>
 <ul class="simple">
@@ -455,7 +438,7 @@ package</a><strong>.</strong></li>
 <div class="section" id="assignment">
 <span id="data-assignment"></span><h3>Assignment<a class="headerlink" href="#assignment" title="Permalink to this headline">¶</a></h3>
 <p>Data array elements are changed by assigning to elements selected by
-inexing the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object, using the <a class="reference internal" href="#indexing"><span class="std std-ref">cfdm indexing rules</span></a>.</p>
+inexing the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance using the <a class="reference internal" href="#indexing"><span class="std std-ref">cfdm indexing rules</span></a>.</p>
 <p>The value, or values, being assigned must be broadcastable to the
 shape defined by the indices, using the <a class="reference external" href="https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html">numpy broadcasting rules</a>.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
@@ -480,13 +463,13 @@ shape defined by the indices, using the <a class="reference external" href="http
 </div>
 </div>
 <div class="section" id="subspacing">
-<span id="id8"></span><h2>Subspacing<a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h2>
-<p>Creation of a new field construct that spans a subspace of the
+<span id="id9"></span><h2>Subspacing<a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h2>
+<p>Creation of a new field construct which spans a subspace of the
 original domain is achieved by indexing the field directly (rather
-than its <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object). The new subspace contains the same properties
-and similar metadata constructs to the original field, but the latter
-are also subspaced when they span domain axes that have been
-changed. Subspacing uses the same <a class="reference internal" href="#indexing"><span class="std std-ref">cfdm indexing rules</span></a> that apply to the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
+than its <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance). The new subspace contains the same
+properties and similar metadata constructs to the original field, but
+the latter are also subspaced when they span domain axes that have
+been changed. Subspacing uses the same <a class="reference internal" href="#indexing"><span class="std std-ref">cfdm indexing rules</span></a> that apply to the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> class.</p>
 <p>In this example a new field is created whose domain spans the first
 latitude of the original, and with a reversed longitude axis:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
@@ -511,7 +494,7 @@ latitude of the original, and with a reversed longitude axis:</p>
 </div>
 </div>
 <div class="section" id="netcdf-interface">
-<span id="id9"></span><h2>NetCDF interface<a class="headerlink" href="#netcdf-interface" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2>NetCDF interface<a class="headerlink" href="#netcdf-interface" title="Permalink to this headline">¶</a></h2>
 <p>The logical CF data model is independent of netCDF, but the CF
 conventions are designed to enable the processing and sharing of
 datasets stored in netCDF files. Therefore, the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package includes methods for recording and editing
@@ -523,7 +506,7 @@ variable names, and some attribute values) that do not have a place in
 the CF data model are, nevertheless, stored within the appropriate
 <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> objects. This allows them to be used when
 writing field constructs to a new netCDF dataset, and also makes them
-accessible for construct identification &lt;TODO LINK&gt;.</p>
+accessible for metadata construct identification &lt;TODO LINK&gt;.</p>
 <p>Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:</p>
 <table border="1" class="docutils">
@@ -537,25 +520,25 @@ requires. For example, the field construct has the following methods:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.nc_get_variable.html#cfdm.Field.nc_get_variable" title="cfdm.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_get_variable.html#cfdm.Field.nc_get_variable" title="cfdm.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
 <td>Return the netCDF variable name</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.nc_set_variable.html#cfdm.Field.nc_set_variable" title="cfdm.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_set_variable.html#cfdm.Field.nc_set_variable" title="cfdm.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
 <td>Set the netCDF variable name</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.nc_del_variable.html#cfdm.Field.nc_del_variable" title="cfdm.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_del_variable.html#cfdm.Field.nc_del_variable" title="cfdm.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
 <td>Remove the netCDF variable name</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.nc_has_variable.html#cfdm.Field.nc_has_variable" title="cfdm.Field.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_has_variable.html#cfdm.Field.nc_has_variable" title="cfdm.Field.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
 <td>Whether the netCDF variable name has
 been set</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a></td>
 <td>Return or replace the selection of
 properties to be written as netCDF
 global attributes</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a></td>
 <td>Return or replace the selection of
 domain axis constructs to be written
 as netCDF unlimited dimensions</td>
@@ -681,17 +664,6 @@ as netCDF unlimited dimensions</td>
 </tr>
 </tbody>
 </table>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncvar</span><span class="si">%lo</span><span class="s1">n&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span>
-<span class="go">&lt;DimensionCoordinate: longitude(8) degrees_east&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;lon&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncdim%time&#39;</span><span class="p">)</span>
-<span class="go">&lt;DomainAxis: 1&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span><span class="o">.</span><span class="n">nc_get_dimension</span><span class="p">()</span>
-<span class="go">&#39;time&#39;</span>
-</pre></div>
-</div>
 </div>
 <div class="section" id="writing-to-disk">
 <span id="write"></span><h2>Writing to disk<a class="headerlink" href="#writing-to-disk" title="Permalink to this headline">¶</a></h2>
@@ -706,7 +678,6 @@ new netCDF file on disk:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;new_file.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>&lt;TODO say something abount netCDF names&gt;</p>
 <p>The <a class="reference internal" href="generated/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> function has optional parameters to</p>
 <ul class="simple">
 <li>set the output netCDF format (all netCDF3 and netCDF4 formats are
@@ -720,15 +691,21 @@ file;</li>
 <li>apply netCDF compression and packing; and</li>
 <li>set the endian-ness of the output data.</li>
 </ul>
-<p>It is also possible to create netCDF unlimited dimensions and set the
-HDF5 chunk size using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_chunksize</span></code>
-methods of the field construct.</p>
+<p>Output netCDF variable and dimension names read from a netCDF dataset
+are stored in the resulting field constructs, and may also be set
+manually with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code>
+methods. If a name has not been set then one will be generated
+internally (usually based on the standard name if it exists).</p>
+<p>It is possible to create netCDF unlimited dimensions and set the HDF5
+chunk size using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_chunksize</span></code> methods of the field construct.</p>
 </div>
 <div class="section" id="metadata-constructs">
 <span id="constructs"></span><h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
-<p>Metadata constructs of the field are all of the constructs that serve
-to describe the field construct that contains them. Each metadata
-construct of the CF data model has a corresponding <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> class:</p>
+<p>The metadata constructs are all of the constructs that serve to
+describe the field construct that contains them. Each CF data model
+metadata construct has a corresponding <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a>
+class:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="31%" />
@@ -779,7 +756,7 @@ variation within cells</td>
 </tr>
 </tbody>
 </table>
-<p>The metadata constructs are returned by the <a class="reference internal" href="generated/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> method
+<p>The metadata constructs are returned by the <a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> method
 of the field construct, which provides a dictionary of the metadata
 constructs, each of which is keyed by a unique identifier called a
 “construct identifier”.</p>
@@ -817,18 +794,18 @@ constructs, each of which is keyed by a unique identifier called a
 <p>The construct identifiers are usually generated internally by the
 field construct and are</p>
 <ul class="simple">
-<li><em>robust</em> (each metadata construct within a field construct is
-guaranteed to have a unique identifier),</li>
+<li><em>robust</em> (each metadata construct is guaranteed to have a unique
+identifier within its parent field construct),</li>
 <li><em>arbitrary</em> (no semantic meaning should be attached to the
-identifier and the same identifier will usually refer to different
+identifier, and the same identifier will usually refer to different
 metadata constructs in different field constructs), and</li>
 <li><em>unstable</em> (the identifiers could be different each time the field
 construct is created).</li>
 </ul>
-<p>The <a class="reference internal" href="generated/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> method has optional parameters to filter the
+<p>The <a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> method has optional parameters to filter the
 metadata constructs by</p>
 <ul class="simple">
-<li>construct type,</li>
+<li>metadata construct type,</li>
 <li>property value,</li>
 <li>whether or the data array spans particular domain axis constructs,</li>
 <li>netCDF variable name,</li>
@@ -860,8 +837,9 @@ metadata constructs by</p>
 <span class="go">{}</span>
 </pre></div>
 </div>
-<p>Selection by construct identifier is useful for systematic construct
-access, and for when a construct is not identifiable by other means.</p>
+<p>Selection by construct identifier is useful for systematic metadata
+construct access, and for when a metadata construct is not
+identifiable by other means.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">cid</span><span class="o">=</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">)</span>
 <span class="go">{&#39;domainancillary2&#39;: &lt;DomainAncillary: surface_altitude(10, 9) m&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;cid</span><span class="si">%c</span><span class="s1">ellmethod1&#39;</span><span class="p">)</span>
@@ -870,9 +848,10 @@ access, and for when a construct is not identifiable by other means.</p>
 <span class="go">{}</span>
 </pre></div>
 </div>
-<p>An individual metadata construct may be returned without its construct
-identifier via the <a class="reference internal" href="generated/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a> method of the field
-construct, which supports the same filtering options as above:</p>
+<p>An individual metadata construct may be returned, without its
+construct identifier, via the <a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a> method of the
+field construct, which supports the same filtering options as the
+<a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> method:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
 <span class="go">&lt;AuxiliaryCoordinate: latitude(10, 9) degrees_N&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;units:km2&#39;</span><span class="p">)</span>
@@ -887,7 +866,7 @@ construct, which supports the same filtering options as above:</p>
 <div class="section" id="domain-axes">
 <h3>Domain axes<a class="headerlink" href="#domain-axes" title="Permalink to this headline">¶</a></h3>
 <p>The domain axis constructs spanned by a metadata construct’s data are
-found with the <a class="reference internal" href="generated/cfdm.Field.construct_axes.html#cfdm.Field.construct_axes" title="cfdm.Field.construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_axes</span></code></a> method of the field construct:</p>
+found with the <a class="reference internal" href="method/cfdm.Field.construct_axes.html#cfdm.Field.construct_axes" title="cfdm.Field.construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_axes</span></code></a> method of the field construct:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">construct_axes</span><span class="p">()</span>
 <span class="go">{&#39;auxiliarycoordinate0&#39;: (&#39;domainaxis1&#39;, &#39;domainaxis2&#39;),</span>
 <span class="go"> &#39;auxiliarycoordinate1&#39;: (&#39;domainaxis2&#39;, &#39;domainaxis1&#39;),</span>
@@ -903,16 +882,12 @@ found with the <a class="reference internal" href="generated/cfdm.Field.construc
 <span class="go"> &#39;fieldancillary0&#39;: (&#39;domainaxis1&#39;, &#39;domainaxis2&#39;)}</span>
 </pre></div>
 </div>
-<p>The domain axis constructs spanned by a metadata construct’s data are
-usually set during <a class="reference internal" href="#field-creation"><span class="std std-ref">field creation</span></a>, but may be
-changed at any time with the <a class="reference internal" href="generated/cfdm.Field.set_construct_axes.html#cfdm.Field.set_construct_axes" title="cfdm.Field.set_construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_axes</span></code></a> method of the
-field construct.</p>
 </div>
 <div class="section" id="properties-and-data">
 <h3>Properties and data<a class="headerlink" href="#properties-and-data" title="Permalink to this headline">¶</a></h3>
-<p>Where applicable, the classes for metadata constructs share the same
-API as the field construct. This means, for instance, that any class
-that has a data array (such as <a class="reference internal" href="classes/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>) will have a
+<p>Where applicable, metadata constructs share the same API as the field
+construct. This means, for instance, that any construct that has a
+data array (such as auxiliary coordinate construct) will have a
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code> method to access its data as an independent numpy array:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span>
@@ -932,8 +907,8 @@ that has a data array (such as <a class="reference internal" href="classes/cfdm.
 </div>
 <div class="section" id="components">
 <h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
-<p>Other classes are required to represent construct components that are
-neither “properties” nor “data”:</p>
+<p>Other classes are required to represent metadata construct components
+that are neither “properties” nor “data”:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="30%" />
@@ -1008,15 +983,15 @@ coordinate system.</td>
 </div>
 </div>
 <div class="section" id="field-creation">
-<span id="id10"></span><h2>Field creation<a class="headerlink" href="#field-creation" title="Permalink to this headline">¶</a></h2>
+<span id="id11"></span><h2>Field creation<a class="headerlink" href="#field-creation" title="Permalink to this headline">¶</a></h2>
 <p>Creation of a field construct has three stages:</p>
 <p><strong>Stage 1:</strong> The field construct is created without metadata constructs.</p>
 <p><strong>Stage 2:</strong> Metadata constructs are created independently.</p>
 <p><strong>Stage 3:</strong> The metadata constructs are inserted into the field
 construct with cross-references to other, related metadata constructs
-(for example, an auxiliary coordinate construct is related to an
-ordered list of the domain axis constructs which correspond to its
-data array dimensions).</p>
+if required (for example, an auxiliary coordinate construct is related
+to an ordered list of the domain axis constructs which correspond to
+its data array dimensions).</p>
 <p>There are two equivalent approaches to stages <strong>1</strong> and <strong>2</strong>.</p>
 <p>Either as much of the content as possible is specified during object
 instantiation:</p>
@@ -1071,33 +1046,33 @@ domain axis constructs:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.set_domain_axis.html#cfdm.Field.set_domain_axis" title="cfdm.Field.set_domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_axis</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.set_domain_axis.html#cfdm.Field.set_domain_axis" title="cfdm.Field.set_domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_axis</span></code></a></td>
 <td>Set a domain axis construct</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.set_cell_method.html#cfdm.Field.set_cell_method" title="cfdm.Field.set_cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_method</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.set_cell_method.html#cfdm.Field.set_cell_method" title="cfdm.Field.set_cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_method</span></code></a></td>
 <td>Set a cell method construct</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.set_field_ancillary.html#cfdm.Field.set_field_ancillary" title="cfdm.Field.set_field_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_field_ancillary</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.set_field_ancillary.html#cfdm.Field.set_field_ancillary" title="cfdm.Field.set_field_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_field_ancillary</span></code></a></td>
 <td>Set a field ancillary construct and the axes spanned by its data</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.set_auxiliary_coordinate.html#cfdm.Field.set_auxiliary_coordinate" title="cfdm.Field.set_auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_auxiliary_coordinate</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.set_auxiliary_coordinate.html#cfdm.Field.set_auxiliary_coordinate" title="cfdm.Field.set_auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_auxiliary_coordinate</span></code></a></td>
 <td>Set an auxiliary coordinate construct and the axes spanned by its data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.set_cell_measure.html#cfdm.Field.set_cell_measure" title="cfdm.Field.set_cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_measure</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.set_cell_measure.html#cfdm.Field.set_cell_measure" title="cfdm.Field.set_cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_cell_measure</span></code></a></td>
 <td>Set an cell measure construct and the axes spanned by its data</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.set_dimension_coordinate.html#cfdm.Field.set_dimension_coordinate" title="cfdm.Field.set_dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dimension_coordinate</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.set_dimension_coordinate.html#cfdm.Field.set_dimension_coordinate" title="cfdm.Field.set_dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_dimension_coordinate</span></code></a></td>
 <td>Set a dimension coordinate construct and the axes spanned by its data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cfdm.Field.set_domain_ancillary.html#cfdm.Field.set_domain_ancillary" title="cfdm.Field.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.set_domain_ancillary.html#cfdm.Field.set_domain_ancillary" title="cfdm.Field.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a></td>
 <td>Set a domain ancillary and the axes spanned by its data</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cfdm.Field.set_coordinate_reference.html#cfdm.Field.set_coordinate_reference" title="cfdm.Field.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.set_coordinate_reference.html#cfdm.Field.set_coordinate_reference" title="cfdm.Field.set_coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_reference</span></code></a></td>
 <td>Set a coordinate reference construct</td>
 </tr>
 </tbody>
 </table>
-<p>These methods all return a construct identifier for the metadata
+<p>These methods all return the construct identifier for the metadata
 construct which can be used when other metadata constructs are added
 to the field (e.g. to specify which domain axis constructs correspond
 to a data array), or when other metadata constructs are created
@@ -1121,6 +1096,9 @@ by another, in which case the former must be added to the field first
 so that its construct identifier is available to the latter.</p>
 <p>One other restriction is that cell method constructs must be set in
 the relative order in which their methods were applied to the data.</p>
+<p>The domain axis constructs spanned by a metadata construct’s data may
+be changed after insertion with the <a class="reference internal" href="method/cfdm.Field.set_construct_axes.html#cfdm.Field.set_construct_axes" title="cfdm.Field.set_construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_axes</span></code></a> method
+of the field construct.</p>
 <p>The following code creates a field construct with properties; data;
 and domain axis, cell method and dimension coordinate metadata
 constructs (data arrays have been generated with dummy values using
@@ -1424,11 +1402,11 @@ been generated with dummy values using <a class="reference external" href="https
 </div>
 </div>
 <div class="section" id="domain">
-<span id="id11"></span><h2>Domain<a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
-<p>The abstract domain of the CF data model describes the locations of
-the field construct’s data and is represented by the <a class="reference internal" href="classes/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a>
-class. The domain object may be accessed with the <a class="reference internal" href="generated/cfdm.Field.get_domain.html#cfdm.Field.get_domain" title="cfdm.Field.get_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain</span></code></a>
-method of the field construct:</p>
+<span id="id12"></span><h2>Domain<a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
+<p>The domain of the CF data model describes the locations of the field
+construct’s data and is represented by the <a class="reference internal" href="classes/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> class. The domain
+instance may be accessed with the <a class="reference internal" href="method/cfdm.Field.get_domain.html#cfdm.Field.get_domain" title="cfdm.Field.get_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain</span></code></a> method of the
+field construct:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_domain</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span>
 <span class="go">&lt;Domain: {1, 1, 9, 10}&gt;</span>
@@ -1449,12 +1427,12 @@ method of the field construct:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">description</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">display</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Changes to domain are seen by the field construct, and vice
-versa. (This is because the domain is essentially a “view” of the
-relevant metadata constructs contained in the field construct.) The
+<p>Changes to domain instance are seen by the field construct, and vice
+versa. This is because the domain instance is merely “view” of the
+relevant metadata constructs contained in the field construct. The
 field construct also has a <a class="reference internal" href="generated/cfdm.Field.domain.html#cfdm.Field.domain" title="cfdm.Field.domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain</span></code></a> attribute that is an alias
-for the <a class="reference internal" href="generated/cfdm.Field.get_domain.html#cfdm.Field.get_domain" title="cfdm.Field.get_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain</span></code></a> method, which makes it easier to access
-attributes and methods of the domain:</p>
+for the <a class="reference internal" href="method/cfdm.Field.get_domain.html#cfdm.Field.get_domain" title="cfdm.Field.get_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain</span></code></a> method, which makes it easier to access
+attributes and methods of the domain instance:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;set by domain&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="go">&#39;set by domain&#39;</span>
@@ -1469,8 +1447,8 @@ attributes and methods of the domain:</p>
 </div>
 </div>
 <div class="section" id="copying">
-<span id="id12"></span><h2>Copying<a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h2>
-<p>A field construct may be copied with its <a class="reference internal" href="generated/cfdm.Field.copy.html#cfdm.Field.copy" title="cfdm.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method. This
+<span id="id13"></span><h2>Copying<a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h2>
+<p>A field construct may be copied with its <a class="reference internal" href="method/cfdm.Field.copy.html#cfdm.Field.copy" title="cfdm.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method. This
 produces a deep copy, i.e. the new field construct is completely
 independent of the original field.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1491,17 +1469,17 @@ independent of the original field.</p>
 </div>
 <dl class="docutils">
 <dt><em>Note on performance</em></dt>
-<dd><a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects within the field are copied with a <a class="reference external" href="https://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a> technique. This
+<dd><a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instances within the field are copied with a <a class="reference external" href="https://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a> technique. This
 means that a copy of a field takes up very little extra memory, even
-when the original field contains very large data arrays, and the
-copy operation is fast—at the time of copying, it is essentially
-only the descriptive properties that are duplicated.</dd>
+when the original field construct contains very large data arrays,
+and the copy operation is fast—at the time of copying, it is
+essentially only the descriptive properties that are duplicated.</dd>
 </dl>
 </div>
 <div class="section" id="equality">
-<span id="id13"></span><h2>Equality<a class="headerlink" href="#equality" title="Permalink to this headline">¶</a></h2>
-<p>Whether or not two fields constructs are equal is tested with either
-field construct’s <a class="reference internal" href="generated/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method.</p>
+<span id="id14"></span><h2>Equality<a class="headerlink" href="#equality" title="Permalink to this headline">¶</a></h2>
+<p>Whether or not two fields constructs are the same is tested with
+either field construct’s <a class="reference internal" href="method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
@@ -1518,8 +1496,9 @@ field construct’s <a class="reference internal" href="generated/cfdm.Field.equ
 constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:</p>
 <ul class="simple">
-<li>the properties must be the same (with the exception of the field
-construct’s “Conventions” property, which is never checked), and</li>
+<li>the descriptive properties must be the same (with the exception of
+the field construct’s “Conventions” property, which is never
+checked), and</li>
 <li>if there are data arrays then they must have same shape, data type
 and be element-wise equal.</li>
 </ul>
@@ -1547,7 +1526,7 @@ and <a class="reference internal" href="generated/cfdm.RTOL.html#cfdm.RTOL" titl
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.</p>
-<p>The <a class="reference internal" href="generated/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method has optional parameters for modifying the
+<p>The <a class="reference internal" href="method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method has optional parameters for modifying the
 criteria for considering two fields to be equal:</p>
 <ul class="simple">
 <li>named properties may be omitted from the comparison,</li>
@@ -1561,7 +1540,7 @@ settings.</li>
 </ul>
 </div>
 <div class="section" id="external-variables">
-<span id="id14"></span><h2>External variables<a class="headerlink" href="#external-variables" title="Permalink to this headline">¶</a></h2>
+<span id="id15"></span><h2>External variables<a class="headerlink" href="#external-variables" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables">External variables</a> are those referred to in a netCDF dataset, but
 which are not present in it. Instead, such variables are stored in
 other netCDF files known as “external files”. External variables may,
@@ -1569,7 +1548,7 @@ however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the <a class="reference internal" href="generated/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function.</p>
 <p>This is illustrated with the files <strong>parent.nc</strong> (<a class="reference download internal" href="_downloads/parent.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) and <strong>external.nc</strong>
-(<a class="reference download internal" href="_downloads/external.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id15">[2]</a>:</p>
+(<a class="reference download internal" href="_downloads/external.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id16">[3]</a>:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h parent.nc
 netcdf parent {
 dimensions:
@@ -1692,21 +1671,21 @@ may remain in their compressed representation.</p>
 numpy array that is uncompressed. The underlying array will, however,
 remain in its compressed form. The underlying compressed array may be
 retrieved as a numpy array with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code> method of
-the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
+the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <p>A subspace created by indexing (based on the axes of the uncompressed
 form of the data) will no longer be compressed, i.e. its underlying
 array will be in incomplete multidimensional representation. The
 original data will, however, retain its underlying compressed form.</p>
 <p>If the data elements are modified by indexed assignment then the
 underlying compressed array is replaced by its uncompressed form.</p>
-<p>A count variable that is required to uncompress a contiguous, or
+<p>The count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is stored in a <a class="reference internal" href="classes/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a> object and is
-retrieved with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count_variable</span></code> method of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
-<p>An index variable that is required to uncompress an indexed, or indexed
-contiguous, ragged array is stored in an <a class="reference internal" href="classes/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a> object and is
-retrieved with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index_variable</span></code> method of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
+retrieved with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count_variable</span></code> method of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
+<p>The index variable that is required to uncompress an indexed, or
+indexed contiguous, ragged array is stored in an <a class="reference internal" href="classes/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a> object and is
+retrieved with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index_variable</span></code> method of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <p>This is illustrated with the file <strong>contiguous.nc</strong>
-(<a class="reference download internal" href="_downloads/contiguous.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id16">[2]</a>:</p>
+(<a class="reference download internal" href="_downloads/contiguous.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id17">[3]</a>:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h contiguous.nc
 dimensions:
      station = 4 ;
@@ -1809,7 +1788,7 @@ modified by assignment. Any compressed arrays that have been modified
 will be written to an output dataset as incomplete multidimensional
 arrays.</p>
 <p>A construct with an underlying compressed array is created by
-initialising the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object with a compressed array that is stored
+initialising a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance with a compressed array that is stored
 in one of three special array objects: <a class="reference internal" href="classes/cfdm.RaggedContiguousArray.html#cfdm.RaggedContiguousArray" title="cfdm.RaggedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedContiguousArray</span></code></a>,
 <a class="reference internal" href="classes/cfdm.RaggedIndexedArray.html#cfdm.RaggedIndexedArray" title="cfdm.RaggedIndexedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedIndexedArray</span></code></a> or <a class="reference internal" href="classes/cfdm.RaggedIndexedContiguousArray.html#cfdm.RaggedIndexedContiguousArray" title="cfdm.RaggedIndexedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedIndexedContiguousArray</span></code></a>. The following
 code creates a simple field construct with an underlying contiguous
@@ -1877,8 +1856,8 @@ in their gathered representation.</p>
 <p>Accessing the data by a call to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code> method returns a
 numpy array that is uncompressed. The underlying array will, however,
 remain in its compressed form. The underlying compressed array may be
-retrieved as a numpy array with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code> method of a
-<a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
+retrieved as a numpy array with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code> method of
+the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance</p>
 <p>A subspace created by indexing will no longer be compressed,
 i.e. its underlying array will be in incomplete multidimensional
 representation. The original data will, however, retain its underlying
@@ -1886,10 +1865,10 @@ compressed array.</p>
 <p>If the data elements are modified by indexed assignment then the
 underlying compressed array is replaced by its uncompressed form.</p>
 <p>Indexing is based on the axes of the uncompressed form of the data.</p>
-<p>A list variable that is required to uncompress a gathered array is
+<p>The list variable that is required to uncompress a gathered array is
 stored in a <a class="reference internal" href="classes/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a> object and is retrieved with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list_variable</span></code> method of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
-<p>This is illustrated with the file <strong>gathered.nc</strong> (<a class="reference download internal" href="_downloads/gathered.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id17">[2]</a>:</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list_variable</span></code> method of the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
+<p>This is illustrated with the file <strong>gathered.nc</strong> (<a class="reference download internal" href="_downloads/gathered.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id18">[3]</a>:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h gathered.nc
 netcdf gathered {
 dimensions:
@@ -1961,7 +1940,7 @@ compression, provided that no data elements have been modified by
 assignment. Any compressed arrays that have been modified will be
 written to an output dataset without compression.</p>
 <p>A construct with an underlying compressed array is created by
-initializing the <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object with a compressed array that is stored
+initializing a <a class="reference internal" href="classes/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance with a compressed array that is stored
 in the special <a class="reference internal" href="classes/cfdm.GatheredArray.html#cfdm.GatheredArray" title="cfdm.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GatheredArray</span></code></a> array object. The following code
 creates a simple field construct with an underlying gathered array:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
@@ -2028,18 +2007,34 @@ initialisation).</p>
 </div>
 <hr class="docutils" />
 <p class="rubric">Footnotes</p>
-<table class="docutils footnote" frame="void" id="opendap" rules="none">
+<table class="docutils footnote" frame="void" id="opendap2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>Requires the netCDF-4 C library to have been compiled
 with OPeNDAP support enabled.</td></tr>
 </tbody>
 </table>
+<table class="docutils footnote" frame="void" id="language" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>In the terminology of the CF data model, a “construct”
+is an abstract concept which is distinct from its
+realization, e.g. a <a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance is not, strictly
+speaking, a field construct. However, the distinction
+is moot and the descriptive language used in this
+tutorial is greatly simplified by allowing the term
+“construct” to mean “class instance” (e.g. “field
+construct” means “<a class="reference internal" href="classes/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance”), and this
+convention is apllied throughout this tutorial. The
+phrase “CF data model construct” is used on occasions
+when the original abstract meaning is intended.</td></tr>
+</tbody>
+</table>
 <table class="docutils footnote" frame="void" id="files" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id15">2</a>, <a class="fn-backref" href="#id16">3</a>, <a class="fn-backref" href="#id17">4</a>)</em> The tutorial files may be also found in the
-<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/tree/master/docs/netcdf_files">docs/netcdf_files</a>
+<tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id4">1</a>, <a class="fn-backref" href="#id16">2</a>, <a class="fn-backref" href="#id17">3</a>, <a class="fn-backref" href="#id18">4</a>)</em> The tutorial files may be also found in the
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/master/docs/netcdf_files">docs/netcdf_files</a>
 directory.</td></tr>
 </tbody>
 </table>

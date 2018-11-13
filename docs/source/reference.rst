@@ -4,7 +4,7 @@ Reference manual
 .. toctree::
    :maxdepth: 2
 
-   function
+   functions
    class
    class_core
    constant

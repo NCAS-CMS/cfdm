@@ -11,7 +11,7 @@ Field construct class
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.core.Field	              
 
@@ -20,7 +20,7 @@ Metadata construct classes
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.core.AuxiliaryCoordinate
    cfdm.core.CellMeasure
@@ -36,7 +36,7 @@ Construct component classes
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.core.Bounds
    cfdm.core.CoordinateConversion
@@ -49,17 +49,20 @@ Data classes
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.core.Data
    cfdm.core.NumpyArray
+   cfdm.core.Array
 
-Abstract classes
-----------------
+Construct abstract base classes
+-------------------------------
+
+Abstract base classes that providing the basis for construct classes.
 
 .. autosummary::
    :nosignatures:
-   :toctree: classes/
+   :toctree: class/
 
    cfdm.core.abstract.Container
    cfdm.core.abstract.Coordinate
@@ -69,13 +72,3 @@ Abstract classes
    cfdm.core.abstract.PropertiesData
    cfdm.core.abstract.PropertiesDataBounds
    cfdm.core.data.abstract.Array
-
-Mixin classes
--------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: classes/
-
-   cfdm.core.mixin.ConstructAccess
-  
