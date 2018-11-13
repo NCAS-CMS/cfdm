@@ -1,0 +1,7 @@
+cfdm.core.Field.domain_ancillaries
+==================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.core.Field.domain_ancillaries

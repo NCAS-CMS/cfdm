@@ -1,0 +1,7 @@
+cfdm.core.Field.coordinate_references
+=====================================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.core.Field.coordinate_references

@@ -1,0 +1,7 @@
+cfdm.Field.__setitem__
+======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Field.__setitem__
