@@ -1,0 +1,230 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cfdm &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="#">Table Of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subclassing.html">Subclassing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="installation.html" title="next chapter">Installation</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm">
+<h1>cfdm<a class="headerlink" href="#cfdm" title="Permalink to this headline">¶</a></h1>
+<p>Version 1.7</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The cfdm package is a complete implementation of the CF data model.</p>
+<div class="section" id="cf-conventions">
+<h3>CF conventions<a class="headerlink" href="#cf-conventions" title="Permalink to this headline">¶</a></h3>
+<p>The CF (Climate and Forecast) metadata conventions
+(<a class="reference external" href="http://cfconventions.org">http://cfconventions.org</a>) provide a description of the physical
+meaning of data and of their spatial and temporal properties and are
+designed to promote the creation, processing, and sharing of climate
+and forecasting data using Network Common Data Form (netCDF,
+<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf">https://www.unidata.ucar.edu/software/netcdf</a>) files and libraries.</p>
+</div>
+<div class="section" id="cf-data-model">
+<h3>CF data model<a class="headerlink" href="#cf-data-model" title="Permalink to this headline">¶</a></h3>
+<p>The CF data model identifies the fundamental elements (“constructs”)
+of CF and shows how they relate to each other, independently of the
+netCDF encoding.</p>
+<p>The <strong>field</strong> construct defined by the CF data model, which
+corresponds to a CF-netCDF data variable with all of its metadata, is
+the central construct that includes all of the other constructs. It
+consists of</p>
+<ul class="simple">
+<li>descriptive properties that apply to field construct as a whole
+(e.g. the standard name),</li>
+<li>a data array, and</li>
+<li>“metadata constructs” that describe<ul>
+<li>the locations of each cell of the data array (i.e. the domain),
+and</li>
+<li>the physical nature of each cell’s datum.</li>
+</ul>
+</li>
+</ul>
+<p>The domain is defined collectively by</p>
+<ul class="simple">
+<li><strong>domain axis</strong> constructs (corresponding to CF-netCDF dimensions or
+scalar coordinate variables),</li>
+<li><strong>dimension coordinate</strong> constructs (corresponding to CF-netCDF
+coordinate variables or numeric scalar coordinate variables),</li>
+<li><strong>auxiliary coordinate</strong> constructs (corresponding to CF-netCDF
+auxiliary coordinate variables and non-numeric scalar coordinate
+variables),</li>
+<li><strong>coordinate reference</strong> constructs (corresponding to CF-netCDF grid
+mapping variables or the formula_terms attribute of a coordinate
+variable),</li>
+<li><strong>domain ancillary</strong> constructs (corresponding to CF-netCDF
+variables named by the formula_terms attribute of a coordinate
+variable), and</li>
+<li><strong>cell measure</strong> constructs (corresponding to CF-netCDF cell measure
+variables).</li>
+</ul>
+<p>The physical nature of individual data values are described by</p>
+<ul class="simple">
+<li><strong>field ancillary</strong> constructs (corresponding to CF-netCDF ancillary
+variables), and</li>
+<li><strong>cell method</strong> constructs (corresponding to a CF-netCDF
+cell_methods attribute of data variable).</li>
+</ul>
+<p>A complete description of the CF data model, including UML diagrams,
+is available at <a class="reference external" href="https://www.geosci-model-dev.net/10/4619/2017">https://www.geosci-model-dev.net/10/4619/2017</a>.</p>
+</div>
+<div class="section" id="implementation">
+<h3>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> library implements the CF data model
+for its internal data structures and so is able to process any
+CF-compliant dataset. It is, however, not strict about CF compliance
+so that partially conformant datasets may be modified in memory, as
+well as ingested from existing datasets and written to new datasets.</p>
+<p>The <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package can</p>
+<ul class="simple">
+<li>read netCDF datasets into field constructs,</li>
+<li>create new field constructs in memory,</li>
+<li>inspect field constructs,</li>
+<li>modify field construct metadata and data,</li>
+<li>create subspaces of field constructs,</li>
+<li>write field constructs to netCDF datasets on disk,</li>
+<li>incorporate metadata stored in external files,</li>
+<li>read and write data that has been compressed by convention
+(i.e. ragged or gathered arrays), whilst presenting a view of the
+data in its uncompressed form.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="table-of-contents">
+<h2>Table Of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#conda">conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#pip">pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#source">Source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#code-repository">Code repository</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#reading-datasets">Reading datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#inspection">Inspection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#properties">Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#subspacing">Subspacing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#netcdf-interface">NetCDF interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#writing-to-disk">Writing to disk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#metadata-constructs">Metadata constructs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#field-creation">Field creation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#domain">Domain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#copying">Copying</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#equality">Equality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#external-variables">External variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#discrete-sampling-geometries">Discrete sampling geometries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#gathering">Gathering</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="subclassing.html">Subclassing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="index-and-search">
+<h2>Index and search<a class="headerlink" href="#index-and-search" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

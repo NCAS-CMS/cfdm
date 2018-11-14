@@ -28,6 +28,8 @@ that the method was applied only over El Nino years).
                  copy=True):
         '''**Initialisation**
 
+:Parmaeters:
+
     axes: (sequence of) `str`, optional
         Set the axes of the cell method. Ignored if the *source*
         parameter is set.
