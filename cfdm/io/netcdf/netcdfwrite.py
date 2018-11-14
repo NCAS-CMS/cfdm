@@ -2329,7 +2329,7 @@ write them to the netCDF4.Dataset.
         # ------------------------------------------------------------
         # Write the global attributes to the file
         # ------------------------------------------------------------
-        g['netcdf'].setncattr('Conventions', 'CF-'+self.implementation.get_version())
+        g['netcdf'].setncattr('Conventions', 'CF-'+self.implementation.get_cf_version())
         
         for attr in global_attributes - set(('Conventions',)):
             g['netcdf'].setncattr(attr, self.implementation.get_property(f0, attr)) 

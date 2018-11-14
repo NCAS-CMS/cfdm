@@ -1,4 +1,6 @@
-from .. import __version__
+#from .. import __version__
+from .. import CF
+
 from .. import (CoordinateReference,
                 Field,
                 Data)
@@ -8,7 +10,7 @@ from . import CFDMImplementation
 from .netcdf import NetCDFWrite
 
 
-implementation = CFDMImplementation(version=__version__,
+implementation = CFDMImplementation(cf_version=CF(),
                                     CoordinateReference=CoordinateReference,
                                     Field=Field,
                                     Data=Data)

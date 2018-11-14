@@ -10,8 +10,10 @@ This package is an implementation of the CF data model
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2018-11-11'
-__version__      = '1.7'
+__date__         = '2018-11-14'
+
+
+__version__      = '1.7-beta1'
 
 from distutils.version import StrictVersion
 import platform
@@ -33,9 +35,8 @@ from .data.raggedcontiguousarray        import RaggedContiguousArray
 from .data.raggedindexedarray           import RaggedIndexedArray
 from .data.raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 
-from .functions        import *
-#from .io.read              import read
-#from .io.write             import write
+#from .functions        import *
+from .functions import (CF, environment, ATOL, RTOL)
 
 from .count import Count
 from .index import Index

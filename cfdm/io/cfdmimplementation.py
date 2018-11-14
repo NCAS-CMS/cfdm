@@ -6,7 +6,7 @@ from .abstract import Implementation
 class CFDMImplementation(Implementation):
     '''
     '''
-    def __init__(self, version=None,
+    def __init__(self, cf_version=None,
                  
                  AuxiliaryCoordinate=None,
                  CellMeasure=None,
@@ -71,7 +71,7 @@ class CFDMImplementation(Implementation):
 
         '''
         super().__init__(
-            version=version,
+            cf_version=cf_version,
 
             AuxiliaryCoordinate=AuxiliaryCoordinate,
             CellMeasure=CellMeasure,

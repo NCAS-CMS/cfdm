@@ -85,7 +85,7 @@
 <h1>cfdm.core.abstract.Properties<a class="headerlink" href="#cfdm-core-abstract-properties" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.abstract.Properties">
-<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>Abstract base class for an object with descriptive properties.</p>
 <p><strong>Initialization</strong></p>
@@ -123,7 +123,7 @@ initialization By default parameters are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.Properties.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-15"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-15"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -194,7 +194,7 @@ initialization By default parameters are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.Properties.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -218,7 +218,7 @@ initialization By default parameters are deep copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Properties.del_property">
-<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.del_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.del_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a property.</p>
 <p>A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
@@ -280,7 +280,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Properties.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a property.</p>
 <p>A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
@@ -339,7 +339,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Properties.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.has_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.has_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
 <p>A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
@@ -393,7 +393,7 @@ to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Properties.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-231"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.properties" title="Permalink to this definition">¶</a></dt>
+<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-231"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace all properties.</p>
 <p>A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond
@@ -458,7 +458,7 @@ properties if no changes were specified.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Properties.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/properties.py#core/abstract/properties.py-293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.set_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/properties.py#core/abstract/properties.py-293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Properties.set_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a property.</p>
 <p>A property describes an aspect of the construct that is independent of
 the domain and may have any name and value. Some properties correspond

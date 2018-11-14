@@ -642,3 +642,21 @@ cfdm: 1.7 /home/user/cfdm/cfdm/__init__.pyc
     else:
         return out
 #--- End: def
+
+def CF():
+    '''Return the version of the CF conventions.
+
+.. versionadded:: 1.7
+
+:Returns:
+
+    out:`str`
+        TODO
+
+**Examples:**
+
+>>> cfdm.CF()
+'1.8'
+    '''
+    return __version__.split('-')[0]
+#--- End: def

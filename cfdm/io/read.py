@@ -3,7 +3,9 @@ from past.builtins import basestring
 
 import os
 
-from .. import __version__
+#from .. import __version__
+
+from .. import CF
 
 from .. import (AuxiliaryCoordinate,
                 CellMethod,
@@ -32,7 +34,7 @@ from . import CFDMImplementation
 
 from .netcdf import NetCDFRead
 
-implementation = CFDMImplementation(version = __version__,
+implementation = CFDMImplementation(cf_version = CF(),
 
                                     AuxiliaryCoordinate = AuxiliaryCoordinate,
                                     CellMeasure         = CellMeasure,

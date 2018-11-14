@@ -536,6 +536,33 @@ Parameters:
             raise ValueError("Can't get construct!!!!!!")
     #--- End: def
     
+    def has_construct(self, cid):
+        '''Whether a construct exisits.
+
+.. versionadded:: 1.7
+
+:Parameters:
+
+    cid: `str`
+        TODO
+
+:Returns:
+
+    out: `bool`
+        True if the construct exists, otherwise False.
+
+**Examples:**
+
+TODO
+        '''
+        try:
+            self.get_construct(cid)
+        except ValueError:
+            return False
+        else:
+            return True        
+    #--- End: def
+
     def set_construct(self, construct_type, construct, cid=None,
                       axes=None, #extra_axes=0, #replace=True,
                       copy=True):

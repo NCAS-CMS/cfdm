@@ -7,7 +7,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     '''Store an implementation of the CF data model.
     '''
     
-    def __init__(self, version=None, **kwargs):
+    def __init__(self, cf_version=None, **kwargs):
         '''**Initialisation**
 
 :Parameters:
@@ -16,7 +16,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
         The concrete objects required to represent a Field.
 
         '''
-        self._version = version
+        self._cf_version = cf_version
         self._class = kwargs.copy()
         for key, value in kwargs.items():
             if value is None:
@@ -58,8 +58,8 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
             raise ValueError("Implementation does not have class {!r}".format(name))
     #--- End: def
 
-    def get_version(self):
-        '''Return the version of the implementation.
+    def get_cf_version(self):
+        '''Return the CF version of the implementation.
 
 :Returns:
     
@@ -68,11 +68,11 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
 
 :Examples:
 
->>> i.get_version()
+>>> i.get_cf_version()
 '1.8'    
 
         '''
-        return self._version
+        return self._cf_version
     #--- End: def
 
     def set_class(self, name, cls):

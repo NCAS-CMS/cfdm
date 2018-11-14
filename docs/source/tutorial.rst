@@ -6,7 +6,26 @@
 Tutorial
 ========
 
-.. _read:
+The :ref:`cfdm <class_extended>` package is imported as follows:
+
+.. code:: python
+
+   >>> import cfdm
+
+.. _cf_version:
+
+CF version
+----------
+
+The version of the `CF conventions <http://cfconventions.org>`_ being
+used may be found with the `cfdm.CF` function:
+
+.. code:: python
+
+   >>> cfdm.CF()
+   '1.7'
+
+.. _reading:
 
 Reading datasets
 ----------------
@@ -1375,8 +1394,10 @@ independent of the original field.
    >>> u = t.copy()
    >>> u.del_construct('grid_latitude')
    <DimensionCoordinate: grid_latitude(10) degrees>
-   >>> t.has_construct('grid_latitude')
-   True
+   >>> u.constructs('grid_latitude')
+   {}
+   >>> t.constructs('grid_latitude')
+   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
 
 Equivalently, the `copy.deepcopy` function may be used:
 

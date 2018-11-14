@@ -131,6 +131,8 @@ TODO
     def get_construct(self, cid):
         '''Return a metadata construct.
 
+.. versionadded:: 1.7
+
 :Parameters:
 
     cid: `str`
@@ -141,7 +143,7 @@ TODO
     out:
         TODO
 
-**Examples**
+**Examples:**
 
 >>> f.constructs()
 >>> f.get_construct('dimensioncoordinate1')
@@ -150,6 +152,28 @@ TODO
 'Not set'
         '''
         return self._get_constructs().get_construct(cid)
+    #--- End: def
+
+    def has_construct(self, cid):
+        '''Whether a construct exisits.
+
+.. versionadded:: 1.7
+
+:Parameters:
+
+    cid: `str`
+        TODO
+
+:Returns:
+
+    out: `bool`
+        True if the construct exists, otherwise False.
+
+**Examples:**
+
+TODO
+        '''
+        return self._get_constructs().has_construct(cid)
     #--- End: def
 
     def domain_axis_name(self, axis):

@@ -48,7 +48,7 @@ Cell measure          Domain cell size or shape stored in
     #--- End: def
     
     def __repr__(self):
-        '''Called by the :py:obj:`repr` built-in function.
+        '''Called by the `repr` built-in function.
 
 x.__repr__() <==> repr(x)
 
@@ -61,7 +61,7 @@ x.__repr__() <==> repr(x)
     #--- End: def
 
     def __str__(self):
-        '''Called by the :py:obj:`str` built-in function.
+        '''Called by the `str` built-in function.
 
 x.__str__() <==> str(x)
 
@@ -75,8 +75,8 @@ x.__str__() <==> str(x)
                 name = variable.name(ncvar=True, default=key)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
-                elif hasattr(variable, 'nc_get_external'):
-                    if variable.nc_get_external():
+                elif hasattr(variable, 'nc_external'):
+                    if variable.nc_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
                             x.append(' (external variable: ncvar%{})'.format(ncvar))
@@ -100,8 +100,8 @@ x.__str__() <==> str(x)
                     shape = str(tuple(shape)).replace("'", "")
                     shape = shape.replace(',)', ')')
                     x.append(shape)
-                elif hasattr(variable, 'nc_get_external'):
-                    if variable.nc_get_external():
+                elif hasattr(variable, 'nc_external'):
+                    if variable.nc_external():
                         ncvar = variable.nc_get_variable(None)
                         if ncvar is not None:
                             x.append(' (external variable: ncvar%{})'.format(ncvar))
@@ -134,7 +134,8 @@ x.__str__() <==> str(x)
                         
                     x.append(y)
         #--- End: for
-        string.append('Dimension coords: {}'.format('\n                : '.join(x)))
+        if x:
+            string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
         # Auxiliary coordinates
         x = [_print_item(self, aux, v, False) 

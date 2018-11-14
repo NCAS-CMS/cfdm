@@ -25,9 +25,9 @@ Constants
    :toctree: function/
    :template: function.rst
 
+   cfdm.CF
    cfdm.ATOL
    cfdm.RTOL
-
 
 Miscellaneous 
 --------------
