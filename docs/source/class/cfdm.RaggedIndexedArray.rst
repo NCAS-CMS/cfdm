@@ -4,38 +4,34 @@ cfdm.RaggedIndexedArray
 .. currentmodule:: cfdm
 
 .. autoclass:: RaggedIndexedArray
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
 
-   
-   .. rubric:: Methods
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   .. autosummary::
-   
-      ~RaggedIndexedArray.__init__
-      ~RaggedIndexedArray.copy
-      ~RaggedIndexedArray.get_array
-      ~RaggedIndexedArray.get_compressed_array
-      ~RaggedIndexedArray.get_compressed_axes
-      ~RaggedIndexedArray.get_compression_type
-      ~RaggedIndexedArray.get_sample_axis
-      ~RaggedIndexedArray.get_subspace
-      ~RaggedIndexedArray.next
-   
-   
+   ~RaggedIndexedArray.copy
+   ~RaggedIndexedArray.get_array
+   ~RaggedIndexedArray.get_compressed_array
+   ~RaggedIndexedArray.get_compressed_axes
+   ~RaggedIndexedArray.get_compression_type
+   ~RaggedIndexedArray.get_sample_axis
+   ~RaggedIndexedArray.get_subspace
+ 
+.. rubric:: Attributes
 
-   
-   
-   .. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   .. autosummary::
-   
-      ~RaggedIndexedArray.dtype
-      ~RaggedIndexedArray.index_array
-      ~RaggedIndexedArray.ndim
-      ~RaggedIndexedArray.sample_axis
-      ~RaggedIndexedArray.shape
-      ~RaggedIndexedArray.size
+   ~RaggedIndexedArray.dtype
+   ~RaggedIndexedArray.ndim
+   ~RaggedIndexedArray.shape
+   ~RaggedIndexedArray.size
    
    

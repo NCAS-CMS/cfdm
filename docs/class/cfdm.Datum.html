@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.NetCDFArray" href="cfdm.NetCDFArray.html" />
-    <link rel="prev" title="cfdm.Data" href="cfdm.Data.html" />
+    <link rel="next" title="cfdm.Datum.copy" href="../method/cfdm.Datum.copy.html" />
+    <link rel="prev" title="cfdm.Data.unique" href="../method/cfdm.Data.unique.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html">Reference manual</a><ul>
   <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
-      <li>Previous: <a href="cfdm.Data.html" title="previous chapter">cfdm.Data</a></li>
-      <li>Next: <a href="cfdm.NetCDFArray.html" title="next chapter">cfdm.NetCDFArray</a></li>
+      <li>Previous: <a href="../method/cfdm.Data.unique.html" title="previous chapter">cfdm.Data.unique</a></li>
+      <li>Next: <a href="../method/cfdm.Datum.copy.html" title="next chapter">cfdm.Datum.copy</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -108,20 +108,6 @@ of the dimension and auxiliary coordinate constructs referenced by the
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="cfdm.Datum.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>Initialization</strong></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">source: optional</p>
-<p class="last">copy: <cite>bool</cite>, optional</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -131,280 +117,35 @@ of the dimension and auxiliary coordinate constructs referenced by the
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Datum.html#cfdm.Datum.__init__" title="cfdm.Datum.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([parameters,&nbsp;source,&nbsp;copy,&nbsp;_use_data])</td>
-<td><strong>Initialization</strong></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Datum.html#cfdm.Datum.copy" title="cfdm.Datum.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([data])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.copy.html#cfdm.Datum.copy" title="cfdm.Datum.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Datum.html#cfdm.Datum.del_parameter" title="cfdm.Datum.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a>(parameter,&nbsp;*default)</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.del_parameter.html#cfdm.Datum.del_parameter" title="cfdm.Datum.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></td>
 <td>Delete a parameter.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Datum.html#cfdm.Datum.equals" title="cfdm.Datum.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>(other[,&nbsp;rtol,&nbsp;atol,&nbsp;traceback,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.equals.html#cfdm.Datum.equals" title="cfdm.Datum.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>TODO True if two instances are equal, False otherwise.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Datum.html#cfdm.Datum.get_parameter" title="cfdm.Datum.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a>(term,&nbsp;*default)</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.get_parameter.html#cfdm.Datum.get_parameter" title="cfdm.Datum.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
 <td>Get a parameter value.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.Datum.html#cfdm.Datum.parameters" title="cfdm.Datum.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a>([parameters,&nbsp;copy])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.parameters.html#cfdm.Datum.parameters" title="cfdm.Datum.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
 <td>Return or replace the parameter-valued terms.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.Datum.html#cfdm.Datum.set_parameter" title="cfdm.Datum.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a>(term,&nbsp;value[,&nbsp;copy])</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.set_parameter.html#cfdm.Datum.set_parameter" title="cfdm.Datum.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></td>
 <td>Set a parameter-valued term.</td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="cfdm.Datum.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-59"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a deep copy.</p>
-<p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>data: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the ancillary data arrays. By
-default the data arrays are copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The deep copy.</p>
-</dd>
-</dl>
-</td>
-</tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.Datum.del_parameter">
-<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.del_parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a parameter.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_parameter</cite>, <cite>has_parameter</cite>, <cite>parameters</cite>,
-<cite>set_parameter</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>parameter: <cite>str</cite></dt>
-<dd><p class="first last">The name of the parameter to be deleted.</p>
-</dd>
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the parameter has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The removed parameter. If the parameter has not been then
-<em>default</em> is returned, if provided.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.Datum.equals">
-<code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_construct_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/parameters.py#mixin/parameters.py-31"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.equals" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO True if two instances are equal, False otherwise.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>other:</dt>
-<dd><p class="first last">The object to compare for equality.</p>
-</dd>
-<dt>atol: <cite>float</cite>, optional</dt>
-<dd><p class="first last">The absolute tolerance for all numerical comparisons, By
-default the value returned by the <cite>ATOL</cite> function is used.</p>
-</dd>
-<dt>rtol: <cite>float</cite>, optional</dt>
-<dd><p class="first last">The relative tolerance for all numerical comparisons, By
-default the value returned by the <cite>RTOL</cite> function is used.</p>
-</dd>
-<dt>ignore_fill_value: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If True then data arrays with different fill values are
-considered equal. By default they are considered unequal.</p>
-</dd>
-<dt>traceback: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If True then print a traceback highlighting where the two
-instances differ.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">Whether or not the two instances are equal.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.Datum.get_parameter">
-<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-114"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.get_parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a parameter value.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>term: <cite>str</cite></dt>
-<dd><p class="first last">The name of the term.</p>
-</dd>
-</dl>
-<p>default: optional</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The value of the term &lt;SOMETING BAOUT DEFAULT&gt;</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">)</span>
-<span class="go">70.0</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
-<span class="go">ERROR</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nonexistent term&#39;</span><span class="p">)</span>
-<span class="go">&#39;nonexistent term&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.Datum.parameters">
-<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-154"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return or replace the parameter-valued terms.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>ancillaries</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>parameters: <cite>dict</cite>, optional</dt>
-<dd><p class="first">Replace all parameter-valued terms with those provided.</p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007}</span></code></p>
-</dd>
-</dl>
-</div></blockquote>
-</dd>
-</dl>
-<p>copy: <cite>bool</cite>, optional</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>dict</cite></dt>
-<dd><p class="first last">The parameter-valued terms and their values. If the
-<em>parameters</em> keyword has been set then the parameter-valued
-terms prior to replacement are returned.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
-<span class="go"> &#39;longitude_of_central_meridian&#39;: 265.0,</span>
-<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.Datum.set_parameter">
-<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-202"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Datum.set_parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a parameter-valued term.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>parameters</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>None</cite></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
-<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span> <span class="mf">265.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
-<span class="go"> &#39;longitude_of_central_meridian&#39;: 265.0,</span>
-<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 
 

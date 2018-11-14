@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.mixin.ParametersDomainAncillaries" href="cfdm.mixin.ParametersDomainAncillaries.html" />
-    <link rel="prev" title="cfdm.mixin.NetCDFVariable" href="cfdm.mixin.NetCDFVariable.html" />
+    <link rel="next" title="cfdm.mixin.Parameters.equals" href="../method/cfdm.mixin.Parameters.equals.html" />
+    <link rel="prev" title="cfdm.mixin.NetCDFVariable.nc_set_variable" href="../method/cfdm.mixin.NetCDFVariable.nc_set_variable.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html">Reference manual</a><ul>
   <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
-      <li>Previous: <a href="cfdm.mixin.NetCDFVariable.html" title="previous chapter">cfdm.mixin.NetCDFVariable</a></li>
-      <li>Next: <a href="cfdm.mixin.ParametersDomainAncillaries.html" title="next chapter">cfdm.mixin.ParametersDomainAncillaries</a></li>
+      <li>Previous: <a href="../method/cfdm.mixin.NetCDFVariable.nc_set_variable.html" title="previous chapter">cfdm.mixin.NetCDFVariable.nc_set_variable</a></li>
+      <li>Next: <a href="../method/cfdm.mixin.Parameters.equals.html" title="next chapter">cfdm.mixin.Parameters.equals</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -88,6 +88,8 @@
 <em class="property">class </em><code class="descclassname">cfdm.mixin.</code><code class="descname">Parameters</code><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/parameters.py#mixin/parameters.py-7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.Parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code></p>
 <p>Mixin class for parameters.</p>
+</dd></dl>
+
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -95,57 +97,20 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.mixin.Parameters.equals" title="cfdm.mixin.Parameters.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.mixin.Parameters.equals.html#cfdm.mixin.Parameters.equals" title="cfdm.mixin.Parameters.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>TODO True if two instances are equal, False otherwise.</td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="cfdm.mixin.Parameters.equals">
-<code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_construct_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7/cfdm/mixin/parameters.py#mixin/parameters.py-31"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.Parameters.equals" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO True if two instances are equal, False otherwise.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>other:</dt>
-<dd><p class="first last">The object to compare for equality.</p>
-</dd>
-<dt>atol: <cite>float</cite>, optional</dt>
-<dd><p class="first last">The absolute tolerance for all numerical comparisons, By
-default the value returned by the <cite>ATOL</cite> function is used.</p>
-</dd>
-<dt>rtol: <cite>float</cite>, optional</dt>
-<dd><p class="first last">The relative tolerance for all numerical comparisons, By
-default the value returned by the <cite>RTOL</cite> function is used.</p>
-</dd>
-<dt>ignore_fill_value: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If True then data arrays with different fill values are
-considered equal. By default they are considered unequal.</p>
-</dd>
-<dt>traceback: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If True then print a traceback highlighting where the two
-instances differ.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
-<dt>out: <cite>bool</cite></dt>
-<dd><p class="first last">Whether or not the two instances are equal.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Examples:</th><td class="field-body"></td>
-</tr>
 </tbody>
 </table>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 
 

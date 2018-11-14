@@ -1,9 +1,9 @@
-cfdm.mixin.NetCDFDimension
-==========================
+cfdm.Array
+==========
 
-.. currentmodule:: cfdm.mixin
+.. currentmodule:: cfdm.Array
 
-.. autoclass:: NetCDFDimension
+.. autoclass:: Array
    :no-members:
    :no-inherited-members:
 
@@ -13,21 +13,21 @@ cfdm.mixin.NetCDFDimension
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
+      
+   ~Array.copy
+   ~Array.get_array
    
-   ~NetCDFDimension.nc_del_dimension
-   ~NetCDFDimension.nc_get_dimension
-   ~NetCDFDimension.nc_has_dimension
-   ~NetCDFDimension.nc_set_dimension
-   
-
 .. rubric:: Attributes
 
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
-   
 
+   ~Array.dtype
+   ~Array.ndim
+   ~Array.shape
+   ~Array.size
    
    
    

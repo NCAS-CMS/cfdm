@@ -4,36 +4,21 @@ cfdm.mixin.Coordinate
 .. currentmodule:: cfdm.mixin
 
 .. autoclass:: Coordinate
+   :no-members:
+   :no-inherited-members:
 
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
-      :nosignatures:
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-      ~Coordinate.HDF_chunks
-      ~Coordinate.del_part_ncdim
-      ~Coordinate.dump
-      ~Coordinate.equals
-      ~Coordinate.expand_dims
-      ~Coordinate.get_node_ncdim
-      ~Coordinate.get_part_ncdim
-      ~Coordinate.has_part_ncdim
-      ~Coordinate.name
-      ~Coordinate.open
-      ~Coordinate.set_node_ncdim
-      ~Coordinate.set_part_ncdim
-      ~Coordinate.squeeze
-      ~Coordinate.transpose
-   
-   
+.. rubric:: Attributes
 
-   
-   
-   .. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   .. autosummary::
-   
-      ~Coordinate.dtarray
-      ~Coordinate.isreftime
-   
    

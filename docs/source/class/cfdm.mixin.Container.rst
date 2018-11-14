@@ -4,15 +4,30 @@ cfdm.mixin.Container
 .. currentmodule:: cfdm.mixin
 
 .. autoclass:: Container
-   
-   .. rubric:: Methods
+   :no-members:
+   :no-inherited-members:
 
-   .. autosummary::
-      :nosignatures:
+.. rubric:: Methods
 
-      ~Container.equals
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~Container.equals
    
    
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~Container.__repr__
 
    
    

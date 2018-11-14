@@ -4,40 +4,39 @@ cfdm.NetCDFArray
 .. currentmodule:: cfdm
 
 .. autoclass:: NetCDFArray
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-   .. rubric:: Methods
+   ~NetCDFArray.close
+   ~NetCDFArray.copy
+   ~NetCDFArray.get_array
+   ~NetCDFArray.get_compressed_array
+   ~NetCDFArray.get_compressed_axes
+   ~NetCDFArray.get_compression_type
+   ~NetCDFArray.get_sample_axis
+   ~NetCDFArray.get_subspace
+   ~NetCDFArray.next
+   ~NetCDFArray.open
+   
+.. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~NetCDFArray.__init__
-      ~NetCDFArray.close
-      ~NetCDFArray.copy
-      ~NetCDFArray.get_array
-      ~NetCDFArray.get_compressed_array
-      ~NetCDFArray.get_compressed_axes
-      ~NetCDFArray.get_compression_type
-      ~NetCDFArray.get_sample_axis
-      ~NetCDFArray.get_subspace
-      ~NetCDFArray.next
-      ~NetCDFArray.open
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~NetCDFArray.dtype
-      ~NetCDFArray.ncvar
-      ~NetCDFArray.ndim
-      ~NetCDFArray.shape
-      ~NetCDFArray.size
-      ~NetCDFArray.varid
+   ~NetCDFArray.dtype
+   ~NetCDFArray.ncvar
+   ~NetCDFArray.ndim
+   ~NetCDFArray.shape
+   ~NetCDFArray.size
+   ~NetCDFArray.varid
    
    

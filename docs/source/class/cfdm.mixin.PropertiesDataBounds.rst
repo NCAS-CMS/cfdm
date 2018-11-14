@@ -4,36 +4,51 @@ cfdm.mixin.PropertiesDataBounds
 .. currentmodule:: cfdm.mixin
 
 .. autoclass:: PropertiesDataBounds
-   
-   .. rubric:: Methods
+   :no-members:
+   :no-inherited-members:
 
-   .. autosummary::
-      :nosignatures:
+.. rubric:: Methods
 
-      ~PropertiesDataBounds.HDF_chunks
-      ~PropertiesDataBounds.del_part_ncdim
-      ~PropertiesDataBounds.dump
-      ~PropertiesDataBounds.equals
-      ~PropertiesDataBounds.expand_dims
-      ~PropertiesDataBounds.get_node_ncdim
-      ~PropertiesDataBounds.get_part_ncdim
-      ~PropertiesDataBounds.has_part_ncdim
-      ~PropertiesDataBounds.name
-      ~PropertiesDataBounds.open
-      ~PropertiesDataBounds.set_node_ncdim
-      ~PropertiesDataBounds.set_part_ncdim
-      ~PropertiesDataBounds.squeeze
-      ~PropertiesDataBounds.transpose
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~PropertiesDataBounds.HDF_chunks
+   ~PropertiesDataBounds.del_part_ncdim
+   ~PropertiesDataBounds.dump
+   ~PropertiesDataBounds.equals
+   ~PropertiesDataBounds.expand_dims
+   ~PropertiesDataBounds.get_node_ncdim
+   ~PropertiesDataBounds.get_part_ncdim
+   ~PropertiesDataBounds.has_part_ncdim
+   ~PropertiesDataBounds.name
+   ~PropertiesDataBounds.open
+   ~PropertiesDataBounds.set_node_ncdim
+   ~PropertiesDataBounds.set_part_ncdim
+   ~PropertiesDataBounds.squeeze
+   ~PropertiesDataBounds.transpose
    
    
+.. rubric:: Attributes
 
-   
-   
-   .. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   .. autosummary::
-   
-      ~PropertiesDataBounds.dtarray
-      ~PropertiesDataBounds.isreftime
+   ~PropertiesDataBounds.dtarray
+   ~PropertiesDataBounds.isreftime
    
    
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~PropertiesDataBounds.__getitem__

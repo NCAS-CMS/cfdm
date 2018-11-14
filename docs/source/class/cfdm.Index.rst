@@ -1,66 +1,47 @@
-cfdm.Index
-==========
+cfdm.List
+=========
 
 .. currentmodule:: cfdm
 
 .. autoclass:: Index
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-   .. rubric:: Methods
+   ~Index.HDF_chunks
+   ~Index.copy
+   ~Index.del_data   
+   ~Index.del_ncvar
+   ~Index.del_property
+   ~Index.dump
+   ~Index.equals
+   ~Index.expand_dims
+   ~Index.fill_value
+   ~Index.get_array
+   ~Index.get_data
+   ~Index.get_ncvar
+   ~Index.get_property
+   ~Index.has_data
+   ~Index.has_property
+   ~Index.name
+   ~Index.open
+   ~Index.properties
+   ~Index.set_data
+   ~Index.set_ncvar
+   ~Index.set_property
+   ~Index.squeeze
+   
+.. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~Index.HDF_chunks
-      ~Index.__init__
-      ~Index.copy
-      ~Index.del_data
-      ~Index.del_property
-      ~Index.dump
-      ~Index.equals
-      ~Index.expand_dims
-      ~Index.get_array
-      ~Index.get_data
-      ~Index.get_property
-      ~Index.has_data
-      ~Index.has_property
-      ~Index.name
-      ~Index.nc_del_dimension
-      ~Index.nc_del_instance_dimension
-      ~Index.nc_del_sample_dimension
-      ~Index.nc_del_variable
-      ~Index.nc_get_dimension
-      ~Index.nc_get_instance_dimension
-      ~Index.nc_get_sample_dimension
-      ~Index.nc_get_variable
-      ~Index.nc_has_dimension
-      ~Index.nc_has_instance_dimension
-      ~Index.nc_has_sample_dimension
-      ~Index.nc_has_variable
-      ~Index.nc_set_dimension
-      ~Index.nc_set_instance_dimension
-      ~Index.nc_set_sample_dimension
-      ~Index.nc_set_variable
-      ~Index.next
-      ~Index.open
-      ~Index.properties
-      ~Index.set_data
-      ~Index.set_property
-      ~Index.squeeze
-      ~Index.transpose
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Index.data
-      ~Index.dtarray
-      ~Index.isreftime
-   
-   
+   ~Index.data     

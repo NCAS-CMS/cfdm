@@ -4,16 +4,26 @@ cfdm.mixin.Parameters
 .. currentmodule:: cfdm.mixin
 
 .. autoclass:: Parameters
+   :no-members:
+   :no-inherited-members:
 
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
-      :nosignatures:
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-      ~Parameters.equals
+   ~Parameters.equals
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
    
-   
 
-   
    
    

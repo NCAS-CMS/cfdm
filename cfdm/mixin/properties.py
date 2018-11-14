@@ -63,7 +63,7 @@ class Properties(Container):
                ignore_properties=(), ignore_construct_type=False):
         '''TODO
 
-..versionadded:: 1.7
+.. versionadded:: 1.7
 
 :Parameters:
 

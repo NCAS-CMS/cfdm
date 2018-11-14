@@ -4,15 +4,30 @@ cfdm.mixin.Properties
 .. currentmodule:: cfdm.mixin
 
 .. autoclass:: Properties
-   
-   .. rubric:: Methods
+   :no-members:
+   :no-inherited-members:
 
-   .. autosummary::
-      :nosignatures:
-	 
-      ~Properties.equals
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~Properties.equals
+   
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+   
+   ~PropertiesData.dtarray
+   ~PropertiesData.isreftime
    
    
+
 
    
    

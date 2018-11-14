@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="cfdm.CellMeasure" href="cfdm.CellMeasure.html" />
+    <link rel="prev" title="cfdm.CellMeasure.__str__" href="../method/cfdm.CellMeasure.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -48,7 +48,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html">Reference manual</a><ul>
   <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
-      <li>Previous: <a href="cfdm.CellMeasure.html" title="previous chapter">cfdm.CellMeasure</a></li>
+      <li>Previous: <a href="../method/cfdm.CellMeasure.__str__.html" title="previous chapter">cfdm.CellMeasure.__str__</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -98,7 +98,11 @@ properties serving to indicate more precisely how the method was
 applied (e.g. recording the spacing of the original data, or the fact
 that the method was applied only over El Nino years).</p>
 <p><strong>Initialisation</strong></p>
-<dl class="docutils">
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parmaeters:</th><td class="field-body"><dl class="first last docutils">
 <dt>axes: (sequence of) <cite>str</cite>, optional</dt>
 <dd><p class="first">Set the axes of the cell method. Ignored if the <em>source</em>
 parameter is set.</p>
@@ -106,13 +110,17 @@ parameter is set.</p>
 <div><blockquote>
 <div><dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><code class="docutils literal notranslate"><span class="pre">axes=('id%domainaxis0',)</span></code></dd>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=('id%domainaxis0',)</span></code></p>
+</dd>
 <dt><em>Example:</em></dt>
-<dd><code class="docutils literal notranslate"><span class="pre">axes=('id%domainaxis0',</span> <span class="pre">'id%domainaxis1')</span></code></dd>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=('id%domainaxis0',</span> <span class="pre">'id%domainaxis1')</span></code></p>
+</dd>
 <dt><em>Example:</em></dt>
-<dd><code class="docutils literal notranslate"><span class="pre">axes=('area',)</span></code></dd>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=('area',)</span></code></p>
+</dd>
 <dt><em>Example:</em></dt>
-<dd><code class="docutils literal notranslate"><span class="pre">axes=('time',)</span></code></dd>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=('time',)</span></code></p>
+</dd>
 </dl>
 </div></blockquote>
 <p>The axes may also be set after initialisation with the</p>
@@ -126,9 +134,11 @@ the <em>source</em> parameter is set.</p>
 <blockquote>
 <div><dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><code class="docutils literal notranslate"><span class="pre">properties={'method':</span> <span class="pre">'variance'}</span></code></dd>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'method':</span> <span class="pre">'variance'}</span></code></p>
+</dd>
 <dt><em>Example:</em></dt>
-<dd><code class="docutils literal notranslate"><span class="pre">properties={'method':</span> <span class="pre">'mean',</span> <span class="pre">'where':</span> <span class="pre">'sea'}</span></code></dd>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'method':</span> <span class="pre">'mean',</span> <span class="pre">'where':</span> <span class="pre">'sea'}</span></code></p>
+</dd>
 </dl>
 </div></blockquote>
 <p class="last">Properties may also be set after initialisation with the
@@ -141,14 +151,20 @@ subclass of one of its parent classes.</p>
 <blockquote class="last">
 <div><dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">CellMethod(source=c)</span></code></dd>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">CellMethod(source=c)</span></code></p>
+</dd>
 </dl>
 </div></blockquote>
 </dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
-<dd>If False then do not deep copy input parameters prior to
-initialization By default parameters are deep copied.</dd>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization By default parameters are deep copied.</p>
+</dd>
 </dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <p class="rubric">Methods</p>

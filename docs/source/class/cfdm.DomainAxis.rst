@@ -1,37 +1,37 @@
-cfdm\.DomainAxis
-================
+cfdm.DomainAxis
+===============
 
 .. currentmodule:: cfdm
 
 .. autoclass:: DomainAxis
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-   .. rubric:: Methods
+   ~DomainAxis.copy
+   ~DomainAxis.del_ncdim
+   ~DomainAxis.del_ncvar
+   ~DomainAxis.del_size
+   ~DomainAxis.equals
+   ~DomainAxis.get_ncdim
+   ~DomainAxis.get_ncvar
+   ~DomainAxis.get_size
+   ~DomainAxis.set_ncdim
+   ~DomainAxis.set_ncvar
+   ~DomainAxis.set_size
 
-   .. autosummary::
-   
-      ~DomainAxis.__init__
-      ~DomainAxis.copy
-      ~DomainAxis.del_ncdim
-      ~DomainAxis.del_ncvar
-      ~DomainAxis.del_property
-      ~DomainAxis.del_size
-      ~DomainAxis.equals
-      ~DomainAxis.get_ncdim
-      ~DomainAxis.get_ncvar
-      ~DomainAxis.get_property
-      ~DomainAxis.get_size
-      ~DomainAxis.has_property
-      ~DomainAxis.properties
-      ~DomainAxis.set_ncdim
-      ~DomainAxis.set_ncvar
-      ~DomainAxis.set_property
-      ~DomainAxis.set_size
-   
-   
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
    
    

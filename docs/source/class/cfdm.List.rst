@@ -4,51 +4,44 @@ cfdm.List
 .. currentmodule:: cfdm
 
 .. autoclass:: List
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-   .. rubric:: Methods
+   ~List.HDF_chunks
+   ~List.copy
+   ~List.del_data   
+   ~List.del_ncvar
+   ~List.del_property
+   ~List.dump
+   ~List.equals
+   ~List.expand_dims
+   ~List.fill_value
+   ~List.get_array
+   ~List.get_data
+   ~List.get_ncvar
+   ~List.get_property
+   ~List.has_data
+   ~List.has_property
+   ~List.name
+   ~List.open
+   ~List.properties
+   ~List.set_data
+   ~List.set_ncvar
+   ~List.set_property
+   ~List.squeeze
+   
+.. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~List.HDF_chunks
-      ~List.__init__
-      ~List.copy
-      ~List.del_data
-      ~List.del_property
-      ~List.dump
-      ~List.equals
-      ~List.expand_dims
-      ~List.get_array
-      ~List.get_data
-      ~List.get_property
-      ~List.has_data
-      ~List.has_property
-      ~List.name
-      ~List.nc_del_variable
-      ~List.nc_get_variable
-      ~List.nc_has_variable
-      ~List.nc_set_variable
-      ~List.next
-      ~List.open
-      ~List.properties
-      ~List.set_data
-      ~List.set_property
-      ~List.squeeze
-      ~List.transpose
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~List.data
-      ~List.dtarray
-      ~List.isreftime
-   
-   
+   ~List.data     
