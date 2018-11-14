@@ -1625,6 +1625,8 @@ external file name to the `cfdm.write` function:
    >>> area.nc_external(True)
    False
    >>> cfdm.write(g, 'new_parent.nc', external_file='new_external.nc')
+
+.. _DSG:
    
 Discrete sampling geometries
 ----------------------------
@@ -1834,6 +1836,8 @@ We can now inspect the new field construct:
    <Count: long_name:number of obs for this timeseries(2) >
    >>> print(count_variable.get_array())
    [2 4]
+
+.. _gathering:
 
 Gathering
 ---------
