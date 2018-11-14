@@ -1,7 +1,0 @@
-cfdm.CoordinateReference.name
-=============================
-
-.. currentmodule:: cfdm
-.. default-role:: obj
-
-.. automethod:: cfdm.CoordinateReference.name

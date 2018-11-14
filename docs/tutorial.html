@@ -390,7 +390,7 @@ that is accessed with the <a class="reference internal" href="method/cfdm.Field.
 <span class="go">  [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]</span>
 </pre></div>
 </div>
-<p>The field construct also has a <a class="reference internal" href="generated/cfdm.Field.data.html#cfdm.Field.data" title="cfdm.Field.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a> attribute that is an
+<p>The field construct also has a <a class="reference internal" href="attribute/cfdm.Field.data.html#cfdm.Field.data" title="cfdm.Field.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a> attribute that is an
 alias for the <a class="reference internal" href="method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a> method, which makes it easier to
 access attributes and methods of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
@@ -1430,7 +1430,7 @@ field construct:</p>
 <p>Changes to domain instance are seen by the field construct, and vice
 versa. This is because the domain instance is merely “view” of the
 relevant metadata constructs contained in the field construct. The
-field construct also has a <a class="reference internal" href="generated/cfdm.Field.domain.html#cfdm.Field.domain" title="cfdm.Field.domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain</span></code></a> attribute that is an alias
+field construct also has a <a class="reference internal" href="attribute/cfdm.Field.domain.html#cfdm.Field.domain" title="cfdm.Field.domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain</span></code></a> attribute that is an alias
 for the <a class="reference internal" href="method/cfdm.Field.get_domain.html#cfdm.Field.get_domain" title="cfdm.Field.get_domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain</span></code></a> method, which makes it easier to access
 attributes and methods of the domain instance:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;set by domain&#39;</span><span class="p">)</span>

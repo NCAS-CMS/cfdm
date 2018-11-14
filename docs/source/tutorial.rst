@@ -461,6 +461,7 @@ latitude of the original, and with a reversed longitude axis:
                    : latitude(1) = [-75.0] degrees_north
                    : longitude(8) = [337.5, ..., 22.5] degrees_east
 	
+<TODO: squeeze, transpose, expand_dims>
 
 .. _netcdf_interface:
 
@@ -791,6 +792,7 @@ found with the `~Field.construct_axes` method of the field construct:
     'domainancillary2': ('domainaxis1', 'domainaxis2'),
     'fieldancillary0': ('domainaxis1', 'domainaxis2')}
 
+<TODO: get_data_axes>
 
 Properties and data
 ^^^^^^^^^^^^^^^^^^^
