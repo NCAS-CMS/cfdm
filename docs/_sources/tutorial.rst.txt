@@ -1837,6 +1837,8 @@ We can now inspect the new field construct:
    >>> print(count_variable.get_array())
    [2 4]
 
+.. _gathering:
+
 Gathering
 ---------
 

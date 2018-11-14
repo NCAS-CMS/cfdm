@@ -1626,7 +1626,7 @@ external file name to the `cfdm.write` function:
    False
    >>> cfdm.write(g, 'new_parent.nc', external_file='new_external.nc')
 
-.. _DSG:
+.. _dsg:
    
 Discrete sampling geometries
 ----------------------------
