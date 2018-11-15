@@ -1,4 +1,4 @@
-.. currentmodule:: cfdm
+`.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. _tutorial:
@@ -421,7 +421,7 @@ Assignment
 ^^^^^^^^^^
 
 Data array elements are changed by assigning to elements selected by
-inexing the `Data` instance using the :ref:`cfdm indexing rules
+indexing the `Data` instance using the :ref:`cfdm indexing rules
 <indexing>`.
 
 The value, or values, being assigned must be broadcastable to the
@@ -447,6 +447,34 @@ shape defined by the indices, using the `numpy broadcasting rules
      [267.9 -10.0 279.8 260.3 261.2 275.3 271.2 -- 268.9]
      [270.9 -10.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]
      [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0 --  -3.0]]]
+
+
+Data dimensions
+^^^^^^^^^^^^^^^
+
+The dimensions of a field construct's data may be reordered, have size
+one dimensions removed and have new new size one dimensions included.
+
+====================  ====================================
+Method                Description
+====================  ====================================
+`~Field.transpose`    Reorder data dimensions
+`~Field.expand_dims`  Insert a new size one data dimension
+`~Field.squeeze`      Remove size one data dimensions
+====================  ====================================
+
+.. code:: python
+
+   >>> t
+   <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> t2 = t.squeeze(0)
+   >>> t2
+   <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>
+   >>> t2 = t2.expand_dims(position=1, axis='domainaxis3')
+   >>> t2
+   <Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>
+   >>> t.tranpose([2, 0, 1])
+   TODO
 
 .. _subspacing:
 
@@ -484,8 +512,6 @@ latitude of the original, and with a reversed longitude axis:
    Dimension coords: time(1) = [2019-01-01 00:00:00]
                    : latitude(1) = [-75.0] degrees_north
                    : longitude(8) = [337.5, ..., 22.5] degrees_east
-	
-<TODO: squeeze, transpose, expand_dims>
 
 .. _constructs:
 
@@ -963,7 +989,7 @@ The new dataset is structured as follows:
    		:project = "research" ;
    }
 
-A sequence of field constructs iw written in exactly the same way:
+A sequence of field constructs is written in exactly the same way:
    
 .. code:: python
 	     
@@ -1008,13 +1034,13 @@ created when there is a size one domain axis construct which is
 spanned by a dimension coordinate construct's data array, but not the
 field construct's data, nor the data of any other metadata construct.
 
-This is the case for the "specific hunidity" field construct ``q``
+This is the case for the "specific humidity" field construct ``q``
 that was written to the file **q_file.nc**.
 
 To change this so that the "time" dimension coordinate construct is
 written as a CF-netCDF size one coordinate variable, the field
 construct's data must be expanded to span the corresponding size one
-domain axis constuct, by using the `~Field.expand_dims` method of the
+domain axis construct, by using the `~Field.expand_dims` method of the
 field construct:
 
 .. code:: python
@@ -2207,14 +2233,14 @@ We can now inspect the new field construct:
                tutorial is greatly simplified by allowing the term
                "construct" to mean "class instance" (e.g. "field
                construct" means "`Field` instance"), and this
-               convention is apllied throughout this tutorial. The
+               convention is applied throughout this tutorial. The
                phrase "CF data model construct" is used on the few
                occasions when the original abstract meaning is
                intended.
 	     	    
 .. [#files] The tutorial files may be also found in the
             `docs/source/netcdf_files
-            <https://github.com/NCAS-CMS/cfdm/master/docs/souce/netcdf_files>`_
+            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/source/netcdf_files>`_
             directory of the code repository.
 
 

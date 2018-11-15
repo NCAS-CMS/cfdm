@@ -920,28 +920,35 @@ axes, use the `remove_axes` method.
 
         '''
         f = self.copy()
-        
+        try:
+            axes = self.data._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't squeeze data: {}".format(error))
+
         data_axes = self.get_data_axes(())
-        domain_axes = self.domain_axes()
-            
-        if axes is None:
-            axes = [axis for axis in data_axes if domain_axes[axis].get_size(None) == 1]
-        else:
-            for axis in axes:
-                if domain_axes[axis].get_size() != 1:
-                    raise ValueError(
-"Can't squeeze domain axis with size {}".format(domain_axes[axis].get_size(None)))
-            #--- End: for
-            
-            axes = [axis for axis in axes if axis in data_axes]
-        #--- End: if
         
-        new_data_axes = [axis for axis in data_axes if axis not in axes]
-        f.set_data_axes(new_data_axes)
+#        domain_axes = self.domain_axes()
+#            
+#        if axes is None:
+#            axes = [axis for axis in data_axes if domain_axes[axis].get_size(None) == 1]
+#        else:
+#            for axis in axes:
+#                if domain_axes[axis].get_size() != 1:
+#                    raise ValueError(
+#"Can't squeeze domain axis with size {}".format(domain_axes[axis].get_size(None)))
+#            #--- End: for
+#            
+#            axes = [axis for axis in axes if axis in data_axes]
+#        #--- End: if
+
+        new_data_axes = [data_axes[i] for i in range(self.data.ndim) if i not in axes]
+        
+#        new_data_axes = [axis for axis in data_axes if axis not in axes]
+#        f.set_data_axes(new_data_axes)
 
         # Squeeze the field's data array
-        iaxes = [data_axes.index(axis) for axis in axes]
-        new_data = self.data.squeeze(iaxes)
+ #       iaxes = [data_axes.index(axis) for axis in axes]
+        new_data = self.data.squeeze(axes)
 
         f.set_data(new_data, new_data_axes)
 

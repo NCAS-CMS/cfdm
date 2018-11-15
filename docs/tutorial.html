@@ -478,6 +478,45 @@ shape defined by the indices, using the <a class="reference external" href="http
 </pre></div>
 </div>
 </div>
+<div class="section" id="data-dimensions">
+<h3>Data dimensions<a class="headerlink" href="#data-dimensions" title="Permalink to this headline">¶</a></h3>
+<p>The dimensions of a field construct’s data may be reordered, have size
+one dimensions removed and have new new size one dimensions included.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Method</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.transpose.html#cfdm.Field.transpose" title="cfdm.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<td>Reorder data dimensions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.expand_dims.html#cfdm.Field.expand_dims" title="cfdm.Field.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<td>Insert a new size one data dimension</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<td>Remove size one data dimensions</td>
+</tr>
+</tbody>
+</table>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span>
+<span class="go">&lt;Field: air_temperature(grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span> <span class="o">=</span> <span class="n">t2</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span>
+<span class="go">&lt;Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">tranpose</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">TODO</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="subspacing">
 <span id="id10"></span><h2>Subspacing<a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h2>
@@ -509,7 +548,6 @@ latitude of the original, and with a reversed longitude axis:</p>
 <span class="go">                : longitude(8) = [337.5, ..., 22.5] degrees_east</span>
 </pre></div>
 </div>
-<p>&lt;TODO: squeeze, transpose, expand_dims&gt;</p>
 </div>
 <div class="section" id="metadata-constructs">
 <span id="constructs"></span><h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
@@ -2225,15 +2263,16 @@ tutorial is greatly simplified by allowing the term
 “construct” to mean “class instance” (e.g. “field
 construct” means “<a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance”), and this
 convention is apllied throughout this tutorial. The
-phrase “CF data model construct” is used on occasions
-when the original abstract meaning is intended.</td></tr>
+phrase “CF data model construct” is used on the few
+occasions when the original abstract meaning is
+intended.</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="files" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id17">2</a>, <a class="fn-backref" href="#id18">3</a>, <a class="fn-backref" href="#id20">4</a>)</em> The tutorial files may be also found in the
-<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/master/docs/souce/netcdf_files">docs/source/netcdf_files</a>
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/tree/master/docs/source/netcdf_files">docs/source/netcdf_files</a>
 directory of the code repository.</td></tr>
 </tbody>
 </table>
