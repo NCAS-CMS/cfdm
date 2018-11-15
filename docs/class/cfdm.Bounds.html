@@ -32,23 +32,23 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html">Subclassing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html">Reference manual</a><ul>
-  <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
+  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.Domain.set_domain_axis.html" title="previous chapter">cfdm.Domain.set_domain_axis</a></li>
       <li>Next: <a href="../method/cfdm.Bounds.HDF_chunks.html" title="next chapter">cfdm.Bounds.HDF_chunks</a></li>
   </ul></li>
@@ -85,7 +85,7 @@
 <h1>cfdm.Bounds<a class="headerlink" href="#cfdm-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.Bounds">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/bounds.py#bounds.py-7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/bounds.py#bounds.py-7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.bounds.Bounds</span></code></p>
 <p>A cell bounds array with properties.</p>
 <p>An array of cell bounds spans the same domain axes as its coordinate
@@ -98,8 +98,11 @@ cell method constructs.</p>
 <p>In the CF data model, cell bounds do not have their own properties
 because they can not logically be different to those of the coordinate
 construct itself. However, it is sometimes desired to store properties
-on a CF-netCDF bounds variable, so the <cite>Bounds</cite> object supports this
+on a CF-netCDF bounds variable, so this class supports this
 capability.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -113,7 +116,7 @@ parameter is set.</p>
 <blockquote>
 <div><dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'grid_latitude'}</span></code></p>
 </dd>
 </dl>
 </div></blockquote>
@@ -126,11 +129,7 @@ parameter is set.</p>
 <cite>set_data</cite> method.</p>
 </dd>
 <dt>source: optional</dt>
-<dd><p class="first">Override the <em>properties</em> and <em>data</em> parameters with
-<code class="docutils literal notranslate"><span class="pre">source.properties()</span></code> and <code class="docutils literal notranslate"><span class="pre">source.get_data(None)</span></code>
-respectively.</p>
-<p class="last">If <em>source</em> does not have one of these methods, then the
-corresponding parameter is not set.</p>
+<dd><p class="first last">Initialize the properties and data from those of <em>source</em>.</p>
 </dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
@@ -234,14 +233,32 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Bounds.data.html#cfdm.Bounds.data" title="cfdm.Bounds.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.Bounds.dtarray.html#cfdm.Bounds.dtarray" title="cfdm.Bounds.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></td>
-<td>TODO An independent numpy array of date-time objects.</td>
+</tbody>
+</table>
+<div class="section" id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Bounds.nc_del_variable.html#cfdm.Bounds.nc_del_variable" title="cfdm.Bounds.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
+<td>Remove the netCDF variable name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.Bounds.isreftime.html#cfdm.Bounds.isreftime" title="cfdm.Bounds.isreftime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isreftime</span></code></a></td>
-<td>TODO</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Bounds.nc_get_variable.html#cfdm.Bounds.nc_get_variable" title="cfdm.Bounds.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
+<td>Return the netCDF variable name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Bounds.nc_has_variable.html#cfdm.Bounds.nc_has_variable" title="cfdm.Bounds.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
+<td>Whether the netCDF variable name has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Bounds.nc_set_variable.html#cfdm.Bounds.nc_set_variable" title="cfdm.Bounds.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
+<td>Set the netCDF variable name.</td>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 
 

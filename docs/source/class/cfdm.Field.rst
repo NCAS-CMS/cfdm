@@ -81,7 +81,6 @@ Data
    ~cfdm.Field.get_array
    ~cfdm.Field.get_data
    ~cfdm.Field.get_data_axes
-   ~cfdm.Field.get_dtarray
    ~cfdm.Field.has_data
    ~cfdm.Field.set_data
    ~cfdm.Field.set_data_axes   

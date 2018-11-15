@@ -27,17 +27,45 @@ the domain definition of the parent field construct but does not
 contribute to the domain's definition, unlike, for instance, an
 auxiliary coordinate construct or domain ancillary construct.
 
-    '''
+.. versionadded:: 1.7
 
-    def __init__(self, properties={}, data=None, source=None,
+    '''
+    def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
-        '''
+
+        '''**Initialization**
+
+:Parameters:
+
+    properties: `dict`, optional
+       Set descriptive properties. The dictionary keys are property
+       names, with corresponding values. Ignored if the *source*
+       parameter is set.
+
+       *Example:*
+          ``properties={'standard_name': 'altitude'}``
+
+       Properties may also be set after initialisation with the
+       `properties` and `set_property` methods.
+
+    data: `Data`, optional
+        Set the data array. Ignored if the *source* parameter is set.
+
+        The data array may also be set after initialisation with the
+        `set_data` method.
+
+    source: optional
+        Initialize the properties and data from those of *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
+
         '''
         super().__init__(properties=properties, data=data,
                          source=source, copy=copy,
                          _use_data=_use_data)
         
-#        if source is not None:
         self._initialise_netcdf(source)
     #--- End: def
     

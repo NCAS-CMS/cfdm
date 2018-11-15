@@ -3,8 +3,8 @@
 
 .. _subclassing:
 
-Subclassing
-===========
+**Subclassing**
+===============
 
 This page is under preparation (December 2018).
 

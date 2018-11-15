@@ -21,7 +21,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, shuffle=True, HDF_chunksizes=None,
           verbose=False, _implementation=implementation):
-    '''Write fields to a netCDF file.
+    '''Write field constructs to a netCDF file.
 
 **File format**
 
@@ -30,10 +30,10 @@ formats are supported.
 
 **NetCDF variable and dimension names**
 
-These names are stored from fields read a from dataset, or may be set
-manually. They are used when writing the field to the file. If a name
-has not been set then one will be constructed. The names may be
-modified internally to prevent duplication in the file.
+These names are stored within field constructs read a from dataset, or
+may be set manually. They are used when writing a field construct to
+the file. If a name has not been set then one will be constructed. The
+names may be modified internally to prevent duplication in the file.
 
 Each construct, or construct component, that corresponds to a netCDF
 variable has the following methods to get, set and remove a netCDF
@@ -53,15 +53,15 @@ or netCDF data variable attributes. See the *global_attributes* and
 
 **External variables**
 
-Constructs marked as external may be omitted from the file and
-referred to via the netCDF "external_variables" global attribute. In
-addition, omitted constructs may be written to an external
-file. Constructs that are allowed to be external have the following
-method to get and set their external status: `!nc_external`.
+Metadata constructs marked as external may be omitted from the file
+and referred to via the netCDF "external_variables" global
+attribute. In addition, omitted constructs may be written to an
+external file. Constructs that are allowed to be external have the
+`!nc_external` method to get and set their external status: `
 
 **NetCDF unlimited dimensions**
 
-TODO
+
 
 **HDF chunksizes**
 
@@ -145,7 +145,7 @@ TODO
         default a pre-existing output file is overwritten.
 
     global_attributes: (sequence of) `str`, optional
-         Create netCDF global attributes from the given field
+         Create netCDF global attributes from the specified field
          construct properties, rather than netCDF data variable
          attributes.
 
@@ -156,18 +156,19 @@ TODO
              <http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#description-of-file-contents>`_
              properties, and
 
-           * properties flagged as global on any of the fields being
-             written (see `cfdm.Field.nc_global_attributes` for
-             details).
+           * properties flagged as global on any of the field
+             constructs being written (see
+             `cfdm.Field.nc_global_attributes` for details).
 
          Note that it is not possible to create a netCDF global
          attribute from a property that has different values for
-         different fields being written. In this case the property
-         will not be written as a netCDF global attribute, even if it
-         has been specified by the *global_attributes* parameter or is
-         one of the default properties, but will appear as an
-         attribute on the netCDF data variable corresponding to each
-         field construct that contains the property.
+         different field constructs being written. In this case the
+         property will not be written as a netCDF global attribute,
+         even if it has been specified by the *global_attributes*
+         parameter or is one of the default properties, but will
+         appear as an attribute on the netCDF data variable
+         corresponding to each field construct that contains the
+         property.
 
          *Example:*
             ``global_attributes='project'``
@@ -176,8 +177,9 @@ TODO
             ``global_attributes=['project', 'experiment']``
 
     variable_attributes: (sequence of) `str`, optional
-         Create netCDF data variable attributes from the given field
-         properties, rather than netCDF global attributes.
+         Create netCDF data variable attributes from the specified
+         field construct properties, rather than netCDF global
+         attributes.
 
          By default, all properties that are not created as netCDF
          global properties are created as attributes netCDF data
@@ -193,11 +195,10 @@ TODO
          *Example:*
             ``variable_attributes=['project', 'doi']``
 
-
     external_file: `str`, optional   
-        Write constructs that are marked as external, and have data,
-        to the named external file. Ignored if there are no such
-        constructs .
+        Write metadata constructs that are marked as external, and
+        have data, to the named external file. Ignored if there are no
+        such constructs.
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing
@@ -206,7 +207,8 @@ TODO
         data type (for example, netCDF3 classic files do not support
         64-bit integers). By default, input data types are
         preserved. Any data type conversion is only applied to the
-        arrays on disk, and not to the input fields themselves.
+        arrays on disk, and not to the input field constructs
+        themselves.
 
         Data types conversions are defined by `numpy.dtype` objects in
         a dictionary whose keys are input data types with values of
@@ -239,7 +241,8 @@ TODO
           ``compress=4``
     
     least_significant_digit: `int`, optional
-        Truncate the input field data arrays. For a given positive
+        Truncate the input field construct data arrays, but not the
+        data arrays of metadata constructs. For a given positive
         integer, N the precision that is retained in the compressed
         data is 10 to the power -N. For example, a value of 2 will
         retain a precision of 0.01. In conjunction with the *compress*
@@ -269,12 +272,14 @@ TODO
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
     HDF_chunksizes: `dict`, optional
-        Manually specify HDF5 chunks for the field data arrays.
+
+        Manually specify HDF5 chunks for the field construct data
+        arrays.
 
         Chunking refers to a storage layout where a data array is
         partitioned into fixed-size multi-dimensional chunks when
         written to a netCDF4 file on disk. Chunking is ignored if the
-        field is written to a netCDF3 format file.
+        field construct is written to a netCDF3 format file.
 
         A chunk has the same rank as the data array, but with fewer
         (or no more) elements along each axes. The chunk is defined by
@@ -293,8 +298,9 @@ TODO
         default chunk is used
         (http://www.unidata.ucar.edu/software/netcdf/docs/netcdf_perf_chunking.html).
 
-        If any chunk sizes have already been set on a field with the
-        `cf.Field.HDF_chunks` method then these are used in instead.
+        If any chunk sizes have already been set on a field construct
+        with the `cf.Field.HDF_chunks` method then these are used in
+        instead.
 
         A detailed discussion of HDF chunking and I/O performance is
         available at
@@ -314,7 +320,9 @@ TODO
 
 **Examples:**
 
-TODO
+>>> cfdm.write(f, 'file.nc')
+>>> cfdm.write(f, 'file.nc', fmt='NETCDF3_CLASSIC')
+>>> cfdm.write(f, 'file.nc', external_file='cell_measures.nc')
 
     '''
     # ----------------------------------------------------------------

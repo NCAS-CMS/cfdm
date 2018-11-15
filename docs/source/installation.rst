@@ -3,11 +3,11 @@
 
 .. _installation:
 
-Installation
-============
+**Installation**
+================
 
-Dependencies
-------------
+**Dependencies**
+----------------
 
 The cfdm package requires:
 
@@ -20,8 +20,8 @@ The cfdm package requires:
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 
-conda
------
+**conda**
+---------
 
 To install cfdm using `conda <https://conda.io/docs/>`_, first install
 `Anaconda <https://www.anaconda.com/download>`_ for Python 2 or Python
@@ -31,8 +31,8 @@ To install cfdm using `conda <https://conda.io/docs/>`_, first install
 
    conda install -c ncas cfdm
 
-pip
----
+**pip**
+-------
 
 To install cfdm using `pip <https://pypi.org/project/pip/>`_, type on
 the command line:
@@ -42,8 +42,8 @@ the command line:
    pip install cfdm
 
 
-Source
-------
+**Source**
+----------
 
 To install from source:
 
@@ -77,7 +77,7 @@ To install from source:
 
        python setup.py install --home=<directory>
 
-Code repository
----------------
+**Code repository**
+-------------------
 
 The complete source code is available at https://github.com/NCAS-CMS/cfdm

@@ -4,8 +4,8 @@ from . import core
 
 class CoordinateConversion(mixin.ParametersDomainAncillaries,
                            core.CoordinateConversion):
-    '''A coordinate conversion formula of a coordinate reference construct
-of the CF data model.
+    '''A coordinate conversion component of a coordinate reference
+construct of the CF data model.
 
 A coordinate conversion formula converting coordinate values taken
 from the dimension or auxiliary coordinate constructs to a different
@@ -16,6 +16,8 @@ name "mercator"), or it can be a reference to a domain ancillary
 construct (such as one containing spatially varying orography data). A
 coordinate reference construct relates the coordinate values of the
 field to locations in a planetary reference frame.
+
+.. versionadded:: 1.7
 
     '''
     

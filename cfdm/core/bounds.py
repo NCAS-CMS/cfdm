@@ -14,11 +14,7 @@ independent axis of the domain. Note that, for climatological time
 axes, the bounds are interpreted in a special way indicated by the
 cell method constructs.
 
-In the CF data model, cell bounds do not have their own properties
-because they can not logically be different to those of the coordinate
-construct itself. However, it is sometimes desired to store properties
-on a CF-netCDF bounds variable, so the `Bounds` object supports this
-capability.
+.. versionadded:: 1.7
 
     '''
     def __init__(self, properties=None, data=None, source=None,

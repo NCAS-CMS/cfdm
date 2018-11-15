@@ -19,6 +19,8 @@ spans the domain axis constructs of the domain, with the optional
 exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
+.. versionadded:: 1.7
+
     '''
 
     def __init__(self, size=None, source=None, copy=True):
@@ -29,13 +31,22 @@ to the order of the elements.
     size: `int`, optional
         The size of the domain axis.
 
-    source: `DomainAxis`
+        *Example:*
+          ``size=192``
+
+        The size may also be set after initialisation with the
+        `set_size` method.
+
+    source: optional
+        Initialize the size from that of *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
 
         '''
         super().__init__(size=size, source=source, copy=copy)
         
-#        if source is not None:
-#            self._intialise_ncdim_from(source)
         self._initialise_netcdf(source)
     #--- End: def
         

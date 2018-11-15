@@ -78,14 +78,16 @@ frame and consists of the following:
     auxiliary coordinate constructs which define the coordinate
     system. The datum may be implied by the metadata of the referenced
     dimension and auxiliary coordinate constructs, or explicitly
-    provided by a `Datum` object.
+    provided by a `Datum` instance.
 
   * A coordinate conversion, which defines a formula for converting
     coordinate values taken from the dimension or auxiliary coordinate
     constructs to a different coordinate system. A coordinate
     reference construct relates the coordinate values of the field to
     locations in a planetary reference frame. The coordinate
-    conversion formula is stored in a `CoordinateConversion` object.
+    conversion formula is stored in a `CoordinateConversion` instance.
+
+.. versionadded:: 1.7
 
     '''
 
@@ -108,85 +110,42 @@ frame and consists of the following:
 :Parameters:
 
     coordinates: sequence of `str`, optional
-        Identify the dimension and auxiliary coordinate objects which
-        apply to this coordinate reference. 
+        Identify the related dimension and auxiliary coordinate
+        constructs by their construct identifiers. Ignored if the
+        *source* parameter is set.
 
-          *Example:*
-            ``coordinates=['dimensioncoordinate2']``
+        *Example:*
+          ``coordinates=['dimensioncoordinate2']``
 
-          *Example:*
-            ``coordinates=('dimensioncoordinate0',
-            'dimensioncoordinate1', 'auxiliarycoordinate0',
-            'auxiliarycoordinate1')``
+        *Example:*
+          ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
+
+        The coordinates may also be set after initialisation with the
+        `coordinates` and `set_coordinate` methods.
 
     datum: `Datum`, optional
-        Define the datum of the coordinate reference construct. Cannot
-        be used with the *parameters* nor *domain_ancillaries*
-        keywords.
+        Define the datum component of the coordinate reference
+        construct. Ignored if the *source* parameter is set.
 
-          *Example:*
-            >>> d = Datum(parameters={'earth_radius': 6371007})
-            >>> c = CoordinateReference(datum=d)
+        The datum may also be set after initialisation with the
+        `set_datum` method.
 
     coordinate_conversion: `CoordinateConversion`, optional
-        Define the coordinate conversion formula of the coordinate
-        reference construct. Cannot be used with the *parameters* nor
-        *domain_ancillaries* keywords.
+        Define the coordinate conversion component of the coordinate
+        reference construct. Ignored if the *source* parameter is set.
 
-          *Example:*
-            >>> f = CoordinateConversion(
-            ...         parameters={'standard_name': 'atmosphere_hybrid_height'},
-            ...         domain_ancillaries={'orog': 'domainancillary2',
-            ...                             'a': 'domainancillary0',
-            ...                             'b': 'domainancillary1'})
-            ...
-            >>> c = CoordinateReference(coordinate_conversion=f)
+        The coordinate conversion may also be set after initialisation
+        with the `set_coordinate_conversion` method.
 
     source: optional
-        Initialise the *coordinates*, *datum* and
-        *coordinate_conversion* parameters from the object given by
-        *source*.
+        Initialize the coordinates, datum and coordinate conversion
+        from those of *source*.
 
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
 
         '''
-#        if source is None:
-#            if parameters is not None: #or domain_ancillaries is not None:
-#                if datum is not None or coordinate_conversion is not None:
-#                    raise ValueError(" xcawed we2q3 \a")
-#
-#                datum_parameters = {}
-#                coordinate_conversion_parameters = {}
-#
-##                datum_domain_ancillaries = {}
-#                coordinate_conversion_domain_ancillaries = {}
-#
-#                if parameters is not None:
-#                    for x, value in parameters.items():
-#                        if x in self._datum_parameters:
-#                            datum_parameters[x] = value
-#                        else:
-#                            coordinate_conversion_parameters[x] = value
-#                #-- End: if
-#            
-##                if domain_ancillaries is not None:                 
-##                    for x, value in domain_ancillaries.items():
-###                        if x in self._datum_ancillaries:
-###                            datum_domain_ancillaries[x] = value
-###                        else:
-##                        coordinate_conversion_domain_ancillaries[x] = value
-##                #-- End: if
-#
-#                datum = self._Datum(
-#                    parameters=datum_parameters)
-#        
-##                coordinate_conversion = self._CoordinateConversion(
-##                    parameters=coordinate_conversion_parameters,
-##                    domain_ancillaries=coordinate_conversion_domain_ancillaries)
-#        #--- End: if
-            
         super().__init__(
             coordinates=coordinates,
             datum=datum,

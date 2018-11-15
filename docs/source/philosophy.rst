@@ -4,8 +4,8 @@
 .. _philosophy:
 
 	     
-Philosophy
-==========
+**Philosophy**
+==============
 
 The basic requirement of a reference implementation is to represent
 the logical CF data model in memory with a package of Python classes,

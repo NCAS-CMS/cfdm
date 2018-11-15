@@ -47,7 +47,21 @@ cfdm.Bounds
    :template: attribute.rst
 
    ~Bounds.data
-   ~Bounds.dtarray
-   ~Bounds.isreftime
+
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~Bounds.nc_del_variable
+   ~Bounds.nc_get_variable
+   ~Bounds.nc_has_variable
+   ~Bounds.nc_set_variable 
    
    

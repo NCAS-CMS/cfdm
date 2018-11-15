@@ -68,7 +68,6 @@ Data
    ~cfdm.DimensionCoordinate.get_array
    ~cfdm.DimensionCoordinate.get_bounds
    ~cfdm.DimensionCoordinate.get_data
-   ~cfdm.DimensionCoordinate.get_dtarray
    ~cfdm.DimensionCoordinate.has_data
    ~cfdm.DimensionCoordinate.set_data
    ~cfdm.DimensionCoordinate.squeeze
@@ -114,6 +113,22 @@ Miscellaneous
 
    ~cfdm.DimensionCoordinate.copy
    ~cfdm.DimensionCoordinate.equals
+
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~DimensionCoordinate.nc_del_variable
+   ~DimensionCoordinate.nc_get_variable
+   ~DimensionCoordinate.nc_has_variable
+   ~DimensionCoordinate.nc_set_variable 
 
 Special
 -------

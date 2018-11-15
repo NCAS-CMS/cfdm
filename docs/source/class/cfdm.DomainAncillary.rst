@@ -67,7 +67,6 @@ Data
    ~cfdm.DomainAncillary.get_array
    ~cfdm.DomainAncillary.get_bounds
    ~cfdm.DomainAncillary.get_data
-   ~cfdm.DomainAncillary.get_dtarray
    ~cfdm.DomainAncillary.has_data
    ~cfdm.DomainAncillary.set_data
    ~cfdm.DomainAncillary.squeeze
@@ -114,6 +113,23 @@ Miscellaneous
 
    ~cfdm.DomainAncillary.copy
    ~cfdm.DomainAncillary.equals
+
+
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~DomainAncillary.nc_del_variable
+   ~DomainAncillary.nc_get_variable
+   ~DomainAncillary.nc_has_variable
+   ~DomainAncillary.nc_set_variable 
 
 Special
 -------

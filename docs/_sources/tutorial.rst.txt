@@ -3,13 +3,16 @@
 
 .. _tutorial:
 
-Tutorial
-========
+**Tutorial**
+============
 
-The code examples in this tutorial are available in an
-:download:`IPython notebook <notebooks/tutorial.ipynb>` (60kB).
+Version |release|
 
 ----
+ 
+The code examples in this tutorial are available in an **IPython
+notebook** (:download:`download <notebooks/tutorial.ipynb>`, 60kB)
+[#files]_.
 
 The cfdm package is imported as follows:
 
@@ -17,10 +20,13 @@ The cfdm package is imported as follows:
 
    >>> import cfdm
 
+
 .. _cf_version:
 
-CF version
-----------
+**CF version**
+--------------
+
+----
 
 The version of the `CF conventions <http://cfconventions.org>`_ and
 the CF data model being used may be found with the `cfdm.CF` function:
@@ -30,15 +36,18 @@ the CF data model being used may be found with the `cfdm.CF` function:
    >>> cfdm.CF()
    '1.7'
 
+
 .. _reading:
 
-Reading datasets
-----------------
+**Reading datasets**
+--------------------
+
+----
 
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
 from an `OPeNDAP <https://www.opendap.org/>`_ URL [#opendap2]_, and
-returns the contents as a list of zero or more `Field` class
+returns the contents as a `list` of zero or more `Field` class
 instances, each of which represents a field construct [#language]_.
 
 For example, to read the file **file.nc** (:download:`download
@@ -70,15 +79,18 @@ The `cfdm.read` function has optional parameters to
   within a session, and makes the read operation fast.
 
 .. _inspection:
-  
-Inspection
-----------
+
+**Inspection**
+--------------
+
+----
+
 
 The contents of a field construct may be inspected at three different
 levels of detail.
 
-Minimal detail
-^^^^^^^^^^^^^^
+**Minimal detail**
+^^^^^^^^^^^^^^^^^^
 
 The built-in `repr` function returns a short, one-line description:
 
@@ -96,8 +108,8 @@ This gives the identity of the field construct
 spanned by the data array (latitude and longitude with sizes 5 and 8
 respectively) and the units of the data ("1").
 
-Medium detail
-^^^^^^^^^^^^^
+**Medium detail**
+^^^^^^^^^^^^^^^^^
 
 The built-in `str` function returns similar information as the
 one-line output, along with short descriptions of the metadata
@@ -135,8 +147,8 @@ arrays:
                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
 
-Full detail
-^^^^^^^^^^^
+**Full detail**
+^^^^^^^^^^^^^^^
 
 The `~cfdm.Field.dump` method of the field construct gives all
 properties of all constructs, including metadata constructs and their
@@ -278,8 +290,10 @@ components, and shows the first and last values of all data arrays:
 
 .. _properties:
        
-Properties
-----------
+**Properties**
+--------------
+
+----
 
 Descriptive properties that apply to field construct as a whole may be
 retrieved with the `~Field.properties` method:
@@ -335,7 +349,9 @@ providing a new set of properties to the `~Field.properties` method:
 
 .. _data:
 
-Data
+**Data**
+--------
+
 ----
 
 The field construct's data array is stored in a `Data` class instance
@@ -378,10 +394,11 @@ access attributes and methods of the `Data` instance:
    >>> t.data.size
    90
 
+
 .. _indexing:
 
-Indexing
-^^^^^^^^
+**Indexing**
+^^^^^^^^^^^^
 
 Indexing a `Data` instance follows rules that are very similar to the
 `numpy indexing rules
@@ -414,11 +431,12 @@ the only differences being:
    (1, 2, 2)
    >>> data[0, :, -2].shape
    (1, 10, 1)
-  
+
+
 .. _data_assignment:
 
-Assignment
-^^^^^^^^^^
+**Assignment**
+^^^^^^^^^^^^^^
 
 Data array elements are changed by assigning to elements selected by
 indexing the `Data` instance using the :ref:`cfdm indexing rules
@@ -448,8 +466,8 @@ shape defined by the indices, using the `numpy broadcasting rules
      [270.9 -10.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]
      [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0 --  -3.0]]]
 
-Data dimensions
-^^^^^^^^^^^^^^^
+**Data dimensions**
+^^^^^^^^^^^^^^^^^^^
 
 The dimensions of a field construct's data may be reordered, have size
 one dimensions removed and have new new size one dimensions included
@@ -476,10 +494,15 @@ Method                Description
    >>> t2.transpose([2, 0, 1])
    <Field: air_temperature(grid_longitude(9), grid_latitude(10), time(1)) K>
 
+
 .. _subspacing:
 
-Subspacing
-----------
+
+
+**Subspacing**
+--------------
+
+----
 
 Creation of a new field construct which spans a subspace of the
 original domain is achieved by indexing the field directly (rather
@@ -513,10 +536,15 @@ latitude of the original, and with a reversed longitude axis:
                    : latitude(1) = [-75.0] degrees_north
                    : longitude(8) = [337.5, ..., 22.5] degrees_east
 
+
+
+
 .. _constructs:
 
-Metadata constructs
--------------------
+**Metadata constructs**
+-----------------------
+
+----
 
 The metadata constructs are all of the constructs that serve to
 describe the field construct that contains them. Each CF data model
@@ -686,8 +714,8 @@ Method                          Description
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
 
-Domain axes
-^^^^^^^^^^^
+**Domain axes**
+^^^^^^^^^^^^^^^
 
 The domain axis constructs spanned by a metadata construct's data are
 found with the `~Field.construct_axes` method of the field construct:
@@ -721,8 +749,8 @@ with the `~Field.get_data_axes` method of the field construct:
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
-Properties and data
-^^^^^^^^^^^^^^^^^^^
+**Properties and data**
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Where applicable, metadata constructs share the same API as the field
 construct. This means, for instance, that any construct that has a
@@ -745,8 +773,8 @@ data array (such as auxiliary coordinate construct) will have a
    >>> print(lon.get_array())
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
-Components
-^^^^^^^^^^
+**Components**
+^^^^^^^^^^^^^^
 
 Other classes are required to represent metadata construct components
 that are neither "properties" nor "data":
@@ -809,8 +837,10 @@ Where applicable, these classes also share the same API as the field:
 
 .. _netcdf_interface:
 
-NetCDF interface
-----------------
+**NetCDF interface**
+--------------------
+
+----
 
 The logical CF data model is independent of netCDF, but the CF
 conventions are designed to enable the processing and sharing of
@@ -929,15 +959,17 @@ methods of the field construct:
 	  
    >>> t.constructs('ncvar%b')
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
-   >>> t.get_construct('ncvar%a')
-   <DomainAncillary: ncvar%a(1) m>
+   >>> t.get_construct('ncvar%x')
+   <DimensionCoordinate: grid_longitude(9) degrees>
    >>> t.get_construct('ncdim%x')
    <DomainAxis: 9>
    
 .. _write:
    
-Writing to disk
----------------
+**Writing to disk**
+-------------------
+
+----
 
 The `cfdm.write` function writes a field construct, or a sequence of
 field constructs, to a new netCDF file on disk:
@@ -1026,8 +1058,8 @@ It is possible to create netCDF unlimited dimensions and set the HDF5
 chunk size using the `nc_unlimited_dimensions` and
 `~Field.nc_chunksize` methods of the field construct.
 
-Scalar coordinate variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Scalar coordinate variables**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 CF-netCDF scalar (i.e. zero-dimensional) coordinate variables are
 created when there is a size one domain axis construct which is
@@ -1097,10 +1129,15 @@ The new dataset is structured as follows (note, relative to file
    		:project = "research" ;
    }
     
+
+
+
 .. _field_creation:
 
-Field creation
---------------
+**Field creation**
+------------------
+
+----
 
 Creation of a field construct has three stages:
 
@@ -1528,11 +1565,14 @@ The new field construct may now be inspected:
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m
 
 
+
+
 .. _domain:    
 
-Domain
-------
+**Domain**
+----------
 
+----
 
 The domain of the CF data model describes the locations of the field
 construct's data and is represented by the `Domain` class. The domain
@@ -1580,10 +1620,13 @@ attributes and methods of the domain instance:
    >>> t.get_construct('latitude').has_property('test')
    False
 
+
 .. _copying:
 
-Copying
--------
+**Copying**
+-----------
+
+----
 
 A field construct may be copied with its `~Field.copy` method. This
 produces a deep copy, i.e. the new field construct is completely
@@ -1620,10 +1663,13 @@ Metadata constructs may be copied individually in the same manner:
   and the copy operation is fast---at the time of copying, it is
   essentially only the descriptive properties that are duplicated.
 
+
 .. _equality:
 
-Equality
---------
+**Equality**
+------------
+
+----
 
 Whether or not two fields constructs are the same is tested with
 either field construct's `~Field.equals` method.
@@ -1694,10 +1740,14 @@ criteria for considering two fields to be equal:
   comparisons may be temporarily changed, without changing the default
   settings.
    
+
+
 .. _external_variables:
 
-External variables
-------------------
+**External variables**
+----------------------
+
+----
 
 `External variables`_ are those referred to in a netCDF dataset, but
 which are not present in it. Instead, such variables are stored in
@@ -1826,10 +1876,14 @@ external file name to the `cfdm.write` function:
    False
    >>> cfdm.write(g, 'new_parent.nc', external_file='new_external.nc')
 
+
+
 .. _dsg:
    
-Discrete sampling geometries
-----------------------------
+**Discrete sampling geometries**
+--------------------------------
+
+----
 
 The CF data model views arrays that are compressed (by removing
 unwanted missing data) in their uncompressed form. So, when a
@@ -2037,10 +2091,14 @@ We can now inspect the new field construct:
    >>> print(count_variable.get_array())
    [2 4]
 
+
+
 .. _gathering:
 
-Gathering
----------
+**Gathering**
+-------------
+
+----
 
 The CF data model views arrays that are compressed by removing
 unwanted missing data in their uncompressed form. So, when axes have
@@ -2222,9 +2280,19 @@ We can now inspect the new field construct:
 
 .. rubric:: Footnotes
 
-.. [#opendap2] Requires the netCDF-4 C library to have been compiled
-               with OPeNDAP support enabled.
+.. [#files] The tutorial files may be also found in the
+            `docs/_downloads
+            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
+            directory of the code repository.
 
+..
+
+.. [#opendap2] Requires the netCDF4 python package to have been built
+               with OPeNDAP support enabled. See
+               http://unidata.github.io/netcdf4-python for details.
+
+..
+       
 .. [#language] In the terminology of the CF data model, a "construct"
                is an abstract concept which is distinct from its
                realization, e.g. a `Field` instance is not, strictly
@@ -2237,12 +2305,7 @@ We can now inspect the new field construct:
                phrase "CF data model construct" is used on the few
                occasions when the original abstract meaning is
                intended.
-	     	    
-.. [#files] The tutorial files may be also found in the
-            `docs/source/netcdf_files
-            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/source/netcdf_files>`_
-            directory of the code repository.
-
+	    
 
 .. External links to the CF conventions
    

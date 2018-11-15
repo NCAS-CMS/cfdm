@@ -32,23 +32,23 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html">Subclassing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html">Reference manual</a><ul>
-  <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
+  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.AuxiliaryCoordinate.__str__.html" title="previous chapter">cfdm.AuxiliaryCoordinate.__str__</a></li>
       <li>Next: <a href="../method/cfdm.CellMeasure.dump.html" title="next chapter">cfdm.CellMeasure.dump</a></li>
   </ul></li>
@@ -103,6 +103,53 @@ with the measure, e.g. square metres. It is assumed that the metric
 does not depend on axes of the domain which are not spanned by the
 array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.</p>
+<p><strong>Initialisation</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Set the measure that indicates which metric given by the data
+array. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">measure='area'</span></code></p>
+</dd>
+</dl>
+<p class="last">The measure may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a> method.</p>
+</dd>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first">Set descriptive properties. The dictionary keys are property
+names, with corresponding values. Ignored if the <em>source</em>
+parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'cell_area'}</span></code></p>
+</dd>
+</dl>
+<p class="last">Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CellMeasure.properties.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> and <a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+</dd>
+<dt>data: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
+<p class="last">The data array may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt>
+<dd><p class="first last">Initialize the measure, properties and data from those of
+<em>source</em>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div class="section" id="inspection">
@@ -131,6 +178,18 @@ cell measure variables correspond to cell measure constructs.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_property.html#cfdm.CellMeasure.has_property" title="cfdm.CellMeasure.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_measure.html#cfdm.CellMeasure.get_measure" title="cfdm.CellMeasure.get_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_measure.html#cfdm.CellMeasure.has_measure" title="cfdm.CellMeasure.has_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_measure</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.del_measure.html#cfdm.CellMeasure.del_measure" title="cfdm.CellMeasure.del_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_measure</span></code></a></td>
+<td>Remove the measure.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.properties.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
@@ -174,6 +233,18 @@ cell measure variables correspond to cell measure constructs.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_measure.html#cfdm.CellMeasure.get_measure" title="cfdm.CellMeasure.get_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_measure.html#cfdm.CellMeasure.has_measure" title="cfdm.CellMeasure.has_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_measure</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.del_measure.html#cfdm.CellMeasure.del_measure" title="cfdm.CellMeasure.del_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_measure</span></code></a></td>
+<td>Remove the measure.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -198,19 +269,16 @@ cell measure variables correspond to cell measure constructs.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_data.html#cfdm.CellMeasure.get_data" title="cfdm.CellMeasure.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CellMeasure.get_dtarray</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_data.html#cfdm.CellMeasure.has_data" title="cfdm.CellMeasure.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
 <td>TODO Remove size 1 dimensions from the data array</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
 <td>TODO</td>
 </tr>
 </tbody>
@@ -255,10 +323,13 @@ cell measure variables correspond to cell measure constructs.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
 <td>TODO Remove size 1 dimensions from the data array</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
 <td>TODO</td>
 </tr>
 </tbody>
@@ -278,6 +349,30 @@ cell measure variables correspond to cell measure constructs.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.equals.html#cfdm.CellMeasure.equals" title="cfdm.CellMeasure.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.nc_del_variable.html#cfdm.CellMeasure.nc_del_variable" title="cfdm.CellMeasure.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
+<td>Remove the netCDF variable name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.nc_get_variable.html#cfdm.CellMeasure.nc_get_variable" title="cfdm.CellMeasure.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
+<td>Return the netCDF variable name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.nc_has_variable.html#cfdm.CellMeasure.nc_has_variable" title="cfdm.CellMeasure.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
+<td>Whether the netCDF variable name has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_variable.html#cfdm.CellMeasure.nc_set_variable" title="cfdm.CellMeasure.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
+<td>Set the netCDF variable name.</td>
 </tr>
 </tbody>
 </table>

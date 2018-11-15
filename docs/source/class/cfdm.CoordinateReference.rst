@@ -43,7 +43,22 @@ Attributes
 	      
    ~CoordinateReference.coordinate_conversion
    ~CoordinateReference.datum
-   
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~CoordinateReference.nc_del_variable
+   ~CoordinateReference.nc_get_variable
+   ~CoordinateReference.nc_has_variable
+   ~CoordinateReference.nc_set_variable 
+      
 
    
    

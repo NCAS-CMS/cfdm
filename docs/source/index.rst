@@ -1,9 +1,9 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-############
-cfdm package
-############
+################
+**cfdm package**
+################
 
 Version |release|
 
@@ -11,13 +11,13 @@ Version |release|
 .. .. include:: installation.rst
 .. .. include:: tutorial.rst
 
-Introduction
-============
+**Introduction**
+================
 
 The cfdm package is a complete implementation of the CF data model.
 
-CF conventions
---------------
+**CF conventions**
+------------------
 
 The CF (Climate and Forecast) metadata conventions
 (http://cfconventions.org) provide a description of the physical
@@ -27,8 +27,8 @@ and forecasting data using netCDF files and libraries
 (https://www.unidata.ucar.edu/software/netcdf).
 
 
-CF data model
--------------
+**CF data model**
+-----------------
 
 The CF data model identifies the fundamental elements ("constructs")
 of CF and shows how they relate to each other, independently of the
@@ -85,8 +85,8 @@ The physical nature of individual data values are described by
 A complete description of the CF data model, including UML diagrams,
 is available at https://www.geosci-model-dev.net/10/4619/2017.
 
-Implementation
---------------
+**Implementation**
+------------------
 
 The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is,
@@ -114,8 +114,8 @@ The cfdm package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
 
-Table Of Contents
-=================
+**Table Of Contents**
+=====================
 
 .. toctree::
    :maxdepth: 2

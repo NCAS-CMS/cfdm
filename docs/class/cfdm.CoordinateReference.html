@@ -32,23 +32,23 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html">Subclassing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html">Reference manual</a><ul>
-  <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
+  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.CellMethod.sorted.html" title="previous chapter">cfdm.CellMethod.sorted</a></li>
       <li>Next: <a href="../method/cfdm.CoordinateReference.coordinates.html" title="next chapter">cfdm.CoordinateReference.coordinates</a></li>
   </ul></li>
@@ -117,15 +117,18 @@ only their properties.</li>
 auxiliary coordinate constructs which define the coordinate
 system. The datum may be implied by the metadata of the referenced
 dimension and auxiliary coordinate constructs, or explicitly
-provided by a <a class="reference internal" href="cfdm.Datum.html#cfdm.Datum" title="cfdm.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a> object.</li>
+provided by a <a class="reference internal" href="cfdm.Datum.html#cfdm.Datum" title="cfdm.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a> instance.</li>
 <li>A coordinate conversion, which defines a formula for converting
 coordinate values taken from the dimension or auxiliary coordinate
 constructs to a different coordinate system. A coordinate
 reference construct relates the coordinate values of the field to
 locations in a planetary reference frame. The coordinate
-conversion formula is stored in a <a class="reference internal" href="cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a> object.</li>
+conversion formula is stored in a <a class="reference internal" href="cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a> instance.</li>
 </ul>
 </div></blockquote>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -133,60 +136,35 @@ conversion formula is stored in a <a class="reference internal" href="cfdm.Coord
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>coordinates: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Identify the dimension and auxiliary coordinate objects which
-apply to this coordinate reference.</p>
-<blockquote class="last">
-<div><dl class="docutils">
+<dd><p class="first">Identify the related dimension and auxiliary coordinate
+constructs by their construct identifiers. Ignored if the
+<em>source</em> parameter is set.</p>
+<dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=['dimensioncoordinate2']</span></code></p>
 </dd>
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=('dimensioncoordinate0',</span>
-<span class="pre">'dimensioncoordinate1',</span> <span class="pre">'auxiliarycoordinate0',</span>
-<span class="pre">'auxiliarycoordinate1')</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=('dimensioncoordinate0',</span> <span class="pre">'dimensioncoordinate1')</span></code></p>
 </dd>
 </dl>
-</div></blockquote>
+<p class="last">The coordinates may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CoordinateReference.coordinates.html#cfdm.CoordinateReference.coordinates" title="cfdm.CoordinateReference.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate.html#cfdm.CoordinateReference.set_coordinate" title="cfdm.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a> methods.</p>
 </dd>
 <dt>datum: <a class="reference internal" href="cfdm.Datum.html#cfdm.Datum" title="cfdm.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a>, optional</dt>
-<dd><p class="first">Define the datum of the coordinate reference construct. Cannot
-be used with the <em>parameters</em> nor <em>domain_ancillaries</em>
-keywords.</p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt><em>Example:</em></dt>
-<dd><div class="first last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Datum</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;earth_radius&#39;</span><span class="p">:</span> <span class="mi">6371007</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">CoordinateReference</span><span class="p">(</span><span class="n">datum</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</div></blockquote>
+<dd><p class="first">Define the datum component of the coordinate reference
+construct. Ignored if the <em>source</em> parameter is set.</p>
+<p class="last">The datum may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.CoordinateReference.set_datum.html#cfdm.CoordinateReference.set_datum" title="cfdm.CoordinateReference.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a> method.</p>
 </dd>
 <dt>coordinate_conversion: <a class="reference internal" href="cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a>, optional</dt>
-<dd><p class="first">Define the coordinate conversion formula of the coordinate
-reference construct. Cannot be used with the <em>parameters</em> nor
-<em>domain_ancillaries</em> keywords.</p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt><em>Example:</em></dt>
-<dd><div class="first last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">CoordinateConversion</span><span class="p">(</span>
-<span class="gp">... </span>        <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;atmosphere_hybrid_height&#39;</span><span class="p">},</span>
-<span class="gp">... </span>        <span class="n">domain_ancillaries</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;orog&#39;</span><span class="p">:</span> <span class="s1">&#39;domainancillary2&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                            <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;domainancillary0&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                            <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="s1">&#39;domainancillary1&#39;</span><span class="p">})</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">CoordinateReference</span><span class="p">(</span><span class="n">coordinate_conversion</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd>
-</dl>
-</div></blockquote>
+<dd><p class="first">Define the coordinate conversion component of the coordinate
+reference construct. Ignored if the <em>source</em> parameter is set.</p>
+<p class="last">The coordinate conversion may also be set after initialisation
+with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code> method.</p>
 </dd>
 <dt>source: optional</dt>
-<dd><p class="first last">Initialise the <em>coordinates</em>, <em>datum</em> and
-<em>coordinate_conversion</em> parameters from the object given by
-<em>source</em>.</p>
+<dd><p class="first last">Initialize the coordinates, datum and coordinate conversion
+from those of <em>source</em>.</p>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy arguments prior to
@@ -274,6 +252,30 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.datum.html#cfdm.CoordinateReference.datum" title="cfdm.CoordinateReference.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></td>
 <td>Return the datum.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.nc_del_variable.html#cfdm.CoordinateReference.nc_del_variable" title="cfdm.CoordinateReference.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
+<td>Remove the netCDF variable name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.nc_get_variable.html#cfdm.CoordinateReference.nc_get_variable" title="cfdm.CoordinateReference.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
+<td>Return the netCDF variable name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.nc_has_variable.html#cfdm.CoordinateReference.nc_has_variable" title="cfdm.CoordinateReference.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
+<td>Whether the netCDF variable name has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.nc_set_variable.html#cfdm.CoordinateReference.nc_set_variable" title="cfdm.CoordinateReference.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
+<td>Set the netCDF variable name.</td>
 </tr>
 </tbody>
 </table>

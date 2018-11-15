@@ -587,18 +587,29 @@ data array shape.
 #    #--- End: def
 
     def get_dtarray(self):
-        '''An independent `numpy` array of date-time objects.
+        '''An independent numpy array of date-time objects.
 
 Only applicable for reference time units.
 
-If the calendar has not been set then the CF default calendar will be
-used.
+If the calendar has not been set then the CF default calendar of
+"gregorian" will be used.
+
+Conversions are carried out with the `netCDF4.num2date` function.
 
 .. versionadded:: 1.7
 
-.. seealso:: `array`
+.. seealso:: `get_array`
 
 **Examples:**
+
+>>> d.get_units()
+'days since 2018-12-01'
+>>> d.get_calendar()
+'360_day'
+>>> d.get_array()
+30.0
+>>> print(d.get_dtarray())
+[2019-01-01 00:00:00]
 
         '''
         array = self.get_array()
@@ -613,7 +624,8 @@ used.
         #--- End: if
         
         array = netCDF4.num2date(array, units=self.get_units(None),
-                                 calendar=self.get_calendar('standard'))
+                                 calendar=self.get_calendar('standard'),
+                                 only_use_cftime_datetimes=True)
 
         if mask is None:
             # There is no missing data

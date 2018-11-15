@@ -23,6 +23,8 @@ axes (e.g. a value might represent the cell area average), and
 properties serving to indicate more precisely how the method was
 applied (e.g. recording the spacing of the original data, or the fact
 that the method was applied only over El Nino years).
+
+.. versionadded:: 1.7
     
     '''
 

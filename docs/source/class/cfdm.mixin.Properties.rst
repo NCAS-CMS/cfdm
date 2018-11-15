@@ -22,10 +22,7 @@ cfdm.mixin.Properties
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
-   
-   ~PropertiesData.dtarray
-   ~PropertiesData.isreftime
-   
+
    
 
 

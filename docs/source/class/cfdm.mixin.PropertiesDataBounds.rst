@@ -35,11 +35,7 @@ cfdm.mixin.PropertiesDataBounds
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~PropertiesDataBounds.dtarray
-   ~PropertiesDataBounds.isreftime
-   
+   :template: attribute.rst   
    
 Special
 -------

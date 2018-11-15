@@ -40,14 +40,16 @@ frame and consists of the following:
     auxiliary coordinate constructs which define the coordinate
     system. The datum may be implied by the metadata of the referenced
     dimension and auxiliary coordinate constructs, or explicitly
-    provided by a `Datum` object.
+    provided by a `Datum` instance.
 
   * A coordinate conversion, which defines a formula for converting
     coordinate values taken from the dimension or auxiliary coordinate
     constructs to a different coordinate system. A coordinate
     reference construct relates the coordinate values of the field to
     locations in a planetary reference frame. The coordinate
-    conversion formula is stored in a `CoordinateConversion` object.
+    conversion formula is stored in a `CoordinateConversion` instance.
+
+.. versionadded:: 1.7
 
     '''
     

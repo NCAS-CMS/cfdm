@@ -45,3 +45,20 @@ cfdm.List
    :template: attribute.rst
 
    ~List.data     
+
+   
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~List.nc_del_variable
+   ~List.nc_get_variable
+   ~List.nc_has_variable
+   ~List.nc_set_variable 
+

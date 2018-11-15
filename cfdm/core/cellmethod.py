@@ -22,54 +22,50 @@ properties serving to indicate more precisely how the method was
 applied (e.g. recording the spacing of the original data, or the fact
 that the method was applied only over El Nino years).
 
+.. versionadded:: 1.7
     '''
-    
     def __init__(self, axes=None, properties=None, source=None,
                  copy=True):
         '''**Initialisation**
 
-:Parmaeters:
+:Parameters:
 
-    axes: (sequence of) `str`, optional
-        Set the axes of the cell method. Ignored if the *source*
-        parameter is set.
+    axes: sequence of `str`, optional
+        Set the axes of the cell method construct. Either one or more
+        domain axis construct identifiers or standard names. Ignored
+        if the *source* parameter is set.
 
           *Example:*
-             ``axes=('id%domainaxis0',)``
+             ``axes=['domainaxis0']``
         
           *Example:*
-             ``axes=('id%domainaxis0', 'id%domainaxis1')``
+             ``axes=('domainaxis0', 'domainaxis1')``
         
           *Example:*
              ``axes=('area',)``
         
           *Example:*
-             ``axes=('time',)``
-
+             ``axes=['domainaxis2', 'time']``
+        
          The axes may also be set after initialisation with the
-        `set_axes` method.
+         `set_axes` method.
 
     properties: `dict`, optional
-        Set properties to describe the cell method. The dictionary
-        keys are property names, with corresponding values. Ignored if
-        the *source* parameter is set.
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
 
-          *Example:*
-             ``properties={'method': 'variance'}``
-        
-          *Example:*
-             ``properties={'method': 'mean', 'where': 'sea'}``
+        *Example:*
+          ``properties={'method': 'variance'}``
+       
+        *Example:*
+          ``properties={'method': 'mean', 'where': 'sea'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
 
     source: optional
-        Initialise the *axes* and *properties* parameters (if present)
-        from *source*, which will be a `CellMethod` object, or a
-        subclass of one of its parent classes.
-
-          *Example:*
-            ``d = CellMethod(source=c)``
+        Initialize the axes and properties from those of *source*.
 
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -86,7 +82,7 @@ that the method was applied only over El Nino years).
                 axes = None              
         #--- End: if
 
-        if axes is not None:
+        if axes is not None:                
             axes = self.set_axes(axes)
     #--- End: def
 
@@ -175,10 +171,6 @@ None
 .. versionadded:: 1.7
 
 .. seealso:: `del_axes`, `has_axes`, `set_axes`
-
-:Examples 1:
-
->>> x = f.get_axes()
 
 :Parameters:
 

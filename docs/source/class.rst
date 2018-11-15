@@ -3,11 +3,13 @@
 
 .. _class_extended:
 
-**Classes** of the **cfdm** package
-===================================
+**cfdm classes**
+================
 
-Field construct class
---------------------
+----
+
+**Field construct class**
+-------------------------
 
 .. autosummary::
    :nosignatures:
@@ -15,8 +17,8 @@ Field construct class
 
    cfdm.Field	              
 
-Metadata construct classes
---------------------------
+**Metadata construct classes**
+------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -31,8 +33,8 @@ Metadata construct classes
    cfdm.DomainAxis
    cfdm.FieldAncillary
 
-Construct component classes
----------------------------
+**Construct component classes**
+-------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -44,8 +46,8 @@ Construct component classes
    cfdm.Data
    cfdm.Datum
 
-Data classes
-------------
+**Data classes**
+----------------
 
 .. autosummary::
    :nosignatures:
@@ -56,8 +58,8 @@ Data classes
    cfdm.NumpyArray
    cfdm.Array
 
-Data compression classses
--------------------------
+**Data compression classses**
+-----------------------------
 
 Classes that support the creation and storage of compressed arrays.
 
@@ -74,11 +76,11 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.List
 
 
-Construct mixin classes
------------------------
+**Mixin classes**
+------------------
 
-Classes that provide additional functionality that is shared by
-multiple construct classes.
+Classes that provide functionality that is shared by constructs and
+construct components.
 
 .. autosummary::
    :nosignatures:

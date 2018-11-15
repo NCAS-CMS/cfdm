@@ -31,15 +31,50 @@ cell measure variables correspond to cell measure constructs.
     '''
     def __init__(self, measure=None, properties={}, data=None, source=None,
                  copy=True, _use_data=True):
-        '''
+        '''**Initialisation**
+
+:Parameters:
+
+    measure: `str`, optional
+        Set the measure that indicates which metric given by the data
+        array. Ignored if the *source* parameter is set.
+
+        *Example:*
+          ``measure='area'``
+
+        The measure may also be set after initialisation with the
+        `set_measure` method.
+
+    properties: `dict`, optional
+       Set descriptive properties. The dictionary keys are property
+       names, with corresponding values. Ignored if the *source*
+       parameter is set.
+
+       *Example:*
+          ``properties={'standard_name': 'cell_area'}``
+
+       Properties may also be set after initialisation with the
+       `properties` and `set_property` methods.
+
+    data: `Data`, optional
+        Set the data array. Ignored if the *source* parameter is set.
+
+        The data array may also be set after initialisation with the
+        `set_data` method.
+
+    source: optional
+        Initialize the measure, properties and data from those of
+        *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
+
         '''
         super().__init__(measure=measure, properties=properties,
                          data=data, source=source, copy=copy,
                          _use_data=_use_data)
         
-#        if source is not None:
-#            self._intialise_ncvar_from(source)
-
         self._initialise_netcdf(source)
     #--- End: def
     

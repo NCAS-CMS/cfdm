@@ -33,6 +33,22 @@ cfdm.DomainAxis
    :toctree: ../attribute/
    :template: attribute.rst
 
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~DomainAxis.nc_del_dimension
+   ~DomainAxis.nc_get_dimension
+   ~DomainAxis.nc_has_dimension
+   ~DomainAxis.nc_set_dimension 
+
    
    
    

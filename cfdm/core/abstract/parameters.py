@@ -9,8 +9,7 @@ from . import Container
 
 
 class Parameters(with_metaclass(abc.ABCMeta, Container)):
-    '''Abstract base class for a collection of named parameters and named
-domain ancillary constructs.
+    '''Abstract base class for a collection of named parameters.
 
     '''
 
@@ -20,9 +19,22 @@ domain ancillary constructs.
 
 :Parameters:
 
+    parameters: `dict`, optional
+       Set parameters. The dictionary keys are parameter names, with
+       corresponding values. Ignored if the *source* parameter is set.
+
+       *Example:*
+         ``parameters={'earth_radius': 6371007.}``
+
+       Parameters may also be set after initialisation with the
+       `parameters` and `set_parameter` methods.
+
     source: optional
+        Initialize the parameters from those of *source*.
 
     copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
 
         '''
         super().__init__()

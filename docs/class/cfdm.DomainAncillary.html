@@ -32,23 +32,23 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html">Subclassing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html">Reference manual</a><ul>
-  <li><a href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a><ul>
+  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
+  <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.DimensionCoordinate.__str__.html" title="previous chapter">cfdm.DimensionCoordinate.__str__</a></li>
       <li>Next: <a href="../method/cfdm.DomainAncillary.dump.html" title="next chapter">cfdm.DomainAncillary.dump</a></li>
   </ul></li>
@@ -100,7 +100,51 @@ data.</p>
 <p>An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.</p>
-<p>TODO</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first">Set descriptive properties. The dictionary keys are property
+names, with corresponding values. Ignored if the <em>source</em>
+parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'altitude'}</span></code></p>
+</dd>
+</dl>
+<p class="last">Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> and <a class="reference internal" href="../method/cfdm.DomainAncillary.set_property.html#cfdm.DomainAncillary.set_property" title="cfdm.DomainAncillary.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+</dd>
+<dt>data: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
+<p class="last">The data array may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.DomainAncillary.set_data.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>bounds: <a class="reference internal" href="cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>, optional</dt>
+<dd><p class="first">Set the bounds array. Ignored if the <em>source</em> parameter is
+set.</p>
+<p class="last">The bounds array may also be set after initialisation with the
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code> method.</p>
+</dd>
+<dt>source: optional</dt>
+<dd><p class="first last">Initialize the properties, data and bounds from those of
+<em>source</em>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div class="section" id="inspection">
@@ -202,19 +246,16 @@ number of vertices of each cell.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_data.html#cfdm.DomainAncillary.get_data" title="cfdm.DomainAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.DomainAncillary.get_dtarray</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_data.html#cfdm.DomainAncillary.has_data" title="cfdm.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_data.html#cfdm.DomainAncillary.has_data" title="cfdm.DomainAncillary.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_data.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_data.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.transpose.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.transpose.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
 <td>TODO  Permute the dimensions of the data.</td>
 </tr>
 </tbody>
@@ -285,6 +326,30 @@ number of vertices of each cell.</p>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.equals.html#cfdm.DomainAncillary.equals" title="cfdm.DomainAncillary.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>TODOTODO</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.nc_del_variable.html#cfdm.DomainAncillary.nc_del_variable" title="cfdm.DomainAncillary.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
+<td>Remove the netCDF variable name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.nc_get_variable.html#cfdm.DomainAncillary.nc_get_variable" title="cfdm.DomainAncillary.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
+<td>Return the netCDF variable name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.nc_has_variable.html#cfdm.DomainAncillary.nc_has_variable" title="cfdm.DomainAncillary.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
+<td>Whether the netCDF variable name has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.nc_set_variable.html#cfdm.DomainAncillary.nc_set_variable" title="cfdm.DomainAncillary.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
+<td>Set the netCDF variable name.</td>
 </tr>
 </tbody>
 </table>

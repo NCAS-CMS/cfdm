@@ -20,11 +20,13 @@ cell method constructs.
 In the CF data model, cell bounds do not have their own properties
 because they can not logically be different to those of the coordinate
 construct itself. However, it is sometimes desired to store properties
-on a CF-netCDF bounds variable, so the `Bounds` object supports this
+on a CF-netCDF bounds variable, so this class supports this
 capability.
 
+.. versionadded:: 1.7
+
     '''
-    def __init__(self, properties={}, data=None, source=None,
+    def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
         '''**Initialization**
 
@@ -36,7 +38,7 @@ capability.
         parameter is set.
 
           *Example:*
-             ``properties={'standard_name': 'altitude'}``
+             ``properties={'standard_name': 'grid_latitude'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
@@ -48,12 +50,7 @@ capability.
         `set_data` method.
         
     source: optional
-        Override the *properties* and *data* parameters with
-        ``source.properties()`` and ``source.get_data(None)``
-        respectively.
-
-        If *source* does not have one of these methods, then the
-        corresponding parameter is not set.
+        Initialize the properties and data from those of *source*.
         
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to

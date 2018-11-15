@@ -71,8 +71,8 @@ and institution).
         `properties` and `set_property` methods.
 
     source: optional
-        Initialize the field construct's properties, data and metadata
-        constructs from those of *source*.
+        Initialize the properties, data and metadata constructs from
+        those of *source*.
         
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -934,10 +934,15 @@ may be selected for removal.
 
         '''
         f = self.copy()
-        try:
-            axes = self.data._parse_axes(axes)
-        except ValueError as error:
-            raise ValueError("Can't squeeze data: {}".format(error))
+
+
+        if axes is None:
+            axes = [i for i, n in enumerate(f.data.shape) if n == 1]
+        else:
+            try:
+                axes = self.data._parse_axes(axes)
+            except ValueError as error:
+                raise ValueError("Can't squeeze data: {}".format(error))
 
         data_axes = self.get_data_axes(())
         

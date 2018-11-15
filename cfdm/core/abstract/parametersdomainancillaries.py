@@ -12,6 +12,8 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
     '''Abstract base class for a collection of named parameters and named
 domain ancillary constructs.
 
+.. versionadded:: 1.7
+
     '''
 
     def __init__(self, parameters=None, domain_ancillaries=None,
@@ -20,9 +22,26 @@ domain ancillary constructs.
 
 :Parameters:
 
+    parameters: `dict`, optional
+       Set parameters. The dictionary keys are parameter names, with
+       corresponding values. Ignored if the *source* parameter is set.
+
+       *Example:*
+         ``parameters={'earth_radius': 6371007.}``
+
+       Parameters may also be set after initialisation with the
+       `parameters` and `set_parameter` methods.
+
+    domain_ancillaries: `dict`, optional
+
+       TODO
+
     source: optional
+        TODO Initialize the parameters from those of *source*.
 
     copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
 
         '''
         super().__init__(parameters=parameters, source=source,

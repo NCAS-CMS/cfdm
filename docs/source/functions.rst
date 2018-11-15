@@ -3,8 +3,8 @@
 
 .. _function:
 
-**Functions** of the **cfdm** package
-=====================================
+**cfdm functions**
+==================
 
 Reading and writing
 -------------------

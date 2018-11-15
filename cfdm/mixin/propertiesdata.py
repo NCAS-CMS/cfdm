@@ -518,57 +518,6 @@ TODO
         return v
     #--- End: def
     
-    # ----------------------------------------------------------------
-    # Attribute (read only)
-    # ----------------------------------------------------------------
-    @property
-    def dtarray(self):
-        '''TODO An independent numpy array of date-time objects.
-
-Only applicable for reference time units.
-
-If the calendar has not been set then the CF default calendar will be
-used.
-
-.. versionadded:: 1.6
-
-.. seealso:: `array`
-
-:Examples:
-
-        '''
-        data = self.get_data(None)
-        if data is None:
-            raise AttributeError("{} has no data".format(self.__class__.__name__))
-
-        return data.get_dtarray()
-
-#        array = self.get_data().get_array()
-#
-#        mask = None
-#        if numpy.ma.isMA(array):
-#            # num2date has issues if the mask is nomask
-#            mask = array.mask
-#            if mask is numpy.ma.nomask or not numpy.ma.is_masked(array):
-#                array = array.view(numpy.ndarray)
-#        #--- End: if
-#
-#        utime = Utime(self.getprop('units'),
-#                      self.getptop('calendar', 'gregorian'))
-#        array = utime.num2date(array)
-#    
-#        if mask is None:
-#            # There is no missing data
-#            array = numpy.array(array, dtype=object)
-#        else:
-#            # There is missing data
-#            array = numpy.ma.masked_where(mask, array)
-#            if not numpy.ndim(array):
-#                array = numpy.ma.masked_all((), dtype=object)
-#
-#        return array
-#    #--- End: def
-
     def _parse_axes(self, axes): #, ndim=None):
         '''TODO
         '''

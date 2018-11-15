@@ -24,6 +24,10 @@ Inspection
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.get_property
    ~cfdm.CellMeasure.has_property
+   ~cfdm.CellMeasure.get_measure
+   ~cfdm.CellMeasure.has_measure
+   ~cfdm.CellMeasure.set_measure
+   ~cfdm.CellMeasure.del_measure
    ~cfdm.CellMeasure.properties
 
 .. rubric:: Attributes
@@ -50,6 +54,10 @@ Properties
    ~cfdm.CellMeasure.has_property
    ~cfdm.CellMeasure.properties
    ~cfdm.CellMeasure.set_property
+   ~cfdm.CellMeasure.get_measure
+   ~cfdm.CellMeasure.has_measure
+   ~cfdm.CellMeasure.set_measure
+   ~cfdm.CellMeasure.del_measure
 
 Data
 ----
@@ -65,7 +73,6 @@ Data
    ~cfdm.CellMeasure.expand_dims
    ~cfdm.CellMeasure.get_array
    ~cfdm.CellMeasure.get_data
-   ~cfdm.CellMeasure.get_dtarray
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.set_data
    ~cfdm.CellMeasure.squeeze
@@ -96,8 +103,10 @@ Modification
    ~cfdm.CellMeasure.properties
    ~cfdm.CellMeasure.set_data
    ~cfdm.CellMeasure.set_property
+   ~cfdm.CellMeasure.set_measure
    ~cfdm.CellMeasure.squeeze
    ~cfdm.CellMeasure.transpose
+
 
 Miscellaneous
 -------------
@@ -111,6 +120,21 @@ Miscellaneous
 
    ~cfdm.CellMeasure.copy
    ~cfdm.CellMeasure.equals
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~CellMeasure.nc_del_variable
+   ~CellMeasure.nc_get_variable
+   ~CellMeasure.nc_has_variable
+   ~CellMeasure.nc_set_variable 
 
 Special
 -------

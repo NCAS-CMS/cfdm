@@ -45,3 +45,19 @@ cfdm.FieldAncillary
    :template: attribute.rst
 
    ~FieldAncillary.data     
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~FieldAncillary.nc_del_variable
+   ~FieldAncillary.nc_get_variable
+   ~FieldAncillary.nc_has_variable
+   ~FieldAncillary.nc_set_variable 
+

@@ -3,11 +3,13 @@
 
 .. _class_core:
 
-**Classes** of the **cfdm.core** package
-========================================
+**cfdm.core classes**
+=====================
 
-Field construct class
----------------------
+----
+
+**Field construct class**
+-------------------------
 
 .. autosummary::
    :nosignatures:
@@ -15,8 +17,8 @@ Field construct class
 
    cfdm.core.Field	              
 
-Metadata construct classes
---------------------------
+**Metadata construct classes**
+------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -31,8 +33,8 @@ Metadata construct classes
    cfdm.core.DomainAxis
    cfdm.core.FieldAncillary
 
-Construct component classes
----------------------------
+**Construct component classes**
+-------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -44,8 +46,8 @@ Construct component classes
    cfdm.core.Datum
    cfdm.core.Domain
 
-Data classes
-------------
+**Data classes**
+----------------
 
 .. autosummary::
    :nosignatures:
@@ -53,12 +55,12 @@ Data classes
 
    cfdm.core.Data
    cfdm.core.NumpyArray
-   cfdm.core.data.abstract.Array
 
-Construct abstract base classes
--------------------------------
+**Abstract base classes**
+-------------------------
 
-Abstract base classes that providing the basis for construct classes.
+Abstract base classes that provide the basis for constructs and
+construct components.
 
 .. autosummary::
    :nosignatures:

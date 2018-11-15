@@ -32,23 +32,23 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html">Subclassing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html">Reference manual</a><ul>
-  <li><a href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a><ul>
+  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
+  <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="cfdm.core.abstract.Parameters.html" title="previous chapter">cfdm.core.abstract.Parameters</a></li>
       <li>Next: <a href="cfdm.core.abstract.Properties.html" title="next chapter">cfdm.core.abstract.Properties</a></li>
   </ul></li>
@@ -89,27 +89,78 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.parameters.Parameters</span></code></p>
 <p>Abstract base class for a collection of named parameters and named
 domain ancillary constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">source: optional</p>
-<p class="last">copy: <cite>bool</cite>, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>parameters: <cite>dict</cite>, optional</dt>
+<dd><p class="first">Set parameters. The dictionary keys are parameter names, with
+corresponding values. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
+</dd>
+</dl>
+<p class="last">Parameters may also be set after initialisation with the
+<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
+</dd>
+</dl>
+<p>domain_ancillaries: <cite>dict</cite>, optional</p>
+<blockquote>
+<div><p>TODO</p>
+</div></blockquote>
+<dl class="last docutils">
+<dt>source: optional</dt>
+<dd><p class="first last">TODO Initialize the parameters from those of <em>source</em>.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-19"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">source: optional</p>
-<p class="last">copy: <cite>bool</cite>, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>parameters: <cite>dict</cite>, optional</dt>
+<dd><p class="first">Set parameters. The dictionary keys are parameter names, with
+corresponding values. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
+</dd>
+</dl>
+<p class="last">Parameters may also be set after initialisation with the
+<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
+</dd>
+</dl>
+<p>domain_ancillaries: <cite>dict</cite>, optional</p>
+<blockquote>
+<div><p>TODO</p>
+</div></blockquote>
+<dl class="last docutils">
+<dt>source: optional</dt>
+<dd><p class="first last">TODO Initialize the parameters from those of <em>source</em>.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
@@ -160,7 +211,7 @@ domain ancillary constructs.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-87"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <div class="versionadded">
@@ -196,7 +247,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary">
-<code class="descname">del_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-95"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-114"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a domain ancillary.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -242,7 +293,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.del_parameter">
-<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-98"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a parameter.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -281,7 +332,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries">
-<code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><em>domain_ancillaries=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-127"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
+<code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><em>domain_ancillaries=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-146"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace the domain ancillary-valued terms.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -328,7 +379,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary">
-<code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-169"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-188"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a parameter value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -366,7 +417,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.get_parameter">
-<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-114"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-126"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a parameter value.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -407,7 +458,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.parameters">
-<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-154"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-166"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace the parameter-valued terms.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -461,7 +512,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary">
-<code class="descname">set_domain_ancillary</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-207"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_domain_ancillary</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parametersdomainancillaries.py#core/abstract/parametersdomainancillaries.py-226"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set an domain ancillary-valued term.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -494,7 +545,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.ParametersDomainAncillaries.set_parameter">
-<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-202"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-214"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a parameter-valued term.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>

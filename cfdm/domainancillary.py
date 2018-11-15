@@ -24,11 +24,48 @@ An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
+.. versionadded:: 1.7
+
     '''
     def __init__(self, properties={}, data=None, bounds=None,
                  geometry=None, interior_ring=None, source=None,
                  copy=True, _use_data=True):
-        '''TODO
+        '''**Initialization**
+
+:Parameters:
+
+    properties: `dict`, optional
+       Set descriptive properties. The dictionary keys are property
+       names, with corresponding values. Ignored if the *source*
+       parameter is set.
+
+       *Example:*
+          ``properties={'standard_name': 'altitude'}``
+
+       Properties may also be set after initialisation with the
+       `properties` and `set_property` methods.
+
+    data: `Data`, optional
+        Set the data array. Ignored if the *source* parameter is set.
+
+        The data array may also be set after initialisation with the
+        `set_data` method.
+
+    bounds: `Bounds`, optional
+        Set the bounds array. Ignored if the *source* parameter is
+        set.
+
+        The bounds array may also be set after initialisation with the
+        `set_bounds` method.
+
+    source: optional
+        Initialize the properties, data and bounds from those of
+        *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
+
         '''
         super().__init__(properties=properties, data=data,
                          bounds=bounds, geometry=geometry,

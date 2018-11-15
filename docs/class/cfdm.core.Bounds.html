@@ -32,23 +32,23 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference manual</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>Functions</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>Classes</strong> of the <strong>cfdm</strong> package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../subclassing.html">Subclassing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html">Reference manual</a><ul>
-  <li><a href="../class_core.html"><strong>Classes</strong> of the <strong>cfdm.core</strong> package</a><ul>
+  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
+  <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="cfdm.core.FieldAncillary.html" title="previous chapter">cfdm.core.FieldAncillary</a></li>
       <li>Next: <a href="cfdm.core.CoordinateConversion.html" title="next chapter">cfdm.core.CoordinateConversion</a></li>
   </ul></li>
@@ -95,11 +95,9 @@ correspond to a domain axis construct since it does not relate to an
 independent axis of the domain. Note that, for climatological time
 axes, the bounds are interpreted in a special way indicated by the
 cell method constructs.</p>
-<p>In the CF data model, cell bounds do not have their own properties
-because they can not logically be different to those of the coordinate
-construct itself. However, it is sometimes desired to store properties
-on a CF-netCDF bounds variable, so the <cite>Bounds</cite> object supports this
-capability.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -141,7 +139,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.Bounds.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/bounds.py#core/bounds.py-24"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/bounds.py#core/bounds.py-20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -439,7 +437,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/bounds.py#core/bounds.py-74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/bounds.py#core/bounds.py-70"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p>Note that the data are returned in a <cite>Data</cite> object. Use the
 <cite>get_array</cite> method to return the data as an independent <cite>numpy</cite> array.</p>

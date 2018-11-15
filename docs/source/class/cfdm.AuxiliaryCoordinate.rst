@@ -67,7 +67,6 @@ Data
    ~cfdm.AuxiliaryCoordinate.get_array
    ~cfdm.AuxiliaryCoordinate.get_bounds
    ~cfdm.AuxiliaryCoordinate.get_data
-   ~cfdm.AuxiliaryCoordinate.get_dtarray
    ~cfdm.AuxiliaryCoordinate.has_data
    ~cfdm.AuxiliaryCoordinate.set_data
    ~cfdm.AuxiliaryCoordinate.squeeze
@@ -114,6 +113,23 @@ Miscellaneous
 
    ~cfdm.AuxiliaryCoordinate.copy
    ~cfdm.AuxiliaryCoordinate.equals
+
+
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~AuxiliaryCoordinate.nc_del_variable
+   ~AuxiliaryCoordinate.nc_get_variable
+   ~AuxiliaryCoordinate.nc_has_variable
+   ~AuxiliaryCoordinate.nc_set_variable 
 
 Special
 -------
