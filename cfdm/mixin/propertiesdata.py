@@ -52,7 +52,12 @@ x.__str__() <==> str(x)
 
         # Units
         units = self.get_property('units', '')
-        if self.isreftime:
+        if units is None:
+            isreftime = bool(self.get_property('calendar', False))
+        else:
+            isreftime = 'since' in units
+            
+        if isreftime:
             units += ' '+self.get_property('calendar', '')
             
         return '{0}{1} {2}'.format(self.name(''), dims, units)
@@ -532,18 +537,4 @@ TODO
         return [(i + ndim if i < 0 else i) for i in axes]
     #--- End: def
     
-    @property
-    def isreftime(self):
-        '''TODO
-
-.. versionadded:: 1.6
-
-        '''
-        units = self.get_property('units', None)
-        if units is None:
-            return bool(self.get_property('calendar', False))
-
-        return 'since' in units
-    #--- End: def
-
 #--- End: class

@@ -6,8 +6,8 @@
 **cfdm functions**
 ==================
 
-Reading and writing
--------------------
+**Reading and writing**
+-----------------------
 
 .. autosummary::
    :nosignatures:
@@ -17,8 +17,8 @@ Reading and writing
    cfdm.read 
    cfdm.write
 
-Constants
----------
+**Constants**
+-------------
 
 .. autosummary::
    :nosignatures:
@@ -29,8 +29,8 @@ Constants
    cfdm.ATOL
    cfdm.RTOL
 
-Miscellaneous 
---------------
+**Miscellaneous**
+-----------------
 
 .. autosummary::
    :nosignatures:

@@ -545,7 +545,14 @@ values of all data arrays.
         data = self.get_data(None)
         if data is not None:
             x = [axis_to_name[axis] for axis in self.get_data_axes(())]
-            if self.isreftime:
+
+            units = self.get_property('units', None)
+            if units is None:
+                isreftime = bool(self.get_property('calendar', False))
+            else:
+                isreftime = 'since' in units
+    
+            if isreftime:
                 data = data.asdata(data.get_dtarray())
                 
             string.append('')
