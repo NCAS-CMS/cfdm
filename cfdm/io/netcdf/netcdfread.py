@@ -3,6 +3,7 @@ from builtins import (map, range, str)
 from past.builtins import basestring
 
 import operator
+import os
 import re
 import struct
 
@@ -408,7 +409,15 @@ ancillaries, field ancillaries).
                         "Can't read: Bad parameter value: field={!r}".format(field))            
         #--- End: if
         g['field'] = field
-                
+
+        filename = os.path.expanduser(os.path.expandvars(filename))
+        
+        if os.path.isdir(filename):
+            raise IOError("Can't read directory {}".format(filename))
+        
+        if not os.path.isfile(filename):
+            raise IOError("Can't read non-existent file {}".format(filename))
+
         g['filename'] = filename
 
         # ------------------------------------------------------------
@@ -673,8 +682,6 @@ ancillaries, field ancillaries).
                 print('    External variables:', sorted(g['external_variables']))
                 print('    External files    :', g['external_files'])
 
-#            if g['external_files']:
-#                print ('XXX', g['external_files'])
             if g['external_files'] and g['external_variables']:
                 self._get_variables_from_external_files(netcdf_external_variables)
         #--- End: if
@@ -753,8 +760,10 @@ ancillaries, field ancillaries).
     #--- End: def
 
     def _get_variables_from_external_files(self,
-                                           netcdf_external_variables): #, external_files):
+                                           netcdf_external_variables):
         '''Get external variables from external files.
+
+..versionadded:: 1.7
 
 :Parameters:
 
@@ -764,12 +773,6 @@ ancillaries, field ancillaries).
 
           :Example:
             ``external_variables='areacello'``
-
-    external_files: sequence of `str`
-        The external file names.
-
-          :Example:
-            ``external_files=['area.nc']``
 
 :Returns:
 
@@ -794,9 +797,8 @@ ancillaries, field ancillaries).
         found = []
             
         for external_file in external_files:
-            print('external_file=',external_file)
             external_read_vars = self.read(external_file, _scan_only=True,
-                                           verbose=False)
+                                           verbose=read_vars['verbose'])
             # Reset self.read_vars
             self.read_vars = read_vars
             

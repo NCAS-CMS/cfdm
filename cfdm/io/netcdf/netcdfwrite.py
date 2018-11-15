@@ -16,6 +16,7 @@ from .. import IOWrite
 
 from . import constants
 
+zzz = False
 
 class NetCDFWrite(IOWrite):
     '''
@@ -139,7 +140,7 @@ class NetCDFWrite(IOWrite):
         
         self.write_vars['nc'][ncvar].setncatts(netcdf_attrs)
 
-        if True:
+        if zzz:
             self.write_vars['zzz'].write('\n{}.setncatts({})\n'.format(ncvar, netcdf_attrs))            
     #--- End: def
     
@@ -307,7 +308,7 @@ If the input variable has no `!dtype` attribute (or it is None) then
             # This string length dimension needs creating
             g['ncdim_to_size'][ncdim] = size
             g['netcdf'].createDimension(ncdim, size)
-            if True:
+            if zzz:
                 g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
                     ncdim=ncdim, size=size))
         return ncdim
@@ -466,7 +467,7 @@ message+" In a {} file only one unlimited dimension is allowed. Consider using a
                         size, g['netcdf'].file_format, error))
         #--- End: if
         
-        if True:
+        if zzz:
             g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
                 ncdim=ncdim, size=size))
 
@@ -846,7 +847,7 @@ name.
                     
                 ncdim_to_size[ncdim] = size
                 g['netcdf'].createDimension(ncdim, size)
-                if True:
+                if zzz:
                     g['zzz'].write('\nnc.createDimension({ncdim!r}, {size!r})\n'.format(
                         ncdim=ncdim, size=size))
 
@@ -1227,7 +1228,7 @@ measure will not be written.
         
         g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs)
         
-        if True:
+        if zzz:
             g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
                 ncvar,
                 ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
@@ -1283,7 +1284,7 @@ measure will not be written.
 #            g['nc'][ncvar] = g['netcdf'].createVariable(**kwargs) #ncvar, 'S1', (),
 #                                                        endian=g['endian'],
 #                                                        **g['netcdf_compression'])
-#            if True:
+#            if zzz:
 #                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
 #                    ncvar,
 #                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
@@ -1314,7 +1315,7 @@ measure will not be written.
 #                parameters['grid_mapping_name'] = grid_mapping_name
                 
             g['nc'][ncvar].setncatts(parameters)
-            if True:
+            if zzz:
                 g['zzz'].write('{}.setncatts({})\n'.format(ncvar, parameters))
                 
             # Update the 'seen' dictionary
@@ -1455,7 +1456,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
                     
             raise RuntimeError(message)
 #        else:
-#            if True:
+#            if zzz:
 #                g['zzz'].write('\n{} = nc.createVariable(\n    {})\n'.format(
 #                    ncvar,
 #                    ',\n    '.join("{}={!r}".format(k, v) for k, v in kwargs.items())))
@@ -1546,7 +1547,7 @@ created. The ``seen`` dictionary is updated for *cfvar*.
         '''
         g = self.write_vars
         
-        if True:
+        if zzz:
             masked = numpy.ma.isMA(array)
             if masked:
                 array = array.toflex()
@@ -2053,7 +2054,7 @@ extra trailing dimension.
                 ncvar = g['key_to_ncvar'][owning_coord_key]
                 formula_terms = ' '.join(formula_terms)
                 g['nc'][ncvar].setncattr('formula_terms', formula_terms)
-                if True:
+                if zzz:
                     g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
                         ncvar=ncvar, formula_terms=formula_terms))
             
@@ -2066,7 +2067,7 @@ extra trailing dimension.
                 if bounds_ncvar is not None:
                     bounds_formula_terms = ' '.join(bounds_formula_terms)
                     g['nc'][bounds_ncvar].setncattr('formula_terms', bounds_formula_terms)
-                    if True:
+                    if zzz:
                         g['zzz'].write('{ncvar}.setncattr("formula_terms", {formula_terms!r})\n'.format(
                             ncvar=bounds_ncvar, formula_terms=bounds_formula_terms))
 
@@ -2347,7 +2348,7 @@ write them to the netCDF4.Dataset.
         '''
         self.write_vars['netcdf'].close()
 
-        if True:
+        if zzz:
             self.write_vars['zzz'].close()
     #--- End: def
 
@@ -2364,15 +2365,15 @@ write them to the netCDF4.Dataset.
         except RuntimeError as error:
             raise RuntimeError("{}: {}".format(error, filename))        
 
-        if True:
-            zzz = open('netcdf4_creator.py', 'w')
-            self.write_vars['zzz'] = zzz
+        if zzz:
+            creator = open('netcdf4_creator.py', 'w')
+            self.write_vars['zzz'] = creator
             
-            zzz.writelines(['import netCDF4\n',
-                            'import numpy\n',
-                            '\n',
-                            'nc = netCDF4.Dataset({!r}, {!r}, {format!r})\n'.format(
-                                filename, mode, format=fmt),
+            creator.writelines(['import netCDF4\n',
+                                'import numpy\n',
+                                '\n',
+                                'nc = netCDF4.Dataset({!r}, {!r}, {format!r})\n'.format(
+                                    filename, mode, format=fmt),
             ])
             
         return nc

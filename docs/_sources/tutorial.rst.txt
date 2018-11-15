@@ -7,7 +7,9 @@ Tutorial
 ========
 
 The code examples in this tutorial are available in an
-(:download:`Ipython notebook <../netcdf_files/file.nc>`, 9kB)
+:download:`Ipython notebook <../notebooks/tutorial.ipynb>` (60kB).
+
+----
 
 The :ref:`cfdm <class_extended>` package is imported as follows:
 
@@ -509,7 +511,7 @@ Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:
 
 ================================  ====================================
-Field method                      Description
+Method                            Description
 ================================  ====================================
 `~Field.nc_get_variable`          Return the netCDF variable name
 `~Field.nc_set_variable`          Set the netCDF variable name
@@ -613,8 +615,8 @@ new netCDF file on disk:
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
    >>> cfdm.write(q, 'q_file.nc')
    >>> x
-   [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
-    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+   [<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+    <Field: specific_humidity(latitude(5), longitude(8)) 1>]
    >>> cfdm.write(f, 'new_file.nc')
 
 The `cfdm.write` function has optional parameters to
@@ -644,6 +646,13 @@ internally (usually based on the standard name if it exists).
 It is possible to create netCDF unlimited dimensions and set the HDF5
 chunk size using the `nc_unlimited_dimensions` and
 `~Field.nc_chunksize` methods of the field construct.
+
+Scalar coordinate variables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+<TODO>
+
+
 
 .. _constructs:
 
@@ -792,6 +801,35 @@ field construct, which supports the same filtering options as the
    >>> t.get_construct('units:degrees')
    ValueError: More than one construct meets criteria
 
+Metadata constructs of a particular type can also be retrieved with
+the following methods of the field construct:
+
+==============================  ====================================
+Method                          Description
+==============================  ====================================
+`~Field.domain_axes`            The domain axis constructs
+`~Field.cell_methods`           The ordered cell method constructs
+`~Field.field_ancillaries`      The field ancillary constructs
+`~Field.auxiliary_coordinates`  The auxiliary coordinate constructs
+`~Field.cell_measures`          The cell measure constructs
+`~Field.dimension_coordinates`  The dimension coordinates
+`~Field.domain_ancillaries`     The domain ancillary constructs
+`~Field.coordinate_references`  The coordinate reference constructs
+==============================  ====================================
+
+.. code:: python
+
+   >>> t.cell_methods()
+   OrderedDict([('cellmethod0',
+                  <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+   >>> t.dimension_coordinates()
+   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+
 Domain axes
 ^^^^^^^^^^^
 
@@ -814,7 +852,18 @@ found with the `~Field.construct_axes` method of the field construct:
     'domainancillary2': ('domainaxis1', 'domainaxis2'),
     'fieldancillary0': ('domainaxis1', 'domainaxis2')}
 
-<TODO: get_data_axes>
+The domain axis constructs spanned by the field construct's data found
+with the `~Field.get_data_axes` method of the field construct:
+
+.. code:: python
+
+   >>> t.domain_axes()
+   {'domainaxis0': <DomainAxis: 1>,
+    'domainaxis1': <DomainAxis: 10>,
+    'domainaxis2': <DomainAxis: 9>,
+    'domainaxis3': <DomainAxis: 1>}
+   >>> t.get_data_axes()
+   ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
 Properties and data
 ^^^^^^^^^^^^^^^^^^^
@@ -973,7 +1022,7 @@ setting metadata constructs and mapping data array dimensions to
 domain axis constructs:
 
 =============================================  ======================================================================
-Field method for setting a metadata construct  Description
+Method for setting a metadata construct        Description
 =============================================  ======================================================================
 `~Field.set_domain_axis`                       Set a domain axis construct
 `~Field.set_cell_method`                       Set a cell method construct
