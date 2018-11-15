@@ -7,11 +7,11 @@ Tutorial
 ========
 
 The code examples in this tutorial are available in an
-:download:`Ipython notebook <../notebooks/tutorial.ipynb>` (60kB).
+:download:`IPython notebook <notebooks/tutorial.ipynb>` (60kB).
 
 ----
 
-The :ref:`cfdm <class_extended>` package is imported as follows:
+The cfdm package is imported as follows:
 
 .. code:: python
 
@@ -22,8 +22,8 @@ The :ref:`cfdm <class_extended>` package is imported as follows:
 CF version
 ----------
 
-The version of the `CF conventions <http://cfconventions.org>`_ being
-used may be found with the `cfdm.CF` function:
+The version of the `CF conventions <http://cfconventions.org>`_ and
+the CF data model being used may be found with the `cfdm.CF` function:
 
 .. code:: python
 
@@ -42,7 +42,7 @@ returns the contents as a list of zero or more `Field` class
 instances, each of which represents a field construct [#language]_.
 
 For example, to read the file **file.nc** (:download:`download
-<../netcdf_files/file.nc>`, 9kB) [#files]_:
+<netcdf_files/file.nc>`, 9kB) [#files]_:
 
 .. code:: python
 
@@ -487,173 +487,6 @@ latitude of the original, and with a reversed longitude axis:
 	
 <TODO: squeeze, transpose, expand_dims>
 
-.. _netcdf_interface:
-
-NetCDF interface
-----------------
-
-The logical CF data model is independent of netCDF, but the CF
-conventions are designed to enable the processing and sharing of
-datasets stored in netCDF files. Therefore, the :ref:`cfdm
-<class_extended>` package includes methods for recording and editing
-netCDF elements that are not part of the CF model, but are nonetheless
-often required to interpret and create CF-netCDF datasets. See the
-section on :ref:`philosophy <philosophy>` for a further discussion.
-
-When a netCDF dataset is read, netCDF elements (such as dimension and
-variable names, and some attribute values) that do not have a place in
-the CF data model are, nevertheless, stored within the appropriate
-:ref:`cfdm <class_extended>` objects. This allows them to be used when
-writing field constructs to a new netCDF dataset, and also makes them
-accessible for metadata construct identification <TODO LINK>.
-
-Each construct has methods to access the netCDF elements which it
-requires. For example, the field construct has the following methods:
-
-================================  ====================================
-Method                            Description
-================================  ====================================
-`~Field.nc_get_variable`          Return the netCDF variable name
-`~Field.nc_set_variable`          Set the netCDF variable name
-`~Field.nc_del_variable`          Remove the netCDF variable name
-
-`~Field.nc_has_variable`          Whether the netCDF variable name has
-                                  been set
-
-`~Field.nc_global_attributes`     Return or replace the selection of
-                                  properties to be written as netCDF
-                                  global attributes
-
-`~Field.nc_unlimited_dimensions`  Return or replace the selection of
-                                  domain axis constructs to be written
-                                  as netCDF unlimited dimensions
-================================  ====================================
-
-.. code:: python
-
-   >>> q.nc_get_variable()
-   'q'
-   >>> q.nc_global_attributes()
-   {'project', 'Conventions'}
-   >>> q.nc_unlimited_dimensions()
-   set()
-   >>> q.nc_set_variable('humidity')
-   >>> q.nc_get_variable()
-   'humidity'
-
-The complete collection of netCDF interface methods is:
-
-============================  =======================================  =====================================
-Method                        Classes                                  NetCDF element
-============================  =======================================  =====================================
-`!nc_del_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`,  `Bounds`,
-			      `Count`, `Index`, `List`
-			      				
-`!nc_get_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`, `Bounds`,
-			      `Count`, `Index`, `List`
-			      
-`!nc_has_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`, `Bounds`,
-			      `Count`, `Index`, `List`
-			      
-`!nc_set_variable`            `Field`, `DimensionCoordinate`,          Variable name
-                              `AuxiliaryCoordinate`, `CellMeasure`,
-                              `DomainAncillary`, `FieldAncillary`,
-                              `CoordinateReference`, `Bounds`,
-			      `Count`, `Index`, `List`
-
-`!nc_del_dimension`           `DomainAxis`                             Dimension name
-			      
-`!nc_get_dimension`	      `DomainAxis`                             Dimension name
-			      			                    
-`!nc_has_dimension`	      `DomainAxis`                             Dimension name
-			      			                    
-`!nc_set_dimension`	      `DomainAxis`                             Dimension name
-			      
-`!nc_global_attributes`	      `Field`                                  Global attributes
-
-`!nc_unlimited_dimensions`    `Field`                                  Unlimited dimensions
-
-`!nc_external`                `CellMeasure`                            External variable status
-
-`!nc_del_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-
-`!nc_get_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-
-`!nc_has_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-
-`!nc_set_instance_dimension`  `Index`                                  Instance dimension of a ragged array
-  
-`!nc_del_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
-
-`!nc_get_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
-    
-`!nc_has_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array   
-
-`!nc_set_sample_dimension`    `Count`, `Index`                         Sample  dimension of a ragged array
-============================  =======================================  =====================================
-
-.. _write:
-   
-Writing to disk
----------------
-
-The `cfdm.write` function writes a field, or sequence of fields, to a
-new netCDF file on disk:
-
-.. code:: python
-
-   >>> q
-   <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> cfdm.write(q, 'q_file.nc')
-   >>> x
-   [<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
-    <Field: specific_humidity(latitude(5), longitude(8)) 1>]
-   >>> cfdm.write(f, 'new_file.nc')
-
-The `cfdm.write` function has optional parameters to
-
-* set the output netCDF format (all netCDF3 and netCDF4 formats are
-  possible);
-
-* specify which field construct properties should become netCDF data
-  variable attributes and which should, if possible, become netCDF
-  global attributes;
-  
-* create :ref:`external variables <external_variables>` in an external
-  file;
-
-* change the data type of output data arrays;
-  
-* apply netCDF compression and packing; and
-
-* set the endian-ness of the output data.
-
-Output netCDF variable and dimension names read from a netCDF dataset
-are stored in the resulting field constructs, and may also be set
-manually with the `!nc_set_variable` and `nc_set_dimension`
-methods. If a name has not been set then one will be generated
-internally (usually based on the standard name if it exists).
-
-It is possible to create netCDF unlimited dimensions and set the HDF5
-chunk size using the `nc_unlimited_dimensions` and
-`~Field.nc_chunksize` methods of the field construct.
-
-Scalar coordinate variables
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-<TODO>
-
-
-
 .. _constructs:
 
 Metadata constructs
@@ -661,8 +494,7 @@ Metadata constructs
 
 The metadata constructs are all of the constructs that serve to
 describe the field construct that contains them. Each CF data model
-metadata construct has a corresponding :ref:`cfdm <class_extended>`
-class:
+metadata construct has a corresponding cfdm class:
 
 =======================  ==============================  =====================  
 CF data model construct  Description                     cfdm class             
@@ -766,8 +598,6 @@ metadata constructs by
    {'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
    >>> t.constructs(construct_type='dimension_coordinate', axes=['domainaxis1'])
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
-   >>> t.constructs('ncvar%b')
-   {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
    >>> t.constructs('wavelength')
    {}
    
@@ -951,6 +781,296 @@ Where applicable, these classes also share the same API as the field:
     'b': 'domainancillary1',
     'orog': 'domainancillary2'}
 
+.. _netcdf_interface:
+
+NetCDF interface
+----------------
+
+The logical CF data model is independent of netCDF, but the CF
+conventions are designed to enable the processing and sharing of
+datasets stored in netCDF files. Therefore, the cfdm package includes
+methods for recording and editing netCDF elements that are not part of
+the CF model, but are nonetheless often required to interpret and
+create CF-netCDF datasets. See the section on :ref:`philosophy
+<philosophy>` for a further discussion.
+
+When a netCDF dataset is read, netCDF elements (such as dimension and
+variable names, and some attribute values) that do not have a place in
+the CF data model are, nevertheless, stored within the appropriate
+cfdm objects. This allows them to be used when writing field
+constructs to a new netCDF dataset, and also makes them accessible for
+:ref:`metadata construct identification <constructs>`.
+
+Each construct has methods to access the netCDF elements which it
+requires. For example, the field construct has the following methods:
+
+================================  ====================================
+Method                            Description
+================================  ====================================
+`~Field.nc_get_variable`          Return the netCDF variable name
+`~Field.nc_set_variable`          Set the netCDF variable name
+`~Field.nc_del_variable`          Remove the netCDF variable name
+
+`~Field.nc_has_variable`          Whether the netCDF variable name has
+                                  been set
+
+`~Field.nc_global_attributes`     Return or replace the selection of
+                                  properties to be written as netCDF
+                                  global attributes
+
+`~Field.nc_unlimited_dimensions`  Return or replace the selection of
+                                  domain axis constructs to be written
+                                  as netCDF unlimited dimensions
+================================  ====================================
+
+.. code:: python
+
+   >>> q.nc_get_variable()
+   'q'
+   >>> q.nc_global_attributes()
+   {'project', 'Conventions'}
+   >>> q.nc_unlimited_dimensions()
+   set()
+   >>> q.nc_set_variable('humidity')
+   >>> q.nc_get_variable()
+   'humidity'
+
+The complete collection of netCDF interface methods is:
+
+============================  =======================================  =====================================
+Method                        Classes                                  NetCDF element
+============================  =======================================  =====================================
+`!nc_del_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`,  `Bounds`,
+			      `Count`, `Index`, `List`
+			      				
+`!nc_get_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`, `Bounds`,
+			      `Count`, `Index`, `List`
+			      
+`!nc_has_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`, `Bounds`,
+			      `Count`, `Index`, `List`
+			      
+`!nc_set_variable`            `Field`, `DimensionCoordinate`,          Variable name
+                              `AuxiliaryCoordinate`, `CellMeasure`,
+                              `DomainAncillary`, `FieldAncillary`,
+                              `CoordinateReference`, `Bounds`,
+			      `Count`, `Index`, `List`
+
+`!nc_del_dimension`           `DomainAxis`                             Dimension name
+			      
+`!nc_get_dimension`	      `DomainAxis`                             Dimension name
+			      			                    
+`!nc_has_dimension`	      `DomainAxis`                             Dimension name
+			      			                    
+`!nc_set_dimension`	      `DomainAxis`                             Dimension name
+			      
+`!nc_global_attributes`	      `Field`                                  Global attributes
+
+`!nc_unlimited_dimensions`    `Field`                                  Unlimited dimensions
+
+`!nc_external`                `CellMeasure`                            External variable status
+
+`!nc_del_instance_dimension`  `Index`                                  Instance dimension of a ragged array
+
+`!nc_get_instance_dimension`  `Index`                                  Instance dimension of a ragged array
+
+`!nc_has_instance_dimension`  `Index`                                  Instance dimension of a ragged array
+
+`!nc_set_instance_dimension`  `Index`                                  Instance dimension of a ragged array
+  
+`!nc_del_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
+
+`!nc_get_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array
+    
+`!nc_has_sample_dimension`    `Count`, `Index`                         Sample dimension of a ragged array   
+
+`!nc_set_sample_dimension`    `Count`, `Index`                         Sample  dimension of a ragged array
+============================  =======================================  =====================================
+
+NetCDF variable and dimension names may be used to identify metadata
+constructs via the `~Field.constructs` and `~Field.get_construct`
+methods of the field construct:
+
+.. code:: python
+	  
+   >>> t.constructs('ncvar%b')
+   {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
+   >>> t.get_construct('ncvar%a')
+   <DomainAncillary: ncvar%a(1) m>
+   >>> t.get_construct('ncdim%x')
+   <DomainAxis: 9>
+   
+.. _write:
+   
+Writing to disk
+---------------
+
+The `cfdm.write` function writes a field construct, or a sequence of
+field constructs, to a new netCDF file on disk:
+
+.. code:: python
+
+   >>> print(q)
+   Field: specific_humidity (ncvar%humidity)
+   -----------------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> cfdm.write(q, 'q_file.nc')
+
+The new dataset is structured as follows:
+
+.. code:: bash
+
+   $ ncdump -h q_file.nc
+   netcdf q_file {
+   dimensions:
+   	lat = 5 ;
+   	bounds2 = 2 ;
+   	lon = 8 ;
+   variables:
+   	double lat_bnds(lat, bounds2) ;
+   	double lat(lat) ;
+   		lat:units = "degrees_north" ;
+   		lat:standard_name = "latitude" ;
+   		lat:bounds = "lat_bnds" ;
+   	double lon_bnds(lon, bounds2) ;
+   	double lon(lon) ;
+   		lon:units = "degrees_east" ;
+   		lon:standard_name = "longitude" ;
+   		lon:bounds = "lon_bnds" ;
+   	double time ;
+   		time:units = "days since 2018-12-01" ;
+   		time:standard_name = "time" ;
+   	double humidity(lat, lon) ;
+   		humidity:standard_name = "specific_humidity" ;
+   		humidity:cell_methods = "area: mean" ;
+   		humidity:units = "1" ;
+   		humidity:coordinates = "time" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.7" ;
+   		:project = "research" ;
+   }
+
+A sequence of field constructs iw written in exactly the same way:
+   
+.. code:: python
+	     
+   >>> x
+   [<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+    <Field: specific_humidity(latitude(5), longitude(8)) 1>]
+   >>> cfdm.write(x, 'new_file.nc')
+
+The `cfdm.write` function has optional parameters to
+
+* set the output netCDF format (all netCDF3 and netCDF4 formats are
+  possible);
+
+* specify which field construct properties should become netCDF data
+  variable attributes and which should, if possible, become netCDF
+  global attributes;
+  
+* create :ref:`external variables <external_variables>` in an external
+  file;
+
+* change the data type of output data arrays;
+  
+* apply netCDF compression and packing; and
+
+* set the endian-ness of the output data.
+
+Output netCDF variable and dimension names read from a netCDF dataset
+are stored in the resulting field constructs, and may also be set
+manually with the `!nc_set_variable` and `nc_set_dimension`
+methods. If a name has not been set then one will be generated
+internally (usually based on the standard name if it exists).
+
+It is possible to create netCDF unlimited dimensions and set the HDF5
+chunk size using the `nc_unlimited_dimensions` and
+`~Field.nc_chunksize` methods of the field construct.
+
+Scalar coordinate variables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+CF-netCDF scalar (i.e. zero-dimensional) coordinate variables are
+created when there is a size one domain axis construct which is
+spanned by a dimension coordinate construct's data array, but not the
+field construct's data, nor the data of any other metadata construct.
+
+This is the case for the "specific hunidity" field construct ``q``
+that was written to the file **q_file.nc**.
+
+To change this so that the "time" dimension coordinate construct is
+written as a CF-netCDF size one coordinate variable, the field
+construct's data must be expanded to span the corresponding size one
+domain axis constuct, by using the `~Field.expand_dims` method of the
+field construct:
+
+.. code:: python
+		   
+   >>> q
+   <Field: specific_humidity(latitude(5), longitude(8)) 1>
+   >>> q.dimension_coordinates()
+   {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+    'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+    'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+   >>> q.construct_axes()
+   {'dimensioncoordinate0': ('domainaxis0',),
+    'dimensioncoordinate1': ('domainaxis1',),
+    'dimensioncoordinate2': ('domainaxis2',)}
+   >>> q2 = q.expand_dims(axis='domainaxis2')
+   >>> q2
+   <Field: specific_humidity(time(1), latitude(5), longitude(8)) 1>
+   >>> cfdm.write(q2, 'q2_file.nc')
+
+The new dataset is structured as follows (note, relative to file
+**q_file.nc**, the existence of the "time" dimension and the lack of a
+"coordinates" attribute on the, now three-dimensional, data variable):
+   
+.. code:: bash
+
+   $ ncdump -h q2_file.nc
+   netcdf q2_file {
+   dimensions:
+   	lat = 5 ;
+   	bounds2 = 2 ;
+   	lon = 8 ;
+   	time = 1 ;
+   variables:
+   	double lat_bnds(lat, bounds2) ;
+   	double lat(lat) ;
+   		lat:units = "degrees_north" ;
+   		lat:standard_name = "latitude" ;
+   		lat:bounds = "lat_bnds" ;
+   	double lon_bnds(lon, bounds2) ;
+   	double lon(lon) ;
+   		lon:units = "degrees_east" ;
+   		lon:standard_name = "longitude" ;
+   		lon:bounds = "lon_bnds" ;
+   	double time(time) ;
+   		time:units = "days since 2018-12-01" ;
+   		time:standard_name = "time" ;
+   	double humidity(time, lat, lon) ;
+   		humidity:units = "1" ;
+   		humidity:standard_name = "specific_humidity" ;
+   		humidity:cell_methods = "area: mean" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.7" ;
+   		:project = "research" ;
+   }
+    
 .. _field_creation:
 
 Field creation
@@ -1175,9 +1295,11 @@ The new field construct may now be inspected:
        Data(longitude(8)) = [0.0, ..., 7.0] degrees_east
 
 It is not necessary to set the "Conventions" property, because this is
-automatically included in output files as a netCDF global attribute
-corresponding to the version number (e.g. ``'1.7'``) of the :ref:`cfdm
-<class_extended>` package.
+automatically included in output files as a netCDF global
+"Conventions" attribute corresponding to the version number of CF
+being used, as returned by the `cfdm.CF` function. For example, a CF
+version of ``'1.7'`` will produce a "Conventions" attribute value of
+``'CF-1.7'``.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
@@ -1559,8 +1681,8 @@ if they had actually been stored in the same file, simply by providing
 the external file names to the `cfdm.read` function.
 
 This is illustrated with the files **parent.nc** (:download:`download
-<../netcdf_files/parent.nc>`, 2kB) and **external.nc**
-(:download:`download <../netcdf_files/external.nc>`, 1kB) [#files]_:
+<netcdf_files/parent.nc>`, 2kB) and **external.nc**
+(:download:`download <netcdf_files/external.nc>`, 1kB) [#files]_:
 
 .. code:: bash
    
@@ -1715,7 +1837,7 @@ indexed contiguous, ragged array is stored in an `Index` object and is
 retrieved with the `get_index_variable` method of the `Data` instance.
 
 This is illustrated with the file **contiguous.nc**
-(:download:`download <../netcdf_files/contiguous.nc>`, 2kB) [#files]_:
+(:download:`download <netcdf_files/contiguous.nc>`, 2kB) [#files]_:
 
 .. code:: bash
    
@@ -1922,7 +2044,7 @@ stored in a `List` object and is retrieved with the
 `get_list_variable` method of the `Data` instance.
 
 This is illustrated with the file **gathered.nc** (:download:`download
-<../netcdf_files/gathered.nc>`, 1kB) [#files]_:
+<netcdf_files/gathered.nc>`, 1kB) [#files]_:
 
 .. code:: bash
    
@@ -2090,9 +2212,9 @@ We can now inspect the new field construct:
                when the original abstract meaning is intended.
 	     	    
 .. [#files] The tutorial files may be also found in the
-            `docs/netcdf_files
-            <https://github.com/NCAS-CMS/cfdm/master/docs/netcdf_files>`_
-            directory.
+            `docs/source/netcdf_files
+            <https://github.com/NCAS-CMS/cfdm/master/docs/souce/netcdf_files>`_
+            directory of the code repository.
 
 
 .. External links to the CF conventions

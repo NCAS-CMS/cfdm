@@ -40,9 +40,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#properties">Properties</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data">Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#subspacing">Subspacing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#metadata-constructs">Metadata constructs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#netcdf-interface">NetCDF interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#writing-to-disk">Writing to disk</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#metadata-constructs">Metadata constructs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#field-creation">Field creation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#domain">Domain</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#copying">Copying</a></li>
@@ -93,16 +93,16 @@
   <div class="section" id="tutorial">
 <span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <p>The code examples in this tutorial are available in an
-<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">Ipython</span> <span class="pre">notebook</span></code></a> (60kB).</p>
+<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">IPython</span> <span class="pre">notebook</span></code></a> (60kB).</p>
 <hr class="docutils" />
-<p>The <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package is imported as follows:</p>
+<p>The cfdm package is imported as follows:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 </pre></div>
 </div>
 <div class="section" id="cf-version">
 <span id="id2"></span><h2>CF version<a class="headerlink" href="#cf-version" title="Permalink to this headline">¶</a></h2>
-<p>The version of the <a class="reference external" href="http://cfconventions.org">CF conventions</a> being
-used may be found with the <a class="reference internal" href="function/cfdm.CF.html#cfdm.CF" title="cfdm.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CF</span></code></a> function:</p>
+<p>The version of the <a class="reference external" href="http://cfconventions.org">CF conventions</a> and
+the CF data model being used may be found with the <a class="reference internal" href="function/cfdm.CF.html#cfdm.CF" title="cfdm.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CF</span></code></a> function:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">CF</span><span class="p">()</span>
 <span class="go">&#39;1.7&#39;</span>
 </pre></div>
@@ -511,223 +511,11 @@ latitude of the original, and with a reversed longitude axis:</p>
 </div>
 <p>&lt;TODO: squeeze, transpose, expand_dims&gt;</p>
 </div>
-<div class="section" id="netcdf-interface">
-<span id="id11"></span><h2>NetCDF interface<a class="headerlink" href="#netcdf-interface" title="Permalink to this headline">¶</a></h2>
-<p>The logical CF data model is independent of netCDF, but the CF
-conventions are designed to enable the processing and sharing of
-datasets stored in netCDF files. Therefore, the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package includes methods for recording and editing
-netCDF elements that are not part of the CF model, but are nonetheless
-often required to interpret and create CF-netCDF datasets. See the
-section on <a class="reference internal" href="philosophy.html#philosophy"><span class="std std-ref">philosophy</span></a> for a further discussion.</p>
-<p>When a netCDF dataset is read, netCDF elements (such as dimension and
-variable names, and some attribute values) that do not have a place in
-the CF data model are, nevertheless, stored within the appropriate
-<a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> objects. This allows them to be used when
-writing field constructs to a new netCDF dataset, and also makes them
-accessible for metadata construct identification &lt;TODO LINK&gt;.</p>
-<p>Each construct has methods to access the netCDF elements which it
-requires. For example, the field construct has the following methods:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="47%" />
-<col width="53%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Method</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_get_variable.html#cfdm.Field.nc_get_variable" title="cfdm.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
-<td>Return the netCDF variable name</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_set_variable.html#cfdm.Field.nc_set_variable" title="cfdm.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
-<td>Set the netCDF variable name</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_del_variable.html#cfdm.Field.nc_del_variable" title="cfdm.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
-<td>Remove the netCDF variable name</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_has_variable.html#cfdm.Field.nc_has_variable" title="cfdm.Field.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
-<td>Whether the netCDF variable name has
-been set</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a></td>
-<td>Return or replace the selection of
-properties to be written as netCDF
-global attributes</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a></td>
-<td>Return or replace the selection of
-domain axis constructs to be written
-as netCDF unlimited dimensions</td>
-</tr>
-</tbody>
-</table>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;q&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
-<span class="go">{&#39;project&#39;, &#39;Conventions&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_unlimited_dimensions</span><span class="p">()</span>
-<span class="go">set()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;humidity&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
-<span class="go">&#39;humidity&#39;</span>
-</pre></div>
-</div>
-<p>The complete collection of netCDF interface methods is:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="27%" />
-<col width="38%" />
-<col width="36%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Method</th>
-<th class="head">Classes</th>
-<th class="head">NetCDF element</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
-<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
-<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>,  <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
-<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
-<td>Variable name</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
-<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
-<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>, <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
-<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
-<td>Variable name</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
-<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
-<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>, <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
-<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
-<td>Variable name</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
-<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
-<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>, <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
-<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
-<td>Variable name</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
-<td>Dimension name</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
-<td>Dimension name</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
-<td>Dimension name</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
-<td>Dimension name</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
-<td>Global attributes</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
-<td>Unlimited dimensions</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_external</span></code></td>
-<td><a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a></td>
-<td>External variable status</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_instance_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Instance dimension of a ragged array</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_instance_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Instance dimension of a ragged array</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_instance_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Instance dimension of a ragged array</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_instance_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Instance dimension of a ragged array</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Sample dimension of a ragged array</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Sample dimension of a ragged array</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Sample dimension of a ragged array</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
-<td>Sample  dimension of a ragged array</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="writing-to-disk">
-<span id="write"></span><h2>Writing to disk<a class="headerlink" href="#writing-to-disk" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> function writes a field, or sequence of fields, to a
-new netCDF file on disk:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
-<span class="go">&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="s1">&#39;q_file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
-<span class="go">[&lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;,</span>
-<span class="go"> &lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;new_file.nc&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> function has optional parameters to</p>
-<ul class="simple">
-<li>set the output netCDF format (all netCDF3 and netCDF4 formats are
-possible);</li>
-<li>specify which field construct properties should become netCDF data
-variable attributes and which should, if possible, become netCDF
-global attributes;</li>
-<li>create <a class="reference internal" href="#external-variables"><span class="std std-ref">external variables</span></a> in an external
-file;</li>
-<li>change the data type of output data arrays;</li>
-<li>apply netCDF compression and packing; and</li>
-<li>set the endian-ness of the output data.</li>
-</ul>
-<p>Output netCDF variable and dimension names read from a netCDF dataset
-are stored in the resulting field constructs, and may also be set
-manually with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code>
-methods. If a name has not been set then one will be generated
-internally (usually based on the standard name if it exists).</p>
-<p>It is possible to create netCDF unlimited dimensions and set the HDF5
-chunk size using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code> and
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_chunksize</span></code> methods of the field construct.</p>
-<div class="section" id="scalar-coordinate-variables">
-<h3>Scalar coordinate variables<a class="headerlink" href="#scalar-coordinate-variables" title="Permalink to this headline">¶</a></h3>
-<p>&lt;TODO&gt;</p>
-</div>
-</div>
 <div class="section" id="metadata-constructs">
 <span id="constructs"></span><h2>Metadata constructs<a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p>The metadata constructs are all of the constructs that serve to
 describe the field construct that contains them. Each CF data model
-metadata construct has a corresponding <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a>
-class:</p>
+metadata construct has a corresponding cfdm class:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="31%" />
@@ -853,8 +641,6 @@ metadata constructs by</p>
 <span class="go">{&#39;dimensioncoordinate3&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
 <span class="go">{&#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: grid_latitude(10) degrees&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;ncvar%b&#39;</span><span class="p">)</span>
-<span class="go">{&#39;domainancillary1&#39;: &lt;DomainAncillary: ncvar%b(1) &gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;wavelength&#39;</span><span class="p">)</span>
 <span class="go">{}</span>
 </pre></div>
@@ -1061,6 +847,331 @@ coordinate system.</td>
 <span class="go">{&#39;a&#39;: &#39;domainancillary0&#39;,</span>
 <span class="go"> &#39;b&#39;: &#39;domainancillary1&#39;,</span>
 <span class="go"> &#39;orog&#39;: &#39;domainancillary2&#39;}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="netcdf-interface">
+<span id="id11"></span><h2>NetCDF interface<a class="headerlink" href="#netcdf-interface" title="Permalink to this headline">¶</a></h2>
+<p>The logical CF data model is independent of netCDF, but the CF
+conventions are designed to enable the processing and sharing of
+datasets stored in netCDF files. Therefore, the cfdm package includes
+methods for recording and editing netCDF elements that are not part of
+the CF model, but are nonetheless often required to interpret and
+create CF-netCDF datasets. See the section on <a class="reference internal" href="philosophy.html#philosophy"><span class="std std-ref">philosophy</span></a> for a further discussion.</p>
+<p>When a netCDF dataset is read, netCDF elements (such as dimension and
+variable names, and some attribute values) that do not have a place in
+the CF data model are, nevertheless, stored within the appropriate
+cfdm objects. This allows them to be used when writing field
+constructs to a new netCDF dataset, and also makes them accessible for
+<a class="reference internal" href="#constructs"><span class="std std-ref">metadata construct identification</span></a>.</p>
+<p>Each construct has methods to access the netCDF elements which it
+requires. For example, the field construct has the following methods:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Method</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_get_variable.html#cfdm.Field.nc_get_variable" title="cfdm.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
+<td>Return the netCDF variable name</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_set_variable.html#cfdm.Field.nc_set_variable" title="cfdm.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
+<td>Set the netCDF variable name</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_del_variable.html#cfdm.Field.nc_del_variable" title="cfdm.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
+<td>Remove the netCDF variable name</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_has_variable.html#cfdm.Field.nc_has_variable" title="cfdm.Field.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
+<td>Whether the netCDF variable name has
+been set</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a></td>
+<td>Return or replace the selection of
+properties to be written as netCDF
+global attributes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cfdm.Field.nc_unlimited_dimensions.html#cfdm.Field.nc_unlimited_dimensions" title="cfdm.Field.nc_unlimited_dimensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></a></td>
+<td>Return or replace the selection of
+domain axis constructs to be written
+as netCDF unlimited dimensions</td>
+</tr>
+</tbody>
+</table>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
+<span class="go">&#39;q&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_global_attributes</span><span class="p">()</span>
+<span class="go">{&#39;project&#39;, &#39;Conventions&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_unlimited_dimensions</span><span class="p">()</span>
+<span class="go">set()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_set_variable</span><span class="p">(</span><span class="s1">&#39;humidity&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
+<span class="go">&#39;humidity&#39;</span>
+</pre></div>
+</div>
+<p>The complete collection of netCDF interface methods is:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="38%" />
+<col width="36%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Method</th>
+<th class="head">Classes</th>
+<th class="head">NetCDF element</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
+<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
+<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
+<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>,  <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
+<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
+<td>Variable name</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
+<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
+<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
+<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>, <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
+<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
+<td>Variable name</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
+<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
+<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
+<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>, <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
+<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
+<td>Variable name</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>, <a class="reference internal" href="class/cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a>,
+<a class="reference internal" href="class/cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
+<a class="reference internal" href="class/cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a>, <a class="reference internal" href="class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a>,
+<a class="reference internal" href="class/cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a>, <a class="reference internal" href="class/cfdm.Bounds.html#cfdm.Bounds" title="cfdm.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>,
+<a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a>, <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a></td>
+<td>Variable name</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
+<td>Dimension name</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
+<td>Dimension name</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
+<td>Dimension name</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a></td>
+<td>Dimension name</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
+<td>Global attributes</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
+<td>Unlimited dimensions</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_external</span></code></td>
+<td><a class="reference internal" href="class/cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a></td>
+<td>External variable status</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_instance_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Instance dimension of a ragged array</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_instance_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Instance dimension of a ragged array</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_instance_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Instance dimension of a ragged array</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_instance_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Instance dimension of a ragged array</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Sample dimension of a ragged array</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Sample dimension of a ragged array</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Sample dimension of a ragged array</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></td>
+<td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a>, <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></td>
+<td>Sample  dimension of a ragged array</td>
+</tr>
+</tbody>
+</table>
+<p>NetCDF variable and dimension names may be used to identify metadata
+constructs via the <a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> and <a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>
+methods of the field construct:</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;ncvar%b&#39;</span><span class="p">)</span>
+<span class="go">{&#39;domainancillary1&#39;: &lt;DomainAncillary: ncvar%b(1) &gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncvar%a&#39;</span><span class="p">)</span>
+<span class="go">&lt;DomainAncillary: ncvar%a(1) m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncdim</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">&lt;DomainAxis: 9&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="writing-to-disk">
+<span id="write"></span><h2>Writing to disk<a class="headerlink" href="#writing-to-disk" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> function writes a field construct, or a sequence of
+field constructs, to a new netCDF file on disk:</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%humidity)</span>
+<span class="go">-----------------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="s1">&#39;q_file.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The new dataset is structured as follows:</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h q_file.nc
+netcdf q_file {
+dimensions:
+     lat = 5 ;
+     bounds2 = 2 ;
+     lon = 8 ;
+variables:
+     double lat_bnds(lat, bounds2) ;
+     double lat(lat) ;
+             lat:units = &quot;degrees_north&quot; ;
+             lat:standard_name = &quot;latitude&quot; ;
+             lat:bounds = &quot;lat_bnds&quot; ;
+     double lon_bnds(lon, bounds2) ;
+     double lon(lon) ;
+             lon:units = &quot;degrees_east&quot; ;
+             lon:standard_name = &quot;longitude&quot; ;
+             lon:bounds = &quot;lon_bnds&quot; ;
+     double time ;
+             time:units = &quot;days since 2018-12-01&quot; ;
+             time:standard_name = &quot;time&quot; ;
+     double humidity(lat, lon) ;
+             humidity:standard_name = &quot;specific_humidity&quot; ;
+             humidity:cell_methods = &quot;area: mean&quot; ;
+             humidity:units = &quot;1&quot; ;
+             humidity:coordinates = &quot;time&quot; ;
+
+// global attributes:
+             :Conventions = &quot;CF-1.7&quot; ;
+             :project = &quot;research&quot; ;
+}
+</pre></div>
+</div>
+<p>A sequence of field constructs iw written in exactly the same way:</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">[&lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;,</span>
+<span class="go"> &lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;new_file.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> function has optional parameters to</p>
+<ul class="simple">
+<li>set the output netCDF format (all netCDF3 and netCDF4 formats are
+possible);</li>
+<li>specify which field construct properties should become netCDF data
+variable attributes and which should, if possible, become netCDF
+global attributes;</li>
+<li>create <a class="reference internal" href="#external-variables"><span class="std std-ref">external variables</span></a> in an external
+file;</li>
+<li>change the data type of output data arrays;</li>
+<li>apply netCDF compression and packing; and</li>
+<li>set the endian-ness of the output data.</li>
+</ul>
+<p>Output netCDF variable and dimension names read from a netCDF dataset
+are stored in the resulting field constructs, and may also be set
+manually with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code>
+methods. If a name has not been set then one will be generated
+internally (usually based on the standard name if it exists).</p>
+<p>It is possible to create netCDF unlimited dimensions and set the HDF5
+chunk size using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_unlimited_dimensions</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_chunksize</span></code> methods of the field construct.</p>
+<div class="section" id="scalar-coordinate-variables">
+<h3>Scalar coordinate variables<a class="headerlink" href="#scalar-coordinate-variables" title="Permalink to this headline">¶</a></h3>
+<p>CF-netCDF scalar (i.e. zero-dimensional) coordinate variables are
+created when there is a size one domain axis construct which is
+spanned by a dimension coordinate construct’s data array, but not the
+field construct’s data, nor the data of any other metadata construct.</p>
+<p>This is the case for the “specific hunidity” field construct <code class="docutils literal notranslate"><span class="pre">q</span></code>
+that was written to the file <strong>q_file.nc</strong>.</p>
+<p>To change this so that the “time” dimension coordinate construct is
+written as a CF-netCDF size one coordinate variable, the field
+construct’s data must be expanded to span the corresponding size one
+domain axis constuct, by using the <a class="reference internal" href="method/cfdm.Field.expand_dims.html#cfdm.Field.expand_dims" title="cfdm.Field.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a> method of the
+field construct:</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<span class="go">&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">dimension_coordinates</span><span class="p">()</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">construct_axes</span><span class="p">()</span>
+<span class="go">{&#39;dimensioncoordinate0&#39;: (&#39;domainaxis0&#39;,),</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: (&#39;domainaxis1&#39;,),</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: (&#39;domainaxis2&#39;,)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q2</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q2</span>
+<span class="go">&lt;Field: specific_humidity(time(1), latitude(5), longitude(8)) 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span> <span class="s1">&#39;q2_file.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The new dataset is structured as follows (note, relative to file
+<strong>q_file.nc</strong>, the existence of the “time” dimension and the lack of a
+“coordinates” attribute on the, now three-dimensional, data variable):</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h q2_file.nc
+netcdf q2_file {
+dimensions:
+     lat = 5 ;
+     bounds2 = 2 ;
+     lon = 8 ;
+     time = 1 ;
+variables:
+     double lat_bnds(lat, bounds2) ;
+     double lat(lat) ;
+             lat:units = &quot;degrees_north&quot; ;
+             lat:standard_name = &quot;latitude&quot; ;
+             lat:bounds = &quot;lat_bnds&quot; ;
+     double lon_bnds(lon, bounds2) ;
+     double lon(lon) ;
+             lon:units = &quot;degrees_east&quot; ;
+             lon:standard_name = &quot;longitude&quot; ;
+             lon:bounds = &quot;lon_bnds&quot; ;
+     double time(time) ;
+             time:units = &quot;days since 2018-12-01&quot; ;
+             time:standard_name = &quot;time&quot; ;
+     double humidity(time, lat, lon) ;
+             humidity:units = &quot;1&quot; ;
+             humidity:standard_name = &quot;specific_humidity&quot; ;
+             humidity:cell_methods = &quot;area: mean&quot; ;
+
+// global attributes:
+             :Conventions = &quot;CF-1.7&quot; ;
+             :project = &quot;research&quot; ;
+}
 </pre></div>
 </div>
 </div>
@@ -1287,8 +1398,11 @@ constructs (data arrays have been generated with dummy values using
 </pre></div>
 </div>
 <p>It is not necessary to set the “Conventions” property, because this is
-automatically included in output files as a netCDF global attribute
-corresponding to the version number (e.g. <code class="docutils literal notranslate"><span class="pre">'1.7'</span></code>) of the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package.</p>
+automatically included in output files as a netCDF global
+“Conventions” attribute corresponding to the version number of CF
+being used, as returned by the <a class="reference internal" href="function/cfdm.CF.html#cfdm.CF" title="cfdm.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CF</span></code></a> function. For example, a CF
+version of <code class="docutils literal notranslate"><span class="pre">'1.7'</span></code> will produce a “Conventions” attribute value of
+<code class="docutils literal notranslate"><span class="pre">'CF-1.7'</span></code>.</p>
 <p>If this field were to be written to a netCDF dataset then, in the
 absence of pre-defined names, default netCDF variable and dimension
 names would be automatically generated (based on standard names where
@@ -2119,8 +2233,8 @@ when the original abstract meaning is intended.</td></tr>
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label">[3]</td><td><em>(<a class="fn-backref" href="#id5">1</a>, <a class="fn-backref" href="#id17">2</a>, <a class="fn-backref" href="#id18">3</a>, <a class="fn-backref" href="#id20">4</a>)</em> The tutorial files may be also found in the
-<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/master/docs/netcdf_files">docs/netcdf_files</a>
-directory.</td></tr>
+<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/master/docs/souce/netcdf_files">docs/source/netcdf_files</a>
+directory of the code repository.</td></tr>
 </tbody>
 </table>
 </div>

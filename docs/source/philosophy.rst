@@ -17,11 +17,10 @@ In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
 includes no functionality beyond that mandated by the CF data
 model. This core implementation provides the basis for an extended
-implementation, the :ref:`cfdm <class_extended>` package, that allows
-the reading and writing of netCDF datasets, as well as having
-comprehensive inspection capabilities, more flexible field
-modification capabilities, and a more user-friendly API (application
-programming interface).
+implementation, the cfdm package, that allows the reading and writing
+of netCDF datasets, as well as having comprehensive inspection
+capabilities, more flexible field modification capabilities, and a
+more user-friendly API (application programming interface).
 
 Here is an example of a simple field created with the :ref:`cfdm.core
 <class_core>` package:
@@ -39,8 +38,7 @@ Here is an example of a simple field created with the :ref:`cfdm.core
    >>> print(f)
    <cfdm.core.field.Field object at 0x7faf6ac23510>
 
-The same field may be created with the :ref:`cfdm <class_extended>`
-package:
+The same field may be created with the cfdm package:
 
 .. code:: python
 
@@ -54,17 +52,16 @@ package:
    Field: altitude
    ---------------
    Data            : altitude(cid%domainaxis0(1))
-   Dimension coords:    TODO
 
 The design of the API also needs to strike a balance between being
 "verbose" and "terse". A verbose API is easier to understand, is more
-memorable, but involves more typing; whilst a terse API is more
-efficient for the experienced user. The :ref:`cfdm <class_extended>`
-package has aimed for an API that more at the verbose end of the
-spectrum: in general it does not use abbreviations for method and
-parameter names, and each method performs a sole function.
+memorable, but usually involves more typing; whilst a terse API is
+more efficient for the experienced user. The cfdm package has aimed
+for an API that more at the verbose end of the spectrum: in general it
+does not use abbreviations for method and parameter names, and each
+method performs a sole function.
 
-The :ref:`cfdm <class_extended>` package is *not* (and not meant to
-be) a general analysis package so it can't, for example, regrid field
-constructs to new domains, perform statistical collapses, combine
-field constructs arithmetically, etc.
+The cfdm package is *not* (and is not meant to be) a general analysis
+package so it can't, for example, regrid field constructs to new
+domains, perform statistical collapses, combine field constructs
+arithmetically, etc.

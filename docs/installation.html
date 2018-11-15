@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorial" href="tutorial.html" />
-    <link rel="prev" title="cfdm" href="index.html" />
+    <link rel="prev" title="cfdm package" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -49,7 +49,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">cfdm</a></li>
+      <li>Previous: <a href="index.html" title="previous chapter">cfdm package</a></li>
       <li>Next: <a href="tutorial.html" title="next chapter">Tutorial</a></li>
   </ul></li>
 </ul>
@@ -83,25 +83,28 @@
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package requires:</p>
+<p>The cfdm package requires:</p>
 <ul class="simple">
-<li><strong>Python</strong> version 2.7 or 3 or newer,</li>
-<li><strong>numpy</strong> version 1.11 or newer,</li>
-<li><strong>netCDF4</strong> version 1.4.0 or newer, and</li>
-<li><strong>future</strong> version 0.16.0 or newer.</li>
+<li><a class="reference external" href="https://www.python.org/">Python</a>,version 2.7 or 3 or newer,</li>
+<li><a class="reference external" href="http://www.numpy.org/">numpy</a>, version 1.11 or newer,</li>
+<li><a class="reference external" href="http://unidata.github.io/netcdf4-python/">netCDF4</a>, version 1.4.0
+or newer, and</li>
+<li><a class="reference external" href="https://python-future.org/">future</a>, version 0.16.0 or newer.</li>
 </ul>
 </div>
 <div class="section" id="conda">
 <h2>conda<a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
-<p>To install <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> using <a class="reference external" href="https://conda.io/docs/">conda</a>, first install <a class="reference external" href="https://www.anaconda.com/download">Anaconda</a> for Python 2 or Python 3, then
-on type on the command line:</p>
+<p>To install cfdm using <a class="reference external" href="https://conda.io/docs/">conda</a>, first install
+<a class="reference external" href="https://www.anaconda.com/download">Anaconda</a> for Python 2 or Python
+3, then on type on the command line:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">ncas</span> <span class="n">cfdm</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="pip">
 <h2>pip<a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
-<p>To install <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> using <a class="reference external" href="https://pypi.org/project/pip/">pip</a>, type on the command line:</p>
+<p>To install cfdm using <a class="reference external" href="https://pypi.org/project/pip/">pip</a>, type on
+the command line:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">cfdm</span>
 </pre></div>
 </div>
@@ -110,8 +113,7 @@ on type on the command line:</p>
 <h2>Source<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
 <p>To install from source:</p>
 <ol class="arabic">
-<li><p class="first">Download the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package from
-<a class="reference external" href="https://pypi.org/project/cfdm">https://pypi.org/project/cfdm</a></p>
+<li><p class="first">Download the cfdm package from <a class="reference external" href="https://pypi.org/project/cfdm">https://pypi.org/project/cfdm</a></p>
 </li>
 <li><p class="first">Unpack the library:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
@@ -124,19 +126,18 @@ on type on the command line:</p>
 </ol>
 <blockquote>
 <div><ul>
-<li><p class="first">To install the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package to a central
-location:</p>
+<li><p class="first">To install the cfdm package to a central location:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">To install the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package locally to the user in a default location:</p>
+<li><p class="first">To install the cfdm package locally to the user in a default
+location:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">To install the <a class="reference internal" href="class.html#class-extended"><span class="std std-ref">cfdm</span></a> package in the
-&lt;directory&gt; of your choice:</p>
+<li><p class="first">To install the cfdm package in the &lt;directory&gt; of your choice:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">home</span><span class="o">=&lt;</span><span class="n">directory</span><span class="o">&gt;</span>
 </pre></div>
 </div>

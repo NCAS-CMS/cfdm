@@ -37,27 +37,40 @@ packages     = ['cfdm']
 
 #package_data = etc_files
 
-long_description = """
+long_description = """**cfdm** is a complete implementation of the `CF data model
+<https://www.geosci-model-dev.net/10/4619/2017>`_, that identifies the
+fundamental elements of the `CF conventions
+<http://cfconventions.org/>`_ and shows how they relate to each other,
+independently of the `netCDF
+<https://www.unidata.ucar.edu/software/netcdf/>`_ encoding.
 
-Home page
-=========
+The central element defined by the CF data model is the **field
+construct**, which corresponds to a CF-netCDF data variable with all
+of its metadata.
 
-* `https://bitbucket.org/cfpython/cfdm`_
+The cfdm package can
 
-Documentation
-=============
+* read field constructs from netCDF datasets,
 
-* 
+* create new field constructs in memory,
 
-Dependencies
-============
+* inspect field constructs,
 
-* See the `https://bitbucket.org/cfpython/cfdm`_ for dependencies.
+* modify field construct metadata and data,
 
-Code license
-============
+* create subspaces of field constructs,
 
-* `MIT License <http://opensource.org/licenses/mit-license.php>`_"""
+* write field constructs to netCDF datasets on disk,
+
+* incorporate, and create, metadata stored in external files,
+
+* read and write data that has been compressed by convention
+  (i.e. ragged or gathered arrays), whilst presenting a view of the
+  data in its uncompressed form.
+
+This project is hosted on a `GitHub repository
+<https://github.com/NCAS-CMS/cfdm>`_ where you may access the most
+up-to-date source."""
 
 setup(name = "cfdm",
       long_description = long_description,
@@ -65,7 +78,7 @@ setup(name = "cfdm",
       description  = "A complete implementation of the CF data model",
       author       = "David Hassell",
       maintainer   = "David Hassell",
-      maintainer_email  = "david.hassell@ncas.ac.uk",
+      maintainer_email = "david.hassell@ncas.ac.uk",
       author_email = "david.hassell@ncas.ac.uk",
       url          = "https://github.com/NCAS-CMS/cfdm",
       download_url = "https://pypi.org/project/cfdm",

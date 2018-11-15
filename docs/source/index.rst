@@ -1,12 +1,11 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-####
-cfdm
-####
+############
+cfdm package
+############
 
 Version |release|
-
 
 .. .. include:: introduction.rst
 .. .. include:: installation.rst
@@ -24,8 +23,8 @@ The CF (Climate and Forecast) metadata conventions
 (http://cfconventions.org) provide a description of the physical
 meaning of data and of their spatial and temporal properties and are
 designed to promote the creation, processing, and sharing of climate
-and forecasting data using Network Common Data Form (netCDF,
-https://www.unidata.ucar.edu/software/netcdf) files and libraries.
+and forecasting data using netCDF files and libraries
+(https://www.unidata.ucar.edu/software/netcdf).
 
 
 CF data model
@@ -47,7 +46,7 @@ consists of
 
 - "metadata constructs" that describe
   
-  - the locations of each cell of the data array (i.e. the domain),
+  - the locations of each cell of the data array (i.e. the "domain"),
     and
 
   - the physical nature of each cell's datum.
@@ -89,15 +88,15 @@ is available at https://www.geosci-model-dev.net/10/4619/2017.
 Implementation
 --------------
 
-The :ref:`cfdm <class_extended>` library implements the CF data model
-for its internal data structures and so is able to process any
-CF-compliant dataset. It is, however, not strict about CF compliance
-so that partially conformant datasets may be modified in memory, as
-well as ingested from existing datasets and written to new datasets.
+The cfdm package implements the CF data model for its internal data
+structures and so is able to process any CF-compliant dataset. It is,
+however, not strict about CF compliance so that partially conformant
+datasets may be modified in memory, as well as ingested from existing
+datasets and written to new datasets.
 
-The :ref:`cfdm <class_extended>` package can
+The cfdm package can
 
-* read netCDF datasets into field constructs,
+* read field constructs from netCDF datasets,
 
 * create new field constructs in memory,
 
@@ -109,7 +108,7 @@ The :ref:`cfdm <class_extended>` package can
 
 * write field constructs to netCDF datasets on disk,
 
-* incorporate metadata stored in external files,
+* incorporate, and create, metadata stored in external files,
 
 * read and write data that has been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
