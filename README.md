@@ -1,83 +1,48 @@
 cfdm
 ====
 
-----------------------------------------------------------------------
+**cfdm** is a complete implementation of the `CF data model
+<https://www.geosci-model-dev.net/10/4619/2017>`_, that identifies the
+fundamental elements of the `CF conventions
+<http://cfconventions.org/>`_ and shows how they relate to each other,
+independently of the `netCDF
+<https://www.unidata.ucar.edu/software/netcdf/>`_ encoding.
 
-A python reference implementation of the CF data model.
+The central element defined by the CF data model is the **field
+construct**, which corresponds to a CF-netCDF data variable with all
+of its metadata.
+
+The **cfdm** package can
+
+* read field constructs from netCDF datasets,
+
+* create new field constructs in memory,
+
+* inspect field constructs,
+
+* modify field construct metadata and data,
+
+* create subspaces of field constructs,
+
+* write field constructs to netCDF datasets on disk,
+
+* incorporate, and create, metadata stored in external files,
+
+* read and write data that has been compressed by convention
+  (i.e. ragged or gathered arrays), whilst presenting a view of the
+  data in its uncompressed form.
 
 Documentation
 =============
 
-----------------------------------------------------------------------
-
-See the online [**documentation**](https://ncas-cms.github.io/cfdm)
-for more details.
-
-Description
-===========
-
-----------------------------------------------------------------------
-
-The CF (Climate and Forecast) metadata conventions (http://cfconventions.org) provide a description of the physical
-meaning of data and of their spatial and temporal properties and are designed to promote the creation, processing, and sharing of climate
-and forecasting data using Network Common Data Form (netCDF, https://www.unidata.ucar.edu/software/netcdf) files and libraries.
-
-The CF data model identifies the fundamental elements of CF and shows
-how they relate to each other, independently of the netCDF encoding.
-
-The field construct, which corresponds to a CF-netCDF data variable
-with all of its metadata, is central to the CF data model. The field
-construct consists of a data array and the definition of its domain,
-ancillary metadata fields defined over the same domain, and cell
-method constructs to describe how the cell values represent the
-variation of the physical quantity within the cells of the domain. The
-domain itself is defined collectively by various other constructs
-included in the field: domain axis, dimension coordinate, auxiliary
-coordinate, cell measure, coordinate reference and domain ancillary
-constructs. See https://www.geosci-model-dev.net/10/4619/2017/ for
-full details.
-
-The **cfdm** library implements the CF data model for its internal
-data structures and so is able to process any CF-compliant dataset. It
-is, however, not strict about CF compliance so that partially
-conformant datasets may be modified in memory as well as ingested from
-existing datasets, or written to new datasets.
-
-The **cfdm** package can
-
-* read netCDF datasets into field constructs
-
-* create new field constructs in memory
-
-* inspect field constructs
-
-* modify field construct metadata and data in memory
-
-* create subspaces of field constructs
-
-* write field constructs to a netCDF dataset on disk
-
-Quick start
-===========
-
-----------------------------------------------------------------------
-
-* Make sure [**numpy**](https://pypi.python.org/pypi/numpy) (1.13 or
-  newer) and [**netCDF4**](https://pypi.python.org/pypi/netCDF4) (1.4
-  or newer) are installed, and you have
-  [**Python**](http://www.python.org) 2.7 or newer.
+https://ncas-cms.github.io/cfdm
 
 Tests
 =====
 
-----------------------------------------------------------------------
-
 The test scripts are in the ``test`` directory. To run all tests:
 
     python test/run_tests.py
-
-
-----------------------------------------------------------------------
 
 Code license
 ============

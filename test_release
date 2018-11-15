@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -x
+
+if [[ ! $1 ]] ; then 
+  echo "No version \$1 (e.g. 1.7)"
+  exit 1
+fi
+
+vn=$1
+
+cp dist/cfdm-$vn.tar.gz ~/tmp
+cd ~/tmp
+rm -fr ~/tmp/test ~/tmp/bin ~/tmp/lib ~/tmp/cfdm-$vn
+tar zxvf cfdm-$vn.tar.gz
+cd cfdm-$vn
+python setup.py install --home=~/tmp
+
+cp -pr test ~/tmp
+cd ~/tmp
+
+export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
+
+python test/run_tests.py
+
+set -x
