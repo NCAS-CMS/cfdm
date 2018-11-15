@@ -448,7 +448,6 @@ shape defined by the indices, using the `numpy broadcasting rules
      [270.9 -10.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]
      [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0 --  -3.0]]]
 
-
 Data dimensions
 ^^^^^^^^^^^^^^^
 

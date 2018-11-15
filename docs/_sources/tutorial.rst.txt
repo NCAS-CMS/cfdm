@@ -1,4 +1,4 @@
-.. currentmodule:: cfdm
+`.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. _tutorial:
@@ -421,7 +421,7 @@ Assignment
 ^^^^^^^^^^
 
 Data array elements are changed by assigning to elements selected by
-inexing the `Data` instance using the :ref:`cfdm indexing rules
+indexing the `Data` instance using the :ref:`cfdm indexing rules
 <indexing>`.
 
 The value, or values, being assigned must be broadcastable to the
@@ -989,7 +989,7 @@ The new dataset is structured as follows:
    		:project = "research" ;
    }
 
-A sequence of field constructs iw written in exactly the same way:
+A sequence of field constructs is written in exactly the same way:
    
 .. code:: python
 	     
@@ -1034,13 +1034,13 @@ created when there is a size one domain axis construct which is
 spanned by a dimension coordinate construct's data array, but not the
 field construct's data, nor the data of any other metadata construct.
 
-This is the case for the "specific hunidity" field construct ``q``
+This is the case for the "specific humidity" field construct ``q``
 that was written to the file **q_file.nc**.
 
 To change this so that the "time" dimension coordinate construct is
 written as a CF-netCDF size one coordinate variable, the field
 construct's data must be expanded to span the corresponding size one
-domain axis constuct, by using the `~Field.expand_dims` method of the
+domain axis construct, by using the `~Field.expand_dims` method of the
 field construct:
 
 .. code:: python
@@ -2233,7 +2233,7 @@ We can now inspect the new field construct:
                tutorial is greatly simplified by allowing the term
                "construct" to mean "class instance" (e.g. "field
                construct" means "`Field` instance"), and this
-               convention is apllied throughout this tutorial. The
+               convention is applied throughout this tutorial. The
                phrase "CF data model construct" is used on the few
                occasions when the original abstract meaning is
                intended.
