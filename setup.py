@@ -48,7 +48,7 @@ The central element defined by the CF data model is the **field
 construct**, which corresponds to a CF-netCDF data variable with all
 of its metadata.
 
-The cfdm package can
+The **cfdm** package can
 
 * read field constructs from netCDF datasets,
 
