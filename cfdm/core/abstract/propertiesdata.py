@@ -85,7 +85,7 @@ Note that the data are returned in a `Data` object. Use the
 :Returns:
 
     out: `Data`
-        The data object.
+        The data.
 
 **Examples:**
 
@@ -176,7 +176,7 @@ None
     #--- End: def
 
     def get_array(self):
-        '''Return an numpy array copy the data.
+        '''Return an independent numpy array the data.
 
 Use the `get_data` method to return the data as a `Data` object.
 
@@ -187,7 +187,7 @@ Use the `get_data` method to return the data as a `Data` object.
 :Returns:
 
     out: `numpy.ndarray`
-        An numpy array copy of the data.
+        A numpy array copy of the data.
 
 **Examples:**
 

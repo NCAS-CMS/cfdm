@@ -86,59 +86,9 @@
 <em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>data=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/data/data.py#data/data.py-18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
-<ul class="simple">
-<li>Contains an N-dimensional, indexable and broadcastable array with
-many similarities to a <cite>numpy</cite> array.</li>
-<li>Contains the units of the array elements.</li>
-<li>Supports masked arrays, regardless of whether or not it was
-initialised with a masked array.</li>
-</ul>
-<p><strong>Indexing</strong></p>
-<p>A data array is indexable in a similar way to <cite>numpy</cite> array:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 19, 73, 96)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 19, 73, 96)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="mi">10</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(9, 5, 73, 96)</span>
-</pre></div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
-<p>There are three extensions to the <cite>numpy</cite> indexing functionality:</p>
-<ul>
-<li><p class="first">Size 1 dimensions are never removed by indexing.</p>
-<p>An integer index i takes the i-th element but does not reduce the
-rank of the output array by one:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 19, 73, 96)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(1, 19, 73, 96)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="mi">95</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 1, 5, 1)</span>
-</pre></div>
-</div>
-<p>Size 1 dimensions may be removed with the <cite>squeeze</cite> method.</p>
-</li>
-<li><p class="first">The indices for each axis work independently.</p>
-<p>When more than one dimension’s slice is a 1-d boolean sequence or
-1-d sequence of integers, then these indices work independently
-along each dimension (similar to the way vector subscripts work in
-Fortran), rather than by their elements:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 19, 73, 96)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">27</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(1, 19, 2, 3)</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">Boolean indices may be any object which exposes the <cite>numpy</cite> array
-interface.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 19, 73, 96)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()]</span>
-</pre></div>
-</div>
-</li>
-</ul>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -146,25 +96,65 @@ interface.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>data: array-like, optional</dt>
-<dd><p class="first last">The data for the array.</p>
+<dd><p class="first">The data for the array. Ignored if the <em>source</em> parameter is
+set.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">data=[34.6]</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">data=[[1,</span> <span class="pre">2],</span> <span class="pre">[3,</span> <span class="pre">4]]</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">data=numpy.ma.arange(10).reshape(2,</span> <span class="pre">5,</span> <span class="pre">1)</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>units: <cite>str</cite>, optional</dt>
+<dd><p class="first">TODO. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">units='km'</span></code></p>
+</dd>
+</dl>
+<p class="last">The units may also be set after initialisation with the
+<cite>set_units</cite> method.</p>
+</dd>
+<dt>calendar: <cite>str</cite>, optional</dt>
+<dd><p class="first">TODO. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">calendar='360_day'</span></code></p>
+</dd>
+</dl>
+<p class="last">The calendar may also be set after initialisation with the
+<cite>set_calendar</cite> method.</p>
 </dd>
 <dt>fill_value: optional </dt>
-<dd><p class="first last">The fill value of the data. By default, or if None, the numpy
-fill value appropriate to the array’s data type will be used.</p>
+<dd><p class="first">The fill value of the data. By default, or if None, the numpy
+fill value appropriate to the array’s data type will be used.
+TODO. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">fill_value=-999.</span></code></p>
+</dd>
+</dl>
+<p class="last">The fill value may also be set after initialisation with the
+<cite>set_fill_value</cite> method.</p>
+</dd>
+<dt>source: optional</dt>
+<dd><p class="first last">Initialize the data the array, units, calendar and fill value
+from those of <em>source</em>.</p>
+</dd>
+<dt>copy: bool, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">fill_value</span><span class="o">=-</span><span class="mi">999</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="s1">&#39;fly&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <p class="rubric">Methods</p>

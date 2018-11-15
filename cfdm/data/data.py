@@ -18,62 +18,9 @@ from . import NumpyArray
 class Data(mixin.Container, core.Data):
     '''An N-dimensional data array with units and masked values.
 
-* Contains an N-dimensional, indexable and broadcastable array with
-  many similarities to a `numpy` array.
-
-* Contains the units of the array elements.
-
-* Supports masked arrays, regardless of whether or not it was
-  initialised with a masked array.
-
-**Indexing**
-
-A data array is indexable in a similar way to `numpy` array:
-
->>> d.shape
-(12, 19, 73, 96)
->>> d[...].shape
-(12, 19, 73, 96)
->>> d[slice(0, 9), 10:0:-2, :, :].shape
-(9, 5, 73, 96)
-
-There are three extensions to the `numpy` indexing functionality:
-
-* Size 1 dimensions are never removed by indexing.
-
-  An integer index i takes the i-th element but does not reduce the
-  rank of the output array by one:
-
-  >>> d.shape
-  (12, 19, 73, 96)
-  >>> d[0, ...].shape
-  (1, 19, 73, 96)
-  >>> d[:, 3, slice(10, 0, -2), 95].shape
-  (12, 1, 5, 1)
-
-  Size 1 dimensions may be removed with the `squeeze` method.
-
-* The indices for each axis work independently.
-
-  When more than one dimension's slice is a 1-d boolean sequence or
-  1-d sequence of integers, then these indices work independently
-  along each dimension (similar to the way vector subscripts work in
-  Fortran), rather than by their elements:
-
-  >>> d.shape
-  (12, 19, 73, 96)
-  >>> d[0, :, [0, 1], [0, 13, 27]].shape
-  (1, 19, 2, 3)
-
-* Boolean indices may be any object which exposes the `numpy` array
-  interface.
-
-  >>> d.shape
-  (12, 19, 73, 96)
-  >>> d[..., d[0, 0, 0]>d[0, 0, 0].min()]
+.. versionadded:: 1.7
 
     '''
-
     def __init__(self, data=None, units=None, calendar=None,
                  fill_value=None, source=None, copy=True,
                  _use_data=True):
@@ -82,19 +29,54 @@ There are three extensions to the `numpy` indexing functionality:
 :Parameters:
 
     data: array-like, optional
-        The data for the array.
+        The data for the array. Ignored if the *source* parameter is
+        set.
+
+        *Example:*
+          ``data=[34.6]``
+
+        *Example:*
+          ``data=[[1, 2], [3, 4]]``
+
+        *Example:*
+          ``data=numpy.ma.arange(10).reshape(2, 5, 1)``
+
+    units: `str`, optional
+        TODO. Ignored if the *source* parameter is set.
+
+        *Example:*
+          ``units='km'``
+
+        The units may also be set after initialisation with the
+        `set_units` method.
+
+    calendar: `str`, optional
+        TODO. Ignored if the *source* parameter is set.
+
+        *Example:*
+          ``calendar='360_day'``
+        
+        The calendar may also be set after initialisation with the
+        `set_calendar` method.
 
     fill_value: optional 
         The fill value of the data. By default, or if None, the numpy
         fill value appropriate to the array's data type will be used.
+        TODO. Ignored if the *source* parameter is set.
 
-**Examples:**
+        *Example:*
+          ``fill_value=-999.``
+                
+        The fill value may also be set after initialisation with the
+        `set_fill_value` method.
 
->>> d = Data(5)
->>> d = Data([1,2,3])
->>> import numpy
->>> d = Data(numpy.arange(10).reshape(2, 5), fill_value=-999)
->>> d = Data(tuple('fly'))
+    source: optional
+        Initialize the data the array, units, calendar and fill value
+        from those of *source*.
+
+    copy: bool, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
 
         '''
         super().__init__(data=data, units=units, calendar=calendar,
@@ -114,16 +96,40 @@ There are three extensions to the `numpy` indexing functionality:
     #--- End: def
  
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        '''Return a subspace of the data defined by indices
 
-Returns a independent subspace of the data.
+d.__getitem__(indices) <==> d[indices]
 
-Indexing is similar to `numpy` indexing. The only difference to
-`numpy` indexing is:
+Indexing follows rules that are very similar to the numpy indexing
+rules, the only differences being:
 
-  * When two or more dimension's indices are sequences of integers
-    then these indices work independently along each dimension
-    (similar to the way vector subscripts work in Fortran).
+* An integer index i takes the i-th element but does not reduce the
+  rank by one.
+
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a Variable object of the netCDF4 package.
+
+:Returns:
+
+    out: `Data`
+        The subspace of the data.
+
+**Examples:**
+
+>>> d.shape
+(1, 10, 9)
+>>> d[:, :, 1].shape
+(1, 10, 1)
+>>> d[:, 0].shape
+(1, 1, 9)
+>>> d[..., 6:3:-1, 3:6].shape
+(1, 3, 3)
+>>> d[0, [2, 9], [4, 8]].shape
+(1, 2, 2)
+>>> d[0, :, -2].shape
+(1, 10, 1)
 
         '''
         indices = tuple(self.parse_indices(indices))
@@ -1144,10 +1150,6 @@ Missing data array elements are omitted from the calculation.
         The new axis order of the data array. By default the order is
         reversed. Each axis of the new order is identified by its
         original integer position.
-
-    copy: `bool`, optional
-        If False then update the data array in place. By default a new
-        data array is created.
 
 :Returns:
 

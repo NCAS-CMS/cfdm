@@ -41,20 +41,16 @@ some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).
 
-    '''
+.. versionadded:: 1.7
 
+    '''
     def __new__(cls, *args, **kwargs):
         '''
         '''
-        instance = super().__new__(cls) #, *args, **kwargs)
+        instance = super().__new__(cls)
         instance._Constructs = Constructs
         instance._Domain     = Domain
         return instance
-
-#        obj = object.__new__(cls, *args, **kwargs)    
-#        obj._Constructs = Constructs
-#        obj._Domain     = Domain
-#        return obj
     #--- End: def
 
     def __init__(self, properties=None, source=None, copy=True,
@@ -64,13 +60,22 @@ and institution).
 :Parameters:
 
     properties: `dict`, optional
-        TODO Provide the new field with CF properties from the dictionary's
-        key/value pairs.
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
 
-    source: TODO
+        *Example:*
+           ``properties={'standard_name': 'air_temperature'}``
+        
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
 
+    source: optional
+        Initialize the field construct's properties, data and metadata
+        constructs from those of *source*.
+        
     copy: `bool`, optional
-        TODO If False then do not deep copy arguments prior to
+        If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
         '''        
@@ -250,69 +255,44 @@ x.__str__() <==> str(x)
     #--- End def
 
     def __getitem__(self, indices):
-        '''TODO f.__getitem__(indices) <==> f[indices]
+        '''Return a subspace of the field defined by indices
 
-Return a subspace of the field defined by index values
+f.__getitem__(indices) <==> f[indices]
 
-Subspacing by axis indices uses an extended Python slicing syntax,
-which is similar to :ref:`numpy array indexing
-<numpy:arrays.indexing>`. There are extensions to the numpy indexing
-functionality:
+The new subspace contains the same properties and similar metadata
+constructs to the original field, but the latter are also subspaced
+when they span domain axis constructs that have been changed.
 
-* Size 1 axes are never removed.
+Indexing follows rules that are very similar to the numpy indexing
+rules, the only differences being:
 
-  An integer index *i* takes the *i*-th element but does not reduce
-  the rank of the output array by one:
+* An integer index i takes the i-th element but does not reduce the
+  rank by one.
 
-  >>> f.shape
-  (12, 73, 96)
-  >>> f[0].shape
-  (1, 73, 96)
-  >>> f[3, slice(10, 0, -2), 95:93:-1].shape
-  (1, 5, 2)
-
-* The indices for each axis work independently.
-
-  When more than one axis's slice is a 1-d boolean sequence or 1-d
-  sequence of integers, then these indices work independently along
-  each axis (similar to the way vector subscripts work in Fortran),
-  rather than by their elements:
-
-  >>> f.shape
-  (12, 73, 96)
-  >>> f[:, [0, 72], [5, 4, 3]].shape
-  (12, 2, 3)
-
-  Note that the indices of the last example would raise an error when
-  given to a numpy array.
-
-* Boolean indices may be any object which exposes the numpy array
-  interface, such as the field's coordinate objects:
-
-  >>> f[:, f.coord('latitude')<0].shape
-  (12, 36, 96)
-
->>> f.shape
-(12, 73, 96)
->>> f[...].shape
-(12, 73, 96)
-
-.. versionadded:: 1.7
-
-.. seealso:: `__setitem__`
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a Variable object of the netCDF4 package.
 
 :Returns:
 
     out: `Field`
+        The subspace of the field contruct.
 
-**Examples**
+**Examples:**
 
->>> g = f[..., 0, :6, 9:1:-2, [1, 3, 4]]
-
->>> f.shape
-(12, 73, 96)
->>> f[...].shape
-(12, 73, 96)
+>>> f.data.shape
+(1, 10, 9)
+>>> f[:, :, 1].data.shape
+(1, 10, 1)
+>>> f[:, 0].data.shape
+(1, 1, 9)
+>>> f[..., 6:3:-1, 3:6].data.shape
+(1, 3, 3)
+>>> f[0, [2, 9], [4, 8]].data.shape
+(1, 2, 2)
+>>> f[0, :, -2].data.shape
+(1, 10, 1)
 
         ''' 
         data  = self.get_data()
@@ -506,11 +486,13 @@ field.
     #--- End: def
     
     def dump(self, display=True, _level=0, _title=None):
-        '''TODOA full description of the field.
+        '''A full description of the field construct.
 
-The field and its components are described without abbreviation with
-the exception of data arrays, which are abbreviated to their first and
-last values.
+Returns a desciption of all properties of all constructs, including
+metadata constructs and their components, and shows the first and last
+values of all data arrays.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -518,16 +500,12 @@ last values.
         If False then return the description as a string. By default
         the description is printed.
 
-          *Example:*
-            ``f.dump()`` is equivalent to
-            ``print f.dump(display=False)``.
-
 :Returns:
 
     out: `None` or `str`
-        If *display* is True then the description is printed and
-        `None` is returned. Otherwise the description is returned as a
-        string.
+        The description of the field construct. If *display* is True
+        then the description is printed and `None` is
+        returned. Otherwise the description is returned as a string.
 
         '''
         indent = '    '      
@@ -709,32 +687,52 @@ False
         return True
     #--- End: def
         
-    def expand_dims(self, position=0, axis=None):
-        '''TODOInsert a size 1 axis into the data array.
+    def expand_dims(self, axis, position=0):
+        '''Expand the shape of the data array.
 
-By default default a new size 1 axis is inserted which doesn't yet
-exist, but a unique existing size 1 axis which is not already spanned
-by the data array may be selected.
+Insert a new size 1 axis, corresponding to a domain axis construct,
+into the data array.
 
-.. seealso:: `axes`, `squeeze`, `transpose`
+.. versionadded:: 1.7
+
+.. seealso:: `squeeze`, `transpose`
 
 :Parameters:
+
+    axis: `str`
+        The construct identifier of the domain axis construct
+        corresponding to the inserted axis.
+
+        *Example:*
+          ``axis='domainaxis2'``
 
     position: `int`, optional
         Specify the position that the new axis will have in the data
         array. By default the new axis has position 0, the slowest
-        varying position.
+        varying position. Negative integers counting from the last
+        position are allowed.
 
-    {+axes, kwargs}
+        *Example:*
+          ``position=2``
 
-    {+copy}
+        *Example:*
+          ``position=-1``
 
 :Returns:
 
-    out: `{+Variable}`
-        The expanded field.
+    out: `Field`
+        The new field construct with expanded data axes.
 
-**Examples**
+**Examples:**
+
+>>> f.data.shape
+(19, 73, 96)
+>>> f.expand_dims('domainaxis3').data.shape
+(1, 96, 73, 19)
+>>> f.expand_dims('domainaxis3', position=3).data.shape
+(96, 73, 19, 1)
+>>> f.expand_dims('domainaxis3', position=-1).data.shape
+(96, 73, 1, 19)
 
         '''
         f = self.copy()
@@ -892,31 +890,47 @@ TODO
     #--- End: def    
    
     def squeeze(self, axes=None):
-        '''TODORemove size-1 axes from the data array.
+        '''Remove size one axes from the data array.
 
-By default all size 1 axes are removed, but particular size 1 axes may
-be selected for removal.
+By default all size one axes are removed, but particular size one axes
+may be selected for removal.
 
-The axes are selected with the *axes* parameter.
+.. versionadded:: 1.7
 
-Squeezed axes are not removed from the coordinate and cell measure
-objects, nor are they removed from the domain. To completely remove
-axes, use the `remove_axes` method.
-
-.. seealso:: `expand_dims`, `remove_axes`, `transpose`, `unsqueeze`
+.. seealso:: `expand_dims`, `transpose`
 
 :Parameters:
 
-    {+axes, kwargs}
+    axes: (sequence of) `int`
+        The positions of the size one axes to be removed. By default
+        all size one axes are removed. Each axis is identified by its
+        original integer position. Negative integers counting from the
+        last position are allowed.
 
-    {+copy}
+        *Example:*
+          ``axes=0``
+
+        *Example:*
+          ``axes=-2``
+
+        *Example:*
+          ``axes=[2, 0]``
 
 :Returns:
 
-    out: `{+Variable}`
-        The squeezed field.
+    out: `Field`
+        The new field construct with removed data axes.
 
-**Examples**
+**Examples:**
+
+>>> f.data.shape
+(1, 73, 1, 96)
+>>> f.squeeze().data.shape
+(73, 96)
+>>> f.squeeze(0).data.shape
+(73, 1, 96)
+>>> f.squeeze([-3, 2]).data.shape
+(73, 96)
 
         '''
         f = self.copy()
@@ -949,6 +963,60 @@ axes, use the `remove_axes` method.
         # Squeeze the field's data array
  #       iaxes = [data_axes.index(axis) for axis in axes]
         new_data = self.data.squeeze(axes)
+
+        f.set_data(new_data, new_data_axes)
+
+        return f
+    #--- End: def
+
+    def transpose(self, axes=None):
+        '''Permute the axes of the data array.
+
+.. versionadded:: 1.7
+
+.. seealso:: `expand_dims`, `squeeze`
+
+:Parameters:
+
+    axes: (sequence of) `int`
+        The new axis order. By default the order is reversed. Each
+        axis in the new order is identified by its original integer
+        position. Negative integers counting from the last position
+        are allowed.
+
+        *Example:*
+          ``axes=[2, 0, 1]``
+
+        *Example:*
+          ``axes=[-1, 0, 1]``
+
+:Returns:
+
+    out: `Field`
+         The new field construct with permuted data axes.
+
+**Examples:**
+
+>>> f.data.shape
+(19, 73, 96)
+>>> f.tranpose().data.shape
+(96, 73, 19)
+>>> f.tranpose([1, 0, 2]).data.shape
+(73, 19, 96)
+
+        '''
+        f = self.copy()
+        try:
+            axes = self.data._parse_axes(axes)
+        except ValueError as error:
+            raise ValueError("Can't transpose data: {}".format(error))
+
+        data_axes = self.get_data_axes(())
+
+        new_data_axes = [data_axes[i] for i in axes]
+        
+        # Transpose the field's data array
+        new_data = self.data.transpose(axes)
 
         f.set_data(new_data, new_data_axes)
 

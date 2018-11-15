@@ -491,25 +491,23 @@ None
     def transpose(self, axes=None):
         '''TODO
 
-.. versionadded:: 1.6
+.. versionadded:: 1.7
 
-.. seealso:: `squeeze`
-
-:Examples 1:
-
->>> g = f.{+name}()
+.. seealso:: `expand_dims`, `squeeze`
 
 :Parameters:
 
-    {+copy}
+    axes:
+        TODO
 
 :Returns:
 
     out: 
+        TODO
 
-:Examples:
+**Examples:**
 
->>> 
+TODO
         '''       
         v = self.copy()
 

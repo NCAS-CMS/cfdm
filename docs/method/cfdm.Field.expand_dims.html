@@ -87,40 +87,68 @@
 <h1>cfdm.Field.expand_dims<a class="headerlink" href="#cfdm-field-expand-dims" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.expand_dims">
-<code class="descclassname">Field.</code><code class="descname">expand_dims</code><span class="sig-paren">(</span><em>position=0</em>, <em>axis=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/field.py#field.py-712"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.expand_dims" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODOInsert a size 1 axis into the data array.</p>
-<p>By default default a new size 1 axis is inserted which doesn’t yet
-exist, but a unique existing size 1 axis which is not already spanned
-by the data array may be selected.</p>
+<code class="descclassname">Field.</code><code class="descname">expand_dims</code><span class="sig-paren">(</span><em>axis</em>, <em>position=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/field.py#field.py-690"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.expand_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expand the shape of the data array.</p>
+<p>Insert a new size 1 axis, corresponding to a domain axis construct,
+into the data array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code>, <a class="reference internal" href="cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>, <a class="reference internal" href="cfdm.Field.transpose.html#cfdm.Field.transpose" title="cfdm.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>, <a class="reference internal" href="cfdm.Field.transpose.html#cfdm.Field.transpose" title="cfdm.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first last">Specify the position that the new axis will have in the data
-array. By default the new axis has position 0, the slowest
-varying position.</p>
+<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dd><p class="first">The construct identifier of the domain axis construct
+corresponding to the inserted axis.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axis='domainaxis2'</span></code></p>
 </dd>
 </dl>
-<p>{+axes, kwargs}</p>
-<p>{+copy}</p>
+</dd>
+<dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dd><p class="first">Specify the position that the new axis will have in the data
+array. By default the new axis has position 0, the slowest
+varying position. Negative integers counting from the last
+position are allowed.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">position=2</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">position=-1</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <code class="xref py py-obj docutils literal notranslate"><span class="pre">{+Variable}</span></code></dt>
-<dd><p class="first last">The expanded field.</p>
+<dt>out: <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
+<dd><p class="first last">The new field construct with expanded data axes.</p>
 </dd>
 </dl>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(19, 73, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 96, 73, 19)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 73, 19, 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">,</span> <span class="n">position</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 73, 1, 19)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

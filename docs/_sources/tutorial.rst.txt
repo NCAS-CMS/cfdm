@@ -1,4 +1,4 @@
-`.. currentmodule:: cfdm
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. _tutorial:
@@ -448,12 +448,12 @@ shape defined by the indices, using the `numpy broadcasting rules
      [270.9 -10.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]
      [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0 --  -3.0]]]
 
-
 Data dimensions
 ^^^^^^^^^^^^^^^
 
 The dimensions of a field construct's data may be reordered, have size
-one dimensions removed and have new new size one dimensions included.
+one dimensions removed and have new new size one dimensions included
+by using the following field construct methods:
 
 ====================  ====================================
 Method                Description
@@ -469,12 +469,12 @@ Method                Description
    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> t2 = t.squeeze(0)
    >>> t2
-   <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>
-   >>> t2 = t2.expand_dims(position=1, axis='domainaxis3')
+   <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>   
+   >>> t2 = t2.expand_dims(axis='domainaxis3', position=1)
    >>> t2
-   <Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>
-   >>> t.tranpose([2, 0, 1])
-   TODO
+   <Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>  
+   >>> t2.transpose([2, 0, 1])
+   <Field: air_temperature(grid_longitude(9), grid_latitude(10), time(1)) K>
 
 .. _subspacing:
 
@@ -485,9 +485,9 @@ Creation of a new field construct which spans a subspace of the
 original domain is achieved by indexing the field directly (rather
 than its `Data` instance). The new subspace contains the same
 properties and similar metadata constructs to the original field, but
-the latter are also subspaced when they span domain axes that have
-been changed. Subspacing uses the same :ref:`cfdm indexing rules
-<indexing>` that apply to the `Data` class.
+the latter are also subspaced when they span domain axis constructs
+that have been changed. Subspacing uses the same :ref:`cfdm indexing
+rules <indexing>` that apply to the `Data` class.
 
 In this example a new field is created whose domain spans the first
 latitude of the original, and with a reversed longitude axis:

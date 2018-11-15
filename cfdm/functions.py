@@ -651,12 +651,12 @@ def CF():
 :Returns:
 
     out:`str`
-        TODO
+        The version of the CF conventions.
 
 **Examples:**
 
 >>> cfdm.CF()
-'1.8'
+'1.7'
     '''
     return __version__.split('-')[0]
 #--- End: def
