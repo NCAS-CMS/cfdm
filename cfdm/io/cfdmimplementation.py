@@ -461,13 +461,13 @@ axes, and possibly other axes, are returned.
     def nc_get_instance_dimension(self, index, *default):
         '''TODO
         '''
-        return index.nc_get_instance_dimension(index, *default)
+        return index.nc_get_instance_dimension(*default)
     #--- End: def
     
     def nc_get_sample_dimension(self, count, *default):
         '''TODO
         '''
-        return count.nc_get_sample_dimension(count, *default)
+        return count.nc_get_sample_dimension(*default)
     #--- End: def
 
     def nc_get_unlimited_axes(self, field):

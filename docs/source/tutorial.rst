@@ -1892,16 +1892,16 @@ form.
 
 Therefore, the field construct contains domain axis constructs for the
 compressed dimensions and presents a view of compressed data in its
-uncompressed form, even though their "underlying arrays" (i.e. the
+uncompressed form, even though their "underlying" arrays (i.e. the
 arrays contained in `Data` instances) are compressed. This means that
 the cfdm package includes the algorithms that are required to
 uncompress each type of compressed array.
 
 There are two basic types of compression supported by the CF
-conventions (:ref:`discrete sampling geometry ragged array
+conventions: :ref:`discrete sampling geometry ragged array
 representations <dsg>` and :ref:`compression by gathering
-<gathering>`), each of which has particular implementation details,
-but the following access patterns and behaviours apply to all:
+<gathering>`, each of which has particular implementation details, but
+the following access patterns and behaviours apply to all:
 
 * Accessing the data by a call to the `!get_array` method of a field
   or metadata construct returns a numpy array that is
@@ -1912,28 +1912,30 @@ but the following access patterns and behaviours apply to all:
 
 ..
 
-* A :ref:`subspace <subspacing>` of a field contruct is created with
-  indicies to the uncompressed form of the data. The new subspace will
+* A :ref:`subspace <subspacing>` of a field construct is created with
+  indices of the uncompressed form of the data. The new subspace will
   no longer be compressed, i.e. its underlying arrays will be
-  uncompressed, but the original data will remain compressed.
-
+  uncompressed, but the original data will remain compressed. It
+  follows that to uncompress all of the data in a field construct,
+  index the field construct with `Ellipsis`.
+  
 ..
 
 * If data elements are modified by :ref:`assigning <data_assignment>`
-  to indicies to the uncompressed form of the data, then the
-  underlying compressed array is replaced by its uncompressed form.
+  to indices of the uncompressed form of the data, then the underlying
+  compressed array is replaced by its uncompressed form.
 
 ..
 
 * If an underlying array is compressed at the time of writing to disk
   with the `cfdm.write` function, then it is written to the file as a
   compressed array, along with the supplementary netCDF variables and
-  attributes that are required to required for the encoding. This
-  means that if a dataset using compression is read from disk then it
-  will be written back to disk with the same compression, unless data
-  elements have been modified by assignment. Any compressed arrays
-  that have been modified will be written to an output dataset as
-  uncompressed arrays.
+  attributes that are required for the encoding. This means that if a
+  dataset using compression is read from disk then it will be written
+  back to disk with the same compression, unless data elements have
+  been modified by assignment. Any compressed arrays that have been
+  modified will be written to an output dataset as uncompressed
+  arrays.
 
 Examples of all of the above may be found in the sections on
 :ref:`discrete sampling geometries <dsg>` and :ref:`gathering
@@ -2062,12 +2064,11 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-A construct with an underlying compressed array is created by
-initialising a `Data` instance with a compressed array that is stored
-in one of three special array objects: `RaggedContiguousArray`,
-`RaggedIndexedArray` or `RaggedIndexedContiguousArray`. The following
-code creates a simple field construct with an underlying contiguous
-ragged array:
+A construct with an underlying ragged array is created by initialising
+a `Data` instance with a ragged array that is stored in one of three
+special array objects: `RaggedContiguousArray`, `RaggedIndexedArray`
+or `RaggedIndexedContiguousArray`. The following code creates a simple
+field construct with an underlying contiguous ragged array:
 
 .. code:: python
 
@@ -2095,7 +2096,8 @@ ragged array:
    # array
    tas = cfdm.Field()
    tas.properties({'standard_name': 'air_temperature',
-	           'units': 'K'})
+	           'units': 'K',
+		   'featureType': 'timeSeries'})
    
    # Create the domain axis constructs for the uncompressed array
    X = tas.set_domain_axis(cfdm.DomainAxis(4))
@@ -2103,10 +2105,8 @@ ragged array:
    
    # Set the data for the field
    tas.set_data(cfdm.Data(array), axes=[Y, X])
-
 				
-We can now inspect the new field construct, write it to disk and
-inspect the new netCDF file:
+We can now inspect the new field construct...
 
 .. code:: python
    
@@ -2124,12 +2124,39 @@ inspect the new netCDF file:
    <Count: long_name:number of obs for this timeseries(2) >
    >>> print(count_variable.get_array())
    [2 4]
+
+...write it to a netCDF file...
+
+.. code:: python
+	  
    >>> cfdm.write(tas, 'tas_contiguous.nc')
 
+...and inspect the file:
+   
 .. code:: bash
 
-   $ ncdump -h tas_contiguous.nc
-
+   $ ncdump tas_contiguous.nc
+   netcdf tas_contiguous {
+   dimensions:
+   	dim = 2 ;
+   	element = 6 ;
+   variables:
+   	int64 count(dim) ;
+   		count:long_name = "number of obs for this timeseries" ;
+   		count:sample_dimension = "element" ;
+   	float air_temperature(element) ;
+   		air_temperature:units = "K" ;
+   		air_temperature:standard_name = "air_temperature" ;
+   
+   // global attributes:
+		:Conventions = "CF-1.7" ;
+		:featureType = "timeSeries" ;
+   data:
+   
+    count = 2, 4 ;
+   
+    air_temperature = 280, 282.5, 281, 279, 278, 279.5 ;
+   }
 
 .. _gathering:
 
@@ -2138,32 +2165,13 @@ inspect the new netCDF file:
 
 ----
 
-The CF data model views arrays that are compressed by removing
-unwanted missing data in their uncompressed form. So, when axes have
-been `compressed by gathering`_, the field construct contains the
-domain axes that have been compressed and presents a view of the data
-in their uncompressed form, even though the underlying arrays remain
-in their gathered representation.
-
-Accessing the data by a call to the `!get_array` method returns a
-numpy array that is uncompressed. The underlying array will, however,
-remain in its compressed form. The underlying compressed array may be
-retrieved as a numpy array with the `get_compressed_array` method of
-the `Data` instance
-
-A subspace created by indexing will no longer be compressed,
-i.e. its underlying array will be in incomplete multidimensional
-representation. The original data will, however, retain its underlying
-compressed array.
-
-If the data elements are modified by indexed assignment then the
-underlying compressed array is replaced by its uncompressed form.
-
-Indexing is based on the axes of the uncompressed form of the data.
+`Compression by gathering`_ combines axes of a multidimensional array
+into a new, discrete axis whilst omitting the missing values and thus
+reducing the number of values that need to be stored.
 
 The list variable that is required to uncompress a gathered array is
 stored in a `List` object and is retrieved with the
-`get_list_variable` method of the `Data` instance.
+`~Data.get_list_variable` method of the `Data` instance.
 
 This is illustrated with the file **gathered.nc** (:download:`download
 <netcdf_files/gathered.nc>`, 1kB) [#files]_:
@@ -2233,19 +2241,31 @@ file:
    >>> print(list_variable.get_array())
    [1 2 5 7 8 16 18]
 
-If the underlying array is compressed at the time of writing to disk
-with the `cfdm.write` function, then it is written to the file as a
-gathered array, along with the required list variable required to
-uncompress it. This means that if a dataset using compression is read
-from disk then it will be written back to disk with the same
-compression, provided that no data elements have been modified by
-assignment. Any compressed arrays that have been modified will be
-written to an output dataset without compression.
+We can easily create subspaces based on the uncompressed axes of the
+field construct:
+
+.. code:: python
+	  
+   >>> p[0]
+   <Field: precipitation_flux(time(1), latitude(4), longitude(5)) kg m2 s-1>
+   >>> p[1, :, 3:5]
+   <Field: precipitation_flux(time(1), latitude(4), longitude(2)) kg m2 s-1>
+
+The underlying array of original data remains in compressed form until
+data array elements are modified:
    
-A construct with an underlying compressed array is created by
-initializing a `Data` instance with a compressed array that is stored
-in the special `GatheredArray` array object. The following code
-creates a simple field construct with an underlying gathered array:
+.. code:: python
+
+   >>> p.data.get_compression_type()
+   'gathered'
+   >>> p.data[1] = -9
+   >>> p.data.get_compression_type()
+   ''
+   
+A construct with an underlying gathered array is created by
+initializing a `Data` instance with a gathered array that is stored in
+the special `GatheredArray` array object. The following code creates a
+simple field construct with an underlying gathered array:
 
 .. code:: python
 
@@ -2288,7 +2308,7 @@ compressed dimension in the compressed array (with the
 *compressed_dimension* parameter of the `GatheredArray`
 initialisation).
 
-We can now inspect the new field construct:
+We can now inspect the new field construct...
 
 .. code:: python
    
@@ -2313,6 +2333,40 @@ We can now inspect the new field construct:
    >>> print(list_variable.get_array())
    [1 4 5]
 
+...write it to a netCDF file...
+
+.. code:: python
+	  
+   >>> cfdm.write(tas, 'tas_gathered.nc')
+
+...and inspect the file:
+   
+.. code:: bash
+
+   $ ncdump tas_gathered.nc
+   netcdf tas_gathered {
+   dimensions:
+   	dim = 2 ;
+   	dim_1 = 3 ;
+   	dim_2 = 2 ;
+   	list = 3 ;
+   variables:
+   	int64 list(list) ;
+   		list:compress = "dim_1 dim_2" ;
+   	float air_temperature(dim, list) ;
+   		air_temperature:units = "K" ;
+   		air_temperature:standard_name = "air_temperature" ;
+   
+   // global attributes:
+   		:Conventions = "CF-1.7" ;
+   data:
+   
+    list = 1, 4, 5 ;
+   
+    air_temperature =
+     280, 282.5, 281,
+     279, 278, 277.5 ;
+   }
 
 ----
 
@@ -2350,7 +2404,7 @@ We can now inspect the new field construct:
 .. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables
 .. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries
 .. _incomplete multidimensional form: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_incomplete_multidimensional_array_representation
-.. _compressed by gathering:          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering
+.. _Compression by gathering:         http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering
 .. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles

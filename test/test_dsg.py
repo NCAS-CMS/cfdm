@@ -139,6 +139,42 @@ class DSGTest(unittest.TestCase):
 
         for i in range(len(f)):
             self.assertTrue(g[i].equals(f[i], traceback=True))
+
+        # ------------------------------------------------------------
+        # Test creation
+        # ------------------------------------------------------------
+        # Define the ragged array values
+        ragged_array = numpy.array([280, 282.5, 281, 279, 278, 279.5],
+                                   dtype='float32')
+        
+        # Define the count array values
+        count_array = [2, 4]
+        
+        # Create the count variable
+        count_variable = cfdm.Count(data=cfdm.Data(count_array))
+        count_variable.set_property('long_name', 'number of obs for this timeseries')
+        
+        # Create the contiguous ragged array object
+        array = cfdm.RaggedContiguousArray(
+                         compressed_array=cfdm.NumpyArray(ragged_array),
+                         shape=(2, 4), size=8, ndim=2,
+                         count_variable=count_variable)
+        
+        # Create the field construct with the domain axes and the ragged
+        # array
+        tas = cfdm.Field()
+        tas.properties({'standard_name': 'air_temperature',
+                        'units': 'K',
+    		        'featureType': 'timeSeries'})
+        
+        # Create the domain axis constructs for the uncompressed array
+        X = tas.set_domain_axis(cfdm.DomainAxis(4))
+        Y = tas.set_domain_axis(cfdm.DomainAxis(2))
+        
+        # Set the data for the field
+        tas.set_data(cfdm.Data(array), axes=[Y, X])
+        
+        cfdm.write(tas, 'tas_contiguous.nc') 
     #--- End: def   
         
         
@@ -253,7 +289,7 @@ class DSGTest(unittest.TestCase):
         self.assertTrue((z.data.get_count_variable().get_array() == numpy.array(
             [2, 3])).all())
     #--- End: def
-    
+
 #--- End: class
 
 
