@@ -16,12 +16,30 @@ import sys
 import os
 import re
 
+def _read(fname):
+    """Returns content of a file.
+
+    """
+    fpath = os.path.dirname(__file__)
+    fpath = os.path.join(fpath, fname)
+    with open(fpath, 'r') as file_:
+        return file_.read()
+#--- End: def
 
 def _get_version():
     """Returns library version by inspecting __init__.py file.
 
     """
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                     _read("../../cfdm/__init__.py"),
+                     re.MULTILINE).group(1)
+#--- End: def
+
+def _get_cf_version():
+    """Returns CF version by inspecting __init__.py file.
+
+    """
+    return re.search(r'^__cf_version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("../../cfdm/__init__.py"),
                      re.MULTILINE).group(1)
 #--- End: def
@@ -37,6 +55,10 @@ sys.path.insert(0, os.path.abspath('../..'))
 # If your documentation needs a minimal Sphinx version, state it here.
 needs_sphinx = '1.0'
 
+#rst_prolog = """
+#.. |CF| replace:: """+_get_cf_version()+"""
+#"""
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -51,6 +73,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
               ]
+
 
 # Boolean indicating whether to scan all found documents for
 # autosummary directives, and to generate stub pages for each
@@ -115,23 +138,6 @@ copyright = u'2018, David Hassell'
 # The version info for the project you're documenting, acts as
 # replacement for |version| and |release|, also used in various other
 # places throughout the built documents.
-
-def _read(fname):
-    """Returns content of a file.
-
-    """
-    fpath = os.path.dirname(__file__)
-    fpath = os.path.join(fpath, fname)
-    with open(fpath, 'r') as file_:
-        return file_.read()
-
-def _get_version():
-    """Returns library version by inspecting __init__.py file.
-
-    """
-    return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
-                     _read("../../cfdm/__init__.py"),
-                     re.MULTILINE).group(1)
 
 # The full version, including alpha/beta/rc tags.
 release = _get_version()

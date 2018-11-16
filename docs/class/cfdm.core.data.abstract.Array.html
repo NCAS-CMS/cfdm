@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.Container" href="cfdm.core.abstract.Container.html" />
-    <link rel="prev" title="cfdm.core.NumpyArray" href="cfdm.core.NumpyArray.html" />
+    <link rel="next" title="Subclassing" href="../subclassing.html" />
+    <link rel="prev" title="cfdm.core.abstract.PropertiesDataBounds" href="cfdm.core.abstract.PropertiesDataBounds.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="cfdm.core.NumpyArray.html" title="previous chapter">cfdm.core.NumpyArray</a></li>
-      <li>Next: <a href="cfdm.core.abstract.Container.html" title="next chapter">cfdm.core.abstract.Container</a></li>
+      <li>Previous: <a href="cfdm.core.abstract.PropertiesDataBounds.html" title="previous chapter">cfdm.core.abstract.PropertiesDataBounds</a></li>
+      <li>Next: <a href="../subclassing.html" title="next chapter"><strong>Subclassing</strong></a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -131,13 +131,13 @@ set on a subclass of the abstract <cite>Array</cite> object.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.data.abstract.Array.__init__" title="cfdm.core.data.abstract.Array.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.data.abstract.Array.html#cfdm.core.data.abstract.Array.__init__" title="cfdm.core.data.abstract.Array.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(**kwargs)</td>
 <td><strong>Initialization</strong></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.data.abstract.Array.copy" title="cfdm.core.data.abstract.Array.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.data.abstract.Array.html#cfdm.core.data.abstract.Array.copy" title="cfdm.core.data.abstract.Array.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
 <td>Return a deep copy of the array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.data.abstract.Array.get_array" title="cfdm.core.data.abstract.Array.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.data.abstract.Array.html#cfdm.core.data.abstract.Array.get_array" title="cfdm.core.data.abstract.Array.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
@@ -152,16 +152,16 @@ set on a subclass of the abstract <cite>Array</cite> object.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.data.abstract.Array.dtype" title="cfdm.core.data.abstract.Array.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.data.abstract.Array.html#cfdm.core.data.abstract.Array.dtype" title="cfdm.core.data.abstract.Array.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
 <td>Data-type of the data elements.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.data.abstract.Array.ndim" title="cfdm.core.data.abstract.Array.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.data.abstract.Array.html#cfdm.core.data.abstract.Array.ndim" title="cfdm.core.data.abstract.Array.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
 <td>Number of array dimensions</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.data.abstract.Array.shape" title="cfdm.core.data.abstract.Array.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.data.abstract.Array.html#cfdm.core.data.abstract.Array.shape" title="cfdm.core.data.abstract.Array.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
 <td>Tuple of array dimension sizes.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.data.abstract.Array.size" title="cfdm.core.data.abstract.Array.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.data.abstract.Array.html#cfdm.core.data.abstract.Array.size" title="cfdm.core.data.abstract.Array.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
 <td>Number of elements in the array.</td>
 </tr>
 </tbody>
@@ -368,7 +368,7 @@ modifying any attribute.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.data.abstract.Array.rst.txt"

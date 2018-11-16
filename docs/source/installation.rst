@@ -20,17 +20,6 @@ The cfdm package requires:
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 
-**conda**
----------
-
-To install cfdm using `conda <https://conda.io/docs/>`_, first install
-`Anaconda <https://www.anaconda.com/download>`_ for Python 2 or Python
-3, then on type on the command line:
-
-.. code:: bash
-
-   conda install -c ncas cfdm
-
 **pip**
 -------
 
@@ -40,6 +29,19 @@ the command line:
 .. code:: bash
 
    pip install cfdm
+
+**conda**
+---------
+
+*Coming soon*
+
+.. To install cfdm using `conda <https://conda.io/docs/>`_, first install
+   `Anaconda <https://www.anaconda.com/download>`_ for Python 2 or Python
+   3, then on type on the command line:
+   
+   .. code:: bash
+   
+      conda install -c ncas cfdm
 
 
 **Source**

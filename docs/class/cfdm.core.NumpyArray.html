@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.data.abstract.Array" href="cfdm.core.data.abstract.Array.html" />
+    <link rel="next" title="cfdm.core.abstract.Container" href="cfdm.core.abstract.Container.html" />
     <link rel="prev" title="cfdm.core.Domain" href="cfdm.core.Domain.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -50,7 +50,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="cfdm.core.Domain.html" title="previous chapter">cfdm.core.Domain</a></li>
-      <li>Next: <a href="cfdm.core.data.abstract.Array.html" title="next chapter">cfdm.core.data.abstract.Array</a></li>
+      <li>Next: <a href="cfdm.core.abstract.Container.html" title="next chapter">cfdm.core.abstract.Container</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -128,13 +128,13 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.NumpyArray.__init__" title="cfdm.core.NumpyArray.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([array])</td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.NumpyArray.html#cfdm.core.NumpyArray.__init__" title="cfdm.core.NumpyArray.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([array])</td>
 <td><strong>Initialization</strong></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.NumpyArray.copy" title="cfdm.core.NumpyArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.NumpyArray.html#cfdm.core.NumpyArray.copy" title="cfdm.core.NumpyArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
 <td>Return a deep copy of the array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.NumpyArray.get_array" title="cfdm.core.NumpyArray.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.NumpyArray.html#cfdm.core.NumpyArray.get_array" title="cfdm.core.NumpyArray.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
@@ -149,16 +149,16 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.NumpyArray.dtype" title="cfdm.core.NumpyArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.NumpyArray.html#cfdm.core.NumpyArray.dtype" title="cfdm.core.NumpyArray.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
 <td>Data-type of the data elements.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.NumpyArray.ndim" title="cfdm.core.NumpyArray.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.NumpyArray.html#cfdm.core.NumpyArray.ndim" title="cfdm.core.NumpyArray.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
 <td>Number of array dimensions</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.NumpyArray.shape" title="cfdm.core.NumpyArray.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.NumpyArray.html#cfdm.core.NumpyArray.shape" title="cfdm.core.NumpyArray.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
 <td>Tuple of array dimension sizes.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.NumpyArray.size" title="cfdm.core.NumpyArray.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.NumpyArray.html#cfdm.core.NumpyArray.size" title="cfdm.core.NumpyArray.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
 <td>Number of elements in the array.</td>
 </tr>
 </tbody>
@@ -365,7 +365,7 @@ modifying any attribute.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.NumpyArray.rst.txt"
