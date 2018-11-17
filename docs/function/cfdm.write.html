@@ -85,7 +85,7 @@
 <h1>cfdm.write<a class="headerlink" href="#cfdm-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.write">
-<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>external_file=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>HDF_chunksizes=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;cfdm.io.cfdmimplementation.CFDMImplementation object&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/io/write.py#io/write.py-18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cfdm.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>variable_attributes=None</em>, <em>external_file=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>HDF_chunksizes=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;cfdm.io.cfdmimplementation.CFDMImplementation object&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/io/write.py#io/write.py-18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -121,7 +121,7 @@ external file. Constructs that are allowed to be external have the
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../generated/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -195,7 +195,7 @@ any of the other options.</p>
 <p>All formats support large files (i.e. those greater than 2GB)
 except <code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> is a format that requires version
-4.4.0 or newer of the C library (use <a class="reference internal" href="../generated/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a> to see
+4.4.0 or newer of the C library (use <a class="reference internal" href="cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a> to see
 which version if the netCDF-C library is in use). It extends
 the <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code> binary format to allow for
 unsigned/64 bit integer data types and 64-bit dimension sizes.</p>
@@ -406,7 +406,7 @@ netCDF dimensions, variables and attributes.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/function/cfdm.write.rst.txt"

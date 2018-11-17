@@ -37,6 +37,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#pip"><strong>pip</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#conda"><strong>conda</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#source"><strong>Source</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tests"><strong>Tests</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#code-repository"><strong>Code repository</strong></a></li>
 </ul>
 </li>
@@ -94,9 +95,13 @@ or newer, and</li>
 </div>
 <div class="section" id="pip">
 <h2><strong>pip</strong><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
-<p>To install cfdm using <a class="reference external" href="https://pypi.org/project/pip/">pip</a>, type on
-the command line:</p>
+<p><a class="reference external" href="https://pip.pypa.io/en/latest/reference/pip_install/">pip install</a>
+can be used, for example</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">cfdm</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">cfdm</span> <span class="o">--</span><span class="n">user</span>
 </pre></div>
 </div>
 </div>
@@ -111,7 +116,7 @@ the command line:</p>
 <li><p class="first">Download the cfdm package from <a class="reference external" href="https://pypi.org/project/cfdm">https://pypi.org/project/cfdm</a></p>
 </li>
 <li><p class="first">Unpack the library:</p>
-<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="o">|</span><span class="n">release</span><span class="o">|</span>
 <span class="n">cd</span> <span class="n">cfdm</span><span class="o">-</span><span class="mf">1.7</span>
 </pre></div>
 </div>
@@ -139,6 +144,13 @@ location:</p>
 </li>
 </ul>
 </div></blockquote>
+</div>
+<div class="section" id="tests">
+<h2><strong>Tests</strong><a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<p>Run the tests by running, from the <code class="docutils literal notranslate"><span class="pre">test</span></code> directory,</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">run_tests</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="code-repository">
 <h2><strong>Code repository</strong><a class="headerlink" href="#code-repository" title="Permalink to this headline">¶</a></h2>

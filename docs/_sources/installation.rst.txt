@@ -23,12 +23,18 @@ The cfdm package requires:
 **pip**
 -------
 
-To install cfdm using `pip <https://pypi.org/project/pip/>`_, type on
-the command line:
+`pip install <https://pip.pypa.io/en/latest/reference/pip_install/>`_
+can be used, for example
 
 .. code:: bash
 
    pip install cfdm
+
+or
+
+.. code:: bash
+
+   pip install cfdm --user
 
 **conda**
 ---------
@@ -55,7 +61,7 @@ To install from source:
 
    .. code:: bash
 	 
-      tar zxvf cfdm-1.7.tar.gz
+      tar zxvf cfdm-1.7.tar.gz |release|
       cd cfdm-1.7
 
 3. Install the package:
@@ -79,6 +85,15 @@ To install from source:
 
        python setup.py install --home=<directory>
 
+**Tests**
+---------
+
+Run the tests by running, from the ``test`` directory,
+
+.. code:: bash
+ 
+   python run_tests.py
+       
 **Code repository**
 -------------------
 

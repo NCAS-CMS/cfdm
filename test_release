@@ -17,10 +17,10 @@ cd cfdm-$vn
 python setup.py install --home=~/tmp
 
 cp -pr test ~/tmp
-cd ~/tmp
+cd ~/tmp/test
 
 export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
 
-python test/run_tests.py
+python run_tests.py
 
 set -x

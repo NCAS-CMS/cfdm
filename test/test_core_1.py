@@ -8,6 +8,8 @@ import numpy
 
 import cfdm
 
+verbose = False
+
 class create_fieldTest(unittest.TestCase):
 
     def test_create_field(self):
@@ -134,8 +136,8 @@ class create_fieldTest(unittest.TestCase):
         ref1 = f.set_construct('coordinate_reference', ref1)
 
         f_data = f.get_data()
-        print (repr(f_data), type(f_data))
-        print (repr(f_data.get_array()))
+#        print (repr(f_data), type(f_data))
+#        print (repr(f_data.get_array()))
         # Field ancillary variables
         data = f_data
         anc = cfdm.core.FieldAncillary(data=data)
@@ -168,12 +170,12 @@ class create_fieldTest(unittest.TestCase):
         f.set_construct('cell_method', cm0)
         f.set_construct('cell_method', cm1)
 
-        print(f.get_data())
-        print(f.properties())
-        print(repr(f))
-        print(f)
-        print(f.constructs())
-        print(f.construct_axes())
+#        print(f.get_data())
+#        print(f.properties())
+#        print(repr(f))
+#        print(f)
+#        print(f.constructs())
+#        print(f.construct_axes())
     #--- End: def
 
 #--- End: class

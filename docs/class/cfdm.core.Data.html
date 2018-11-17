@@ -85,7 +85,7 @@
 <h1>cfdm.core.Data<a class="headerlink" href="#cfdm-core-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.Data">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>data=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>data=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>An orthogonal multidimensional array with units.</p>
 <p><strong>Initialization</strong></p>
@@ -132,7 +132,7 @@ initialization. By default arguments are deep copied.</p>
 </div>
 <dl class="method">
 <dt id="cfdm.core.Data.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>data=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-12"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-12"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -184,43 +184,43 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.__init__" title="cfdm.core.Data.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([data,&nbsp;units,&nbsp;calendar,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.__init__" title="cfdm.core.Data.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([data,&nbsp;units,&nbsp;calendar,&nbsp;…])</td>
 <td><strong>Initialization</strong></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.copy" title="cfdm.core.Data.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([data])</td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Data.copy" title="cfdm.core.Data.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([data])</td>
 <td>Return a deep copy of the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.del_calendar" title="cfdm.core.Data.del_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_calendar</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.del_calendar" title="cfdm.core.Data.del_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_calendar</span></code></a>()</td>
 <td>Delete the calendar.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.del_fill_value" title="cfdm.core.Data.del_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_fill_value</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Data.del_fill_value" title="cfdm.core.Data.del_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_fill_value</span></code></a>()</td>
 <td>Delete the fill value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.del_units" title="cfdm.core.Data.del_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_units</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.del_units" title="cfdm.core.Data.del_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_units</span></code></a>()</td>
 <td>Delete the units.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.get_array" title="cfdm.core.Data.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Data.get_array" title="cfdm.core.Data.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.get_calendar" title="cfdm.core.Data.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a>(*default)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.get_calendar" title="cfdm.core.Data.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a>(*default)</td>
 <td>Return the calendar.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.get_fill_value" title="cfdm.core.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a>(*default)</td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Data.get_fill_value" title="cfdm.core.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a>(*default)</td>
 <td>Return the missing data value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.get_units" title="cfdm.core.Data.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a>(*default)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.get_units" title="cfdm.core.Data.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a>(*default)</td>
 <td>Return the units.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a>(calendar)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.set_calendar" title="cfdm.core.Data.set_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_calendar</span></code></a>(calendar)</td>
 <td>Set the calendar.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a>(value)</td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Data.set_fill_value" title="cfdm.core.Data.set_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_fill_value</span></code></a>(value)</td>
 <td>Set the missing data value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a>(value)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.set_units" title="cfdm.core.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a>(value)</td>
 <td>Set the units.</td>
 </tr>
 </tbody>
@@ -232,23 +232,23 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.dtype" title="cfdm.core.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.dtype" title="cfdm.core.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
 <td>Data-type of the data elements.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.ndim" title="cfdm.core.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Data.ndim" title="cfdm.core.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
 <td>Number of data dimensions.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.shape" title="cfdm.core.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Data.shape" title="cfdm.core.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
 <td>Tuple of data dimension sizes.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../classes/cfdm.core.Data.html#cfdm.core.Data.size" title="cfdm.core.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Data.size" title="cfdm.core.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
 <td>Number of elements in the data.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="cfdm.core.Data.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-244"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-244"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy of the data.</p>
 <p><code class="docutils literal notranslate"><span class="pre">d.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(d)</span></code>.</p>
 <p>Copy-on-write is employed, so care must be taken when modifying any
@@ -275,7 +275,7 @@ attribute.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.del_calendar">
-<code class="descname">del_calendar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-265"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.del_calendar" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_calendar</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-265"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.del_calendar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the calendar.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -322,7 +322,7 @@ not set.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.del_fill_value">
-<code class="descname">del_fill_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-320"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.del_fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_fill_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-320"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.del_fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the fill value.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -375,7 +375,7 @@ was not set.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.del_units">
-<code class="descname">del_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-359"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.del_units" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-359"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.del_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the units.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -422,7 +422,7 @@ set.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-392"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-392"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array containing the data.</p>
 <p>If a fill value has been set (see <cite>set_fill_value</cite>) then it will be
 used, otherwise the default numpy fill value appropriate to the data
@@ -457,7 +457,7 @@ type will be used.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.get_calendar">
-<code class="descname">get_calendar</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-426"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_calendar" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_calendar</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-426"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_calendar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the calendar.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -511,7 +511,7 @@ value of <em>default</em> parameter, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.get_fill_value">
-<code class="descname">get_fill_value</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-505"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_fill_value</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-505"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the missing data value.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -571,7 +571,7 @@ value of <em>default</em> parameter, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.get_units">
-<code class="descname">get_units</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-555"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_units" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_units</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-555"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.get_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the units.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -625,7 +625,7 @@ value of <em>default</em> parameter, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.set_calendar">
-<code class="descname">set_calendar</code><span class="sig-paren">(</span><em>calendar</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-599"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.set_calendar" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_calendar</code><span class="sig-paren">(</span><em>calendar</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-599"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.set_calendar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the calendar.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -674,7 +674,7 @@ value of <em>default</em> parameter, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.set_fill_value">
-<code class="descname">set_fill_value</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-658"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.set_fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_fill_value</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-658"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.set_fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the missing data value.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -729,7 +729,7 @@ value of <em>default</em> parameter, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Data.set_units">
-<code class="descname">set_units</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta1/cfdm/core/data/data.py#core/data/data.py-698"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.set_units" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_units</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/data/data.py#core/data/data.py-698"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Data.set_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the units.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -925,7 +925,7 @@ value of <em>default</em> parameter, if provided.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.core.Data.rst.txt"

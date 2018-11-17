@@ -746,6 +746,10 @@ with the `~Field.get_data_axes` method of the field construct:
     'domainaxis1': <DomainAxis: 10>,
     'domainaxis2': <DomainAxis: 9>,
     'domainaxis3': <DomainAxis: 1>}
+   >>> t
+   <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> t.data.shape
+   (1, 10, 9)
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 

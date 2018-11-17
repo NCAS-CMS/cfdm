@@ -9,6 +9,8 @@ import numpy
 
 import cfdm
 
+verbose = False
+
 class create_fieldTest_2(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file_b.nc')
@@ -183,36 +185,43 @@ class create_fieldTest_2(unittest.TestCase):
         f.set_cell_method(cm0)
         f.set_cell_method(cm1)
 
-        print(repr(f))
-        print(f)
-        print(f.constructs())
-        print(f.construct_axes())
+        if verbose:                
+            print(repr(f))
+            print(f)
+            print(f.constructs())
+            print(f.construct_axes())
         
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")
         
 #        f.dump()
-        print("####################################################")
+        if verbose:
+            print("####################################################")
+            
         for fmt in ('NETCDF3_CLASSIC',
                     'NETCDF3_64BIT',
                     'NETCDF4',
                     'NETCDF4_CLASSIC'):
-            cfdm.write(f, self.filename, fmt=fmt, verbose=True)
+            cfdm.write(f, self.filename, fmt=fmt, verbose=verbose)
 
-            g = cfdm.read(self.filename, verbose=True)
-            for x in g:
-                x.print_read_report()
-#            g[0].dump()
+            g = cfdm.read(self.filename, verbose=verbose)
+            if verbose:
+                for x in g:
+                    x.print_read_report()
         
             self.assertTrue(len(g) == 1, '{} != 1'.format(len(g)))
 
             g = g[0].squeeze()
-        
+
+            #            g[0].dump()
+            
             #        g.dump
-            print('f')
-            print(f)
-            print('g')
-            print(g)
+            if verbose:
+                print('f')
+                print(f)
+                print('g')
+                print(g)
+                
             self.assertTrue(sorted(f.constructs()) == sorted(g.constructs()),
                             '\n\nf\n{}\n\n{}\n\ng\n{}\n\n{}'.format(
                             sorted(f.constructs()),
@@ -220,14 +229,14 @@ class create_fieldTest_2(unittest.TestCase):
                             sorted(g.constructs()),
                             sorted(g.constructs().items())))
 
-            print(2)
+
             self.assertTrue(g.equals(g.copy(), traceback=True),
                             "Field g not equal to a copy of itself")
-
-            print('f')
-            f.dump()
-            print('g')
-            g.dump()
+            if verbose:
+                print('f')
+                f.dump()
+                print('g')
+                g.dump()
             
             self.assertTrue(g.equals(f, traceback=True),                            
                             "Field not equal to itself read back in")
@@ -236,12 +245,12 @@ class create_fieldTest_2(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, verbose=True, field=['domain_ancillary'])
-        for x in g:
-            x.print_read_report()
+        g = cfdm.read(self.filename, verbose=verbose, field=['domain_ancillary'])
+        if verbose:
+            for x in g:
+                x.print_read_report()
 
-
-        print(g)
+            print(g)
 #        for x in g:
 #            x.dump()
 #        h = g.field('domainancillary2')

@@ -30,9 +30,9 @@ and forecasting data using netCDF files and libraries
 **CF data model**
 -----------------
 
-The CF data model identifies the fundamental elements ("constructs")
-of CF and shows how they relate to each other, independently of the
-netCDF encoding.
+The `CF data model <https://www.geosci-model-dev.net/10/4619/2017>`_
+identifies the fundamental elements ("constructs") of CF and shows how
+they relate to each other, independently of the netCDF encoding.
 
 The **field** construct defined by the CF data model, which
 corresponds to a CF-netCDF data variable with all of its metadata, is
@@ -51,7 +51,7 @@ consists of
 
   - the physical nature of each cell's datum.
 
-The domain is defined collectively by
+The domain is defined by
 
 * **domain axis** constructs (corresponding to CF-netCDF dimensions or
   scalar coordinate variables),

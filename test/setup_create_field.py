@@ -8,6 +8,8 @@ import numpy
 
 import cfdm
 
+verbose = False
+
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
@@ -185,12 +187,13 @@ class create_fieldTest(unittest.TestCase):
 #        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment:# ok) '+axisY+': max where sea'):
 #            f.set_cell_method(cm)
 
-        print(repr(f))
-        print(f)
-        print(f.constructs())
-        print(f.construct_axes())
+        if verbose:
+            print(repr(f))
+            print(f)
+            print(f.constructs())
+            print(f.construct_axes())
         
-        f.dump()
+            f.dump()
 
         self.assertTrue(f.equals(f, traceback=True),
                         "Field f not equal to itself")
@@ -198,16 +201,20 @@ class create_fieldTest(unittest.TestCase):
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")
 
-        print("####################################################")
-        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=True)
+        if verbose:
+            print("####################################################")
+            
+        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 #        f.dump()
 #        sys.exit(0)
 
-        g = cfdm.read(self.filename, verbose=True) #, squeeze=True)
+        g = cfdm.read(self.filename, verbose=verbose) #, squeeze=True)
 #        for x in g:
 #            x.print_read_report()
-        print(g)
-        g[0].dump()
+
+        if verbose:
+            print(g)
+            g[0].dump()
 
         array = g[0].get_construct(description='long_name:greek_letters').get_array()
         self.assertTrue(array[1] == b'beta', 'greek_letters = {!r}'.format(array))
@@ -234,17 +241,18 @@ class create_fieldTest(unittest.TestCase):
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 
+        if verbose:                    
 #        print'f'
 #        print f
 #        print 'g'
 #        print g
 #        f.dump()
 #        g.dump()
-
-        print('g')
-        g.dump()
-        print('f')
-        f.dump()
+            print('g')
+            g.dump()
+            print('f')
+            f.dump()
+            
         self.assertTrue(g.equals(f, traceback=True),
                         "Field (f) not equal to itself read back in (g)")
 
@@ -252,12 +260,14 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, verbose=True, field='domain_ancillary')
-        for x in g:
-            x.print_read_report()
+        g = cfdm.read(self.filename, verbose=verbose, field='domain_ancillary')
 
+        if verbose:            
+            for x in g:
+                x.print_read_report()
 
-        print(g)
+            print(g)
+            
 #        for x in g:
 #            x.dump()
 #        h = g.field('domainancillary2')

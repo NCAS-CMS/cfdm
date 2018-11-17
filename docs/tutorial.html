@@ -93,7 +93,7 @@
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Version 1.7-beta1</p>
+<p>Version 1.7-beta2</p>
 <hr class="docutils" />
 <p>The code examples in this tutorial are available in an <strong>IPython
 notebook</strong> (<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 70kB)
@@ -797,6 +797,10 @@ with the <a class="reference internal" href="method/cfdm.Field.get_data_axes.htm
 <span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: 10&gt;,</span>
 <span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: 9&gt;,</span>
 <span class="go"> &#39;domainaxis3&#39;: &lt;DomainAxis: 1&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">&lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 10, 9)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_data_axes</span><span class="p">()</span>
 <span class="go">(&#39;domainaxis0&#39;, &#39;domainaxis1&#39;, &#39;domainaxis2&#39;)</span>
 </pre></div>

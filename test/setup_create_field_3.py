@@ -8,6 +8,8 @@ import numpy
 
 import cfdm
 
+verbose = False
+
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file_c.nc')
@@ -197,23 +199,27 @@ class create_fieldTest(unittest.TestCase):
 #        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment:# ok) '+axisY+': max where sea'):
 #            f.set_cell_method(cm)
 
-        print(repr(f))
-        print(f)
-        print(f.constructs())
-        print(f.construct_axes())
+        if verbose:
+            print(repr(f))
+            print(f)
+            print(f.constructs())
+            print(f.construct_axes())
         
-        f.dump()
+            f.dump()
+            
 #        sys.exit(0)
-        print("####################################################")
-        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=True)
+        
+        cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
 #        f.dump()
 
-        g = cfdm.read(self.filename, verbose=True) #, squeeze=True)
-#        g[0].dump()
-#        sys.exit(0)
-        for x in g:
-            x.print_read_report()
+        g = cfdm.read(self.filename, verbose=verbose) #, squeeze=True)
 
+        if verbose:
+#           g[0].dump()
+#           sys.exit(0)
+            for x in g:
+                x.print_read_report()
+                
         self.assertTrue(len(g) == 1, 'Read produced too many fields: {} != 1'.format(len(g)))
 
         g = g[0].squeeze()
@@ -229,7 +235,7 @@ class create_fieldTest(unittest.TestCase):
 
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")
-        print(2)
+
         self.assertTrue(g.equals(g.copy(), traceback=True),
                         "Field g not equal to a copy of itself")
 #        print f.dump()
@@ -241,9 +247,9 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
 #        g.dump()
 
-        print(3)
-        f.dump()
-        g.dump()
+        if verbose:
+            f.dump()
+            g.dump()
 #        sys.exit(0)
         
         self.assertTrue(g.equals(f, traceback=True),
@@ -254,13 +260,14 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, verbose=True, field=['domain_ancillary'])
-        for x in g:
-            x.print_read_report()
+        g = cfdm.read(self.filename, verbose=verbose, field=['domain_ancillary'])
 
+        if verbose:
+            for x in g:
+                x.print_read_report()
 
-        print(g)
-        g[0].dump()
+            print(g)
+            g[0].dump()
 #        for x in g:
 #            x.dump()
 #        h = g.field('domainancillary2')
