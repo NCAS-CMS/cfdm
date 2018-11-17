@@ -88,11 +88,11 @@ To install from source:
 **Tests**
 ---------
 
-Run the tests by running, from the ``test`` directory,
+To run all tests:
 
 .. code:: bash
  
-   python run_tests.py
+   python test/run_tests.py
        
 **Code repository**
 -------------------

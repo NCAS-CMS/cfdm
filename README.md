@@ -40,6 +40,6 @@ https://ncas-cms.github.io/cfdm
 Tests
 =====
 
-The test scripts are in the ``test`` directory. To run all tests:
+To run all tests:
 
     python test/run_tests.py
