@@ -85,6 +85,17 @@ implementation, the cfdm package, that allows the reading and writing
 of netCDF datasets, as well as having comprehensive inspection
 capabilities, more flexible field modification capabilities, and a
 more user-friendly API (application programming interface).</p>
+<p>The design of the API needs to strike a balance between being
+“verbose” and “terse”. A verbose API is easier to understand, is more
+memorable, but usually involves more typing; whilst a terse API is
+more efficient for the experienced user. The cfdm package has aimed
+for an API that more at the verbose end of the spectrum: in general it
+does not use abbreviations for method and parameter names, and each
+method performs a sole function.</p>
+<p>The cfdm package is <em>not</em> (and is not meant to be) a general analysis
+package so it can’t, for example, regrid field constructs to new
+domains, perform statistical collapses, combine field constructs
+arithmetically, etc.</p>
 <p>Here is an example of a simple field created with the <a class="reference internal" href="class_core.html#class-core"><span class="std std-ref">cfdm.core</span></a> package:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
@@ -111,17 +122,6 @@ more user-friendly API (application programming interface).</p>
 <span class="go">Data            : altitude(cid%domainaxis0(1))</span>
 </pre></div>
 </div>
-<p>The design of the API also needs to strike a balance between being
-“verbose” and “terse”. A verbose API is easier to understand, is more
-memorable, but usually involves more typing; whilst a terse API is
-more efficient for the experienced user. The cfdm package has aimed
-for an API that more at the verbose end of the spectrum: in general it
-does not use abbreviations for method and parameter names, and each
-method performs a sole function.</p>
-<p>The cfdm package is <em>not</em> (and is not meant to be) a general analysis
-package so it can’t, for example, regrid field constructs to new
-domains, perform statistical collapses, combine field constructs
-arithmetically, etc.</p>
 </div>
 
 

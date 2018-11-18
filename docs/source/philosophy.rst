@@ -22,6 +22,19 @@ of netCDF datasets, as well as having comprehensive inspection
 capabilities, more flexible field modification capabilities, and a
 more user-friendly API (application programming interface).
 
+The design of the API needs to strike a balance between being
+"verbose" and "terse". A verbose API is easier to understand, is more
+memorable, but usually involves more typing; whilst a terse API is
+more efficient for the experienced user. The cfdm package has aimed
+for an API that more at the verbose end of the spectrum: in general it
+does not use abbreviations for method and parameter names, and each
+method performs a sole function.
+
+The cfdm package is *not* (and is not meant to be) a general analysis
+package so it can't, for example, regrid field constructs to new
+domains, perform statistical collapses, combine field constructs
+arithmetically, etc.
+
 Here is an example of a simple field created with the :ref:`cfdm.core
 <class_core>` package:
 
@@ -53,15 +66,3 @@ The same field may be created with the cfdm package:
    ---------------
    Data            : altitude(cid%domainaxis0(1))
 
-The design of the API also needs to strike a balance between being
-"verbose" and "terse". A verbose API is easier to understand, is more
-memorable, but usually involves more typing; whilst a terse API is
-more efficient for the experienced user. The cfdm package has aimed
-for an API that more at the verbose end of the spectrum: in general it
-does not use abbreviations for method and parameter names, and each
-method performs a sole function.
-
-The cfdm package is *not* (and is not meant to be) a general analysis
-package so it can't, for example, regrid field constructs to new
-domains, perform statistical collapses, combine field constructs
-arithmetically, etc.
