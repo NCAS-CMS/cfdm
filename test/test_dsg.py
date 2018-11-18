@@ -109,7 +109,11 @@ class DSGTest(unittest.TestCase):
         
         self.test_only = []
     #--- End: def
-    
+
+#    def _make_contiguous_file(self):
+#        nc = netCDF4.Dataset(DSG_timeSeries_contiguous.nc, 'w', format='NETCDF3_CLASSIC')
+        
+            
     def test_DSG_contiguous(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

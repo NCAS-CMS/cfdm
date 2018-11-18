@@ -18,10 +18,10 @@ python setup.py install --home=~/tmp
 
 rm -fr ~/tmp/test
 cp -pr test ~/tmp
-cd ~/tmp
 
 export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
 
-python test/run_tests.py
+cd ~/tmp/test
+python run_tests.py
 
 set -x
