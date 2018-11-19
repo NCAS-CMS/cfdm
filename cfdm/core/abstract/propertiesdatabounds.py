@@ -117,9 +117,27 @@ properties.
     # ----------------------------------------------------------------
     @property
     def bounds(self):
-        '''TODO
+        '''Return the bounds.
+
+``f.bounds`` is equivalent to ``f.get_bounds()`` 
+
+Note that a `Bounds` instance is returned. Use the `get_array` method
+of the `Bounds` instance to return the bounds as a `numpy` array.
 
 .. versionadded:: 1.7
+
+.. seealso:: `data`, `del_bounds`, `get_bounds`, `has_bounds`,
+             `set_bounds`
+
+:Returns:
+
+    out: `Bounds`
+        The bounds.
+
+**Examples:**
+
+TODO
+
         '''
         return self.get_bounds()
     #--- End: def

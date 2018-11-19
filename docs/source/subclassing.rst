@@ -6,7 +6,7 @@
 **Subclassing**
 ===============
 
-This page is under preparation (December 2018).
+*This page is under preparation*
 
 It will describe how to utilize the cfdm and :ref:`cfdm.core
 <class_core>` packages as a basis for other implementations that want

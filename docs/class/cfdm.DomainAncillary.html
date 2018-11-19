@@ -85,7 +85,7 @@
 <h1>cfdm.DomainAncillary<a class="headerlink" href="#cfdm-domainancillary" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.DomainAncillary">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">DomainAncillary</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/domainancillary.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">DomainAncillary</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/domainancillary.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domainancillary.DomainAncillary</span></code></p>
 <p>A domain ancillary construct of the CF data model.</p>
 <p>A domain ancillary construct provides information which is needed for
@@ -253,10 +253,10 @@ initialization. By default arguments are deep copied.</p>
 <td>Set the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>TODO</td>
+<td>Remove size one axes from the data array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.transpose.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>TODO  Permute the dimensions of the data.</td>
+<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -268,7 +268,7 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.bounds.html#cfdm.DomainAncillary.bounds" title="cfdm.DomainAncillary.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
-<td>TODO</td>
+<td>Return the bounds.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.data.html#cfdm.DomainAncillary.data" title="cfdm.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
@@ -304,10 +304,10 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>TODO</td>
+<td>Remove size one axes from the data array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.transpose.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>TODO  Permute the dimensions of the data.</td>
+<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -367,7 +367,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__getitem__.html#cfdm.DomainAncillary.__getitem__" title="cfdm.DomainAncillary.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
-<td>x.__getitem__(indices) &lt;==&gt; x[indices]</td>
+<td>Return a subspace of the construct defined by indices</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__repr__.html#cfdm.DomainAncillary.__repr__" title="cfdm.DomainAncillary.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>

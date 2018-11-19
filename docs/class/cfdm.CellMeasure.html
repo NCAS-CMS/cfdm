@@ -85,7 +85,7 @@
 <h1>cfdm.CellMeasure<a class="headerlink" href="#cfdm-cellmeasure" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.CellMeasure">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFExternal</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about the
@@ -276,10 +276,10 @@ initialization. By default arguments are deep copied.</p>
 <td>Set the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>TODO Remove size 1 dimensions from the data array</td>
+<td>Remove size one axes from the data array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>TODO</td>
+<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -327,10 +327,10 @@ initialization. By default arguments are deep copied.</p>
 <td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.squeeze.html#cfdm.CellMeasure.squeeze" title="cfdm.CellMeasure.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>TODO Remove size 1 dimensions from the data array</td>
+<td>Remove size one axes from the data array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.transpose.html#cfdm.CellMeasure.transpose" title="cfdm.CellMeasure.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>TODO</td>
+<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -390,7 +390,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.__getitem__.html#cfdm.CellMeasure.__getitem__" title="cfdm.CellMeasure.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
-<td>TODO x.__getitem__(indices) &lt;==&gt; x[indices]</td>
+<td>Return a subspace of the construct defined by indices</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.__repr__.html#cfdm.CellMeasure.__repr__" title="cfdm.CellMeasure.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>

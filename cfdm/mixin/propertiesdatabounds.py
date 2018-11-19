@@ -13,7 +13,44 @@ bounds.
     '''
     
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        '''Return a subspace of the construct defined by indices
+
+f.__getitem__(indices) <==> f[indices]
+
+The new subspace contains the same properties and similar components
+to the original construct, but the latter are also subspaced over
+their corresponding axes.
+
+Indexing follows rules that are very similar to the numpy indexing
+rules, the only differences being:
+
+* An integer index i takes the i-th element but does not reduce the
+  rank by one.
+
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a Variable object of the netCDF4 package.
+
+:Returns:
+
+    out:
+        The subspace of the construct.
+
+**Examples:**
+
+>>> f.data.shape
+(1, 10, 9)
+>>> f[:, :, 1].data.shape
+(1, 10, 1)
+>>> f[:, 0].data.shape
+(1, 1, 9)
+>>> f[..., 6:3:-1, 3:6].data.shape
+(1, 3, 3)
+>>> f[0, [2, 9], [4, 8]].data.shape
+(1, 2, 2)
+>>> f[0, :, -2].data.shape
+(1, 10, 1)
 
         '''
         if indices is Ellipsis:

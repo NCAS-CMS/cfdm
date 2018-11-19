@@ -85,7 +85,7 @@
 <h1>cfdm.AuxiliaryCoordinate<a class="headerlink" href="#cfdm-auxiliarycoordinate" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.AuxiliaryCoordinate">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/auxiliarycoordinate.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/auxiliarycoordinate.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which locate
@@ -198,7 +198,10 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.AuxiliaryCoordinate.data.html#cfdm.AuxiliaryCoordinate.data" title="cfdm.AuxiliaryCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.AuxiliaryCoordinate.bounds.html#cfdm.AuxiliaryCoordinate.bounds" title="cfdm.AuxiliaryCoordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.AuxiliaryCoordinate.data.html#cfdm.AuxiliaryCoordinate.data" title="cfdm.AuxiliaryCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
 </tbody>
@@ -262,10 +265,10 @@ initialization. By default arguments are deep copied.</p>
 <td>Set the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.squeeze.html#cfdm.AuxiliaryCoordinate.squeeze" title="cfdm.AuxiliaryCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>TODO</td>
+<td>Remove size one axes from the data array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.transpose.html#cfdm.AuxiliaryCoordinate.transpose" title="cfdm.AuxiliaryCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>TODO  Permute the dimensions of the data.</td>
+<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -280,7 +283,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.AuxiliaryCoordinate.bounds.html#cfdm.AuxiliaryCoordinate.bounds" title="cfdm.AuxiliaryCoordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
-<td>TODO</td>
+<td>Return the bounds.</td>
 </tr>
 </tbody>
 </table>
@@ -313,10 +316,10 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.squeeze.html#cfdm.AuxiliaryCoordinate.squeeze" title="cfdm.AuxiliaryCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>TODO</td>
+<td>Remove size one axes from the data array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.transpose.html#cfdm.AuxiliaryCoordinate.transpose" title="cfdm.AuxiliaryCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>TODO  Permute the dimensions of the data.</td>
+<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -376,7 +379,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__getitem__.html#cfdm.AuxiliaryCoordinate.__getitem__" title="cfdm.AuxiliaryCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
-<td>x.__getitem__(indices) &lt;==&gt; x[indices]</td>
+<td>Return a subspace of the construct defined by indices</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.AuxiliaryCoordinate.__repr__.html#cfdm.AuxiliaryCoordinate.__repr__" title="cfdm.AuxiliaryCoordinate.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>

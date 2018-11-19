@@ -29,8 +29,8 @@ array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.
 
     '''
-    def __init__(self, measure=None, properties={}, data=None, source=None,
-                 copy=True, _use_data=True):
+    def __init__(self, measure=None, properties=None, data=None,
+                 source=None, copy=True, _use_data=True):
         '''**Initialisation**
 
 :Parameters:
