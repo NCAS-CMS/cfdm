@@ -33,6 +33,8 @@ some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).
 
+.. versionadded:: 1.7
+
     '''
 
     # Define the base of the identity keys for each construct type
@@ -59,12 +61,9 @@ and institution).
     def __init__(self, properties={}, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
-
-If the source parameter contains a data array then it will be copied
-into the new field, otherwise the data must be set after
-initialisation with the `set_data` method.
         
 :Parameters:
+
 
     properties: `dict`, optional
         Set descriptive properties. The dictionary keys are property
@@ -72,39 +71,18 @@ initialisation with the `set_data` method.
         parameter is set.
 
         *Example:*
-           ``properties={'standard_name': 'altitude'}``
+           ``properties={'standard_name': 'air_temperature'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
 
-    source: optional 
-        Override the *properties* parameter with
-        ``source.properties()``.
-
-        If *source* does not have this method, or it can not return
-        anything, then the *properties* parameter is not set.
-
-        In addition, if *source* has any of a data array, data array
-        axes, and metadata constructs then these are copied to the new
-        field.
-
-        *Example:*
-          If ``g`` is a `Field` object then ``f = Field(source=g)``
-          is equivalent to ``f = g.copy()``.
-
-        *Example:*
-          If ``dc`` is a `DimensionCoordinate` object then
-
-                >>> f = Field(source=dc)
-
-          is equivalent to
-
-             >>> f = Field(properties=dc.properties())
-             >>> f.set_data(dc.get_data(None))
-
+    source: optional
+        Initialize the properties, data and metadata constructs from
+        those of *source*.
+        
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
-        initialization By default parameters are deep copied.
+        initialization. By default arguments are deep copied.
 
         '''
         super().__init__(properties=properties, source=source,
@@ -331,7 +309,7 @@ None
 #            construct_type='field_ancillary', copy=copy)
 
     def del_construct(self, cid):
-        '''Remove a construct.
+        '''Remove a metadata construct.
 
 If a removed domain axis construct is referenced by a cell method
 construct, then that reference is also removed.
@@ -342,8 +320,9 @@ construct, then that reference is also removed.
 
 :Parameters:
 
-    cid: `str`, optional
-        The identifier of the construct.
+    cid: `str`
+        The construct identifier of the metadata construct to be
+        removed.
 
         *Example:*
           ``cid='auxiliarycoordinate0'``
@@ -351,9 +330,9 @@ construct, then that reference is also removed.
 :Returns:
 
     out: 
-        The removed construct.
+        The removed metadata construct.
 
-**Examples**
+**Examples:**
 
 TODO
 

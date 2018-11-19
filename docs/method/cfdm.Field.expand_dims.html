@@ -87,7 +87,7 @@
 <h1>cfdm.Field.expand_dims<a class="headerlink" href="#cfdm-field-expand-dims" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.expand_dims">
-<code class="descclassname">Field.</code><code class="descname">expand_dims</code><span class="sig-paren">(</span><em>axis</em>, <em>position=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/field.py#field.py-697"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.expand_dims" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">expand_dims</code><span class="sig-paren">(</span><em>axis</em>, <em>position=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/field.py#L721"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.expand_dims" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expand the shape of the data array.</p>
 <p>Insert a new size 1 axis, corresponding to a domain axis construct,
 into the data array.</p>
@@ -144,9 +144,9 @@ position are allowed.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 96, 73, 19)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(96, 73, 19, 1)</span>
+<span class="go">(19, 73, 96, 1)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="s1">&#39;domainaxis3&#39;</span><span class="p">,</span> <span class="n">position</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(96, 73, 1, 19)</span>
+<span class="go">(19, 73, 1, 96)</span>
 </pre></div>
 </div>
 </dd></dl>

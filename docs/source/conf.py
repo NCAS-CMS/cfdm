@@ -436,8 +436,7 @@ def linkcode_resolve(domain, info):
     fn = relpath(fn, start=dirname(cfdm.__file__))
     
     if lineno:
-#        linespec = "#cl-%d" % (lineno + 1)  ##This format used to work in bitbucket, but doesn't now 910/02/2016)
-        linespec = "#{0}-{1}".format(fn, lineno+1) #, lineno+nlines)
+        linespec = "#L{0}".format(lineno+1)
         # Can add range when jump-to feature is enable in bitbucket
     else:
         linespec = ""

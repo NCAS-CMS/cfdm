@@ -87,11 +87,11 @@
 <h1>cfdm.Field.dump<a class="headerlink" href="#cfdm-field-dump" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.dump">
-<code class="descclassname">Field.</code><code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>_level=0</em>, <em>_title=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/field.py#field.py-488"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.dump" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">dump</code><span class="sig-paren">(</span><em>display=True</em>, <em>_level=0</em>, <em>_title=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/field.py#L512"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>A full description of the field construct.</p>
-<p>Returns a desciption of all properties of all constructs, including
-metadata constructs and their components, and shows the first and last
-values of all data arrays.</p>
+<p>Returns a description of all properties, including those of metadata
+constructs and their components, and provides selected values of all
+data arrays.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -109,9 +109,9 @@ the description is printed.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">The description of the field construct. If <em>display</em> is True
-then the description is printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is
-returned. Otherwise the description is returned as a string.</p>
+<dd><p class="first last">The description. If <em>display</em> is True then the description is
+printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise the description is
+returned as a string.</p>
 </dd>
 </dl>
 </td>

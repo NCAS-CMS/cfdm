@@ -291,7 +291,48 @@ bounds.
     #--- End: def
 
     def expand_dims(self, position):
-        '''TODO
+        '''Expand the shape of the data array.
+
+Insert a new size 1 axis into the data array. A corresponding axis is
+also inserted into the bounds data array, if present.
+
+.. versionadded:: 1.7
+
+.. seealso:: `squeeze`, `transpose`
+
+:Parameters:
+
+    position: `int`, optional
+        Specify the position that the new axis will have in the data
+        array. By default the new axis has position 0, the slowest
+        varying position. Negative integers counting from the last
+        position are allowed.
+
+        *Example:*
+          ``position=2``
+
+        *Example:*
+          ``position=-1``
+
+:Returns:
+
+    out:
+        The new construct with expanded data axes.
+
+**Examples:**
+
+>>> f.data.shape
+(19, 73, 96)
+>>> f.expand_dims(position=3).data.shape
+(96, 73, 19, 1)
+>>> g = f.expand_dims(position=-1)
+>>> g.data.shape
+(19, 73, 1, 96)
+>>> f.bounds.data.shape
+(19, 73, 96, 4)
+>>> g.bounds.data.shape
+(19, 73, 1, 96, 4)
+
         '''
         position = self._parse_axes([position])[0]
         
@@ -348,7 +389,54 @@ variable.
     #--- End: def
 
     def squeeze(self, axes=None):
-        '''TODO 
+        '''Remove size one axes from the data array.
+
+By default all size one axes are removed, but particular size one axes
+may be selected for removal. Corresponding axes are also removed from
+the bounds data array, if present.
+
+.. versionadded:: 1.7
+
+.. seealso:: `expand_dims`, `transpose`
+
+:Parameters:
+
+    axes: (sequence of) `int`
+        The positions of the size one axes to be removed. By default
+        all size one axes are removed. Each axis is identified by its
+        original integer position. Negative integers counting from the
+        last position are allowed.
+
+        *Example:*
+          ``axes=0``
+
+        *Example:*
+          ``axes=-2``
+
+        *Example:*
+          ``axes=[2, 0]``
+
+:Returns:
+
+    out:
+        The new construct with removed data axes.
+
+**Examples:**
+
+>>> f.data.shape
+(1, 73, 1, 96)
+>>> f.squeeze().data.shape
+(73, 96)
+>>> f.squeeze(0).data.shape
+(73, 1, 96)
+>>> g = f.squeeze([-3, 2])
+>>> g.data.shape
+(73, 96)
+>>> f.bounds.data.shape
+(1, 73, 1, 96, 4)
+>>> g.data.shape
+(73, 96, 4)
+
         '''
         axes = self._parse_axes(axes)
 
@@ -372,31 +460,51 @@ variable.
     #--- End: def
     
     def transpose(self, axes=None):
-        '''TODO  Permute the dimensions of the data.
+        '''Permute the axes of the data array.
+
+Corresponding axes of the bounds data array, if present, are also
+permuted.
+
+Note that if i) the data array is two-dimensional, ii) the two axes
+have been permuted, and iii) each cell has four bounds values; then
+columns 1 and 3 (counting from 0) of the bounds axis are swapped to
+preserve contiguity bounds in adjacent cells. See section 7.1 "Cell
+Boundaries" of the CF conventions for details.
 
 .. seealso:: `expand_dims`, `squeeze`
 
 :Parameters:
 
-    axes: (sequence of) `int`, optional
-        The new order of the data array. By default, reverse the
-        dimensions' order, otherwise the axes are permuted according
-        to the values given. The values of the sequence comprise the
-        integer positions of the dimensions in the data array in the
-        desired order.
+    axes: (sequence of) `int`
+        The new axis order. By default the order is reversed. Each
+        axis in the new order is identified by its original integer
+        position. Negative integers counting from the last position
+        are allowed.
 
-    {+copy}
+        *Example:*
+          ``axes=[2, 0, 1]``
+
+        *Example:*
+          ``axes=[-1, 0, 1]``
 
 :Returns:
 
-    out : `{+Variable}`
+    out: 
+         The new construct with permuted data axes.
 
-:Examples:
+**Examples:**
 
->>> c.ndim
-3
->>> c.{+name}()
->>> c.{+name}([1, 2, 0])
+>>> f.data.shape
+(19, 73, 96)
+>>> f.tranpose().data.shape
+(96, 73, 19)
+>>> g = f.tranpose([1, 0, 2])
+>>> g.data.shape
+(73, 19, 96)
+>>> f.bounds.data.shape
+(19, 73, 96, 4)
+>>> g.bounds.data.shape
+(73, 19, 96, 4)
 
         '''
         if axes is None:

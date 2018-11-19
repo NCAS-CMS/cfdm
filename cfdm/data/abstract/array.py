@@ -14,7 +14,7 @@ class Array(with_metaclass(abc.ABCMeta, core_Array)):
 The form of the array is arbitrary and is defined by the attributes
 set on a subclass of the abstract `Array` object.
 
-See `cfdm.data.NumpyArray` for an example implementation.
+See `cfdm.NumpyArray` for an example implementation.
 
     '''
     @abc.abstractmethod

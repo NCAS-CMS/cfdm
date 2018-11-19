@@ -277,7 +277,7 @@ rules, the only differences being:
 :Returns:
 
     out: `Field`
-        The subspace of the field contruct.
+        The subspace of the field construct.
 
 **Examples:**
 
@@ -476,7 +476,31 @@ field.
 #    #--- End: def
 
     def copy(self, data=True):
-        '''TODO
+        '''Return a deep copy of the field construct.
+
+``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.7
+
+:Parameters:
+
+    data: `bool`, optional
+        If False then do not copy the data field construct, nor that
+        of any of its metadata constructs. By default all data are
+        copied.
+
+:Returns:
+
+    out:
+        The deep copy.
+
+**Examples:**
+
+>>> g = f.copy()
+>>> g = f.copy(data=False)
+>>> g.has_data()
+False
+
         '''
         new = super().copy(data=data)
 
@@ -488,9 +512,9 @@ field.
     def dump(self, display=True, _level=0, _title=None):
         '''A full description of the field construct.
 
-Returns a desciption of all properties of all constructs, including
-metadata constructs and their components, and shows the first and last
-values of all data arrays.
+Returns a description of all properties, including those of metadata
+constructs and their components, and provides selected values of all
+data arrays.
 
 .. versionadded:: 1.7
 
@@ -503,9 +527,9 @@ values of all data arrays.
 :Returns:
 
     out: `None` or `str`
-        The description of the field construct. If *display* is True
-        then the description is printed and `None` is
-        returned. Otherwise the description is returned as a string.
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
         '''
         indent = '    '      
@@ -737,9 +761,9 @@ into the data array.
 >>> f.expand_dims('domainaxis3').data.shape
 (1, 96, 73, 19)
 >>> f.expand_dims('domainaxis3', position=3).data.shape
-(96, 73, 19, 1)
+(19, 73, 96, 1)
 >>> f.expand_dims('domainaxis3', position=-1).data.shape
-(96, 73, 1, 19)
+(19, 73, 1, 96)
 
         '''
         f = self.copy()

@@ -80,27 +80,25 @@ number of vertices of each cell.
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None, _axes=None,
              _axis_names=None):
-        '''TODO Return a string containing a full description of the domain
-ancillary object.
+        '''A full description of the domain ancillary construct.
+
+Returns a description of all properties, including those of
+components, and provides selected values of all data arrays.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
     display: `bool`, optional
         If False then return the description as a string. By default
-
-        the description is printed, i.e. ``f.dump()`` is equivalent to
-        ``print f.dump(display=False)``.
-
-    field: `Field`, optional
-
-    key: `str`, optional
+        the description is printed.
 
 :Returns:
 
     out: `None` or `str`
-        A string containing the description.
-
-**Examples**
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
         '''
         if _title is None:

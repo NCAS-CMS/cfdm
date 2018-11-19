@@ -28,7 +28,7 @@ Inspection
    ~cfdm.core.Field.get_property
    ~cfdm.core.Field.has_property
    ~cfdm.core.Field.properties
-   
+
 .. rubric:: Attributes
    
 .. autosummary::
@@ -72,8 +72,8 @@ Data
    ~cfdm.core.Field.get_data_axes
    ~cfdm.core.Field.has_data
    ~cfdm.core.Field.set_data
-   ~cfdm.core.Field.set_data_axes
-
+   ~cfdm.core.Field.set_data_axes   
+   
 .. rubric:: Attributes
    
 .. autosummary::
@@ -103,7 +103,7 @@ Modification
    ~cfdm.core.Field.set_data
    ~cfdm.core.Field.set_data_axes
    ~cfdm.core.Field.set_property
-
+ 
 
 Miscellaneous
 -------------
@@ -128,5 +128,3 @@ Special
    :template: method.rst
 
    ~cfdm.core.Field.__deepcopy__
-   ~cfdm.core.Field.__repr__
-   ~cfdm.core.Field.__str__

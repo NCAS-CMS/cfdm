@@ -72,22 +72,25 @@ auxiliary coordinate construct or domain ancillary construct.
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None, _axes=None,
              _axis_names=None):
-        '''Return a string containing a full description of the field ancillary
-object.
+        '''A full description of the field ancillary construct.
+
+Returns a description of all properties, including those of
+components, and provides selected values of all data arrays.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
     display: `bool`, optional
         If False then return the description as a string. By default
-        the description is printed, i.e. ``f.dump()`` is equivalent to
-        ``print f.dump(display=False)``.
+        the description is printed.
 
 :Returns:
 
     out: `None` or `str`
-        A string containing the description.
-
-**Examples**
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
         '''
         if _title is None:

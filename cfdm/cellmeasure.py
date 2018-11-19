@@ -81,23 +81,25 @@ cell measure variables correspond to cell measure constructs.
     def dump(self, display=True, _omit_properties=None, field=None,
              key=None, _level=0, _title=None, _axes=None,
              _axis_names=None):
-        '''
+        '''A full description of the cell measure construct.
 
-Return a string containing a full description of the cell measure.
+Returns a description of all properties, including those of
+components, and provides selected values of all data arrays.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
-    display : bool, optional
+    display: `bool`, optional
         If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
+        the description is printed.
 
 :Returns:
 
-    out : None or str
-        A string containing the description.
-
-**Examples**
+    out: `None` or `str`
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
 ''' 
         if _title is None:

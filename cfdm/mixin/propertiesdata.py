@@ -239,33 +239,41 @@ standard_name = 'time'
     #--- End: def
 
     def expand_dims(self, position=0):
-        '''TODO Insert a size 1 axis into the data array.
+        '''Expand the shape of the data array.
 
-.. versionadded:: 1.6
+Insert a new size 1 axis into the data array.
 
-.. seealso:: `squeeze`
+.. versionadded:: 1.7
 
-:Examples 1:
-
->>> g = f.{+name}()
+.. seealso:: `squeeze`, `transpose`
 
 :Parameters:
 
-    position: `int`, optional    
-        Specify the position amongst the data array axes where the new
-        axis is to be inserted. By default the new axis is inserted at
-        position 0, the slowest varying position.
+    position: `int`, optional
+        Specify the position that the new axis will have in the data
+        array. By default the new axis has position 0, the slowest
+        varying position. Negative integers counting from the last
+        position are allowed.
 
-    {+copy}
+        *Example:*
+          ``position=2``
+
+        *Example:*
+          ``position=-1``
 
 :Returns:
 
-    `None`
+    out:
+        The new construct with expanded data axes.
 
-:Examples:
+**Examples:**
 
->>> v.{+name}(2)
->>> v.{+name}(-1)
+>>> f.data.shape
+(19, 73, 96)
+>>> f.expand_dims(position=3).data.shape
+(19, 73, 96, 1)
+>>> f.expand_dims(position=-1).data.shape
+(19, 73, 1, 96)
 
         '''       
         v = self.copy()
@@ -455,33 +463,47 @@ None
     #--- End: def
 
     def squeeze(self, axes=None):
-        '''TODO Remove size 1 dimensions from the data array
+        '''Remove size one axes from the data array.
 
-.. versionadded:: 1.6
+By default all size one axes are removed, but particular size one axes
+may be selected for removal.
 
-.. seealso:: `expand_dims`
+.. versionadded:: 1.7
 
-:Examples 1:
-
->>> f.{+name}()
+.. seealso:: `expand_dims`, `transpose`
 
 :Parameters:
 
-    axes: (sequence of) `int`, optional
-        The size 1 axes to remove. By default, all size 1 axes are
-        removed. Size 1 axes for removal are identified by their
-        integer positions in the data array.
-    
-    {+copy}
+    axes: (sequence of) `int`
+        The positions of the size one axes to be removed. By default
+        all size one axes are removed. Each axis is identified by its
+        original integer position. Negative integers counting from the
+        last position are allowed.
+
+        *Example:*
+          ``axes=0``
+
+        *Example:*
+          ``axes=-2``
+
+        *Example:*
+          ``axes=[2, 0]``
 
 :Returns:
 
-    out: `{+Variable}`
+    out:
+        The new construct with removed data axes.
 
-:Examples:
+**Examples:**
 
->>> f.{+name}(1)
->>> f.{+name}([1, 2])
+>>> f.data.shape
+(1, 73, 1, 96)
+>>> f.squeeze().data.shape
+(73, 96)
+>>> f.squeeze(0).data.shape
+(73, 1, 96)
+>>> f.squeeze([-3, 2]).data.shape
+(73, 96)
 
         '''
         v = self.copy()
@@ -494,7 +516,7 @@ None
     #--- End: def
 
     def transpose(self, axes=None):
-        '''TODO
+        '''Permute the axes of the data array.
 
 .. versionadded:: 1.7
 
@@ -502,17 +524,32 @@ None
 
 :Parameters:
 
-    axes:
-        TODO
+    axes: (sequence of) `int`
+        The new axis order. By default the order is reversed. Each
+        axis in the new order is identified by its original integer
+        position. Negative integers counting from the last position
+        are allowed.
+
+        *Example:*
+          ``axes=[2, 0, 1]``
+
+        *Example:*
+          ``axes=[-1, 0, 1]``
 
 :Returns:
 
     out: 
-        TODO
+         The new construct with permuted data axes.
 
 **Examples:**
 
-TODO
+>>> f.data.shape
+(19, 73, 96)
+>>> f.tranpose().data.shape
+(96, 73, 19)
+>>> f.tranpose([1, 0, 2]).data.shape
+(73, 19, 96)
+
         '''       
         v = self.copy()
 

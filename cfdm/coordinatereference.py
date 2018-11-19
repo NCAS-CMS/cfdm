@@ -168,26 +168,25 @@ x.__str__() <==> str(x)
     def dump(self, display=True, _omit_properties=None, field=None,
              key='', _level=0, _title=None, _construct_names=None,
              _auxiliary_coordinates=None, _dimension_coordinates=None):
-        '''Return a string containing a full description of the coordinate
-reference object.
+        '''A full description of the coordinate reference construct.
+
+Returns a description of all properties, including those of
+components.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
     display: `bool`, optional
         If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
-
-    field: `cf.Field`, optional
-
-    key: `str`, optional
-        Ignored.
+        the description is printed.
 
 :Returns:
 
     out: `None` or `str`
-
-**Examples**
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
         '''          
         indent0 = '    ' * _level

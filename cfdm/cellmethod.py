@@ -29,28 +29,26 @@ that the method was applied only over El Nino years).
     '''
 
     def dump(self, display=True, _title=None, _level=0):
-        '''TODO
-        
-Return a string containing a full description of the instance.
+        '''A full description of the cell method construct.
 
-If a cell methods 'name' is followed by a '*' then that cell method is
-relevant to the data in a way which may not be precisely defined its
-corresponding dimension or dimensions.
+Returns a description of all properties and the axes to which it
+applies.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
     display: `bool`, optional
         If False then return the description as a string. By default
-        the description is printed, i.e. ``c.dump()`` is equivalent to
-        ``print c.dump(display=False)``.
+        the description is printed.
 
 :Returns:
 
-    out: `str` or `None`
-        A string containing the description.
+    out: `None` or `str`
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
 
-**Examples**
-         
         '''
         indent0 = '    ' * _level
 

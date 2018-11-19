@@ -85,7 +85,7 @@
 <h1>cfdm.core.abstract.Parameters<a class="headerlink" href="#cfdm-core-abstract-parameters" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.abstract.Parameters">
-<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>Abstract base class for a collection of named parameters.</p>
 <div class="versionadded">
@@ -122,7 +122,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.Parameters.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -186,7 +186,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.Parameters.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-71"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L71"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <div class="versionadded">
@@ -222,7 +222,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Parameters.del_parameter">
-<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-98"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.del_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L98"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.del_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a parameter.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -261,7 +261,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Parameters.get_parameter">
-<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-126"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.get_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L126"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.get_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a parameter value.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -302,7 +302,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Parameters.parameters">
-<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-166"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L166"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace the parameter-valued terms.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -356,7 +356,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.Parameters.set_parameter">
-<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/parameters.py#core/abstract/parameters.py-214"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.set_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L214"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.set_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a parameter-valued term.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
