@@ -85,7 +85,7 @@
 <h1>cfdm.core.AuxiliaryCoordinate<a class="headerlink" href="#cfdm-core-auxiliarycoordinate" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.AuxiliaryCoordinate">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/auxiliarycoordinate.py#core/auxiliarycoordinate.py-4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/auxiliarycoordinate.py#core/auxiliarycoordinate.py-4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.coordinate.Coordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which locate
@@ -160,13 +160,8 @@ is set.</p>
 with the <cite>set_interior_ring</cite> method.</p>
 </dd>
 <dt>source: optional</dt>
-<dd><p class="first">Override the <em>properties</em>, <em>data</em>, <em>bounds</em>, <em>geometry</em> and
-<em>interior_ring</em> parameters with <code class="docutils literal notranslate"><span class="pre">source.properties()</span></code>,
-<code class="docutils literal notranslate"><span class="pre">source.get_data(None)</span></code>, <code class="docutils literal notranslate"><span class="pre">source.get_bounds(None)</span></code>,
-<code class="docutils literal notranslate"><span class="pre">source.get_geometry(None)</span></code>,
-<code class="docutils literal notranslate"><span class="pre">source.get_interior_ring(None)</span></code> respectively.</p>
-<p class="last">If <em>source</em> does not have one of these methods, then the
-corresponding parameter is not set.</p>
+<dd><p class="first last">Initialize the properties, data and bounds from those of
+<em>source</em>.</p>
 </dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
@@ -179,7 +174,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -231,13 +226,8 @@ is set.</p>
 with the <cite>set_interior_ring</cite> method.</p>
 </dd>
 <dt>source: optional</dt>
-<dd><p class="first">Override the <em>properties</em>, <em>data</em>, <em>bounds</em>, <em>geometry</em> and
-<em>interior_ring</em> parameters with <code class="docutils literal notranslate"><span class="pre">source.properties()</span></code>,
-<code class="docutils literal notranslate"><span class="pre">source.get_data(None)</span></code>, <code class="docutils literal notranslate"><span class="pre">source.get_bounds(None)</span></code>,
-<code class="docutils literal notranslate"><span class="pre">source.get_geometry(None)</span></code>,
-<code class="docutils literal notranslate"><span class="pre">source.get_interior_ring(None)</span></code> respectively.</p>
-<p class="last">If <em>source</em> does not have one of these methods, then the
-corresponding parameter is not set.</p>
+<dd><p class="first last">Initialize the properties, data and bounds from those of
+<em>source</em>.</p>
 </dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
@@ -294,7 +284,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.AuxiliaryCoordinate.has_bounds" title="cfdm.core.AuxiliaryCoordinate.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a>()</td>
-<td>True if there are bounds.</td>
+<td>Whether or not there are bounds.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.AuxiliaryCoordinate.has_data" title="cfdm.core.AuxiliaryCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a>()</td>
 <td>Whether a data object has been set.</td>
@@ -351,9 +341,12 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-139"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-139"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">c.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(c)</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -375,7 +368,7 @@ arrays. By default they are copied.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
@@ -388,7 +381,7 @@ arrays. By default they are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.del_bounds">
-<code class="descname">del_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-168"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-170"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the bounds.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -418,19 +411,21 @@ arrays. By default they are copied.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">d</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -438,7 +433,7 @@ arrays. By default they are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.del_data">
-<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-134"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -490,7 +485,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.del_geometry">
-<code class="descname">del_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-210"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the geometry type. TODO</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -516,16 +511,13 @@ set then the <em>default</em> is returned, if provided.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.del_property">
-<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/properties.py#core/abstract/properties.py-86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/properties.py#core/abstract/properties.py-78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.del_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -583,7 +575,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array the data.</p>
 <p>Use the <cite>get_data</cite> method to return the data as a <cite>Data</cite> object.</p>
 <div class="versionadded">
@@ -625,7 +617,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.get_bounds">
-<code class="descname">get_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-229"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-235"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the bounds.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -652,20 +644,32 @@ value of <em>default</em> parameter if provided.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="s1">&#39;No bounds&#39;</span><span class="p">)</span>
-<span class="go">&#39;No bounds&#39;</span>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-211"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
-<p>Note that the data are returned in a <cite>Data</cite> object. Use the
-<cite>get_array</cite> method to return the data as an independent <cite>numpy</cite> array.</p>
+<p>Note that a <cite>Data</cite> is returned. Use the <cite>get_array</cite> method to return
+the data as an independent <cite>numpy</cite> array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -716,8 +720,11 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.get_geometry">
-<code class="descname">get_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-272"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-290"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the geometry type.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><cite>get_array</cite>, <cite>get_data</cite>, <cite>has_bounds</cite>, <cite>set_bounds</cite></p>
@@ -738,13 +745,16 @@ provided.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.get_interior_ring">
-<code class="descname">get_interior_ring</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-292"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_interior_ring" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_interior_ring</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_interior_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the interior_ring.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><cite>del_interior_ring</cite>, <cite>get_bounds</cite>, <cite>has_interior_ring</cite>,
@@ -766,7 +776,7 @@ provided.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_interior_ring</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -774,11 +784,11 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/properties.py#core/abstract/properties.py-135"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/properties.py#core/abstract/properties.py-123"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><cite>del_property</cite>, <cite>has_property</cite>, <cite>properties</cite>,
@@ -833,8 +843,11 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.has_bounds">
-<code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-314"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if there are bounds. TODO</p>
+<code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-336"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not there are bounds.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><cite>del_bounds</cite>, <cite>get_bounds</cite>, <cite>has_data</cite>, <cite>set_bounds</cite></p>
@@ -852,17 +865,29 @@ returned, if provided.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="k">print</span> <span class="s1">&#39;Has bounds&#39;</span>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.has_data">
-<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-274"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a data object has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -906,8 +931,11 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.has_geometry">
-<code class="descname">has_geometry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-335"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_geometry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-370"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if there is a goemetry type. TODO</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><cite>del_bounds</cite>, <cite>get_bounds</cite>, <cite>has_data</cite>, <cite>set_bounds</cite></p>
@@ -920,7 +948,7 @@ returned, if provided.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">has_geometry</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -928,8 +956,11 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.has_interior_ring">
-<code class="descname">has_interior_ring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-352"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_interior_ring" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_interior_ring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-389"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_interior_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if there are interior_ring. TODO</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><cite>del_interior_ring</cite>, <cite>get_interior_ring</cite>, <cite>has_data</cite>, <cite>set_interior_ring</cite></p>
@@ -947,7 +978,7 @@ returned, if provided.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">has_interior_ring</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">has_interior_ring</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="s1">&#39;Has interior_ring&#39;</span>
@@ -957,11 +988,11 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/properties.py#core/abstract/properties.py-189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/properties.py#core/abstract/properties.py-175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.has_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>properties</cite>, <cite>set_property</cite></p>
@@ -1011,11 +1042,8 @@ to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/properties.py#core/abstract/properties.py-231"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.properties" title="Permalink to this definition">¶</a></dt>
+<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/properties.py#core/abstract/properties.py-215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace all properties.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -1076,8 +1104,11 @@ properties if no changes were specified.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.set_bounds">
-<code class="descname">set_bounds</code><span class="sig-paren">(</span><em>bounds</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-372"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_bounds</code><span class="sig-paren">(</span><em>bounds</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-411"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the bounds.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1098,18 +1129,31 @@ default the bounds are copied.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span>
+<span class="go">&lt;Bounds: (5, 2) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">has_bounds</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">del_bounds</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.set_data">
-<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdata.py#core/abstract/propertiesdata.py-308"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the data.</p>
-<p>The units, calendar and fill value properties of the data object are
+<p>The units, calendar and fill value of the incoming <cite>Data</cite> instance are
 removed prior to insertion.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -1124,7 +1168,7 @@ removed prior to insertion.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>data: <cite>Data</cite></dt>
-<dd><p class="first last">The data object to be inserted.</p>
+<dd><p class="first last">The data to be inserted.</p>
 </dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
 <dd><p class="first last">If False then do not copy the data prior to insertion. By
@@ -1160,8 +1204,11 @@ default the data are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.set_geometry">
-<code class="descname">set_geometry</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-402"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_geometry</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-456"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the geometry type.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1172,13 +1219,16 @@ default the data are copied.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.set_interior_ring">
-<code class="descname">set_interior_ring</code><span class="sig-paren">(</span><em>interior_ring</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-420"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_interior_ring" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_interior_ring</code><span class="sig-paren">(</span><em>interior_ring</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/propertiesdatabounds.py#core/abstract/propertiesdatabounds.py-476"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_interior_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the interior_ring.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -1199,7 +1249,7 @@ default the interior_ring are copied.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_interior_ring</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1207,11 +1257,8 @@ default the interior_ring are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.AuxiliaryCoordinate.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta2/cfdm/core/abstract/properties.py#core/abstract/properties.py-293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7-beta3/cfdm/core/abstract/properties.py#core/abstract/properties.py-273"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.set_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a property.</p>
-<p>A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -1261,6 +1308,9 @@ to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 <dt id="cfdm.core.AuxiliaryCoordinate.bounds">
 <code class="descname">bounds</code><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -1268,8 +1318,8 @@ to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 <code class="descname">data</code><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.data</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">f.get_data()</span></code></p>
-<p>Note that the data are returned in a <cite>Data</cite> object. Use the
-<cite>get_array</cite> method to return the data as a <cite>numpy</cite> array.</p>
+<p>Note that a <cite>Data</cite> object is returned. Use the <cite>get_array</cite> method to
+return the data as a <cite>numpy</cite> array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -1309,6 +1359,9 @@ to CF-netCDF attributes, such as ‘standard_name’, ‘history’, etc.</p>
 <dt id="cfdm.core.AuxiliaryCoordinate.interior_ring">
 <code class="descname">interior_ring</code><a class="headerlink" href="#cfdm.core.AuxiliaryCoordinate.interior_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.</span></p>
+</div>
 </dd></dl>
 
 </dd></dl>
