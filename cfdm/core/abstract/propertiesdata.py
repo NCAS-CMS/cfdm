@@ -9,6 +9,7 @@ from . import Properties
 class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     '''Abstract base class for a data array with descriptive properties.
 
+.. versionadded:: 1.7
     '''
     def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
@@ -34,13 +35,8 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         `set_data` method.
         
     source: optional
-        Override the *properties* and *data* parameters with
-        ``source.properties()`` and ``source.get_data(None)``
-        respectively.
+        Initialize the properties and data from those of *source*.
 
-        If *source* does not have one of these methods, then the
-        corresponding parameter is not set.
-        
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
@@ -74,8 +70,8 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
 ``f.data`` is equivalent to ``f.get_data()`` 
 
-Note that the data are returned in a `Data` object. Use the
-`get_array` method to return the data as a `numpy` array.
+Note that a `Data` object is returned. Use the `get_array` method to
+return the data as a `numpy` array.
 
 .. versionadded:: 1.7
 
@@ -215,8 +211,8 @@ array([ 1.  2.  3.])
     def get_data(self, *default):
         '''Return the data.
 
-Note that the data are returned in a `Data` object. Use the
-`get_array` method to return the data as an independent `numpy` array.
+Note that a `Data` is returned. Use the `get_array` method to return
+the data as an independent `numpy` array.
 
 .. versionadded:: 1.7
 
@@ -312,7 +308,7 @@ None
     def set_data(self, data, copy=True):
         '''Set the data.
 
-The units, calendar and fill value properties of the data object are
+The units, calendar and fill value of the incoming `Data` instance are
 removed prior to insertion.
 
 .. versionadded:: 1.7
@@ -322,7 +318,7 @@ removed prior to insertion.
 :Parameters:
 
     data: `Data`
-        The data object to be inserted.
+        The data to be inserted.
 
     copy: `bool`, optional
         If False then do not copy the data prior to insertion. By

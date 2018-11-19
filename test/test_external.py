@@ -1,6 +1,7 @@
 from __future__ import print_function
 import datetime
 import os
+import tempfile
 import time 
 import unittest
 
@@ -9,100 +10,118 @@ import numpy
 
 import cfdm
 
-class ExternalVariableTest(unittest.TestCase):
-    def setUp(self):
-        (self.parent_file,
-         self.external_file,
-         self.combined_file,
-         self.external_missing_file) = self._make_files()
+def _make_files():
+    '''
+    '''
+    def _pp(filename, parent=False, external=False, combined=False, external_missing=False):
+        '''
+        '''
+        nc = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
         
-        self.test_only = []
+        nc.createDimension('grid_latitude', 10)
+        nc.createDimension('grid_longitude', 9)
+        
+        nc.Conventions = 'CF-1.7'
+        if parent:
+            nc.external_variables = 'areacella'
+
+        if parent or combined or external_missing:
+            grid_latitude = nc.createVariable(dimensions=('grid_latitude',),
+                                              datatype='f8',
+                                              varname='grid_latitude')
+            grid_latitude.setncatts({'units': 'degrees', 'standard_name': 'grid_latitude'})
+            grid_latitude[...] = range(10)
+            
+            grid_longitude = nc.createVariable(dimensions=('grid_longitude',),
+                                               datatype='f8',
+                                               varname='grid_longitude')
+            grid_longitude.setncatts({'units': 'degrees', 'standard_name': 'grid_longitude'})
+            grid_longitude[...] = range(9)
+            
+            latitude = nc.createVariable(dimensions=('grid_latitude', 'grid_longitude'),
+                                         datatype='i4',
+                                         varname='latitude')
+            latitude.setncatts({'units': 'degree_N', 'standard_name': 'latitude'})
+            
+            latitude[...] = numpy.arange(90).reshape(10, 9)
+            
+            longitude = nc.createVariable(dimensions=('grid_longitude', 'grid_latitude'),
+                                          datatype='i4',
+                                          varname='longitude')
+            longitude.setncatts({'units': 'degreeE', 'standard_name': 'longitude'})
+            longitude[...] = numpy.arange(90).reshape(9, 10)
+            
+            eastward_wind = nc.createVariable(dimensions=('grid_latitude', 'grid_longitude'),
+                                              datatype='f8',
+                                              varname=u'eastward_wind')
+            eastward_wind.coordinates = u'latitude longitude'
+            eastward_wind.standard_name = 'eastward_wind'
+            eastward_wind.cell_methods = 'grid_longitude: mean (interval: 1 day comment: ok) grid_latitude: maximum where sea'
+            eastward_wind.cell_measures = 'area: areacella'
+            eastward_wind.units = 'm s-1'
+            eastward_wind[...] = numpy.arange(90).reshape(10, 9) - 45.5
+
+        if external or combined:                
+            areacella = nc.createVariable(dimensions=('grid_longitude', 'grid_latitude'),
+                                          datatype='f8',
+                                          varname='areacella')
+            areacella.setncatts({'units': 'm2', 'standard_name': 'cell_area'})
+            areacella[...] = numpy.arange(90).reshape(9, 10) + 100000.5
+            
+        nc.close()
     #--- End: def
 
-    def _make_files(self):
-        '''
-        '''
-        def _pp(filename, parent=False, external=False, combined=False, external_missing=False):
-            '''
-            '''
-            nc = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
-            
-            nc.createDimension('grid_latitude', 10)
-            nc.createDimension('grid_longitude', 9)
+    parent_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               'parent.nc')        
+    external_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 'external.nc')            
+    combined_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                 'combined.nc')        
+    external_missing_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                         'external_missing.nc')            
+    
+    _pp(parent_file          , parent=True)
+    _pp(external_file        , external=True)
+    _pp(combined_file        , combined=True)
+    _pp(external_missing_file, external_missing=True)
 
-            nc.Conventions = 'CF-1.7'
-            if parent:
-                nc.external_variables = 'areacella'
+    return parent_file, external_file, combined_file, external_missing_file
+#--- End: def
 
-            if parent or combined or external_missing:
-                grid_latitude = nc.createVariable(dimensions=('grid_latitude',),
-                                                  datatype='f8',
-                                                  varname='grid_latitude')
-                grid_latitude.setncatts({'units': 'degrees', 'standard_name': 'grid_latitude'})
-                grid_latitude[...] = range(10)
-                
-                grid_longitude = nc.createVariable(dimensions=('grid_longitude',),
-                                                   datatype='f8',
-                                                   varname='grid_longitude')
-                grid_longitude.setncatts({'units': 'degrees', 'standard_name': 'grid_longitude'})
-                grid_longitude[...] = range(9)
-                
-                latitude = nc.createVariable(dimensions=('grid_latitude', 'grid_longitude'),
-                                             datatype='i4',
-                                             varname='latitude')
-                latitude.setncatts({'units': 'degree_N', 'standard_name': 'latitude'})
-                
-                latitude[...] = numpy.arange(90).reshape(10, 9)
-                
-                longitude = nc.createVariable(dimensions=('grid_longitude', 'grid_latitude'),
-                                              datatype='i4',
-                                              varname='longitude')
-                longitude.setncatts({'units': 'degreeE', 'standard_name': 'longitude'})
-                longitude[...] = numpy.arange(90).reshape(9, 10)
-                
-                eastward_wind = nc.createVariable(dimensions=('grid_latitude', 'grid_longitude'),
-                                                  datatype='f8',
-                                                  varname=u'eastward_wind')
-#                eastward_wind.setncatts({'coordinates': u'latitude longitude', 'standard_name': 'eastward_wind', 'cell_methods': 'grid_longitude: mean (interval: 1 day comment: ok) grid_latitude: maximum where sea', 'cell_measures': 'area: areacella', 'units': 'm s-1'})
-                eastward_wind.coordinates = u'latitude longitude'
-                eastward_wind.standard_name = 'eastward_wind'
-                eastward_wind.cell_methods = 'grid_longitude: mean (interval: 1 day comment: ok) grid_latitude: maximum where sea'
-                eastward_wind.cell_measures = 'area: areacella'
-                eastward_wind.units = 'm s-1'
-                eastward_wind[...] = numpy.arange(90).reshape(10, 9) - 45.5
+(parent_file,
+ external_file,
+ combined_file,
+ external_missing_file) = _make_files()
 
-            if external or combined:                
-                areacella = nc.createVariable(dimensions=('grid_longitude', 'grid_latitude'),
-                                              datatype='f8',
-                                              varname='areacella')
-                areacella.setncatts({'units': 'm2', 'standard_name': 'cell_area'})
-                areacella[...] = numpy.arange(90).reshape(9, 10) + 100000.5
-                
-            nc.close
-        #--- End: def
 
-        parent_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                   'parent.nc')        
-        external_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                     'external.nc')            
-        combined_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                     'combined.nc')        
-        external_missing_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                             'external_missing.nc')            
+class ExternalVariableTest(unittest.TestCase):
+    def setUp(self):
+        self.parent_file           = parent_file
+        self.external_file         = external_file
+        self.combined_file         = combined_file
+        self.external_missing_file = external_missing_file
         
-        _pp(parent_file  , parent=True)
-        _pp(external_file, external=True)
-        _pp(combined_file, combined=True)
-        _pp(external_missing_file, combined=True)
+        self.test_only = []
 
-        return parent_file, external_file, combined_file, external_missing_file
+        (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_', dir='.')
+        os.close(fd)        
+        (fd, self.tempfilename_parent) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_parent_', dir='.')
+        os.close(fd)        
+        (fd, self.tempfilename_external) = tempfile.mkstemp(suffix='.nc', prefix='cfdm_external_', dir='.')
+        os.close(fd)        
+    #--- End: def
+
+    def tearDown(self):
+        os.remove(self.tempfilename)
+        os.remove(self.tempfilename_parent)
+        os.remove(self.tempfilename_external)
     #--- End: def
 
     def test_EXTERNAL_READ(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        # Read the parent fielsd on its own, without the external file
+        # Read the parent file on its own, without the external file
         f = cfdm.read(self.parent_file)
         self.assertTrue(len(f) == 1)
         f = f[0]
@@ -118,13 +137,15 @@ class ExternalVariableTest(unittest.TestCase):
         f = cfdm.read(self.parent_file,
                       external_files=[self.external_file],
                       verbose=False)
-        
+
         c = cfdm.read(self.combined_file, verbose=False)
+
+        cell_measure = f[0].get_construct('measure%area')
 
 #        print ('\nParent + External:\n')
 #        for x in f:
 #            print(x)
-##            print (x.get_read_report())
+#            print (x.get_read_report())
 #
 #        print ('\nCombined:\n')
 #        for x in c:
@@ -186,9 +207,8 @@ class ExternalVariableTest(unittest.TestCase):
         f = cfdm.read(self.parent_file,
                       external_files=self.external_file)
 
-        cfdm.write(f, 'delme.nc')
-
-        g = cfdm.read('delme.nc')
+        cfdm.write(f, self.tempfilename)
+        g = cfdm.read(self.tempfilename)
 
         self.assertTrue(len(g) == len(combined))
 
@@ -205,17 +225,18 @@ class ExternalVariableTest(unittest.TestCase):
 
         self.assertTrue(g[0].get_construct('measure%area').nc_external())
 
-        cfdm.write(g, 'delme_parent.nc', external_file='delme_external.nc',
+        cfdm.write(g, self.tempfilename_parent,
+                   external_file=self.tempfilename_external,
                    verbose=False)
 
-        h = cfdm.read('delme_parent.nc', verbose=False)
+        h = cfdm.read(self.tempfilename_parent, verbose=False)
 
         self.assertTrue(len(h) == len(parent))
 
         for i in range(len(h)):
             self.assertTrue(parent[i].equals(h[i], traceback=True))
 
-        h = cfdm.read('delme_external.nc')
+        h = cfdm.read(self.tempfilename_external)
         external = cfdm.read(self.external_file)
 
         self.assertTrue(len(h) == len(external))

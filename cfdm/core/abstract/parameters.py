@@ -11,8 +11,8 @@ from . import Container
 class Parameters(with_metaclass(abc.ABCMeta, Container)):
     '''Abstract base class for a collection of named parameters.
 
+.. versionadded:: 1.7
     '''
-
     def __init__(self, parameters=None, source=None, copy=True,
                  _use_data=True):
         '''**Initialization**
@@ -86,7 +86,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
     out:
         The deep copy.
 
-**Examples**
+**Examples:**
 
 >>> g = f.copy()
 >>> g = f.copy(data=False)
@@ -117,7 +117,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         The removed parameter. If the parameter has not been then
         *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
         '''
         return self._get_component('parameters').pop(parameter, None)
@@ -140,7 +140,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
     out:
         The value of the term <SOMETING BAOUT DEFAULT>
 
-**Examples**
+**Examples:**
 
 >>> c.get_parameter('grid_north_pole_latitude')
 70.0
@@ -187,7 +187,7 @@ ERROR
         *parameters* keyword has been set then the parameter-valued
         terms prior to replacement are returned.
 
-**Examples**
+**Examples:**
 
 >>> c.parameters()
 {'standard_parallel': 25.0;
@@ -222,7 +222,7 @@ ERROR
 
     `None`
 
-**Examples**
+**Examples:**
 
 >>> c.parameters()
 {'standard_parallel': 25.0;

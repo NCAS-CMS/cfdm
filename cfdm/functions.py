@@ -17,7 +17,7 @@ import netCDF4
 import numpy
 import future
 
-from . import __version__, __file__
+from . import __version__, __cf_version__, __file__
 
 from .constants import CONSTANTS
 
@@ -658,5 +658,5 @@ def CF():
 >>> cfdm.CF()
 '1.7'
     '''
-    return __version__.split('-')[0]
+    return __cf_version__
 #--- End: def

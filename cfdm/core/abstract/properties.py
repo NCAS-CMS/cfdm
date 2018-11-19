@@ -11,6 +11,7 @@ from . import Container
 class Properties(with_metaclass(abc.ABCMeta, Container)):
     '''Abstract base class for an object with descriptive properties.
 
+.. versionadded:: 1.7
     '''
     def __init__(self, properties=None, source=None, copy=True):
         '''**Initialization**
@@ -29,12 +30,8 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         `properties` and `set_property` methods.
 
     source: optional
-        Override the *properties* parameter with
-        ``source.properties()``.
+        Initialize the properties from those of *source*.
 
-        If *source* does not have this method then the *properties*
-        parameter is not set.
-        
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
         initialization By default parameters are deep copied.
@@ -55,13 +52,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
             self.properties(properties, copy=copy)
     #--- End: def
 
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-#    #--- End: def
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -69,6 +59,8 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.7
 
 :Returns:
 
@@ -85,10 +77,6 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
     def del_property(self, prop, *default):
         '''Remove a property.
-
-A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. versionadded:: 1.7
 
@@ -135,9 +123,7 @@ None
     def get_property(self, prop, *default):
         '''Return a property.
 
-A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as 'standard_name', 'history', etc.
+.. versionadded:: 1.7
 
 .. seealso:: `del_property`, `has_property`, `properties`,
              `set_property`
@@ -189,9 +175,7 @@ None
     def has_property(self, prop):
         '''Whether a property has been set.
 
-A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as 'standard_name', 'history', etc.
+.. versionadded:: 1.7
 
 .. seealso:: `del_property`, `get_property`, `properties`, `set_property`
 
@@ -230,10 +214,6 @@ None
 
     def properties(self, properties=None, copy=True):
         '''Return or replace all properties.
-
-A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. versionadded:: 1.7
 
@@ -292,10 +272,6 @@ to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
     def set_property(self, prop, value, copy=True):
         '''Set a property.
-
-A property describes an aspect of the construct that is independent of
-the domain and may have any name and value. Some properties correspond
-to CF-netCDF attributes, such as 'standard_name', 'history', etc.
 
 .. versionadded:: 1.7
 

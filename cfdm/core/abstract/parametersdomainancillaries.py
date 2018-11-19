@@ -102,7 +102,7 @@ domain ancillary constructs.
     out:
         The deep copy.
 
-**Examples**
+**Examples:**
 
 >>> g = f.copy()
 >>> g = f.copy(data=False)
@@ -136,7 +136,7 @@ domain ancillary constructs.
         The removed domain. If the property has not been then the
         *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
         '''
         return self._get_component('domain_ancillaries').pop(
@@ -167,7 +167,7 @@ domain ancillary constructs.
         *parameters* keyword has been set then the parameter-valued
         terms prior to replacement are returned.
 
-**Examples**
+**Examples:**
 
 >>> d = c.ancillaries()
         '''
@@ -200,7 +200,7 @@ domain ancillary constructs.
     out:
         The value of the term <SOMETING BAOUT DEFAULT>
 
-**Examples**
+**Examples:**
 
 >>> c.get_parameter('grid_north_pole_latitude')
 70.0
@@ -235,7 +235,7 @@ ERROR
 
     `None`
 
-**Examples**
+**Examples:**
 
 >>> c.parameters()
 {'standard_parallel': 25.0;

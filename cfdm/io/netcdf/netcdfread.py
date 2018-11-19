@@ -782,6 +782,7 @@ ancillaries, field ancillaries).
         attribute = {'external_variables': netcdf_external_variables}
 
         read_vars = self.read_vars.copy()
+        verbose = read_vars['verbose']
         
         external_variables       = read_vars['external_variables']
         external_files           = read_vars['external_files']
@@ -796,9 +797,17 @@ ancillaries, field ancillaries).
         
         found = []
             
-        for external_file in external_files:
+        for external_file in external_files: 
+            if verbose:
+                print('\nScanning external file:')
+                print('-----------------------')
+
             external_read_vars = self.read(external_file, _scan_only=True,
-                                           verbose=read_vars['verbose'])
+                                           verbose=verbose)
+
+            if verbose:
+                print('Finished scanning external file\n')
+
             # Reset self.read_vars
             self.read_vars = read_vars
             

@@ -10,6 +10,8 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
     '''Abstract base class for a data array with bounds and descriptive
 properties.
 
+.. versionadded:: 1.7
+
     '''    
     def __init__(self, properties=None, data=None, bounds=None,
                  geometry=None, interior_ring=None, source=None,
@@ -60,14 +62,8 @@ properties.
         with the `set_interior_ring` method.
   
     source: optional
-        Override the *properties*, *data*, *bounds*, *geometry* and
-        *interior_ring* parameters with ``source.properties()``,
-        ``source.get_data(None)``, ``source.get_bounds(None)``,
-        ``source.get_geometry(None)``,
-        ``source.get_interior_ring(None)`` respectively.
-
-        If *source* does not have one of these methods, then the
-        corresponding parameter is not set.
+        Initialize the properties, data and bounds from those of
+        *source*.
  
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -122,6 +118,8 @@ properties.
     @property
     def bounds(self):
         '''TODO
+
+.. versionadded:: 1.7
         '''
         return self.get_bounds()
     #--- End: def
@@ -129,6 +127,8 @@ properties.
     @property
     def interior_ring(self):
         '''TODO
+
+.. versionadded:: 1.8
         '''
         return self.get_interior_ring()
     #--- End: def
@@ -141,6 +141,8 @@ properties.
 
 ``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
 
+.. versionadded:: 1.7
+
 :Parameters:
 
     data: `bool`, optional
@@ -152,7 +154,7 @@ properties.
     out:
         The deep copy.
 
-**Examples**
+**Examples:**
 
 >>> g = f.copy()
 >>> g = f.copy(data=False)
@@ -183,28 +185,32 @@ False
         The removed bounds. If the bounds has not been set then the
         *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
+>>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> c.set_bounds(b)
 >>> c.has_bounds()
 True
->>> print c.get_bounds()
-
->>> d = c.del_bounds()
->>> print d
-
+>>> c.get_bounds()
+<Bounds: (5, 2) >
+>>> b = c.del_bounds()
+>>> b
+<Bounds: (5, 2) >
 >>> c.has_bounds()
 False
->>> print c.del_bounds()
+>>> print(c.get_bounds(None))
+None
+>>> print(c.del_bounds(None))
 None
 
         '''
-        return self._del_component('bounds')
+        return self._del_component('bounds', *default)
     #--- End: def
 
     def del_geometry(self, *default):
         '''Delete the geometry type. TODO
 
-.. versionadd:: 1.7
+.. versionadd:: 1.8
 
 .. seealso:: `get_geometry`, `has_geometry`, `set_geometry`
 
@@ -220,10 +226,10 @@ None
         The removed geometry type. If the geometry type has not been
         set then the *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
         '''
-        return self._del_component('geometry')
+        return self._del_component('geometry', *default)
     #--- End: def
 
     def get_bounds(self, *default):
@@ -244,11 +250,23 @@ None
         The bounds. If the bounds have not been set, then return the
         value of *default* parameter if provided.
 
-**Examples**
+**Examples:**
 
+>>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> c.set_bounds(b)
+>>> c.has_bounds()
+True
+>>> c.get_bounds()
+<Bounds: (5, 2) >
 >>> b = c.del_bounds()
->>> c.get_bounds('No bounds')
-'No bounds'
+>>> b
+<Bounds: (5, 2) >
+>>> c.has_bounds()
+False
+>>> print(c.get_bounds(None))
+None
+>>> print(c.del_bounds(None))
+None
 
         '''
         bounds = self._get_component('bounds', None)
@@ -272,6 +290,8 @@ None
     def get_geometry(self, *default):
         '''Return the geometry type.
 
+.. versionadded:: 1.8
+
 .. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
 
 :Parameters:
@@ -283,7 +303,7 @@ None
 
     out:
 
-**Examples**
+**Examples:**
 
         '''
         return self._get_component('geometry', *default)
@@ -291,6 +311,8 @@ None
 
     def get_interior_ring(self, *default):
         '''Return the interior_ring.
+
+.. versionadded:: 1.8
 
 .. seealso:: `del_interior_ring`, `get_bounds`, `has_interior_ring`,
              `set_interior_ring`
@@ -304,7 +326,7 @@ None
 
     out:
     
-**Examples**
+**Examples:**
 
 >>> i = c.get_interior_ring()
         '''
@@ -312,21 +334,34 @@ None
     #--- End: def
 
     def has_bounds(self):
-        '''True if there are bounds. TODO
+        '''Whether or not there are bounds.
         
-.. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
+.. versionadded:: 1.7
 
+.. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
 :Returns:
 
     out: `bool`
         True if there are bounds, otherwise False.
 
-**Examples**
+**Examples:**
 
->>> x = c.has_bounds()
->>> if c.has_bounds():
-...     print 'Has bounds'
+>>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> c.set_bounds(b)
+>>> c.has_bounds()
+True
+>>> c.get_bounds()
+<Bounds: (5, 2) >
+>>> b = c.del_bounds()
+>>> b
+<Bounds: (5, 2) >
+>>> c.has_bounds()
+False
+>>> print(c.get_bounds(None))
+None
+>>> print(c.del_bounds(None))
+None
 
         '''
         return self._has_component('bounds')
@@ -335,13 +370,15 @@ None
     def has_geometry(self):
         '''True if there is a goemetry type. TODO
         
+.. versionadded:: 1.8
+
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
 :Returns:
 
     out: `bool`
 
-**Examples**
+**Examples:**
 
 >>> x = c.has_geometry()
 
@@ -352,6 +389,8 @@ None
     def has_interior_ring(self):
         '''True if there are interior_ring. TODO
         
+.. versionadded:: 1.8
+
 .. seealso:: `del_interior_ring`, `get_interior_ring`, `has_data`, `set_interior_ring`
 
 :Returns:
@@ -359,7 +398,7 @@ None
     out: `bool`
         True if there are interior_ring, otherwise False.
 
-**Examples**
+**Examples:**
 
 >>> x = f.has_interior_ring()
 >>> if c.has_interior_ring():
@@ -371,6 +410,8 @@ None
 
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
+
+.. versionadded:: 1.7
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 
@@ -387,10 +428,23 @@ None
 
     `None`
 
-**Examples**
+**Examples:**
 
+>>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
 >>> c.set_bounds(b)
->>> c.set_data(b, copy=False)
+>>> c.has_bounds()
+True
+>>> c.get_bounds()
+<Bounds: (5, 2) >
+>>> b = c.del_bounds()
+>>> b
+<Bounds: (5, 2) >
+>>> c.has_bounds()
+False
+>>> print(c.get_bounds(None))
+None
+>>> print(c.del_bounds(None))
+None
 
         '''
         if copy:
@@ -402,6 +456,8 @@ None
     def set_geometry(self, value, copy=True):
         '''Set the geometry type.
 
+.. versionadded:: 1.8
+
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 
 :Parameters:
@@ -412,13 +468,15 @@ None
 
     `None`
 
-**Examples**
+**Examples:**
         '''
         self._set_component('geometry', value, copy=copy)
     #--- End: def
 
     def set_interior_ring(self, interior_ring, copy=True):
         '''Set the interior_ring.
+
+.. versionadded:: 1.8
 
 .. seealso: `del_interior_ring`, `get_interior_ring`,
             `has_interior_ring`
@@ -436,7 +494,7 @@ None
 
     `None`
 
-**Examples**
+**Examples:**
 
 >>> c.set_interior_ring(b)
         '''

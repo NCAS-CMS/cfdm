@@ -7,7 +7,9 @@ from copy import deepcopy
 
 
 class Container(with_metaclass(abc.ABCMeta, object)):
-    '''Abstract base class for storing object components.
+    '''Abstract base class for storing components.
+
+.. versionadded:: 1.7
 
     '''
     def __init__(self):
@@ -69,7 +71,7 @@ x.__deepcopy__() <==> copy.deepcopy(x)
         The removed component. If unset then *default* is returned, if
         provided.
 
-**Examples**
+**Examples:**
 
 >>> f._set_component('foo', 'bar')
 >>> f._has_component('foo')
@@ -110,7 +112,7 @@ False
         The component. If unset then *default* is returned, if
         provided.
 
-**Examples**
+**Examples:**
 
 >>> f._set_component('foo', 'bar')
 >>> f._has_component('foo')
@@ -150,7 +152,7 @@ False
      out: `bool`
         True if the component has been set, otherwise False.
 
-**Examples**
+**Examples:**
 
 >>> f._set_component('foo', 'bar')
 >>> f._has_component('foo')
@@ -183,7 +185,7 @@ False
 
      `None`
 
-**Examples**
+**Examples:**
 
 
 >>> f._set_component('foo', 'bar')
@@ -214,7 +216,7 @@ False
     out:
         The deep copy.
 
-**Examples**
+**Examples:**
 
 >>> g = f.copy()
 

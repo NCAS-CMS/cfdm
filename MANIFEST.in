@@ -1,3 +1,2 @@
 include Changelog
 include README.md
-recursive-include test DSG*.nc
