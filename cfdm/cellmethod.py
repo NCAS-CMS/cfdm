@@ -27,6 +27,51 @@ that the method was applied only over El Nino years).
 .. versionadded:: 1.7
     
     '''
+    def __str__(self):
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
+Returns a CF-netCDF-like string of the cell method.
+
+Note that if the intention is to use this string in a CF-netCDF
+cell_methods attribute then, unless they are standard names, the axes
+names will need to be modified to be netCDF dimension names.
+
+.. versionadded:: 1.7
+
+        '''     
+        string = ['{0}:'.format(axis) for axis in self.get_axes(())]
+
+        string.append(self.get_property('method', ''))
+
+        for portion in ('within', 'where', 'over'):
+            p = self.get_property(portion, None)
+            if p is not None:
+                string.extend((portion, p))
+        #--- End: for
+
+        intervals = self.get_property('intervals', ())
+        comment   = self.get_property('comment', None)
+
+        if intervals:
+            x = ['(']
+
+            y = ['interval: {0}'.format(data) for data in intervals]
+            x.append(' '.join(y))
+
+            if comment is not None:
+                x.append(' comment: {0}'.format(comment))
+
+            x.append(')')
+
+            string.append(''.join(x))
+
+        elif comment is not None:
+            string.append('({0})'.format(comment))
+
+        return ' '.join(string)
+    #--- End: def
 
     def dump(self, display=True, _title=None, _level=0):
         '''A full description of the cell method construct.

@@ -138,11 +138,12 @@ alternative coordinate systems stored in
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>source: optional</dt>
-<dd><p class="first last">Initialise the domain from the constructs of <em>source</em>,
+<dd><p class="first last">TODO
+Initialise the domain from the constructs of <em>source</em>,
 ignoring any cell method or field ancillary constructs.</p>
 </dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not deep copy arguments prior to
+<dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
@@ -160,11 +161,12 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>source: optional</dt>
-<dd><p class="first last">Initialise the domain from the constructs of <em>source</em>,
+<dd><p class="first last">TODO
+Initialise the domain from the constructs of <em>source</em>,
 ignoring any cell method or field ancillary constructs.</p>
 </dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not deep copy arguments prior to
+<dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
@@ -208,8 +210,8 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.coordinates</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Domain.copy" title="cfdm.core.Domain.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Domain.copy" title="cfdm.core.Domain.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([data])</td>
+<td>Return a deep copy.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Domain.del_construct" title="cfdm.core.Domain.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a>(key)</td>
 <td></td>
@@ -227,15 +229,7 @@ initialization. By default arguments are deep copied.</p>
 <td>TODO WHY DO WE NED THIS HERE?</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Domain.fromconstructs" title="cfdm.core.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a>(constructs)</td>
-<td><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-</td>
+<td>TODO</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Domain.get_construct" title="cfdm.core.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>(cid)</td>
 <td>Return a metadata construct.</td>
@@ -356,12 +350,45 @@ data array. If the construct does not have a data array then
 
 <dl class="method">
 <dt id="cfdm.core.Domain.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domain.py#L127"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.copy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domain.py#L129"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deep copy.</p>
+<p><code class="docutils literal notranslate"><span class="pre">d.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(d)</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>fromconstructs</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>data: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not copy data. By default data are copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The deep copy.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.Domain.del_construct">
-<code class="descname">del_construct</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domain.py#L133"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.del_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_construct</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domain.py#L156"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.del_construct" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -372,18 +399,32 @@ data array. If the construct does not have a data array then
 
 <dl class="classmethod">
 <dt id="cfdm.core.Domain.fromconstructs">
-<em class="property">classmethod </em><code class="descname">fromconstructs</code><span class="sig-paren">(</span><em>constructs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domain.py#L158"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.fromconstructs" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<em class="property">classmethod </em><code class="descname">fromconstructs</code><span class="sig-paren">(</span><em>constructs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domain.py#L181"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.fromconstructs" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>copy</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body">constructs: <cite>Constructs</cite></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">constructs: <cite>Constructs</cite></p>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">out: <cite>Domain</cite></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>Domain</cite></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
+</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Domain</span><span class="o">.</span><span class="n">fromconstructs</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">_get_constructs</span><span class="p">())</span>
 </pre></div>
 </div>

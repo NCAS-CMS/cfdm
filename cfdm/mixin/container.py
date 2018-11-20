@@ -6,24 +6,43 @@ import textwrap
 import numpy
 import sys
 
+
 class Container(object):
     '''Mixin class for storing object components.
-    
+
+.. versionadded:: 1.7
+
     '''
-    
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
 x.__repr__() <==> repr(x)
+
+.. versionadded:: 1.7
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
                                    str(self))
     #--- End: def
 
+    def __str__(self):
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
+.. versionadded:: 1.7
+
+        '''
+        out = sorted(self._components)
+        return ', '.join(out)
+    #--- End: def
+
     @classmethod
     def _equals(self, x, y, rtol=None, atol=None, **kwargs):
         '''TODO
+
+.. versionadded:: 1.7
+
         '''
         if rtol is None:
             rtol = sys.float_info.epsilon
@@ -77,15 +96,21 @@ x.__repr__() <==> repr(x)
     def equals(self, other, #rtol=None, atol=None,
                traceback=False,
                ignore_construct_type=False):
-        '''TODOTODO
+        '''TODO
 
 ..versionadded:: 1.7
 
 :Parameters:
 
+    TODO
+
 :Returns:
 
+    TODO
+
 **Examples:**
+
+TODO
         '''
         # Check for object identity
         if self is other:

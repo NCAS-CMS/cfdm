@@ -63,11 +63,12 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 :Parameters:
 
     source: optional
+        TODO
         Initialise the domain from the constructs of *source*,
         ignoring any cell method or field ancillary constructs.
         
     copy: `bool`, optional
-        If False then do not deep copy arguments prior to
+        If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
         '''
@@ -94,27 +95,28 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         self._set_component('constructs', constructs, copy=False)
     #--- End: def
     
-    def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
-        shape = sorted([domain_axis.size for domain_axis in list(self.domain_axes().values())])
-
-        return '<{0}: {1}>'.format(self.__class__.__name__, shape)
-    #--- End: def
-
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
-        return 'STRINASDAs da sa'
-    #-- End: def
+#    def __repr__(self):
+#        '''x.__repr__() <==> repr(x)
+#
+#        '''
+#        shape = sorted([domain_axis.size for domain_axis in list(self.domain_axes().values())]#)
+#
+#        return '<{0}: {1}>'.format(self.__class__.__name__, shape)
+#    #--- End: def
+#
+#    def __str__(self):
+#        '''x.__str__() <==> str(x)
+#
+#        '''
+#        return 'STRINASDAs da sa'
+#    #-- End: def
 
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
     def _get_constructs(self, *default):
-        '''
+        '''TODO
+
 .. versionadded:: 1.7
         
         '''
@@ -124,10 +126,31 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def copy(self):
+    def copy(self, data=True):
+        '''Return a deep copy.
+
+``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
+
+.. versionadded:: 1.7
+
+.. seealso:: `fromconstructs`
+
+:Parameters:
+
+    data: `bool`, optional
+        If False then do not copy data. By default data are copied.
+
+:Returns:	
+
+    out:
+        The deep copy.
+
+**Examples:**
+
+>>> e = d.copy()
+
         '''
-        '''
-        return type(self)(source=self, copy=True)
+        return type(self)(source=self, copy=True, _use_data=data)
     #--- End: def
 
     def del_construct(self, key):
@@ -157,7 +180,12 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 
     @classmethod
     def fromconstructs(cls, constructs):
-        '''
+        '''TODO
+
+.. versionadded:: 1.7
+
+.. seealso:: `copy`
+
 :Parameters:
 
     constructs: `Constructs`
@@ -165,8 +193,9 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 :Returns:
 
     out: `Domain`
+        TODO
 
-**Examples**
+**Examples:**
 
 >>> d = Domain.fromconstructs(f._get_constructs())
         

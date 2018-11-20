@@ -55,18 +55,18 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
         self.parameters(parameters, copy=copy)
     #--- End: def
 
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
-        out = []
-
-        parameters = self.parameters()
-        if parameters:
-            out.append('Parameters: {0}'.format(', '.join(sorted(parameters))))
-            
-        return '; '.join(out)
-    #--- End: def
+#    def __str__(self):
+#        '''x.__str__() <==> str(x)
+#
+#        '''
+#        out = []
+#
+#        parameters = self.parameters()
+#        if parameters:
+#            out.append('Parameters: {0}'.format(', '.join(sorted(parameters))))
+#            
+#        return '; '.join(out)
+#    #--- End: def
 
     def copy(self, data=True):
         '''Return a deep copy.

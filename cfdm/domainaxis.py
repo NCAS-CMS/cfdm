@@ -22,7 +22,6 @@ to the order of the elements.
 .. versionadded:: 1.7
 
     '''
-
     def __init__(self, size=None, source=None, copy=True):
         '''**Initialization**
 
@@ -50,6 +49,17 @@ to the order of the elements.
         self._initialise_netcdf(source)
     #--- End: def
         
+    def __str__(self):
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
+.. versionadded:: 1.7
+
+        '''
+        return str(self.get_size(''))
+    #--- End: def
+
     def equals(self, other, traceback=False, *kwargs):
         '''Return True if two domain axis objects are equal.
 

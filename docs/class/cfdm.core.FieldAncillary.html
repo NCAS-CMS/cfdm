@@ -244,6 +244,10 @@ initialization. By default arguments are deep copied.</p>
 <code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
+<p><cite>Data</cite> instances contained within are copied with a copy-on-write
+technique. This means that a copy takes up very little extra memory,
+even when the original contains very large data arrays, and the copy
+operation is fast.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -253,8 +257,7 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>data: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the data. By default the data is
-copied.</p>
+<dd><p class="first last">If False then do not copy data. By default data are copied.</p>
 </dd>
 </dl>
 </td>
@@ -279,7 +282,7 @@ copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.FieldAncillary.del_data">
-<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L134"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.del_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.del_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -390,7 +393,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.FieldAncillary.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array the data.</p>
 <p>Use the <cite>get_data</cite> method to return the data as a <cite>Data</cite> object.</p>
 <div class="versionadded">
@@ -432,7 +435,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.FieldAncillary.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L211"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p>Note that a <cite>Data</cite> is returned. Use the <cite>get_array</cite> method to return
 the data as an independent <cite>numpy</cite> array.</p>
@@ -545,7 +548,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.FieldAncillary.has_data">
-<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L274"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.has_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.has_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a data object has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -705,7 +708,7 @@ properties if no changes were specified.</p>
 
 <dl class="method">
 <dt id="cfdm.core.FieldAncillary.set_data">
-<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L308"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.set_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary.set_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the data.</p>
 <p>The units, calendar and fill value of the incoming <cite>Data</cite> instance are
 removed prior to insertion.</p>

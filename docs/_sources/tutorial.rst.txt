@@ -1664,9 +1664,7 @@ Metadata constructs may be copied individually in the same manner:
   <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This
   means that a copy of a field takes up very little extra memory, even
   when the original field construct contains very large data arrays,
-  and the copy operation is fast---at the time of copying, it is
-  essentially only the descriptive properties that are duplicated.
-
+  and the copy operation is fast.
 
 .. _equality:
 

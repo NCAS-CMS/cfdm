@@ -107,13 +107,17 @@ True
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
+`Data` instances contained within are copied with a copy-on-write
+technique. This means that a copy takes up very little extra memory,
+even when the original contains very large data arrays, and the copy
+operation is fast.
+
 .. versionadded:: 1.7
 
 :Parameters:
 
     data: `bool`, optional
-        If False then do not copy the data. By default the data is
-        copied.
+        If False then do not copy data. By default data are copied.
 
 :Returns:
 

@@ -71,6 +71,8 @@ rules, the only differences being:
 
 x.__str__() <==> str(x)
 
+.. versionadded:: 1.7
+
         '''
         name = self.name('')
 

@@ -96,20 +96,31 @@ implies a domain axis of size one. The field construct’s data array
 spans the domain axis constructs of the domain, with the optional
 exception of size one axes, because their presence makes no difference
 to the order of the elements.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>size: <cite>int</cite>, optional</dt>
-<dd><p class="first last">The size of the domain axis.</p>
+<dd><p class="first">The size of the domain axis.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">size=192</span></code></p>
 </dd>
 </dl>
-<p>source:</p>
-<dl class="last docutils">
+<p class="last">The size may also be set after initialisation with the
+<cite>set_size</cite> method.</p>
+</dd>
+<dt>source:</dt>
+<dd><p class="first last">Initialize the size from that of source.</p>
+</dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If True then . In any</p>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
 </td>
@@ -118,21 +129,29 @@ to the order of the elements.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.DomainAxis.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>size=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L19"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>size=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L21"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>size: <cite>int</cite>, optional</dt>
-<dd><p class="first last">The size of the domain axis.</p>
+<dd><p class="first">The size of the domain axis.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">size=192</span></code></p>
 </dd>
 </dl>
-<p>source:</p>
-<dl class="last docutils">
+<p class="last">The size may also be set after initialisation with the
+<cite>set_size</cite> method.</p>
+</dd>
+<dt>source:</dt>
+<dd><p class="first last">Initialize the size from that of source.</p>
+</dd>
 <dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If True then . In any</p>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
 </dd>
 </dl>
 </td>
@@ -152,49 +171,75 @@ to the order of the elements.</p>
 <td><strong>Initialization</strong></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.DomainAxis.copy" title="cfdm.core.DomainAxis.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
-<td></td>
+<td>Return a deep copy.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.DomainAxis.del_size" title="cfdm.core.DomainAxis.del_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_size</span></code></a>(*default)</td>
-<td></td>
+<td>TODO</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.DomainAxis.get_size" title="cfdm.core.DomainAxis.get_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_size</span></code></a>(*default)</td>
-<td></td>
+<td>TODO</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.DomainAxis.has_size" title="cfdm.core.DomainAxis.has_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_size</span></code></a>()</td>
-<td></td>
+<td>TODO</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.DomainAxis.set_size" title="cfdm.core.DomainAxis.set_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_size</span></code></a>(size[,&nbsp;copy])</td>
-<td></td>
+<td>TODO</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
 <dt id="cfdm.core.DomainAxis.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L53"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.copy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deep copy.</p>
+<p><code class="docutils literal notranslate"><span class="pre">d.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(d)</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The deep copy.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.DomainAxis.del_size">
-<code class="descname">del_size</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L59"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.del_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">del_size</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L85"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.del_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.DomainAxis.get_size">
-<code class="descname">get_size</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L71"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.get_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">get_size</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L97"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.get_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.DomainAxis.has_size">
-<code class="descname">has_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.has_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">has_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L91"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.has_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.DomainAxis.set_size">
-<code class="descname">set_size</code><span class="sig-paren">(</span><em>size</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L77"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.set_size" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">set_size</code><span class="sig-paren">(</span><em>size</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/domainaxis.py#L103"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.DomainAxis.set_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO</p>
+</dd></dl>
 
 </dd></dl>
 

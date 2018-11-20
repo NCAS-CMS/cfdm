@@ -90,6 +90,10 @@
 <code class="descclassname">Field.</code><code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
+<p><a class="reference internal" href="../class/cfdm.core.Data.html#cfdm.core.Data" title="cfdm.core.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instances contained within are copied with a copy-on-write
+technique. This means that a copy takes up very little extra memory,
+even when the original contains very large data arrays, and the copy
+operation is fast.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -99,8 +103,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then do not copy the data. By default the data is
-copied.</p>
+<dd><p class="first last">If False then do not copy data. By default data are copied.</p>
 </dd>
 </dl>
 </td>

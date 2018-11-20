@@ -141,12 +141,12 @@ frame and consists of the following:
         self.set_datum(datum, copy=copy)
     #--- End: def
    
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''    
-        return ', '.join(sorted(self.terms()))
-    #--- End: def
+#    def __str__(self):
+#        '''x.__str__() <==> str(x)
+#
+#        '''    
+#        return ', '.join(sorted(self.terms()))
+#    #--- End: def
 
     @property
     def coordinate_conversion(self):

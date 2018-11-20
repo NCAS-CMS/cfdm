@@ -27,6 +27,8 @@ after initialisation with the `_set_component` method.
 
 x.__deepcopy__() <==> copy.deepcopy(x)
 
+.. versionadded:: 1.7
+
         '''
         return self.copy()
     #--- End: def
@@ -140,6 +142,8 @@ False
     def _has_component(self, component):
         '''Whether a component has been set.
 
+.. versionadded:: 1.7
+
 .. seealso:: `_del_component`, `_get_component`, `_set_component`
 
 :Parameters:
@@ -170,6 +174,8 @@ False
 
     def _set_component(self, component, value, copy=True):
         '''Set a component.
+
+.. versionadded:: 1.7
 
 .. seealso:: `_del_component`, `_get_component`, `_has_component`
 
@@ -210,6 +216,8 @@ False
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
+
+.. versionadded:: 1.7
 
 :Returns:
 

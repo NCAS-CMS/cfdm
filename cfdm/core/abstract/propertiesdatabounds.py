@@ -151,39 +151,44 @@ TODO
         return self.get_interior_ring()
     #--- End: def
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
-    def copy(self, data=True):
-        '''Return a deep copy.
-
-``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
-
-.. versionadded:: 1.7
-
-:Parameters:
-
-    data: `bool`, optional
-        If False then do not copy the data, bounds nor interior ring
-        arrays. By default they are copied.
-
-:Returns:
-
-    out:
-        The deep copy.
-
-**Examples:**
-
->>> g = f.copy()
->>> g = f.copy(data=False)
->>> g.has_data()
-False
->>> g.bounds.has_data()
-False
-
-        '''
-        return super().copy(data=data)
-    #--- End: def
+#    # ----------------------------------------------------------------
+#    # Methods
+#    # ----------------------------------------------------------------
+#    def copy(self, data=True):
+#        '''Return a deep copy.
+#
+#``c.copy()`` is equivalent to ``copy.deepcopy(c)``.
+#
+#`Data` instances contained within are copied with a copy-on-write
+#technique. This means that a copy takes up very little extra memory,
+#even when the original contains very large data arrays, and the copy
+#operation is fast.
+#
+#.. versionadded:: 1.7
+#
+#:Parameters:
+#
+#    data: `bool`, optional
+#        If False then do not copy the data, bounds nor interior ring
+#        arrays. By default they are copied.
+#
+#:Returns:
+#
+#    out:
+#        The deep copy.
+#
+#**Examples:**
+#
+#>>> g = f.copy()
+#>>> g = f.copy(data=False)
+#>>> g.has_data()
+#False
+#>>> g.bounds.has_data()
+#False
+#
+#        '''
+#        return super().copy(data=data)
+#    #--- End: def
 
     def del_bounds(self, *default):
         '''Remove the bounds.

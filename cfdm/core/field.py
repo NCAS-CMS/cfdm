@@ -64,7 +64,6 @@ and institution).
         
 :Parameters:
 
-
     properties: `dict`, optional
         Set descriptive properties. The dictionary keys are property
         names, with corresponding values. Ignored if the *source*
@@ -108,12 +107,6 @@ and institution).
                                 
             if constructs is not None and (copy or not _use_data):
                 constructs = constructs.copy(data=_use_data)
-
-#            if data is not None:
- #               if _use_data:
- #                   self.set_data(data, data_axes, copy=copy)
- #           elif data_axes is not None:
- #               self.set_data_axes(data_axes)
         else:
             constructs = None
             data       = None

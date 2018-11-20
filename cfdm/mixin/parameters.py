@@ -11,18 +11,27 @@ class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
 
     def __bool__(self):
         '''TODO 
+
+.. versionadded:: 1.7
+
         '''
         return bool(self.parameters())
     #--- End: def
         
     def __nonzero__(self):
         '''TODO 
+
+.. versionadded:: 1.7
         '''
         return bool(self.parameters())
     #--- End: def
         
     def __str__(self):
-        '''x.__str__() <==> str(x)
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
+.. versionadded:: 1.7
 
         '''
         return 'Parameters: {0}'.format(', '.join(sorted(self.parameters())))

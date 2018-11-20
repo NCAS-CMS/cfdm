@@ -86,54 +86,54 @@ that the method was applied only over El Nino years).
             axes = self.set_axes(axes)
     #--- End: def
 
-    def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
-        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-    #--- End: def
-
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-Return a CF-netCDF-like string of the cell method.
-
-Note that if the intention is to use this string in a CF-netCDF
-cell_methods attribute then, unless they are standard names, the axes
-names will need to be modified to be netCDF dimension names.
-
-        '''     
-        string = ['{0}:'.format(axis) for axis in self.get_axes(())]
-
-        string.append(self.get_property('method', ''))
-
-        for portion in ('within', 'where', 'over'):
-            p = self.get_property(portion, None)
-            if p is not None:
-                string.extend((portion, p))
-        #--- End: for
-
-        intervals = self.get_property('intervals', ())
-        comment   = self.get_property('comment', None)
-
-        if intervals:
-            x = ['(']
-
-            y = ['interval: {0}'.format(data) for data in intervals]
-            x.append(' '.join(y))
-
-            if comment is not None:
-                x.append(' comment: {0}'.format(comment))
-
-            x.append(')')
-
-            string.append(''.join(x))
-
-        elif comment is not None:
-            string.append('({0})'.format(comment))
-
-        return ' '.join(string)
-    #--- End: def
+#    def __repr__(self):
+#        '''x.__repr__() <==> repr(x)
+#
+#        '''
+#        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
+#    #--- End: def
+#
+#    def __str__(self):
+#        '''x.__str__() <==> str(x)
+#
+#Return a CF-netCDF-like string of the cell method.
+#
+#Note that if the intention is to use this string in a CF-netCDF
+#cell_methods attribute then, unless they are standard names, the axes
+#names will need to be modified to be netCDF dimension names.
+#
+#        '''     
+#        string = ['{0}:'.format(axis) for axis in self.get_axes(())]
+#
+#        string.append(self.get_property('method', ''))
+#
+#        for portion in ('within', 'where', 'over'):
+#            p = self.get_property(portion, None)
+#            if p is not None:
+#                string.extend((portion, p))
+#        #--- End: for
+#
+#        intervals = self.get_property('intervals', ())
+#        comment   = self.get_property('comment', None)
+#
+#        if intervals:
+#            x = ['(']
+#
+#            y = ['interval: {0}'.format(data) for data in intervals]
+#            x.append(' '.join(y))
+#
+#            if comment is not None:
+#                x.append(' comment: {0}'.format(comment))
+#
+#            x.append(')')
+#
+#            string.append(''.join(x))
+#
+#        elif comment is not None:
+#            string.append('({0})'.format(comment))
+#
+#        return ' '.join(string)
+#    #--- End: def
 
     def del_axes(self, *default):
         '''Remove the axes of the cell method.
