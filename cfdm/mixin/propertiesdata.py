@@ -354,36 +354,27 @@ first axis which is to have a chunk size of 12:
 
     def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
-        '''TODO Return a name for the {+variable}.
+        '''Return a name for the construct.
 
 By default the name is the first found of the following:
 
-  1. The `standard_name` CF property.
-  
-  2. The `long_name` CF property, preceeded by the string
-     ``'long_name:'``.
+1. The "standard_name" property.
 
-  2. The `cf_role` CF property, preceeded by the string
-     ``'cf_role:'``.
+2. The "cf_role" property, preceeded by ``'cf_role:'``.
 
-  3. If the *ncvar* parameter is True, the netCDF variable name (as
-     returned by the `get_ncvar` method), preceeded by the string
-     ``'ncvar%'``.
-  
-  4. The value of the *default* parameter.
+3. The "long_name" property, preceeded by ``'long_name:'``.
 
-.. versionadded:: 1.6
+4. The netCDF variable name, preceeded by ``'ncvar%'``.
 
-:Examples 1:
+5. The value of the *default* parameter.
 
->>> n = f.{+name}()
->>> n = f.{+name}(default='NO NAME')
+.. versionadded:: 1.7
 
 :Parameters:
 
     default: optional
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is `None`.
+        TODO If no name can be found then return the value of the
+        *default* parameter. By default the default is `None`.
 
     ncvar: `bool`, optional
 
@@ -392,27 +383,9 @@ By default the name is the first found of the following:
     out:
         The name.
 
-:Examples 2:
+**Examples:**
 
->>> f.setprop('standard_name', 'air_temperature')
->>> f.setprop('long_name', 'temperature of the air')
->>> f.ncvar('tas')
->>> f.{+name}()
-'air_temperature'
->>> f.delprop('standard_name')
->>> f.{+name}()
-'long_name:temperature of the air'
->>> f.delprop('long_name')
->>> f.{+name}()
-'ncvar%tas'
->>> f.ncvar(None)
->>> f.{+name}()
-None
->>> f.{+name}('no_name')
-'no_name'
->>> f.setprop('standard_name', 'air_temperature')
->>> f.{+name}('no_name')
-'air_temperature'
+TODO
 
         '''
         out = []
@@ -449,43 +422,6 @@ None
             return out[-1]
 
         return default
-    
-#        n = self.get_property('standard_name', None)
-#        if n is not None:
-#            return n
-#
-#        properties = ['long_name', 'cf_role']
-#        if property is not None:
-#            properties.append(property)
-#            
-#        for prop in properites:
-#            n = self.get_property(prop, None)
-#            if n is not None:
-#                return '{0}:{1}'.format(prop, n)
-#        
-#        if ncvar:
-#            n = self.nc_get_variable(None)
-#            if n is not None:
-#                return 'ncvar%{0}'.format(n)
-#            
-#        n = self.get_property('standard_name', None)
-#        if n is not None:
-#            return n
-#
-#        n = self.get_property('long_name', None)
-#        if n is not None:
-#            return 'long_name:{0}'.format(n)
-#
-#        n = self.get_property('cf_role', None)
-#        if n is not None:
-#            return 'cf_role:{0}'.format(n)
-#
-#        if ncvar:
-#            n = self.nc_get_variable(None)
-#            if n is not None:
-#                return 'ncvar%{0}'.format(n)
-#            
-#        return default
     #--- End: def
 
     def open(self):

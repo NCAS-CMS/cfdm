@@ -442,7 +442,7 @@ field.
     out: `str`
         A string containing the description.
     
-**Examples**
+**Examples:**
 
         '''
         indent1 = '    ' * _level
@@ -615,65 +615,81 @@ data arrays.
             return string
     #--- End: def
 
-    def equal_datums(self, coordinate_reference0,
-                     coordinate_reference1, rtol=None, atol=None,
-                     traceback=False, ignore_data_type=False,
-                     ignore_fill_value=False,
-                     ignore_construct_type=False):
-        '''TODO
-        '''
-        coordinate_references = self.coordinate_references()
-        
-        datum0 = coordinate_references[coordinate_reference0].get_datum()
-        datum1 = coordinate_references[coordinate_reference1].get_datum()
-        
-    #--- End: def
+#    def equal_datums(self, coordinate_reference0,
+#                     coordinate_reference1, rtol=None, atol=None,
+#                     traceback=False, ignore_data_type=False,
+#                     ignore_fill_value=False,
+#                     ignore_construct_type=False):
+#        '''
+#        '''
+#        coordinate_references = self.coordinate_references()
+#        
+#        datum0 = coordinate_references[coordinate_reference0].get_datum()
+#        datum1 = coordinate_references[coordinate_reference1].get_datum()
+#        
+#    #--- End: def
     
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''TODOTrue if two {+variable}s are equal, False otherwise.
+        '''Whether two field constructs are the same.
 
-Two fields are equal if ...
+Equality is strict by default. This means that for two field
+constructs to be considered equal they must have corresponding
+metadata constructs and for each pair of constructs:
 
-Note that a {+variable} may be equal to a single element field list,
-for example ``f.equals(f[0:1])`` and ``f[0:1].equals(f)`` are always
-True.
+* the descriptive properties must be the same (with the exception of
+  the field construct's "Convenions" property, which is never
+  checked), and
 
-.. seealso:: `cf.FieldList.equals`, `cf.FieldList.set_equals`
+* if there are data arrays then they must have same shape, data type
+  and be element-wise equal.
+
+Two numerical data elements ``a`` and ``b`` are considered equal if
+``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked on any
+construct.
 
 :Parameters:
 
-    other: `object`
-        The object to compare for equality.
+    other: 
+        TODO The object to compare for equality.
 
-    {+atol}
-
-    {+rtol}
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
+        
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
 
     ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
+        TODO If True then data arrays with different fill values are
         considered equal. By default they are considered unequal.
 
     traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        {+variable}s differ.
+        If True and the field constructs are different then print a
+        traceback stating where they are different.
 
-    ignore: `tuple`, optional
-        The names of CF properties to omit from the comparison. By
-        default, the CF Conventions property is omitted.
+    ignore_properties: sequence of `str`, optional
+        The names of properties to omit from the comparison. Note that
+        the "Conventions" property is always omitted.
 
 :Returns: 
   
     out: `bool`
-        Whether or not the two {+variable}s are equal.
+        Whether the two field constructs are equal.
 
-**Examples**
+**Examples:**
 
 >>> f.Conventions
 'CF-1.0'
 >>> g = f.copy()
->>> g.Conventions = 'CF-1.6'
+>>> g.Conventions = 'CF-1.7'
 >>> f.equals(g)
 True
 
@@ -876,13 +892,13 @@ TODO
         return f
     #--- End: def
     
-    def field_ancillaries(self, axes=None, copy=False):
-        '''TODO
-        '''
-        return self._get_constructs().constructs(
-            construct_type='field_ancillary',
-            axes=axes, copy=copy)
-    #--- End: def
+#    def field_ancillaries(self, axes=None, copy=False):
+#        '''TODO
+#        '''
+#        return self._get_constructs().constructs(
+#            construct_type='field_ancillary',
+#            axes=axes, copy=copy)
+#    #--- End: def
 
     def get_read_report(self, *default):
         '''TODO
@@ -1079,7 +1095,7 @@ may be selected for removal.
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
 >>> f.field_ancillaries()
 TODO
@@ -1104,8 +1120,9 @@ TODO
 :Returns:
 
     out: `OrderDict`
+        TODO
 
-**Examples**
+**Examples:**
 
 >>> f.cell_methods()
 OrderedDict([('cellmethod0',
@@ -1208,7 +1225,7 @@ OrderedDict([('cellmethod0',
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
 
@@ -1257,7 +1274,7 @@ TODO
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
         

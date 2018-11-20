@@ -25,6 +25,7 @@ Inspection
    ~cfdm.DimensionCoordinate.has_data
    ~cfdm.DimensionCoordinate.get_property
    ~cfdm.DimensionCoordinate.has_property
+   ~cfdm.DimensionCoordinate.name
    ~cfdm.DimensionCoordinate.properties
 
 .. rubric:: Attributes
@@ -34,8 +35,8 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~cfdm.DimensionCoordinate.data
    ~cfdm.DimensionCoordinate.bounds
+   ~cfdm.DimensionCoordinate.data
 
 Properties
 ----------
@@ -64,14 +65,10 @@ Data
    :template: method.rst
 
    ~cfdm.DimensionCoordinate.del_data
-   ~cfdm.DimensionCoordinate.expand_dims
    ~cfdm.DimensionCoordinate.get_array
-   ~cfdm.DimensionCoordinate.get_bounds
    ~cfdm.DimensionCoordinate.get_data
    ~cfdm.DimensionCoordinate.has_data
    ~cfdm.DimensionCoordinate.set_data
-   ~cfdm.DimensionCoordinate.squeeze
-   ~cfdm.DimensionCoordinate.transpose
    
 .. rubric:: Attributes
    
@@ -81,6 +78,30 @@ Data
    :template: attribute.rst
 
    ~cfdm.DimensionCoordinate.data
+
+Bounds
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DimensionCoordinate.del_bounds
+   ~cfdm.DimensionCoordinate.get_bounds
+   ~cfdm.DimensionCoordinate.has_bounds
+   ~cfdm.DimensionCoordinate.set_bounds
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.DimensionCoordinate.bounds
 
 Modification
 ------------
@@ -92,10 +113,12 @@ Modification
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.DimensionCoordinate.del_bounds
    ~cfdm.DimensionCoordinate.del_data
    ~cfdm.DimensionCoordinate.del_property
    ~cfdm.DimensionCoordinate.expand_dims
    ~cfdm.DimensionCoordinate.properties
+   ~cfdm.DimensionCoordinate.set_bounds
    ~cfdm.DimensionCoordinate.set_data
    ~cfdm.DimensionCoordinate.set_property
    ~cfdm.DimensionCoordinate.squeeze
@@ -115,6 +138,7 @@ Miscellaneous
    ~cfdm.DimensionCoordinate.equals
 
 
+
 NetCDF
 ------
 
@@ -125,10 +149,10 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~DimensionCoordinate.nc_del_variable
-   ~DimensionCoordinate.nc_get_variable
-   ~DimensionCoordinate.nc_has_variable
-   ~DimensionCoordinate.nc_set_variable 
+   ~cfdm.DimensionCoordinate.nc_del_variable
+   ~cfdm.DimensionCoordinate.nc_get_variable
+   ~cfdm.DimensionCoordinate.nc_has_variable
+   ~cfdm.DimensionCoordinate.nc_set_variable 
 
 Special
 -------
@@ -144,3 +168,5 @@ Special
    ~cfdm.DimensionCoordinate.__getitem__
    ~cfdm.DimensionCoordinate.__repr__
    ~cfdm.DimensionCoordinate.__str__
+
+   

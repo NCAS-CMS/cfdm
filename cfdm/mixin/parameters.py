@@ -4,7 +4,7 @@ from builtins import super
 from . import Container
 
 
-class Parameters(Container): #with_metaclass(abc.ABCMeta, Container)):
+class Parameters(Container):
     '''Mixin class for parameters.
 
     '''

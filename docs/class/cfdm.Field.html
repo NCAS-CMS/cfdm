@@ -117,7 +117,7 @@ and institution).</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>properties: <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>, optional</dt>
 <dd><p class="first">Set descriptive properties. The dictionary keys are property
 names, with corresponding values. Ignored if the <em>source</em>
 parameter is set.</p>
@@ -133,7 +133,7 @@ parameter is set.</p>
 <dd><p class="first last">Initialize the properties, data and metadata constructs from
 those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -210,7 +210,10 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.has_property.html#cfdm.Field.has_property" title="cfdm.Field.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.name.html#cfdm.Field.name" title="cfdm.Field.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
+<td>Return a name for the construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
 </tbody>
@@ -273,32 +276,23 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.del_data_axes.html#cfdm.Field.del_data_axes" title="cfdm.Field.del_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data_axes</span></code></a></td>
 <td>Remove the identifiers of the domain axes spanned by the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.expand_dims.html#cfdm.Field.expand_dims" title="cfdm.Field.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
-<td>Expand the shape of the data array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.get_array.html#cfdm.Field.get_array" title="cfdm.Field.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.get_array.html#cfdm.Field.get_array" title="cfdm.Field.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.get_data_axes.html#cfdm.Field.get_data_axes" title="cfdm.Field.get_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data_axes</span></code></a></td>
 <td>Return the identifiers of the domain axes spanned by the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.has_data.html#cfdm.Field.has_data" title="cfdm.Field.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.has_data.html#cfdm.Field.has_data" title="cfdm.Field.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
 <td>Whether a data object has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.set_data.html#cfdm.Field.set_data" title="cfdm.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.set_data_axes.html#cfdm.Field.set_data_axes" title="cfdm.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a></td>
 <td>Set the domain axes spanned by the data array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.squeeze.html#cfdm.Field.squeeze" title="cfdm.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>Remove size one axes from the data array.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.transpose.html#cfdm.Field.transpose" title="cfdm.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>Permute the axes of the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -403,7 +397,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy of the field construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>TODOTrue if two {+variable}s are equal, False otherwise.</td>
+<td>Whether two field constructs are the same.</td>
 </tr>
 </tbody>
 </table>
@@ -448,16 +442,16 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.__deepcopy__.html#cfdm.Field.__deepcopy__" title="cfdm.Field.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
+<td>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code> function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.__getitem__.html#cfdm.Field.__getitem__" title="cfdm.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>Return a subspace of the field defined by indices</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.__repr__.html#cfdm.Field.__repr__" title="cfdm.Field.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+<td>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code> built-in function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.__str__.html#cfdm.Field.__str__" title="cfdm.Field.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+<td>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> built-in function.</td>
 </tr>
 </tbody>
 </table>

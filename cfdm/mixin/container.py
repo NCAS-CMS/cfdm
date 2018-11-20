@@ -1,11 +1,12 @@
 from __future__ import print_function
 from builtins import object
 
+import sys
 import textwrap
 
 import numpy
-import sys
 
+from ..functions import ATOL, RTOL
 
 class Container(object):
     '''Mixin class for storing object components.
@@ -43,23 +44,40 @@ x.__str__() <==> str(x)
 
 .. versionadded:: 1.7
 
+:Parameters:
+
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
+        
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
+
         '''
         if rtol is None:
-            rtol = sys.float_info.epsilon
+            rtol = RTOL()
         if atol is None:
-            atol = sys.float_info.epsilon
+            atol = ATOL()
 
         eq = getattr(x, 'equals', None)
         if callable(eq):
-            # x has a callable equals method
+            # --------------------------------------------------------
+            # x has a callable "equals" method
+            # --------------------------------------------------------
             return eq(y, rtol=rtol, atol=atol, **kwargs)
         
         eq = getattr(y, 'equals', None)
         if callable(eq):
-            # y has a callable equals method
+            # --------------------------------------------------------
+            # y has a callable "equals" method
+            # --------------------------------------------------------
             return eq(x, rtol=rtol, atol=atol, **kwargs)
         
         if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
+            # --------------------------------------------------------
+            # x or y is a numpy array
+            # --------------------------------------------------------
             if numpy.shape(x) != numpy.shape(y):
                 return False
             
@@ -90,11 +108,13 @@ x.__str__() <==> str(x)
                     else:
                         return out
         else:
+            # --------------------------------------------------------
+            # x and y are not numpy arrays
+            # --------------------------------------------------------
             return x == y
     #--- End: def
     
-    def equals(self, other, #rtol=None, atol=None,
-               traceback=False,
+    def equals(self, other, traceback=False,
                ignore_construct_type=False):
         '''TODO
 

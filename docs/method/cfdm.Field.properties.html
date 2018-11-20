@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.data" href="../attribute/cfdm.Field.data.html" />
-    <link rel="prev" title="cfdm.Field.has_property" href="cfdm.Field.has_property.html" />
+    <link rel="prev" title="cfdm.Field.name" href="cfdm.Field.name.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -50,7 +50,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
-      <li>Previous: <a href="cfdm.Field.has_property.html" title="previous chapter">cfdm.Field.has_property</a></li>
+      <li>Previous: <a href="cfdm.Field.name.html" title="previous chapter">cfdm.Field.name</a></li>
       <li>Next: <a href="../attribute/cfdm.Field.data.html" title="next chapter">cfdm.Field.data</a></li>
   </ul></li>
   </ul></li>
@@ -102,7 +102,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional   </dt>
+<dt>properties: <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>, optional   </dt>
 <dd><p class="first">Replace all existing properties with those specified in the
 dictionary. If the dictionary is empty then all properties
 will be removed.</p>
@@ -115,7 +115,7 @@ will be removed.</p>
 </dd>
 </dl>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt>
 <dd><p class="first last">If False then any property values provided by the <em>properties</em>
 parameter are not copied before insertion. By default they are
 deep copied.</p>
@@ -124,7 +124,7 @@ deep copied.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt>out: <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></dt>
 <dd><p class="first last">The properties prior to being changed, or the current
 properties if no changes were specified.</p>
 </dd>

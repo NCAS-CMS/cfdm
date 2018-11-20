@@ -1,45 +1,115 @@
-cfdm.FieldAncillary
-===================
-
 .. currentmodule:: cfdm
+.. default-role:: obj
 
-.. autoclass:: FieldAncillary
+cfdm.FieldAncillary
+========================
+
+.. autoclass:: cfdm.FieldAncillary
    :no-members:
    :no-inherited-members:
 
-.. rubric:: Methods
+Inspection
+----------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
-   ~FieldAncillary.copy
-   ~FieldAncillary.del_data
-   ~FieldAncillary.del_property
-   ~FieldAncillary.dump
-   ~FieldAncillary.equals
-   ~FieldAncillary.expand_dims
-   ~FieldAncillary.get_array
-   ~FieldAncillary.get_data
-   ~FieldAncillary.get_property
-   ~FieldAncillary.has_data
-   ~FieldAncillary.has_property
-   ~FieldAncillary.name
-   ~FieldAncillary.properties
-   ~FieldAncillary.set_data
-   ~FieldAncillary.set_property
-   ~FieldAncillary.squeeze
-   ~FieldAncillary.transpose
-   
-.. rubric:: Attributes
+   ~cfdm.FieldAncillary.dump
+   ~cfdm.FieldAncillary.get_array
+   ~cfdm.FieldAncillary.get_data
+   ~cfdm.FieldAncillary.has_data
+   ~cfdm.FieldAncillary.get_property
+   ~cfdm.FieldAncillary.has_property
+   ~cfdm.FieldAncillary.name
+   ~cfdm.FieldAncillary.properties
 
+.. rubric:: Attributes
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~FieldAncillary.data     
+   ~cfdm.FieldAncillary.data
+
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.del_property
+   ~cfdm.FieldAncillary.get_property
+   ~cfdm.FieldAncillary.has_property
+   ~cfdm.FieldAncillary.properties
+   ~cfdm.FieldAncillary.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.del_data
+   ~cfdm.FieldAncillary.get_array
+   ~cfdm.FieldAncillary.get_data
+   ~cfdm.FieldAncillary.has_data
+   ~cfdm.FieldAncillary.set_data
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.FieldAncillary.data
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.del_data
+   ~cfdm.FieldAncillary.del_property
+   ~cfdm.FieldAncillary.expand_dims
+   ~cfdm.FieldAncillary.properties
+   ~cfdm.FieldAncillary.set_data
+   ~cfdm.FieldAncillary.set_property
+   ~cfdm.FieldAncillary.squeeze
+   ~cfdm.FieldAncillary.transpose
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.copy
+   ~cfdm.FieldAncillary.equals
+
+
 
 NetCDF
 ------
@@ -51,8 +121,24 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~FieldAncillary.nc_del_variable
-   ~FieldAncillary.nc_get_variable
-   ~FieldAncillary.nc_has_variable
-   ~FieldAncillary.nc_set_variable 
+   ~cfdm.FieldAncillary.nc_del_variable
+   ~cfdm.FieldAncillary.nc_get_variable
+   ~cfdm.FieldAncillary.nc_has_variable
+   ~cfdm.FieldAncillary.nc_set_variable 
 
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.FieldAncillary.__deepcopy__
+   ~cfdm.FieldAncillary.__getitem__
+   ~cfdm.FieldAncillary.__repr__
+   ~cfdm.FieldAncillary.__str__
+
+   

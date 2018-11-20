@@ -17,7 +17,7 @@ domain ancillary constructs.
     '''
 
     def __init__(self, parameters=None, domain_ancillaries=None,
-                 source=None, copy=True, _use_data=True):
+                 source=None, copy=True): #, _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -45,8 +45,7 @@ domain ancillary constructs.
 
         '''
         super().__init__(parameters=parameters, source=source,
-                         copy=copy,
-                         _use_data=_use_data)
+                         copy=copy)
 
         self._set_component('domain_ancillaries', {}, copy=False)
 
@@ -59,43 +58,37 @@ domain ancillary constructs.
         
         if domain_ancillaries is None:
             domain_ancillaries = {}
-        elif copy or not _use_data:
+        elif copy: # or not _use_data:
             domain_ancillaries = domain_ancillaries.copy()
             for key, value in list(domain_ancillaries.items()):
-                try:
-                    domain_ancillaries[key] = value.copy(data=_use_data)
-                except AttributeError:
-                    domain_ancillaries[key] = deepcopy(value)
+#                try:
+#                    domain_ancillaries[key] = value.copy(data=_use_data)
+#                except AttributeError:
+                domain_ancillaries[key] = deepcopy(value)
         #--- End: if
             
         self.domain_ancillaries(domain_ancillaries, copy=False)
     #--- End: def
 
-    def __str__(self):
-        '''x.__str__() <==> str(x)
+#    def __str__(self):
+#        '''x.__str__() <==> str(x)
+#
+#        '''
+#        out = [super().__str__()]
+#            
+#        domain_ancillaries = self.domain_ancillaries()
+#        if domain_ancillaries:
+#            out.append('Domain Ancillaries: {0}'.format(', '.join(sorted(domain_ancillaries))))
+#            
+#        return '; '.join(out)
+#    #--- End: def
 
-        '''
-        out = [super().__str__()]
-            
-        domain_ancillaries = self.domain_ancillaries()
-        if domain_ancillaries:
-            out.append('Domain Ancillaries: {0}'.format(', '.join(sorted(domain_ancillaries))))
-            
-        return '; '.join(out)
-    #--- End: def
-
-    def copy(self, data=True):
+    def copy(self): #, data=True):
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
 .. versionadded:: 1.7
-
-:Parameters:
-
-    data: `bool`, optional
-        If False then do not copy the ancillary data arrays. By
-        default the data arrays are copied.
 
 :Returns:
 
@@ -105,10 +98,9 @@ domain ancillary constructs.
 **Examples:**
 
 >>> g = f.copy()
->>> g = f.copy(data=False)
 
         '''
-        return type(self)(source=self, copy=True, _use_data=data)
+        return type(self)(source=self, copy=True) #, _use_data=data)
     #--- End: def
 
     def del_domain_ancillary(self, domain_ancillary, *default):

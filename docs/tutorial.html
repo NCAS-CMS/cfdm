@@ -117,7 +117,7 @@ the CF data model being used may be found with the <a class="reference internal"
 <hr class="docutils" />
 <p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function reads a <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> file from disk, or
 from an <a class="reference external" href="https://www.opendap.org/">OPeNDAP</a> URL <a class="footnote-reference" href="#opendap2" id="id4">[2]</a>, and
-returns the contents as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of zero or more <a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> class
+returns the contents as a <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> of zero or more <a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> class
 instances, each of which represents a field construct <a class="footnote-reference" href="#language" id="id5">[3]</a>.</p>
 <p>For example, to read the file <strong>file.nc</strong> (<a class="reference download internal" href="_downloads/file.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id6">[1]</a>:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
@@ -150,7 +150,7 @@ within a session, and makes the read operation fast.</dd>
 levels of detail.</p>
 <div class="section" id="minimal-detail">
 <h3><strong>Minimal detail</strong><a class="headerlink" href="#minimal-detail" title="Permalink to this headline">¶</a></h3>
-<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function returns a short, one-line description:</p>
+<p>The built-in <code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code> function returns a short, one-line description:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">[&lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;,</span>
 <span class="go"> &lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;]</span>
@@ -166,7 +166,7 @@ respectively) and the units of the data (“1”).</p>
 </div>
 <div class="section" id="medium-detail">
 <h3><strong>Medium detail</strong><a class="headerlink" href="#medium-detail" title="Permalink to this headline">¶</a></h3>
-<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function returns similar information as the
+<p>The built-in <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> function returns similar information as the
 one-line output, along with short descriptions of the metadata
 constructs, which include the first and last values of their data
 arrays:</p>
@@ -401,7 +401,7 @@ that is accessed with the <a class="reference internal" href="method/cfdm.Field.
 </pre></div>
 </div>
 <p>The data array may be retrieved as an independent (possibly masked)
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array with the <a class="reference internal" href="method/cfdm.Field.get_array.html#cfdm.Field.get_array" title="cfdm.Field.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a> method:</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code> array with the <a class="reference internal" href="method/cfdm.Field.get_array.html#cfdm.Field.get_array" title="cfdm.Field.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a> method:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
 <span class="go">[[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]</span>
 <span class="go">  [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]</span>
@@ -1353,7 +1353,7 @@ of the field construct.</p>
 <p>The following code creates a field construct with properties; data;
 and domain axis, cell method and dimension coordinate metadata
 constructs (data arrays have been generated with dummy values using
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code>):</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">cfdm</span>
 
@@ -1478,7 +1478,7 @@ with the <a class="reference internal" href="#netcdf-interface"><span class="std
 </div>
 <p>Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
-been generated with dummy values using <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.arange.html#numpy.arange" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code></a>):</p>
+been generated with dummy values using <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.arange</span></code>):</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="kn">import</span> <span class="nn">cfdm</span>
 
@@ -1716,7 +1716,7 @@ independent of the original field.</p>
 <span class="go">{&#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: grid_latitude(10) degrees&gt;}</span>
 </pre></div>
 </div>
-<p>Equivalently, the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function may be used:</p>
+<p>Equivalently, the <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code> function may be used:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">copy</span>
 <span class="go">   &gt;&gt;&gt; u = copy.deepcopy(t)</span>
 </pre></div>
@@ -1736,8 +1736,8 @@ and the copy operation is fast.</dd>
 <div class="section" id="equality">
 <span id="id16"></span><h2><strong>Equality</strong><a class="headerlink" href="#equality" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p>Whether or not two fields constructs are the same is tested with
-either field construct’s <a class="reference internal" href="method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method.</p>
+<p>Whether or not two field constructs are the same is tested with either
+field construct’s <a class="reference internal" href="method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
@@ -1948,7 +1948,7 @@ indices of the uncompressed form of the data. The new subspace will
 no longer be compressed, i.e. its underlying arrays will be
 uncompressed, but the original data will remain compressed. It
 follows that to uncompress all of the data in a field construct,
-index the field construct with <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a>.</li>
+index the field construct with <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code>.</li>
 </ul>
 <ul class="simple">
 <li>If data elements are modified by <a class="reference internal" href="#data-assignment"><span class="std std-ref">assigning</span></a>

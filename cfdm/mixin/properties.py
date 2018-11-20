@@ -71,10 +71,8 @@ class Properties(Container):
 
 **Examples:**
         '''
-        if not super().equals(
-                other, #rtol=rtol, atol=atol,
-                traceback=traceback,
-                ignore_construct_type=ignore_construct_type):
+        if not super().equals(other, traceback=traceback,
+                              ignore_construct_type=ignore_construct_type):
             if traceback:
                 print(
 "{0}: Different ??/".format(self.__class__.__name__))

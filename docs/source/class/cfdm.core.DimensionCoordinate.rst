@@ -1,53 +1,146 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.DimensionCoordinate
-=============================
+========================
 
-.. currentmodule:: cfdm.core
+.. autoclass:: cfdm.core.DimensionCoordinate
+   :no-members:
+   :no-inherited-members:
 
-.. autoclass:: DimensionCoordinate
+Inspection
+----------
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   
-   .. rubric:: Methods
+   ~cfdm.core.DimensionCoordinate.get_array
+   ~cfdm.core.DimensionCoordinate.get_bounds
+   ~cfdm.core.DimensionCoordinate.get_data
+   ~cfdm.core.DimensionCoordinate.has_data
+   ~cfdm.core.DimensionCoordinate.get_property
+   ~cfdm.core.DimensionCoordinate.has_property
+   ~cfdm.core.DimensionCoordinate.properties
 
-   .. autosummary::
+.. rubric:: Attributes
    
-      ~DimensionCoordinate.__init__
-      ~DimensionCoordinate.copy
-      ~DimensionCoordinate.del_bounds
-      ~DimensionCoordinate.del_data
-      ~DimensionCoordinate.del_geometry
-      ~DimensionCoordinate.del_property
-      ~DimensionCoordinate.get_array
-      ~DimensionCoordinate.get_bounds
-      ~DimensionCoordinate.get_data
-      ~DimensionCoordinate.get_geometry
-      ~DimensionCoordinate.get_interior_ring
-      ~DimensionCoordinate.get_property
-      ~DimensionCoordinate.has_bounds
-      ~DimensionCoordinate.has_data
-      ~DimensionCoordinate.has_geometry
-      ~DimensionCoordinate.has_interior_ring
-      ~DimensionCoordinate.has_property
-      ~DimensionCoordinate.next
-      ~DimensionCoordinate.properties
-      ~DimensionCoordinate.set_bounds
-      ~DimensionCoordinate.set_data
-      ~DimensionCoordinate.set_geometry
-      ~DimensionCoordinate.set_interior_ring
-      ~DimensionCoordinate.set_property
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   
-   
-   .. rubric:: Attributes
+   ~cfdm.core.DimensionCoordinate.bounds
+   ~cfdm.core.DimensionCoordinate.data
 
-   .. autosummary::
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.del_property
+   ~cfdm.core.DimensionCoordinate.get_property
+   ~cfdm.core.DimensionCoordinate.has_property
+   ~cfdm.core.DimensionCoordinate.properties
+   ~cfdm.core.DimensionCoordinate.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.del_data
+   ~cfdm.core.DimensionCoordinate.get_array
+   ~cfdm.core.DimensionCoordinate.get_data
+   ~cfdm.core.DimensionCoordinate.has_data
+   ~cfdm.core.DimensionCoordinate.set_data
    
-      ~DimensionCoordinate.bounds
-      ~DimensionCoordinate.data
-      ~DimensionCoordinate.interior_ring
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.DimensionCoordinate.data
+
+Bounds
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.del_bounds
+   ~cfdm.core.DimensionCoordinate.get_bounds
+   ~cfdm.core.DimensionCoordinate.has_bounds
+   ~cfdm.core.DimensionCoordinate.set_bounds
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.DimensionCoordinate.bounds
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.del_bounds
+   ~cfdm.core.DimensionCoordinate.del_data
+   ~cfdm.core.DimensionCoordinate.del_property
+   ~cfdm.core.DimensionCoordinate.properties
+   ~cfdm.core.DimensionCoordinate.set_bounds
+   ~cfdm.core.DimensionCoordinate.set_data
+   ~cfdm.core.DimensionCoordinate.set_property
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DimensionCoordinate.__deepcopy__
+
    

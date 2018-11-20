@@ -37,6 +37,7 @@ Inspection
    ~cfdm.Field.has_data
    ~cfdm.Field.get_property
    ~cfdm.Field.has_property
+   ~cfdm.Field.name
    ~cfdm.Field.properties
 
 .. rubric:: Attributes
@@ -77,15 +78,12 @@ Data
 
    ~cfdm.Field.del_data
    ~cfdm.Field.del_data_axes
-   ~cfdm.Field.expand_dims
    ~cfdm.Field.get_array
    ~cfdm.Field.get_data
    ~cfdm.Field.get_data_axes
    ~cfdm.Field.has_data
    ~cfdm.Field.set_data
    ~cfdm.Field.set_data_axes   
-   ~cfdm.Field.squeeze
-   ~cfdm.Field.transpose
    
 .. rubric:: Attributes
    

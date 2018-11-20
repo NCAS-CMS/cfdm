@@ -112,24 +112,26 @@ cell measure variables correspond to cell measure constructs.
 
 **Examples**
 
+TODO
+
         '''
         return self._del_component('measure')
     #--- End: def
 
     def has_measure(self):
-        '''
+        '''TODO
         '''
         return self._has_component('measure')
     #--- End: def
 
     def get_measure(self, *default):
-        '''
+        '''TODO
         '''
         return self._get_component('measure', *default)
     #--- End: def
 
     def set_measure(self, measure, copy=True):
-        '''
+        '''TODO
         '''
         return self._set_component('measure', measure, copy=copy)
     #--- End: def

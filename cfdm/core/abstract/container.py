@@ -23,7 +23,7 @@ after initialisation with the `_set_component` method.
     #--- End: def
         
     def __deepcopy__(self, memo):
-        '''Used if `copy.deepcopy` is called on the object.
+        '''Called by the `copy.deepcopy` function.
 
 x.__deepcopy__() <==> copy.deepcopy(x)
 

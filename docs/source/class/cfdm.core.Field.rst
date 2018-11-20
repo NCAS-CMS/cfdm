@@ -30,7 +30,7 @@ Inspection
    ~cfdm.core.Field.properties
 
 .. rubric:: Attributes
-   
+
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/

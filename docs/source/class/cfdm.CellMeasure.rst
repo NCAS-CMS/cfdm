@@ -2,7 +2,7 @@
 .. default-role:: obj
 
 cfdm.CellMeasure
-========================
+================
 
 .. autoclass:: cfdm.CellMeasure
    :no-members:
@@ -22,12 +22,11 @@ Inspection
    ~cfdm.CellMeasure.get_array
    ~cfdm.CellMeasure.get_data
    ~cfdm.CellMeasure.has_data
+   ~cfdm.CellMeasure.has_measure
+   ~cfdm.CellMeasure.get_measure
    ~cfdm.CellMeasure.get_property
    ~cfdm.CellMeasure.has_property
-   ~cfdm.CellMeasure.get_measure
-   ~cfdm.CellMeasure.has_measure
-   ~cfdm.CellMeasure.set_measure
-   ~cfdm.CellMeasure.del_measure
+   ~cfdm.CellMeasure.name
    ~cfdm.CellMeasure.properties
 
 .. rubric:: Attributes
@@ -49,15 +48,16 @@ Properties
    :toctree: ../method/
    :template: method.rst
 
+
+   ~cfdm.CellMeasure.del_measure
    ~cfdm.CellMeasure.del_property
+   ~cfdm.CellMeasure.get_measure
    ~cfdm.CellMeasure.get_property
+   ~cfdm.CellMeasure.has_measure
    ~cfdm.CellMeasure.has_property
    ~cfdm.CellMeasure.properties
-   ~cfdm.CellMeasure.set_property
-   ~cfdm.CellMeasure.get_measure
-   ~cfdm.CellMeasure.has_measure
    ~cfdm.CellMeasure.set_measure
-   ~cfdm.CellMeasure.del_measure
+   ~cfdm.CellMeasure.set_property
 
 Data
 ----
@@ -70,13 +70,10 @@ Data
    :template: method.rst
 
    ~cfdm.CellMeasure.del_data
-   ~cfdm.CellMeasure.expand_dims
    ~cfdm.CellMeasure.get_array
    ~cfdm.CellMeasure.get_data
    ~cfdm.CellMeasure.has_data
    ~cfdm.CellMeasure.set_data
-   ~cfdm.CellMeasure.squeeze
-   ~cfdm.CellMeasure.transpose
    
 .. rubric:: Attributes
    
@@ -98,15 +95,15 @@ Modification
    :template: method.rst
 
    ~cfdm.CellMeasure.del_data
+   ~cfdm.CellMeasure.del_measure
    ~cfdm.CellMeasure.del_property
    ~cfdm.CellMeasure.expand_dims
    ~cfdm.CellMeasure.properties
+   ~cfdm.CellMeasure.set_measure
    ~cfdm.CellMeasure.set_data
    ~cfdm.CellMeasure.set_property
-   ~cfdm.CellMeasure.set_measure
    ~cfdm.CellMeasure.squeeze
    ~cfdm.CellMeasure.transpose
-
 
 Miscellaneous
 -------------
@@ -121,6 +118,8 @@ Miscellaneous
    ~cfdm.CellMeasure.copy
    ~cfdm.CellMeasure.equals
 
+
+
 NetCDF
 ------
 
@@ -131,10 +130,10 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~CellMeasure.nc_del_variable
-   ~CellMeasure.nc_get_variable
-   ~CellMeasure.nc_has_variable
-   ~CellMeasure.nc_set_variable 
+   ~cfdm.CellMeasure.nc_del_variable
+   ~cfdm.CellMeasure.nc_get_variable
+   ~cfdm.CellMeasure.nc_has_variable
+   ~cfdm.CellMeasure.nc_set_variable 
 
 Special
 -------
@@ -150,3 +149,5 @@ Special
    ~cfdm.CellMeasure.__getitem__
    ~cfdm.CellMeasure.__repr__
    ~cfdm.CellMeasure.__str__
+
+   

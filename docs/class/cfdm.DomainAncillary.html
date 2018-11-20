@@ -109,7 +109,7 @@ number of vertices of each cell.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>properties: <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>, optional</dt>
 <dd><p class="first">Set descriptive properties. The dictionary keys are property
 names, with corresponding values. Ignored if the <em>source</em>
 parameter is set.</p>
@@ -130,13 +130,13 @@ parameter is set.</p>
 <dd><p class="first">Set the bounds array. Ignored if the <em>source</em> parameter is
 set.</p>
 <p class="last">The bounds array may also be set after initialisation with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code> method.</p>
+<a class="reference internal" href="../method/cfdm.DomainAncillary.set_bounds.html#cfdm.DomainAncillary.set_bounds" title="cfdm.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the properties, data and bounds from those of
 <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -177,7 +177,10 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_property.html#cfdm.DomainAncillary.has_property" title="cfdm.DomainAncillary.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.name.html#cfdm.DomainAncillary.name" title="cfdm.DomainAncillary.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
+<td>Return a name for the construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
 </tbody>
@@ -189,7 +192,10 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.data.html#cfdm.DomainAncillary.data" title="cfdm.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.bounds.html#cfdm.DomainAncillary.bounds" title="cfdm.DomainAncillary.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.data.html#cfdm.DomainAncillary.data" title="cfdm.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
 </tbody>
@@ -234,14 +240,8 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_data.html#cfdm.DomainAncillary.del_data" title="cfdm.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
 <td>Remove the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.expand_dims.html#cfdm.DomainAncillary.expand_dims" title="cfdm.DomainAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
-<td>Expand the shape of the data array.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_array.html#cfdm.DomainAncillary.get_array" title="cfdm.DomainAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_array.html#cfdm.DomainAncillary.get_array" title="cfdm.DomainAncillary.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_bounds.html#cfdm.DomainAncillary.get_bounds" title="cfdm.DomainAncillary.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
-<td>Return the bounds.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_data.html#cfdm.DomainAncillary.get_data" title="cfdm.DomainAncillary.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
@@ -252,11 +252,41 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_data.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.squeeze.html#cfdm.DomainAncillary.squeeze" title="cfdm.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>Remove size one axes from the data array.</td>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.data.html#cfdm.DomainAncillary.data" title="cfdm.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<td>Return the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.transpose.html#cfdm.DomainAncillary.transpose" title="cfdm.DomainAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
-<td>Permute the axes of the data array.</td>
+</tbody>
+</table>
+</div>
+<div class="section" id="bounds">
+<h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_bounds.html#cfdm.DomainAncillary.del_bounds" title="cfdm.DomainAncillary.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
+<td>Remove the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.get_bounds.html#cfdm.DomainAncillary.get_bounds" title="cfdm.DomainAncillary.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.has_bounds.html#cfdm.DomainAncillary.has_bounds" title="cfdm.DomainAncillary.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
+<td>Whether or not there are bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_bounds.html#cfdm.DomainAncillary.set_bounds" title="cfdm.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
+<td>Set the bounds.</td>
 </tr>
 </tbody>
 </table>
@@ -270,9 +300,6 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.bounds.html#cfdm.DomainAncillary.bounds" title="cfdm.DomainAncillary.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
 <td>Return the bounds.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.DomainAncillary.data.html#cfdm.DomainAncillary.data" title="cfdm.DomainAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
-<td>Return the data.</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -285,17 +312,23 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_data.html#cfdm.DomainAncillary.del_data" title="cfdm.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_bounds.html#cfdm.DomainAncillary.del_bounds" title="cfdm.DomainAncillary.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
+<td>Remove the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_data.html#cfdm.DomainAncillary.del_data" title="cfdm.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
 <td>Remove the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_property.html#cfdm.DomainAncillary.del_property" title="cfdm.DomainAncillary.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.del_property.html#cfdm.DomainAncillary.del_property" title="cfdm.DomainAncillary.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
 <td>Remove a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.expand_dims.html#cfdm.DomainAncillary.expand_dims" title="cfdm.DomainAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.expand_dims.html#cfdm.DomainAncillary.expand_dims" title="cfdm.DomainAncillary.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
 <td>Expand the shape of the data array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.properties.html#cfdm.DomainAncillary.properties" title="cfdm.DomainAncillary.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_bounds.html#cfdm.DomainAncillary.set_bounds" title="cfdm.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
+<td>Set the bounds.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.set_data.html#cfdm.DomainAncillary.set_data" title="cfdm.DomainAncillary.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
@@ -364,16 +397,16 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__deepcopy__.html#cfdm.DomainAncillary.__deepcopy__" title="cfdm.DomainAncillary.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Used if <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> is called on the object.</td>
+<td>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code> function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__getitem__.html#cfdm.DomainAncillary.__getitem__" title="cfdm.DomainAncillary.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>Return a subspace of the construct defined by indices</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__repr__.html#cfdm.DomainAncillary.__repr__" title="cfdm.DomainAncillary.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+<td>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code> built-in function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.DomainAncillary.__str__.html#cfdm.DomainAncillary.__str__" title="cfdm.DomainAncillary.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+<td>Called by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> built-in function.</td>
 </tr>
 </tbody>
 </table>

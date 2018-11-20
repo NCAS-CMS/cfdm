@@ -87,7 +87,7 @@
 <h1>cfdm.Field.cell_methods<a class="headerlink" href="#cfdm-field-cell-methods" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.cell_methods">
-<code class="descclassname">Field.</code><code class="descname">cell_methods</code><span class="sig-paren">(</span><em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/field.py#L1092"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.cell_methods" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">cell_methods</code><span class="sig-paren">(</span><em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/field.py#L1108"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.cell_methods" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return cell method constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -101,18 +101,22 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then deep copies of the constructs are returned.</p>
+<dt>copy: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt>
+<dd><p class="first last">If <code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code> then deep copies of the constructs are returned.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">out: <code class="xref py py-obj docutils literal notranslate"><span class="pre">OrderDict</span></code></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <code class="xref py py-obj docutils literal notranslate"><span class="pre">OrderDict</span></code></dt>
+<dd><p class="first last">TODO</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">cell_methods</span><span class="p">()</span>
 <span class="go">OrderedDict([(&#39;cellmethod0&#39;,</span>
 <span class="go">              &lt;CellMethod: domainaxis2: mean (interval: 1 day comment: ok)&gt;),</span>

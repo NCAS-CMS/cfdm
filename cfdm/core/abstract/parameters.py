@@ -13,8 +13,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
 .. versionadded:: 1.7
     '''
-    def __init__(self, parameters=None, source=None, copy=True,
-                 _use_data=True):
+    def __init__(self, parameters=None, source=None, copy=True): 
         '''**Initialization**
 
 :Parameters:
@@ -68,18 +67,12 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 #        return '; '.join(out)
 #    #--- End: def
 
-    def copy(self, data=True):
+    def copy(self):
         '''Return a deep copy.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
 .. versionadded:: 1.7
-
-:Parameters:
-
-    data: `bool`, optional
-        If False then do not copy the ancillary data arrays. By
-        default the data arrays are copied.
 
 :Returns:
 
@@ -89,10 +82,9 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 **Examples:**
 
 >>> g = f.copy()
->>> g = f.copy(data=False)
 
         '''
-        return type(self)(source=self, copy=True, _use_data=data)
+        return type(self)(source=self, copy=True)
     #--- End: def
     
     def del_parameter(self, parameter, *default):

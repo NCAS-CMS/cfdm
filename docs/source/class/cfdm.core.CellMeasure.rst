@@ -1,44 +1,126 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.CellMeasure
 =====================
 
-.. currentmodule:: cfdm.core
+.. autoclass:: cfdm.core.CellMeasure
+   :no-members:
+   :no-inherited-members:
 
-.. autoclass:: CellMeasure
+Inspection
+----------
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   
-   .. rubric:: Methods
+   ~cfdm.core.CellMeasure.get_array
+   ~cfdm.core.CellMeasure.get_data
+   ~cfdm.core.CellMeasure.has_data
+   ~cfdm.core.CellMeasure.has_measure
+   ~cfdm.core.CellMeasure.get_measure
+   ~cfdm.core.CellMeasure.get_property
+   ~cfdm.core.CellMeasure.has_property
+   ~cfdm.core.CellMeasure.properties
 
-   .. autosummary::
+.. rubric:: Attributes
    
-      ~CellMeasure.__init__
-      ~CellMeasure.copy
-      ~CellMeasure.del_data
-      ~CellMeasure.del_measure
-      ~CellMeasure.del_property
-      ~CellMeasure.get_array
-      ~CellMeasure.get_data
-      ~CellMeasure.get_measure
-      ~CellMeasure.get_property
-      ~CellMeasure.has_data
-      ~CellMeasure.has_measure
-      ~CellMeasure.has_property
-      ~CellMeasure.next
-      ~CellMeasure.properties
-      ~CellMeasure.set_data
-      ~CellMeasure.set_measure
-      ~CellMeasure.set_property
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   
-   
-   .. rubric:: Attributes
+   ~cfdm.core.CellMeasure.data
 
-   .. autosummary::
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CellMeasure.del_measure
+   ~cfdm.core.CellMeasure.del_property
+   ~cfdm.core.CellMeasure.get_measure
+   ~cfdm.core.CellMeasure.get_property
+   ~cfdm.core.CellMeasure.has_measure
+   ~cfdm.core.CellMeasure.has_property
+   ~cfdm.core.CellMeasure.properties
+   ~cfdm.core.CellMeasure.set_measure
+   ~cfdm.core.CellMeasure.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CellMeasure.del_data
+   ~cfdm.core.CellMeasure.get_array
+   ~cfdm.core.CellMeasure.get_data
+   ~cfdm.core.CellMeasure.has_data
+   ~cfdm.core.CellMeasure.set_data
    
-      ~CellMeasure.data
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.CellMeasure.data
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CellMeasure.del_data
+   ~cfdm.core.CellMeasure.del_measure
+   ~cfdm.core.CellMeasure.del_property
+   ~cfdm.core.CellMeasure.properties
+   ~cfdm.core.CellMeasure.set_measure
+   ~cfdm.core.CellMeasure.set_data
+   ~cfdm.core.CellMeasure.set_property
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CellMeasure.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CellMeasure.__deepcopy__
+
    

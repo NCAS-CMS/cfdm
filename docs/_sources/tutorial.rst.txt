@@ -1673,8 +1673,8 @@ Metadata constructs may be copied individually in the same manner:
 
 ----
 
-Whether or not two fields constructs are the same is tested with
-either field construct's `~Field.equals` method.
+Whether or not two field constructs are the same is tested with either
+field construct's `~Field.equals` method.
 
 .. code:: python
 
@@ -1742,8 +1742,6 @@ criteria for considering two fields to be equal:
   comparisons may be temporarily changed, without changing the default
   settings.
    
-
-
 .. _external_variables:
 
 **External variables**

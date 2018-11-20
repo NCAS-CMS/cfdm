@@ -1,53 +1,144 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.AuxiliaryCoordinate
 =============================
 
-.. currentmodule:: cfdm.core
+.. autoclass:: cfdm.core.AuxiliaryCoordinate
+   :no-members:
+   :no-inherited-members:
 
-.. autoclass:: AuxiliaryCoordinate
+Inspection
+----------
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   
-   .. rubric:: Methods
+   ~cfdm.core.AuxiliaryCoordinate.get_array
+   ~cfdm.core.AuxiliaryCoordinate.get_bounds
+   ~cfdm.core.AuxiliaryCoordinate.get_data
+   ~cfdm.core.AuxiliaryCoordinate.has_data
+   ~cfdm.core.AuxiliaryCoordinate.get_property
+   ~cfdm.core.AuxiliaryCoordinate.has_property
+   ~cfdm.core.AuxiliaryCoordinate.properties
 
-   .. autosummary::
+.. rubric:: Attributes
    
-      ~AuxiliaryCoordinate.__init__
-      ~AuxiliaryCoordinate.copy
-      ~AuxiliaryCoordinate.del_bounds
-      ~AuxiliaryCoordinate.del_data
-      ~AuxiliaryCoordinate.del_geometry
-      ~AuxiliaryCoordinate.del_property
-      ~AuxiliaryCoordinate.get_array
-      ~AuxiliaryCoordinate.get_bounds
-      ~AuxiliaryCoordinate.get_data
-      ~AuxiliaryCoordinate.get_geometry
-      ~AuxiliaryCoordinate.get_interior_ring
-      ~AuxiliaryCoordinate.get_property
-      ~AuxiliaryCoordinate.has_bounds
-      ~AuxiliaryCoordinate.has_data
-      ~AuxiliaryCoordinate.has_geometry
-      ~AuxiliaryCoordinate.has_interior_ring
-      ~AuxiliaryCoordinate.has_property
-      ~AuxiliaryCoordinate.next
-      ~AuxiliaryCoordinate.properties
-      ~AuxiliaryCoordinate.set_bounds
-      ~AuxiliaryCoordinate.set_data
-      ~AuxiliaryCoordinate.set_geometry
-      ~AuxiliaryCoordinate.set_interior_ring
-      ~AuxiliaryCoordinate.set_property
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   
-   
-   .. rubric:: Attributes
+   ~cfdm.core.AuxiliaryCoordinate.bounds
+   ~cfdm.core.AuxiliaryCoordinate.data
 
-   .. autosummary::
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.del_property
+   ~cfdm.core.AuxiliaryCoordinate.get_property
+   ~cfdm.core.AuxiliaryCoordinate.has_property
+   ~cfdm.core.AuxiliaryCoordinate.properties
+   ~cfdm.core.AuxiliaryCoordinate.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.del_data
+   ~cfdm.core.AuxiliaryCoordinate.get_array
+   ~cfdm.core.AuxiliaryCoordinate.get_data
+   ~cfdm.core.AuxiliaryCoordinate.has_data
+   ~cfdm.core.AuxiliaryCoordinate.set_data
    
-      ~AuxiliaryCoordinate.bounds
-      ~AuxiliaryCoordinate.data
-      ~AuxiliaryCoordinate.interior_ring
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.data
+
+Bounds
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.del_bounds
+   ~cfdm.core.AuxiliaryCoordinate.get_bounds
+   ~cfdm.core.AuxiliaryCoordinate.has_bounds
+   ~cfdm.core.AuxiliaryCoordinate.set_bounds
    
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.bounds
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.del_bounds
+   ~cfdm.core.AuxiliaryCoordinate.del_data
+   ~cfdm.core.AuxiliaryCoordinate.del_property
+   ~cfdm.core.AuxiliaryCoordinate.properties
+   ~cfdm.core.AuxiliaryCoordinate.set_bounds
+   ~cfdm.core.AuxiliaryCoordinate.set_data
+   ~cfdm.core.AuxiliaryCoordinate.set_property
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.AuxiliaryCoordinate.__deepcopy__

@@ -85,7 +85,7 @@
 <h1>cfdm.core.CoordinateConversion<a class="headerlink" href="#cfdm-core-coordinateconversion" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.CoordinateConversion">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/coordinateconversion.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/coordinateconversion.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.parametersdomainancillaries.ParametersDomainAncillaries</span></code></p>
 <p>A coordinate conversion component of a coordinate reference
 construct of the CF data model.</p>
@@ -138,7 +138,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L19"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L19"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -186,7 +186,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.CoordinateConversion.__init__" title="cfdm.core.CoordinateConversion.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([parameters,&nbsp;domain_ancillaries,&nbsp;…])</td>
 <td><strong>Initialization</strong></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.CoordinateConversion.copy" title="cfdm.core.CoordinateConversion.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([data])</td>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.CoordinateConversion.copy" title="cfdm.core.CoordinateConversion.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
 <td>Return a deep copy.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.CoordinateConversion.del_domain_ancillary" title="cfdm.core.CoordinateConversion.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a>(domain_ancillary,&nbsp;*default)</td>
@@ -220,7 +220,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L87"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <div class="versionadded">
@@ -230,15 +230,7 @@ initialization. By default arguments are deep copied.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>data: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not copy the ancillary data arrays. By
-default the data arrays are copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out:</dt>
 <dd><p class="first last">The deep copy.</p>
 </dd>
@@ -249,14 +241,13 @@ default the data arrays are copied.</p>
 </table>
 <p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.del_domain_ancillary">
-<code class="descname">del_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L114"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.del_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L106"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.del_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a domain ancillary.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -302,7 +293,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.del_parameter">
-<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L98"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.del_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.del_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a parameter.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -341,7 +332,7 @@ default the data arrays are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.domain_ancillaries">
-<code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><em>domain_ancillaries=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L146"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
+<code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><em>domain_ancillaries=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace the domain ancillary-valued terms.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -388,7 +379,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.get_domain_ancillary">
-<code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L188"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L180"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a parameter value.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -426,7 +417,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.get_parameter">
-<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L126"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.get_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L118"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.get_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a parameter value.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -467,7 +458,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.parameters">
-<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L166"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.parameters" title="Permalink to this definition">¶</a></dt>
+<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L158"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace the parameter-valued terms.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -521,7 +512,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.set_domain_ancillary">
-<code class="descname">set_domain_ancillary</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L226"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.set_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_domain_ancillary</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parametersdomainancillaries.py#L218"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.set_domain_ancillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set an domain ancillary-valued term.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -554,7 +545,7 @@ terms prior to replacement are returned.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateConversion.set_parameter">
-<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L214"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.set_parameter" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/parameters.py#L206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion.set_parameter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a parameter-valued term.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>

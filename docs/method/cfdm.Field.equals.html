@@ -88,56 +88,69 @@
 <dl class="method">
 <dt id="cfdm.Field.equals">
 <code class="descclassname">Field.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_construct_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/field.py#L632"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.equals" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODOTrue if two {+variable}s are equal, False otherwise.</p>
-<p>Two fields are equal if …</p>
-<p>Note that a {+variable} may be equal to a single element field list,
-for example <code class="docutils literal notranslate"><span class="pre">f.equals(f[0:1])</span></code> and <code class="docutils literal notranslate"><span class="pre">f[0:1].equals(f)</span></code> are always
-True.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.equals</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.set_equals</span></code></p>
-</div>
+<dd><p>Whether two field constructs are the same.</p>
+<p>Equality is strict by default. This means that for two field
+constructs to be considered equal they must have corresponding
+metadata constructs and for each pair of constructs:</p>
+<ul class="simple">
+<li>the descriptive properties must be the same (with the exception of
+the field construct’s “Convenions” property, which is never
+checked), and</li>
+<li>if there are data arrays then they must have same shape, data type
+and be element-wise equal.</li>
+</ul>
+<p>Two numerical data elements <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
+<code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
+differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
+positive, typically very small numbers.</p>
+<p>NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked on any
+construct.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>other: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">object</span></code></a></dt>
-<dd><p class="first last">The object to compare for equality.</p>
+<dt>other: </dt>
+<dd><p class="first last">TODO The object to compare for equality.</p>
 </dd>
-</dl>
-<p>{+atol}</p>
-<p>{+rtol}</p>
-<dl class="docutils">
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then data arrays with different fill values are
+<dt>atol: float, optional</dt>
+<dd><p class="first last">The tolerance on absolute differences between real
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> function.</p>
+</dd>
+<dt>rtol: float, optional</dt>
+<dd><p class="first last">The tolerance on relative differences between real
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
+</dd>
+<dt>ignore_fill_value: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt>
+<dd><p class="first last">TODO If True then data arrays with different fill values are
 considered equal. By default they are considered unequal.</p>
 </dd>
-<dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then print a traceback highlighting where the two
-{+variable}s differ.</p>
+<dt>traceback: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional</dt>
+<dd><p class="first last">If True and the field constructs are different then print a
+traceback stating where they are different.</p>
 </dd>
-<dt>ignore: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional</dt>
-<dd><p class="first last">The names of CF properties to omit from the comparison. By
-default, the CF Conventions property is omitted.</p>
+<dt>ignore_properties: sequence of <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional</dt>
+<dd><p class="first last">The names of properties to omit from the comparison. Note that
+the “Conventions” property is always omitted.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">Whether or not the two {+variable}s are equal.</p>
+<dt>out: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></dt>
+<dd><p class="first last">Whether the two field constructs are equal.</p>
 </dd>
 </dl>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Conventions</span>
 <span class="go">&#39;CF-1.0&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s1">&#39;CF-1.6&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s1">&#39;CF-1.7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>

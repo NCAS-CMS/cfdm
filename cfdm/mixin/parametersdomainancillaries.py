@@ -4,7 +4,7 @@ from builtins import super
 from . import Parameters
 
 
-class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Parameters)):
+class ParametersDomainAncillaries(Parameters):
     '''Mixin class for parameter- and ancillary-valued terms.
 
     '''
@@ -74,7 +74,7 @@ class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Para
         
         # Check that the coordinate conversion ancillary terms
         # match
-        internal_ancillaries = self._internal_ancillaries
+#        internal_ancillaries = self._internal_ancillaries
         
         domain_ancillaries0 = self.domain_ancillaries()
         domain_ancillaries1 = other.domain_ancillaries()
@@ -99,18 +99,18 @@ class ParametersDomainAncillaries(Parameters): #with_metaclass(abc.ABCMeta, Para
     value0, value1))
                 return False
 
-            if internal_ancillaries:
-                if not self._equals(value0, value1,
-                                    rtol=rtol, atol=atol,
-                                    traceback=traceback,
-                                    ignore_data_type=ignore_data_type,
-                                    ignore_fill_value=ignore_fill_value,
-                                    ignore_construct_type=ignore_construct_type):
-                    if traceback:
-                        print(
-"{}: Unequal {!r} terms ({!r} != {!r})".format( 
-    self.__class__.__name__, term, value0, value1))
-                    return False
+#            if internal_ancillaries:
+#                if not self._equals(value0, value1,
+#                                    rtol=rtol, atol=atol,
+#                                    traceback=traceback,
+#                                    ignore_data_type=ignore_data_type,
+#                                    ignore_fill_value=ignore_fill_value,
+#                                    ignore_construct_type=ignore_construct_type):
+#                    if traceback:
+#                        print(
+#"{}: Unequal {!r} terms ({!r} != {!r})".format( 
+#    self.__class__.__name__, term, value0, value1))
+#                    return False
         #--- End: for
      
         # Still here? Then the two XXX are as equal as can be
