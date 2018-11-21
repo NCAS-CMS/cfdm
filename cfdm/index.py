@@ -10,15 +10,9 @@ class Index(mixin.NetCDFVariable,
             mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
-    '''An ??? with properties.
+    '''An index variable required to uncompress a ragged array.
 
-The index variable, which must be one-dimensional and of type integer,
-contains the zero-based index of the feature to which each element
-belongs. 
-
-For those indices of the sample dimension, into which data have not
-yet been written, the index variable should be pre-filled with missing
-values.
+.. versionadded:: 1.7
 
     '''
     def __init__(self, properties={}, data=None, source=None,

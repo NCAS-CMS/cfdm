@@ -29,6 +29,11 @@ x.__deepcopy__() <==> copy.deepcopy(x)
 
 .. versionadded:: 1.7
 
+**Examples:**
+
+>>> import copy
+>>> y = copy.deepcopy(x)
+
         '''
         return self.copy()
     #--- End: def

@@ -134,7 +134,8 @@ that the method was applied only over El Nino years).
 #
 #        return ' '.join(string)
 #    #--- End: def
-
+    def get_construct_type(self):
+        return 'cell_method'
     def del_axes(self, *default):
         '''Remove the axes of the cell method.
 

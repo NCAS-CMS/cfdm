@@ -298,9 +298,9 @@ class DSGTest(unittest.TestCase):
                                      'units': 'K'})
         
         # Create the domain axis constructs for the uncompressed array
-        T = tas.set_domain_axis(cfdm.DomainAxis(2))
-        Y = tas.set_domain_axis(cfdm.DomainAxis(3))
-        X = tas.set_domain_axis(cfdm.DomainAxis(2))
+        T = tas.set_construct(cfdm.DomainAxis(2))
+        Y = tas.set_construct(cfdm.DomainAxis(3))
+        X = tas.set_construct(cfdm.DomainAxis(2))
         
         # Set the data for the field
         tas.set_data(cfdm.Data(array), axes=[T, Y, X])			      

@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Field.set_construct_axes" href="cfdm.Field.set_construct_axes.html" />
-    <link rel="prev" title="cfdm.Field.set_cell_method" href="cfdm.Field.set_cell_method.html" />
+    <link rel="prev" title="cfdm.Field.expand_dims" href="cfdm.Field.expand_dims.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -50,7 +50,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
-      <li>Previous: <a href="cfdm.Field.set_cell_method.html" title="previous chapter">cfdm.Field.set_cell_method</a></li>
+      <li>Previous: <a href="cfdm.Field.expand_dims.html" title="previous chapter">cfdm.Field.expand_dims</a></li>
       <li>Next: <a href="cfdm.Field.set_construct_axes.html" title="next chapter">cfdm.Field.set_construct_axes</a></li>
   </ul></li>
   </ul></li>
@@ -87,7 +87,7 @@
 <h1>cfdm.Field.set_construct<a class="headerlink" href="#cfdm-field-set-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.set_construct">
-<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct_type</em>, <em>construct</em>, <em>cid=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/mixin/constructaccess.py#L322"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>cid=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/mixin/constructaccess.py#L322"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -102,12 +102,13 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>item: </dt>
-<dd><p class="first last">TODO</p>
+<dt>construct:</dt>
+<dd><p class="first last">The metadata construct to be inserted.</p>
 </dd>
 <dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">The identifiers of the domain axes spanned by the data
-array. Ignored for constructs that can not have a data array,
+<dd><p class="first">The construct identifiers of the domain axis constructs
+spanned by the data array. An exception is raised if used for
+a metadata construct that can not have a data array,
 i.e. domain axis, cell method and coordinate reference
 constructs.</p>
 <p>The axes may also be set afterwards with the
@@ -116,12 +117,16 @@ constructs.</p>
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis1']</span></code></p>
 </dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis1',</span> <span class="pre">'domainaxis0']</span></code></p>
+</dd>
 </dl>
 </dd>
 <dt>cid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">The identifier of the construct. If not set then a new, unique
-identifier is created. If the identifier already exisits then
-the exisiting construct will be replaced.</p>
+<dd><p class="first">The construct identifier to be used for the construct. If not
+set then a new, unique identifier is created automatically. If
+the identifier already exisits then the exisiting construct
+will be replaced.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='cellmeasure0'</span></code></p>
@@ -129,23 +134,28 @@ the exisiting construct will be replaced.</p>
 </dl>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then do not copy the construct prior to insertion. By
-default it is copied.</p>
+<dd><p class="first last">If True then return a copy of the unique selected
+construct. By default the construct is not copied.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">The identifier of the construct.</p>
+<dd><p class="first last">The construct identifier for the construct.</p>
 </dd>
 </dl>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<p>TODO</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cid</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cid</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cid</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cid</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">cid</span><span class="o">=</span><span class="s1">&#39;cellmeasure0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

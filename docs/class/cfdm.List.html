@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.List.HDF_chunks" href="../method/cfdm.List.HDF_chunks.html" />
-    <link rel="prev" title="cfdm.Index.nc_set_variable" href="../method/cfdm.Index.nc_set_variable.html" />
+    <link rel="next" title="cfdm.List.dump" href="../method/cfdm.List.dump.html" />
+    <link rel="prev" title="cfdm.Index.__str__" href="../method/cfdm.Index.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Index.nc_set_variable.html" title="previous chapter">cfdm.Index.nc_set_variable</a></li>
-      <li>Next: <a href="../method/cfdm.List.HDF_chunks.html" title="next chapter">cfdm.List.HDF_chunks</a></li>
+      <li>Previous: <a href="../method/cfdm.Index.__str__.html" title="previous chapter">cfdm.Index.__str__</a></li>
+      <li>Next: <a href="../method/cfdm.List.dump.html" title="next chapter">cfdm.List.dump</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -87,9 +87,13 @@
 <dt id="cfdm.List">
 <em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">List</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/list.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.List" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
+<p>A list variable required to uncompress a gathered array.</p>
+<p><strong>Initialization</strong></p>
 <p>TODO</p>
 </dd></dl>
 
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -97,32 +101,8 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.HDF_chunks.html#cfdm.List.HDF_chunks" title="cfdm.List.HDF_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HDF_chunks</span></code></a></td>
-<td>TODO {+HDF_chunks}</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.copy.html#cfdm.List.copy" title="cfdm.List.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
-<td>Return a deep copy.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.del_data.html#cfdm.List.del_data" title="cfdm.List.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
-<td>Remove the data.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">List.del_ncvar</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.del_property.html#cfdm.List.del_property" title="cfdm.List.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
-<td>Remove a property.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.dump.html#cfdm.List.dump" title="cfdm.List.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.dump.html#cfdm.List.dump" title="cfdm.List.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
 <td>TODO</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.equals.html#cfdm.List.equals" title="cfdm.List.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>TODOTODO</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.expand_dims.html#cfdm.List.expand_dims" title="cfdm.List.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
-<td>Expand the shape of the data array.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">List.fill_value</span></code></td>
-<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.get_array.html#cfdm.List.get_array" title="cfdm.List.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array the data.</td>
@@ -130,38 +110,20 @@
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.get_data.html#cfdm.List.get_data" title="cfdm.List.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">List.get_ncvar</span></code></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.has_data.html#cfdm.List.has_data" title="cfdm.List.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<td>Whether a data object has been set.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.get_property.html#cfdm.List.get_property" title="cfdm.List.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.has_data.html#cfdm.List.has_data" title="cfdm.List.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
-<td>Whether a data object has been set.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.has_property.html#cfdm.List.has_property" title="cfdm.List.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.has_property.html#cfdm.List.has_property" title="cfdm.List.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.name.html#cfdm.List.name" title="cfdm.List.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.name.html#cfdm.List.name" title="cfdm.List.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
 <td>Return a name for the construct.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.open.html#cfdm.List.open" title="cfdm.List.open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open</span></code></a></td>
-<td>TODO</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.properties.html#cfdm.List.properties" title="cfdm.List.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.set_data.html#cfdm.List.set_data" title="cfdm.List.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
-<td>Set the data.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">List.set_ncvar</span></code></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.set_property.html#cfdm.List.set_property" title="cfdm.List.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
-<td>Set a property.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.squeeze.html#cfdm.List.squeeze" title="cfdm.List.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
-<td>Remove size one axes from the data array.</td>
 </tr>
 </tbody>
 </table>
@@ -177,6 +139,127 @@
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.del_property.html#cfdm.List.del_property" title="cfdm.List.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.get_property.html#cfdm.List.get_property" title="cfdm.List.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<td>Return a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.has_property.html#cfdm.List.has_property" title="cfdm.List.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<td>Whether a property has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.properties.html#cfdm.List.properties" title="cfdm.List.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.set_property.html#cfdm.List.set_property" title="cfdm.List.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<td>Set a property.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.del_data.html#cfdm.List.del_data" title="cfdm.List.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.get_array.html#cfdm.List.get_array" title="cfdm.List.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<td>Return an independent numpy array the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.get_data.html#cfdm.List.get_data" title="cfdm.List.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
+<td>Return the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.has_data.html#cfdm.List.has_data" title="cfdm.List.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<td>Whether a data object has been set.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.set_data.html#cfdm.List.set_data" title="cfdm.List.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<td>Set the data.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.List.data.html#cfdm.List.data" title="cfdm.List.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<td>Return the data.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="modification">
+<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.del_data.html#cfdm.List.del_data" title="cfdm.List.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.del_property.html#cfdm.List.del_property" title="cfdm.List.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.expand_dims.html#cfdm.List.expand_dims" title="cfdm.List.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a></td>
+<td>Expand the shape of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.properties.html#cfdm.List.properties" title="cfdm.List.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return or replace all properties.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.set_data.html#cfdm.List.set_data" title="cfdm.List.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<td>Set the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.set_property.html#cfdm.List.set_property" title="cfdm.List.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<td>Set a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.squeeze.html#cfdm.List.squeeze" title="cfdm.List.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<td>Remove size one axes from the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.transpose.html#cfdm.List.transpose" title="cfdm.List.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<td>Permute the axes of the data array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.copy.html#cfdm.List.copy" title="cfdm.List.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.equals.html#cfdm.List.equals" title="cfdm.List.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<td>TODOTODO</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="netcdf">
 <h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
@@ -197,6 +280,30 @@
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.nc_set_variable.html#cfdm.List.nc_set_variable" title="cfdm.List.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
 <td>Set the netCDF variable name.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.__deepcopy__.html#cfdm.List.__deepcopy__" title="cfdm.List.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.__getitem__.html#cfdm.List.__getitem__" title="cfdm.List.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
+<td>Return a subspace of the construct defined by indices</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.List.__repr__.html#cfdm.List.__repr__" title="cfdm.List.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.List.__str__.html#cfdm.List.__str__" title="cfdm.List.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>

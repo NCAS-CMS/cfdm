@@ -52,7 +52,8 @@ to the order of the elements.
         if size is not None:
             self.set_size(size)        
     #--- End: def
-
+    def get_construct_type(self):
+        return 'domain_axis'
 #    def __str__(self):
 #        '''TODO 
 #

@@ -80,22 +80,22 @@ class create_fieldTest(unittest.TestCase):
         f = cfdm.core.Field(properties=properties)
         f.set_property('standard_name', 'eastward_wind')
 
-        axisX = f.set_construct('domain_axis', cfdm.core.DomainAxis(9))
-        axisY = f.set_construct('domain_axis', cfdm.core.DomainAxis(10))
-        axisZ = f.set_construct('domain_axis', cfdm.core.DomainAxis(1))
+        axisX = f.set_construct(cfdm.core.DomainAxis(9))
+        axisY = f.set_construct(cfdm.core.DomainAxis(10))
+        axisZ = f.set_construct(cfdm.core.DomainAxis(1))
 
         f.set_data(data, axes=[axisY, axisX])
         
-        x = f.set_construct('dimension_coordinate', dim0, axes=[axisX])
-        y = f.set_construct('dimension_coordinate', dim1, axes=[axisY])
-        z = f.set_construct('dimension_coordinate', dim2, axes=[axisZ])
+        x = f.set_construct(dim0, axes=[axisX])
+        y = f.set_construct(dim1, axes=[axisY])
+        z = f.set_construct(dim2, axes=[axisZ])
 
-        lat   = f.set_construct('auxiliary_coordinate', aux2, axes=[axisY, axisX])
-        lon   = f.set_construct('auxiliary_coordinate', aux3, axes=[axisX, axisY])
-        greek = f.set_construct('auxiliary_coordinate', aux4, axes=[axisY])
+        lat   = f.set_construct(aux2, axes=[axisY, axisX])
+        lon   = f.set_construct(aux3, axes=[axisX, axisY])
+        greek = f.set_construct(aux4, axes=[axisY])
 
-        ak = f.set_construct('domain_ancillary', ak, axes=[axisZ])
-        bk = f.set_construct('domain_ancillary', bk, axes=[axisZ])
+        ak = f.set_construct(ak, axes=[axisZ])
+        bk = f.set_construct(bk, axes=[axisZ])
 
         # Coordinate references
         coordinate_conversion = cfdm.core.CoordinateConversion(
@@ -111,14 +111,14 @@ class create_fieldTest(unittest.TestCase):
             coordinates=[x, y, lat, lon]
         )
 
-        f.set_construct('cell_measure', msr0, axes=[axisX, axisY])
+        f.set_construct(msr0, axes=[axisX, axisY])
 
-        f.set_construct('coordinate_reference', ref0)
+        f.set_construct(ref0)
 
         orog = cfdm.core.DomainAncillary(data=f.get_data())
         orog.set_property('standard_name', 'surface_altitude')
         orog.set_property('units', 'm')
-        orog = f.set_construct('domain_ancillary', orog, axes=[axisY, axisX])
+        orog = f.set_construct(orog, axes=[axisY, axisX])
 
         coordinate_conversion = cfdm.core.CoordinateConversion(
             parameters={'standard_name': 'atmosphere_hybrid_height_coordinate',
@@ -133,7 +133,7 @@ class create_fieldTest(unittest.TestCase):
             coordinate_conversion=coordinate_conversion
         )
         
-        ref1 = f.set_construct('coordinate_reference', ref1)
+        ref1 = f.set_construct(ref1)
 
         f_data = f.get_data()
 #        print (repr(f_data), type(f_data))
@@ -141,15 +141,15 @@ class create_fieldTest(unittest.TestCase):
         # Field ancillary variables
         data = f_data
         anc = cfdm.core.FieldAncillary(data=data)
-        f.set_construct('field_ancillary', anc, axes=[axisY, axisX])
+        f.set_construct(anc, axes=[axisY, axisX])
         
         data = f_data.get_array()[0]
         anc = cfdm.core.FieldAncillary(data=cfdm.core.Data(cfdm.core.NumpyArray(data)))
-        f.set_construct('field_ancillary', anc, axes=[axisX])
+        f.set_construct(anc, axes=[axisX])
 
         data = f_data.get_array()[..., 0]
         anc = cfdm.core.FieldAncillary(data=cfdm.core.Data(cfdm.core.NumpyArray(data)))
-        f.set_construct('field_ancillary', anc, axes=[axisY])
+        f.set_construct(anc, axes=[axisY])
 
         f.set_property('flag_values', numpy.array([1, 2, 4], 'int32'))
         f.set_property('flag_meanings', 'a bb ccc')
@@ -167,8 +167,8 @@ class create_fieldTest(unittest.TestCase):
             properties={'method': 'maximum',
                         'where' : 'sea'})
         
-        f.set_construct('cell_method', cm0)
-        f.set_construct('cell_method', cm1)
+        f.set_construct(cm0)
+        f.set_construct(cm1)
 
 #        print(f.get_data())
 #        print(f.properties())

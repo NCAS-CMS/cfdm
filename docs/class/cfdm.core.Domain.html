@@ -243,7 +243,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_cell_measure</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Domain.set_construct" title="cfdm.core.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>(construct_type,&nbsp;construct[,&nbsp;…])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Domain.set_construct" title="cfdm.core.Domain.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>(construct[,&nbsp;cid,&nbsp;axes,&nbsp;copy])</td>
 <td>Set a metadata construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.Domain.set_construct_axes" title="cfdm.core.Domain.set_construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_axes</span></code></a>(cid,&nbsp;axes)</td>
@@ -500,7 +500,7 @@ data array. If the construct does not have a data array then
 
 <dl class="method">
 <dt id="cfdm.core.Domain.set_construct">
-<code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct_type</em>, <em>construct</em>, <em>cid=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/mixin/constructaccess.py#L322"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>cid=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/mixin/constructaccess.py#L322"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -563,7 +563,7 @@ default it is copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Domain.set_construct_axes">
-<code class="descname">set_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/mixin/constructaccess.py#L379"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.set_construct_axes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/mixin/constructaccess.py#L377"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Domain.set_construct_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the domain axes spanned by a construct data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>

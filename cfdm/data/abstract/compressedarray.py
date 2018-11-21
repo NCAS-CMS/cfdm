@@ -9,35 +9,10 @@ from .array import Array
 
 
 class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
-    '''A container for a compressed array.
+    '''Abstract base class for a container of an underlying compressed
+array
 
-The compressed array must be a subclass of `Array`.
-
-It must be possible to derive the following from the compressed array:
-
-  * Data-type of the array elements (see `dtype`)
-
-  * An independent numpy array containing the uncompressed data (see
-    `get_array`)
-
-  * A uncompressed subspace of the array as an independent numpy array
-    (see `__getitem__`)
-
-The CF data model views compressed arrays in their uncompressed form,
-so the following need to be provided as atttributes (as opposed to
-being derived from the compressed array):
-
-  * Number of uncompressed array dimensions (see `ndim`)
-  
-  * Uncompressed array dimension sizes (see `shape`)
-  
-  * Number of elements in the uncompressed array (see `size`)
-
-  * The sample axis, i.e. which axis in the compressed array
-    represents two or more uncompressed axes (see
-    `get_compressed_dimension`)
-
-See `cfdm.data.GatheredArray` for an example implementation.
+See `cfdm.GatheredArray` for an example implementation.
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
@@ -47,9 +22,8 @@ See `cfdm.data.GatheredArray` for an example implementation.
 
 :Parameters:
 
-    compressed_array:
-        The compressed array. May a numpy array or any object that
-        exposes the `cfdm.Array` interface.
+    compressed_array: numpy array or subclass of `Array`
+        The compressed array.
 
     shape: `tuple`
         The uncompressed array dimension sizes.
@@ -68,7 +42,7 @@ See `cfdm.data.GatheredArray` for an example implementation.
         The type of compression.        
         
     kwargs: *optional*
-        Further attributes that may be required to uncompress the
+        Further named parameters and their values needed to define the
         compressed array.
 
         '''
@@ -81,16 +55,27 @@ See `cfdm.data.GatheredArray` for an example implementation.
 
     @abc.abstractmethod
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        '''Return an uncompressed subspace as an independent numpy array.
 
-Returns an uncompressed subspace of the compressed array as an
-independent numpy array.
+x.__getitem__(indices) <==> x[indices]
 
-The indices that define the subspace are relative to the full
-uncompressed array and must be either `Ellipsis` or a sequence that
-contains an index for each dimension. In the latter case, each
-dimension's index must either be a `slice` object or a sequence of
-integers.
+The indices that define the subspace are relative to the uncompressed
+array.
+
+Indexing follows rules that are very similar to the numpy indexing
+rules, the only differences being:
+
+* An integer index i takes the i-th element but does not reduce the
+  rank by one.
+
+..
+
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a Variable object of the netCDF4 package.
+
+.. versionadded:: 1.7
 
         '''
         raise NotImplementedError()
@@ -98,10 +83,6 @@ integers.
 
     def _get_compressed_Array(self, *default):
         '''TODO
-
-:Examples 1:
-
->>> a = d.get_data()
 
 :Parameters:
 
@@ -114,7 +95,7 @@ integers.
         The data. If the data has not been set then *default* is
         returned, if set.
 
-:Examples 2:
+**Examples:**
 
 >>> a = d.get_data(None)
 
@@ -272,7 +253,7 @@ dtype('float64')
     #--- End: def
 
     def get_compressed_axes(self):
-        '''The axes of the uncompressed array that have been compressed.
+        '''Return axes that are compressed in the underlying array.
 
 :Returns:
 

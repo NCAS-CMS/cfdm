@@ -14,7 +14,7 @@ from . import abstract
 
 
 class NetCDFArray(abstract.Array):
-    '''A container for an array stored in a netCDF file.
+    '''An underlying array stored in a netCDF file.
     
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,

@@ -94,8 +94,10 @@ constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:</p>
 <ul class="simple">
 <li>the descriptive properties must be the same (with the exception of
-the field construct’s “Convenions” property, which is never
+the field construct’s “Conventions” property, which is never
 checked), and</li>
+</ul>
+<ul class="simple">
 <li>if there are data arrays then they must have same shape, data type
 and be element-wise equal.</li>
 </ul>
@@ -112,7 +114,7 @@ construct.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>other: </dt>
-<dd><p class="first last">TODO The object to compare for equality.</p>
+<dd><p class="first last">The object to compare for equality.</p>
 </dd>
 <dt>atol: float, optional</dt>
 <dd><p class="first last">The tolerance on absolute differences between real
@@ -123,8 +125,8 @@ numbers. The default value is set by the <a class="reference internal" href="../
 numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
 </dd>
 <dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">TODO If True then data arrays with different fill values are
-considered equal. By default they are considered unequal.</p>
+<dd><p class="first last">If True then the “_FillValue” and “missing_value” properties
+are omitted from the comparison.</p>
 </dd>
 <dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True and the field constructs are different then print a
@@ -133,6 +135,11 @@ traceback stating where they are different.</p>
 <dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">The names of properties to omit from the comparison. Note that
 the “Conventions” property is always omitted.</p>
+</dd>
+<dt>ignore_construct_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then proceed with equality comparisons if when the
+<em>other</em> parameter is not a <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance. By default, a
+non-<a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance is never equal to a <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>.</p>
 </dd>
 </dl>
 </td>
@@ -147,6 +154,23 @@ the “Conventions” property is always omitted.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a Field instance&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>TODO</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a Field instance&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Conventions</span>
 <span class="go">&#39;CF-1.0&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>

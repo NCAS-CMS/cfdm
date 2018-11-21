@@ -235,7 +235,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(len(constructs) == n,
                         'Got {} constructs, expected {}'.format(len(constructs), n))
 
-        f.set_domain_axis(cfdm.DomainAxis(1))
+        f.set_construct(cfdm.DomainAxis(1))
         self.assertTrue(len(f.constructs(construct_type='domain_axis')) == 4)
 
         # ------------------------------------------------------------
@@ -346,6 +346,9 @@ class FieldTest(unittest.TestCase):
         g = f.copy()
         self.assertTrue(f.equals(g, traceback=True))
 
+        g = f[...]
+        self.assertTrue(f.equals(g, traceback=True))
+
         g = g.squeeze()
         self.assertFalse(f.equals(g))
 
@@ -362,12 +365,12 @@ class FieldTest(unittest.TestCase):
         
         g = f.copy()
 
-        key = g.set_domain_axis(cfdm.DomainAxis(1))
+        key = g.set_construct(cfdm.DomainAxis(1))
         h = g.expand_dims(axis=key)
         self.assertTrue(h.data.ndim == f.data.ndim + 1)
         self.assertTrue(h.get_data_axes()[1:] == f.get_data_axes())
 
-        key = g.set_domain_axis(cfdm.DomainAxis(1))
+        key = g.set_construct(cfdm.DomainAxis(1))
         h = g.expand_dims(position=g.data.ndim, axis=key)
         self.assertTrue(h.data.ndim == f.data.ndim + 1)
         self.assertTrue(h.get_data_axes()[:-1] == f.get_data_axes())

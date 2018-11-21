@@ -9,7 +9,7 @@ from . import mixin
 class RaggedIndexedContiguousArray(mixin.RaggedContiguous,
                                    mixin.RaggedIndexed,
                                    abstract.CompressedArray):
-    '''A container for an indexed contiguous ragged compressed array.
+    '''An underlying indexed contiguous ragged array.
 
 A collection of features, each of which is sequence of (vertical)
 profiles, stored using an indexed contiguous ragged array combines all
@@ -18,10 +18,11 @@ such that a contiguous ragged array representation is used for each
 profile and the indexed ragged array representation to organise the
 profiles into timeseries.
 
-The information needed to uncompress the data is stored in a separate
-"count variable" that gives the size of each profile; and in a
-separate "index variable" that specifies the feature that each profile
-belongs to.
+The information needed to uncompress the data is stored in a "count
+variable" that gives the size of each profile; and in a "index
+variable" that specifies the feature that each profile belongs to.
+
+.. versionadded:: 1.7
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,

@@ -28,5 +28,6 @@ climatological time axes, the bounds are interpreted in a special way
 indicated by the cell method constructs.
 
     '''
-
+    def get_construct_type(self):
+        return 'auxiliary_coordinate'
 #--- End: class

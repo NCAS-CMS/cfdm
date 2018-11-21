@@ -7,12 +7,12 @@ from ...abstract import Container
 
 #class Array(with_metaclass(abc.ABCMeta, object)):
 class Array(with_metaclass(abc.ABCMeta, Container)):
-    '''A container for an array.
+    '''Abstract base class for a container of an array.
 
-The form of the array is arbitrary and is defined by the attributes
-set on a subclass of the abstract `Array` object.
+The form of the array is arbitrary and is defined by the
+initialization parameters of a subclass of `Array`.
 
-See `cfdm.core.data.NumpyArray` for an example implementation.
+See cfdm.core.NumpyArray for an example implementation.
 
     '''
     def __init__(self, **kwargs):
@@ -21,12 +21,10 @@ See `cfdm.core.data.NumpyArray` for an example implementation.
 :Parameters:
 
     kwargs: *optional*
-        Named attributes and their values that define the array.
+        Named parameters and their values that define the array.
 
         '''
         super().__init__()
-
-#        self.__dict__.update(kwargs)
 
         for key, value in kwargs.items():
             self._set_component(key, value, copy=False)
@@ -40,8 +38,10 @@ See `cfdm.core.data.NumpyArray` for an example implementation.
     out: `numpy.ndarray`
         An independent numpy array of the data.
 
-:Examples:
+**Examples:**
 
+>>> isinstance(a, Array)
+True
 >>> n = numpy.asanyarray(a)
 >>> isinstance(n, numpy.ndarray)
 True
@@ -55,30 +55,46 @@ True
     #--- End: def
 
     def __deepcopy__(self, memo):
-        '''x.__deepcopy__() -> Deep copy of data.
+        '''Called by the `copy.deepcopy` function.
 
-Used if copy.deepcopy is called on data. 
+x.__deepcopy__() <==> copy.deepcopy(x)
 
-Copy-on-write is employed, so care must be taken when modifying any
-attribute.
+Copy-on-write is employed. Therefore, after copying, care must be
+taken when making in-place modifications to attributes of either the
+original or the new copy.
+
+.. versionadded:: 1.7
+
+**Examples:**
+
+>>> import copy
+>>> y = copy.deepcopy(x)
 
         '''
         return self.copy()
     #--- End: def
 
-    def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''      
-        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
-    #--- End: def
-        
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
-        return "shape={0}, dtype={1}".format(self.shape, self.dtype)
-    #--- End: def
+#    def __repr__(self):
+#        '''Called by the `repr` built-in function.
+#
+#x.__repr__() <==> repr(x)
+#
+#.. versionadded:: 1.7
+#
+#        '''      
+#        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
+#    #--- End: def
+#        
+#    def __str__(self):
+#        '''Called by the `str` built-in function.
+#
+#x.__str__() <==> str(x)
+#
+#.. versionadded:: 1.7
+#
+#        '''
+#        return "shape={0}, dtype={1}".format(self.shape, self.dtype)
+#    #--- End: def
 
     # ----------------------------------------------------------------
     # Attributes
@@ -203,8 +219,9 @@ dtype('float64')
 
 ``a.copy() is equivalent to ``copy.deepcopy(a)``.
 
-Note that copy-on-write is employed, so care must be taken when
-modifying any attribute.
+Copy-on-write is employed. Therefore, after copying, care must be
+taken when making in-place modifications to attributes of either the
+original or the new copy.
 
 :Returns:
 

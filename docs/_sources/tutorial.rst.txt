@@ -672,8 +672,8 @@ An individual metadata construct may be returned without its construct
 identifier, via the `~Field.get_construct` method of the field
 construct, which supports the same filtering options as the
 `~Field.constructs` method. The existence of a metadata construct may
-be checked with the `~Field.has_construct` method of the field
-construct:
+be checked with the `~Field.has_construct` method and a construct may
+be remmoved with the `~Field.del_construct` method.
 
 .. code:: python
 
@@ -709,16 +709,38 @@ Method                          Description
 
 .. code:: python
 
-   >>> t.cell_methods()
-   OrderedDict([('cellmethod0',
-                  <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+   >>> t.coordinate_references()
+   {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
    >>> t.dimension_coordinates()
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
+**Properties and data**
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Where applicable, metadata constructs share the same API as the field
+construct. This means, for instance, that any construct that has a
+data array (such as auxiliary coordinate construct) will have a
+`!get_array` method to access its data as an independent numpy array:
+
+.. code:: python
+
+   >>> lon = q.get_construct('longitude')   
+   >>> lon
+   <DimensionCoordinate: longitude(8) degrees_east>
+   >>> lon.set_property('long_name', 'Longitude')
+   >>> lon.properties()
+   {'units': 'degrees_east',
+    'long_name': 'Longitude',
+    'standard_name': 'longitude'}   
+   >>> lon.data[2]
+   <Data(1): [112.5] degrees_east>
+   >>> lon.data[2] = 133.33
+   >>> print(lon.get_array())
+   [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
 **Domain axes**
 ^^^^^^^^^^^^^^^
@@ -759,29 +781,28 @@ with the `~Field.get_data_axes` method of the field construct:
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
-**Properties and data**
-^^^^^^^^^^^^^^^^^^^^^^^
+.. _cell_methods:
+   
+**Cell methods**
+^^^^^^^^^^^^^^^^
 
-Where applicable, metadata constructs share the same API as the field
-construct. This means, for instance, that any construct that has a
-data array (such as auxiliary coordinate construct) will have a
-`!get_array` method to access its data as an independent numpy array:
+A cell method construct describes how the data represent the variation
+of the physical quantity within the cells of the domain, and multiple
+cell method constructs allow multiple methods to be recorded. Because
+the application of methods is not commutitive (e.g. a mean of
+variances is generally not the same as a variance of means), the
+`~cfdm.Field.cell_methods` method of the field construct returns an
+ordered dictionary of contructs. The order is the same as that of a
+cell method attribute in a netCDF dataset, or the same as that in
+which cell method constructs were added to the field construct during
+:ref:`field creation <field_creation>`.
 
 .. code:: python
 
-   >>> lon = q.get_construct('longitude')   
-   >>> lon
-   <DimensionCoordinate: longitude(8) degrees_east>
-   >>> lon.set_property('long_name', 'Longitude')
-   >>> lon.properties()
-   {'units': 'degrees_east',
-    'long_name': 'Longitude',
-    'standard_name': 'longitude'}   
-   >>> lon.data[2]
-   <Data(1): [112.5] degrees_east>
-   >>> lon.data[2] = 133.33
-   >>> print(lon.get_array())
-   [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
+   >>> t.cell_methods()
+   OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+
 
 **Components**
 ^^^^^^^^^^^^^^
@@ -1210,50 +1231,49 @@ methods:
    >>> fa
    <FieldAncillary: precipitation_flux status_flag(3) >
 
-For stage **3**, the field construct has the following methods for
-setting metadata constructs and mapping data array dimensions to
-domain axis constructs:
+For stage **3**, the `~cfdm.Field.set_construct` method of the field
+construct is used for setting metadata constructs and mapping data
+array dimensions to domain axis constructs. This method returns the
+construct identifier for the metadata construct which can be used when
+other metadata constructs are added to the field (e.g. to specify
+which domain axis constructs correspond to a data array), or when
+other metadata constructs are created (e.g. to identify the domain
+ancillary constructs forming part of a coordinate reference
+construct):
 
-=============================================  ======================================================================
-Method for setting a metadata construct        Description
-=============================================  ======================================================================
-`~Field.set_domain_axis`                       Set a domain axis construct
-`~Field.set_cell_method`                       Set a cell method construct
-`~Field.set_field_ancillary`                   Set a field ancillary construct and the axes spanned by its data
-`~Field.set_auxiliary_coordinate`              Set an auxiliary coordinate construct and the axes spanned by its data
-`~Field.set_cell_measure`                      Set an cell measure construct and the axes spanned by its data
-`~Field.set_dimension_coordinate`              Set a dimension coordinate construct and the axes spanned by its data
-`~Field.set_domain_ancillary`                  Set a domain ancillary and the axes spanned by its data
-`~Field.set_coordinate_reference`              Set a coordinate reference construct
-=============================================  ======================================================================
 
-These methods all return the construct identifier for the metadata
-construct which can be used when other metadata constructs are added
-to the field (e.g. to specify which domain axis constructs correspond
-to a data array), or when other metadata constructs are created
-(e.g. to identify the domain ancillary constructs forming part of a
-coordinate reference construct):
+.. =============================================  ======================================================================
+   Method for setting a metadata construct        Description
+   =============================================  ======================================================================
+   `~Field.set_domain_axis`                       Set a domain axis construct
+   `~Field.set_cell_method`                       Set a cell method construct
+   `~Field.set_field_ancillary`                   Set a field ancillary construct and the axes spanned by its data
+   `~Field.set_auxiliary_coordinate`              Set an auxiliary coordinate construct and the axes spanned by its data
+   `~Field.set_cell_measure`                      Set an cell measure construct and the axes spanned by its data
+   `~Field.set_dimension_coordinate`              Set a dimension coordinate construct and the axes spanned by its data
+   `~Field.set_domain_ancillary`                  Set a domain ancillary and the axes spanned by its data
+   `~Field.set_coordinate_reference`              Set a coordinate reference construct
+   =============================================  ======================================================================
 
 .. code:: python
 	  
-   >>> longitude_axis = p.set_domain_axis(cfdm.DomainAxis(3))
+   >>> longitude_axis = p.set_construct(cfdm.DomainAxis(3))
    >>> longitude_axis
    'domainaxis0'
-   >>> cid = p.set_dimension_coordinate(dc, axes=[longitude_axis])
+   >>> cid = p.set_construct(dc, axes=[longitude_axis])
    >>> cid
    'dimensioncoordinate0'
    >>> cm = cfdm.CellMethod(axes=[longitude_axis],
    ...                      properties={'method': 'minimum'})
-   >>> p.set_cell_method(cm)
+   >>> p.set_construct(cm)
    'cellmethod0'
    
 In general, the order in which metadata constructs are added to the
 field does not matter, except when one metadata construct is required
 by another, in which case the former must be added to the field first
-so that its construct identifier is available to the latter.
-
-One other restriction is that cell method constructs must be set in
-the relative order in which their methods were applied to the data.
+so that its construct identifier is available to the latter. Cell
+method constructs must, however, be set in the relative order in which
+their methods were applied to the data.
 
 The domain axis constructs spanned by a metadata construct's data may
 be changed after insertion with the `~Field.set_construct_axes` method
@@ -1283,9 +1303,9 @@ constructs (data arrays have been generated with dummy values using
    # returns the domain axis construct identifier that will be used
    # later to specify which domain axis corresponds to which dimension
    # coordinate construct.  
-   axisT = Q.set_domain_axis(domain_axisT)
-   axisY = Q.set_domain_axis(domain_axisY)
-   axisX = Q.set_domain_axis(domain_axisX)
+   axisT = Q.set_construct(domain_axisT)
+   axisY = Q.set_construct(domain_axisY)
+   axisX = Q.set_construct(domain_axisX)
 
    # Field data
    data = cfdm.Data(numpy.arange(40.).reshape(5, 8))
@@ -1298,9 +1318,10 @@ constructs (data arrays have been generated with dummy values using
    cell_method2.set_axes([axisT])
    cell_method2.properties({'method': 'maximum'})
 
-   # Insert the cell methods into the field
-   Q.set_cell_method(cell_method1)
-   Q.set_cell_method(cell_method2)
+   # Insert the cell methods into the field in the same order that
+   # their methods were applied to the data
+   Q.set_construct(cell_method1)
+   Q.set_construct(cell_method2)
 
    # Create the dimension Coordinates
    dimT = cfdm.DimensionCoordinate(
@@ -1325,9 +1346,9 @@ constructs (data arrays have been generated with dummy values using
   
    # Insert the dimension coordinates into the field, specifying to
    # which domain axis each one corresponds
-   Q.set_dimension_coordinate(dimT, axes=[axisT])
-   Q.set_dimension_coordinate(dimY, axes=[axisY])
-   Q.set_dimension_coordinate(dimX, axes=[axisX])
+   Q.set_construct(dimT, axes=[axisT])
+   Q.set_construct(dimY, axes=[axisY])
+   Q.set_construct(dimX, axes=[axisX])
 
 The new field construct may now be inspected:
    
@@ -1408,10 +1429,10 @@ been generated with dummy values using `numpy.arange`):
                        'units': 'K'})
 
    # Create and set domain axes
-   axis_T = tas.set_domain_axis(cfdm.DomainAxis(1))
-   axis_Z = tas.set_domain_axis(cfdm.DomainAxis(1))
-   axis_Y = tas.set_domain_axis(cfdm.DomainAxis(10))
-   axis_X = tas.set_domain_axis(cfdm.DomainAxis(9))
+   axis_T = tas.set_construct(cfdm.DomainAxis(1))
+   axis_Z = tas.set_construct(cfdm.DomainAxis(1))
+   axis_Y = tas.set_construct(cfdm.DomainAxis(10))
+   axis_X = tas.set_construct(cfdm.DomainAxis(9))
 
    # Set the field data
    tas.set_data(cfdm.Data(numpy.arange(90.).reshape(10, 9)),
@@ -1428,8 +1449,8 @@ been generated with dummy values using `numpy.arange`):
                     axes=[axis_T],
 	            properties={'method': 'maximum'})
    
-   tas.set_cell_method(cell_method1)
-   tas.set_cell_method(cell_method2)
+   tas.set_construct(cell_method1)
+   tas.set_construct(cell_method2)
 
    # Create and set the field ancillaries
    field_ancillary = cfdm.FieldAncillary(
@@ -1437,7 +1458,7 @@ been generated with dummy values using `numpy.arange`):
                              'units': 'K'},
                 data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
 
-   tas.set_field_ancillary(field_ancillary, axes=[axis_Y, axis_X])
+   tas.set_construct(field_ancillary, axes=[axis_Y, axis_X])
 		
    # Create and set the dimension coordinates
    dimension_coordinate_T = cfdm.DimensionCoordinate(
@@ -1464,10 +1485,10 @@ been generated with dummy values using `numpy.arange`):
 	   data=cfdm.Data(numpy.arange(9.)),
 	   bounds=cfdm.Bounds(data=cfdm.Data(numpy.arange(18).reshape(9, 2))))
 
-   tas.set_dimension_coordinate(dimension_coordinate_T, axes=[axis_T])
-   tas.set_dimension_coordinate(dimension_coordinate_Z, axes=[axis_Z])
-   tas.set_dimension_coordinate(dimension_coordinate_Y, axes=[axis_Y])
-   tas.set_dimension_coordinate(dimension_coordinate_X, axes=[axis_X])
+   tas.set_construct(dimension_coordinate_T, axes=[axis_T])
+   tas.set_construct(dimension_coordinate_Z, axes=[axis_Z])
+   tas.set_construct(dimension_coordinate_Y, axes=[axis_Y])
+   tas.set_construct(dimension_coordinate_X, axes=[axis_X])
       
    # Create and set the auxiliary coordinates
    auxiliary_coordinate_lat = cfdm.AuxiliaryCoordinate(
@@ -1486,11 +1507,9 @@ been generated with dummy values using `numpy.arange`):
                           properties={'long_name': 'Grid latitude name'},
                           data=cfdm.Data(array))
 
-   tas.set_auxiliary_coordinate(auxiliary_coordinate_lat,
-	                        axes=[axis_Y, axis_X])
-   tas.set_auxiliary_coordinate(auxiliary_coordinate_lon,
-	                        axes=[axis_X, axis_Y])
-   tas.set_auxiliary_coordinate(auxiliary_coordinate_name, axes=[axis_Y])
+   tas.set_construct(auxiliary_coordinate_lat, axes=[axis_Y, axis_X])
+   tas.set_construct(auxiliary_coordinate_lon, axes=[axis_X, axis_Y])
+   tas.set_construct(auxiliary_coordinate_name, axes=[axis_Y])
 
    # Create and set domain ancillaries
    domain_ancillary_a = cfdm.DomainAncillary(
@@ -1499,7 +1518,7 @@ been generated with dummy values using `numpy.arange`):
                           bounds=cfdm.Bounds(data=cfdm.Data([[5., 15.]])))
 
    domain_ancillary_b = cfdm.DomainAncillary(
-	                  properties={'units': '1'},
+	                  properties= {'units': '1'},
       	                  data=cfdm.Data([20.]),
 	                  bounds=cfdm.Bounds(data=cfdm.Data([[14, 26.]])))
 
@@ -1508,9 +1527,9 @@ been generated with dummy values using `numpy.arange`):
                                           'units': 'm'},
 	                     data=cfdm.Data(numpy.arange(90.).reshape(10, 9)))
 
-   tas.set_domain_ancillary(domain_ancillary_a, axes=[axis_Z])
-   tas.set_domain_ancillary(domain_ancillary_b, axes=[axis_Z])
-   tas.set_domain_ancillary(domain_ancillary_orog, axes=[axis_Y, axis_X])
+   tas.set_construct(domain_ancillary_a, axes=[axis_Z])
+   tas.set_construct(domain_ancillary_b, axes=[axis_Z])
+   tas.set_construct(domain_ancillary_orog, axes=[axis_Y, axis_X])
 
    # Create and set the coordinate references
    datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
@@ -1540,15 +1559,15 @@ been generated with dummy values using `numpy.arange`):
      	            coordinate_conversion=coordinate_conversion_v,
         	    coordinates=[dimension_coordinate_Z])
 
-   tas.set_coordinate_reference(horizontal_crs)
-   tas.set_coordinate_reference(vertical_crs)
+   tas.set_construct(horizontal_crs)
+   tas.set_construct(vertical_crs)
 
    # Create and set the cell measures
    cell_measure = cfdm.CellMeasure(measure='area',
                     properties={'units': 'km2'},
                     data=cfdm.Data(numpy.arange(90.).reshape(9, 10)))
 
-   tas.set_cell_measure(cell_measure, axes=[axis_X, axis_Y])
+   tas.set_construct(cell_measure, axes=[axis_X, axis_Y])
 
 The new field construct may now be inspected:
 
@@ -1645,6 +1664,13 @@ independent of the original field.
 .. code:: python
 
    >>> u = t.copy()
+   >>> u.data[0, 0, 0] = -1e30
+   >>> print(u.data[0, 0, 0])
+   [[[-1e+30]]] K
+   >>> print(t.data[0, 0, 0])
+   [[[0.0]]] K
+   >>> u.data[0, 0, 0] = -99
+   >>> print(u.data[0, 0, 0], t.data[0, 0, 0])
    >>> u.del_construct('grid_latitude')
    <DimensionCoordinate: grid_latitude(10) degrees>
    >>> u.constructs('grid_latitude')
@@ -1900,14 +1926,14 @@ Therefore, the field construct contains domain axis constructs for the
 compressed dimensions and presents a view of compressed data in its
 uncompressed form, even though their "underlying" arrays (i.e. the
 arrays contained in `Data` instances) are compressed. This means that
-the cfdm package includes the algorithms that are required to
-uncompress each type of compressed array.
+the cfdm package includes algorithms that are required to uncompress
+each type of compressed array.
 
 There are two basic types of compression supported by the CF
-conventions: :ref:`discrete sampling geometry ragged array
-representations <dsg>` and :ref:`compression by gathering
-<gathering>`, each of which has particular implementation details, but
-the following access patterns and behaviours apply to all:
+conventions: ragged arrays (as used by :ref:`discrete sampling
+geometries <dsg>` and :ref:`compression by gathering <gathering>`,
+each of which has particular implementation details, but the following
+access patterns and behaviours apply to both:
 
 * Accessing the data by a call to the `!get_array` method of a field
   or metadata construct returns a numpy array that is
@@ -2106,8 +2132,8 @@ field construct with an underlying contiguous ragged array:
 		   'featureType': 'timeSeries'})
    
    # Create the domain axis constructs for the uncompressed array
-   X = tas.set_domain_axis(cfdm.DomainAxis(4))
-   Y = tas.set_domain_axis(cfdm.DomainAxis(2))
+   X = tas.set_construct(cfdm.DomainAxis(4))
+   Y = tas.set_construct(cfdm.DomainAxis(2))
    
    # Set the data for the field
    tas.set_data(cfdm.Data(array), axes=[Y, X])
@@ -2301,9 +2327,9 @@ simple field construct with an underlying gathered array:
                                 'units': 'K'})
 
    # Create the domain axis constructs for the uncompressed array
-   T = tas.set_domain_axis(cfdm.DomainAxis(2))
-   Y = tas.set_domain_axis(cfdm.DomainAxis(3))
-   X = tas.set_domain_axis(cfdm.DomainAxis(2))
+   T = tas.set_construct(cfdm.DomainAxis(2))
+   Y = tas.set_construct(cfdm.DomainAxis(3))
+   X = tas.set_construct(cfdm.DomainAxis(2))
 
    # Set the data for the field
    tas.set_data(cfdm.Data(array), axes=[T, Y, X])			      

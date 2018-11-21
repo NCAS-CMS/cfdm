@@ -490,8 +490,8 @@ class DSGTest(unittest.TestCase):
     		        'featureType': 'timeSeries'})
         
         # Create the domain axis constructs for the uncompressed array
-        X = tas.set_domain_axis(cfdm.DomainAxis(4))
-        Y = tas.set_domain_axis(cfdm.DomainAxis(2))
+        X = tas.set_construct(cfdm.DomainAxis(4))
+        Y = tas.set_construct(cfdm.DomainAxis(2))
         
         # Set the data for the field
         tas.set_data(cfdm.Data(array), axes=[Y, X])

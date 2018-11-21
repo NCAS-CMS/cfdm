@@ -57,6 +57,7 @@
    cfdm.NetCDFArray
    cfdm.NumpyArray
    cfdm.Array
+   cfdm.CompressedArray
 
 **Data compression classses**
 -----------------------------

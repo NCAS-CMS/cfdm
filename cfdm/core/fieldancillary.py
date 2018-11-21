@@ -22,6 +22,9 @@ the domain definition of the parent field construct but does not
 contribute to the domain's definition, unlike, for instance, an
 auxiliary coordinate construct or domain ancillary construct.
 
-    '''
+.. versionadded:: 1.7
 
+    '''
+    def get_construct_type(self):
+        return 'field_ancillary'
 #--- End: class

@@ -255,7 +255,7 @@ x.__str__() <==> str(x)
     #--- End def
 
     def __getitem__(self, indices):
-        '''Return a subspace of the field defined by indices
+        '''Return a subspace of the field defined by indices.
 
 f.__getitem__(indices) <==> f[indices]
 
@@ -639,8 +639,10 @@ constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:
 
 * the descriptive properties must be the same (with the exception of
-  the field construct's "Convenions" property, which is never
+  the field construct's "Conventions" property, which is never
   checked), and
+
+..
 
 * if there are data arrays then they must have same shape, data type
   and be element-wise equal.
@@ -657,7 +659,7 @@ construct.
 :Parameters:
 
     other: 
-        TODO The object to compare for equality.
+        The object to compare for equality.
 
     atol: float, optional
         The tolerance on absolute differences between real
@@ -668,8 +670,8 @@ construct.
         numbers. The default value is set by the `cfdm.RTOL` function.
 
     ignore_fill_value: `bool`, optional
-        TODO If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
+        If True then the "_FillValue" and "missing_value" properties
+        are omitted from the comparison.
 
     traceback: `bool`, optional
         If True and the field constructs are different then print a
@@ -679,12 +681,32 @@ construct.
         The names of properties to omit from the comparison. Note that
         the "Conventions" property is always omitted.
 
+    ignore_construct_type: `bool`, optional
+        If True then proceed with equality comparisons if when the
+        *other* parameter is not a `Field` instance. By default, a
+        non-`Field` instance is never equal to a `Field`.
+
 :Returns: 
   
     out: `bool`
         Whether the two field constructs are equal.
 
 **Examples:**
+
+>>> f.equals(f)
+True
+>>> f.equals(f.copy())
+True
+>>> f.equals(f[...])
+True
+
+>>> f.equals('not a Field instance')
+False
+
+TODO
+
+>>> f.equals('not a Field instance')
+False
 
 >>> f.Conventions
 'CF-1.0'
@@ -843,8 +865,8 @@ TODO
         data_axes = self.construct_axes(cid)
         if data_axes:
             for domain_axis in data_axes:
-                f.set_domain_axis(self.domain_axes()[domain_axis],
-                                  cid=domain_axis, copy=True)
+                f.set_construct(self.domain_axes()[domain_axis],
+                                cid=domain_axis, copy=True)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -885,7 +907,7 @@ TODO
                 #--- End: for
                 
                 if ok:
-                    f.set_coordinate_reference(ref, cid=rcid, copy=True)
+                    f.set_construct(ref, cid=rcid, copy=True)
             #--- End: for
         #--- End: if
               
@@ -1204,92 +1226,91 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 #        return out
 #    #--- End: def
 
-    def set_cell_method(self, cell_method, cid=None, copy=True):
-        '''Set a cell method construct.
+#    def set_cell_method(self, cell_method, cid=None, copy=True):
+#        '''Set a cell method construct.
+#
+#.. versionadded:: 1.7
+#
+#.. seealso:: `constructs`, `del_construct`, `get_construct`,
+#             `set_construct_axes`
+#
+#:Parameters:
+#
+#    item: `CellMethod`
+#        TODO
+#        
+#    cid: `str`, optional
+#        The identifier of the construct. If not set then a new, unique
+#        identifier is created. If the identifier already exisits then
+#        the exisiting construct will be replaced.
+#
+#        *Example:*
+#          ``cid='cellmethod0'``
+#        
+#    copy: `bool`, optional
+#        If False then do not copy the construct prior to insertion. By
+#        default it is copied.
+#        
+#:Returns:
+#
+#     out: `str`
+#        The identifier of the construct.
+#    
+#**Examples:**
+#
+#TODO
+#
+#        '''
+#        self.set_construct(cell_method, cid=cid, copy=copy)
+#    #--- End: def
 
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct_axes`
-
-:Parameters:
-
-    item: `CellMethod`
-        TODO
-        
-    cid: `str`, optional
-        The identifier of the construct. If not set then a new, unique
-        identifier is created. If the identifier already exisits then
-        the exisiting construct will be replaced.
-
-        *Example:*
-          ``cid='cellmethod0'``
-        
-    copy: `bool`, optional
-        If False then do not copy the construct prior to insertion. By
-        default it is copied.
-        
-:Returns:
-
-     out: `str`
-        The identifier of the construct.
-    
-**Examples:**
-
-TODO
-
-        '''
-        self.set_construct('cell_method', cell_method, cid=cid,
-                           copy=copy)
-    #--- End: def
-
-    def set_field_ancillary(self, construct, axes=None, cid=None,
-                            copy=True):
-        '''Set a field ancillary construct.
-
-.. versionadded:: 1.7
-
-.. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct_axes`
-
-:Parameters:
-
-    item: `FieldAncillary`
-        TODO
-
-    axes: sequence of `str`, optional
-        The identifiers of the domain axes spanned by the data array.
-
-        The axes may also be set afterwards with the
-        `set_construct_axes` method.
-
-        *Example:*
-          ``axes=['domainaxis0', 'domainaxis1']``
-
-    cid: `str`, optional
-        The identifier of the construct. If not set then a new, unique
-        identifier is created. If the identifier already exisits then
-        the exisiting construct will be replaced.
-
-        *Example:*
-          ``cid='fieldancillary0'``
-        
-    copy: `bool`, optional
-        If False then do not copy the construct prior to insertion. By
-        default it is copied.
-        
-:Returns:
-
-     out: `str`
-        The identifier of the construct.
-    
-**Examples:**
-
-TODO
-        
-        '''
-        return self.set_construct('field_ancillary', construct, cid=cid,
-                                  axes=axes, copy=copy)
-    #--- End: def
+#    def set_field_ancillary(self, construct, axes=None, cid=None,
+#                            copy=True):
+#        '''Set a field ancillary construct.
+#
+#.. versionadded:: 1.7
+#
+#.. seealso:: `constructs`, `del_construct`, `get_construct`,
+#             `set_construct_axes`
+#
+#:Parameters:
+#
+#    item: `FieldAncillary`
+#        TODO
+#
+#    axes: sequence of `str`, optional
+#        The identifiers of the domain axes spanned by the data array.
+#
+#        The axes may also be set afterwards with the
+#        `set_construct_axes` method.
+#
+#        *Example:*
+#          ``axes=['domainaxis0', 'domainaxis1']``
+#
+#    cid: `str`, optional
+#        The identifier of the construct. If not set then a new, unique
+#        identifier is created. If the identifier already exisits then
+#        the exisiting construct will be replaced.
+#
+#        *Example:*
+#          ``cid='fieldancillary0'``
+#        
+#    copy: `bool`, optional
+#        If False then do not copy the construct prior to insertion. By
+#        default it is copied.
+#        
+#:Returns:
+#
+#     out: `str`
+#        The identifier of the construct.
+#    
+#**Examples:**
+#
+#TODO
+#        
+#        '''
+#        return self.set_construct(construct, cid=cid,
+#                                  axes=axes, copy=copy)
+#    #--- End: def
     
 #--- End: class

@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Datum.copy" href="../method/cfdm.Datum.copy.html" />
-    <link rel="prev" title="cfdm.Data.unique" href="../method/cfdm.Data.unique.html" />
+    <link rel="next" title="cfdm.Datum.del_parameter" href="../method/cfdm.Datum.del_parameter.html" />
+    <link rel="prev" title="cfdm.Data.size" href="../attribute/cfdm.Data.size.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Data.unique.html" title="previous chapter">cfdm.Data.unique</a></li>
-      <li>Next: <a href="../method/cfdm.Datum.copy.html" title="next chapter">cfdm.Datum.copy</a></li>
+      <li>Previous: <a href="../attribute/cfdm.Data.size.html" title="previous chapter">cfdm.Data.size</a></li>
+      <li>Next: <a href="../method/cfdm.Datum.del_parameter.html" title="next chapter">cfdm.Datum.del_parameter</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -97,7 +97,7 @@ corresponds to the zero of a vertical coordinate construct, and this
 may be required for both horizontal and vertical coordinate systems.</p>
 <p>Elements of the datum not specified may be implied by the properties
 of the dimension and auxiliary coordinate constructs referenced by the
-<cite>CoordinateReference</cite> instance that contains the datum.</p>
+<a class="reference internal" href="cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a> instance that contains the datum.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -107,7 +107,7 @@ of the dimension and auxiliary coordinate constructs referenced by the
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>parameters: <cite>dict</cite>, optional</dt>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set parameters. The dictionary keys are parameter names, with
 corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 <dl class="docutils">
@@ -116,12 +116,12 @@ corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 </dd>
 </dl>
 <p class="last">Parameters may also be set after initialisation with the
-<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
+<a class="reference internal" href="../method/cfdm.Datum.parameters.html#cfdm.Datum.parameters" title="cfdm.Datum.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.Datum.set_parameter.html#cfdm.Datum.set_parameter" title="cfdm.Datum.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the parameters from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -132,6 +132,8 @@ initialization. By default arguments are deep copied.</p>
 </table>
 </dd></dl>
 
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -139,14 +141,8 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.copy.html#cfdm.Datum.copy" title="cfdm.Datum.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
-<td>Return a deep copy.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.del_parameter.html#cfdm.Datum.del_parameter" title="cfdm.Datum.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.del_parameter.html#cfdm.Datum.del_parameter" title="cfdm.Datum.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></td>
 <td>Delete a parameter.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.equals.html#cfdm.Datum.equals" title="cfdm.Datum.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>TODO True if two instances are equal, False otherwise.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.get_parameter.html#cfdm.Datum.get_parameter" title="cfdm.Datum.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
 <td>Get a parameter value.</td>
@@ -159,15 +155,46 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Attributes</p>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.copy.html#cfdm.Datum.copy" title="cfdm.Datum.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.equals.html#cfdm.Datum.equals" title="cfdm.Datum.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<td>TODO True if two instances are equal, False otherwise.</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.__deepcopy__.html#cfdm.Datum.__deepcopy__" title="cfdm.Datum.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Datum.__repr__.html#cfdm.Datum.__repr__" title="cfdm.Datum.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Datum.__str__.html#cfdm.Datum.__str__" title="cfdm.Datum.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 

@@ -189,6 +189,8 @@ TODO
 #        return self._get_constructs().constructs(
 #            construct_type='cell_method', copy=copy)
 #    #--- End: def
+    def get_construct_type(self):
+        return 'field'
     
     def del_data_axes(self, *default):
         '''Remove the identifiers of the domain axes spanned by the data
@@ -302,7 +304,7 @@ None
 #            construct_type='field_ancillary', copy=copy)
 
     def del_construct(self, cid):
-        '''Remove a metadata construct.
+        '''TODO Remove a metadata construct.
 
 If a removed domain axis construct is referenced by a cell method
 construct, then that reference is also removed.

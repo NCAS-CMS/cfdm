@@ -16,7 +16,7 @@ from . import NumpyArray
 
 
 class Data(mixin.Container, core.Data):
-    '''An N-dimensional data array with units and masked values.
+    '''An orthogonal multidimensional array with masked values and units.
 
 .. versionadded:: 1.7
 
@@ -28,9 +28,8 @@ class Data(mixin.Container, core.Data):
 
 :Parameters:
 
-    data: array-like, optional
-        The data for the array. Ignored if the *source* parameter is
-        set.
+    array: numpy array-like or subclass of `Array`, optional
+        The array of values. Ignored if the *source* parameter is set.
 
         *Example:*
           ``data=[34.6]``
@@ -39,19 +38,24 @@ class Data(mixin.Container, core.Data):
           ``data=[[1, 2], [3, 4]]``
 
         *Example:*
-          ``data=numpy.ma.arange(10).reshape(2, 5, 1)``
+          ``data=numpy.ma.arange(10).reshape(2, 1, 5)``
 
     units: `str`, optional
-        TODO. Ignored if the *source* parameter is set.
+        The physical units of the data. Ignored if the *source*
+        parameter is set.
 
         *Example:*
-          ``units='km'``
+          ``units='km hr-1'``
+
+        *Example:*
+          ``units='days since 2018-12-01'``
 
         The units may also be set after initialisation with the
         `set_units` method.
 
     calendar: `str`, optional
-        TODO. Ignored if the *source* parameter is set.
+        The calendar for reference time units. Ignored if the *source*
+        parameter is set.
 
         *Example:*
           ``calendar='360_day'``

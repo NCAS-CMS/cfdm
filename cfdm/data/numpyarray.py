@@ -4,7 +4,7 @@ from ..core.data import NumpyArray as core_NumpyArray
 
 
 class NumpyArray(abstract.Array, core_NumpyArray):
-    '''A container for a numpy array.
+    '''An underlying numpy array.
 
     '''
     def __getitem__(self, indices):

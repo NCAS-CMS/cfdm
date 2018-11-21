@@ -6,7 +6,9 @@ from .. import abstract
 
 
 class Data(abstract.Container):
-    '''An orthogonal multidimensional array with units.
+    '''An orthogonal multidimensional array with masked values and units.
+
+.. versionadded:: 1.7
 
     '''
     def __init__(self, data=None, units=None, calendar=None,
@@ -21,21 +23,18 @@ class Data(abstract.Container):
         `cfdm.core.data.abstract.Array` interface.
 
     units: `str`, optional
-        
+        TODO
+
     calendar: `str`, optional
-        
+        TODO
+
     fill_value: optional 
         The fill value of the data. By default, or if None, the numpy
         fill value appropriate to the array's data type will be used.
 
     source: *optional*
-        Override the *data*, *units*, *calendar* and *fill_value*
-        parameters with ``source.get_data(None)``,
-        ``source.get_units(None)``, ``source.get_calendar(None)`` and
-        ``source.get_fill_value(None)``respectively.
-
-        If *source* does not have one of these methods then
-        corresponding parameter is set to `None`.
+        Initialize the data, units, calendar and fill value from those
+        of *source*.
         
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
@@ -491,7 +490,7 @@ None
 
         '''
         array = self._get_component('data', *default)
-#        array = self._data
+
         if array is None:
             if default:
                 return default[0]     

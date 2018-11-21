@@ -1,11 +1,17 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.Data
 =========
 
 .. currentmodule:: cfdm
 
-.. autoclass:: Data
+.. autoclass:: cfdm.Data
    :no-members:
    :no-inherited-members:
+
+Inspection
+-----------
 
 .. rubric:: Methods
 
@@ -14,34 +20,35 @@ cfdm.Data
    :toctree: ../method/
    :template: method.rst
    
-   ~Data.allclose
-   ~Data.asdata
-   ~Data.copy
-   ~Data.dump
-   ~Data.element
-   ~Data.equals
-   ~Data.expand_dims
-   ~Data.first_element
-   ~Data.get_array
-   ~Data.get_calendar
-   ~Data.get_dtarray
-   ~Data.get_fill_value
-   ~Data.get_units
-   ~Data.isclose
-   ~Data.last_element
-   ~Data.max
-   ~Data.min
-   ~Data.ndindex
-   ~Data.parse_indices
-   ~Data.second_element
-   ~Data.set_calendar
-   ~Data.set_dtype
-   ~Data.set_fill_value
-   ~Data.set_units
-   ~Data.squeeze
-   ~Data.sum
-   ~Data.transpose
-   ~Data.unique
+   ~cfdm.Data.allclose
+   ~cfdm.Data.asdata
+   ~cfdm.Data.copy
+   ~cfdm.Data.dump
+   ~cfdm.Data.element
+   ~cfdm.Data.equals
+   ~cfdm.Data.expand_dims
+   ~cfdm.Data.first_element
+   ~cfdm.Data.get_array
+   ~cfdm.Data.get_calendar
+   ~cfdm.Data.get_dtarray
+   ~cfdm.Data.get_fill_value
+   ~cfdm.Data.get_units
+   ~cfdm.Data.isclose
+   ~cfdm.Data.last_element
+   ~cfdm.Data.max
+   ~cfdm.Data.min
+   ~cfdm.Data.ndindex
+   ~cfdm.Data.parse_indices
+   ~cfdm.Data.second_element
+   ~cfdm.Data.set_calendar
+   ~cfdm.Data.set_dtype
+   ~cfdm.Data.set_fill_value
+   ~cfdm.Data.set_units
+   ~cfdm.Data.squeeze
+   ~cfdm.Data.sum
+   ~cfdm.Data.transpose
+   ~cfdm.Data.unique
+   
    
 .. rubric:: Attributes
 
@@ -50,6 +57,10 @@ cfdm.Data
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.Data.dtype
+   ~cfdm.Data.ndim
+   ~cfdm.Data.shape
+   ~cfdm.Data.size
    
 
    

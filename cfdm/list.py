@@ -7,11 +7,16 @@ from . import core
 class List(mixin.NetCDFVariable,
            mixin.PropertiesData,
            core.abstract.PropertiesData):
-    '''
+    '''A list variable required to uncompress a gathered array.
+
+.. versionadded::1.7
+
     '''
     def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
-        '''TODO
+        '''**Initialization**
+
+TODO
         '''
         super().__init__(properties=properties, data=data,
                          source=source, copy=copy,

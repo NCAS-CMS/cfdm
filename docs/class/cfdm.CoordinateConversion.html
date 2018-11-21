@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.CoordinateConversion.copy" href="../method/cfdm.CoordinateConversion.copy.html" />
-    <link rel="prev" title="cfdm.Bounds.data" href="../attribute/cfdm.Bounds.data.html" />
+    <link rel="next" title="cfdm.CoordinateConversion.del_domain_ancillary" href="../method/cfdm.CoordinateConversion.del_domain_ancillary.html" />
+    <link rel="prev" title="cfdm.Bounds.__str__" href="../method/cfdm.Bounds.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,8 +49,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../attribute/cfdm.Bounds.data.html" title="previous chapter">cfdm.Bounds.data</a></li>
-      <li>Next: <a href="../method/cfdm.CoordinateConversion.copy.html" title="next chapter">cfdm.CoordinateConversion.copy</a></li>
+      <li>Previous: <a href="../method/cfdm.Bounds.__str__.html" title="previous chapter">cfdm.Bounds.__str__</a></li>
+      <li>Next: <a href="../method/cfdm.CoordinateConversion.del_domain_ancillary.html" title="next chapter">cfdm.CoordinateConversion.del_domain_ancillary</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -107,7 +107,7 @@ field to locations in a planetary reference frame.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>parameters: <cite>dict</cite>, optional</dt>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set parameters. The dictionary keys are parameter names, with
 corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 <dl class="docutils">
@@ -116,10 +116,10 @@ corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 </dd>
 </dl>
 <p class="last">Parameters may also be set after initialisation with the
-<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
+<a class="reference internal" href="../method/cfdm.CoordinateConversion.parameters.html#cfdm.CoordinateConversion.parameters" title="cfdm.CoordinateConversion.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateConversion.set_parameter.html#cfdm.CoordinateConversion.set_parameter" title="cfdm.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 </dd>
 </dl>
-<p>domain_ancillaries: <cite>dict</cite>, optional</p>
+<p>domain_ancillaries: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</p>
 <blockquote>
 <div><p>TODO</p>
 </div></blockquote>
@@ -127,7 +127,7 @@ corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 <dt>source: optional</dt>
 <dd><p class="first last">TODO Initialize the parameters from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -138,6 +138,8 @@ initialization. By default arguments are deep copied.</p>
 </table>
 </dd></dl>
 
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -145,29 +147,17 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.copy.html#cfdm.CoordinateConversion.copy" title="cfdm.CoordinateConversion.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
-<td>Return a deep copy.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.del_domain_ancillary.html#cfdm.CoordinateConversion.del_domain_ancillary" title="cfdm.CoordinateConversion.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.del_domain_ancillary.html#cfdm.CoordinateConversion.del_domain_ancillary" title="cfdm.CoordinateConversion.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a></td>
 <td>Delete a domain ancillary.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.del_parameter.html#cfdm.CoordinateConversion.del_parameter" title="cfdm.CoordinateConversion.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.del_parameter.html#cfdm.CoordinateConversion.del_parameter" title="cfdm.CoordinateConversion.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></td>
 <td>Delete a parameter.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.domain_ancillaries.html#cfdm.CoordinateConversion.domain_ancillaries" title="cfdm.CoordinateConversion.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a></td>
-<td>Return or replace the domain ancillary-valued terms.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.equals.html#cfdm.CoordinateConversion.equals" title="cfdm.CoordinateConversion.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>TODO True if two instances are equal, False otherwise.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.get_domain_ancillary.html#cfdm.CoordinateConversion.get_domain_ancillary" title="cfdm.CoordinateConversion.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.get_domain_ancillary.html#cfdm.CoordinateConversion.get_domain_ancillary" title="cfdm.CoordinateConversion.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a></td>
 <td>Get a parameter value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.get_parameter.html#cfdm.CoordinateConversion.get_parameter" title="cfdm.CoordinateConversion.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.get_parameter.html#cfdm.CoordinateConversion.get_parameter" title="cfdm.CoordinateConversion.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
 <td>Get a parameter value.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.next.html#cfdm.CoordinateConversion.next" title="cfdm.CoordinateConversion.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a></td>
-<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.parameters.html#cfdm.CoordinateConversion.parameters" title="cfdm.CoordinateConversion.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
 <td>Return or replace the parameter-valued terms.</td>
@@ -180,15 +170,46 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Attributes</p>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.copy.html#cfdm.CoordinateConversion.copy" title="cfdm.CoordinateConversion.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.equals.html#cfdm.CoordinateConversion.equals" title="cfdm.CoordinateConversion.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<td>TODO True if two instances are equal, False otherwise.</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__deepcopy__.html#cfdm.CoordinateConversion.__deepcopy__" title="cfdm.CoordinateConversion.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__repr__.html#cfdm.CoordinateConversion.__repr__" title="cfdm.CoordinateConversion.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__str__.html#cfdm.CoordinateConversion.__str__" title="cfdm.CoordinateConversion.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 

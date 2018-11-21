@@ -9,14 +9,9 @@ class Count(mixin.NetCDFVariable,
             mixin.NetCDFSampleDimension,
             mixin.PropertiesData,
             core.abstract.PropertiesData):
-    '''An ??? with properties.
+    '''A count variable required to uncompress a ragged array.
 
-The count variable, which must be one-dimensional and of type integer,
-contains the number of elements that each feature has.
-
-For indices that correspond to features, whose data have not yet been
-written, the count variable should have a value of zero or a missing
-value.
+.. versionadded::1.7
 
     '''
     def __init__(self, properties={}, data=None, source=None,

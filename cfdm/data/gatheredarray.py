@@ -8,16 +8,17 @@ import numpy
 from . import abstract
 
 class GatheredArray(abstract.CompressedArray):
-    '''A container for a gathered compressed array.
+    '''An underlying gathered array.
 
-Compression by gathering combines axes of an orthogonal
-multi-dimensional array into a new, discrete axis (the "list axis")
-whilst omitting the missing values and thus reducing the number of
-values that need to be stored.
+Compression by gathering combines axes of a multidimensional array
+into a new, discrete axis whilst omitting the missing values and thus
+reducing the number of values that need to be stored.
 
-The information needed to uncompress the data is stored in a separate
-variable (the "list variable") that contains the indices needed to
-uncompress the data.
+The information needed to uncompress the data is stored in a "list
+variable" that gives the indices of the required points.
+
+
+.. versionadded::1.7
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,

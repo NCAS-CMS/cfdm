@@ -91,7 +91,9 @@ cell measure variables correspond to cell measure constructs.
         if measure is not None:
             self.set_measure(measure)
     #--- End: def
-
+    def get_construct_type(self):
+        return 'cell_measure'
+    
     def del_measure(self, *default):
         '''Remove the measure.
 

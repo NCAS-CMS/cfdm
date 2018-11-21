@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.NetCDFArray.close" href="../method/cfdm.NetCDFArray.close.html" />
-    <link rel="prev" title="cfdm.Datum.set_parameter" href="../method/cfdm.Datum.set_parameter.html" />
+    <link rel="prev" title="cfdm.Datum.__str__" href="../method/cfdm.Datum.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,7 +49,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.Datum.set_parameter.html" title="previous chapter">cfdm.Datum.set_parameter</a></li>
+      <li>Previous: <a href="../method/cfdm.Datum.__str__.html" title="previous chapter">cfdm.Datum.__str__</a></li>
       <li>Next: <a href="../method/cfdm.NetCDFArray.close.html" title="next chapter">cfdm.NetCDFArray.close</a></li>
   </ul></li>
   </ul></li>
@@ -87,7 +87,7 @@
 <dt id="cfdm.NetCDFArray">
 <em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">NetCDFArray</code><span class="sig-paren">(</span><em>filename=None</em>, <em>ncvar=None</em>, <em>varid=None</em>, <em>dtype=None</em>, <em>ndim=None</em>, <em>shape=None</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/netcdfarray.py#L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NetCDFArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code></p>
-<p>A container for an array stored in a netCDF file.</p>
+<p>An underlying array stored in a netCDF file.</p>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -151,13 +151,13 @@ set.</p>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.get_compressed_array.html#cfdm.NetCDFArray.get_compressed_array" title="cfdm.NetCDFArray.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a></td>
-<td>Return an independent numpy array containing the compressed data.</td>
+<td>Return an independent numpy array containing of the underlying compressed array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.get_compressed_axes.html#cfdm.NetCDFArray.get_compressed_axes" title="cfdm.NetCDFArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
-<td>The axes of the array that have been compressed.</td>
+<td>Return axes that are compressed in the underlying array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.get_compression_type.html#cfdm.NetCDFArray.get_compression_type" title="cfdm.NetCDFArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
-<td>The type of compression that has been applied to the array.</td>
+<td>The type of compression that has been applied to the underlying array.</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFArray.get_sample_axis</span></code></td>
 <td></td>

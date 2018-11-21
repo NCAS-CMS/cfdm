@@ -22,7 +22,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     out:
         The `Constructs` object. If unset then return *default* if provided.
 
-**Examples**
+**Examples:**
 
 >>> c = f._get_constructs()
 >>> c = f._get_constructs(None)
@@ -54,7 +54,7 @@ data arrays.
         data array. If the construct does not have a data array then
         `None` is returned.
 
-**Examples**
+**Examples:**
 
 >>> f.construct_axes('auxiliarycoordinate0')
 ('domainaxis1', 'domainaxis0')
@@ -90,7 +90,7 @@ None
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
 TODO
 
@@ -120,7 +120,7 @@ TODO
     out: 
         The removed construct.
 
-**Examples**
+**Examples:**
 
 TODO
 
@@ -194,7 +194,7 @@ TODO
 #:Parameters:
 #
 #    item: `AuxiliaryCoordinate`
-#        TODO
+#        TODOgg369
 #
 #    axes: sequence of `str`, optional
 #        The identifiers of the domain axes spanned by the data array.
@@ -222,7 +222,7 @@ TODO
 #     out: `str`
 #        The identifier of the construct.
 #    
-#**Examples**
+#**Examples:**
 #
 #TODO
 #
@@ -260,7 +260,7 @@ TODO
 #     out: `str`
 #        The identifier of the construct.
 #    
-#**Examples**
+#**Examples:**
 #
 #TODO
 #
@@ -309,7 +309,7 @@ TODO
 #     out: `str`
 #        The identifier of the construct.
 #    
-#**Examples**
+#**Examples:**
 #
 #TODO
 #
@@ -319,8 +319,7 @@ TODO
 #                                  copy=copy)
 #    #--- End: def
 
-    def set_construct(self, construct_type, construct, cid=None,
-                      axes=None, #replace=True,
+    def set_construct(self, construct, cid=None, axes=None,
                       copy=True):
         '''Set a metadata construct.
 
@@ -331,12 +330,13 @@ TODO
 
 :Parameters:
 
-    item: 
-        TODO
+    construct:
+        The metadata construct to be inserted.
 
     axes: sequence of `str`, optional
-        The identifiers of the domain axes spanned by the data
-        array. Ignored for constructs that can not have a data array,
+        The construct identifiers of the domain axis constructs
+        spanned by the data array. An exception is raised if used for
+        a metadata construct that can not have a data array,
         i.e. domain axis, cell method and coordinate reference
         constructs.
 
@@ -346,30 +346,36 @@ TODO
         *Example:*
           ``axes=['domainaxis1']``
         
+        *Example:*
+          ``axes=['domainaxis1', 'domainaxis0']``
+        
     cid: `str`, optional
-        The identifier of the construct. If not set then a new, unique
-        identifier is created. If the identifier already exisits then
-        the exisiting construct will be replaced.
+        The construct identifier to be used for the construct. If not
+        set then a new, unique identifier is created automatically. If
+        the identifier already exisits then the exisiting construct
+        will be replaced.
 
         *Example:*
           ``cid='cellmeasure0'``
-        
+
     copy: `bool`, optional
-        If False then do not copy the construct prior to insertion. By
-        default it is copied.
+        If True then return a copy of the unique selected
+        construct. By default the construct is not copied.
         
 :Returns:
 
      out: `str`
-        The identifier of the construct.
+        The construct identifier for the construct.
     
-**Examples**
+**Examples:**
 
-TODO
+>>> cid = f.set_construct(c)
+>>> cid = f.set_construct(c, copy=False)
+>>> cid = f.set_construct(c, axes=['domainaxis2'])
+>>> cid = f.set_construct(c, cid='cellmeasure0')
 
         '''
-        return self._get_constructs().set_construct(construct_type,
-                                                    construct, cid=cid,
+        return self._get_constructs().set_construct(construct, cid=cid,
                                                     axes=axes,
 #                                                    extra_axes=extra_axes,
 #                                                    replace=replace,
@@ -402,7 +408,7 @@ TODO
 
     `None`
 
-**Examples**
+**Examples:**
 
 TODO
 
@@ -449,7 +455,7 @@ TODO
 #     out: `str`
 #        The identifier of the construct.
 #    
-#**Examples**
+#**Examples:**
 #
 #TODO
 #        '''
@@ -487,7 +493,7 @@ TODO
 #     out: `str`
 #        The identifier of the construct.
 #    
-#**Examples**
+#**Examples:**
 #
 #TODO
 #
@@ -536,7 +542,7 @@ TODO
 #     out: `str`
 #        The identifier of the construct.
 #    
-#**Examples**
+#**Examples:**
 #
 #TODO
 #

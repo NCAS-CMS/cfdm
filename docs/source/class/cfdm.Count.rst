@@ -1,50 +1,113 @@
-cfdm.List
-=========
-
 .. currentmodule:: cfdm
+.. default-role:: obj
 
-.. autoclass:: Count
+cfdm.Count
+==========
+
+.. autoclass:: cfdm.Count
    :no-members:
    :no-inherited-members:
 
-.. rubric:: Methods
+Inspection
+----------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
-   ~Count.HDF_chunks
-   ~Count.copy
-   ~Count.del_data   
-   ~Count.del_ncvar
-   ~Count.del_property
-   ~Count.dump
-   ~Count.equals
-   ~Count.expand_dims
-   ~Count.fill_value
-   ~Count.get_array
-   ~Count.get_data
-   ~Count.get_ncvar
-   ~Count.get_property
-   ~Count.has_data
-   ~Count.has_property
-   ~Count.name
-   ~Count.open
-   ~Count.properties
-   ~Count.set_data
-   ~Count.set_ncvar
-   ~Count.set_property
-   ~Count.squeeze
-   
-.. rubric:: Attributes
 
+   ~cfdm.Count.dump
+   ~cfdm.Count.get_array
+   ~cfdm.Count.get_data
+   ~cfdm.Count.has_data
+   ~cfdm.Count.get_property
+   ~cfdm.Count.has_property
+   ~cfdm.Count.name
+   ~cfdm.Count.properties
+
+.. rubric:: Attributes
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~Count.data     
+   ~cfdm.Count.data
+  
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.del_property
+   ~cfdm.Count.get_property
+   ~cfdm.Count.has_property
+   ~cfdm.Count.properties
+   ~cfdm.Count.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.del_data
+   ~cfdm.Count.get_array
+   ~cfdm.Count.get_data
+   ~cfdm.Count.has_data
+   ~cfdm.Count.set_data
+   
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.Count.data
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.del_data
+   ~cfdm.Count.del_property
+   ~cfdm.Count.expand_dims
+   ~cfdm.Count.properties
+   ~cfdm.Count.set_data
+   ~cfdm.Count.set_property
+   ~cfdm.Count.squeeze
+   ~cfdm.Count.transpose
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.copy
+   ~cfdm.Count.equals
 
 NetCDF
 ------
@@ -56,8 +119,28 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~Count.nc_del_variable
-   ~Count.nc_get_variable
-   ~Count.nc_has_variable
-   ~Count.nc_set_variable 
+   ~cfdm.Count.nc_del_sample_dimension
+   ~cfdm.Count.nc_get_sample_dimension
+   ~cfdm.Count.nc_has_sample_dimension
+   ~cfdm.Count.nc_set_sample_dimension 
+   ~cfdm.Count.nc_del_variable
+   ~cfdm.Count.nc_get_variable
+   ~cfdm.Count.nc_has_variable
+   ~cfdm.Count.nc_set_variable 
 
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Count.__deepcopy__
+   ~cfdm.Count.__getitem__
+   ~cfdm.Count.__repr__
+   ~cfdm.Count.__str__
+
+   

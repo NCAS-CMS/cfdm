@@ -1,52 +1,114 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.List
 =========
 
-.. currentmodule:: cfdm
-
-.. autoclass:: List
+.. autoclass:: cfdm.List
    :no-members:
    :no-inherited-members:
 
-.. rubric:: Methods
+Inspection
+----------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-   
-   ~List.HDF_chunks
-   ~List.copy
-   ~List.del_data   
-   ~List.del_ncvar
-   ~List.del_property
-   ~List.dump
-   ~List.equals
-   ~List.expand_dims
-   ~List.fill_value
-   ~List.get_array
-   ~List.get_data
-   ~List.get_ncvar
-   ~List.get_property
-   ~List.has_data
-   ~List.has_property
-   ~List.name
-   ~List.open
-   ~List.properties
-   ~List.set_data
-   ~List.set_ncvar
-   ~List.set_property
-   ~List.squeeze
-   
-.. rubric:: Attributes
 
+   ~cfdm.List.dump
+   ~cfdm.List.get_array
+   ~cfdm.List.get_data
+   ~cfdm.List.has_data
+   ~cfdm.List.get_property
+   ~cfdm.List.has_property
+   ~cfdm.List.name
+   ~cfdm.List.properties
+
+.. rubric:: Attributes
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
-   ~List.data     
+   ~cfdm.List.data
 
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.List.del_property
+   ~cfdm.List.get_property
+   ~cfdm.List.has_property
+   ~cfdm.List.properties
+   ~cfdm.List.set_property
+
+Data
+----
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.List.del_data
+   ~cfdm.List.get_array
+   ~cfdm.List.get_data
+   ~cfdm.List.has_data
+   ~cfdm.List.set_data
    
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.List.data
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.List.del_data
+   ~cfdm.List.del_property
+   ~cfdm.List.expand_dims
+   ~cfdm.List.properties
+   ~cfdm.List.set_data
+   ~cfdm.List.set_property
+   ~cfdm.List.squeeze
+   ~cfdm.List.transpose
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.List.copy
+   ~cfdm.List.equals
+
 NetCDF
 ------
 
@@ -57,8 +119,24 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~List.nc_del_variable
-   ~List.nc_get_variable
-   ~List.nc_has_variable
-   ~List.nc_set_variable 
+   ~cfdm.List.nc_del_variable
+   ~cfdm.List.nc_get_variable
+   ~cfdm.List.nc_has_variable
+   ~cfdm.List.nc_set_variable 
 
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.List.__deepcopy__
+   ~cfdm.List.__getitem__
+   ~cfdm.List.__repr__
+   ~cfdm.List.__str__
+
+   

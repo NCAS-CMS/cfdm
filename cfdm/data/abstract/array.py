@@ -9,38 +9,66 @@ from ...core.data import Array as core_Array
 
 
 class Array(with_metaclass(abc.ABCMeta, core_Array)):
-    '''A container for an array.
+    '''Abstract base class for a container of an underlying array.
 
-The form of the array is arbitrary and is defined by the attributes
-set on a subclass of the abstract `Array` object.
+The form of the array is arbitrary and is defined by the
+initialization parameters of a subclass of `Array`.
 
 See `cfdm.NumpyArray` for an example implementation.
 
     '''
     @abc.abstractmethod
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        '''Return a subspace as an independent numpy array.
 
-Returns a subspace of the array as an independent numpy array.
+x.__getitem__(indices) <==> x[indices]
 
-The indices that define the subspace must be either `Ellipsis` or a
-sequence that contains an index for each dimension. In the latter
-case, each dimension's index must either be a `slice` object or a
-sequence of two or more integers.
+Indexing follows rules that are very similar to the numpy indexing
+rules, the only differences being:
 
-Indexing is similar to numpy indexing. The only difference to numpy
-indexing (given the restrictions on the type of indices allowed) is:
+* An integer index i takes the i-th element but does not reduce the
+  rank by one.
 
-  * When two or more dimension's indices are sequences of integers
-    then these indices work independently along each dimension
-    (similar to the way vector subscripts work in Fortran).
+..
+
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a Variable object of the netCDF4 package.
+
+.. versionadded:: 1.7
 
         '''
         raise NotImplementedError()
     #--- End: def
 
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+x.__repr__() <==> repr(x)
+
+.. versionadded:: 1.7
+
+        '''      
+        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
+    #--- End: def
+        
+    def __str__(self):
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
+
+.. versionadded:: 1.7
+
+        '''
+        return "shape={0}, dtype={1}".format(self.shape, self.dtype)
+    #--- End: def
+
     def get_compression_type(self):
-        '''The type of compression that has been applied to the array.
+        '''The type of compression that has been applied to the underlying
+array.
+
+.. versionadded:: 1.7
 
 :Returns:
 
@@ -50,13 +78,13 @@ indexing (given the restrictions on the type of indices allowed) is:
 
 :Examples:
 
->>> c.compression_type
+>>> a.compression_type
 ''
 
->>> c.compression_type
+>>> a.compression_type
 'gathered'
 
->>> c.compression_type
+>>> a.compression_type
 'ragged contiguous'
 
         '''
@@ -64,7 +92,10 @@ indexing (given the restrictions on the type of indices allowed) is:
     #--- End: def
 
     def get_compressed_array(self, *default):
-        '''Return an independent numpy array containing the compressed data.
+        '''Return an independent numpy array containing of the underlying
+compressed array.
+
+.. versionadded:: 1.7
 
 :Returns:
 
@@ -82,14 +113,16 @@ True
     #--- End: def
     
     def get_compressed_axes(self):
-        '''The axes of the array that have been compressed.
+        '''Return axes that are compressed in the underlying array.
+
+.. versionadded:: 1.7
 
 :Returns:
 
     out: `list`
         The compressed axes described by their integer positions in
-        the list of (uncompressed) axes. If no axes have been
-        compressed then the list is empty.
+        the list of uncompressed axes. If no axes have been compressed
+        then the list is empty.
 
 :Examples:
 
@@ -99,6 +132,8 @@ True
 
     def get_compressed_dimension(self, *default):
         '''TODO
+
+.. versionadded:: 1.7
 
 :Returns:
 
@@ -126,6 +161,8 @@ difference to numpy indexing is
   * When two or more dimension's indices are sequences of integers
     then these indices work independently along each dimension
     (similar to the way vector subscripts work in Fortran).
+
+.. versionadded:: 1.7
 
 :Parameters:
 

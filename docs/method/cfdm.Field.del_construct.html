@@ -87,28 +87,183 @@
 <h1>cfdm.Field.del_construct<a class="headerlink" href="#cfdm-field-del-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.del_construct">
-<code class="descclassname">Field.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/mixin/constructaccess.py#L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.del_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/mixin/constructaccess.py#L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.del_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a metadata construct.</p>
-<p>If a removed domain axis construct is referenced by a cell method
-construct, then that reference is also removed.</p>
+<p>The construct is identified via optional parameters. If multiple
+parameters are specified, then the <em>unique</em> construct that satisfies
+<em>all</em> of the given criteria is removed. An error is raised if multiple
+constructs satisfy all of the given criteria.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>, <a class="reference internal" href="cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>, <a class="reference internal" href="cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>, <a class="reference internal" href="cfdm.Field.has_construct.html#cfdm.Field.has_construct" title="cfdm.Field.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code></a>,
+<a class="reference internal" href="cfdm.Field.set_construct.html#cfdm.Field.set_construct" title="cfdm.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>cid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
-<dd><p class="first">The construct identifier of the metadata construct to be
-removed.</p>
+<dt>description: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select constructs that have the given property, or other
+attribute, value.</p>
+<p>The description may be one of:</p>
+<ul class="last">
+<li><p class="first">The value of the standard name property on its own.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs
+that have a “standard_name” property with the value
+“air_pressure”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The value of any property prefixed by the property name and
+a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs
+that have a “positive” property with the value “up”.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that
+have a “foo” property with the value “bar”.</p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
+constructs that have a “standard_name” property with the
+value “air_pressure”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The measure of cell measure constructs, prefixed by
+<code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='measure%area'</span></code> will select “area” cell
+measure constructs.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">A construct identifier, prefixed by <code class="docutils literal notranslate"><span class="pre">cid%</span></code> (see also the
+<em>cid</em> parameter).</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em> </dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%cellmethod1'</span></code> will select cell
+method construct with construct identifier
+“cellmethod1”. This is equivalent to
+<code class="docutils literal notranslate"><span class="pre">cid='cellmethod1'</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with
+netCDF variable name “lat”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first">The netCDF dimension name of domain axis constructs,
+prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncdim%time'</span></code> will select domain axis
+constructs with netCDF dimension name “time”.</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</dd>
+<dt>cid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select the construct with the given construct identifier.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='auxiliarycoordinate0'</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary0'</span></code> will the domain ancillary
+construct with construct identifier “domainancillary1”. This
+is equivalent to <code class="docutils literal notranslate"><span class="pre">description='cid%domainancillary0'</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>construct_type: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select constructs of the given type. Valid types are:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>construct_type</em></th>
+<th class="head">Constructs</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'domain_ancillary'</span></code></td>
+<td>Domain ancillary constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'dimension_coordinate'</span></code></td>
+<td>Dimension coordinate constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'domain_axis'</span></code></td>
+<td>Domain axis constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'auxiliary_coordinate'</span></code></td>
+<td>Auxiliary coordinate constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_measure'</span></code></td>
+<td>Cell measure constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'coordinate_reference'</span></code></td>
+<td>Coordinate reference constructs</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_method'</span></code></td>
+<td>Cell method constructs</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'field_ancillary'</span></code></td>
+<td>Field ancillary constructs</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type='dimension_coordinate'</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=['auxiliary_coordinate']</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=('domain_ancillary',</span> <span class="pre">'cell_method')</span></code></p>
+</dd>
+</dl>
+<p class="last">Note that a domain never contains cell method nor field
+ancillary constructs.</p>
+</dd>
+<dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Select constructs which have data that spans any one or more
+of the given domain axes, in any order. Domain axes are
+specified by their construct identifiers.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis2']</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -116,7 +271,7 @@ removed.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: </dt>
+<dt>out:</dt>
 <dd><p class="first last">The removed metadata construct.</p>
 </dd>
 </dl>

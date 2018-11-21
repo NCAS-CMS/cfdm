@@ -7,15 +7,17 @@ from . import mixin
 
 class RaggedIndexedArray(mixin.RaggedIndexed,
                          abstract.CompressedArray):
-    '''A container for an indexed ragged compressed array.
+    '''An underlying indexed ragged array.
 
 A collection of features stored using an indexed ragged array combines
 all features along a single dimension (the "sample dimension") such
 that the values of each feature in the collection are interleaved.
 
-The information needed to uncompress the data is stored in a separate
-"index variable" that specifies the feature that each element of the
-sample dimension belongs to.
+The information needed to uncompress the data is stored in a "index
+variable" that specifies the feature that each element of the sample
+dimension belongs to.
+
+.. versionadded:: 1.7
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,

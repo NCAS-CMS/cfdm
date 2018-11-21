@@ -26,13 +26,22 @@ if StrictVersion(platform.python_version()) < StrictVersion('2.7.0'):
 from .constants        import *
 from .constructs       import Constructs
 
-from .data.data                         import Data
-from .data.netcdfarray                  import NetCDFArray
-from .data.numpyarray                   import NumpyArray
-from .data.gatheredarray                import GatheredArray
-from .data.raggedcontiguousarray        import RaggedContiguousArray
-from .data.raggedindexedarray           import RaggedIndexedArray
-from .data.raggedindexedcontiguousarray import RaggedIndexedContiguousArray
+#from .data.data                         import Data
+#from .data.netcdfarray                  import NetCDFArray
+from .data                              import (Data,
+                                                Array,
+                                                CompressedArray,
+                                                NumpyArray,
+                                                NetCDFArray,
+                                                GatheredArray,
+                                                RaggedContiguousArray,
+                                                RaggedIndexedArray,
+                                                RaggedIndexedContiguousArray)
+#from .data.numpyarray                   import NumpyArray
+#from .data.gatheredarray                import GatheredArray
+#from .data.raggedcontiguousarray        import RaggedContiguousArray
+#from .data.raggedindexedarray           import RaggedIndexedArray
+#from .data.raggedindexedcontiguousarray import RaggedIndexedContiguousArray
 
 #from .functions        import *
 from .functions import (CF, environment, ATOL, RTOL)

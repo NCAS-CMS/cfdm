@@ -87,7 +87,8 @@
 <dt id="cfdm.core.Bounds">
 <em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
-<p>A cell bounds array with properties.</p>
+<p>A cell bounds component of a coordinate or domain ancillary
+construct of the CF data model.</p>
 <p>An array of cell bounds spans the same domain axes as its coordinate
 array, with the addition of an extra dimension whose size is that of
 the number of vertices of each cell. This extra dimension does not
@@ -139,7 +140,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.Bounds.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L21"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -437,7 +438,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L70"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L71"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p>Note that the data are returned in a <cite>Data</cite> object. Use the
 <cite>get_array</cite> method to return the data as an independent <cite>numpy</cite> array.</p>

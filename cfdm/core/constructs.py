@@ -625,31 +625,59 @@ TODO
             return True        
     #--- End: def
 
-    def set_construct(self, construct_type, construct, cid=None,
+    def set_construct(self, construct, cid=None,
                       axes=None, #extra_axes=0, #replace=True,
                       copy=True):
-        '''Insert a construct.
+        '''Set a construct.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct_axes`
 
 :Parameters:
 
-    construct_type: `str`
-          *Example*:
-            ``construct_type='auxiliary_coordinate'``
-          
-    construct: construct
-        The construct to be inserted.
+    construct:
+        The metadata construct to be inserted.
 
-    extra_axes: `int`, optional
-        The number of extra, trailing data array axes that do **not**
-        correspond to a domain axis specified by the *axes*
-        parameter. For example, a coordinate bounds data array may has
-        one or two extra axes. By default it assumed that there are no
-        extra axes.
+    axes: sequence of `str`, optional
+        The construct identifiers of the domain axis constructs
+        spanned by the data array. An exception is raised if used for
+        a metadata construct that can not have a data array,
+        i.e. domain axis, cell method and coordinate reference
+        constructs.
 
-          *Example:*
-             ``extra_axes=1``
+        The axes may also be set afterwards with the
+        `set_construct_axes` method.
+
+        *Example:*
+          ``axes=['domainaxis1']``
+        
+    cid: `str`, optional
+        The construct identifier to be used for the construct. If not
+        set then a new, unique identifier is created automatically. If
+        the identifier already exisits then the exisiting construct
+        will be replaced.
+
+        *Example:*
+          ``cid='cellmeasure0'``
+
+    copy: `bool`, optional
+        If True then return a copy of the unique selected
+        construct. By default the construct is not copied.
 
         '''
+#    extra_axes: `int`, optional
+#        The number of extra, trailing data array axes that do **not**
+#        correspond to a domain axis specified by the *axes*
+#        parameter. For example, a coordinate bounds data array may has
+#        one or two extra axes. By default it assumed that there are no
+#        extra axes.
+#
+#          *Example:*
+#             ``extra_axes=1``
+
+        construct_type = construct.get_construct_type()
         construct_type = self._check_construct_type(construct_type)
                                                 
         if cid is None:
@@ -675,8 +703,8 @@ TODO
             for axis in axes:
                 if axis not in domain_axes:
                     raise ValueError(                    
-"Can't set {} construct: Domain axis {!r} does not exist".format(
-    self._construct_type_description(construct_type), axis))
+"Can't set {!r}: Domain axis {!r} does not exist".format(
+    construct, axis))
 
                 axes_shape.append(domain_axes[axis].get_size())
             #--- End: for
@@ -685,10 +713,15 @@ TODO
             if (construct.has_data() and 
                 construct.data.shape[:construct.data.ndim - extra_axes] != axes_shape):
                 raise ValueError(
-"Can't set {!r}: Data array shape of {} does not match the shape required by domain axes {}: {}".format(
+                    "Can't set {!r}: Data array shape of {!r} does not match the shape required by domain axes {}: {}".format(
     construct, construct.data.shape, tuple(axes), axes_shape))
 
             self._set_construct_axes(cid, axes)
+
+        elif axes is not None:
+            raise ValueError(
+"Can't set {!r}: Can't provide domain axis constructs for {} construct".format(
+    construct, self._construct_type_description(construct_type)))
         #--- End: if
 
         # Record the construct type

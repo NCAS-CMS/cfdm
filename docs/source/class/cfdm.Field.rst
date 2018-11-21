@@ -111,18 +111,10 @@ Modification
    ~cfdm.Field.del_property
    ~cfdm.Field.expand_dims
    ~cfdm.Field.properties
-   ~cfdm.Field.set_auxiliary_coordinate
-   ~cfdm.Field.set_cell_measure
-   ~cfdm.Field.set_cell_method
    ~cfdm.Field.set_construct
    ~cfdm.Field.set_construct_axes
-   ~cfdm.Field.set_coordinate_reference
    ~cfdm.Field.set_data
    ~cfdm.Field.set_data_axes
-   ~cfdm.Field.set_dimension_coordinate
-   ~cfdm.Field.set_domain_ancillary
-   ~cfdm.Field.set_domain_axis
-   ~cfdm.Field.set_field_ancillary
    ~cfdm.Field.set_property
    ~cfdm.Field.squeeze
    ~cfdm.Field.transpose

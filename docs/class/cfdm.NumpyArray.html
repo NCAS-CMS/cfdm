@@ -85,7 +85,7 @@
 <dt id="cfdm.NumpyArray">
 <em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">NumpyArray</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/numpyarray.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NumpyArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.numpyarray.NumpyArray</span></code></p>
-<p>A container for a numpy array.</p>
+<p>An underlying numpy array.</p>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -116,13 +116,13 @@
 <td>Return an independent numpy array containing the data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compressed_array.html#cfdm.NumpyArray.get_compressed_array" title="cfdm.NumpyArray.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a></td>
-<td>Return an independent numpy array containing the compressed data.</td>
+<td>Return an independent numpy array containing of the underlying compressed array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compressed_axes.html#cfdm.NumpyArray.get_compressed_axes" title="cfdm.NumpyArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
-<td>The axes of the array that have been compressed.</td>
+<td>Return axes that are compressed in the underlying array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compression_type.html#cfdm.NumpyArray.get_compression_type" title="cfdm.NumpyArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
-<td>The type of compression that has been applied to the array.</td>
+<td>The type of compression that has been applied to the underlying array.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumpyArray.get_sample_axis</span></code></td>
 <td></td>

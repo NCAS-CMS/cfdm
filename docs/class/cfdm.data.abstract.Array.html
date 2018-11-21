@@ -74,9 +74,9 @@
 <dt id="cfdm.data.abstract.Array">
 <em class="property">class </em><code class="descclassname">cfdm.data.abstract.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.abstract.array.Array</span></code></p>
-<p>A container for an array.</p>
-<p>The form of the array is arbitrary and is defined by the attributes
-set on a subclass of the abstract <cite>Array</cite> object.</p>
+<p>Abstract base class for a container of an underlying array.</p>
+<p>The form of the array is arbitrary and is defined by the
+initialization parameters of a subclass of <cite>Array</cite>.</p>
 <p>See <cite>cfdm.NumpyArray</cite> for an example implementation.</p>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -85,7 +85,7 @@ set on a subclass of the abstract <cite>Array</cite> object.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>kwargs: <em>optional</em></dt>
-<dd><p class="first last">Named attributes and their values that define the array.</p>
+<dd><p class="first last">Named parameters and their values that define the array.</p>
 </dd>
 </dl>
 </td>
@@ -102,7 +102,7 @@ set on a subclass of the abstract <cite>Array</cite> object.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>kwargs: <em>optional</em></dt>
-<dd><p class="first last">Named attributes and their values that define the array.</p>
+<dd><p class="first last">Named parameters and their values that define the array.</p>
 </dd>
 </dl>
 </td>
@@ -128,13 +128,13 @@ set on a subclass of the abstract <cite>Array</cite> object.</p>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.data.abstract.Array.get_compressed_array" title="cfdm.data.abstract.Array.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a>(*default)</td>
-<td>Return an independent numpy array containing the compressed data.</td>
+<td>Return an independent numpy array containing of the underlying compressed array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.data.abstract.Array.get_compressed_axes" title="cfdm.data.abstract.Array.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a>()</td>
-<td>The axes of the array that have been compressed.</td>
+<td>Return axes that are compressed in the underlying array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.data.abstract.Array.get_compression_type" title="cfdm.data.abstract.Array.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a>()</td>
-<td>The type of compression that has been applied to the array.</td>
+<td>The type of compression that has been applied to the underlying array.</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Array.get_sample_axis</span></code></td>
 <td></td>
@@ -170,11 +170,12 @@ set on a subclass of the abstract <cite>Array</cite> object.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.data.abstract.Array.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L201"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy of the array.</p>
 <p><code class="docutils literal notranslate"><span class="pre">a.copy()</span> <span class="pre">is</span> <span class="pre">equivalent</span> <span class="pre">to</span> <span class="pre">``copy.deepcopy(a)</span></code>.</p>
-<p>Note that copy-on-write is employed, so care must be taken when
-modifying any attribute.</p>
+<p>Copy-on-write is employed. Therefore, after copying, care must be
+taken when making in-place modifications to attributes of either the
+original or the new copy.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -197,7 +198,7 @@ modifying any attribute.</p>
 
 <dl class="method">
 <dt id="cfdm.data.abstract.Array.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L225"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array containing the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -223,8 +224,12 @@ modifying any attribute.</p>
 
 <dl class="method">
 <dt id="cfdm.data.abstract.Array.get_compressed_array">
-<code class="descname">get_compressed_array</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L66"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compressed_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an independent numpy array containing the compressed data.</p>
+<code class="descname">get_compressed_array</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L94"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compressed_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an independent numpy array containing of the underlying
+compressed array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -249,8 +254,11 @@ modifying any attribute.</p>
 
 <dl class="method">
 <dt id="cfdm.data.abstract.Array.get_compressed_axes">
-<code class="descname">get_compressed_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L84"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compressed_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>The axes of the array that have been compressed.</p>
+<code class="descname">get_compressed_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L115"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compressed_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return axes that are compressed in the underlying array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -258,8 +266,8 @@ modifying any attribute.</p>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first docutils">
 <dt>out: <cite>list</cite></dt>
 <dd><p class="first last">The compressed axes described by their integer positions in
-the list of (uncompressed) axes. If no axes have been
-compressed then the list is empty.</p>
+the list of uncompressed axes. If no axes have been compressed
+then the list is empty.</p>
 </dd>
 </dl>
 </td>
@@ -272,8 +280,11 @@ compressed then the list is empty.</p>
 
 <dl class="method">
 <dt id="cfdm.data.abstract.Array.get_compressed_dimension">
-<code class="descname">get_compressed_dimension</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L100"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compressed_dimension" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_compressed_dimension</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L133"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compressed_dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -294,8 +305,12 @@ compressed then the list is empty.</p>
 
 <dl class="method">
 <dt id="cfdm.data.abstract.Array.get_compression_type">
-<code class="descname">get_compression_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L42"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compression_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>The type of compression that has been applied to the array.</p>
+<code class="descname">get_compression_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L67"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_compression_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The type of compression that has been applied to the underlying
+array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -312,15 +327,15 @@ compression has been applied.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">compression_type</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">compression_type</span>
 <span class="go">&#39;&#39;</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">compression_type</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">compression_type</span>
 <span class="go">&#39;gathered&#39;</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">compression_type</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">compression_type</span>
 <span class="go">&#39;ragged contiguous&#39;</span>
 </pre></div>
 </div>
@@ -328,7 +343,7 @@ compression has been applied.</p>
 
 <dl class="classmethod">
 <dt id="cfdm.data.abstract.Array.get_subspace">
-<em class="property">classmethod </em><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L115"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/abstract/array.py#L150"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.data.abstract.Array.get_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace, defined by indices, of a numpy array.</p>
 <p>Only certain type of indices are allowed. See the <em>indices</em> parameter
 for details.</p>
@@ -342,6 +357,9 @@ then these indices work independently along each dimension
 (similar to the way vector subscripts work in Fortran).</li>
 </ul>
 </div></blockquote>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

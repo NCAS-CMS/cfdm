@@ -8,15 +8,17 @@ from . import mixin
 
 class RaggedContiguousArray(mixin.RaggedContiguous,
                             abstract.CompressedArray):
-    '''A container for a contiguous ragged compressed array.
+    '''An underlying contiguous ragged array.
 
 A collection of features stored using a contiguous ragged array
 combines all features along a single dimension (the "sample
 dimension") such that each feature in the collection occupies a
 contiguous block.
 
-The information needed to uncompress the data is stored in a separate
-"count variable" that gives the size of each block.
+The information needed to uncompress the data is stored in a "count
+variable" that gives the size of each block.
+
+.. versionadded:: 1.7
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,

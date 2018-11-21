@@ -19,6 +19,8 @@ An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
+.. versionadded:: 1.7
     '''
-    
+    def get_construct_type(self):
+        return 'domain_ancillary' 
 #--- End: class

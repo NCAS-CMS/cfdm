@@ -85,24 +85,24 @@ class create_fieldTest(unittest.TestCase):
         f = cfdm.Field(properties=properties)
         f.set_property('standard_name', 'eastward_wind')
 
-        axisX = f.set_domain_axis(cfdm.DomainAxis(9))
-        axisY = f.set_domain_axis(cfdm.DomainAxis(10))
-        axisZ = f.set_domain_axis(cfdm.DomainAxis(1))
-        axisT = f.set_domain_axis(cfdm.DomainAxis(1))
+        axisX = f.set_construct(cfdm.DomainAxis(9))
+        axisY = f.set_construct(cfdm.DomainAxis(10))
+        axisZ = f.set_construct(cfdm.DomainAxis(1))
+        axisT = f.set_construct(cfdm.DomainAxis(1))
 
         f.set_data(data, axes=[axisY, axisX])
         
-        x = f.set_dimension_coordinate(dim0, axes=[axisX])
-        y = f.set_dimension_coordinate(dim1, axes=[axisY])
-        z = f.set_dimension_coordinate(dim2, axes=[axisZ])
-        t = f.set_dimension_coordinate(dim3, axes=[axisT])
+        x = f.set_construct(dim0, axes=[axisX])
+        y = f.set_construct(dim1, axes=[axisY])
+        z = f.set_construct(dim2, axes=[axisZ])
+        t = f.set_construct(dim3, axes=[axisT])
 
-        lat   = f.set_auxiliary_coordinate(aux2, axes=[axisY, axisX])
-        lon   = f.set_auxiliary_coordinate(aux3, axes=[axisX, axisY])
-        greek = f.set_auxiliary_coordinate(aux4, axes=[axisY])
+        lat   = f.set_construct(aux2, axes=[axisY, axisX])
+        lon   = f.set_construct(aux3, axes=[axisX, axisY])
+        greek = f.set_construct(aux4, axes=[axisY])
 
-        ak = f.set_domain_ancillary(ak, axes=[axisZ])
-        bk = f.set_domain_ancillary(bk, axes=[axisZ])
+        ak = f.set_construct(ak, axes=[axisZ])
+        bk = f.set_construct(bk, axes=[axisZ])
 
        # Coordinate references
 #       ref0 = cfdm.CoordinateReference(
@@ -126,14 +126,14 @@ class create_fieldTest(unittest.TestCase):
             coordinates=[x, y, lat, lon]
             )
 
-        f.set_cell_measure(msr0, axes=[axisX, axisY])
+        f.set_construct(msr0, axes=[axisX, axisY])
 
-        f.set_coordinate_reference(ref0)
+        f.set_construct(ref0)
 
         orog = cfdm.DomainAncillary(data=f.get_data())
         orog.set_property('standard_name', 'surface_altitude')
         orog.set_property('units', 'm')
-        orog = f.set_domain_ancillary(orog, axes=[axisY, axisX])
+        orog = f.set_construct(orog, axes=[axisY, axisX])
 
         datum1 = cfdm.Datum({'earth_radius' : 6371007})
         
@@ -150,7 +150,7 @@ class create_fieldTest(unittest.TestCase):
             coordinates=[z]
         )
         
-        ref1 = f.set_coordinate_reference(ref1)
+        ref1 = f.set_construct(ref1)
 
         # Field ancillary variables
 #        g = f.transpose([1, 0])
@@ -159,7 +159,7 @@ class create_fieldTest(unittest.TestCase):
 #        g *= 0.01
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryA'
-        f.set_field_ancillary(anc, axes=[axisY, axisX])
+        f.set_construct(anc, axes=[axisY, axisX])
         
         g = f[0]
         g = g.squeeze()
@@ -167,7 +167,7 @@ class create_fieldTest(unittest.TestCase):
 #        g *= 0.001
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryB'
-        f.set_field_ancillary(anc, axes=[axisX])
+        f.set_construct(anc, axes=[axisX])
 
         g = f[..., 0]
         g = g.squeeze()
@@ -175,7 +175,7 @@ class create_fieldTest(unittest.TestCase):
 #        g *= 0.001
         anc = cfdm.FieldAncillary(data=g.get_data())
         anc.standard_name = 'ancillaryC'
-        f.set_field_ancillary(anc, axes=[axisY])
+        f.set_construct(anc, axes=[axisY])
 
         
         f.set_property('flag_values', numpy.array([1, 2, 4], 'int32'))
@@ -193,8 +193,8 @@ class create_fieldTest(unittest.TestCase):
 
 
         
-        f.set_cell_method(cm0)
-        f.set_cell_method(cm1)
+        f.set_construct(cm0)
+        f.set_construct(cm1)
 
 #        for cm in cfdm.CellMethod.parse(axisX+': mean (interval: 1 day comment:# ok) '+axisY+': max where sea'):
 #            f.set_cell_method(cm)

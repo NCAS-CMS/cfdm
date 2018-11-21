@@ -87,17 +87,19 @@
 <dt id="cfdm.RaggedIndexedContiguousArray">
 <em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">RaggedIndexedContiguousArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>count_variable=None</em>, <em>index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/data/raggedindexedcontiguousarray.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.RaggedIndexedContiguousArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.ragged.RaggedContiguous</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.mixin.ragged.RaggedIndexed</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.compressedarray.CompressedArray</span></code></p>
-<p>A container for an indexed contiguous ragged compressed array.</p>
+<p>An underlying indexed contiguous ragged array.</p>
 <p>A collection of features, each of which is sequence of (vertical)
 profiles, stored using an indexed contiguous ragged array combines all
 feature elements along a single dimension (the “sample dimension”)
 such that a contiguous ragged array representation is used for each
 profile and the indexed ragged array representation to organise the
 profiles into timeseries.</p>
-<p>The information needed to uncompress the data is stored in a separate
-“count variable” that gives the size of each profile; and in a
-separate “index variable” that specifies the feature that each profile
-belongs to.</p>
+<p>The information needed to uncompress the data is stored in a “count
+variable” that gives the size of each profile; and in a “index
+variable” that specifies the feature that each profile belongs to.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -151,10 +153,10 @@ corresponding to a CF-netCDF CF-netCDF index variable.</p>
 <td>Return an independent numpy array containing the compressed data.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedContiguousArray.get_compressed_axes.html#cfdm.RaggedIndexedContiguousArray.get_compressed_axes" title="cfdm.RaggedIndexedContiguousArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
-<td>The axes of the uncompressed array that have been compressed.</td>
+<td>Return axes that are compressed in the underlying array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.RaggedIndexedContiguousArray.get_compression_type.html#cfdm.RaggedIndexedContiguousArray.get_compression_type" title="cfdm.RaggedIndexedContiguousArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
-<td>The type of compression that has been applied to the array.</td>
+<td>The type of compression that has been applied to the underlying array.</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedIndexedContiguousArray.get_sample_axis</span></code></td>
 <td></td>

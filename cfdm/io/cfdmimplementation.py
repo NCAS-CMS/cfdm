@@ -1066,7 +1066,7 @@ axes, and possibly other axes, are returned.
 
     out: `str`
         '''
-        return field.set_auxiliary_coordinate(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
     def set_bounds(self, construct, bounds, copy=True):
@@ -1098,7 +1098,7 @@ axes, and possibly other axes, are returned.
 
     out: `str`
         '''
-        return field.set_cell_measure(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
     def set_cell_method(self, field, construct, copy=True):
@@ -1116,7 +1116,27 @@ axes, and possibly other axes, are returned.
 
     out: `str`
         '''
-        return field.set_cell_method(construct, copy=copy)
+#        return field.set_cell_method(construct, copy=copy)
+        return field.set_construct(construct, copy=copy)
+    #--- End: def
+
+    def set_cell_method(self, field, construct, copy=True):
+        '''Insert a cell_method object into a field.
+
+:Parameters:
+
+    field: `Field`
+
+    construct: `CellMethod`
+
+    copy: `bool`, optional
+
+:Returns:
+
+    out: `str`
+        '''
+#        return field.set_cell_method(construct, copy=copy)
+        return field.set_construct(construct, copy=copy)
     #--- End: def
 
     def set_cell_method_axes(self, cell_method, axes):
@@ -1142,18 +1162,13 @@ axes, and possibly other axes, are returned.
         '''Insert a coordinate reference object into a field.
 
 :Parameters:
-
     field: `Field`
-
     construct: `CoordinateReference`
-
     copy: `bool`, optional
-
 :Returns:
-
     out: `str`
         '''
-        return field.set_coordinate_reference(construct, copy=copy)
+        return field.set_construct(construct, copy=copy)
     #--- End: def
 
     def set_coordinate_reference_coordinates(self,
@@ -1234,7 +1249,7 @@ also be provided.
 
     out: `str`
         '''
-        return field.set_dimension_coordinate(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
     def set_domain_ancillary(self, field, construct, axes, copy=True):
@@ -1255,9 +1270,7 @@ also be provided.
 
     out: `str`
         '''
-        return field.set_domain_ancillary(construct, axes=axes,
-#                                          extra_axes=extra_axes,
-                                          copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
     def set_domain_axis(self, field, construct, copy=True):
@@ -1275,7 +1288,7 @@ also be provided.
 
     out: `str`
         '''
-        return field.set_domain_axis(construct, copy=copy)
+        return field.set_construct(construct, copy=copy)
     #--- End: def
 
     def nc_set_external(self, construct):
@@ -1301,7 +1314,7 @@ also be provided.
 
     out: `str`
         '''
-        return field.set_field_ancillary(construct, axes=axes, copy=copy)
+        return field.set_construct(construct, axes=axes, copy=copy)
     #--- End: def
 
     def set_geometry(self, coordinate, value):
