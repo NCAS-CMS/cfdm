@@ -26,6 +26,7 @@ Inspection
    ~cfdm.core.Field.get_domain
    ~cfdm.core.Field.has_data
    ~cfdm.core.Field.get_property
+   ~cfdm.core.Field.has_construct
    ~cfdm.core.Field.has_property
    ~cfdm.core.Field.properties
 

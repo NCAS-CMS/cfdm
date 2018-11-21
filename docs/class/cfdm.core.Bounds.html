@@ -85,7 +85,7 @@
 <h1>cfdm.core.Bounds<a class="headerlink" href="#cfdm-core-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.Bounds">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/bounds.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A cell bounds array with properties.</p>
 <p>An array of cell bounds spans the same domain axes as its coordinate
@@ -139,7 +139,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.Bounds.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/bounds.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -243,7 +243,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.Bounds.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <p><cite>Data</cite> instances contained within are copied with a copy-on-write
@@ -284,7 +284,7 @@ operation is fast.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.del_data">
-<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.del_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.del_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -336,7 +336,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.del_property">
-<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/properties.py#L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.del_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.del_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -395,7 +395,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array the data.</p>
 <p>Use the <cite>get_data</cite> method to return the data as a <cite>Data</cite> object.</p>
 <div class="versionadded">
@@ -437,7 +437,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/bounds.py#L70"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/bounds.py#L70"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p>Note that the data are returned in a <cite>Data</cite> object. Use the
 <cite>get_array</cite> method to return the data as an independent <cite>numpy</cite> array.</p>
@@ -491,7 +491,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/properties.py#L123"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L123"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -550,7 +550,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.has_data">
-<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.has_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.has_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a data object has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -594,7 +594,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/properties.py#L175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.has_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.has_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -648,7 +648,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/properties.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.properties" title="Permalink to this definition">¶</a></dt>
+<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -710,7 +710,7 @@ properties if no changes were specified.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.set_data">
-<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/propertiesdata.py#L312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.set_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.set_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the data.</p>
 <p>The units, calendar and fill value of the incoming <cite>Data</cite> instance are
 removed prior to insertion.</p>
@@ -763,7 +763,7 @@ default the data are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/abstract/properties.py#L273"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.set_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L273"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.set_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>

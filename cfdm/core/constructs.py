@@ -336,9 +336,10 @@ TODO
 
         if construct_type is not None:
             if construct_type == ('cell_method',):
-                out = OrderedDict()
+                out = self._constructs[construct_type[0]].copy()
             else:                
                 out = {}
+                
             for ct in construct_type:
                 ct = self._check_construct_type(ct)
                 out.update(self._constructs[ct])

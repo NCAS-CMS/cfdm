@@ -1078,9 +1078,6 @@ may be selected for removal.
     def field_ancillaries(self, axes=None, copy=False):
         '''Return field ancillary constructs.
 
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
-
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -1094,7 +1091,8 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
 
 **Examples:**
 
@@ -1104,7 +1102,7 @@ their construct identifiers.
 >>> f.field_ancillaries()
 {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
-'''
+        '''
         return self._get_constructs().constructs(
             construct_type='field_ancillary', axes=axes, copy=copy)
     #--- End: def
@@ -1112,12 +1110,10 @@ their construct identifiers.
     def cell_methods(self, copy=False):
         '''Return cell method constructs.
 
-Constructs are returned as values of an ordered dictionary, keyed by
-unique their construct identifiers.
-
 .. versionadded:: 1.7
 
-.. seealso:: `constructs`, `get_construct`
+.. seealso:: `constructs`, `get_construct`, `set_cell_method`,
+             `set_construct`
 
 :Parameters:
 
@@ -1127,8 +1123,11 @@ unique their construct identifiers.
 
 :Returns:
 
-    out: `OrderDict`
-        TODO
+    out: `collections.OrderDict`
+        Constructs are returned as values of an ordered dictionary,
+        keyed by their construct identifiers. The order is determined
+        by the order in which the cell method constructs were added to
+        the field construct.
 
 **Examples:**
 

@@ -668,13 +668,17 @@ identifiable by other means.
    >>> t.constructs(cid='auxiliarycoordinate999')
    {}
 
-An individual metadata construct may be returned, without its
-construct identifier, via the `~Field.get_construct` method of the
-field construct, which supports the same filtering options as the
-`~Field.constructs` method:
+An individual metadata construct may be returned without its construct
+identifier, via the `~Field.get_construct` method of the field
+construct, which supports the same filtering options as the
+`~Field.constructs` method. The existence of a metadata construct may
+be checked with the `~Field.has_construct` method of the field
+construct:
 
 .. code:: python
 
+   >>> t.has_construct('latitude')
+   True
    >>> t.get_construct('latitude')
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
    >>> t.get_construct('units:km2')
@@ -684,6 +688,8 @@ field construct, which supports the same filtering options as the
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>}
    >>> t.get_construct('units:degrees')
    ValueError: More than one construct meets criteria
+   >>> t.has_construct('units:degrees')
+   False
 
 Metadata constructs of a particular type can also be retrieved with
 the following methods of the field construct:

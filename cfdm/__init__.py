@@ -10,9 +10,9 @@ This package is an implementation of the CF data model
 '''
 
 __author__       = 'David Hassell'
-__date__         = '2018-11-17'
+__date__         = '2018-11-21'
 __cf_version__   = '1.7'
-__version__      = '1.7b3'
+__version__      = '1.7b4'
 
 from distutils.version import StrictVersion
 import platform

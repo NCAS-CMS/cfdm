@@ -93,7 +93,7 @@
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Version 1.7b3</p>
+<p>Version 1.7b4</p>
 <hr class="docutils" />
 <p>The code examples in this tutorial are available in an <strong>IPython
 notebook</strong> (<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 70kB)
@@ -706,11 +706,15 @@ identifiable by other means.</p>
 <span class="go">{}</span>
 </pre></div>
 </div>
-<p>An individual metadata construct may be returned, without its
-construct identifier, via the <a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a> method of the
-field construct, which supports the same filtering options as the
-<a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> method:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
+<p>An individual metadata construct may be returned without its construct
+identifier, via the <a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a> method of the field
+construct, which supports the same filtering options as the
+<a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> method. The existence of a metadata construct may
+be checked with the <a class="reference internal" href="method/cfdm.Field.has_construct.html#cfdm.Field.has_construct" title="cfdm.Field.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code></a> method of the field
+construct:</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
 <span class="go">&lt;AuxiliaryCoordinate: latitude(10, 9) degrees_N&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;units:km2&#39;</span><span class="p">)</span>
 <span class="go">&lt;CellMeasure: measure%area(9, 10) km2&gt;</span>
@@ -719,6 +723,8 @@ field construct, which supports the same filtering options as the
 <span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: grid_longitude(9) degrees&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;units:degrees&#39;</span><span class="p">)</span>
 <span class="go">ValueError: More than one construct meets criteria</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;units:degrees&#39;</span><span class="p">)</span>
+<span class="go">False</span>
 </pre></div>
 </div>
 <p>Metadata constructs of a particular type can also be retrieved with

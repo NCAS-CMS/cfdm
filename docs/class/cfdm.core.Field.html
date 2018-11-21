@@ -85,7 +85,7 @@
 <h1>cfdm.core.Field<a class="headerlink" href="#cfdm-core-field" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.Field">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties={}</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b3/cfdm/core/field.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties={}</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/field.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -178,10 +178,13 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Field.get_property.html#cfdm.core.Field.get_property" title="cfdm.core.Field.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Field.has_property.html#cfdm.core.Field.has_property" title="cfdm.core.Field.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Field.has_construct.html#cfdm.core.Field.has_construct" title="cfdm.core.Field.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code></a></td>
+<td>Whether a construct exisits.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Field.has_property.html#cfdm.core.Field.has_property" title="cfdm.core.Field.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Field.properties.html#cfdm.core.Field.properties" title="cfdm.core.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Field.properties.html#cfdm.core.Field.properties" title="cfdm.core.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
 </tbody>

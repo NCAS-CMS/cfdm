@@ -65,9 +65,6 @@ object.
     def coordinate_references(self, copy=False):
         '''Return coordinate reference constructs.
 
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
-
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -81,7 +78,9 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
+
 
 **Examples:**
 
@@ -100,9 +99,6 @@ their construct identifiers.
     def coordinates(self, copy=False):
         '''Return dimension and auxiliary coordinate constructs.
 
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
-
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -116,7 +112,8 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
 
 **Examples:**
 
@@ -141,9 +138,6 @@ their construct identifiers.
     def domain_ancillaries(self, copy=False):
         '''Return domain ancillary constructs.
 
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
-
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -157,7 +151,8 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
 
 **Examples:**
 
@@ -177,9 +172,6 @@ their construct identifiers.
     def cell_measures(self, copy=False):
         '''Return cell measure constructs.
 
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
-
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -193,7 +185,8 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
 
 **Examples:**
 
@@ -221,13 +214,14 @@ their construct identifiers.
         '''Return a metadata construct.
 
 The construct is selected via optional parameters. If multiple
-parameters are specified, then the unique construct that satisfies
+parameters are specified, then the *unique* construct that satisfies
 *all* of the given criteria is returned. An error is raised if
 multiple constructs satisfy all of the given criteria.
 
 .. versionadded:: 1.7
 
-.. seealso:: `constructs`, `del_construct`, `set_construct`
+.. seealso:: `constructs`, `del_construct`, `has_construct`,
+             `set_construct`
 
 :Parameters:
 
@@ -316,13 +310,20 @@ multiple constructs satisfy all of the given criteria.
         *Example:*
           ``construct_type='dimension_coordinate'``
 
-        Note that a `Domain` object never contains cell method nor
-        field ancillary constructs.
+
+        *Example:*
+          ``construct_type=['auxiliary_coordinate']``
+
+        *Example:*
+          ``construct_type=('domain_ancillary', 'cell_method')``
+
+        Note that a domain never contains cell method nor field
+        ancillary constructs.
 
     axes: sequence of `str`, optional
         Select constructs which have data that spans any one or more
         of the given domain axes, in any order. Domain axes are
-        specified by their unique internal identifiers.
+        specified by their construct identifiers.
 
         *Example:*
           ``axes=['domainaxis2']``
@@ -338,9 +339,11 @@ multiple constructs satisfy all of the given criteria.
 
     out: `dict`
 
+        True if a unique construct has been identified, otherwise
+        False.
+
 **Examples:**
 
->>> f.constructs()
 TODO
 
         '''
@@ -351,12 +354,148 @@ TODO
             copy=copy)
     #--- End: def
 
+    def has_construct(self, description=None, cid=None, axes=None,
+                      construct_type=None):
+        '''Whether a construct has been set.
+
+The construct is identified via optional parameters. If multiple
+parameters are specified, then the *unique* construct that satisfies
+*all* of the given criteria is identified and `True` is returned. If
+multiple constructs satisfy all of the given criteria then `False` is
+returned.
+
+.. versionadded:: 1.7
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct`
+
+:Parameters:
+
+    description: `str`, optional
+        Select constructs that have the given property, or other
+        attribute, value.
+
+        The description may be one of:
+
+        * The value of the standard name property on its own. 
+
+            *Example:*
+              ``description='air_pressure'`` will select constructs
+              that have a "standard_name" property with the value
+              "air_pressure".
+
+        * The value of any property prefixed by the property name and
+          a colon (``:``).
+
+            *Example:*
+              ``description='positive:up'`` will select constructs
+              that have a "positive" property with the value "up".
+
+            *Example:*
+              ``description='foo:bar'`` will select constructs that
+              have a "foo" property with the value "bar".
+
+            *Example:*
+              ``description='standard_name:air_pressure'`` will select
+              constructs that have a "standard_name" property with the
+              value "air_pressure".
+
+        * The measure of cell measure constructs, prefixed by
+          ``measure%``.
+
+            *Example:*
+              ``description='measure%area'`` will select "area" cell
+              measure constructs.
+
+        * A construct identifier, prefixed by ``cid%`` (see also the
+          *cid* parameter).
+
+            *Example:* 
+              ``description='cid%cellmethod1'`` will select cell
+              method construct with construct identifier
+              "cellmethod1". This is equivalent to
+              ``cid='cellmethod1'``.
+
+        * The netCDF variable name, prefixed by ``ncvar%``.
+
+            *Example:*
+              ``description='ncvar%lat'`` will select constructs with
+              netCDF variable name "lat".
+
+        * The netCDF dimension name of domain axis constructs,
+          prefixed by ``ncdim%``.
+
+            *Example:*
+              ``description='ncdim%time'`` will select domain axis
+              constructs with netCDF dimension name "time".
+
+    cid: `str`, optional
+        Select the construct with the given construct identifier.
+
+        *Example:*
+          ``cid='domainancillary0'`` will the domain ancillary
+          construct with construct identifier "domainancillary1". This
+          is equivalent to ``description='cid%domainancillary0'``.
+
+    construct_type: `str`, optional
+        Select constructs of the given type. Valid types are:
+
+          ==========================  ================================
+          *construct_type*            Constructs
+          ==========================  ================================
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
+          ==========================  ================================
+
+        *Example:*
+          ``construct_type='dimension_coordinate'``
+
+        *Example:*
+          ``construct_type=['auxiliary_coordinate']``
+
+        *Example:*
+          ``construct_type=('domain_ancillary', 'cell_method')``
+
+        Note that a domain never contains cell method nor field
+        ancillary constructs.
+
+    axes: sequence of `str`, optional
+        Select constructs which have data that spans any one or more
+        of the given domain axes, in any order. Domain axes are
+        specified by their construct identifiers.
+
+        *Example:*
+          ``axes=['domainaxis2']``
+
+        *Example:*
+          ``axes=['domainaxis0', 'domainaxis1']``
+
+:Returns:
+
+    out: `bool`
+        True if a unique construct has been identified, otherwise
+        False.
+
+**Examples:**
+
+TODO
+
+        '''
+        out = self.constructs(description=description, cid=cid,
+                              construct_type=construct_type,
+                              axes=axes, copy=False)
+        return len(out) == 1
+    #--- End: def
+
     def constructs(self, description=None, cid=None, axes=None,
                    construct_type=None, copy=False):
         '''Return metadata constructs
-
-Constructs are returned as values of a dictionary, keyed by their
-construct identifiers.
 
 By default all metadata constructs are returned, but a subset may be
 selected via the optional parameters. If multiple parameters are
@@ -365,7 +504,8 @@ returned.
 
 .. versionadded:: 1.7
 
-.. seealso:: `del_construct`, `get_construct`, `set_construct`
+.. seealso:: `del_construct`, `get_construct`, `has_construct`,
+             `set_construct`
 
 :Parameters:
 
@@ -459,7 +599,7 @@ returned.
           ``construct_type=['auxiliary_coordinate']``
 
         *Example:*
-          ``construct_type=['domain_ancillary', 'cell_method']``
+          ``construct_type=('domain_ancillary', 'cell_method')``
 
         Note that a domain never contains cell method nor field
         ancillary constructs.
@@ -467,7 +607,7 @@ returned.
     axes: sequence of `str`, optional
         Select constructs which have data that spans any one or more
         of the given domain axes, in any order. Domain axes are
-        specified by their unique internal identifiers.
+        specified by their construct identifiers.
 
         *Example:*
           ``axes=['domainaxis2']``
@@ -482,11 +622,79 @@ returned.
 :Returns:
 
     out: `dict`
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
+        
+        If cell method contructs, and no other construct types, have
+        been selected with the *construct_type* parameter then the
+        constructs are returned in an ordered dictionary
+        (`collections.OrderedDict`). The order is determined by the
+        order in which the cell method constructs were originally
+        added.
 
 **Examples:**
 
 >>> f.constructs()
-TODO
+{}
+
+>>> f.constructs()
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+ 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+ 'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+ 'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod1': <CellMethod: domainaxis3: maximum>,
+ 'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+ 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+ 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+ 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+ 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+ 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+ 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+ 'domainaxis0': <DomainAxis: 1>,
+ 'domainaxis1': <DomainAxis: 10>,
+ 'domainaxis2': <DomainAxis: 9>,
+ 'domainaxis3': <DomainAxis: 1>,
+ 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+>>> f.constructs('grid_latitude')
+{'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
+>>> f.constructs('long_name:Grid latitude name')
+{'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+>>> f.constructs('ncvar%b')
+{'domainancillary1': <DomainAncillary: ncvar%b(1) >}
+>>> f.constructs(construct_type='coordinate_reference')
+{'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+ 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
+>>> f.constructs(construct_type='cell_method')
+OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+>>> f.constructs(construct_type=['cell_method', 'field_ancillary'])
+{'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+ 'cellmethod1': <CellMethod: domainaxis3: maximum>,
+ 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+>>> f.constructs(axes=['domainaxis0'])
+{'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+ 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+ 'domainancillary1': <DomainAncillary: ncvar%b(1) >}
+>>> f.constructs(axes=['domainaxis0', 'domainaxis1'])
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+ 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+ 'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+ 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+ 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+ 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+ 'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+>>> f.constructs('longitude',
+...              construct_type='auxiliary_coordinate', 
+...              axes=['domainaxis1'])
+{'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
+>>> f.constructs('air_pressure')
+{}
 
         '''
         return self._get_constructs().constructs(
@@ -496,9 +704,6 @@ TODO
 
     def domain_axes(self, copy=False):
         '''Return domain axis constructs.
-
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
 
 .. versionadded:: 1.7
 
@@ -513,7 +718,8 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
 
 **Examples:**
 
@@ -535,9 +741,6 @@ their construct identifiers.
     def auxiliary_coordinates(self, copy=False):
         '''Return auxiliary coordinate constructs.
 
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
-
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -551,7 +754,8 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
 
 **Examples:**
 
@@ -571,9 +775,6 @@ their construct identifiers.
     def dimension_coordinates(self, copy=False):
         '''Return dimension coordinate constructs.
 
-Constructs are returned as values of a dictionary, keyed by unique
-their construct identifiers.
-
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -587,7 +788,8 @@ their construct identifiers.
 :Returns:
 
     out: `dict`
-        TODO
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
 
 **Examples:**
 
