@@ -1,4 +1,5 @@
 from builtins import (object, str)
+from past.builtins import basestring
 
 from collections import OrderedDict
 
@@ -272,17 +273,77 @@ class Constructs(object):
     #--- End: def
         
     def constructs(self, construct_type=None, copy=False):
-        '''TODO
+        '''Return metadata constructs
+
+Constructs are returned as values of a dictionary, keyed by their
+construct identifiers.
+
+.. versionadded:: 1.7
+
+.. seealso:: `del_construct`, `get_construct`, `set_construct`
+
+:Parameters:
+
+    construct_type: (sequence of) `str`, optional
+        Select constructs of the given type, or types. Valid types
+        are:
+
+          ==========================  ================================
+          *construct_type*            Constructs
+          ==========================  ================================
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
+          ==========================  ================================
+
+        *Example:*
+          ``construct_type='dimension_coordinate'``
+
+        *Example:*
+          ``construct_type=['auxiliary_coordinate']``
+
+        *Example:*
+          ``construct_type=['domain_ancillary', 'cell_method']``
+
+        Note that a domain never contains cell method nor field
+        ancillary constructs.
+
+    copy: `bool`, optional
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
 
+**Examples:**
+
+>>> f.constructs()
+TODO
+
         '''
-        construct_type = self._check_construct_type(construct_type)
+        if construct_type is not None:
+            if isinstance(construct_type, basestring):
+                construct_type = (construct_type,)
+        #--- End: if
+        
+#        construct_type = self._check_construct_type(construct_type)
 
         if construct_type is not None:
-            out = self._constructs[construct_type].copy()
+            if construct_type == ('cell_method',):
+                out = OrderedDict()
+            else:                
+                out = {}
+            for ct in construct_type:
+                ct = self._check_construct_type(ct)
+                out.update(self._constructs[ct])
+            
+#            out = self._constructs[construct_type].copy()
         else:
             out = {}
             ignore = self._ignore

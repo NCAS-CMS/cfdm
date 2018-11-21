@@ -1078,17 +1078,18 @@ may be selected for removal.
     def field_ancillaries(self, axes=None, copy=False):
         '''Return field ancillary constructs.
 
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
+
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
 
 :Parameters:
 
-    axes: sequence of `str`, optional
-        TODO
-
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
@@ -1098,7 +1099,10 @@ may be selected for removal.
 **Examples:**
 
 >>> f.field_ancillaries()
-TODO
+{}
+
+>>> f.field_ancillaries()
+{'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
 '''
         return self._get_constructs().constructs(
@@ -1108,6 +1112,9 @@ TODO
     def cell_methods(self, copy=False):
         '''Return cell method constructs.
 
+Constructs are returned as values of an ordered dictionary, keyed by
+unique their construct identifiers.
+
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -1115,7 +1122,8 @@ TODO
 :Parameters:
 
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
@@ -1125,9 +1133,11 @@ TODO
 **Examples:**
 
 >>> f.cell_methods()
-OrderedDict([('cellmethod0',
-              <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>),
-             ('cellmethod1', <CellMethod: domainaxis1: maximum where sea>)])
+OrderedDict()
+
+>>> f.cell_methods()
+OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+             ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
         return self._get_constructs().constructs(

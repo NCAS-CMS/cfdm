@@ -65,6 +65,9 @@ object.
     def coordinate_references(self, copy=False):
         '''Return coordinate reference constructs.
 
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
+
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -72,26 +75,33 @@ object.
 :Parameters:
 
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
-
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
-TODO
 >>> f.coordinate_references()
 {}
+
+>>> f.coordinate_references()
+{'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+ 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
+
         '''
         return self._get_constructs().constructs(
             construct_type='coordinate_reference', copy=copy)
     #--- End: def
 
-    def coordinates(self, axes=None, copy=False):
+    def coordinates(self, copy=False):
         '''Return dimension and auxiliary coordinate constructs.
+
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
 
 .. versionadded:: 1.7
 
@@ -99,74 +109,76 @@ TODO
 
 :Parameters:
 
-    axes: sequence of `str`, optional
-        TODO
-
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
-TODO
 >>> f.coordinates()
 {}
+
+>>> f.coordinates()
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+ 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+ 'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+ 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
         '''
-        out = self.dimension_coordinates(axes=axes, copy=copy)
-        out.update(self.auxiliary_coordinates(axes=axes, copy=copy))
+        out = self.dimension_coordinates(copy=copy)
+        out.update(self.auxiliary_coordinates(copy=copy))
         return out
     #--- End: def
 
-    def domain_ancillaries(self, axes=None, copy=False):
+    def domain_ancillaries(self, copy=False):
         '''Return domain ancillary constructs.
 
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
+
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
 
 :Parameters:
 
-    axes: sequence of `str`, optional
-        TODO
-
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
-TODO
 >>> f.domain_ancillaries()
 {}
+
+>>> f.domain_ancillaries()
+{'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+ 'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+ 'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
+
         '''
         return self._get_constructs().constructs(
-            construct_type='domain_ancillary', axes=axes, copy=copy)
+            construct_type='domain_ancillary', copy=copy)
     #--- End: def
     
-    def domain_axes(self, copy=False):
-        '''TODO
-
-:Parameters:
-
-    copy: 
-
-**Examples**
-
-TODO     
-        '''
-        return self.constructs(construct_type='domain_axis', copy=copy)
-    #--- End: def
-    
-    def cell_measures(self, axes=None, copy=False):
+    def cell_measures(self, copy=False):
         '''Return cell measure constructs.
+
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
 
 .. versionadded:: 1.7
 
@@ -174,27 +186,27 @@ TODO
 
 :Parameters:
 
-    axes: sequence of `str`, optional
-        TODO
-
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
-TODO
->>> f.cell_measure()
+>>> f.cell_measures()
 {}
+
+>>> f.cell_measures()
+{'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+
         '''
         return self._get_constructs().constructs(
-            construct_type='cell_measure', axes=axes, copy=copy)
+            construct_type='cell_measure', copy=copy)
     #--- End: def
-
 
     def del_construct(self, *args, **kwargs):
 
@@ -343,8 +355,8 @@ TODO
                    construct_type=None, copy=False):
         '''Return metadata constructs
 
-Constructs are returned as values of a dictionary, keyed by unique
-internal identifiers.
+Constructs are returned as values of a dictionary, keyed by their
+construct identifiers.
 
 By default all metadata constructs are returned, but a subset may be
 selected via the optional parameters. If multiple parameters are
@@ -423,8 +435,9 @@ returned.
           construct with construct identifier "domainancillary1". This
           is equivalent to ``description='cid%domainancillary0'``.
 
-    construct_type: `str`, optional
-        Select constructs of the given type. Valid types are:
+    construct_type: (sequence of) `str`, optional
+        Select constructs of the given type, or types. Valid types
+        are:
 
           ==========================  ================================
           *construct_type*            Constructs
@@ -442,8 +455,14 @@ returned.
         *Example:*
           ``construct_type='dimension_coordinate'``
 
-        Note that a `Domain` object never contains cell method nor
-        field ancillary constructs.
+        *Example:*
+          ``construct_type=['auxiliary_coordinate']``
+
+        *Example:*
+          ``construct_type=['domain_ancillary', 'cell_method']``
+
+        Note that a domain never contains cell method nor field
+        ancillary constructs.
 
     axes: sequence of `str`, optional
         Select constructs which have data that spans any one or more
@@ -478,6 +497,9 @@ TODO
     def domain_axes(self, copy=False):
         '''Return domain axis constructs.
 
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
+
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
@@ -485,64 +507,72 @@ TODO
 :Parameters:
 
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
-TODO
+
 >>> f.domain_axes()
 {}
+
+>>> f.domain_axes()
+{'domainaxis0': <DomainAxis: 1>,
+ 'domainaxis1': <DomainAxis: 10>,
+ 'domainaxis2': <DomainAxis: 9>,
+ 'domainaxis3': <DomainAxis: 1>}
+
         '''
         return self._get_constructs().constructs(
             construct_type='domain_axis', copy=copy)
     #--- End: def
         
-#    def coordinates(self, axes=None, copy=False):
-#        '''
-#        '''
-#        out = self.dimension_coordinates(axes=axes, copy=copy)
- #       out.update(self.auxiliary_coordinates(axes=axes, copy=copy))
- #       return out
- #   #--- End: def
-
-    def auxiliary_coordinates(self, axes=None, copy=False):
+    def auxiliary_coordinates(self, copy=False):
         '''Return auxiliary coordinate constructs.
 
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
+
 .. versionadded:: 1.7
 
 .. seealso:: `constructs`, `get_construct`
 
 :Parameters:
 
-    axes: sequence of `str`, optional
-        TODO
-
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
-TODO
->>> f.auxiliary_constructs()
+>>> f.auxiliary_coordinates()
 {}
+
+>>> f.auxiliary_coordinates()
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+ 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
         '''
         return self._get_constructs().constructs(
-            construct_type='auxiliary_coordinate', axes=axes, copy=copy)
+            construct_type='auxiliary_coordinate', copy=copy)
     #--- End: def
  
-    def dimension_coordinates(self, axes=None, copy=False):
+    def dimension_coordinates(self, copy=False):
         '''Return dimension coordinate constructs.
+
+Constructs are returned as values of a dictionary, keyed by unique
+their construct identifiers.
 
 .. versionadded:: 1.7
 
@@ -550,25 +580,29 @@ TODO
 
 :Parameters:
 
-    axes: sequence of `str`, optional
-        TODO
-
     copy: `bool`, optional
-        If `True` then deep copies of the constructs are returned.
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
 
 :Returns:
 
     out: `dict`
         TODO
 
-**Examples**
+**Examples:**
 
-TODO
 >>> f.dimension_coordinates()
 {}
+
+>>> f.dimension_coordinates()
+{'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+ 'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
         '''
         return self._get_constructs().constructs(
-            construct_type='dimension_coordinate', axes=axes, copy=copy)
+            construct_type='dimension_coordinate', copy=copy)
     #--- End: def
     
     def domain_axis_name(self, axis):
@@ -616,7 +650,7 @@ TODO
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
         '''
@@ -654,7 +688,7 @@ TODO
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
 
@@ -703,7 +737,7 @@ TODO
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
 
@@ -752,7 +786,7 @@ TODO
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
 
@@ -790,7 +824,7 @@ TODO
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
 
@@ -839,7 +873,7 @@ TODO
      out: `str`
         The identifier of the construct.
     
-**Examples**
+**Examples:**
 
 TODO
 
