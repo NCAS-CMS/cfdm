@@ -61,15 +61,74 @@ class Properties(Container):
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''TODO
+        '''Whether two collections of properties are the same.
+
+For vector-valued properties to be equal they must have same size and
+be element-wise equal.
+
+Two numerical elements ``a`` and ``b`` are considered equal if
+``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers.
 
 .. versionadded:: 1.7
 
 :Parameters:
 
-:Returns:
+    other: 
+        The object to compare for equality.
+
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
+        
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
+
+    ignore_fill_value: `bool`, optional
+        If True then the "_FillValue" and "missing_value" properties
+        are omitted from the comparison.
+
+    traceback: `bool`, optional
+        If True and the collections of properties are different then
+        print a traceback stating how they are different.
+
+    ignore_properties: sequence of `str`, optional
+        The names of properties to omit from the comparison.
+
+    ignore_data_type: `bool`, optional
+        TODO
+
+    ignore_construct_type: `bool`, optional
+        If True then proceed with equality comparisons if the *other*
+        parameter is not a `Properties` instance. By default, a
+        non-`Properties` instance is never equal to a `Properties`
+        instance.
+
+:Returns: 
+  
+    out: `bool`
+        Whether the two collections of propoerties are equal.
 
 **Examples:**
+
+>>> p.equals(p)
+True
+>>> p.equals(p.copy())
+True
+>>> p.equals('not a colection of properties')
+False
+
+>>> q = p.copy()
+>>> q.set_property('foo', 'bar')
+>>> p.equals(q)
+False
+>>> p.equals(q, traceback=True)
+Field: Non-common property name: foo
+Field: Different properties
+False
+
         '''
         if not super().equals(other, traceback=traceback,
                               ignore_construct_type=ignore_construct_type):
@@ -95,9 +154,10 @@ class Properties(Container):
                 
         if set(self_properties) != set(other_properties):
             if traceback:
-                print("{0}: Different properties: {1}, {2}".format( 
-                    self.__class__.__name__,
-                    sorted(self_properties), sorted(other_properties)))
+                _ =  set(self_properties).symmetric_difference(other_properties)
+                for prop in set(self_properties).symmetric_difference(other_properties):                    
+                    print("{0}: Non-common property name: {1}".format( 
+                        self.__class__.__name__, prop))
             return False
 
         for prop, x in self_properties.items():

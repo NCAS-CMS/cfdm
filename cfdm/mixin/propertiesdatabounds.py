@@ -211,21 +211,87 @@ rules, the only differences being:
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_construct_type=False):
-        '''TODOTODO
+        '''Whether two data arrays with descriptive properties and cell bounds
+are the same.
 
-..versionadded:: 1.7
+Equality is strict by default. This means that:
+
+* the descriptive properties must be the same,
+
+..
+
+* vector-valued properties must have same size and be element-wise
+  equal,
+
+..
+
+* if there are data arrays then they must have same shape, data type
+  and be element-wise equal.
+
+Two numerical elements ``a`` and ``b`` are considered equal if
+``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
-:Returns:
+    other: 
+        The object to compare for equality.
+
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
+        
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
+
+    ignore_fill_value: `bool`, optional
+        If True then the "_FillValue" and "missing_value" properties
+        are omitted from the comparison.
+
+    traceback: `bool`, optional
+        If True and the collections of properties are different then
+        print a traceback stating how they are different.
+
+    ignore_properties: sequence of `str`, optional
+        The names of properties to omit from the comparison.
+
+    ignore_data_type: `bool`, optional
+        TODO
+
+    ignore_construct_type: `bool`, optional
+        If True then proceed with equality comparisons if the *other*
+        parameter is not a `PropertiesDataBounds` instance. By
+        default, a non-`PropertiesDataBounds` instance is never equal
+        to a `PropertiesDataBounds` instance.
+
+:Returns: 
+  
+    out: `bool`
+        Whether the two collections of propoerties are equal.
 
 **Examples:**
-        '''
-#        if rtol is None:
-#            rtol = RTOL()
-#        if atol is None:
-#            atol = ATOL()
-    
+
+>>> p.equals(p)
+True
+>>> p.equals(p.copy())
+True
+>>> p.equals('not a colection of properties')
+False
+
+>>> q = p.copy()
+>>> q.set_property('foo', 'bar')
+>>> p.equals(q)
+False
+>>> p.equals(q, traceback=True)
+Field: Non-common property name: foo
+Field: Different properties
+False
+
+        '''    
         # ------------------------------------------------------------
         # Check the properties and data
         # ------------------------------------------------------------

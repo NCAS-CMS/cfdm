@@ -640,14 +640,19 @@ metadata constructs and for each pair of constructs:
 
 * the descriptive properties must be the same (with the exception of
   the field construct's "Conventions" property, which is never
-  checked), and
+  checked),
+
+..
+
+* vector-valued properties must have same size and be element-wise
+  equal,
 
 ..
 
 * if there are data arrays then they must have same shape, data type
   and be element-wise equal.
 
-Two numerical data elements ``a`` and ``b`` are considered equal if
+Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers.
@@ -655,6 +660,8 @@ positive, typically very small numbers.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
@@ -675,16 +682,19 @@ construct.
 
     traceback: `bool`, optional
         If True and the field constructs are different then print a
-        traceback stating where they are different.
+        traceback stating how they are different.
 
     ignore_properties: sequence of `str`, optional
         The names of properties to omit from the comparison. Note that
         the "Conventions" property is always omitted.
 
+    ignore_data_type: `bool`, optional
+        TODO
+
     ignore_construct_type: `bool`, optional
-        If True then proceed with equality comparisons if when the
-        *other* parameter is not a `Field` instance. By default, a
-        non-`Field` instance is never equal to a `Field`.
+        If True then proceed with equality comparisons if the *other*
+        parameter is not a `Field` instance. By default, a non-`Field`
+        instance is never equal to a `Field` instance.
 
 :Returns: 
   
@@ -699,32 +709,16 @@ True
 True
 >>> f.equals(f[...])
 True
-
 >>> f.equals('not a Field instance')
 False
 
-TODO
-
->>> f.equals('not a Field instance')
-False
-
->>> f.Conventions
-'CF-1.0'
 >>> g = f.copy()
->>> g.Conventions = 'CF-1.7'
+>>> g.set_property('foo', 'bar')
 >>> f.equals(g)
-True
-
-In the following example, two fields differ only by the long name of
-their time coordinates. The traceback shows that they differ in their
-domains, that they differ in their time coordinates and that the long
-name could not be matched.
-
->>> g = f.copy()
->>> g.coord('time').long_name += ' different'
+False
 >>> f.equals(g, traceback=True)
-Domain: Different coordinate: <CF Coordinate: time(12)>
-Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (128, 1, 12, 64)>
+Field: Non-common property name: foo
+Field: Different properties
 False
 
         '''

@@ -74,12 +74,13 @@ x.__str__() <==> str(x)
             # --------------------------------------------------------
             return eq(x, rtol=rtol, atol=atol, **kwargs)
         
+        if numpy.shape(x) != numpy.shape(y):
+            return False
+        
         if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
             # --------------------------------------------------------
             # x or y is a numpy array
             # --------------------------------------------------------
-            if numpy.shape(x) != numpy.shape(y):
-                return False
             
             # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
    
@@ -111,7 +112,11 @@ x.__str__() <==> str(x)
             # --------------------------------------------------------
             # x and y are not numpy arrays
             # --------------------------------------------------------
-            return x == y
+#            return x == y
+            try:
+                return numpy.allclose(x, y, rtol=rtol, atol=atol)
+            except (IndexError, NotImplementedError, TypeError):
+                return x == y
     #--- End: def
     
     def equals(self, other, traceback=False,
