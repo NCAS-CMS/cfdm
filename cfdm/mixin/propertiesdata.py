@@ -1,6 +1,7 @@
 from __future__ import print_function
 from builtins import (str, super)
 
+from . import Container
 from . import Properties
 
 
@@ -279,6 +280,10 @@ Field: Different properties
 False
 
         '''
+        if not Container.equals(self, other, traceback=traceback,
+                                ignore_construct_type=ignore_construct_type):
+            return False
+        
         # ------------------------------------------------------------
         # Check external variables (returning True if both are
         # external with the same netCDF variable name)

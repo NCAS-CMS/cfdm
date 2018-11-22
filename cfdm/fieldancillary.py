@@ -156,32 +156,32 @@ positive, typically very small numbers.
         TODO
 
     ignore_construct_type: `bool`, optional
-        If True then proceed with equality comparisons if the *other*
-        parameter is not a `FieldAncillary` instance. By default, a
-        non-`FieldAncillary` instance is never equal to a
-        `FieldAncillary` instance.
+        If True then *other* can be equal if it is not a field
+        ancillary construct (nor a subclass of one), but is an object
+        with the same API. By default, *other* can only be equal if it
+        is a field ancillary construct (or a subclass of one).
 
 :Returns: 
   
     out: `bool`
-        Whether the two collections of propoerties are equal.
+        Whether the two field ancillary constructs are equal.
 
 **Examples:**
 
->>> p.equals(p)
+>>> f.equals(p)
 True
->>> p.equals(p.copy())
+>>> f.equals(d.copy())
 True
->>> p.equals('not a colection of properties')
+>>> f.equals('not a field ancillary')
 False
 
->>> q = p.copy()
->>> q.set_property('foo', 'bar')
->>> p.equals(q)
+>>> g = f.copy()
+>>> g.set_property('foo', 'bar')
+>>> f.equals(g)
 False
->>> p.equals(q, traceback=True)
-Field: Non-common property name: foo
-Field: Different properties
+>>> f.equals(g, traceback=True)
+FieldAncillary: Non-common property name: foo
+FieldAncillary: Different properties
 False
 
         '''

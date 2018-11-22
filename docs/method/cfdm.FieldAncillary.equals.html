@@ -139,17 +139,17 @@ print a traceback stating how they are different.</p>
 <dd><p class="first last">TODO</p>
 </dd>
 <dt>ignore_construct_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then proceed with equality comparisons if the <em>other</em>
-parameter is not a <a class="reference internal" href="../class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a> instance. By default, a
-non-<a class="reference internal" href="../class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a> instance is never equal to a
-<a class="reference internal" href="../class/cfdm.FieldAncillary.html#cfdm.FieldAncillary" title="cfdm.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldAncillary</span></code></a> instance.</p>
+<dd><p class="first last">If True then <em>other</em> can be equal if it is not a field
+ancillary construct (nor a subclass of one), but is an object
+with the same API. By default, <em>other</em> can only be equal if it
+is a field ancillary construct (or a subclass of one).</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">Whether the two collections of propoerties are equal.</p>
+<dd><p class="first last">Whether the two field ancillary constructs are equal.</p>
 </dd>
 </dl>
 </td>
@@ -157,21 +157,21 @@ non-<a class="reference internal" href="../class/cfdm.FieldAncillary.html#cfdm.F
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a colection of properties&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a field ancillary&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="go">Field: Non-common property name: foo</span>
-<span class="go">Field: Different properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">FieldAncillary: Non-common property name: foo</span>
+<span class="go">FieldAncillary: Different properties</span>
 <span class="go">False</span>
 </pre></div>
 </div>

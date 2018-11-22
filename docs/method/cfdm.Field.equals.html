@@ -147,9 +147,10 @@ the “Conventions” property is always omitted.</p>
 <dd><p class="first last">TODO</p>
 </dd>
 <dt>ignore_construct_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then proceed with equality comparisons if the <em>other</em>
-parameter is not a <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance. By default, a non-<a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>
-instance is never equal to a <a class="reference internal" href="../class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance.</p>
+<dd><p class="first last">If True then <em>other</em> can be equal if it is not a field
+construct (nor a subclass of one), but is an object with the
+same API. By default, <em>other</em> can only be equal if it is a
+field construct (or a subclass of one).</p>
 </dd>
 </dl>
 </td>

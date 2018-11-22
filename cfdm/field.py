@@ -661,6 +661,8 @@ NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
 
+
+
 .. versionadded:: 1.7
 
 :Parameters:
@@ -692,9 +694,10 @@ construct.
         TODO
 
     ignore_construct_type: `bool`, optional
-        If True then proceed with equality comparisons if the *other*
-        parameter is not a `Field` instance. By default, a non-`Field`
-        instance is never equal to a `Field` instance.
+        If True then *other* can be equal if it is not a field
+        construct (nor a subclass of one), but is an object with the
+        same API. By default, *other* can only be equal if it is a
+        field construct (or a subclass of one).
 
 :Returns: 
   

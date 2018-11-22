@@ -132,9 +132,6 @@ False
         '''
         if not super().equals(other, traceback=traceback,
                               ignore_construct_type=ignore_construct_type):
-            if traceback:
-                print(
-"{0}: Different ??/".format(self.__class__.__name__))
             return False
 
         # ------------------------------------------------------------
