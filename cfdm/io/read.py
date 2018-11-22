@@ -68,6 +68,14 @@ def read(filename, external_files=None, field=None, verbose=False,
 
 The dataset may be a netCDF file on disk or on an OPeNDAP server.
 
+**Performance**
+
+Descriptive properties are always read into memory, but lazy loading
+is employed for all data arrays, which means that no data is read into
+memory until the data is required for inspection or to modify the
+array contents. This maximises the number of fields that may be read
+within a session, and makes the read operation fast.
+
 .. versionadded:: 1.7
 
 .. seealso:: `cfdm.write`

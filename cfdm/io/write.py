@@ -30,10 +30,11 @@ formats are supported.
 
 **NetCDF variable and dimension names**
 
-These names are stored within field constructs read a from dataset, or
-may be set manually. They are used when writing a field construct to
-the file. If a name has not been set then one will be constructed. The
-names may be modified internally to prevent duplication in the file.
+These names are stored within constructs read a from dataset, or may
+be set manually. They are used when writing a field construct to the
+file. If a name has not been set then one will be constructed (usually
+based on the standard name if it exists). The names may be modified
+internally to prevent duplication in the file.
 
 Each construct, or construct component, that corresponds to a netCDF
 variable has the following methods to get, set and remove a netCDF
@@ -53,11 +54,12 @@ or netCDF data variable attributes. See the *global_attributes* and
 
 **External variables**
 
-Metadata constructs marked as external may be omitted from the file
-and referred to via the netCDF "external_variables" global
-attribute. In addition, omitted constructs may be written to an
-external file. Constructs that are allowed to be external have the
-`!nc_external` method to get and set their external status: `
+Metadata constructs marked as external are omitted from the file and
+referred to via the netCDF "external_variables" global
+attribute. However, omitted constructs may be written to an external
+file (see the *external_file* parameter for details). Constructs that
+are allowed to be external have the `!nc_external` method to get and
+set their external status:
 
 **NetCDF unlimited dimensions**
 
@@ -65,7 +67,7 @@ external file. Constructs that are allowed to be external have the
 
 **HDF chunksizes**
 
-TODO
+
 
 .. versionadded:: 1.7
 
@@ -93,34 +95,31 @@ TODO
     fmt: `str`, optional
         The format of the output file. One of:
 
-          ==========================  ===============================
-          *fmt*                       Output file type
-          ==========================  ===============================
-          ``'NETCDF4'``               NetCDF4 format file. This is
-                                      the default.       
-          
-          ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file
-                                      (see below) 
-          
-          ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file
-                                      (limited to file sizes less
-                                      than 2GB).
-          
-          ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format
-                                      file
-          
-          ``'NETCDF3_64BIT'``         An alias for
-                                      ``'NETCDF3_64BIT_OFFSET'``
-          
-          ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format
-                                      file with extensions (see
-                                      below)
-          ==========================  ===============================
+          ==========================  =============================== 
+          *fmt*                       Output file type                
+          ==========================  =============================== 
+          ``'NETCDF4'``               NetCDF4 format file. This is    
+                                      the default.                    
+                                                                      
+          ``'NETCDF4_CLASSIC'``       NetCDF4 classic format file     
+                                      (see below)                     
+                                                                      
+          ``'NETCDF3_CLASSIC'``       NetCDF3 classic format file 
+                                      (limited to file sizes less     
+                                      than 2GB).                      
+                                                                      
+          ``'NETCDF3_64BIT_OFFSET'``  NetCDF3 64-bit offset format    
+                                      file                            
+                                                                      
+          ``'NETCDF3_64BIT'``         An alias for                    
+                                      ``'NETCDF3_64BIT_OFFSET'``      
+                                                                      
+          ``'NETCDF3_64BIT_DATA'``    NetCDF3 64-bit offset format    
+                                      file with extensions (see       
+                                      below)                          
+          ==========================  ================================
 
         By default the format is ``'NETCDF4'``.
-
-        Note that the netCDF3 formats may be considerably slower than
-        any of the other options.
 
         All formats support large files (i.e. those greater than 2GB)
         except ``'NETCDF3_CLASSIC'``.
@@ -178,16 +177,14 @@ TODO
 
     variable_attributes: (sequence of) `str`, optional
          Create netCDF data variable attributes from the specified
-         field construct properties, rather than netCDF global
-         attributes.
+         field construct properties.
 
          By default, all properties that are not created as netCDF
          global properties are created as attributes netCDF data
          variables. See the *global_attributes* parameter for details.
 
-         If a property is named by the *variable_attributes* parameter
-         then it will always be created as a netCDF data variable
-         attribute.
+         Any property named by the *variable_attributes* parameter
+         will always be created as a netCDF data variable attribute.
 
          *Example:*
             ``variable_attributes='project'``
@@ -196,19 +193,18 @@ TODO
             ``variable_attributes=['project', 'doi']``
 
     external_file: `str`, optional   
-        Write metadata constructs that are marked as external, and
-        have data, to the named external file. Ignored if there are no
+        Write metadata constructs that have data and are marked as
+        external to the named external file. Ignored if there are no
         such constructs.
 
     datatype: `dict`, optional
         Specify data type conversions to be applied prior to writing
-        data to disk. This may be useful as a crude means of packing,
-        or because the output format does not support a particular
-        data type (for example, netCDF3 classic files do not support
-        64-bit integers). By default, input data types are
-        preserved. Any data type conversion is only applied to the
-        arrays on disk, and not to the input field constructs
-        themselves.
+        data to disk. This may be useful as a means of packing, or
+        because the output format does not support a particular data
+        type (for example, netCDF3 classic files do not support 64-bit
+        integers). By default, input data types are preserved. Any
+        data type conversion is only applied to the arrays on disk,
+        and not to the input field constructs themselves.
 
         Data types conversions are defined by `numpy.dtype` objects in
         a dictionary whose keys are input data types with values of
@@ -247,7 +243,7 @@ TODO
         data is 10 to the power -N. For example, a value of 2 will
         retain a precision of 0.01. In conjunction with the *compress*
         parameter this produces 'lossy', but significantly more
-        efficient compression. See the `netCDF4 package
+        efficient, compression. See the `netCDF4 package
         <http://unidata.github.io/netcdf4-python>`_ for more details.
 
         *Example:*

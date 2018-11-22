@@ -14,6 +14,8 @@ The code examples in this tutorial are available in an **IPython
 notebook** (:download:`download <notebooks/tutorial.ipynb>`, 70kB)
 [#files]_.
 
+----
+ 
 The cfdm package is imported as follows:
 
 .. code:: python

@@ -91,10 +91,11 @@
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
 formats are supported.</p>
 <p><strong>NetCDF variable and dimension names</strong></p>
-<p>These names are stored within field constructs read a from dataset, or
-may be set manually. They are used when writing a field construct to
-the file. If a name has not been set then one will be constructed. The
-names may be modified internally to prevent duplication in the file.</p>
+<p>These names are stored within constructs read a from dataset, or may
+be set manually. They are used when writing a field construct to the
+file. If a name has not been set then one will be constructed (usually
+based on the standard name if it exists). The names may be modified
+internally to prevent duplication in the file.</p>
 <p>Each construct, or construct component, that corresponds to a netCDF
 variable has the following methods to get, set and remove a netCDF
 variable name: <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code> and
@@ -108,20 +109,20 @@ remove a netCDF dimension name: <a class="reference internal" href="../method/cf
 or netCDF data variable attributes. See the <em>global_attributes</em> and
 <em>variable_attributes</em> parameters for details.</p>
 <p><strong>External variables</strong></p>
-<p>Metadata constructs marked as external may be omitted from the file
-and referred to via the netCDF “external_variables” global
-attribute. In addition, omitted constructs may be written to an
-external file. Constructs that are allowed to be external have the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_external</span></code> method to get and set their external status: `</p>
+<p>Metadata constructs marked as external are omitted from the file and
+referred to via the netCDF “external_variables” global
+attribute. However, omitted constructs may be written to an external
+file (see the <em>external_file</em> parameter for details). Constructs that
+are allowed to be external have the <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_external</span></code> method to get and
+set their external status:</p>
 <p><strong>NetCDF unlimited dimensions</strong></p>
 <p><strong>HDF chunksizes</strong></p>
-<p>TODO</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
+<p class="last"><a class="reference internal" href="../generated/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -149,53 +150,12 @@ current working directory is <code class="docutils literal notranslate"><span cl
 <dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">The format of the output file. One of:</p>
 <blockquote>
-<div><table border="1" class="docutils">
-<colgroup>
-<col width="46%" />
-<col width="54%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head"><em>fmt</em></th>
-<th class="head">Output file type</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code></td>
-<td>NetCDF4 format file. This is
-the default.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'NETCDF4_CLASSIC'</span></code></td>
-<td>NetCDF4 classic format file
-(see below)</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code></td>
-<td>NetCDF3 classic format file
-(limited to file sizes less
-than 2GB).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code></td>
-<td>NetCDF3 64-bit offset format
-file</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT'</span></code></td>
-<td>An alias for
-<code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code></td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code></td>
-<td>NetCDF3 64-bit offset format
-file with extensions (see
-below)</td>
-</tr>
-</tbody>
-</table>
-</div></blockquote>
+<div></div></blockquote>
 <p>By default the format is <code class="docutils literal notranslate"><span class="pre">'NETCDF4'</span></code>.</p>
-<p>Note that the netCDF3 formats may be considerably slower than
-any of the other options.</p>
 <p>All formats support large files (i.e. those greater than 2GB)
 except <code class="docutils literal notranslate"><span class="pre">'NETCDF3_CLASSIC'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> is a format that requires version
-4.4.0 or newer of the C library (use <a class="reference internal" href="cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a> to see
+4.4.0 or newer of the C library (use <a class="reference internal" href="../generated/cfdm.environment.html#cfdm.environment" title="cfdm.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.environment</span></code></a> to see
 which version if the netCDF-C library is in use). It extends
 the <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code> binary format to allow for
 unsigned/64 bit integer data types and 64-bit dimension sizes.</p>
@@ -246,14 +206,12 @@ property.</p>
 </dd>
 <dt>variable_attributes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Create netCDF data variable attributes from the specified
-field construct properties, rather than netCDF global
-attributes.</p>
+field construct properties.</p>
 <p>By default, all properties that are not created as netCDF
 global properties are created as attributes netCDF data
 variables. See the <em>global_attributes</em> parameter for details.</p>
-<p>If a property is named by the <em>variable_attributes</em> parameter
-then it will always be created as a netCDF data variable
-attribute.</p>
+<p>Any property named by the <em>variable_attributes</em> parameter
+will always be created as a netCDF data variable attribute.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">variable_attributes='project'</span></code></p>
@@ -264,19 +222,18 @@ attribute.</p>
 </dl>
 </dd>
 <dt>external_file: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional   </dt>
-<dd><p class="first last">Write metadata constructs that are marked as external, and
-have data, to the named external file. Ignored if there are no
+<dd><p class="first last">Write metadata constructs that have data and are marked as
+external to the named external file. Ignored if there are no
 such constructs.</p>
 </dd>
 <dt>datatype: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Specify data type conversions to be applied prior to writing
-data to disk. This may be useful as a crude means of packing,
-or because the output format does not support a particular
-data type (for example, netCDF3 classic files do not support
-64-bit integers). By default, input data types are
-preserved. Any data type conversion is only applied to the
-arrays on disk, and not to the input field constructs
-themselves.</p>
+data to disk. This may be useful as a means of packing, or
+because the output format does not support a particular data
+type (for example, netCDF3 classic files do not support 64-bit
+integers). By default, input data types are preserved. Any
+data type conversion is only applied to the arrays on disk,
+and not to the input field constructs themselves.</p>
 <p>Data types conversions are defined by <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a> objects in
 a dictionary whose keys are input data types with values of
 output data types.</p>
@@ -316,7 +273,7 @@ integer, N the precision that is retained in the compressed
 data is 10 to the power -N. For example, a value of 2 will
 retain a precision of 0.01. In conjunction with the <em>compress</em>
 parameter this produces ‘lossy’, but significantly more
-efficient compression. See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more details.</p>
+efficient, compression. See the <a class="reference external" href="http://unidata.github.io/netcdf4-python">netCDF4 package</a> for more details.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">least_significant_digit=3</span></code></p>
@@ -406,7 +363,7 @@ netCDF dimensions, variables and attributes.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/function/cfdm.write.rst.txt"
