@@ -87,14 +87,15 @@
 <h1>cfdm.core.Field.has_property<a class="headerlink" href="#cfdm-core-field-has-property" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.Field.has_property">
-<code class="descclassname">Field.</code><code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.has_property" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.has_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.core.Field.del_property.html#cfdm.core.Field.del_property" title="cfdm.core.Field.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a>, <a class="reference internal" href="cfdm.core.Field.get_property.html#cfdm.core.Field.get_property" title="cfdm.core.Field.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a>, <a class="reference internal" href="cfdm.core.Field.properties.html#cfdm.core.Field.properties" title="cfdm.core.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>, <a class="reference internal" href="cfdm.core.Field.set_property.html#cfdm.core.Field.set_property" title="cfdm.core.Field.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.core.Field.del_property.html#cfdm.core.Field.del_property" title="cfdm.core.Field.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a>, <a class="reference internal" href="cfdm.core.Field.get_property.html#cfdm.core.Field.get_property" title="cfdm.core.Field.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a>, <a class="reference internal" href="cfdm.core.Field.properties.html#cfdm.core.Field.properties" title="cfdm.core.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>,
+<a class="reference internal" href="cfdm.core.Field.set_property.html#cfdm.core.Field.set_property" title="cfdm.core.Field.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -131,7 +132,7 @@
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>

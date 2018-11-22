@@ -29,7 +29,22 @@ climatological time axes, the bounds are interpreted in a special way
 indicated by the cell method constructs.
 
     '''
-    def get_construct_type(self):
+#    def get_construct_type(self):
+
+
+    @property
+    def construct_type(self):
+        '''Return a description of the construct type.
+        
+.. versionadded:: 1.7
+        
+:Returns:
+
+    out: `str`
+        The construct type.
+
+        '''
         return 'dimension_coordinate'
+    #--- End: def
 
 #--- End: class

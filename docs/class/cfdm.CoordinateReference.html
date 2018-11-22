@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.CoordinateReference.coordinates" href="../method/cfdm.CoordinateReference.coordinates.html" />
-    <link rel="prev" title="cfdm.CellMethod.sorted" href="../method/cfdm.CellMethod.sorted.html" />
+    <link rel="prev" title="cfdm.CellMethod.__str__" href="../method/cfdm.CellMethod.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,7 +49,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.CellMethod.sorted.html" title="previous chapter">cfdm.CellMethod.sorted</a></li>
+      <li>Previous: <a href="../method/cfdm.CellMethod.__str__.html" title="previous chapter">cfdm.CellMethod.__str__</a></li>
       <li>Next: <a href="../method/cfdm.CoordinateReference.coordinates.html" title="next chapter">cfdm.CoordinateReference.coordinates</a></li>
   </ul></li>
   </ul></li>
@@ -85,7 +85,7 @@
 <h1>cfdm.CoordinateReference<a class="headerlink" href="#cfdm-coordinatereference" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.CoordinateReference">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/coordinatereference.py#L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/coordinatereference.py#L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of the
@@ -247,10 +247,13 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.coordinate_conversion.html#cfdm.CoordinateReference.coordinate_conversion" title="cfdm.CoordinateReference.coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_conversion</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.construct_type.html#cfdm.CoordinateReference.construct_type" title="cfdm.CoordinateReference.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></td>
+<td>Return a description of the construct type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.coordinate_conversion.html#cfdm.CoordinateReference.coordinate_conversion" title="cfdm.CoordinateReference.coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_conversion</span></code></a></td>
 <td>Return the coordinate conversion.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.datum.html#cfdm.CoordinateReference.datum" title="cfdm.CoordinateReference.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.datum.html#cfdm.CoordinateReference.datum" title="cfdm.CoordinateReference.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></td>
 <td>Return the datum.</td>
 </tr>
 </tbody>

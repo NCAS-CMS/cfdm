@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Field.expand_dims" href="cfdm.Field.expand_dims.html" />
+    <link rel="next" title="cfdm.Field.set_construct" href="cfdm.Field.set_construct.html" />
     <link rel="prev" title="cfdm.Field.set_data_axes" href="cfdm.Field.set_data_axes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -51,7 +51,7 @@
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
   <li><a href="../class/cfdm.Field.html">cfdm.Field</a><ul>
       <li>Previous: <a href="cfdm.Field.set_data_axes.html" title="previous chapter">cfdm.Field.set_data_axes</a></li>
-      <li>Next: <a href="cfdm.Field.expand_dims.html" title="next chapter">cfdm.Field.expand_dims</a></li>
+      <li>Next: <a href="cfdm.Field.set_construct.html" title="next chapter">cfdm.Field.set_construct</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -87,12 +87,12 @@
 <h1>cfdm.Field.del_construct<a class="headerlink" href="#cfdm-field-del-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.del_construct">
-<code class="descclassname">Field.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/mixin/constructaccess.py#L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.del_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/mixin/constructaccess.py#L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.del_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a metadata construct.</p>
-<p>The construct is identified via optional parameters. If multiple
-parameters are specified, then the <em>unique</em> construct that satisfies
-<em>all</em> of the given criteria is removed. An error is raised if multiple
-constructs satisfy all of the given criteria.</p>
+<p>The construct is identified via optional parameters. The <em>unique</em>
+construct that satisfies <em>all</em> of the given criteria is removed. An
+error is raised if multiple constructs satisfy all of the given
+criteria.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -280,7 +280,15 @@ specified by their construct identifiers.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;grid_latitude&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;long_name:Air Pressure&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;ncvar%lat)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="s1">&#39;cid</span><span class="si">%c</span><span class="s1">ellmeasure0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="n">cid</span><span class="o">=</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_construct</span><span class="p">(</span><span class="n">construct_type</span><span class="o">=</span><span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>

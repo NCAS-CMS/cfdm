@@ -35,6 +35,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.DomainAncillary.construct_type
    ~cfdm.DomainAncillary.bounds
    ~cfdm.DomainAncillary.data
 

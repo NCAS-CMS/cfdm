@@ -205,10 +205,10 @@ object.
                       construct_type=None):
         '''Remove a metadata construct.
 
-The construct is identified via optional parameters. If multiple
-parameters are specified, then the *unique* construct that satisfies
-*all* of the given criteria is removed. An error is raised if multiple
-constructs satisfy all of the given criteria.
+The construct is identified via optional parameters. The *unique*
+construct that satisfies *all* of the given criteria is removed. An
+error is raised if multiple constructs satisfy all of the given
+criteria.
 
 .. versionadded:: 1.7
 
@@ -329,7 +329,13 @@ constructs satisfy all of the given criteria.
 
 **Examples:**
 
-TODO
+>>> c = f.del_construct('grid_latitude')
+>>> c = f.del_construct('long_name:Air Pressure')
+>>> c = f.del_construct('ncvar%lat)
+>>> c = f.del_construct('cid%cellmeasure0')
+>>> c = f.del_construct(cid='domainaxis2')
+>>> c = f.del_construct(construct_type='auxiliary_coordinate',
+...                     axes=['domainaxis1'])
 
         '''
         c = self.constructs(description=description, cid=cid,
@@ -348,10 +354,10 @@ TODO
                       construct_type=None, copy=False):
         '''Return a metadata construct.
 
-The construct is selected via optional parameters. If multiple
-parameters are specified, then the *unique* construct that satisfies
-*all* of the given criteria is returned. An error is raised if
-multiple constructs satisfy all of the given criteria.
+The construct is selected via optional parameters. The *unique*
+construct that satisfies *all* of the given criteria is returned. An
+error is raised if multiple constructs satisfy all of the given
+criteria.
 
 .. versionadded:: 1.7
 
@@ -479,7 +485,13 @@ multiple constructs satisfy all of the given criteria.
 
 **Examples:**
 
-TODO
+>>> c = f.get_construct('grid_latitude')
+>>> c = f.get_construct('long_name:Air Pressure')
+>>> c = f.get_construct('ncvar%lat)
+>>> c = f.get_construct('cid%cellmeasure0')
+>>> c = f.get_construct(cid='domainaxis2')
+>>> c = f.get_construct(construct_type='auxiliary_coordinate',
+...                     axes=['domainaxis1'])
 
         '''
         return self._get_constructs().get_construct(
@@ -493,11 +505,9 @@ TODO
                       construct_type=None):
         '''Whether a metadata construct has been set.
 
-The construct is identified via optional parameters. If multiple
-parameters are specified, then the *unique* construct that satisfies
-*all* of the given criteria is identified and `True` is returned. If
-multiple constructs satisfy all of the given criteria then `False` is
-returned.
+The construct is identified via optional parameters. If, and only if,
+there is a *unique* construct that satisfies *all* of the given
+criteria, then `True` is returned.
 
 .. versionadded:: 1.7
 
@@ -619,7 +629,13 @@ returned.
 
 **Examples:**
 
-TODO
+>>> x = f.has_construct('grid_latitude')
+>>> x = f.has_construct('long_name:Air Pressure')
+>>> x = f.has_construct('ncvar%lat)
+>>> x = f.has_construct('cid%cellmeasure0')
+>>> x = f.has_construct(cid='domainaxis2')
+>>> x = f.has_construct(construct_type='auxiliary_coordinate',
+...                     axes=['domainaxis1'])
 
         '''
         out = self.constructs(description=description, cid=cid,

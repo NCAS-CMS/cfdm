@@ -52,17 +52,22 @@ to the order of the elements.
         if size is not None:
             self.set_size(size)        
     #--- End: def
-    def get_construct_type(self):
-        return 'domain_axis'
-#    def __str__(self):
-#        '''TODO 
-#
-#x.__str__() <==> str(x)
-#
-#        '''
-#        return str(self.get_size(''))
-#    #--- End: def
 
+    @property
+    def construct_type(self):
+        '''Return a description of the construct type.
+        
+.. versionadded:: 1.7
+
+:Returns:
+
+    out: `str`
+        The construct type.
+
+        '''
+        return 'domain_axis'
+    #--- End: def
+    
     def copy(self):
         '''Return a deep copy.
 
@@ -84,25 +89,145 @@ to the order of the elements.
     #--- End: def
 
     def del_size(self, *default):
-        '''TODO
+        '''Remove the size.
+
+.. versionadded:: 1.7
+
+.. seealso:: `get_size`, `has_size`, `set_size`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the size has not been set.
+
+:Returns:
+
+     out:
+        The removed size. If unset then *default* is returned, if
+        provided.
+
+**Examples:**
+
+>>> d.set_size(96)
+>>> d.has_size()
+True
+>>> d.get_size()
+96
+>>> d.del_size()
+96
+>>> d.has_size()
+False
+>>> print(d.del_size(None))
+None
+>>> print(d.get_size(None))
+None
+
         '''
         return self._del_component('size', *default)
     #--- End: def
 
     def has_size(self):
-        '''TODO
+        '''Whether the size has been set.
+
+.. versionadded:: 1.7
+
+.. seealso:: `del_size`, `get_size`, `set_size`
+
+:Returns:
+
+     out: `bool`
+        True if the size has been set, otherwise False.
+
+**Examples:**
+
+>>> d.set_size(96)
+>>> d.has_size()
+True
+>>> d.get_size()
+96
+>>> d.del_size()
+96
+>>> d.has_size()
+False
+>>> print(d.del_size(None))
+None
+>>> print(d.get_size(None))
+None
+
         '''
         return self._has_component('size')
     #--- End: def
 
     def get_size(self, *default):
-        '''TODO
+        '''Return the size.
+
+.. versionadded:: 1.7
+
+.. seealso:: `del_size`, `has_size`, `set_size`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the size has not been set.
+
+:Returns:
+
+     out:
+        The size. If unset then *default* is returned, if provided.
+
+**Examples:**
+
+>>> d.set_size(96)
+>>> d.has_size()
+True
+>>> d.get_size()
+96
+>>> d.del_size()
+96
+>>> d.has_size()
+False
+>>> print(d.del_size(None))
+None
+>>> print(d.get_size(None))
+
         '''
         return self._get_component('size', *default)
     #--- End: def
 
     def set_size(self, size, copy=True):
-        '''TODO
+        '''Set the size.
+
+.. versionadded:: 1.7
+
+.. seealso:: `del_size`, `get_size`, `has_size`
+
+:Parameters:
+
+    value: `int`
+        The size.
+
+    copy: `bool`, optional
+        If True then set a deep copy of *size*.
+
+:Returns:
+
+     `None`
+
+**Examples:**
+
+>>> d.set_size(96)
+>>> d.has_size()
+True
+>>> d.get_size()
+96
+>>> d.del_size()
+96
+>>> d.has_size()
+False
+>>> print(d.del_size(None))
+None
+>>> print(d.get_size(None))
+
         '''
         self._set_component('size', size, copy=copy)
     #--- End: def

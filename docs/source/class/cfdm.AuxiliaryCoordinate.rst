@@ -35,6 +35,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.AuxiliaryCoordinate.construct_type
    ~cfdm.AuxiliaryCoordinate.bounds
    ~cfdm.AuxiliaryCoordinate.data
 

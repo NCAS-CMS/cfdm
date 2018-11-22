@@ -111,13 +111,21 @@ True
 'CMIP7'
 >>> f.has_property('project')
 False
->>> print(f.del_property('project'))
+>>> print(f.del_property('project', None))
 None
 >>> print(f.get_property('project', None))
 None
 
         '''
-        return self._get_component('properties').pop(prop, None)
+#        return self._get_component('properties').pop(prop, None)
+        try:
+            return self._get_component('properties').pop(prop)
+        except KeyError:
+            if default:
+                return default[0]
+
+            raise AttributeError("{!r} has no {!r} property".format(
+                self.__class__.__name__, prop))
     #--- End: def
 
     def get_property(self, prop, *default):
@@ -156,7 +164,7 @@ True
 'CMIP7'
 >>> f.has_property('project')
 False
->>> print(f.del_property('project'))
+>>> print(f.del_property('project', None))
 None
 >>> print(f.get_property('project', None))
 None
@@ -177,7 +185,8 @@ None
 
 .. versionadded:: 1.7
 
-.. seealso:: `del_property`, `get_property`, `properties`, `set_property`
+.. seealso:: `del_property`, `get_property`, `properties`,
+             `set_property`
 
 :Parameters:
 
@@ -203,7 +212,7 @@ True
 'CMIP7'
 >>> f.has_property('project')
 False
->>> print(f.del_property('project'))
+>>> print(f.del_property('project', None))
 None
 >>> print(f.get_property('project', None))
 None
@@ -286,6 +295,9 @@ None
     value:
         The value for the property.
 
+    copy: `bool`, optional
+        If True then set a deep copy of *value*.
+
 :Returns:
 
      `None`
@@ -301,7 +313,7 @@ True
 'CMIP7'
 >>> f.has_property('project')
 False
->>> print(f.del_property('project'))
+>>> print(f.del_property('project', None))
 None
 >>> print(f.get_property('project', None))
 None

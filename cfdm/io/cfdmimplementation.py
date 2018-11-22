@@ -135,7 +135,7 @@ class CFDMImplementation(Implementation):
         return field.create_field(cid=construct_id, domain=False)
     #--- End: def
         
-    def del_property(self, construct, prop):
+    def del_property(self, construct, prop, default):
         '''
 
 :Parameters:
@@ -154,7 +154,7 @@ class CFDMImplementation(Implementation):
 AttributeError: Field doesn't have property 'standard_name'
         
         '''
-        return construct.del_property(prop)
+        return construct.del_property(prop, default)
     #--- End: def
 
     def field_expand_dims(self, field, position=0, axis=None):

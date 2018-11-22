@@ -41,6 +41,7 @@ Attributes
    :toctree: ../attribute/
    :template: attribute.rst
 	      
+   ~CoordinateReference.construct_type
    ~CoordinateReference.coordinate_conversion
    ~CoordinateReference.datum
 

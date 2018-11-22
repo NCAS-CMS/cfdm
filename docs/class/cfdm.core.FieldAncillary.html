@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.FieldAncillary.get_array" href="../method/cfdm.core.FieldAncillary.get_array.html" />
-    <link rel="prev" title="cfdm.core.DomainAxis" href="cfdm.core.DomainAxis.html" />
+    <link rel="prev" title="cfdm.core.DomainAxis.__deepcopy__" href="../method/cfdm.core.DomainAxis.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,7 +49,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="cfdm.core.DomainAxis.html" title="previous chapter">cfdm.core.DomainAxis</a></li>
+      <li>Previous: <a href="../method/cfdm.core.DomainAxis.__deepcopy__.html" title="previous chapter">cfdm.core.DomainAxis.__deepcopy__</a></li>
       <li>Next: <a href="../method/cfdm.core.FieldAncillary.get_array.html" title="next chapter">cfdm.core.FieldAncillary.get_array</a></li>
   </ul></li>
   </ul></li>
@@ -85,7 +85,7 @@
 <h1>cfdm.core.FieldAncillary<a class="headerlink" href="#cfdm-core-fieldancillary" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.FieldAncillary">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">FieldAncillary</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/fieldancillary.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">FieldAncillary</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/fieldancillary.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.FieldAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A field ancillary construct of the CF data model.</p>
 <p>The field ancillary construct provides metadata which are distributed
@@ -180,7 +180,10 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.FieldAncillary.data.html#cfdm.core.FieldAncillary.data" title="cfdm.core.FieldAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.core.FieldAncillary.construct_type.html#cfdm.core.FieldAncillary.construct_type" title="cfdm.core.FieldAncillary.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></td>
+<td>Return a description of the construct type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.core.FieldAncillary.data.html#cfdm.core.FieldAncillary.data" title="cfdm.core.FieldAncillary.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>Return the data.</td>
 </tr>
 </tbody>

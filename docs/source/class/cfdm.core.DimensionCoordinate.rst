@@ -33,6 +33,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.core.DimensionCoordinate.construct_type
    ~cfdm.core.DimensionCoordinate.bounds
    ~cfdm.core.DimensionCoordinate.data
 

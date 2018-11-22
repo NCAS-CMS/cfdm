@@ -34,6 +34,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.core.CellMeasure.construct_type
    ~cfdm.core.CellMeasure.data
 
 Properties

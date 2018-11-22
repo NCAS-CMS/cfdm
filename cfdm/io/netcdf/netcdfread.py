@@ -1913,7 +1913,7 @@ variable should be pre-filled with missing values.
         # Add scalar dimension coordinates and auxiliary coordinates to
         # the field
         # ----------------------------------------------------------------
-        coordinates = self.implementation.del_property(f, 'coordinates')
+        coordinates = self.implementation.del_property(f, 'coordinates', None)
         if coordinates is not None:
             parsed_coordinates = self._split_string_by_white_space(field_ncvar, coordinates)
             for ncvar in parsed_coordinates:
@@ -2108,7 +2108,7 @@ variable should be pre-filled with missing values.
         # Add grid mapping coordinate references (do this after
         # formula terms)
         # ----------------------------------------------------------------
-        grid_mapping = self.implementation.del_property(f, 'grid_mapping')
+        grid_mapping = self.implementation.del_property(f, 'grid_mapping', None)
         if grid_mapping is not None:
             parsed_grid_mapping = self._parse_grid_mapping(field_ncvar, grid_mapping)
                  
@@ -2205,7 +2205,7 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Add cell measures to the field
         # ----------------------------------------------------------------
-        measures = self.implementation.del_property(f, 'cell_measures')
+        measures = self.implementation.del_property(f, 'cell_measures', None)
         if measures is not None:
             parsed_cell_measures = self._parse_x(field_ncvar, measures)
 
@@ -2268,7 +2268,7 @@ variable should be pre-filled with missing values.
         # ----------------------------------------------------------------
         # Add field ancillaries to the field
         # ----------------------------------------------------------------
-        ancillary_variables = self.implementation.del_property(f, 'ancillary_variables')
+        ancillary_variables = self.implementation.del_property(f, 'ancillary_variables', None)
         if ancillary_variables is not None:
             parsed_ancillary_variables = self._split_string_by_white_space(field_ncvar,
                                                                            ancillary_variables)

@@ -383,7 +383,8 @@ TODO
     #--- End: def
 
     def set_construct_axes(self, cid, axes):
-        '''Set the domain axes spanned by a construct data array.
+        '''Set the domain axis constructs spanned by a metadata construct data
+array.
 
 .. versionadded:: 1.7
 
@@ -393,16 +394,22 @@ TODO
 :Parameters:
 
     cid: `str`
-        The identifier of the construct.
+        The construct identifier of the metadata construct.
 
         *Example:*
-          ``cid='cellmeasure0'``
-        
+          ``cid='dimensioncoordinate2'``
+
      axes: sequence of `str`
-        The identifiers of the domain axes spanned by the data array.
+        The construct identifiers of the domain axis constructs
+        spanned by the data array.
+
+        The axes may also be set with the `set_construct` method.
 
         *Example:*
-          ``axes=['domainaxis0', 'domainaxis1']``
+          ``axes=['domainaxis1']``
+
+        *Example:*
+          ``axes=['domainaxis1', 'domainaxis0']``
 
 :Returns:
 
@@ -410,7 +417,8 @@ TODO
 
 **Examples:**
 
-TODO
+>>> cid = f.set_construct(c
+>>> f.set_construct_axes(c, axes=['domainaxis1'])
 
         '''
         return self._get_constructs().set_construct_axes(cid, axes)

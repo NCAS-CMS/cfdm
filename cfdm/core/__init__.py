@@ -20,12 +20,15 @@ from .bounds               import Bounds
 from .constructs           import Constructs
 from .coordinateconversion import CoordinateConversion
 
-from .data.data            import Data
-from .data.numpyarray      import NumpyArray
+#from .data.data            import Data
+#from .data.numpyarray      import NumpyArray
+from .data                import (Data,
+                                  Array,
+                                  NumpyArray)
 
-from .datum                import Datum
-from .domain               import Domain
-from .interiorring         import InteriorRing
+from .datum               import Datum
+from .domain              import Domain
+from .interiorring        import InteriorRing
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .cellmeasure         import CellMeasure

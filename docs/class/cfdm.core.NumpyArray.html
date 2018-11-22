@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.Container" href="cfdm.core.abstract.Container.html" />
+    <link rel="next" title="cfdm.core.Array" href="cfdm.core.Array.html" />
     <link rel="prev" title="cfdm.core.Domain" href="cfdm.core.Domain.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -50,7 +50,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="cfdm.core.Domain.html" title="previous chapter">cfdm.core.Domain</a></li>
-      <li>Next: <a href="cfdm.core.abstract.Container.html" title="next chapter">cfdm.core.abstract.Container</a></li>
+      <li>Next: <a href="cfdm.core.Array.html" title="next chapter">cfdm.core.Array</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -85,7 +85,7 @@
 <h1>cfdm.core.NumpyArray<a class="headerlink" href="#cfdm-core-numpyarray" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.NumpyArray">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">NumpyArray</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/numpyarray.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">NumpyArray</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/numpyarray.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.abstract.array.Array</span></code></p>
 <p>A container for a numpy array.</p>
 <p><strong>Initialization</strong></p>
@@ -104,7 +104,7 @@
 </table>
 <dl class="method">
 <dt id="cfdm.core.NumpyArray.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/numpyarray.py#L12"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/numpyarray.py#L12"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -165,7 +165,7 @@
 </table>
 <dl class="method">
 <dt id="cfdm.core.NumpyArray.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy of the array.</p>
 <p><code class="docutils literal notranslate"><span class="pre">a.copy()</span> <span class="pre">is</span> <span class="pre">equivalent</span> <span class="pre">to</span> <span class="pre">``copy.deepcopy(a)</span></code>.</p>
 <p>Copy-on-write is employed. Therefore, after copying, care must be
@@ -193,7 +193,7 @@ original or the new copy.</p>
 
 <dl class="method">
 <dt id="cfdm.core.NumpyArray.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/numpyarray.py#L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/numpyarray.py#L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array containing the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

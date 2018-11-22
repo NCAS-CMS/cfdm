@@ -21,6 +21,18 @@ number of vertices of each cell.
 
 .. versionadded:: 1.7
     '''
-    def get_construct_type(self):
+    @property
+    def construct_type(self):
+        '''Return a description of the construct type.
+        
+.. versionadded:: 1.7
+        
+:Returns:
+
+    out: `str`
+        The construct type.
+
+        '''
         return 'domain_ancillary' 
-#--- End: class
+
+        #--- End: class

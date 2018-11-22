@@ -1,32 +1,55 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.CoordinateConversion
 ==============================
 
-.. currentmodule:: cfdm.core
+.. currentmodule:: cfdm
 
-.. autoclass:: CoordinateConversion
+.. autoclass:: cfdm.core.CoordinateConversion
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
-   
-      ~CoordinateConversion.__init__
-      ~CoordinateConversion.copy
-      ~CoordinateConversion.del_domain_ancillary
-      ~CoordinateConversion.del_parameter
-      ~CoordinateConversion.domain_ancillaries
-      ~CoordinateConversion.get_domain_ancillary
-      ~CoordinateConversion.get_parameter
-      ~CoordinateConversion.next
-      ~CoordinateConversion.parameters
-      ~CoordinateConversion.set_domain_ancillary
-      ~CoordinateConversion.set_parameter
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
+   ~cfdm.core.CoordinateConversion.del_domain_ancillary
+   ~cfdm.core.CoordinateConversion.del_parameter
+   ~cfdm.core.CoordinateConversion.get_domain_ancillary
+   ~cfdm.core.CoordinateConversion.get_parameter
+   ~cfdm.core.CoordinateConversion.parameters
+   ~cfdm.core.CoordinateConversion.set_domain_ancillary
+   ~cfdm.core.CoordinateConversion.set_parameter
    
-   
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CoordinateConversion.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CoordinateConversion.__deepcopy__
+
    

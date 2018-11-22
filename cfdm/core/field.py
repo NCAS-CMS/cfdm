@@ -189,9 +189,24 @@ TODO
 #        return self._get_constructs().constructs(
 #            construct_type='cell_method', copy=copy)
 #    #--- End: def
-    def get_construct_type(self):
-        return 'field'
+#    def get_construct_type(self):
+#        return 'field'
     
+    @property
+    def construct_type(self):
+        '''Return a description of the construct type.
+        
+.. versionadded:: 1.7
+        
+:Returns:
+
+    out: `str`
+        The construct type.
+
+        '''
+        return 'field'
+    #--- End: def        
+        
     def del_data_axes(self, *default):
         '''Remove the identifiers of the domain axes spanned by the data
 array.

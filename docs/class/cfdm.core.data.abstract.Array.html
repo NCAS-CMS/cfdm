@@ -17,8 +17,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Subclassing" href="../subclassing.html" />
-    <link rel="prev" title="cfdm.core.abstract.PropertiesDataBounds" href="cfdm.core.abstract.PropertiesDataBounds.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -31,15 +29,10 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
 </ul>
@@ -47,12 +40,6 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
-  <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="cfdm.core.abstract.PropertiesDataBounds.html" title="previous chapter">cfdm.core.abstract.PropertiesDataBounds</a></li>
-      <li>Next: <a href="../subclassing.html" title="next chapter"><strong>Subclassing</strong></a></li>
-  </ul></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -85,7 +72,7 @@
 <h1>cfdm.core.data.abstract.Array<a class="headerlink" href="#cfdm-core-data-abstract-array" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.data.abstract.Array">
-<em class="property">class </em><code class="descclassname">cfdm.core.data.abstract.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.data.abstract.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/abstract/array.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>Abstract base class for a container of an array.</p>
 <p>The form of the array is arbitrary and is defined by the
@@ -107,7 +94,7 @@ initialization parameters of a subclass of <cite>Array</cite>.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.data.abstract.Array.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/abstract/array.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -168,7 +155,7 @@ initialization parameters of a subclass of <cite>Array</cite>.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.data.abstract.Array.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy of the array.</p>
 <p><code class="docutils literal notranslate"><span class="pre">a.copy()</span> <span class="pre">is</span> <span class="pre">equivalent</span> <span class="pre">to</span> <span class="pre">``copy.deepcopy(a)</span></code>.</p>
 <p>Copy-on-write is employed. Therefore, after copying, care must be
@@ -196,7 +183,7 @@ original or the new copy.</p>
 
 <dl class="method">
 <dt id="cfdm.core.data.abstract.Array.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/data/abstract/array.py#L242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/data/abstract/array.py#L242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.data.abstract.Array.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array containing the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

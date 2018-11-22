@@ -1,28 +1,52 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.Datum
 ===============
 
-.. currentmodule:: cfdm.core
+.. currentmodule:: cfdm
 
-.. autoclass:: Datum
+.. autoclass:: cfdm.core.Datum
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
-   
-      ~Datum.__init__
-      ~Datum.copy
-      ~Datum.del_parameter
-      ~Datum.get_parameter
-      ~Datum.next
-      ~Datum.parameters
-      ~Datum.set_parameter
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   
+   ~cfdm.core.Datum.del_parameter
+   ~cfdm.core.Datum.get_parameter
+   ~cfdm.core.Datum.parameters
+   ~cfdm.core.Datum.set_parameter
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Datum.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Datum.__deepcopy__
    
    

@@ -147,8 +147,21 @@ frame and consists of the following:
 #        '''    
 #        return ', '.join(sorted(self.terms()))
 #    #--- End: def
-    def get_construct_type(self):
+
+    @property
+    def construct_type(self):
+        '''Return a description of the construct type.
+        
+.. versionadded:: 1.7
+        
+:Returns:
+
+    out: `str`
+        The construct type.
+
+        '''
         return 'coordinate_reference'
+
     @property
     def coordinate_conversion(self):
         '''Return the coordinate conversion.

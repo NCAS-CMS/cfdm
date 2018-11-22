@@ -34,6 +34,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.FieldAncillary.construct_type
    ~cfdm.FieldAncillary.data
 
 Properties

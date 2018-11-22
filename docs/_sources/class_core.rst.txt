@@ -55,6 +55,7 @@
 
    cfdm.core.Data
    cfdm.core.NumpyArray
+   cfdm.core.Array
 
 **Abstract base classes**
 -------------------------
@@ -73,4 +74,3 @@ construct components.
    cfdm.core.abstract.Properties
    cfdm.core.abstract.PropertiesData
    cfdm.core.abstract.PropertiesDataBounds
-   cfdm.core.data.abstract.Array

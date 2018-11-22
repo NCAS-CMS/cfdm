@@ -48,6 +48,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.Field.construct_type
    ~cfdm.Field.data
    ~cfdm.Field.domain
 
@@ -95,6 +96,33 @@ Data
 
    ~cfdm.Field.data
 
+Metadata constructs
+-------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Field.constructs
+   ~cfdm.Field.construct_axes
+   ~cfdm.Field.del_construct
+   ~cfdm.Field.get_construct
+   ~cfdm.Field.has_construct
+   ~cfdm.Field.set_construct
+   ~cfdm.Field.set_construct_axes
+   ~cfdm.Field.auxiliary_coordinates
+   ~cfdm.Field.cell_measures
+   ~cfdm.Field.cell_methods
+   ~cfdm.Field.coordinates
+   ~cfdm.Field.coordinate_references
+   ~cfdm.Field.dimension_coordinates
+   ~cfdm.Field.domain_ancillaries
+   ~cfdm.Field.domain_axes
+   ~cfdm.Field.field_ancillaries
+ 
 Modification
 ------------
 
@@ -119,7 +147,6 @@ Modification
    ~cfdm.Field.squeeze
    ~cfdm.Field.transpose
  
-
 Miscellaneous
 -------------
 

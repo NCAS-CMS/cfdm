@@ -677,7 +677,7 @@ TODO
 #          *Example:*
 #             ``extra_axes=1``
 
-        construct_type = construct.get_construct_type()
+        construct_type = construct.construct_type
         construct_type = self._check_construct_type(construct_type)
                                                 
         if cid is None:

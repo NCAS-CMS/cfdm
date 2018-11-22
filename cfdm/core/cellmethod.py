@@ -134,8 +134,21 @@ that the method was applied only over El Nino years).
 #
 #        return ' '.join(string)
 #    #--- End: def
-    def get_construct_type(self):
+
+    @property
+    def construct_type(self):
+        '''Return a description of the construct type.
+        
+.. versionadded:: 1.7
+        
+:Returns:
+
+    out: `str`
+        The construct type.
+
+        '''
         return 'cell_method'
+
     def del_axes(self, *default):
         '''Remove the axes of the cell method.
 

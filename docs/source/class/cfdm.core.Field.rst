@@ -37,6 +37,7 @@ Inspection
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.core.Field.construct_type
    ~cfdm.core.Field.data
    ~cfdm.core.Field.domain
 
@@ -83,6 +84,25 @@ Data
    :template: attribute.rst
 
    ~cfdm.core.Field.data
+
+
+Metadata constructs
+-------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Field.constructs
+   ~cfdm.core.Field.construct_axes
+   ~cfdm.core.Field.del_construct
+   ~cfdm.core.Field.get_construct
+   ~cfdm.core.Field.has_construct
+   ~cfdm.core.Field.set_construct
+   ~cfdm.core.Field.set_construct_axes
 
 Modification
 ------------

@@ -1,28 +1,70 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.DomainAxis
 ====================
 
-.. currentmodule:: cfdm.core
+.. autoclass:: cfdm.core.DomainAxis
+   :no-members:
+   :no-inherited-members:
 
-.. autoclass:: DomainAxis
+Inspection
+----------
 
-   
-   .. automethod:: __init__
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-   .. rubric:: Methods
+   ~cfdm.core.DomainAxis.get_size
+   ~cfdm.core.DomainAxis.has_size
 
-   .. autosummary::
+.. rubric:: Attributes
    
-      ~DomainAxis.__init__
-      ~DomainAxis.copy
-      ~DomainAxis.del_size
-      ~DomainAxis.get_size
-      ~DomainAxis.has_size
-      ~DomainAxis.next
-      ~DomainAxis.set_size
-   
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
+   ~cfdm.core.DomainAxis.construct_type
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DomainAxis.del_size
+   ~cfdm.core.DomainAxis.set_size
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DomainAxis.copy
    
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.DomainAxis.__deepcopy__
    
    

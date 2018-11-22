@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.data.abstract.Array" href="cfdm.core.data.abstract.Array.html" />
+    <link rel="next" title="Subclassing" href="../subclassing.html" />
     <link rel="prev" title="cfdm.core.abstract.PropertiesData" href="cfdm.core.abstract.PropertiesData.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -50,7 +50,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
       <li>Previous: <a href="cfdm.core.abstract.PropertiesData.html" title="previous chapter">cfdm.core.abstract.PropertiesData</a></li>
-      <li>Next: <a href="cfdm.core.data.abstract.Array.html" title="next chapter">cfdm.core.data.abstract.Array</a></li>
+      <li>Next: <a href="../subclassing.html" title="next chapter"><strong>Subclassing</strong></a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -85,7 +85,7 @@
 <h1>cfdm.core.abstract.PropertiesDataBounds<a class="headerlink" href="#cfdm-core-abstract-propertiesdatabounds" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.abstract.PropertiesDataBounds">
-<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">PropertiesDataBounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">PropertiesDataBounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>Abstract base class for a data array with bounds and descriptive
 properties.</p>
@@ -157,7 +157,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -324,7 +324,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><em>data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdata.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <p><cite>Data</cite> instances contained within are copied with a copy-on-write
@@ -365,7 +365,7 @@ operation is fast.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.del_bounds">
-<code class="descname">del_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L193"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L193"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the bounds.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -417,7 +417,7 @@ operation is fast.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.del_data">
-<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdata.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -469,7 +469,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.del_geometry">
-<code class="descname">del_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L233"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L233"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the geometry type. TODO</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -500,7 +500,7 @@ set then the <em>default</em> is returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.del_property">
-<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.del_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -549,7 +549,7 @@ provided.</p>
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
@@ -559,7 +559,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdata.py#L178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array the data.</p>
 <p>Use the <cite>get_data</cite> method to return the data as a <cite>Data</cite> object.</p>
 <div class="versionadded">
@@ -601,7 +601,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.get_bounds">
-<code class="descname">get_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L258"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_bounds</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L258"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the bounds.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -650,7 +650,7 @@ value of <em>default</em> parameter if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdata.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
 <p>Note that a <cite>Data</cite> is returned. Use the <cite>get_array</cite> method to return
 the data as an independent <cite>numpy</cite> array.</p>
@@ -704,7 +704,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.get_geometry">
-<code class="descname">get_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L313"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_geometry</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L313"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the geometry type.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.8.</span></p>
@@ -734,7 +734,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.get_interior_ring">
-<code class="descname">get_interior_ring</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L335"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_interior_ring" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_interior_ring</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L335"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_interior_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the interior_ring.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.8.</span></p>
@@ -768,7 +768,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L123"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L131"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -817,7 +817,7 @@ returned, if provided.</p>
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
@@ -827,7 +827,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.has_bounds">
-<code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L359"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_bounds</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L359"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not there are bounds.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -871,7 +871,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.has_data">
-<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdata.py#L278"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a data object has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -915,7 +915,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.has_geometry">
-<code class="descname">has_geometry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L393"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_geometry</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L393"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if there is a goemetry type. TODO</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.8.</span></p>
@@ -940,7 +940,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.has_interior_ring">
-<code class="descname">has_interior_ring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L412"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_interior_ring" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_interior_ring</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L412"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_interior_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if there are interior_ring. TODO</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.8.</span></p>
@@ -972,14 +972,15 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.has_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>properties</cite>, <cite>set_property</cite></p>
+<p class="last"><cite>del_property</cite>, <cite>get_property</cite>, <cite>properties</cite>,
+<cite>set_property</cite></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1016,7 +1017,7 @@ returned, if provided.</p>
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
@@ -1026,7 +1027,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.properties" title="Permalink to this definition">¶</a></dt>
+<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L224"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -1088,7 +1089,7 @@ properties if no changes were specified.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.set_bounds">
-<code class="descname">set_bounds</code><span class="sig-paren">(</span><em>bounds</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L434"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_bounds</code><span class="sig-paren">(</span><em>bounds</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L434"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the bounds.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -1135,7 +1136,7 @@ default the bounds are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.set_data">
-<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdata.py#L312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdata.py#L312"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the data.</p>
 <p>The units, calendar and fill value of the incoming <cite>Data</cite> instance are
 removed prior to insertion.</p>
@@ -1188,7 +1189,7 @@ default the data are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.set_geometry">
-<code class="descname">set_geometry</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L479"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_geometry" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_geometry</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L479"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the geometry type.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.8.</span></p>
@@ -1208,7 +1209,7 @@ default the data are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.set_interior_ring">
-<code class="descname">set_interior_ring</code><span class="sig-paren">(</span><em>interior_ring</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/propertiesdatabounds.py#L499"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_interior_ring" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_interior_ring</code><span class="sig-paren">(</span><em>interior_ring</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdatabounds.py#L499"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_interior_ring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the interior_ring.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.8.</span></p>
@@ -1241,7 +1242,7 @@ default the interior_ring are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.abstract.PropertiesDataBounds.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b4/cfdm/core/abstract/properties.py#L273"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L282"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.PropertiesDataBounds.set_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -1262,6 +1263,9 @@ default the interior_ring are copied.</p>
 <dt>value:</dt>
 <dd><p class="first last">The value for the property.</p>
 </dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If True then set a deep copy of <em>value</em>.</p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -1280,7 +1284,7 @@ default the interior_ring are copied.</p>
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 <span class="go">None</span>

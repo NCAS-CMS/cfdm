@@ -1,11 +1,15 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.DomainAxis
 ===============
 
-.. currentmodule:: cfdm
-
-.. autoclass:: DomainAxis
+.. autoclass:: cfdm.DomainAxis
    :no-members:
    :no-inherited-members:
+
+Inspection
+----------
 
 .. rubric:: Methods
 
@@ -14,25 +18,44 @@ cfdm.DomainAxis
    :toctree: ../method/
    :template: method.rst
    
-   ~DomainAxis.copy
-   ~DomainAxis.del_ncdim
-   ~DomainAxis.del_ncvar
-   ~DomainAxis.del_size
-   ~DomainAxis.equals
-   ~DomainAxis.get_ncdim
-   ~DomainAxis.get_ncvar
-   ~DomainAxis.get_size
-   ~DomainAxis.set_ncdim
-   ~DomainAxis.set_ncvar
-   ~DomainAxis.set_size
+   ~cfdm.DomainAxis.get_size
+   ~cfdm.DomainAxis.has_size
+   ~cfdm.DomainAxis.name
 
 .. rubric:: Attributes
-
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
+   ~cfdm.DomainAxis.construct_type
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAxis.del_size
+   ~cfdm.DomainAxis.set_size
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAxis.copy
+   ~cfdm.DomainAxis.equals
 
 NetCDF
 ------
@@ -44,11 +67,23 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~DomainAxis.nc_del_dimension
-   ~DomainAxis.nc_get_dimension
-   ~DomainAxis.nc_has_dimension
-   ~DomainAxis.nc_set_dimension 
-
+   ~cfdm.DomainAxis.nc_del_dimension
+   ~cfdm.DomainAxis.nc_get_dimension
+   ~cfdm.DomainAxis.nc_has_dimension
+   ~cfdm.DomainAxis.nc_set_dimension 
    
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.DomainAxis.__deepcopy__
+   ~cfdm.DomainAxis.__repr__
+   ~cfdm.DomainAxis.__str__
    
    
