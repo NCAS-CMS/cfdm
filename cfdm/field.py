@@ -662,8 +662,8 @@ constitute part of the CF data model and so are not checked on any
 construct.
 
 Any type of object may be tested for equality but, in general,
-equality is only possible with another field construct or a sublcass
-of a field construct. See the *ignore_type* parameter for details
+equality is only possible with another field construct, or a subclass
+of one. See the *ignore_type* parameter for details.
 
 .. versionadded:: 1.7
 
@@ -696,15 +696,11 @@ of a field construct. See the *ignore_type* parameter for details
         TODO
 
     ignore_type: `bool`, optional
-        By default, an object that is not a field construct (nor a
-        subclass of one) is never equal. If *ignore_type* is True then
-        any object with the same API as a field construct can be
-        considered for equality.
-
-        If True then *other* can be equal if it is not a field
-        construct (nor a subclass of one), but is an object with the
-        same API. By default, an object that is not a field construct
-        (nor a subclass of one) is never equal.
+        Any type of object may be tested for equality but, in general,
+        equality is only possible with another field construct, or a
+        subclass of one. If *ignore_type* is True then then
+        ``Field(source=other)`` is tested for equality, rather than
+        the ``other`` defined by the *other* parameter.
 
 :Returns: 
   

@@ -280,7 +280,7 @@ Field: Different properties
 False
 
         '''
-        pp = super().equals_preprocess(other, traceback=traceback,
+        pp = super()._equals_preprocess(other, traceback=traceback,
                                        ignore_construct_type=ignore_construct_type)
         if pp in (True, False):
             return pp

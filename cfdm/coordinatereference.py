@@ -43,7 +43,6 @@ from . import Datum
 
 
 class CoordinateReference(mixin.NetCDFVariable,
-                          mixin.Equals,
                           mixin.Container,
                           core.CoordinateReference):
     '''A coordinate reference construct of the CF data model. 
@@ -318,8 +317,8 @@ components.
 **Examples**
 
         '''
-        pp = super().equals_preprocess(other, traceback=traceback,
-                                       ignore_construct_type=ignore_construct_type)
+        pp = super()._equals_preprocess(other, traceback=traceback,
+                                        ignore_construct_type=ignore_construct_type)
         if pp in (True, False):
             return pp
         

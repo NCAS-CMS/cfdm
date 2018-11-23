@@ -126,10 +126,13 @@ Two numerical elements ``a`` and ``b`` are considered equal if
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers.
 
-TODO Any type of object may be tested for equality but, in general,
-equality is only possible with another field ancillary construct or a
-sublcass of a field ancillary construct. See the *ignore_type*
-parameter for details
+Any type of object may be tested for equality but, in general,
+equality is only possible with another field ancillary construct (or a
+subclass of one)
+
+Any type of object may be tested for equality but, in general,
+equality is only possible with another field ancillary construct, or a
+subclass of one. See the *ignore_type* parameter for details.
 
 .. versionadded:: 1.7
 
@@ -160,20 +163,14 @@ parameter for details
     ignore_data_type: `bool`, optional
         TODO
 
-
     ignore_type: `bool`, optional
+        Any type of object may be tested for equality but, in general,
+        equality is only possible with another field ancillary
+        construct, or a subclass of one. If *ignore_type* is True then
+        then ``FieldAncillary(source=other)`` is tested for equality,
+        rather than ``other``, rather than the ``other`` defined by
+        the *other* parameter.
 
-        TODO
-
-        By default, an object that is not a field ancillary construct
-        (nor a subclass of one) is never equal. If *ignore_type* is
-        True then any object with the same API as a field ancillary
-        construct can be considered for equality.
-
-        By default, an object that is not (a subclass) of the same
-        type is never equal. If *ignore_type* is True then any object
-        with the same API as a field ancillary construct can be
-        considered for equality.
 
 :Returns: 
   

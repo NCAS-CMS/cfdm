@@ -9,7 +9,7 @@
     <title>cfdm.core.Bounds &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -216,7 +216,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Bounds.has_property" title="cfdm.core.Bounds.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a>(prop)</td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds.next</span></code></td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.Bounds.properties" title="cfdm.core.Bounds.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>([properties,&nbsp;copy])</td>
@@ -492,7 +492,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L131"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L130"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -595,7 +595,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L183"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.has_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.has_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -650,7 +650,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L224"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.properties" title="Permalink to this definition">¶</a></dt>
+<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L223"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -765,7 +765,7 @@ default the data are copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Bounds.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L282"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.set_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/properties.py#L281"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Bounds.set_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -871,8 +871,8 @@ return the data as a <cite>numpy</cite> array.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.Bounds.rst.txt"

@@ -156,5 +156,27 @@ x.__str__() <==> str(x)
 #
 #        return True
 #    #--- End: def
-        
+
+    def _equals_preprocess(self, other, traceback=False,
+                          ignore_construct_type=False):
+        '''TODO
+
+        '''
+        # Check for object identity
+        if self is other:
+            return True
+
+        # Check that each object is of compatible type
+        if ignore_construct_type:
+            if not isinstance(other, self.__class__):
+                other = type(self)(source=other, copy=False)
+        elif not isinstance(other, self.__class__):
+            if traceback:
+                print("{0}: Incompatible type: {1}".format(
+		    other.__class__.__name__))
+            return False
+
+        return other
+    #--- End: def
+    
 #--- End: class
