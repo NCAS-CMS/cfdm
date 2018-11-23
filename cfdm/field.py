@@ -638,14 +638,9 @@ Equality is strict by default. This means that for two field
 constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:
 
-* the descriptive properties must be the same (with the exception of
-  the field construct's "Conventions" property, which is never
-  checked),
-
-..
-
-* vector-valued properties must have same size and be element-wise
-  equal,
+* the descriptive properties must be the same, and vector-valued
+  properties must have same the size and be element-wise equal (see
+  the *ignore_properties* parameter),
 
 ..
 
@@ -657,13 +652,13 @@ Two numerical elements ``a`` and ``b`` are considered equal if
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers.
 
+Any type of object may be tested but, in general, equality is only
+possible with another field construct, or a subclass of one. See the
+*ignore_type* parameter.
+
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
-
-Any type of object may be tested but, in general, equality is only
-possible with another field construct, or a subclass of one. See the
-*ignore_type* parameter for details.
 
 .. versionadded:: 1.7
 
@@ -682,21 +677,23 @@ possible with another field construct, or a subclass of one. See the
 
     ignore_fill_value: `bool`, optional
         If True then the "_FillValue" and "missing_value" properties
-        are omitted from the comparison.
+        are omitted from the comparison, for the field construct and
+        metadata constructs.
 
     traceback: `bool`, optional
-        If True and the field constructs are different then print a
-        traceback stating how they are different.
+        If True then print information about differences that lead to
+        inequaility.
 
     ignore_properties: sequence of `str`, optional
-        The names of properties to omit from the comparison. Note that
-        the "Conventions" property is always omitted.
+        The names of properties of the field construct (not the
+        metadata constructs) to omit from the comparison. Note that
+        the "Conventions" property is always omitted by default.
 
     ignore_data_type: `bool`, optional
-
-        If True then ignore the data types in all data array numerical
+        If True then ignore the data types in all numerical data array
         comparisons. By default different numerical data types imply
-        inequality, regardless of whether the elements satisfy the 
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is

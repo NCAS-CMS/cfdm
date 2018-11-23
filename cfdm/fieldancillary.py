@@ -109,12 +109,9 @@ components, and provides selected values of all data arrays.
 
 Equality is strict by default. This means that:
 
-* the descriptive properties must be the same,
-
-..
-
-* vector-valued properties must have same size and be element-wise
-  equal,
+* the descriptive properties must be the same, and vector-valued
+  properties must have same the size and be element-wise equal (see
+  the *ignore_properties* parameter),
 
 ..
 
@@ -126,13 +123,13 @@ Two numerical elements ``a`` and ``b`` are considered equal if
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers.
 
-Any type of object may be tested for equality but, in general,
-equality is only possible with another field ancillary construct (or a
-subclass of one)
-
 Any type of object may be tested but, in general, equality is only
 possible with another field ancillary construct, or a subclass of
-one. See the *ignore_type* parameter for details.
+one. See the *ignore_type* parameter.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked on any
+construct.
 
 .. versionadded:: 1.7
 
@@ -154,14 +151,17 @@ one. See the *ignore_type* parameter for details.
         are omitted from the comparison.
 
     traceback: `bool`, optional
-        If True and the collections of properties are different then
-        print a traceback stating how they are different.
+        If True then print information about differences that lead to
+        inequaility.
 
     ignore_properties: sequence of `str`, optional
         The names of properties to omit from the comparison.
 
     ignore_data_type: `bool`, optional
-        TODO
+        If True then ignore the data types in all numerical data array
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
@@ -169,7 +169,6 @@ one. See the *ignore_type* parameter for details.
         subclass of one. If *ignore_type* is True then then
         ``FieldAncillary(source=other)`` is tested, rather than the
         ``other`` defined by the *other* parameter.
-
 
 :Returns: 
   

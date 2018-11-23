@@ -24,17 +24,19 @@ The cfdm package requires:
 -------
 
 `pip install <https://pip.pypa.io/en/latest/reference/pip_install/>`_
-can be used, for example
+can be used, for example:
 
 .. code:: bash
 
    pip install cfdm
 
-or
-
 .. code:: bash
 
    pip install cfdm --user
+
+.. code:: bash
+
+   pip install cfdm --target <dir>
 
 **conda**
 ---------

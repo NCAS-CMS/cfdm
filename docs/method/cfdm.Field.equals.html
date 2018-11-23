@@ -93,13 +93,9 @@
 constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:</p>
 <ul class="simple">
-<li>the descriptive properties must be the same (with the exception of
-the field construct’s “Conventions” property, which is never
-checked),</li>
-</ul>
-<ul class="simple">
-<li>vector-valued properties must have same size and be element-wise
-equal,</li>
+<li>the descriptive properties must be the same, and vector-valued
+properties must have same the size and be element-wise equal (see
+the <em>ignore_properties</em> parameter),</li>
 </ul>
 <ul class="simple">
 <li>if there are data arrays then they must have same shape, data type
@@ -109,12 +105,12 @@ and be element-wise equal.</li>
 <code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers.</p>
+<p>Any type of object may be tested but, in general, equality is only
+possible with another field construct, or a subclass of one. See the
+<em>ignore_type</em> parameter.</p>
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.</p>
-<p>Any type of object may be tested but, in general, equality is only
-possible with another field construct, or a subclass of one. See the
-<em>ignore_type</em> parameter for details.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -128,32 +124,32 @@ possible with another field construct, or a subclass of one. See the
 </dd>
 <dt>atol: float, optional</dt>
 <dd><p class="first last">The tolerance on absolute differences between real
-numbers. The default value is set by the <a class="reference internal" href="../generated/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> function.</p>
 </dd>
 <dt>rtol: float, optional</dt>
 <dd><p class="first last">The tolerance on relative differences between real
-numbers. The default value is set by the <a class="reference internal" href="../generated/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
 </dd>
 <dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then the “_FillValue” and “missing_value” properties
-are omitted from the comparison.</p>
+are omitted from the comparison, for the field construct and
+metadata constructs.</p>
 </dd>
 <dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True and the field constructs are different then print a
-traceback stating how they are different.</p>
+<dd><p class="first last">If True then print information about differences that lead to
+inequaility.</p>
 </dd>
 <dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">The names of properties to omit from the comparison. Note that
-the “Conventions” property is always omitted.</p>
+<dd><p class="first last">The names of properties of the field construct (not the
+metadata constructs) to omit from the comparison. Note that
+the “Conventions” property is always omitted by default.</p>
 </dd>
-</dl>
-<p>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</p>
-<blockquote>
-<div><p>If True then ignore the data types in all data array numerical
+<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then ignore the data types in all numerical data array
 comparisons. By default different numerical data types imply
-inequality, regardless of whether the elements satisfy the</p>
-</div></blockquote>
-<dl class="docutils">
+inequality, regardless of whether the elements are within the
+tolerance for equality.</p>
+</dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality is
 only possible with another field construct, or a subclass of
@@ -209,7 +205,7 @@ defined by the <em>other</em> parameter.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.Field.equals.rst.txt"

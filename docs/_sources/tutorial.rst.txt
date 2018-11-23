@@ -14,14 +14,18 @@ The code examples in this tutorial are available in an **IPython
 notebook** (:download:`download <notebooks/tutorial.ipynb>`, 70kB)
 [#files]_.
 
+.. _import:
+
+**Import**
+----------
+
 ----
- 
+
 The cfdm package is imported as follows:
 
 .. code:: python
 
    >>> import cfdm
-
 
 .. _cf_version:
 
@@ -99,16 +103,17 @@ The built-in `repr` function returns a short, one-line description:
 .. code:: python
 
    >>> x
-   [<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
-    <Field: specific_humidity(latitude(5), longitude(8)) 1>]
-   >>> (t, q) = x
+   [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+   >>> q = x[0]
+   >>> t = x[1]
    >>> q
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
    
 This gives the identity of the field construct
 (e.g. "specific_humidity"), the identities and sizes of the dimensions
-spanned by the data array (latitude and longitude with sizes 5 and 8
-respectively) and the units of the data ("1").
+spanned by the data array ("latitude" and "longitude" with sizes 5 and
+8 respectively) and the units of the data ("1").
 
 **Medium detail**
 ^^^^^^^^^^^^^^^^^
@@ -675,7 +680,7 @@ identifier, via the `~Field.get_construct` method of the field
 construct, which supports the same filtering options as the
 `~Field.constructs` method. The existence of a metadata construct may
 be checked with the `~Field.has_construct` method and a construct may
-be remmoved with the `~Field.del_construct` method.
+be removed with the `~Field.del_construct` method.
 
 .. code:: python
 
@@ -791,10 +796,10 @@ with the `~Field.get_data_axes` method of the field construct:
 A cell method construct describes how the data represent the variation
 of the physical quantity within the cells of the domain, and multiple
 cell method constructs allow multiple methods to be recorded. Because
-the application of methods is not commutitive (e.g. a mean of
+the application of methods is not commutative (e.g. a mean of
 variances is generally not the same as a variance of means), the
 `~cfdm.Field.cell_methods` method of the field construct returns an
-ordered dictionary of contructs. The order is the same as that of a
+ordered dictionary of constructs. The order is the same as that of a
 cell method attribute in a netCDF dataset, or the same as that in
 which cell method constructs were added to the field construct during
 :ref:`field creation <field_creation>`.
@@ -1059,8 +1064,8 @@ A sequence of field constructs is written in exactly the same way:
 .. code:: python
 	     
    >>> x
-   [<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
-    <Field: specific_humidity(latitude(5), longitude(8)) 1>]
+   [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
    >>> cfdm.write(x, 'new_file.nc')
 
 The `cfdm.write` function has optional parameters to
@@ -1671,8 +1676,6 @@ independent of the original field.
    [[[-1e+30]]] K
    >>> print(t.data[0, 0, 0])
    [[[0.0]]] K
-   >>> u.data[0, 0, 0] = -99
-   >>> print(u.data[0, 0, 0], t.data[0, 0, 0])
    >>> u.del_construct('grid_latitude')
    <DimensionCoordinate: grid_latitude(10) degrees>
    >>> u.constructs('grid_latitude')
@@ -1684,7 +1687,7 @@ Equivalently, the `copy.deepcopy` function may be used:
 
 .. code:: python
 
->>> import copy
+   >>> import copy
    >>> u = copy.deepcopy(t)
 
 Metadata constructs may be copied individually in the same manner:
@@ -1694,11 +1697,11 @@ Metadata constructs may be copied individually in the same manner:
    >>> orog = t.get_construct('surface_altitude').copy()
 
 *Note on performance*
-  `Data` instances within the field are copied with a `copy-on-write
+  `Data` instances within constructs are copied with a `copy-on-write
   <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This
-  means that a copy of a field takes up very little extra memory, even
-  when the original field construct contains very large data arrays,
-  and the copy operation is fast.
+  means that a copy takes up very little extra memory, even when the
+  original constructs contain very large data arrays, and the copy
+  operation is fast.
 
 .. _equality:
 

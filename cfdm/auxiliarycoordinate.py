@@ -120,16 +120,13 @@ components, and provides selected values of all data arrays.
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
-        '''Whether two constructs are the same.
+        '''Whether two auxiliary coordinate constructs are the same.
 
 Equality is strict by default. This means that:
 
-* the descriptive properties must be the same,
-
-..
-
-* vector-valued properties must have same size and be element-wise
-  equal,
+* the descriptive properties must be the same, and vector-valued
+  properties must have same the size and be element-wise equal (see
+  the *ignore_properties* parameter),
 
 ..
 
@@ -140,6 +137,14 @@ Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers.
+
+Any type of object may be tested but, in general, equality is only
+possible with another auxiliary coordinate construct, or a subclass of
+one. See the *ignore_type* parameter.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked on any
+construct.
 
 .. versionadded:: 1.7
 
@@ -161,39 +166,46 @@ positive, typically very small numbers.
         are omitted from the comparison.
 
     traceback: `bool`, optional
-        If True and the collections of properties are different then
-        print a traceback stating how they are different.
+        If True then print information about differences that lead to
+        inequaility.
 
     ignore_properties: sequence of `str`, optional
         The names of properties to omit from the comparison.
 
     ignore_data_type: `bool`, optional
-        TODO
+        If True then ignore the data types in all numerical data array
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
 
     ignore_type: `bool`, optional
-        TODO
+        Any type of object may be tested but, in general, equality is
+        only possible with another auxiliary coordinate construct, or
+        a subclass of one. If *ignore_type* is True then then
+        ``AuxiliaryCoordinate(source=other)`` is tested, rather than
+        the ``other`` defined by the *other* parameter.
 
 :Returns: 
   
     out: `bool`
-        TODO
+        Whether the two auxiliary coordinate constructs are equal.
 
 **Examples:**
 
->>> p.equals(p)
+>>> f.equals(f)
 True
->>> p.equals(p.copy())
+>>> f.equals(f.copy())
 True
->>> p.equals('something different')
+>>> f.equals('not a auxiliary coordinate')
 False
 
->>> q = p.copy()
->>> q.set_property('foo', 'bar')
->>> p.equals(q)
+>>> g = f.copy()
+>>> g.set_property('foo', 'bar')
+>>> f.equals(g)
 False
->>> p.equals(q, traceback=True)
-Field: Non-common property name: foo
-Field: Different properties
+>>> f.equals(g, traceback=True)
+AuxiliaryCoordinate: Non-common property name: foo
+AuxiliaryCoordinate: Different properties
 False
 
         '''
