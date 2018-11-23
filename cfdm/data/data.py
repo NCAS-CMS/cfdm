@@ -1362,8 +1362,8 @@ Return a string containing a full description of the instance.
 
     def equals(self, other, rtol=None, atol=None,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_construct_type=False,
-               traceback=False, _check_values=True):
+               ignore_construct_type=False, traceback=False,
+               ignore_type=False, _check_values=True):
         '''True if two `Data` objects are equal.
 
 Two `Data` objects are equal if
@@ -1418,20 +1418,27 @@ False
 False
 
         '''
-        # Check for object identity
-        if self is other:
-            return True
+        pp = super()._equals_preprocess(other, traceback=traceback,
+                                        ignore_type=ignore_type)
+        if pp in (True, False):
+            return pp
         
-        # Check that each object is of the same type
-        if ignore_construct_type:
-            if not isinstance(other, self.__class__):
-                other = type(self)(source=other, copy=False)
-        elif not isinstance(other, self.__class__):
-            if traceback:
-                print("{0}: Incompatible types: {0}, {1}".format(
-		    self.__class__.__name__,
-		    other.__class__.__name__))
-            return False
+        other = pp
+        
+#       # Check for object identity
+#       if self is other:
+#           return True
+#       
+#       # Check that each object is of the same type
+#       if ignore_construct_type:
+#           if not isinstance(other, self.__class__):
+#               other = type(self)(source=other, copy=False)
+#       elif not isinstance(other, self.__class__):
+#           if traceback:
+#               print("{0}: Incompatible types: {0}, {1}".format(
+#       	    self.__class__.__name__,
+#       	    other.__class__.__name__))
+#           return False
 #        if not super().equals(other, traceback=traceback,
 #                              ignore_construct_type=ignore_construct_type):
 #            if traceback:

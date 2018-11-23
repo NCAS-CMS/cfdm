@@ -34,7 +34,7 @@ class ParametersDomainAncillaries(Parameters):
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_construct_type=False):
+               ignore_type=False):
         '''TODO True if two instances are equal, False otherwise.
 
 :Parameters:
@@ -66,10 +66,9 @@ class ParametersDomainAncillaries(Parameters):
 :Examples:
 
         '''
-        if not super().equals(
-                other, rtol=rtol, atol=atol,
-                traceback=traceback,
-                ignore_construct_type=ignore_construct_type):
+        if not super().equals(other, rtol=rtol, atol=atol,
+                              traceback=traceback,
+                              ignore_type=ignore_type):
             return False
         
         # Check that the coordinate conversion ancillary terms
@@ -105,7 +104,7 @@ class ParametersDomainAncillaries(Parameters):
 #                                    traceback=traceback,
 #                                    ignore_data_type=ignore_data_type,
 #                                    ignore_fill_value=ignore_fill_value,
-#                                    ignore_construct_type=ignore_construct_type):
+#                                    ignore_type=ignore_type):
 #                    if traceback:
 #                        print(
 #"{}: Unequal {!r} terms ({!r} != {!r})".format( 

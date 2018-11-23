@@ -104,7 +104,7 @@ components, and provides selected values of all data arrays.
     
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_properties=(), ignore_type=False):
         '''Whether two field ancillary constructs are the same.
 
 Equality is strict by default. This means that:
@@ -130,9 +130,9 @@ Any type of object may be tested for equality but, in general,
 equality is only possible with another field ancillary construct (or a
 subclass of one)
 
-Any type of object may be tested for equality but, in general,
-equality is only possible with another field ancillary construct, or a
-subclass of one. See the *ignore_type* parameter for details.
+Any type of object may be tested but, in general, equality is only
+possible with another field ancillary construct, or a subclass of
+one. See the *ignore_type* parameter for details.
 
 .. versionadded:: 1.7
 
@@ -164,12 +164,11 @@ subclass of one. See the *ignore_type* parameter for details.
         TODO
 
     ignore_type: `bool`, optional
-        Any type of object may be tested for equality but, in general,
-        equality is only possible with another field ancillary
-        construct, or a subclass of one. If *ignore_type* is True then
-        then ``FieldAncillary(source=other)`` is tested for equality,
-        rather than ``other``, rather than the ``other`` defined by
-        the *other* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another field ancillary construct, or a
+        subclass of one. If *ignore_type* is True then then
+        ``FieldAncillary(source=other)`` is tested, rather than the
+        ``other`` defined by the *other* parameter.
 
 
 :Returns: 
@@ -201,7 +200,7 @@ False
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
-                              ignore_construct_type=ignore_construct_type)
+                              ignore_type=ignore_type)
     #--- End: def
     
 #--- End: class

@@ -119,7 +119,7 @@ components, and provides selected values of all data arrays.
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_properties=(), ignore_type=False):
         '''Whether two constructs are the same.
 
 Equality is strict by default. This means that:
@@ -170,10 +170,8 @@ positive, typically very small numbers.
     ignore_data_type: `bool`, optional
         TODO
 
-    ignore_construct_type: `bool`, optional
-        If True then proceed with equality comparisons if the *other*
-        parameter is not a construct of the same type. By default,
-        constructs of different types are never equal.
+    ignore_type: `bool`, optional
+        TODO
 
 :Returns: 
   
@@ -204,7 +202,7 @@ False
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
-                              ignore_construct_type=ignore_construct_type)
+                              ignore_type=ignore_type)
     #--- End: def
         
 #--- End: class

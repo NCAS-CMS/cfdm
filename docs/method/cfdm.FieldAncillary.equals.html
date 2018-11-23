@@ -9,7 +9,7 @@
     <title>cfdm.FieldAncillary.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -87,7 +87,7 @@
 <h1>cfdm.FieldAncillary.equals<a class="headerlink" href="#cfdm-fieldancillary-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.FieldAncillary.equals">
-<code class="descclassname">FieldAncillary.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_construct_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/fieldancillary.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.FieldAncillary.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldAncillary.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/fieldancillary.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.FieldAncillary.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two field ancillary constructs are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -108,9 +108,9 @@ positive, typically very small numbers.</p>
 <p>Any type of object may be tested for equality but, in general,
 equality is only possible with another field ancillary construct (or a
 subclass of one)</p>
-<p>Any type of object may be tested for equality but, in general,
-equality is only possible with another field ancillary construct, or a
-subclass of one. See the <em>ignore_type</em> parameter for details.</p>
+<p>Any type of object may be tested but, in general, equality is only
+possible with another field ancillary construct, or a subclass of
+one. See the <em>ignore_type</em> parameter for details.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -124,11 +124,11 @@ subclass of one. See the <em>ignore_type</em> parameter for details.</p>
 </dd>
 <dt>atol: float, optional</dt>
 <dd><p class="first last">The tolerance on absolute differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../generated/cfdm.ATOL.html#cfdm.ATOL" title="cfdm.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> function.</p>
 </dd>
 <dt>rtol: float, optional</dt>
 <dd><p class="first last">The tolerance on relative differences between real
-numbers. The default value is set by the <a class="reference internal" href="../function/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference internal" href="../generated/cfdm.RTOL.html#cfdm.RTOL" title="cfdm.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
 </dd>
 <dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then the “_FillValue” and “missing_value” properties
@@ -145,12 +145,11 @@ print a traceback stating how they are different.</p>
 <dd><p class="first last">TODO</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">Any type of object may be tested for equality but, in general,
-equality is only possible with another field ancillary
-construct, or a subclass of one. If <em>ignore_type</em> is True then
-then <code class="docutils literal notranslate"><span class="pre">FieldAncillary(source=other)</span></code> is tested for equality,
-rather than <code class="docutils literal notranslate"><span class="pre">other</span></code>, rather than the <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by
-the <em>other</em> parameter.</p>
+<dd><p class="first last">Any type of object may be tested but, in general, equality is
+only possible with another field ancillary construct, or a
+subclass of one. If <em>ignore_type</em> is True then then
+<code class="docutils literal notranslate"><span class="pre">FieldAncillary(source=other)</span></code> is tested, rather than the
+<code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
 </dd>
 </dl>
 </td>
@@ -197,7 +196,7 @@ the <em>other</em> parameter.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

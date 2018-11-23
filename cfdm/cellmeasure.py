@@ -124,8 +124,8 @@ components, and provides selected values of all data arrays.
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
-        '''
+               ignore_properties=(), ignore_type=False):
+        '''TODO
         '''
         if not super().equals(
                 other, rtol=rtol, atol=atol,
@@ -133,7 +133,7 @@ components, and provides selected values of all data arrays.
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
-                ignore_construct_type=ignore_construct_type):
+                ignore_type=ignore_type):
             return False
 
         measure0 = self.get_measure(None)

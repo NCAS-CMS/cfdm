@@ -619,7 +619,7 @@ data arrays.
 #                     coordinate_reference1, rtol=None, atol=None,
 #                     traceback=False, ignore_data_type=False,
 #                     ignore_fill_value=False,
-#                     ignore_construct_type=False):
+#                     ignore_type=False):
 #        '''
 #        '''
 #        coordinate_references = self.coordinate_references()
@@ -631,7 +631,7 @@ data arrays.
     
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_properties=(), ignore_type=False):
         '''Whether two field constructs are the same.
 
 Equality is strict by default. This means that for two field
@@ -661,9 +661,9 @@ NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
 
-Any type of object may be tested for equality but, in general,
-equality is only possible with another field construct, or a subclass
-of one. See the *ignore_type* parameter for details.
+Any type of object may be tested but, in general, equality is only
+possible with another field construct, or a subclass of one. See the
+*ignore_type* parameter for details.
 
 .. versionadded:: 1.7
 
@@ -693,14 +693,17 @@ of one. See the *ignore_type* parameter for details.
         the "Conventions" property is always omitted.
 
     ignore_data_type: `bool`, optional
-        TODO
+
+        If True then ignore the data types in all data array numerical
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements satisfy the 
 
     ignore_type: `bool`, optional
-        Any type of object may be tested for equality but, in general,
-        equality is only possible with another field construct, or a
-        subclass of one. If *ignore_type* is True then then
-        ``Field(source=other)`` is tested for equality, rather than
-        the ``other`` defined by the *other* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another field construct, or a subclass of
+        one. If *ignore_type* is True then then
+        ``Field(source=other)`` is tested, rather than the ``other``
+        defined by the *other* parameter.
 
 :Returns: 
   
@@ -736,7 +739,7 @@ False
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
-                ignore_construct_type=ignore_construct_type):
+                ignore_type=ignore_type):
             return False
 
         # ------------------------------------------------------------
@@ -746,7 +749,7 @@ False
                             rtol=rtol, atol=atol,
                             traceback=traceback,
                             ignore_data_type=ignore_data_type,
-                            ignore_construct_type=ignore_construct_type,
+                            ignore_type=ignore_type,
                             ignore_fill_value=ignore_fill_value):
             if traceback:
                 print(

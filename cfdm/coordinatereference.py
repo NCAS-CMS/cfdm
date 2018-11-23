@@ -285,7 +285,7 @@ components.
             
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_construct_type=False):
+               ignore_type=False):
         '''True if two instances are equal, False otherwise.
 
 :Parameters:
@@ -318,7 +318,7 @@ components.
 
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,
-                                        ignore_construct_type=ignore_construct_type)
+                                        ignore_type=ignore_type)
         if pp in (True, False):
             return pp
         
@@ -329,7 +329,7 @@ components.
 #            return True
 #
 #        # Check that each object is of the same type
-#        if ignore_construct_type:
+#        if ignore_type:
 #            if not isinstance(other, self.__class__):
 #                other = type(self)(source=other, copy=False)
 #        elif not isinstance(other, self.__class__):
@@ -342,7 +342,7 @@ components.
 #        if not super().equals(
 #                other, #rtol=rtol, atol=atol,
 #                traceback=traceback,
-#                ignore_construct_type=ignore_construct_type):
+#                ignore_type=ignore_type):
 #            return False
 
         coords0 = self.coordinates()
@@ -358,7 +358,8 @@ components.
                 other.coordinate_conversion,
                 rtol=rtol, atol=atol,
                 traceback=traceback,
-                ignore_construct_type=ignore_construct_type):
+                ignore_data_type=ignore_data_type,
+                ignore_type=ignore_type):
             if traceback:
                 print(
 "{}: Different coordinate conversions".format(self.__class__.__name__))
@@ -368,7 +369,8 @@ components.
                 other.datum,
                 rtol=rtol, atol=atol,
                 traceback=traceback,
-                ignore_construct_type=ignore_construct_type):
+                ignore_data_type=ignore_data_type,
+                ignore_type=ignore_type):
             if traceback:
                 print(
 "{}: Different datums".format(self.__class__.__name__))

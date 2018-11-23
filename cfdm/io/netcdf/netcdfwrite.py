@@ -773,7 +773,7 @@ dictionary.
     
             # Still here?
             if self.implementation.equal_constructs(variable, value['variable'],
-                                                    ignore_construct_type=ignore_type):
+                                                    ignore_type=ignore_type):
                 seen[id(variable)] = {'variable': variable,
                                       'ncvar'   : value['ncvar'],
                                       'ncdims'  : value['ncdims']}

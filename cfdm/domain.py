@@ -311,7 +311,7 @@ last values.
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_properties=(), ignore_type=False):
         '''True if two {+variable}s are equal, False otherwise.
 
 Two fields are equal if ...
@@ -377,7 +377,7 @@ False
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
-                              ignore_construct_type=ignore_construct_type):
+                              ignore_type=ignore_type):
             return False
 
         # ------------------------------------------------------------
@@ -387,7 +387,7 @@ False
                             rtol=rtol, atol=atol,
                             traceback=traceback,
                             ignore_data_type=ignore_data_type,
-                            ignore_construct_type=ignore_construct_type,
+                            ignore_type=ignore_type,
                             ignore_fill_value=ignore_fill_value):
             if traceback:
                 print(

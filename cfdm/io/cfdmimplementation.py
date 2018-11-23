@@ -489,12 +489,11 @@ axes, and possibly other axes, are returned.
     #--- End: def
     
     def equal_constructs(self, construct0, construct1,
-                         ignore_construct_type=False):
+                         ignore_type=False):
         '''
 
         '''    
-        return construct0.equals(construct1,
-                                 ignore_construct_type=ignore_construct_type)
+        return construct0.equals(construct1, ignore_type=ignore_type)
     #--- End: def
 
     def equal_properties(self, property_value0, property_value1):

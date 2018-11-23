@@ -39,7 +39,7 @@ x.__str__() <==> str(x)
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_construct_type=False):
+               ignore_type=False):
         '''TODO True if two instances are equal, False otherwise.
 
 :Parameters:
@@ -71,25 +71,32 @@ x.__str__() <==> str(x)
 :Examples:
 
         '''
-        # Check for object identity
-        if self is other:
-            return True
+        pp = super()._equals_preprocess(other, traceback=traceback,
+                                        ignore_type=ignore_type)
+        if pp in (True, False):
+            return pp
         
-        # Check that each object is of the same type
-        if ignore_construct_type:
-            if not isinstance(other, self.__class__):
-                other = type(self)(source=other, copy=False)
-        elif not isinstance(other, self.__class__):
-            if traceback:
-                print("{0}: Incompatible types: {0}, {1}".format(
-		    self.__class__.__name__,
-		    other.__class__.__name__))
-            return False
+        other = pp
+        
+#        # Check for object identity
+#        if self is other:
+#            return True
+#        
+#        # Check that each object is of the same type
+#        if ignore_type:
+#            if not isinstance(other, self.__class__):
+#                other = type(self)(source=other, copy=False)
+#        elif not isinstance(other, self.__class__):
+#            if traceback:
+#                print("{0}: Incompatible types: {0}, {1}".format(
+#		    self.__class__.__name__,
+#		    other.__class__.__name__))
+#            return False
 
 #        if not super().equals(
 #                other, #rtol=rtol, atol=atol,
 #                traceback=traceback,
-#                ignore_construct_type=ignore_construct_type):
+#                ignore_type=ignore_type):
 #            return False
         
         # Check that the coordinate conversion parameter terms match
@@ -110,12 +117,12 @@ x.__str__() <==> str(x)
             if value0 is None and value1 is None:
                 # Parameter values are both None
                 continue
-                
+
             if not self._equals(value0, value1, rtol=rtol, atol=atol,
                                 traceback=traceback,
-                                ignore_data_type=ignore_data_type,
+                                ignore_data_type=True, #ignore_data_type,
                                 ignore_fill_value=ignore_fill_value,
-                                ignore_construct_type=ignore_construct_type):
+                                ignore_type=ignore_type):
                 if traceback:
                     print(
 "{}: Unequal {!r} terms ({!r} != {!r})".format( 

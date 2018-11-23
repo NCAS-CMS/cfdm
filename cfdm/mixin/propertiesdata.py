@@ -199,7 +199,7 @@ standard_name = 'time'
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_properties=(), ignore_type=False):
         '''Whether two data arrays with descriptive properties are the same.
 
 Equality is strict by default. This means that:
@@ -250,11 +250,8 @@ positive, typically very small numbers.
     ignore_data_type: `bool`, optional
         TODO
 
-    ignore_construct_type: `bool`, optional
-        If True then proceed with equality comparisons if the *other*
-        parameter is not a `PropertiesData` instance. By default, a
-        non-`PropertiesData` instance is never equal to a
-        `PropertiesData` instance.
+    ignore_type: `bool`, optional
+        TODO
 
 :Returns: 
   
@@ -281,7 +278,7 @@ False
 
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,
-                                       ignore_construct_type=ignore_construct_type)
+                                        ignore_type=ignore_type)
         if pp in (True, False):
             return pp
         
@@ -292,7 +289,7 @@ False
 #            return True
 #
 #        # Check that each object is of the same type
-#        if ignore_construct_type:
+#        if ignore_type:
 #            if not isinstance(other, self.__class__):
 #                other = type(self)(source=other, copy=False)
 #        elif not isinstance(other, self.__class__):
@@ -303,7 +300,7 @@ False
 #            return False
 
 #        if not Container.equals(self, other, traceback=traceback,
-#                                ignore_construct_type=ignore_construct_type):
+#                                ignore_type=ignore_type):
 #            return False
         
         # ------------------------------------------------------------
@@ -337,7 +334,7 @@ False
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
-                ignore_construct_type=ignore_construct_type):
+                ignore_type=ignore_type):
             if traceback:
                 print(
 "{0}: Different properties".format(self.__class__.__name__))

@@ -210,7 +210,7 @@ rules, the only differences being:
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_properties=(), ignore_type=False):
         '''Whether two data arrays with descriptive properties and cell bounds
 are the same.
 
@@ -262,11 +262,8 @@ positive, typically very small numbers.
     ignore_data_type: `bool`, optional
         TODO
 
-    ignore_construct_type: `bool`, optional
-        If True then proceed with equality comparisons if the *other*
-        parameter is not a `PropertiesDataBounds` instance. By
-        default, a non-`PropertiesDataBounds` instance is never equal
-        to a `PropertiesDataBounds` instance.
+    ignore_type: `bool`, optional
+        TODO
 
 :Returns: 
   
@@ -300,7 +297,7 @@ False
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
-                              ignore_construct_type=ignore_construct_type):
+                              ignore_type=ignore_type):
             if traceback:
                 print("???????/")
             return False
@@ -329,7 +326,7 @@ False
                                 rtol=rtol, atol=atol,
                                 traceback=traceback,
                                 ignore_data_type=ignore_data_type,
-                                ignore_construct_type=ignore_construct_type,
+                                ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
@@ -350,7 +347,7 @@ False
                                 rtol=rtol, atol=atol,
                                 traceback=traceback,
                                 ignore_data_type=ignore_data_type,
-                                ignore_construct_type=ignore_construct_type,
+                                ignore_type=ignore_type,
                                 ignore_fill_value=ignore_fill_value):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
@@ -376,7 +373,7 @@ False
 #                                traceback=traceback,
 #                                ignore_data_type=ignore_data_type,
 #                                ignore_fill_value=ignore_fill_value,
-#                                ignore_construct_type=ignore_construct_type):
+#                                ignore_type=ignore_type):
 #                if traceback:
 #                    print(
 #"{}: Unequal {!r} ancillaries ({!r} != {!r})".format( 

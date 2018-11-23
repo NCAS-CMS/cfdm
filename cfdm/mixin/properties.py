@@ -62,7 +62,7 @@ class Properties(Container):
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_construct_type=False):
+               ignore_properties=(), ignore_type=False):
         '''Whether two collections of properties are the same.
 
 For vector-valued properties to be equal they must have same size and
@@ -102,11 +102,8 @@ positive, typically very small numbers.
     ignore_data_type: `bool`, optional
         TODO
 
-    ignore_construct_type: `bool`, optional
-        If True then proceed with equality comparisons if the *other*
-        parameter is not a `Properties` instance. By default, a
-        non-`Properties` instance is never equal to a `Properties`
-        instance.
+    ignore_type: `bool`, optional
+        TODO
 
 :Returns: 
   
@@ -133,7 +130,7 @@ False
 
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,
-                                        ignore_construct_type=ignore_construct_type)
+                                        ignore_type=ignore_type)
         if pp in (True, False):
             return pp
         
@@ -168,7 +165,7 @@ False
             if not self._equals(x, y,
                                 rtol=rtol, atol=atol,
                                 ignore_fill_value=ignore_fill_value,
-                                ignore_data_type=ignore_data_type,
+                                ignore_data_type=True, #ignore_data_type,
                                 traceback=traceback):
                 if traceback:
                     print("{0}: Different {1}: {2!r}, {3!r}".format(

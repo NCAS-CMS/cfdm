@@ -90,7 +90,7 @@ x.__str__() <==> str(x)
         Whether or not the two domain axes are equal.
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,
-                                        ignore_construct_type=ignore_construct_type)
+                                        ignore_type=ignore_type)
         if pp in (True, False):
             return pp
         
