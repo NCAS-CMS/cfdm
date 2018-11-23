@@ -105,6 +105,10 @@ and be element-wise equal.</li>
 <code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers.</p>
+<p>TODO Any type of object may be tested for equality but, in general,
+equality is only possible with another field ancillary construct or a
+sublcass of a field ancillary construct. See the <em>ignore_type</em>
+parameter for details</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -138,13 +142,19 @@ print a traceback stating how they are different.</p>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">TODO</p>
 </dd>
-<dt>ignore_construct_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then <em>other</em> can be equal if it is not a field
-ancillary construct (nor a subclass of one), but is an object
-with the same API. By default, <em>other</em> can only be equal if it
-is a field ancillary construct (or a subclass of one).</p>
-</dd>
 </dl>
+<p>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</p>
+<blockquote>
+<div><p>TODO</p>
+<p>By default, an object that is not a field ancillary construct
+(nor a subclass of one) is never equal. If <em>ignore_type</em> is
+True then any object with the same API as a field ancillary
+construct can be considered for equality.</p>
+<p>By default, an object that is not (a subclass) of the same
+type is never equal. If <em>ignore_type</em> is True then any object
+with the same API as a field ancillary construct can be
+considered for equality.</p>
+</div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
@@ -157,9 +167,9 @@ is a field ancillary construct (or a subclass of one).</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a field ancillary&#39;</span><span class="p">)</span>
 <span class="go">False</span>

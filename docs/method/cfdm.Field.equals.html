@@ -112,6 +112,9 @@ positive, typically very small numbers.</p>
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.</p>
+<p>Any type of object may be tested for equality but, in general,
+equality is only possible with another field construct or a sublcass
+of a field construct. See the <em>ignore_type</em> parameter for details</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -146,11 +149,15 @@ the “Conventions” property is always omitted.</p>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">TODO</p>
 </dd>
-<dt>ignore_construct_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then <em>other</em> can be equal if it is not a field
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first">By default, an object that is not a field construct (nor a
+subclass of one) is never equal. If <em>ignore_type</em> is True then
+any object with the same API as a field construct can be
+considered for equality.</p>
+<p class="last">If True then <em>other</em> can be equal if it is not a field
 construct (nor a subclass of one), but is an object with the
-same API. By default, <em>other</em> can only be equal if it is a
-field construct (or a subclass of one).</p>
+same API. By default, an object that is not a field construct
+(nor a subclass of one) is never equal.</p>
 </dd>
 </dl>
 </td>
