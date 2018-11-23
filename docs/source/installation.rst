@@ -88,7 +88,7 @@ To install from source:
 **Tests**
 ---------
 
-Tests are run from within the ``test`` directory:
+Tests are run from within the ``cfdm/test`` directory:
 
 .. code:: bash
  

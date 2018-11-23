@@ -68,6 +68,9 @@ def read(filename, external_files=None, field=None, verbose=False,
 
 The dataset may be a netCDF file on disk or on an OPeNDAP server.
 
+The returned fields are sorted by the netCDF variable names of their
+corresponding data variables.
+
 **Performance**
 
 Descriptive properties are always read into memory, but lazy loading

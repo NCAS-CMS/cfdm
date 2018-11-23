@@ -99,9 +99,10 @@ The built-in `repr` function returns a short, one-line description:
 .. code:: python
 
    >>> x
-   [<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
-    <Field: specific_humidity(latitude(5), longitude(8)) 1>]
-   >>> (t, q) = x
+   [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+   >>> q = x[0]
+   >>> t = x[1]
    >>> q
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
    

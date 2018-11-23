@@ -756,7 +756,7 @@ ancillaries, field ancillaries).
         # ------------------------------------------------------------
         # Return the fields
         # ------------------------------------------------------------
-        return list(fields.values())
+        return [x[1] for x in sorted(fields.items())]
     #--- End: def
 
     def _get_variables_from_external_files(self,
