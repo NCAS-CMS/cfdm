@@ -43,6 +43,7 @@ from . import Datum
 
 
 class CoordinateReference(mixin.NetCDFVariable,
+                          mixin.Equals,
                           mixin.Container,
                           core.CoordinateReference):
     '''A coordinate reference construct of the CF data model. 
@@ -317,11 +318,33 @@ components.
 **Examples**
 
         '''
-        if not super().equals(
-                other, #rtol=rtol, atol=atol,
-                traceback=traceback,
-                ignore_construct_type=ignore_construct_type):
-            return False
+        pp = super().equals_preprocess(other, traceback=traceback,
+                                       ignore_construct_type=ignore_construct_type)
+        if pp in (True, False):
+            return pp
+        
+        other = pp
+        
+#        # Check for object identity
+#        if self is other:
+#            return True
+#
+#        # Check that each object is of the same type
+#        if ignore_construct_type:
+#            if not isinstance(other, self.__class__):
+#                other = type(self)(source=other, copy=False)
+#        elif not isinstance(other, self.__class__):
+#            if traceback:
+#                print("{0}: Incompatible types: {0}, {1}".format(
+#		    self.__class__.__name__,
+#		    other.__class__.__name__))
+#            return False
+        
+#        if not super().equals(
+#                other, #rtol=rtol, atol=atol,
+#                traceback=traceback,
+#                ignore_construct_type=ignore_construct_type):
+#            return False
 
         coords0 = self.coordinates()
         coords1 = other.coordinates()

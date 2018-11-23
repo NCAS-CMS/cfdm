@@ -661,7 +661,9 @@ NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
 
-
+Any type of object may be tested for equality but, in general,
+equality is only possible with another field construct or a sublcass
+of a field construct. See the *ignore_type* parameter for details
 
 .. versionadded:: 1.7
 
@@ -693,11 +695,16 @@ construct.
     ignore_data_type: `bool`, optional
         TODO
 
-    ignore_construct_type: `bool`, optional
+    ignore_type: `bool`, optional
+        By default, an object that is not a field construct (nor a
+        subclass of one) is never equal. If *ignore_type* is True then
+        any object with the same API as a field construct can be
+        considered for equality.
+
         If True then *other* can be equal if it is not a field
         construct (nor a subclass of one), but is an object with the
-        same API. By default, *other* can only be equal if it is a
-        field construct (or a subclass of one).
+        same API. By default, an object that is not a field construct
+        (nor a subclass of one) is never equal.
 
 :Returns: 
   

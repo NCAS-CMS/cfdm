@@ -280,9 +280,31 @@ Field: Different properties
 False
 
         '''
-        if not Container.equals(self, other, traceback=traceback,
-                                ignore_construct_type=ignore_construct_type):
-            return False
+        pp = super().equals_preprocess(other, traceback=traceback,
+                                       ignore_construct_type=ignore_construct_type)
+        if pp in (True, False):
+            return pp
+        
+        other = pp
+
+#        # Check for object identity
+#        if self is other:
+#            return True
+#
+#        # Check that each object is of the same type
+#        if ignore_construct_type:
+#            if not isinstance(other, self.__class__):
+#                other = type(self)(source=other, copy=False)
+#        elif not isinstance(other, self.__class__):
+#            if traceback:
+#                print("{0}: Incompatible types: {0}, {1}".format(
+#		    self.__class__.__name__,
+#		    other.__class__.__name__))
+#            return False
+
+#        if not Container.equals(self, other, traceback=traceback,
+#                                ignore_construct_type=ignore_construct_type):
+#            return False
         
         # ------------------------------------------------------------
         # Check external variables (returning True if both are

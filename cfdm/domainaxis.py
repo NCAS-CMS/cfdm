@@ -93,13 +93,24 @@ x.__str__() <==> str(x)
         if self is other:
             return True
 
-        # Check that each instance is of the same type
-        if not isinstance(other, self.__class__):
+        # Check that each object is of the same type
+        if ignore_construct_type:
+            if not isinstance(other, self.__class__):
+                other = type(self)(source=other, copy=False)
+        elif not isinstance(other, self.__class__):
             if traceback:
                 print("{0}: Incompatible types: {0}, {1}".format(
-			self.__class__.__name__,
-			other.__class__.__name__))
+		    self.__class__.__name__,
+		    other.__class__.__name__))
             return False
+        
+#        # Check that each instance is of the same type
+#        if not isinstance(other, self.__class__):
+#            if traceback:
+#                print("{0}: Incompatible types: {0}, {1}".format(
+#			self.__class__.__name__,
+#			other.__class__.__name__))
+#            return False
 
         # Check that each axis has the same size
         self_size  = self.get_size(None)
@@ -115,7 +126,7 @@ x.__str__() <==> str(x)
 
     def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
-        '''Return a name for the {+variable}.
+        '''TODO
 
 By default the name is the first found of the following:
 

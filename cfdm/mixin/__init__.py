@@ -16,3 +16,4 @@ from .netcdf                      import (NetCDFDataVariable,
 
 from .constructaccess             import ConstructAccess
 
+from .equals import Equals

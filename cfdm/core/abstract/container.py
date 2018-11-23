@@ -38,25 +38,6 @@ x.__deepcopy__() <==> copy.deepcopy(x)
         return self.copy()
     #--- End: def
 
-#    def __repr__(self):
-#        '''asdasdasUsed if `repr` is called on the object.
-#
-#x.__repr__() <==> repr(x)
-#
-#        '''
-#        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''Used if `str` is called on the object.
-#
-#x.__str__() <==> str(x)
-#
-#        '''
-#        out = sorted(self._components)
-#        return ', '.join(out)
-#    #--- End: def
-
     def _del_component(self, component, *default):
         '''Remove a component.
 

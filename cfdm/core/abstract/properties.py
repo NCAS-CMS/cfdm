@@ -117,7 +117,6 @@ None
 None
 
         '''
-#        return self._get_component('properties').pop(prop, None)
         try:
             return self._get_component('properties').pop(prop)
         except KeyError:

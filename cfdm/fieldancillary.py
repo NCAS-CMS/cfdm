@@ -126,6 +126,11 @@ Two numerical elements ``a`` and ``b`` are considered equal if
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers.
 
+TODO Any type of object may be tested for equality but, in general,
+equality is only possible with another field ancillary construct or a
+sublcass of a field ancillary construct. See the *ignore_type*
+parameter for details
+
 .. versionadded:: 1.7
 
 :Parameters:
@@ -155,11 +160,20 @@ positive, typically very small numbers.
     ignore_data_type: `bool`, optional
         TODO
 
-    ignore_construct_type: `bool`, optional
-        If True then *other* can be equal if it is not a field
-        ancillary construct (nor a subclass of one), but is an object
-        with the same API. By default, *other* can only be equal if it
-        is a field ancillary construct (or a subclass of one).
+
+    ignore_type: `bool`, optional
+
+        TODO
+
+        By default, an object that is not a field ancillary construct
+        (nor a subclass of one) is never equal. If *ignore_type* is
+        True then any object with the same API as a field ancillary
+        construct can be considered for equality.
+
+        By default, an object that is not (a subclass) of the same
+        type is never equal. If *ignore_type* is True then any object
+        with the same API as a field ancillary construct can be
+        considered for equality.
 
 :Returns: 
   
@@ -168,9 +182,9 @@ positive, typically very small numbers.
 
 **Examples:**
 
->>> f.equals(p)
+>>> f.equals(f)
 True
->>> f.equals(d.copy())
+>>> f.equals(f.copy())
 True
 >>> f.equals('not a field ancillary')
 False

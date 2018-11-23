@@ -119,37 +119,42 @@ x.__str__() <==> str(x)
                 return x == y
     #--- End: def
     
-    def equals(self, other, traceback=False,
-               ignore_construct_type=False):
-        '''TODO
-
-..versionadded:: 1.7
-
-:Parameters:
-
-    TODO
-
-:Returns:
-
-    TODO
-
-**Examples:**
-
-TODO
-        '''
-        # Check for object identity
-        if self is other:
-            return True
-
-        # Check that each instance is of the same type
-        if not ignore_construct_type and not isinstance(other, self.__class__):
-            if traceback:
-                print("{0}: Incompatible types: {0}, {1}".format(
-			self.__class__.__name__,
-			other.__class__.__name__))
-            return False
-
-        return True
-    #--- End: def
+#    def equals(self, other, traceback=False,
+#               ignore_construct_type=False):
+#        '''TODO
+#
+#..versionadded:: 1.7
+#
+#:Parameters:
+#
+#    TODO
+#
+#:Returns:
+#
+#    TODO
+#
+#**Examples:**
+#
+#TODO
+#        '''
+#        # Check for object identity
+#        if self is other:
+#            return True
+#
+#        # Check that each instance is of the same type
+#        if ignore_construct_type and not isinstance(other, self.__class__):
+#            other = type(self)(source=other, copy=False)
+#        else:
+#        # Check that each instance is of the same type
+#            if not ignore_construct_type and not isinstance(other, self.__class__):
+#                if traceback:
+#                    print("{0}: Incompatible types: {0}, {1}".format(
+#			self.__class__.__name__,
+#			other.__class__.__name__))
+#                return False
+#        #--- End: if
+#
+#        return True
+#    #--- End: def
         
 #--- End: class
