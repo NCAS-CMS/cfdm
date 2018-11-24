@@ -9,7 +9,7 @@
     <title>Tutorial &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -1738,6 +1738,8 @@ field construct’s <a class="reference internal" href="method/cfdm.Field.equals
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -1752,7 +1754,8 @@ metadata constructs and for each pair of constructs:</p>
 <ul class="simple">
 <li>the descriptive properties must be the same (with the exception of
 the field construct’s “Conventions” property, which is never
-checked), and</li>
+checked), and vector-valued properties must have same the size and
+be element-wise equal, and</li>
 <li>if there are data arrays then they must have same shape, data type
 and be element-wise equal.</li>
 </ul>
@@ -1783,15 +1786,19 @@ construct.</p>
 <p>The <a class="reference internal" href="method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method has optional parameters for modifying the
 criteria for considering two fields to be equal:</p>
 <ul class="simple">
-<li>named properties may be omitted from the comparison,</li>
-<li>the missing data value may be ignored,</li>
-<li>the data type of arrays may be ignored (i.e. arrays with different
-data types but equal elements will be accepted as being the same),
-and</li>
+<li>named properties may be omitted from the comparison,x</li>
+<li>the fill value and missing data value properties may be ignored,</li>
+<li>the data type of data arrays may be ignored, and</li>
 <li>the tolerances on absolute and relative differences for numerical
 comparisons may be temporarily changed, without changing the default
 settings.</li>
 </ul>
+<p>Metadata constructs may also be tested for equality:</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">orog</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="external-variables">
 <span id="id19"></span><h2><strong>External variables</strong><a class="headerlink" href="#external-variables" title="Permalink to this headline">¶</a></h2>
@@ -2395,8 +2402,8 @@ intended.</td></tr>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

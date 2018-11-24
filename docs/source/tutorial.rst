@@ -1719,6 +1719,8 @@ field construct's `~Field.equals` method.
    True
    >>> t.equals(t.copy())
    True
+   >>> t.equals(t[...])
+   True
    >>> t.equals(q)
    False
    >>> t.equals(q, traceback=True)
@@ -1732,8 +1734,9 @@ metadata constructs and for each pair of constructs:
 
 * the descriptive properties must be the same (with the exception of
   the field construct's "Conventions" property, which is never
-  checked), and
-
+  checked), and vector-valued properties must have same the size and
+  be element-wise equal, and
+  
 * if there are data arrays then they must have same shape, data type
   and be element-wise equal.
 
@@ -1767,18 +1770,25 @@ construct.
 The `~Field.equals` method has optional parameters for modifying the
 criteria for considering two fields to be equal:
 
-* named properties may be omitted from the comparison,
+* named properties may be omitted from the comparison,x
 
-* the missing data value may be ignored,
+* the fill value and missing data value properties may be ignored,
 
-* the data type of arrays may be ignored (i.e. arrays with different
-  data types but equal elements will be accepted as being the same),
-  and
+* the data type of data arrays may be ignored, and
 
 * the tolerances on absolute and relative differences for numerical
   comparisons may be temporarily changed, without changing the default
   settings.
-   
+
+Metadata constructs may also be tested for equality:
+
+.. code:: python
+	  
+   >>> orog = t.get_construct('surface_altitude')
+   >>> orog.equals(orog.copy())
+   True
+
+
 .. _external_variables:
 
 **External variables**

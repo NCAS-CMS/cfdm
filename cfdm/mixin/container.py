@@ -191,7 +191,7 @@ x.__str__() <==> str(x)
         elif not isinstance(other, self.__class__):
             if traceback:
                 print("{0}: Incompatible type: {1}".format(
-		    other.__class__.__name__))
+		    self.__class__.__name__, other.__class__.__name__))
             return False
 
         return other
