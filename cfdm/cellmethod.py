@@ -294,49 +294,95 @@ applies.
 #    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
-               ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_type=False):
-        '''TODO
+               ignore_data_type=False, ignore_properties=(),
+               ignore_type=False):
+        '''Whether two cell method constructs are the same.
 
-True if two cell methods are equal, False otherwise.
+Equality is strict by default. This means that for two cell method
+constructs to be considered equal:
 
-The `!axes` attribute is ignored in the comparison.
+* TODO <something about axes - are they ignored?>
+
+..
+
+* TODO <something about method  and other propoerties>
+
+..
+
+* TODO <something about data -valued propoerties> (see the
+  *ignore_data_type* parameter).
+
+Two numerical elements ``a`` and ``b`` are considered equal if
+``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
+
+Any type of object may be tested but, in general, equality is only
+possible with another cell method construct, or a subclass of one. See
+the *ignore_type* parameter.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
-    other : 
+    other: 
         The object to compare for equality.
 
-    atol : float, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
+        
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
 
-    rtol : float, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
+    traceback: `bool`, optional
+        If True then print information about differences that lead to
+        inequaility.
 
-    ignore_fill_value : bool, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
+    ignore_properties: sequence of `str`, optional
+        The names of properties to omit from the comparison.
 
-    traceback : bool, optional
-        If True then print a traceback highlighting where the two
-        instances differ.
+    ignore_data_type: `bool`, optional
+        If True then ignore the data types in all numerical data array
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
+
+    ignore_type: `bool`, optional
+        Any type of object may be tested but, in general, equality is
+        only possible with another cell method construct, or a
+        subclass of one. If *ignore_type* is True then then
+        ``CellMethod(source=other)`` is tested, rather than the
+        ``other`` defined by the *other* parameter.
 
 :Returns: 
+  
+    out: `bool`
+        Whether the two cell method constructs are equal.
 
-    out : bool
-        Whether or not the two instances are equal.
+**Examples:**
 
-**Examples**
+>>> f.equals(f)
+True
+>>> f.equals(f.copy())
+True
+>>> f.equals('not a cell method')
+False
 
-'''
+
+        '''
+        ignore_properties = tuple(ignore_properties) + ('intervals',),
+        
         if not super().equals(
                 other, rtol=rtol, atol=atol,
                 traceback=traceback,
                 ignore_data_type=ignore_data_type,
-                ignore_fill_value=ignore_fill_value,
-                ignore_properties=ignore_properties + ('intervals',),
+                ignore_properties=ignore_properties,
                 ignore_type=ignore_type):
             return False
         
@@ -379,7 +425,7 @@ The `!axes` attribute is ignored in the comparison.
                 if not self._equals(data0, data1,
                                     rtol=rtol, atol=atol,
                                     ignore_data_type=ignore_data_type,
-                                    ignore_fill_value=ignore_fill_value,
+#                                    ignore_fill_value=ignore_fill_value,
                                     traceback=traceback):
                     if traceback:
                         print(

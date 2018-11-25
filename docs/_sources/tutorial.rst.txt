@@ -796,13 +796,13 @@ with the `~Field.get_data_axes` method of the field construct:
 A cell method construct describes how the data represent the variation
 of the physical quantity within the cells of the domain, and multiple
 cell method constructs allow multiple methods to be recorded. Because
-the application of methods is not commutative (e.g. a mean of
+the application of cell methods is not commutative (e.g. a mean of
 variances is generally not the same as a variance of means), the
 `~cfdm.Field.cell_methods` method of the field construct returns an
-ordered dictionary of constructs. The order is the same as that of a
-cell method attribute in a netCDF dataset, or the same as that in
-which cell method constructs were added to the field construct during
-:ref:`field creation <field_creation>`.
+ordered dictionary of constructs. The order is the same as that
+described by a cell method attribute read from a netCDF dataset, or
+the same as that in which cell method constructs were added to the
+field construct during :ref:`field creation <field_creation>`.
 
 .. code:: python
 

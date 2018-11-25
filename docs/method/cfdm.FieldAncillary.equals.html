@@ -89,26 +89,27 @@
 <dt id="cfdm.FieldAncillary.equals">
 <code class="descclassname">FieldAncillary.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/fieldancillary.py#L105"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.FieldAncillary.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two field ancillary constructs are the same.</p>
-<p>Equality is strict by default. This means that:</p>
+<p>Equality is strict by default. This means that for two field ancillary
+constructs to be considered equal:</p>
 <ul class="simple">
 <li>the descriptive properties must be the same, and vector-valued
 properties must have same the size and be element-wise equal (see
-the <em>ignore_properties</em> parameter),</li>
+the <em>ignore_properties</em> parameter), and</li>
 </ul>
 <ul class="simple">
 <li>if there are data arrays then they must have same shape, data type
-and be element-wise equal.</li>
+and be element-wise equal (see the <em>ignore_data_type</em> parameter).</li>
 </ul>
 <p>Two numerical elements <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
-positive, typically very small numbers.</p>
+positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
+parameters.</p>
 <p>Any type of object may be tested but, in general, equality is only
 possible with another field ancillary construct, or a subclass of
 one. See the <em>ignore_type</em> parameter.</p>
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked on any
-construct.</p>
+constitute part of the CF data model and so are not checked.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>

@@ -640,17 +640,18 @@ metadata constructs and for each pair of constructs:
 
 * the descriptive properties must be the same, and vector-valued
   properties must have same the size and be element-wise equal (see
-  the *ignore_properties* parameter),
+  the *ignore_properties* parameter), and
 
 ..
 
 * if there are data arrays then they must have same shape, data type
-  and be element-wise equal.
+  and be element-wise equal (see the *ignore_data_type* parameter).
 
 Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers.
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
 
 Any type of object may be tested but, in general, equality is only
 possible with another field construct, or a subclass of one. See the

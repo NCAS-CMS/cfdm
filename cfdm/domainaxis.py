@@ -60,34 +60,59 @@ x.__str__() <==> str(x)
         return str(self.get_size(''))
     #--- End: def
 
-    def equals(self, other, traceback=False, *kwargs):
-        '''Return True if two domain axis objects are equal.
+    def equals(self, other, traceback=False, ignore_type=False):
+        '''Whether two domain axis constructs are the same.
+
+Equality is strict by default. This means that for two field domain
+axis constructs to be considered equal::
+
+* the axis sizes must be the same.
+
+Any type of object may be tested but, in general, equality is only
+possible with another domain axis construct, or a subclass of one. See
+the *ignore_type* parameter.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
-    other : object
+    other: 
         The object to compare for equality.
 
-    traceback : bool, optional
-        If True then print a traceback highlighting where the two
-        domain axes differ.
+    traceback: `bool`, optional
+        If True then print information about differences that lead to
+        inequaility.
 
-    atol : *optional*
-        Ignored.
-
-    rtol : *optional*
-        Ignored.
-
-    ignore : *optional*
-        Ignored.
-
-    ignore_fill_value : *optional*
-        Ignored.
+    ignore_type: `bool`, optional
+        Any type of object may be tested but, in general, equality is
+        only possible with another domain axis construct, or a
+        subclass of one. If *ignore_type* is True then then
+        ``DomainAxis(source=other)`` is tested, rather than the
+        ``other`` defined by the *other* parameter.
 
 :Returns: 
   
-    out : bool
-        Whether or not the two domain axes are equal.
+    out: `bool`
+        Whether the two domain axis constructs are equal.
+
+**Examples:**
+
+>>> d.equals(d)
+True
+>>> d.equals(d.copy())
+True
+>>> d.equals('not a domain axis')
+False
+
+>>> d = cfdm.DomainAxis(1)
+>>> e = cfdm.DomainAxis(99)
+>>> d.equals(e, traceback=True)
+DomainAxis: Different axis sizes: 1 != 99
+False
+
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,
                                         ignore_type=ignore_type)

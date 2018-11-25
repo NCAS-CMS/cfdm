@@ -122,7 +122,8 @@ components, and provides selected values of all data arrays.
                ignore_properties=(), ignore_type=False):
         '''Whether two auxiliary coordinate constructs are the same.
 
-Equality is strict by default. This means that:
+Equality is strict by default. This means that for two auxiliary
+coordinate constructs to be considered equal:
 
 * the descriptive properties must be the same, and vector-valued
   properties must have same the size and be element-wise equal (see
@@ -131,20 +132,28 @@ Equality is strict by default. This means that:
 ..
 
 * if there are data arrays then they must have same shape, data type
-  and be element-wise equal.
+  and be element-wise equal (see the *ignore_data_type* parameter),
+  and
+
+..
+
+* if there are bounds then their descriptive properties (if any) must
+  be the same and their data arrays must have same shape, data type
+  and be element-wise equal (see the *ignore_properties* and
+  *ignore_data_type* parameters).
 
 Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers.
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
 
 Any type of object may be tested but, in general, equality is only
 possible with another auxiliary coordinate construct, or a subclass of
 one. See the *ignore_type* parameter.
 
 NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked on any
-construct.
+constitute part of the CF data model and so are not checked.
 
 .. versionadded:: 1.7
 

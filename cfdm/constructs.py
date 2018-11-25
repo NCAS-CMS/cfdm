@@ -366,6 +366,7 @@ TODO
         # Check non-array constructs
         # ------------------------------------------------------------
         for construct_type in self._non_array_constructs:
+            kwargs.pop('ignore_fill_value', None) # DCH ???
             if not getattr(self, '_equals_'+construct_type)(
                     other,
                     rtol=rtol, atol=atol,
