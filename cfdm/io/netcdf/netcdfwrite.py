@@ -1584,7 +1584,7 @@ extra trailing dimension.
 #        print ('1 strlen =', strlen)
         if strlen > 1:
             data = self.implementation.initialise_Data(
-                data=self._character_array(self.implementation.get_array(data)),
+                array=self._character_array(self.implementation.get_array(data)),
                 units=self.implementation.get_data_units(data, None),
                 calendar=self.implementation.get_data_calendar(data, None),
                 copy=False)

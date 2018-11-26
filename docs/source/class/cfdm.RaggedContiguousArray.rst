@@ -1,9 +1,12 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.RaggedContiguousArray
 ==========================
 
-.. currentmodule:: cfdm
+----
 
-.. autoclass:: RaggedContiguousArray
+.. autoclass:: cfdm.RaggedContiguousArray
    :no-members:
    :no-inherited-members:
 

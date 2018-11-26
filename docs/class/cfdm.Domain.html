@@ -9,7 +9,7 @@
     <title>cfdm.Domain &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -83,9 +83,10 @@
             
   <div class="section" id="cfdm-domain">
 <h1>cfdm.Domain<a class="headerlink" href="#cfdm-domain" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Domain">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Domain</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/domain.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Domain</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
 <p>A CF Domain construct.</p>
 <p>The domain is defined collectively by the following constructs, all of
@@ -103,27 +104,27 @@ which are optional:</p>
 <tbody valign="top">
 <tr class="row-even"><td>Domain axis</td>
 <td>Independent axes of the domain stored in
-<cite>DomainAxis</cite> objects</td>
+<a class="reference internal" href="cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a> objects</td>
 </tr>
 <tr class="row-odd"><td>Dimension coordinate</td>
 <td>Domain cell locations stored in
-<cite>DimensionCoordinate</cite> objects</td>
+<a class="reference internal" href="cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a> objects</td>
 </tr>
 <tr class="row-even"><td>Auxiliary coordinate</td>
 <td>Domain cell locations stored in
-<cite>AuxiliaryCoordinate</cite> objects</td>
+<a class="reference internal" href="cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a> objects</td>
 </tr>
 <tr class="row-odd"><td>Coordinate reference</td>
 <td>Domain coordinate systems stored in
-<cite>CoordinateReference</cite> objects</td>
+<a class="reference internal" href="cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a> objects</td>
 </tr>
 <tr class="row-even"><td>Domain ancillary</td>
 <td>Cell locations in alternative coordinate systems
-stored in <cite>DomainAncillary</cite> objects</td>
+stored in <a class="reference internal" href="cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a> objects</td>
 </tr>
 <tr class="row-odd"><td>Cell measure</td>
 <td>Domain cell size or shape stored in
-<cite>CellMeasure</cite> objects</td>
+<a class="reference internal" href="cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a> objects</td>
 </tr>
 </tbody>
 </table>
@@ -138,7 +139,7 @@ stored in <cite>DomainAncillary</cite> objects</td>
 Initialise the domain from the constructs of <em>source</em>,
 ignoring any cell method or field ancillary constructs.</p>
 </dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -213,7 +214,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.get_construct.html#cfdm.Domain.get_construct" title="cfdm.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a></td>
 <td>Return a metadata construct.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.next</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.next.html#cfdm.Domain.next" title="cfdm.Domain.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a></td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_auxiliary_coordinate</span></code></td>
@@ -263,7 +264,7 @@ initialization. By default arguments are deep copied.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

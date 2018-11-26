@@ -4,6 +4,8 @@
 cfdm.core.AuxiliaryCoordinate
 =============================
 
+----
+
 .. autoclass:: cfdm.core.AuxiliaryCoordinate
    :no-members:
    :no-inherited-members:

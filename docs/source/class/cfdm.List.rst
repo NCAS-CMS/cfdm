@@ -4,6 +4,8 @@
 cfdm.List
 =========
 
+----
+
 .. autoclass:: cfdm.List
    :no-members:
    :no-inherited-members:

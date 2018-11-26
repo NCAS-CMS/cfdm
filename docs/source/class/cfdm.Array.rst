@@ -4,7 +4,7 @@
 cfdm.Array
 ==========
 
-.. currentmodule:: cfdm.Array
+----
 
 .. autoclass:: cfdm.Array
    :no-members:

@@ -4,6 +4,8 @@
 cfdm.core.DomainAncillary
 =========================
 
+----
+
 .. autoclass:: cfdm.core.DomainAncillary
    :no-members:
    :no-inherited-members:

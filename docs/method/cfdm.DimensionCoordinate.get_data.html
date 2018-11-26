@@ -9,7 +9,7 @@
     <title>cfdm.DimensionCoordinate.get_data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -87,10 +87,12 @@
 <h1>cfdm.DimensionCoordinate.get_data<a class="headerlink" href="#cfdm-dimensioncoordinate-get-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DimensionCoordinate.get_data">
-<code class="descclassname">DimensionCoordinate.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/core/abstract/propertiesdata.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DimensionCoordinate.get_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DimensionCoordinate.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.DimensionCoordinate.get_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data.</p>
-<p>Note that a <a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> is returned. Use the <a class="reference internal" href="cfdm.DimensionCoordinate.get_array.html#cfdm.DimensionCoordinate.get_array" title="cfdm.DimensionCoordinate.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a> method to return
-the data as an independent <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
+<p>Note that a <a class="reference internal" href="../class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance is returned. Use the <a class="reference internal" href="cfdm.DimensionCoordinate.get_array.html#cfdm.DimensionCoordinate.get_array" title="cfdm.DimensionCoordinate.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a> method to
+return the data as an independent <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array.</p>
+<p>The units, calendar and fill value properties are, if set, inserted
+into the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -104,15 +106,14 @@ the data as an independent <a class="reference external" href="https://docs.scip
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if a data object has not been set.</p>
+<dd><p class="first last">Return <em>default</em> if a data have not been set.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: </dt>
-<dd><p class="first last">The data object. If unset then <em>default</em> is returned, if
-provided.</p>
+<dt>out:</dt>
+<dd><p class="first last">The data. If unset then <em>default</em> is returned, if provided.</p>
 </dd>
 </dl>
 </td>
@@ -151,7 +152,7 @@ provided.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

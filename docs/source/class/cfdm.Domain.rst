@@ -1,7 +1,10 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.Domain
 ===========
 
-.. currentmodule:: cfdm
+----
 
 .. autoclass:: Domain
    :no-members:

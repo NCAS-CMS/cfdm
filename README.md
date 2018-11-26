@@ -40,6 +40,6 @@ https://ncas-cms.github.io/cfdm
 Tests
 =====
 
-Tests are run from within the ``test`` directory:
+Tests are run from within the ``cfdm/test`` directory:
 
     python run_tests.py

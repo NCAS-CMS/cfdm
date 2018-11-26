@@ -3164,7 +3164,7 @@ variable's netCDF dimensions.
 
                         try:
                             data = self.implementation.initialise_Data(
-                                data=parsed_interval,
+                                array=parsed_interval,
                                 units=units,
                                 copy=False)
                         except:
@@ -3468,7 +3468,7 @@ compressed-by-indexed-contiguous-ragged-array netCDF variable.
             units    = None
             calendar = None
 
-        return self.implementation.initialise_Data(data=array,
+        return self.implementation.initialise_Data(array=array,
                                                    units=units, calendar=calendar,
                                                    copy=False)
     #--- End: def

@@ -1,43 +1,76 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.Data
-==============
+=========
 
-.. currentmodule:: cfdm.core
+----
 
-.. autoclass:: Data
+.. autoclass:: cfdm.core.Data
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+-----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-      ~Data.__init__
-      ~Data.copy
-      ~Data.del_calendar
-      ~Data.del_fill_value
-      ~Data.del_units
-      ~Data.get_array
-      ~Data.get_calendar
-      ~Data.get_fill_value
-      ~Data.get_units
-      ~Data.next
-      ~Data.set_calendar
-      ~Data.set_fill_value
-      ~Data.set_units
-   
-   
+   ~cfdm.core.Data.get_array
+   ~cfdm.core.Data.get_calendar
+   ~cfdm.core.Data.get_fill_value
+   ~cfdm.core.Data.get_units
 
-   
-   
-   .. rubric:: Attributes
+.. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~Data.dtype
-      ~Data.ndim
-      ~Data.shape
-      ~Data.size
-   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.Data.dtype
+   ~cfdm.core.Data.ndim
+   ~cfdm.core.Data.shape
+   ~cfdm.core.Data.size
+ 
+Modification
+------------
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Data.set_calendar
+   ~cfdm.core.Data.set_fill_value
+   ~cfdm.core.Data.set_units
+      
+Miscellaneous
+-------------
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Data.copy
+ 
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Data.__deepcopy__
+
    

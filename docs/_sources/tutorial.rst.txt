@@ -1306,7 +1306,7 @@ constructs (data arrays have been generated with dummy values using
    domain_axisY = cfdm.DomainAxis(5)
    domain_axisX = cfdm.DomainAxis(8)
 
-   # Insert the domain axes into the field. The set_domain_axis method
+   # Insert the domain axes into the field. The set_construct method
    # returns the domain axis construct identifier that will be used
    # later to specify which domain axis corresponds to which dimension
    # coordinate construct.  

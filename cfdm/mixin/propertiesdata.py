@@ -56,17 +56,6 @@ rules, the only differences being:
         return new
     #--- End: def
 
-#   def __setitem__(self, indices, value):
-#       '''TODO x.__setitem__(indices, value) <==> x[indices]
-#
-#       '''
-#       data = self.get_data(None)
-#       if data is None:
-#           raise ValueError("Can't set elements when there is no data")    
-#
-#       data[indices] = value
-#   #--- End: def
-
     def __str__(self):
         '''Called by the `str` built-in function.
 
@@ -517,12 +506,12 @@ TODO
         return default
     #--- End: def
 
-    def open(self):
-        '''TODO
-        '''
-        if self.has_data():
-            self.get_data().open()
-    #--- End: def
+#    def open(self):
+#        '''TODO
+#        '''
+#        if self.has_data():
+#            self.get_data().open()
+#    #--- End: def
 
     def squeeze(self, axes=None):
         '''Remove size one axes from the data array.

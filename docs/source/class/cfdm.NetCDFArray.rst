@@ -1,9 +1,12 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.NetCDFArray
 ================
 
-.. currentmodule:: cfdm
+----
 
-.. autoclass:: NetCDFArray
+.. autoclass:: cfdm.NetCDFArray
    :no-members:
    :no-inherited-members:
 

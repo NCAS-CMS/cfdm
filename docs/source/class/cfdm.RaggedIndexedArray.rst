@@ -1,7 +1,10 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.RaggedIndexedArray
 =======================
 
-.. currentmodule:: cfdm
+----
 
 .. autoclass:: RaggedIndexedArray
    :no-members:

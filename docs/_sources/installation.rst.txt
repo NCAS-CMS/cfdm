@@ -6,12 +6,16 @@
 **Installation**
 ================
 
+----
+
 **Dependencies**
 ----------------
 
+----
+
 The cfdm package requires:
 
-* `Python <https://www.python.org/>`_,version 2.7 or 3 or newer,
+* `Python <https://www.python.org/>`_, version 2.7 or 3 or newer,
 
 * `numpy <http://www.numpy.org/>`_, version 1.11 or newer,
 
@@ -22,6 +26,8 @@ The cfdm package requires:
 
 **pip**
 -------
+
+----
 
 `pip install <https://pip.pypa.io/en/latest/reference/pip_install/>`_
 can be used, for example:
@@ -41,6 +47,8 @@ can be used, for example:
 **conda**
 ---------
 
+----
+
 *Coming soon*
 
 .. To install cfdm using `conda <https://conda.io/docs/>`_, first install
@@ -55,6 +63,8 @@ can be used, for example:
 **Source**
 ----------
 
+----
+
 To install from source:
 
 1. Download the cfdm package from https://pypi.org/project/cfdm
@@ -63,8 +73,8 @@ To install from source:
 
    .. code:: bash
 	 
-      tar zxvf cfdm-1.7b4.tar.gz
-      cd cfdm-1.7b4
+      tar zxvf cfdm-1.7b6.tar.gz
+      cd cfdm-1.7b6
 
 3. Install the package:
   
@@ -90,6 +100,8 @@ To install from source:
 **Tests**
 ---------
 
+----
+
 Tests are run from within the ``cfdm/test`` directory:
 
 .. code:: bash
@@ -98,5 +110,7 @@ Tests are run from within the ``cfdm/test`` directory:
        
 **Code repository**
 -------------------
+
+----
 
 The complete source code is available at https://github.com/NCAS-CMS/cfdm

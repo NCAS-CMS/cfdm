@@ -2,7 +2,9 @@
 .. default-role:: obj
 
 cfdm.DomainAncillary
-========================
+====================
+
+----
 
 .. autoclass:: cfdm.DomainAncillary
    :no-members:

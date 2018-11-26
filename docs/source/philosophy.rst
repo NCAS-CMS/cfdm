@@ -7,11 +7,13 @@
 **Philosophy**
 ==============
 
-The basic requirement of a reference implementation is to represent
+----
+
+The basic requirement of the reference implementation is to represent
 the logical CF data model in memory with a package of Python classes,
 and no further features. However, to be useful, the implementation
-must also have the practical functionality to read and write
-real-world netCDF datasets.
+must also have the practical functionality to read, write, and, to
+some extent, modify real-world netCDF datasets.
 
 In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
@@ -20,19 +22,19 @@ model. This core implementation provides the basis for an extended
 implementation, the cfdm package, that allows the reading and writing
 of netCDF datasets, as well as having comprehensive inspection
 capabilities, more flexible field modification capabilities, and a
-more user-friendly API (application programming interface).
+more user-friendly application programming interface (API).
 
-The design of the API needs to strike a balance between being
-"verbose" and "terse". A verbose API is easier to understand, is more
-memorable, but usually involves more typing; whilst a terse API is
-more efficient for the experienced user. The cfdm package has aimed
-for an API that more at the verbose end of the spectrum: in general it
-does not use abbreviations for method and parameter names, and each
-method performs a sole function.
+The design of the API needs to strike a balance between being verbose
+and terse. A verbose API is easier to understand, is more memorable,
+but usually involves more typing; whilst a terse API is more efficient
+for the experienced user. The cfdm package has aimed for an API that
+is more at the verbose end of the spectrum: in general it does not use
+abbreviations for method and parameter names, and each method performs
+a sole function.
 
 The cfdm package is *not* (and is not meant to be) a general analysis
-package so it can't, for example, regrid field constructs to new
-domains, perform statistical collapses, combine field constructs
+package. Therefore it can't, for example, regrid field constructs to
+new domains, perform statistical collapses, combine field constructs
 arithmetically, etc.
 
 Here is an example of a simple field created with the :ref:`cfdm.core

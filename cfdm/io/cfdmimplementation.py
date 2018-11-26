@@ -874,7 +874,7 @@ axes, and possibly other axes, are returned.
         return cls()
     #--- End: def
 
-    def initialise_Data(self, data=None, units=None, calendar=None,
+    def initialise_Data(self, array=None, units=None, calendar=None,
                         copy=True):
         '''
 :Patameters:
@@ -886,8 +886,8 @@ axes, and possibly other axes, are returned.
     calendar:
         '''
         cls = self.get_class('Data')
-        return cls(data=data, units=units, calendar=calendar,
-                     copy=copy)
+        return cls(array=array, units=units, calendar=calendar,
+                   copy=copy)
     #--- End: def
 
     def initialise_Datum(self, parameters=None):

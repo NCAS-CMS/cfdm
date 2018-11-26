@@ -4,6 +4,8 @@
 cfdm.CoordinateReference
 ========================
 
+----
+
 .. autoclass:: cfdm.CoordinateReference
    :no-members:
    :no-inherited-members:

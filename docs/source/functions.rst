@@ -6,6 +6,8 @@
 **cfdm functions**
 ==================
 
+----
+
 **Reading and writing**
 -----------------------
 

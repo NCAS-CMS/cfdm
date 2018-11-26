@@ -9,7 +9,7 @@
     <title>cfdm classes &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -177,9 +177,6 @@
 <tr class="row-even"><td><a class="reference internal" href="class/cfdm.Array.html#cfdm.Array" title="cfdm.Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Array</span></code></a></td>
 <td>Abstract base class for a container of an underlying array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="class/cfdm.CompressedArray.html#cfdm.CompressedArray" title="cfdm.CompressedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CompressedArray</span></code></a></td>
-<td>Abstract base class for a container of an underlying compressed array</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -192,18 +189,6 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="class/cfdm.GatheredArray.html#cfdm.GatheredArray" title="cfdm.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatheredArray</span></code></a></td>
-<td>An underlying gathered array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="class/cfdm.RaggedContiguousArray.html#cfdm.RaggedContiguousArray" title="cfdm.RaggedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedContiguousArray</span></code></a></td>
-<td>An underlying contiguous ragged array.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="class/cfdm.RaggedIndexedArray.html#cfdm.RaggedIndexedArray" title="cfdm.RaggedIndexedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedIndexedArray</span></code></a></td>
-<td>An underlying indexed ragged array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="class/cfdm.RaggedIndexedContiguousArray.html#cfdm.RaggedIndexedContiguousArray" title="cfdm.RaggedIndexedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedIndexedContiguousArray</span></code></a></td>
-<td>An underlying indexed contiguous ragged array.</td>
-</tr>
 <tr class="row-odd"><td><a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Count</span></code></a></td>
 <td>A count variable required to uncompress a ragged array.</td>
 </tr>
@@ -212,6 +197,21 @@
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.List</span></code></a></td>
 <td>A list variable required to uncompress a gathered array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="class/cfdm.GatheredArray.html#cfdm.GatheredArray" title="cfdm.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.GatheredArray</span></code></a></td>
+<td>An underlying gathered array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="class/cfdm.RaggedContiguousArray.html#cfdm.RaggedContiguousArray" title="cfdm.RaggedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedContiguousArray</span></code></a></td>
+<td>An underlying contiguous ragged array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="class/cfdm.RaggedIndexedArray.html#cfdm.RaggedIndexedArray" title="cfdm.RaggedIndexedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedIndexedArray</span></code></a></td>
+<td>An underlying indexed ragged array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="class/cfdm.RaggedIndexedContiguousArray.html#cfdm.RaggedIndexedContiguousArray" title="cfdm.RaggedIndexedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RaggedIndexedContiguousArray</span></code></a></td>
+<td>An underlying indexed contiguous ragged array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="class/cfdm.CompressedArray.html#cfdm.CompressedArray" title="cfdm.CompressedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CompressedArray</span></code></a></td>
+<td>Abstract base class for a container of an underlying compressed array</td>
 </tr>
 </tbody>
 </table>
@@ -228,7 +228,7 @@
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

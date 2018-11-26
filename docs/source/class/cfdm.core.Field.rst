@@ -4,6 +4,8 @@
 cfdm.core.Field
 ===============
 
+----
+
 .. autoclass:: cfdm.core.Field
    :no-members:
    :no-inherited-members:

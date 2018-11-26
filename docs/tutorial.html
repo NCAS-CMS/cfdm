@@ -9,7 +9,7 @@
     <title>Tutorial &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -1359,7 +1359,7 @@ constructs (data arrays have been generated with dummy values using
 <span class="n">domain_axisY</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">domain_axisX</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
 
-<span class="c1"># Insert the domain axes into the field. The set_domain_axis method</span>
+<span class="c1"># Insert the domain axes into the field. The set_construct method</span>
 <span class="c1"># returns the domain axis construct identifier that will be used</span>
 <span class="c1"># later to specify which domain axis corresponds to which dimension</span>
 <span class="c1"># coordinate construct.</span>
@@ -1943,7 +1943,7 @@ access patterns and behaviours apply to both:</p>
 or metadata construct returns a numpy array that is
 uncompressed. The underlying array will, however, remain in its
 compressed form. The underlying compressed array may be retrieved as
-a numpy array with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code> method of the
+a numpy array with the <a class="reference internal" href="method/cfdm.Data.get_compressed_array.html#cfdm.Data.get_compressed_array" title="cfdm.Data.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a> method of the
 <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</li>
 </ul>
 <ul class="simple">
@@ -1981,11 +1981,11 @@ combining them using one of three ragged array representations:
 <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation">contiguous</a>, <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation">indexed</a> or <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles">indexed contiguous</a>.</p>
 <p>The count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is stored in a <a class="reference internal" href="class/cfdm.Count.html#cfdm.Count" title="cfdm.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a> instance and
-is accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count_variable</span></code> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+is accessed with the <a class="reference internal" href="method/cfdm.Data.get_count_variable.html#cfdm.Data.get_count_variable" title="cfdm.Data.get_count_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count_variable</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance.</p>
 <p>The index variable that is required to uncompress an indexed, or
 indexed contiguous, ragged array is stored in an <a class="reference internal" href="class/cfdm.Index.html#cfdm.Index" title="cfdm.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a> instance and
-is accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index_variable</span></code> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+is accessed with the <a class="reference internal" href="method/cfdm.Data.get_index_variable.html#cfdm.Data.get_index_variable" title="cfdm.Data.get_index_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index_variable</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance.</p>
 <p>The contiguous case is is illustrated with the file <strong>contiguous.nc</strong>
 (<a class="reference download internal" href="_downloads/contiguous.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id22">[1]</a>:</p>
@@ -2176,7 +2176,7 @@ into a new, discrete axis whilst omitting the missing values and thus
 reducing the number of values that need to be stored.</p>
 <p>The list variable that is required to uncompress a gathered array is
 stored in a <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a> object and is retrieved with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list_variable</span></code> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
+<a class="reference internal" href="method/cfdm.Data.get_list_variable.html#cfdm.Data.get_list_variable" title="cfdm.Data.get_list_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list_variable</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
 <p>This is illustrated with the file <strong>gathered.nc</strong> (<a class="reference download internal" href="_downloads/gathered.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id24">[1]</a>:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h gathered.nc
 netcdf gathered {
@@ -2402,7 +2402,7 @@ intended.</td></tr>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

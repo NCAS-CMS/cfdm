@@ -9,7 +9,7 @@
     <title>cfdm.Count &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Count.dump" href="../method/cfdm.Count.dump.html" />
-    <link rel="prev" title="cfdm.RaggedIndexedContiguousArray.size" href="../attribute/cfdm.RaggedIndexedContiguousArray.size.html" />
+    <link rel="prev" title="cfdm.Array.__str__" href="../method/cfdm.Array.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -49,7 +49,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../attribute/cfdm.RaggedIndexedContiguousArray.size.html" title="previous chapter">cfdm.RaggedIndexedContiguousArray.size</a></li>
+      <li>Previous: <a href="../method/cfdm.Array.__str__.html" title="previous chapter">cfdm.Array.__str__</a></li>
       <li>Next: <a href="../method/cfdm.Count.dump.html" title="next chapter">cfdm.Count.dump</a></li>
   </ul></li>
   </ul></li>
@@ -83,9 +83,10 @@
             
   <div class="section" id="cfdm-count">
 <h1>cfdm.Count<a class="headerlink" href="#cfdm-count" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Count">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Count</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/count.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Count</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFSampleDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A count variable required to uncompress a ragged array.</p>
 <p>TODO</p>
@@ -110,7 +111,7 @@
 <td>Return the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Count.has_data.html#cfdm.Count.has_data" title="cfdm.Count.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
-<td>Whether a data object has been set.</td>
+<td>Whether a data has been set.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Count.get_property.html#cfdm.Count.get_property" title="cfdm.Count.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
@@ -185,7 +186,7 @@
 <td>Return the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Count.has_data.html#cfdm.Count.has_data" title="cfdm.Count.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
-<td>Whether a data object has been set.</td>
+<td>Whether a data has been set.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Count.set_data.html#cfdm.Count.set_data" title="cfdm.Count.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
@@ -331,7 +332,7 @@
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

@@ -4,6 +4,8 @@
 cfdm.CellMeasure
 ================
 
+----
+
 .. autoclass:: cfdm.CellMeasure
    :no-members:
    :no-inherited-members:

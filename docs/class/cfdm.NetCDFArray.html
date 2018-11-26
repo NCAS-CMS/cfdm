@@ -9,7 +9,7 @@
     <title>cfdm.NetCDFArray &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -83,9 +83,10 @@
             
   <div class="section" id="cfdm-netcdfarray">
 <h1>cfdm.NetCDFArray<a class="headerlink" href="#cfdm-netcdfarray" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.NetCDFArray">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">NetCDFArray</code><span class="sig-paren">(</span><em>filename=None</em>, <em>ncvar=None</em>, <em>varid=None</em>, <em>dtype=None</em>, <em>ndim=None</em>, <em>shape=None</em>, <em>size=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/data/netcdfarray.py#L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NetCDFArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">NetCDFArray</code><span class="sig-paren">(</span><em>filename=None</em>, <em>ncvar=None</em>, <em>varid=None</em>, <em>dtype=None</em>, <em>ndim=None</em>, <em>shape=None</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.NetCDFArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code></p>
 <p>An underlying array stored in a netCDF file.</p>
 <p><strong>Initialization</strong></p>
@@ -94,28 +95,28 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>filename: <cite>str</cite></dt>
+<dt>filename: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first last">The name of the netCDF file containing the array.</p>
 </dd>
-<dt>ncvar: <cite>str</cite>, optional</dt>
+<dt>ncvar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">The name of the netCDF variable containing the array. Required
 unless <em>varid</em> is set.</p>
 </dd>
-<dt>varid: <cite>int</cite>, optional</dt>
+<dt>varid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">The UNIDATA netCDF interface ID of the variable containing the
 array. Required if <em>ncvar</em> is not set, ignored if <em>ncvar</em> is
 set.</p>
 </dd>
-<dt>dtype: <cite>numpy.dtype</cite></dt>
+<dt>dtype: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.dtype</span></code></a></dt>
 <dd><p class="first last">The data type of the array.</p>
 </dd>
-<dt>shape: <cite>tuple</cite></dt>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
 <dd><p class="first last">The array dimension sizes.</p>
 </dd>
-<dt>size: <cite>int</cite></dt>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">Number of elements in the array.</p>
 </dd>
-<dt>ndim: <cite>int</cite></dt>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The number of array dimensions.</p>
 </dd>
 </dl>
@@ -142,7 +143,7 @@ set.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.close.html#cfdm.NetCDFArray.close" title="cfdm.NetCDFArray.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></td>
-<td>Close the <cite>netCDF4.Dataset</cite> for the file containing the data.</td>
+<td>Close the <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> for the file containing the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.copy.html#cfdm.NetCDFArray.copy" title="cfdm.NetCDFArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy of the array.</td>
@@ -165,11 +166,11 @@ set.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.get_subspace.html#cfdm.NetCDFArray.get_subspace" title="cfdm.NetCDFArray.get_subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subspace</span></code></a></td>
 <td>Return a subspace, defined by indices, of a numpy array.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">NetCDFArray.next</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.next.html#cfdm.NetCDFArray.next" title="cfdm.NetCDFArray.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a></td>
 <td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NetCDFArray.open.html#cfdm.NetCDFArray.open" title="cfdm.NetCDFArray.open"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open</span></code></a></td>
-<td>Return an open <cite>netCDF4.Dataset</cite> for the file containing the array.</td>
+<td>Return an open <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.Dataset</span></code> for the file containing the array.</td>
 </tr>
 </tbody>
 </table>
@@ -212,7 +213,7 @@ set.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

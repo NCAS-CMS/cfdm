@@ -4,6 +4,8 @@
 cfdm.DimensionCoordinate
 ========================
 
+----
+
 .. autoclass:: cfdm.DimensionCoordinate
    :no-members:
    :no-inherited-members:

@@ -6,6 +6,8 @@
 **Subclassing**
 ===============
 
+----
+
 *This page is under preparation*
 
 It will describe how to utilize the cfdm and :ref:`cfdm.core

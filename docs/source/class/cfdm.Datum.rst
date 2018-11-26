@@ -4,7 +4,7 @@
 cfdm.Datum
 ==========
 
-.. currentmodule:: cfdm
+----
 
 .. autoclass:: cfdm.Datum
    :no-members:

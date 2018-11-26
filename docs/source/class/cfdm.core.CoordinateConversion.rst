@@ -4,7 +4,7 @@
 cfdm.core.CoordinateConversion
 ==============================
 
-.. currentmodule:: cfdm
+----
 
 .. autoclass:: cfdm.core.CoordinateConversion
    :no-members:

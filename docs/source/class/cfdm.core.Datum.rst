@@ -4,7 +4,7 @@
 cfdm.core.Datum
 ===============
 
-.. currentmodule:: cfdm
+----
 
 .. autoclass:: cfdm.core.Datum
    :no-members:

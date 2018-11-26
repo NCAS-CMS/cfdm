@@ -9,7 +9,7 @@
     <title>cfdm.DimensionCoordinate.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -87,25 +87,36 @@
 <h1>cfdm.DimensionCoordinate.equals<a class="headerlink" href="#cfdm-dimensioncoordinate-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DimensionCoordinate.equals">
-<code class="descclassname">DimensionCoordinate.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/mixin/propertiesdatabounds.py#L211"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DimensionCoordinate.equals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether two data arrays with descriptive properties and cell bounds
-are the same.</p>
-<p>Equality is strict by default. This means that:</p>
+<code class="descclassname">DimensionCoordinate.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.DimensionCoordinate.equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether two dimension coordinate constructs are the same.</p>
+<p>Equality is strict by default. This means that for two dimension
+coordinate constructs to be considered equal:</p>
 <ul class="simple">
-<li>the descriptive properties must be the same,</li>
-</ul>
-<ul class="simple">
-<li>vector-valued properties must have same size and be element-wise
-equal,</li>
+<li>the descriptive properties must be the same, and vector-valued
+properties must have same the size and be element-wise equal (see
+the <em>ignore_properties</em> parameter),</li>
 </ul>
 <ul class="simple">
 <li>if there are data arrays then they must have same shape, data type
-and be element-wise equal.</li>
+and be element-wise equal (see the <em>ignore_data_type</em> parameter),
+and</li>
+</ul>
+<ul class="simple">
+<li>if there are bounds then their descriptive properties (if any) must
+be the same and their data arrays must have same shape, data type
+and be element-wise equal (see the <em>ignore_properties</em> and
+<em>ignore_data_type</em> parameters).</li>
 </ul>
 <p>Two numerical elements <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
-positive, typically very small numbers.</p>
+positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
+parameters.</p>
+<p>Any type of object may be tested but, in general, equality is only
+possible with another dimension coordinate construct, or a subclass of
+one. See the <em>ignore_type</em> parameter.</p>
+<p>NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -130,24 +141,31 @@ numbers. The default value is set by the <a class="reference internal" href="../
 are omitted from the comparison.</p>
 </dd>
 <dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True and the collections of properties are different then
-print a traceback stating how they are different.</p>
+<dd><p class="first last">If True then print information about differences that lead to
+inequaility.</p>
 </dd>
 <dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">The names of properties to omit from the comparison.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">TODO</p>
+<dd><p class="first last">If True then ignore the data types in all numerical data array
+comparisons. By default different numerical data types imply
+inequality, regardless of whether the elements are within the
+tolerance for equality.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">TODO</p>
+<dd><p class="first last">Any type of object may be tested but, in general, equality is
+only possible with another dimension coordinate construct, or
+a subclass of one. If <em>ignore_type</em> is True then then
+<code class="docutils literal notranslate"><span class="pre">DimensionCoordinate(source=other)</span></code> is tested, rather than
+the <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">Whether the two collections of propoerties are equal.</p>
+<dd><p class="first last">Whether the two dimension coordinate constructs are equal.</p>
 </dd>
 </dl>
 </td>
@@ -155,21 +173,21 @@ print a traceback stating how they are different.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a colection of properties&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a dimension coordinate&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="go">Field: Non-common property name: foo</span>
-<span class="go">Field: Different properties</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">traceback</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">DimensionCoordinate: Non-common property name: foo</span>
+<span class="go">DimensionCoordinate: Different properties</span>
 <span class="go">False</span>
 </pre></div>
 </div>
@@ -187,7 +205,7 @@ print a traceback stating how they are different.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |

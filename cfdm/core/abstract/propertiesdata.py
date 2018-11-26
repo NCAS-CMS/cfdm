@@ -70,8 +70,11 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
 
 ``f.data`` is equivalent to ``f.get_data()`` 
 
-Note that a `Data` object is returned. Use the `get_array` method to
+Note that a `Data` instance is returned. Use the `get_array` method to
 return the data as a `numpy` array.
+
+The units, calendar and fill value properties are, if set, inserted
+into the data.
 
 .. versionadded:: 1.7
 
@@ -145,13 +148,13 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if the data object has not been set.
+        Return *default* if the data have not been set.
 
 :Returns: 
 
     out: 
-        The removed `Data` object. If unset then *default* is
-        returned, if provided.
+        The removed data. If unset then *default* is returned, if
+        provided.
 
 **Examples:**
 
@@ -178,7 +181,7 @@ None
     def get_array(self):
         '''Return an independent numpy array the data.
 
-Use the `get_data` method to return the data as a `Data` object.
+Use the `get_data` method to return the data as a `Data` instance.
 
 .. versionadded:: 1.7
 
@@ -215,8 +218,11 @@ array([ 1.  2.  3.])
     def get_data(self, *default):
         '''Return the data.
 
-Note that a `Data` is returned. Use the `get_array` method to return
-the data as an independent `numpy` array.
+Note that a `Data` instance is returned. Use the `get_array` method to
+return the data as an independent `numpy` array.
+
+The units, calendar and fill value properties are, if set, inserted
+into the data.
 
 .. versionadded:: 1.7
 
@@ -225,13 +231,12 @@ the data as an independent `numpy` array.
 :Parameters:
 
     default: optional
-        Return *default* if a data object has not been set.
+        Return *default* if a data have not been set.
 
 :Returns:
 
-    out: 
-        The data object. If unset then *default* is returned, if
-        provided.
+    out:
+        The data. If unset then *default* is returned, if provided.
 
 **Examples:**
 
@@ -276,7 +281,7 @@ None
     #--- End: def
 
     def has_data(self):
-        '''Whether a data object has been set.
+        '''Whether a data has been set.
         
 .. versionadded:: 1.7
 
@@ -285,7 +290,7 @@ None
 :Returns:
 
     out: `bool`
-        True if a data object has been set, otherwise False.
+        True if a data have been set, otherwise False.
 
 **Examples:**
 

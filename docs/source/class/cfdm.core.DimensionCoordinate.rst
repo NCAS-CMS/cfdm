@@ -2,7 +2,9 @@
 .. default-role:: obj
 
 cfdm.core.DimensionCoordinate
-========================
+=============================
+
+----
 
 .. autoclass:: cfdm.core.DimensionCoordinate
    :no-members:

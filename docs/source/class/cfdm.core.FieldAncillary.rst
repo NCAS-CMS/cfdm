@@ -4,6 +4,8 @@
 cfdm.core.FieldAncillary
 ========================
 
+----
+
 .. autoclass:: cfdm.core.FieldAncillary
    :no-members:
    :no-inherited-members:

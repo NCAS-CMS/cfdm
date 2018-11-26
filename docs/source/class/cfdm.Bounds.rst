@@ -4,6 +4,8 @@
 cfdm.Bounds
 ===========
 
+----
+
 .. autoclass:: cfdm.Bounds
    :no-members:
    :no-inherited-members:

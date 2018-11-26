@@ -1135,8 +1135,7 @@ may be selected for removal.
 
 .. versionadded:: 1.7
 
-.. seealso:: `constructs`, `get_construct`, `set_cell_method`,
-             `set_construct`
+.. seealso:: `constructs`, `get_construct`, `set_construct`
 
 :Parameters:
 

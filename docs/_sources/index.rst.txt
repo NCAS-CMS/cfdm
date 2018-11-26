@@ -14,6 +14,8 @@ Version |release|
 **Introduction**
 ================
 
+----
+
 The cfdm package is a complete implementation of the CF data model.
 
 **CF conventions**
@@ -83,7 +85,8 @@ The physical nature of individual data values are described by
   cell_methods attribute of data variable).
 
 A complete description of the CF data model, including UML diagrams,
-is available at https://www.geosci-model-dev.net/10/4619/2017.
+is available to download at
+https://www.geosci-model-dev.net/10/4619/2017.
 
 **Implementation**
 ------------------
@@ -108,14 +111,16 @@ The cfdm package can
 
 * write field constructs to netCDF datasets on disk,
 
-* incorporate, and create, metadata stored in external files,
+* incorporate, and create, metadata stored in external files, and
 
-* read and write data that has been compressed by convention
+* read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
 
 **Table Of Contents**
 =====================
+
+----
 
 .. toctree::
    :maxdepth: 2
@@ -125,10 +130,12 @@ The cfdm package can
    reference
    subclassing
    philosophy
-   
+   	    
 
-Index and search
-================
+**Index and search**
+====================
+
+----
 
 * :ref:`genindex`
 * :ref:`Search <search>`

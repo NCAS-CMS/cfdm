@@ -4,7 +4,7 @@
 cfdm.CompressedArray
 ====================
 
-.. currentmodule:: cfdm.CompressedArray
+----
 
 .. autoclass:: cfdm.CompressedArray
    :no-members:

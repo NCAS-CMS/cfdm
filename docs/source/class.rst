@@ -57,7 +57,6 @@
    cfdm.NetCDFArray
    cfdm.NumpyArray
    cfdm.Array
-   cfdm.CompressedArray
 
 **Data compression classses**
 -----------------------------
@@ -68,13 +67,14 @@ Classes that support the creation and storage of compressed arrays.
    :nosignatures:
    :toctree: class/
 
+   cfdm.Count
+   cfdm.Index
+   cfdm.List
    cfdm.GatheredArray
    cfdm.RaggedContiguousArray
    cfdm.RaggedIndexedArray
    cfdm.RaggedIndexedContiguousArray
-   cfdm.Count
-   cfdm.Index
-   cfdm.List
+   cfdm.CompressedArray
 
 .. **Mixin classes**
    ------------------

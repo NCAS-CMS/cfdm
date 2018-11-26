@@ -4,7 +4,7 @@
 cfdm.Data
 =========
 
-.. currentmodule:: cfdm
+----
 
 .. autoclass:: cfdm.Data
    :no-members:
@@ -20,36 +20,16 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-   ~cfdm.Data.allclose
-   ~cfdm.Data.asdata
-   ~cfdm.Data.copy
    ~cfdm.Data.dump
-   ~cfdm.Data.element
-   ~cfdm.Data.equals
-   ~cfdm.Data.expand_dims
-   ~cfdm.Data.first_element
    ~cfdm.Data.get_array
-   ~cfdm.Data.get_calendar
    ~cfdm.Data.get_dtarray
+   ~cfdm.Data.first_element
+   ~cfdm.Data.last_element
+   ~cfdm.Data.second_element
+   ~cfdm.Data.get_calendar
    ~cfdm.Data.get_fill_value
    ~cfdm.Data.get_units
-   ~cfdm.Data.isclose
-   ~cfdm.Data.last_element
-   ~cfdm.Data.max
-   ~cfdm.Data.min
-   ~cfdm.Data.ndindex
-   ~cfdm.Data.parse_indices
-   ~cfdm.Data.second_element
-   ~cfdm.Data.set_calendar
-   ~cfdm.Data.set_dtype
-   ~cfdm.Data.set_fill_value
-   ~cfdm.Data.set_units
-   ~cfdm.Data.squeeze
-   ~cfdm.Data.sum
-   ~cfdm.Data.transpose
-   ~cfdm.Data.unique
-   
-   
+
 .. rubric:: Attributes
 
 .. autosummary::
@@ -61,8 +41,85 @@ Inspection
    ~cfdm.Data.ndim
    ~cfdm.Data.shape
    ~cfdm.Data.size
-   
+ 
+Modification
+------------
+.. rubric:: Methods
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.set_calendar
+   ~cfdm.Data.set_fill_value
+   ~cfdm.Data.set_units
+   ~cfdm.Data.expand_dims
+   ~cfdm.Data.squeeze
+   ~cfdm.Data.transpose
+   ~cfdm.Data.unique
+      
+Calculation
+-----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.max
+   ~cfdm.Data.min
+   ~cfdm.Data.sum
+   ~cfdm.Data.unique
+      
+Miscellaneous
+-------------
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.copy
+   ~cfdm.Data.equals
+   ~cfdm.Data.parse_indices
+ 
+Compression
+-----------
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+
+   ~cfdm.Data.get_compression_type
+   ~cfdm.Data.get_compressed_axes
+   ~cfdm.Data.get_compressed_array
+   ~cfdm.Data.get_compressed_dimension
+   ~cfdm.Data.get_count_variable
+   ~cfdm.Data.get_index_variable
+   ~cfdm.Data.get_list_variable
    
-   
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.Data.__array__
+   ~cfdm.Data.__deepcopy__
+   ~cfdm.Data.__getitem__
+   ~cfdm.Data.__repr__
+   ~cfdm.Data.__setitem__
+   ~cfdm.Data.__str__
+
    

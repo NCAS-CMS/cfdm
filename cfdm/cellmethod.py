@@ -367,8 +367,8 @@ True
 False
 
         '''
-        ignore_properties = tuple(ignore_properties) + ('intervals',),
-        
+        ignore_properties = tuple(ignore_properties) + ('intervals',)
+
         if not super().equals(
                 other,
                 rtol=rtol, atol=atol,

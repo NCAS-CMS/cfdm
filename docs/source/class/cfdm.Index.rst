@@ -4,6 +4,8 @@
 cfdm.Index
 ==========
 
+----
+
 .. autoclass:: cfdm.Index
    :no-members:
    :no-inherited-members:

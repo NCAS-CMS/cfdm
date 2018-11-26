@@ -11,49 +11,70 @@ class Data(abstract.Container):
 .. versionadded:: 1.7
 
     '''
-    def __init__(self, data=None, units=None, calendar=None,
+    def __init__(self, array=None, units=None, calendar=None,
                  fill_value=None, source=None, copy=True,
-                 _use_data=True):
+                 _use_array=True):
         '''**Initialization**
 
 :Parameters:
 
-    data: sublcass of `Array`
-        The data array. May be any object that exposes the
-        `cfdm.core.data.abstract.Array` interface.
+    array: subclass of `Array`
+        The array of values. Ignored if the *source* parameter is set.
 
     units: `str`, optional
-        TODO
+        The physical units of the data. Ignored if the *source*
+        parameter is set.
+
+        *Example:*
+          ``units='km hr-1'``
+
+        *Example:*
+          ``units='days since 2018-12-01'``
+
+        The units may also be set after initialisation with the
+        `set_units` method.
 
     calendar: `str`, optional
-        TODO
+        The calendar for reference time units. Ignored if the *source*
+        parameter is set.
+
+        *Example:*
+          ``calendar='360_day'``
+        
+        The calendar may also be set after initialisation with the
+        `set_calendar` method.
 
     fill_value: optional 
         The fill value of the data. By default, or if None, the numpy
         fill value appropriate to the array's data type will be used.
+        TODO. Ignored if the *source* parameter is set.
+
+        *Example:*
+          ``fill_value=-999.``
+                
+        The fill value may also be set after initialisation with the
+        `set_fill_value` method.
 
     source: *optional*
         Initialize the data, units, calendar and fill value from those
         of *source*.
         
-    copy: `bool`, optional
-        If False then do not deep copy arguments prior to
-        initialization. By default arguments are deep copied.
+    source: optional
+        Initialize the array, units, calendar and fill value from
+        those of *source*.
 
->>> d = Data(5)
->>> d = Data([1,2,3])
->>> import numpy   
->>> d = Data(numpy.arange(10).reshape(2, 5), fill_value=-999)
->>> d = Data(tuple('fly'))
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
 
         '''
         super().__init__()
         
         if source is not None:
             try:                
-                data = source._get_Array(None)
+                array = source._get_Array(None)
             except AttributeError:
-                data = None
+                array = None
 
             try:
                 units = source.get_units(None)
@@ -75,56 +96,56 @@ class Data(abstract.Container):
         self.set_calendar(calendar)   
         self.set_fill_value(fill_value)
 
-        if _use_data:
-            self._set_Array(data, copy=copy)
+        if _use_array:
+            self._set_Array(array, copy=copy)
     #--- End: def
 
-    def __array__(self, *dtype):
-        '''The numpy array interface.
+#    def __array__(self, *dtype):
+#        '''The numpy array interface.
+#
+#:Returns: 
+#
+#    out: `numpy.ndarray`
+#        An independent numpy array of the data.
+#
+#        '''
+#        array = self.get_array()
+#        if not dtype:
+#            return array
+#        else:
+#            return array.astype(dtype[0], copy=False)
+#    #--- End: def
 
-:Returns: 
+#    def __deepcopy__(self, memo):
+#        '''x.__deepcopy__() -> Deep copy of data.
+#
+#Used if copy.deepcopy is called on the object.
+#
+#        ''' 
+#        return self.copy()
+#    #--- End: def
 
-    out: `numpy.ndarray`
-        An independent numpy array of the data.
-
-        '''
-        array = self.get_array()
-        if not dtype:
-            return array
-        else:
-            return array.astype(dtype[0], copy=False)
-    #--- End: def
-
-    def __deepcopy__(self, memo):
-        '''x.__deepcopy__() -> Deep copy of data.
-
-Used if copy.deepcopy is called on the object.
-
-        ''' 
-        return self.copy()
-    #--- End: def
-
-    def __repr__(self):
-        '''x.__repr__() <==> repr(x)
-
-        '''
-        try:        
-            shape = self.shape
-        except AttributeError:
-            shape = ''
-        else:
-            shape = str(shape)
-            shape = shape.replace(',)', ')')
-            
-        return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
-    #--- End: def
-
-    def __str__(self):
-        '''x.__str__() <==> str(x)
-
-        '''
-        return str(self._get_Array(None))
-    #--- End: def
+#    def __repr__(self):
+#        '''x.__repr__() <==> repr(x)
+#
+#        '''
+#        try:        
+#            shape = self.shape
+#        except AttributeError:
+#            shape = ''
+#        else:
+#            shape = str(shape)
+#            shape = shape.replace(',)', ')')
+#            
+#        return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
+#    #--- End: def
+#
+#    def __str__(self):
+#        '''x.__str__() <==> str(x)
+#
+#        '''
+#        return str(self._get_Array(None))
+#    #--- End: def
     
     # ----------------------------------------------------------------
     # Attributes
@@ -240,13 +261,19 @@ dtype('float64')
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def copy(self, data=True):
+    def copy(self, array=True):
         '''Return a deep copy of the data.
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
 
 Copy-on-write is employed, so care must be taken when modifying any
 attribute.
+
+:Parameters:
+
+    array: `bool`, optional
+        If False then do not copy the array. By default the array is
+        copied.
 
 :Returns:
 
@@ -256,9 +283,10 @@ attribute.
 :Examples:
 
 >>> e = d.copy()
+>>> e = d.copy(array=False)
 
         '''
-        return type(self)(source=self, copy=True, _use_data=data)
+        return type(self)(source=self, copy=True, _use_array=array)
     #--- End: def
 
     def del_calendar(self):
@@ -311,9 +339,6 @@ None
 
         '''
         return self._del_component('data')
-        array = self._data
-        self._data = None
-        return array
     #--- End: def
     
     def del_fill_value(self):
@@ -489,13 +514,13 @@ None
 >>> a = d.get_data(None)
 
         '''
-        array = self._get_component('data', *default)
+        array = self._get_component('array', *default)
 
         if array is None:
             if default:
                 return default[0]     
 
-            raise AttributeError("{!r} has no data".format(
+            raise AttributeError("{!r} has no array".format(
                 self.__class__.__name__))
         
         return array   
@@ -629,14 +654,13 @@ None
 #        self._calendar = calendar
     #--- End: def
 
-    def _set_Array(self, data, copy=True):
-        '''Set the data.
+    def _set_Array(self, array, copy=True):
+        '''Set the array.
 
 :Parameters:
 
-    data:
-        The data to be inserted. May be any object that exposes the
-        `cfdm.core.data.abstract.Array` interface.
+    array: subclass of `Array`
+        The array to be inserted.
 
 :Returns:
 
@@ -648,10 +672,9 @@ None
 
         '''
         if copy:
-            data = data.copy()
+            array = array.copy()
             
-        self._set_component('data', data, copy=False)
-#        self._data = data
+        self._set_component('array', array, copy=False)
     #--- End: def
 
     def set_fill_value(self, value):

@@ -4,6 +4,8 @@
 cfdm.CellMethod
 ===============
 
+----
+
 .. autoclass:: cfdm.CellMethod
    :no-members:
    :no-inherited-members:

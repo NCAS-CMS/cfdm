@@ -2,9 +2,9 @@
 .. default-role:: obj
 
 cfdm.GatheredArray
-====================
+==================
 
-.. currentmodule:: cfdm.GatheredArray
+----
 
 .. autoclass:: cfdm.GatheredArray
    :no-members:

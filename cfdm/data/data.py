@@ -21,9 +21,9 @@ class Data(mixin.Container, core.Data):
 .. versionadded:: 1.7
 
     '''
-    def __init__(self, data=None, units=None, calendar=None,
+    def __init__(self, array=None, units=None, calendar=None,
                  fill_value=None, source=None, copy=True,
-                 _use_data=True):
+                 _use_array=True):
         '''**Initialization**
 
 :Parameters:
@@ -32,13 +32,13 @@ class Data(mixin.Container, core.Data):
         The array of values. Ignored if the *source* parameter is set.
 
         *Example:*
-          ``data=[34.6]``
+          ``array=[34.6]``
 
         *Example:*
-          ``data=[[1, 2], [3, 4]]``
+          ``array=[[1, 2], [3, 4]]``
 
         *Example:*
-          ``data=numpy.ma.arange(10).reshape(2, 1, 5)``
+          ``array=numpy.ma.arange(10).reshape(2, 1, 5)``
 
     units: `str`, optional
         The physical units of the data. Ignored if the *source*
@@ -75,30 +75,70 @@ class Data(mixin.Container, core.Data):
         `set_fill_value` method.
 
     source: optional
-        Initialize the data the array, units, calendar and fill value
-        from those of *source*.
+        Initialize the array, units, calendar and fill value from
+        those of *source*.
 
     copy: bool, optional
         If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
         '''
-        super().__init__(data=data, units=units, calendar=calendar,
+        super().__init__(array=array, units=units, calendar=calendar,
                          fill_value=fill_value, source=source,
-                         copy=copy, _use_data=_use_data)
+                         copy=copy, _use_array=_use_array)
                                    
         # The _HDF_chunks attribute is.... Is either None or a
         # dictionary. DO NOT CHANGE IN PLACE.
 #        self._HDF_chunks = {}
     #--- End: def
-                                   
+                 
+    def __array__(self, *dtype):
+        '''The numpy array interface.
+
+.. versionadded:: 1.7
+
+:Returns: 
+
+    out: `numpy.ndarray`
+        An independent numpy array of the data.
+
+**Examples:**
+
+TODO
+        '''
+        array = self.get_array()
+        if not dtype:
+            return array
+        else:
+            return array.astype(dtype[0], copy=False)
+    #--- End: def
+                  
     def __data__(self):
-        '''Return self
+        '''TODO
+
+Return self
 
         '''
         return self
     #--- End: def
  
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+x.__repr__() <==> repr(x)
+
+        '''
+        try:        
+            shape = self.shape
+        except AttributeError:
+            shape = ''
+        else:
+            shape = str(shape)
+            shape = shape.replace(',)', ')')
+            
+        return '<{0}{1}: {2}>'.format(self.__class__.__name__, shape, str(self))
+    #--- End: def
+   
     def __getitem__(self, indices):
         '''Return a subspace of the data defined by indices
 
@@ -140,11 +180,11 @@ rules, the only differences being:
 
         array = self._get_Array(None)
         if array is None:
-            raise ValueError("No data!!")
+            raise ValueError("No array!!")
             
         array = array[indices]
 
-        out = self.copy(data=False)
+        out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
         return out
@@ -164,7 +204,7 @@ rules, the only differences being:
     def __setitem__(self, indices, value):
         '''x.__setitem__(indices, y) <==> x[indices]=y
 
-Assignment to data array elements defined by indices.
+Assignment to data elements defined by indices.
 
 Indexing is similar to `numpy` indexing. The only difference to
 `numpy` indexing is:
@@ -238,7 +278,9 @@ TODO
     #--- End: def
 
     def __str__(self):
-        '''x.__str__() <==> str(x)
+        '''Called by the `str` built-in function.
+
+x.__str__() <==> str(x)
 
         '''
         units    = self.get_units(None)
@@ -361,16 +403,16 @@ masked
     #--- End: def
     
     def _parse_axes(self, axes):
-        '''asdasdasdasds
+        '''TODO
 
 :Parameters:
 
     axes: (sequence of) `int`
-        The axes of the data array. May be one of, or a sequence of
-        any combination of zero or more of:
+        The axes of the data. May be one of, or a sequence of any
+        combination of zero or more of:
 
-          * The integer position of a dimension in the data array
-            (negative indices allowed).
+          * The integer position of a dimension in the data (negative
+            indices allowed).
 
 :Returns:
 
@@ -403,13 +445,13 @@ masked
         return tuple(axes2)
     #--- End: def
 
-    def _set_Array(self, data, copy=True):
-        '''Set the data.
+    def _set_Array(self, array, copy=True):
+        '''Set the array.
 
 :Parameters:
 
-    data: `numpy` array_like or subclass of `cfdm.data.Array`
-        The data to be inserted.
+    array: numpy array-like or subclass of `Array`, optional
+        The array to be inserted.
 
 :Returns:
 
@@ -420,18 +462,18 @@ masked
 >>> d._set_Array(a)
 
         '''
-        if not isinstance(data, abstract.Array):
-            if not isinstance(data, numpy.ndarray):
-                data = numpy.asanyarray(data)
+        if not isinstance(array, abstract.Array):
+            if not isinstance(array, numpy.ndarray):
+                array = numpy.asanyarray(array)
                 
-            data = NumpyArray(data)
+            array = NumpyArray(array)
 
-        super()._set_Array(data, copy=copy)
+        super()._set_Array(array, copy=copy)
     #--- End: def
 
     @classmethod
     def _set_subspace(cls, array, indices, value):
-        '''
+        '''TODO
         '''
         axes_with_list_indices = [i for i, x in enumerate(indices)
                                   if not isinstance(x, slice)]
@@ -496,22 +538,29 @@ masked
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def copy(self, data=True):
+    def copy(self, array=True):
         '''Return a deep copy.
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
+
+:Parameters:
+
+    array: `bool`, optional
+        If False then do not copy the array. By default the array is
+        copied.
 
 :Returns:
 
     out: 
         The deep copy.
 
-**Examples:**
+:Examples:
 
 >>> e = d.copy()
+>>> e = d.copy(array=False)
 
         '''
-        new = super().copy(data=data)
+        new = super().copy(array=array)
 #        new.HDF_chunks(self.HDF_chunks())
         return new
     #--- End: def
@@ -555,7 +604,7 @@ data array shape.
         array = self.get_array()
         array = numpy.expand_dims(array, position)
 
-        d = self.copy(data=False)
+        d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
 #        if d._HDF_chunks:            
@@ -644,7 +693,8 @@ Conversions are carried out with the `netCDF4.num2date` function.
     #--- End: def
 
     def get_count_variable(self, *default):
-        '''
+        '''TODO
+
         :Returns:
 
         out: `Data` or `None`
@@ -670,7 +720,8 @@ Conversions are carried out with the `netCDF4.num2date` function.
     #--- End: def
 
     def get_index_variable(self, *default):
-        '''
+        '''TODO
+
         :Returns:
 
         out: `Data` or `None`
@@ -696,7 +747,8 @@ Conversions are carried out with the `netCDF4.num2date` function.
     #--- End: def
 
     def get_list_variable(self, *default):
-        '''
+        '''TODO
+
         :Returns:
 
         out: `Data` or `None`
@@ -722,7 +774,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
     #--- End: def
 
     def get_compressed_dimension(self):
-        '''
+        '''TODO
         '''        
         a = self._get_Array(None)
 
@@ -735,7 +787,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
 
     
     def parse_indices(self, indices):
-        '''
+        '''TODO
     
 :Parameters:
     
@@ -865,7 +917,7 @@ Missing data array elements are omitted from the calculation.
         array = self.get_array()
         array = numpy.amax(array, axis=axes, keepdims=True)
 
-        d = self.copy(data=False)
+        d = self.copy(array=False)
         d._set_Array(array, copy=False)
         
 #        if d._HDF_chunks:            
@@ -908,7 +960,7 @@ Missing data array elements are omitted from the calculation.
         array = self.get_array()
         array = numpy.amin(array, axis=axes, keepdims=True)
 
-        d = self.copy(data=False)
+        d = self.copy(array=False)
         d._set_Array(array, copy=False)
 
 #        if d._HDF_chunks:            
@@ -1220,7 +1272,7 @@ Missing data array elements are omitted from the calculation.
     #--- End: def
 
     def get_compressed_array(self):
-        '''asd s
+        '''TODO
 
 .. seealso:: `compression_type`, `list_indices`
 
@@ -1254,7 +1306,7 @@ Missing data array elements are omitted from the calculation.
     #--- End: def
 
     def get_compressed_axes(self):
-        '''asd s
+        '''TODO
 
 .. seealso:: `compression_type`, `list_indices`
 
@@ -1322,7 +1374,7 @@ Missing data array elements are omitted from the calculation.
     #--- End: def
     
     def dump(self, display=True, prefix=None):
-        '''
+        '''TODO
 
 Return a string containing a full description of the instance.
 
@@ -1529,20 +1581,20 @@ False
     #--- End: def
 
     def first_element(self):
-        '''
+        '''TODO
         '''
         return self._item((slice(0, 1),)*self.ndim)
     #--- End: def
     
     def last_element(self):
-        '''
+        '''TODO
         '''
         
         return self._item((slice(-1, None),)*self.ndim)
     #--- End: def
  
     def second_element(self):
-        '''
+        '''TODO
         '''
         return self._item((slice(0, 1),)*(self.ndim-1) + (slice(1, 2),))
     #--- End: def
@@ -1585,7 +1637,7 @@ missing values.
         if numpy.ma.is_masked(array):
             array = array.compressed()
 
-        out = self.copy(data=False)
+        out = self.copy(array=False)
         out._set_Array(array, copy=False)
 
         return out

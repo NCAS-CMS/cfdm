@@ -1,9 +1,12 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.NumpyArray
 ===============
 
-.. currentmodule:: cfdm
+----
 
-.. autoclass:: NumpyArray
+.. autoclass:: cfdm.NumpyArray
    :no-members:
    :no-inherited-members:
 

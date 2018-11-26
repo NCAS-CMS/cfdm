@@ -4,6 +4,8 @@
 cfdm.core.DomainAxis
 ====================
 
+----
+
 .. autoclass:: cfdm.core.DomainAxis
    :no-members:
    :no-inherited-members:

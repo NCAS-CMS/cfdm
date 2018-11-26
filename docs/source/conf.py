@@ -65,7 +65,7 @@ needs_sphinx = '1.0'
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
 #              'sphinx.ext.viewcode',
-              'sphinx.ext.linkcode',
+#--              'sphinx.ext.linkcode',
               'sphinx.ext.mathjax',
               'sphinx.ext.graphviz',
 #              'sphinx.ext.inheritance_diagram',
@@ -120,7 +120,8 @@ intersphinx_mapping = {
 #primary_domain = 'cfdm'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates', '../_templates', '../../_templates']
+#templates_path = ['_templates', '../_templates', '../../_templates']
+templates_path = ['../_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'

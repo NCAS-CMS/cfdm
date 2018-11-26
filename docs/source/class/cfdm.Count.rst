@@ -4,6 +4,8 @@
 cfdm.Count
 ==========
 
+----
+
 .. autoclass:: cfdm.Count
    :no-members:
    :no-inherited-members:

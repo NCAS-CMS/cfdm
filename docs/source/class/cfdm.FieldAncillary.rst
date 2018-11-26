@@ -2,7 +2,9 @@
 .. default-role:: obj
 
 cfdm.FieldAncillary
-========================
+===================
+
+----
 
 .. autoclass:: cfdm.FieldAncillary
    :no-members:
