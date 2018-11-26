@@ -130,7 +130,6 @@ The cfdm package can
    reference
    subclassing
    philosophy
-   	    
 
 **Index and search**
 ====================
