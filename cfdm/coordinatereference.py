@@ -284,37 +284,74 @@ components.
     #--- End: def
             
     def equals(self, other, rtol=None, atol=None, traceback=False,
-               ignore_data_type=False, ignore_fill_value=False,
                ignore_type=False):
-        '''True if two instances are equal, False otherwise.
+        '''Whether two coordinate reference constructs are the same.
+
+Equality is strict by default. This means that for two coordinate
+reference constructs to be considered equal:
+
+* the datum and coordinate conversion components must have the same
+  string and numerical parameters.
+
+The dimension coordinate, auxiliary coordinate and domain ancillary
+constructs of the coordinate reference constructs are *not*
+considered, because they may ony be correctly interpreted by the field
+constructs that contain the coordinate reference constructs in
+question. They are, however, taken into account when two fields
+constructs are tested for equality.
+
+Two numerical parameters ``a`` and ``b`` are considered equal if
+``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers. The data type of the numbers
+is not taken into consideration. See the *atol* and *rtol* parameters.
+
+Any type of object may be tested but, in general, equality is only
+possible with another coordinate reference construct, or a subclass of
+one. See the *ignore_type* parameter.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
-    other:
+    other: 
         The object to compare for equality.
 
-    atol: `float`, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
-
-    rtol: `float`, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
-
-    ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
+        
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
 
     traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        instances differ.
+        If True then print information about differences that lead to
+        inequality.
+
+    ignore_type: `bool`, optional
+        Any type of object may be tested but, in general, equality is
+        only possible with another coordinate reference construct, or
+        a subclass of one. If *ignore_type* is True then then
+        ``CoordinateReference(source=other)`` is tested, rather than
+        the ``other`` defined by the *other* parameter.
 
 :Returns: 
-
+  
     out: `bool`
-        Whether or not the two instances are equal.
+        Whether the two coordinate reference constructs are equal.
 
-**Examples**
+**Examples:**
+
+>>> c.equals(c)
+True
+>>> c.equals(c.copy())
+True
+>>> c.equals('not a coordinate reference')
+False
 
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,
@@ -358,7 +395,6 @@ components.
                 other.coordinate_conversion,
                 rtol=rtol, atol=atol,
                 traceback=traceback,
-                ignore_data_type=ignore_data_type,
                 ignore_type=ignore_type):
             if traceback:
                 print(
@@ -369,7 +405,6 @@ components.
                 other.datum,
                 rtol=rtol, atol=atol,
                 traceback=traceback,
-                ignore_data_type=ignore_data_type,
                 ignore_type=ignore_type):
             if traceback:
                 print(

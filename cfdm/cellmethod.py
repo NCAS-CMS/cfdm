@@ -294,29 +294,27 @@ applies.
 #    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
-               ignore_data_type=False, ignore_properties=(),
+#               ignore_data_type=False,
+               ignore_properties=(),
                ignore_type=False):
         '''Whether two cell method constructs are the same.
 
 Equality is strict by default. This means that for two cell method
 constructs to be considered equal:
 
-* TODO <something about axes - are they ignored?>
+* the descriptive properties must be the same (see the
+  *ignore_properties* parameter).
 
-..
+The axes of the cell method constructs are *not* considered, because
+they may ony be correctly interpreted by the field constructs that
+contain the cell method constructs in question. They are, however,
+taken into account when two fields constructs are tested for equality.
 
-* TODO <something about method  and other propoerties>
-
-..
-
-* TODO <something about data -valued propoerties> (see the
-  *ignore_data_type* parameter).
-
-Two numerical elements ``a`` and ``b`` are considered equal if
+Two numerical properties ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. See the *atol* and *rtol*
-parameters.
+positive, typically very small numbers. The data type of the numbers
+is not taken into consideration. See the *atol* and *rtol* parameters.
 
 Any type of object may be tested but, in general, equality is only
 possible with another cell method construct, or a subclass of one. See
@@ -342,16 +340,10 @@ constitute part of the CF data model and so are not checked.
 
     traceback: `bool`, optional
         If True then print information about differences that lead to
-        inequaility.
+        inequality.
 
     ignore_properties: sequence of `str`, optional
         The names of properties to omit from the comparison.
-
-    ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical data array
-        comparisons. By default different numerical data types imply
-        inequality, regardless of whether the elements are within the
-        tolerance for equality.
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
@@ -367,23 +359,24 @@ constitute part of the CF data model and so are not checked.
 
 **Examples:**
 
->>> f.equals(f)
+>>> c.equals(c)
 True
->>> f.equals(f.copy())
+>>> c.equals(c.copy())
 True
->>> f.equals('not a cell method')
+>>> c.equals('not a cell method')
 False
-
 
         '''
         ignore_properties = tuple(ignore_properties) + ('intervals',),
         
         if not super().equals(
-                other, rtol=rtol, atol=atol,
+                other,
+                rtol=rtol, atol=atol,
                 traceback=traceback,
-                ignore_data_type=ignore_data_type,
                 ignore_properties=ignore_properties,
-                ignore_type=ignore_type):
+                ignore_type=ignore_type,
+                ignore_data_type=True,
+                ignore_fill_value=True):
             return False
         
 #        axes0 = self.get_axes(())
@@ -424,9 +417,9 @@ False
             for data0, data1 in zip(intervals0, intervals1):
                 if not self._equals(data0, data1,
                                     rtol=rtol, atol=atol,
-                                    ignore_data_type=ignore_data_type,
-#                                    ignore_fill_value=ignore_fill_value,
-                                    traceback=traceback):
+                                    traceback=traceback,
+                                    ignore_data_type=True,
+                                    ignore_fill_value=True):
                     if traceback:
                         print(
                             "{0}: Different intervals: {1!r} != {2!r}".format(

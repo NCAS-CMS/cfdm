@@ -365,14 +365,16 @@ TODO
         # ------------------------------------------------------------
         # Check non-array constructs
         # ------------------------------------------------------------
+        kwargs.pop('ignore_fill_value', None) # DCH ???
+        kwargs.pop('ignore_data_type', None) # DCH ???
         for construct_type in self._non_array_constructs:
-            kwargs.pop('ignore_fill_value', None) # DCH ???
             if not getattr(self, '_equals_'+construct_type)(
                     other,
                     rtol=rtol, atol=atol,
                     traceback=traceback,
                     axis1_to_axis0=axis1_to_axis0,
-                    key1_to_key0=key1_to_key0, **kwargs):
+                    key1_to_key0=key1_to_key0,
+                    **kwargs):
                 return False
 
         # ------------------------------------------------------------
@@ -451,8 +453,8 @@ TODO
     def _equals_cell_method(self, other, rtol=None, atol=None,
                             traceback=False, axis1_to_axis0=None,
                             key1_to_key0=None, **kwargs):
-        '''
-        
+        '''TODO
+
         '''
         cell_methods0 = self.cell_methods()
         cell_methods1 = other.cell_methods()
@@ -460,7 +462,7 @@ TODO
         if len(cell_methods0) != len(cell_methods1):
             if traceback:
                 print(
-"Traceback: Different numbers of cell methods: {0!r}, {1!r}".format(
+"Traceback: Different numbers of cell methods: {0!r} != {1!r}".format(
     cell_methods0, cell_methods1))
             return False
         

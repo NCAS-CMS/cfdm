@@ -87,25 +87,23 @@
 <h1>cfdm.CellMethod.equals<a class="headerlink" href="#cfdm-cellmethod-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CellMethod.equals">
-<code class="descclassname">CellMethod.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_properties=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/cellmethod.py#L296"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMethod.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_properties=()</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b5/cfdm/cellmethod.py#L296"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two cell method constructs are the same.</p>
 <p>Equality is strict by default. This means that for two cell method
 constructs to be considered equal:</p>
 <ul class="simple">
-<li>TODO &lt;something about axes - are they ignored?&gt;</li>
+<li>the descriptive properties must be the same (see the
+<em>ignore_properties</em> parameter).</li>
 </ul>
-<ul class="simple">
-<li>TODO &lt;something about method  and other propoerties&gt;</li>
-</ul>
-<ul class="simple">
-<li>TODO &lt;something about data -valued propoerties&gt; (see the
-<em>ignore_data_type</em> parameter).</li>
-</ul>
-<p>Two numerical elements <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
+<p>The axes of the cell method constructs are <em>not</em> considered, because
+they may ony be correctly interpreted by the field constructs that
+contain the cell method constructs in question. They are, however,
+taken into account when two fields constructs are tested for equality.</p>
+<p>Two numerical properties <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
-positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
-parameters.</p>
+positive, typically very small numbers. The data type of the numbers
+is not taken into consideration. See the <em>atol</em> and <em>rtol</em> parameters.</p>
 <p>Any type of object may be tested but, in general, equality is only
 possible with another cell method construct, or a subclass of one. See
 the <em>ignore_type</em> parameter.</p>
@@ -132,16 +130,10 @@ numbers. The default value is set by the <a class="reference internal" href="../
 </dd>
 <dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print information about differences that lead to
-inequaility.</p>
+inequality.</p>
 </dd>
 <dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">The names of properties to omit from the comparison.</p>
-</dd>
-<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then ignore the data types in all numerical data array
-comparisons. By default different numerical data types imply
-inequality, regardless of whether the elements are within the
-tolerance for equality.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality is
@@ -163,11 +155,11 @@ subclass of one. If <em>ignore_type</em> is True then then
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a cell method&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a cell method&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
