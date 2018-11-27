@@ -223,7 +223,7 @@ contents and any file suffix is not not considered.
             return False
     #--- End: def
 
-    def read(self, filename, field=None, default_version=None,
+    def read(self, filename, create_field=None, default_version=None,
              external_files=None, extra_read_vars=None,
              _scan_only=False, verbose=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
@@ -239,32 +239,42 @@ ancillaries, field ancillaries).
 
 :Parameters:
 
-    filename: `str` or `file`
-        A string giving the file name or OPenDAP URL, or an open file
-        object, from which to read fields. Note that if a file object
-        is given it will be closed and reopened.
+    filename: `str`
+        The file name or OPenDAP URL of the dataset.
 
-    field: sequence of `str`, optional
-        Create independent fields from field components. The *field*
-        parameter may be one, or a sequence, of:
+        Relative paths are allowed, and standard tilde and shell
+        parameter expansions are applied to the string.
+
+        *Example:*
+          The file ``file.nc`` in the user's home directory could be
+          described by any of the following: ``'$HOME/file.nc'``,
+          ``'${HOME}/file.nc'``, ``'~/file.nc'``,
+          ``'~/tmp/../file.nc'``.
+
+    create_field: sequence of `str`, optional
+        Create extra, independent fields from the particular types of
+        metadata constructs. The *create_field* parameter may be one,
+        or a sequence, of:
 
           ==========================  ================================
-          *field*                     Field components
+          *create_field*              Metadata constructs
           ==========================  ================================
-          ``'auxiliary_coordinate'``  Auxiliary coordinate objects
-          ``'cell_measure'``          Cell measure objects
-          ``'dimension_coordinate'``  Dimension coordinate objects
-          ``'domain_ancillary'``      Domain ancillary objects
-          ``'field_ancillary'``       Field ancillary objects
+          ``'field_ancillary'``       Field ancillary constructs
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+        ``'cell_measure'``          Cell measure constructs
           ==========================  ================================
 
-            *Example:*
-              To create fields from auxiliary coordinate objects:
-              ``field=['auxiliary_coordinate']``.
+        *Example:*
+          To create fields from auxiliary coordinate constructs:
+          ``create_field='auxiliary_coordinate'`` or
+          ``create_field=['auxiliary_coordinate']``.
 
-            *Example:*
-              To create fields from domain ancillary and cell measure
-              objects: ``field=['domain_ancillary', 'cell_measure']``.
+        *Example:*
+          To create fields from domain ancillary and cell measure
+          constructs: ``create_field=['domain_ancillary',
+          'cell_measure']``.
 
 :Returns:
 
@@ -273,26 +283,7 @@ ancillaries, field ancillaries).
 
 :Examples:
 
->>> f = cf.netcdf.read('file.nc')
->>> type(f)
-<class 'cf.field.FieldList'>
->>> f
-[<CF Field: pmsl(30, 24)>,
- <CF Field: z-squared(17, 30, 24)>,
- <CF Field: temperature(17, 30, 24)>,
- <CF Field: temperature_wind(17, 29, 24)>]
-
->>> cf.netcdf.read('file.nc')[0:2]
-[<CF Field: pmsl(30, 24)>,
- <CF Field: z-squared(17, 30, 24)>]
-
->>> cf.netcdf.read('file.nc', units='K')
-[<CF Field: temperature(17, 30, 24)>,
- <CF Field: temperature_wind(17, 29, 24)>]
-
->>> cf.netcdf.read('file.nc')[0]
-<CF Field: pmsl(30, 24)>
-
+TODO
         '''
         # ------------------------------------------------------------
         # Initialise netCDF read parameters
@@ -398,17 +389,18 @@ ancillaries, field ancillaries).
 
         g['external_files'] = set(external_files)
 
-        # Parse field parameter
-        if field:
-            if isinstance(field, str):
-                field = (field,)
+        # Parse create_field parameter
+        if create_field:
+            if isinstance(create_field, basestring):
+                field = (create_field,)
 
-            for f in field:
+            for f in create_field:
                 if f not in g['get_constructs']:
                     raise ValueError(
-                        "Can't read: Bad parameter value: field={!r}".format(field))            
+                        "Can't read: Bad parameter value: create_field={!r}".format(
+                            create_field))            
         #--- End: if
-        g['field'] = field
+        g['create_field'] = create_field
 
         filename = os.path.expanduser(os.path.expandvars(filename))
         
@@ -733,9 +725,9 @@ ancillaries, field ancillaries).
         # If requested, reinstate fields created from netCDF variables
         # that are referenced by other netCDF variables.
         # ------------------------------------------------------------
-        if g['field']:
+        if g['create_field']:
             fields0 = list(fields.values())
-            for construct_type in g['field']:
+            for construct_type in g['create_field']:
                 for f in fields0:
                     for construct in g['get_constructs'][construct_type](f).values():
                         ncvar = self.implementation.get_ncvar(construct)
@@ -2300,10 +2292,12 @@ variable should be pre-filled with missing values.
         #--- End: if
 
         if verbose:
-            print('    Field properties:', f.properties())
+            print('    Field properties:', self.implementation.get_properties(f))
         
         # Add the structural read report to the field
-        f.set_read_report({field_ncvar: g['read_report'][field_ncvar]})
+        self.implementation.set_read_report(
+            f,
+            {field_ncvar: g['read_report'][field_ncvar]})
         
         # Return the finished field
         return f

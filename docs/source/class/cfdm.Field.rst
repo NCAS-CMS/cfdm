@@ -161,6 +161,8 @@ Miscellaneous
 
    ~cfdm.Field.copy
    ~cfdm.Field.equals
+   ~cfdm.Field.create_field
+   ~cfdm.Field.read_report
 
 NetCDF
 ------

@@ -6,6 +6,8 @@
 **cfdm classes**
 ================
 
+Version |release| for version |version| of the CF conventions.
+
 ----
 
 **Field construct class**

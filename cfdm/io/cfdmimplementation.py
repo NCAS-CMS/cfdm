@@ -1336,6 +1336,15 @@ also be provided.
         return parent.set_interior_ring(interior_ring, copy=copy)
     #--- End: def
 
+    def set_read_report(self, field, report):
+        '''TODO
+
+..versionadded:: 1.7
+
+        '''
+        field._set_read_report(report)
+    #-- End: def
+    
     def nc_set_dimension(self, construct, ncdim):
         '''
 :Parameters:

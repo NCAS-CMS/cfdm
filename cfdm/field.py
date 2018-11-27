@@ -298,7 +298,7 @@ rules, the only differences being:
         data  = self.get_data()
         shape = data.shape
 
-        indices = data.parse_indices(indices)
+        indices = data._parse_indices(indices)
         indices = tuple(indices)
         
         new = self.copy(data=False)
@@ -352,6 +352,10 @@ rules, the only differences being:
         return new
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Private methods
+    # ----------------------------------------------------------------
+
 #    def _unique_construct_names(self, constructs):
 #        '''
 #
@@ -402,7 +406,8 @@ rules, the only differences being:
 #    #--- End: def
     
     def _one_line_description(self, axis_names_sizes=None):
-        '''TODO'''
+        '''
+        '''
         if axis_names_sizes is None:
             axis_names_sizes = self._unique_domain_axis_names()
             
@@ -426,7 +431,7 @@ rules, the only differences being:
     #--- End: def
 
     def _dump_axes(self, axis_names, display=True, _level=0):
-        '''TODO Return a string containing a description of the domain axes of the
+        '''Return a string containing a description of the domain axes of the
 field.
     
 :Parameters:
@@ -475,6 +480,31 @@ field.
 #        return constructs.domain_axis_name(key)
 #    #--- End: def
 
+    def _set_read_report(self, value):
+        '''Set the report of problems encountered whilst reading the field
+construct from a dataset.
+
+.. versionadded:: 1.7
+
+.. seealso:: `read_report`
+
+:Parameters:
+
+    value:
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+        '''
+        self._set_component('read_report', value, copy=True)
+    #--- End: def    
+
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def copy(self, data=True):
         '''Return a deep copy of the field construct.
 
@@ -504,7 +534,7 @@ False
         '''
         new = super().copy(data=data)
 
-        new.set_read_report(self.get_read_report({}))
+        new._set_read_report(self.read_report(display=False))
 
         return new
     #--- End: def
@@ -847,28 +877,170 @@ construct, into the data array.
         return f
     #--- End: def
 
-    def create_field(self, cid, domain=True):
-        '''TODO
+    def create_field(self, description=None, cid=None, domain=True):
+        '''Return a new field construct based on a metadata construct.
+
+A unique metdata construct is identified with the *description* and
+*cid* parameters, and a new field construct based on its properties
+and data is returned. The new field construct always has domain axis
+constructs corresponding to the data, and may also contain other
+metadata constructs that further define its domain.
+
+The `cfdm.read` function allows field constructs to be derived
+directly from the netCDF variables that, in turn, correspond to
+metadata constructs. In this case, the new field constructs will have
+a domain limited to that which can be inferred from the corresponding
+netCDF variable, but without the connections that are defined by the
+parent netCDF data variable. This will usually result in different
+field constructs than are created with the `~Field.create_field`
+method, regardless of the setting of the *domain* parameter.
+
+.. versionadded:: 1.7
+
+.. seealso:: `cfdm.read`
 
 :Parameters:
 
-    cid: `str`
-        TODO
+    description: `str`, optional
+        Select the construct that has the given property, or other
+        attribute, value.
+
+        The description may be one of:
+
+        * The value of the standard name property on its own. 
+
+          *Example:*
+            ``description='air_pressure'`` will select constructs that
+            have a "standard_name" property with the value
+            "air_pressure".
+
+        * The value of any property prefixed by the property name and
+          a colon (``:``).
+
+          *Example:*
+            ``description='positive:up'`` will select constructs that
+            have a "positive" property with the value "up".
+
+          *Example:*
+            ``description='foo:bar'`` will select constructs that have
+            a "foo" property with the value "bar".
+
+          *Example:*
+            ``description='standard_name:air_pressure'`` will select
+            constructs that have a "standard_name" property with the
+            value "air_pressure".
+
+        * The measure of cell measure constructs, prefixed by
+          ``measure%``.
+
+          *Example:*
+            ``description='measure%area'`` will select "area" cell
+            measure constructs.
+
+        * A construct identifier, prefixed by ``cid%`` (see also the
+          *cid* parameter).
+
+          *Example:*
+            ``description='cid%cellmethod1'`` will select cell method
+            construct with construct identifier "cellmethod1". This is
+            equivalent to ``cid='cellmethod1'``.
+
+        * The netCDF variable name, prefixed by ``ncvar%``.
+
+          *Example:*
+            ``description='ncvar%lat'`` will select constructs with
+            netCDF variable name "lat".
+
+        * The netCDF dimension name of domain axis constructs,
+          prefixed by ``ncdim%``.
+
+          *Example:*
+            ``description='ncdim%time'`` will select domain axis
+            constructs with netCDF dimension name "time".
+
+    cid: `str`, optional
+        Select the construct with the given construct identifier.
+
+        *Example:*
+          ``cid='domainancillary0'`` will the domain ancillary
+          construct with construct identifier "domainancillary0". This
+          is equivalent to ``description='cid%domainancillary0'``.
 
     domain: `bool`, optional
-        TODO
+        If False then do not create a domain, other than domain axis
+        constructs, for the new field construct. By default as much of
+        the domain as possible is copied to the new field construct.
 
 :Returns:
 
     out: `Field`
-        TODO
+        The new field construct.
 
 **Examples:**
 
-TODO
+>>> f = cfdm.read('file.nc')
+>>> f
+[<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+>>> f = f[0]
+>>> print(f)
+Field: air_temperature (ncvar%ta)
+---------------------------------
+Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                : time(1) = [2019-01-01 00:00:00]
+Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+Coord references: atmosphere_hybrid_height_coordinate
+                : rotated_latitude_longitude
+Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+>>> x = f.create_field('domainancillary2')
+>>> print(x)
+Field: surface_altitude (ncvar%surface_altitude)
+------------------------------------------------
+Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
+Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
+                : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+Coord references: rotated_latitude_longitude
+>>> y = f.create_field('domainancillary2', domain=False)
+>>> print(y)
+Field: surface_altitude (ncvar%surface_altitude)
+------------------------------------------------
+Data            : surface_altitude(ncdim%y(10), ncdim%x(9)) m
+>>> g = cfdm.read('file.nc', create_field='domain_ancillary')
+>>> g
+[<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
+ <Field: ncvar%b(atmosphere_hybrid_height_coordinate(1))>,
+ <Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m>,
+ <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+>>> print(g[2])
+Field: surface_altitude (ncvar%surface_altitude)
+------------------------------------------------
+Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
+Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
+                : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+
         '''
-        c = self.get_construct(cid=cid, copy=False)
-    
+        c0 = self.constructs(description=description, cid=cid,
+                            copy=False)
+        if len(c0) != 1:
+            self.get_construct(description=description, cid=cid,
+                               copy=False)
+            return
+
+        cid, c = c0.popitem()
+        
         # ------------------------------------------------------------
         # Create a new field with the properties and data from the
         # construct
@@ -895,17 +1067,19 @@ TODO
         # Add a more complete domain
         # ------------------------------------------------------------
         if domain:
-            for construct_type in ('dimensioncoordinate', 'auxiliarycoordinate', 'cellmeasure'):
-                for ccid, con in self.constructs(construct_type=construct_type,
-                                                 axes=data_axes,
-                                                 copy=False).items():
+            for construct_type in ('dimension_coordinate',
+                                   'auxiliary_coordinate',
+                                   'cell_measure'):
+                for ccid, con in self.constructs(
+                        construct_type=construct_type,
+                        axes=data_axes,
+                        copy=False).items():
                     axes = self.construct_axes().get(ccid)
                     if axes is None:
                         continue
 
                     if set(axes).issubset(data_axes):
-                        f.set_construct(self.construct_type(ccid),
-                                        con, cid=ccid, axes=axes,
+                        f.set_construct(con, cid=ccid, axes=axes,
                                         copy=True)
             #--- End: for
         
@@ -914,8 +1088,7 @@ TODO
             for rcid, ref in self.coordinate_references().items():
                 ok = True
                 for ccid in (tuple(ref.coordinates()) +
-                             tuple(ref.datum.ancillaries().values()),
-                             tuple(ref.coordinate_conversion.ancillaries().values())):
+                             tuple(ref.coordinate_conversion.domain_ancillaries().values())):
                     axes = self.construct_axes()[ccid]
                     if not set(axes).issubset(data_axes):
                         ok = False
@@ -930,26 +1103,57 @@ TODO
         return f
     #--- End: def
     
-#    def field_ancillaries(self, axes=None, copy=False):
-#        '''TODO
+#    def get_read_report(self):
+#        '''Return the report of problems encountered whilst reading the field
+#construct from a dataset.
+#
+#.. versionadded:: 1.7
+#
+#.. seealso:: `dump_read_report`
+#
+#:Returns:
+#
+#    out: `dict`
+#        The report.
+#
+#**Examples:**
+#
+#>>> f.get_read_report()
+#{'humidity': {'dimensions': ('obs',), 'components': {}}}
+#
 #        '''
-#        return self._get_constructs().constructs(
-#            construct_type='field_ancillary',
-#            axes=axes, copy=copy)
+#        return self._get_component('read_report', {})
 #    #--- End: def
-
-    def get_read_report(self, *default):
-        '''TODO
-        '''
-        return self._get_component('read_report', *default)
-    #--- End: def
    
-    def print_read_report(self, *default):
-        '''TODO
+    def read_report(self, display=True):
+        '''A report of problems encountered whilst reading the field construct
+from a dataset.
+
+.. versionadded:: 1.7
+
+:Parameters:
+
+    display: `bool`, optional
+        If False then return the report as a dictionary. By default
+        the report is printed.
+
+:Returns:
+
+    out: `None` or `dict`
+        The report. If *display* is True then the report is printed
+        and `None` is returned. Otherwise the report is returned as a
+        dictionary.
+
         '''
-        d = self.get_read_report({'dimensions': None, 
-                                  'components': {}})
+        d = self._get_component('read_report', {})
+
+        if not display:
+            return d
         
+        if not d:
+            print(d)
+            return
+    
         for key0, value0 in d.items():
             print('{{{0!r}:'.format(key0))
             print('    dimensions: {0!r},'.format(value0['dimensions']))
@@ -967,13 +1171,7 @@ TODO
             print('}\n')
         #--- End: for
     #--- End: def
-   
-    def set_read_report(self, value, copy=True):
-        '''TODO
-        '''
-        self._set_component('read_report', value, copy=copy)
-    #--- End: def    
-   
+     
     def squeeze(self, axes=None):
         '''Remove size one axes from the data array.
 
@@ -1241,91 +1439,4 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 #        return out
 #    #--- End: def
 
-#    def set_cell_method(self, cell_method, cid=None, copy=True):
-#        '''Set a cell method construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `CellMethod`
-#        TODO
-#        
-#    cid: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``cid='cellmethod0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#
-#        '''
-#        self.set_construct(cell_method, cid=cid, copy=copy)
-#    #--- End: def
-
-#    def set_field_ancillary(self, construct, axes=None, cid=None,
-#                            copy=True):
-#        '''Set a field ancillary construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `FieldAncillary`
-#        TODO
-#
-#    axes: sequence of `str`, optional
-#        The identifiers of the domain axes spanned by the data array.
-#
-#        The axes may also be set afterwards with the
-#        `set_construct_axes` method.
-#
-#        *Example:*
-#          ``axes=['domainaxis0', 'domainaxis1']``
-#
-#    cid: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``cid='fieldancillary0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#        
-#        '''
-#        return self.set_construct(construct, cid=cid,
-#                                  axes=axes, copy=copy)
-#    #--- End: def
-    
 #--- End: class

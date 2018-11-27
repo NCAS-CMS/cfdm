@@ -155,6 +155,10 @@ rules, the only differences being:
   the way vector subscripts work in Fortran). This is the same
   behaviour as indexing on a Variable object of the netCDF4 package.
 
+.. versionadded:: 1.7
+
+.. seealso:: `__setitem__`, `_parse_indices`
+
 :Returns:
 
     out: `Data`
@@ -162,6 +166,8 @@ rules, the only differences being:
 
 **Examples:**
 
+>>> import numpy
+>>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
 >>> d.shape
 (1, 10, 9)
 >>> d[:, :, 1].shape
@@ -176,7 +182,7 @@ rules, the only differences being:
 (1, 10, 1)
 
         '''
-        indices = tuple(self.parse_indices(indices))
+        indices = tuple(self._parse_indices(indices))
 
         array = self._get_Array(None)
         if array is None:
@@ -202,67 +208,54 @@ rules, the only differences being:
     #--- End: def
 
     def __setitem__(self, indices, value):
-        '''x.__setitem__(indices, y) <==> x[indices]=y
+        '''Assign to data elements defined by indices.
 
-Assignment to data elements defined by indices.
+d.__setitem__(indices, x) <==> d[indices]=x
 
-Indexing is similar to `numpy` indexing. The only difference to
-`numpy` indexing is:
+Indexing follows rules that are very similar to the numpy indexing
+rules, the only differences being:
 
-  * When two or more dimension's indices are sequences of integers
-    then these indices work independently along each dimension
-    (similar to the way vector subscripts work in Fortran).
+* An integer index i takes the i-th element but does not reduce the
+  rank by one.
 
-For example:
-
-   >>> d = cfdm.Data([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-   >>> d
-   >>> d.get_array()
-   array([[1, 2, 3],
-          [4, 5, 6],
-          [7, 8, 9]])
-   >>> d[[0, 2], [1, 2]].get_array()
-   array([[2, 3],
-          [8, 9]])
-   >>> d.get_array()[[0, 2], [1, 2]]
-   array([2, 9])
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a Variable object of the netCDF4 package.
 
 **Broadcasting**
 
-The value being assigned must be broadcastable (in the `numpy` sense)
-to the subspace defined by the indices. For example:
-
-   >>> d = cfdm.Data([1, 2, 3])
-   >>> d
-   <Data(3): [1, 2, 3]>
-   >>> d[:] = 99
-   <Data(3): [99, 99, 99]>
-   >>> d[1:] = [-2, -1]
-   <Data(3): [99, -2, -1]>
+The value, or values, being assigned must be broadcastable to the
+shape defined by the indices, using the numpy broadcasting rules.
 
 **Missing data**
 
 Data array elements may be set to missing values by assigning them to
-`cfdm.masked` (or, equivalently, `numpy.ma.masked`). Missing values
-may be unmasked by simple assignment. For example:
+`numpy.ma.masked`. Missing values may be unmasked by assigning them to
+any other value.
 
-   >>> d = cfdm.Data([1, 2, 3])
-   >>> d
-   <Data(3): [1, 2, 3]>
-   >>> d[1:] = cfdm.masked
-   >>> d
-   <Data(3): [1, --, --]>
-   >>> d[:2] = 99
-   >>> d
-   <Data(3): [99, 99, --]>
+.. versionadded:: 1.7
 
-.. seealso:: `__getitem__`, `masked`, `parse_indices`, `_set_subspace`
+.. seealso:: `__getitem__`, `_parse_indices`
+
+:Returns:
+
+    `None`
 
 **Examples:**
 
-TODO
+>>> import numpy
+>>> d = cfdm.Data(numpy.arange(100, 190).reshape(1, 10, 9))
+>>> d.shape
+(10, 9)
+>>> d[:, :, 1] = -10
+>>> d[:, 0] = range(9)
+>>> d[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
+>>> d[0, [2, 9], [4, 8]] =  cfdm.Data([[-2, -3]])
+>>> d[0, :, -2] = numpy.ma.masked
+
         '''
-        indices = self.parse_indices(indices)
+        indices = self._parse_indices(indices)
                 
         array = self.get_array()
 
@@ -854,7 +847,7 @@ array.
     #--- End: def
 
     
-    def parse_indices(self, indices):
+    def _parse_indices(self, indices):
         '''TODO
     
 :Parameters:

@@ -34,54 +34,55 @@ from . import CFDMImplementation
 
 from .netcdf import NetCDFRead
 
-implementation = CFDMImplementation(cf_version = CF(),
+implementation = CFDMImplementation(
+    cf_version = CF(),
+    
+    AuxiliaryCoordinate = AuxiliaryCoordinate,
+    CellMeasure         = CellMeasure,
+    CellMethod          = CellMethod,
+    CoordinateReference = CoordinateReference,
+    DimensionCoordinate = DimensionCoordinate,
+    DomainAncillary     = DomainAncillary,
+    DomainAxis          = DomainAxis,
+    Field               = Field,
+    FieldAncillary      = FieldAncillary,
+    
+    Bounds = Bounds,
+    List   = List,
+    Index=Index,
+    Count=Count,
+    
+    CoordinateConversion = CoordinateConversion,
+    Datum                = Datum,
+    
+    Data                         = Data,
+    GatheredArray                = GatheredArray,
+    NetCDFArray                  = NetCDFArray,
+    RaggedContiguousArray        = RaggedContiguousArray,
+    RaggedIndexedArray           = RaggedIndexedArray,
+    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
+)
 
-                                    AuxiliaryCoordinate = AuxiliaryCoordinate,
-                                    CellMeasure         = CellMeasure,
-                                    CellMethod          = CellMethod,
-                                    CoordinateReference = CoordinateReference,
-                                    DimensionCoordinate = DimensionCoordinate,
-                                    DomainAncillary     = DomainAncillary,
-                                    DomainAxis          = DomainAxis,
-                                    Field               = Field,
-                                    FieldAncillary      = FieldAncillary,
-                                    
-                                    Bounds = Bounds,
-                                    List   = List,
-                                    Index=Index,
-                                    Count=Count,
-                                    
-                                    CoordinateConversion = CoordinateConversion,
-                                    Datum                = Datum,
-                                    
-                                    Data                         = Data,
-                                    GatheredArray                = GatheredArray,
-                                    NetCDFArray                  = NetCDFArray,
-                                    RaggedContiguousArray        = RaggedContiguousArray,
-                                    RaggedIndexedArray           = RaggedIndexedArray,
-                                    RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
-                                    )
-
-def read(filename, external_files=None, field=None, verbose=False,
-         _implementation=implementation):
-    '''Read fields from a dataset.
+def read(filename, external_files=None, create_field=None,
+         verbose=False, _implementation=implementation):
+    '''Read field constructs from a dataset.
 
 The dataset may be a netCDF file on disk or on an OPeNDAP server.
 
-The returned fields are sorted by the netCDF variable names of their
-corresponding data variables.
+The returned field constructs are sorted by the netCDF variable names
+of their corresponding data variables.
 
 **Performance**
 
 Descriptive properties are always read into memory, but lazy loading
 is employed for all data arrays, which means that no data is read into
 memory until the data is required for inspection or to modify the
-array contents. This maximises the number of fields that may be read
-within a session, and makes the read operation fast.
+array contents. This maximises the number of field constructs that may
+be read within a session, and makes the read operation fast.
 
 .. versionadded:: 1.7
 
-.. seealso:: `cfdm.write`
+.. seealso:: `cfdm.write`, `cfdm.Field.create_field`
 
 :Parameters:
 
@@ -92,11 +93,10 @@ within a session, and makes the read operation fast.
         parameter expansions are applied to the string.
 
         *Example:*
-          The file ``file.nc`` in the user's home directory can be
+          The file ``file.nc`` in the user's home directory could be
           described by any of the following: ``'$HOME/file.nc'``,
           ``'${HOME}/file.nc'``, ``'~/file.nc'``,
-          ``'~/tmp/../file.nc'`` or, most simply but assuming that the
-          current working directory is ``$HOME``, ``'file.nc'``.
+          ``'~/tmp/../file.nc'``.
     
     external_files: (sequence of) `str`, optional
         Read external variables (i.e. variables which are named by
@@ -119,13 +119,13 @@ within a session, and makes the read operation fast.
         *Example:*
           ``external_files=['cell_measure_A.nc', 'cell_measure_O.nc']``
 
-    field: (sequence of) `str`, optional
-        Create extra, independent fields from the given types of
-        metadata constructs. The *field* parameter may be one, or a
-        sequence, of:
+    create_field: (sequence of) `str`, optional
+        Create extra, independent fields from the particular types of
+        metadata constructs. The *create_field* parameter may be one,
+        or a sequence, of:
 
           ==========================  ================================
-          *field*                     Field components
+          *create_field*              Metadata constructs
           ==========================  ================================
           ``'field_ancillary'``       Field ancillary constructs
           ``'domain_ancillary'``      Domain ancillary constructs
@@ -136,26 +136,28 @@ within a session, and makes the read operation fast.
 
         *Example:*
           To create fields from auxiliary coordinate constructs:
-          ``field='auxiliary_coordinate'`` or
-          ``field=['auxiliary_coordinate']``.
+          ``create_field='auxiliary_coordinate'`` or
+          ``create_field=['auxiliary_coordinate']``.
 
         *Example:*
           To create fields from domain ancillary and cell measure
-          constructs: ``field=['domain_ancillary', 'cell_measure']``.
+          constructs: ``create_field=['domain_ancillary',
+          'cell_measure']``.
 
-        An extra field created via the *field* parameter will have a
-        domain limited to that which can be inferred from the
-        corresponding netCDF variable, without the connections that
-        are defined by the parent netCDF data variable. It is possbile
-        to create independent fields from metadata constructs that do
-        incorporate as much of the parent field's domain as possible
-        by using the `~cfdm.Field.field` method of the returned
-        fields, instead of setting the *field* parameter.
+        An extra field construct created via the *create_field*
+        parameter will have a domain limited to that which can be
+        inferred from the corresponding netCDF variable, but without
+        the connections that are defined by the parent netCDF data
+        variable. It is possible to create independent fields from
+        metadata constructs that do incorporate as much of the parent
+        field construct's domain as possible by using the
+        `~cfdm.Field.create_field` method of a returned field
+        construct, instead of setting the *create_field* parameter.
 
 :Returns:
     
     out: `list`
-        The fields constructs found in the dataset. The list may be
+        The field constructs found in the dataset. The list may be
         empty.
 
 **Examples:**
@@ -164,10 +166,10 @@ TODO
 
     '''
     # Parse the field parameter
-    if field is None:
-        field = ()
-    elif isinstance(field, basestring):
-        field = (field,)
+    if create_field is None:
+        create_field = ()
+    elif isinstance(create_field, basestring):
+        create_field = (create_field,)
 
     filename = os.path.expanduser(os.path.expandvars(filename))
     
@@ -180,16 +182,16 @@ TODO
     # ----------------------------------------------------------------
     # Read the fields in the file
     # ----------------------------------------------------------------
-    return  _read_a_file(filename,
-                         external_files=external_files,
-                         field=field,
-                         verbose=verbose,
-                         _implementation=_implementation)
+    return _read_a_file(filename,
+                        external_files=external_files,
+                        create_field=create_field,
+                        verbose=verbose,
+                        _implementation=_implementation)
 #--- End: def
 
 def _read_a_file(filename,
                  external_files=(),
-                 field=(),
+                 create_field=(),
                  verbose=False,
                  _implementation=None):
     '''Read the contents of a single file into a field list.
@@ -215,7 +217,8 @@ def _read_a_file(filename,
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external_files=external_files,
-                             field=field, verbose=verbose)
+                             create_field=create_field,
+                             verbose=verbose)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 

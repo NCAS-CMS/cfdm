@@ -84,7 +84,6 @@ Miscellaneous
 
    ~cfdm.Data.copy
    ~cfdm.Data.equals
-   ~cfdm.Data.parse_indices
  
 Compression
 -----------

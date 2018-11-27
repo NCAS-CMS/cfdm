@@ -133,131 +133,131 @@ between ``a`` and ``b``.
         return a == b
 #--- End: def
 
-def parse_indices(shape, indices):
-    '''
-
-:Parameters:
-
-    shape: sequence of `ints`
-
-    indices: `tuple` (not a `list`!)
-
-:Returns:
-
-    out: `list`
-
-**Examples**
-
-'''
-    parsed_indices = []
-    roll           = {}
-    flip           = []
-    compressed_indices = []
-
-    if not isinstance(indices, tuple):
-        indices = (indices,)
-
-    # Initialize the list of parsed indices as the input indices with any
-    # Ellipsis objects expanded
-    length = len(indices)
-    n = len(shape)
-    ndim = n
-    for index in indices:
-        if index is Ellipsis:
-            m = n - length + 1
-            parsed_indices.extend([slice(None)] * m)
-            n -= m            
-        else:
-            parsed_indices.append(index)
-            n -= 1
-
-        length -= 1
-    #--- End: for
-    len_parsed_indices = len(parsed_indices)
-
-    if ndim and len_parsed_indices > ndim:
-        raise IndexError("Invalid indices %s for array with shape %s" %
-                         (parsed_indices, shape))
-
-    if len_parsed_indices < ndim:
-        parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
-
-    if not ndim and parsed_indices:
-        raise IndexError("Scalar array can only be indexed with () or Ellipsis")
-
-    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
-        is_slice = False
-
-        if isinstance(index, slice):            
-            is_slice = True
-
-        elif isinstance(index, (int, int)):
-            if index < 0: 
-                index += size
-
-            index = slice(index, index+1, 1)
-            is_slice = True
-        else:
-            convert2positve = True
-            if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
-                # Convert booleans to non-negative integers. We're
-                # assuming that anything with a dtype attribute also
-                # has a size attribute.
-                if index.size != size:
-                    raise IndexError(
-"Invalid indices {} for array with shape {}".format(parsed_indices, shape))
-                
-                index = numpy.where(index)[0]
-                convert2positve = False
-            #--- End: if
-
-            if not numpy.ndim(index):
-                if index < 0:
-                    index += size
-
-                index = slice(index, index+1, 1)
-                is_slice = True
-            else:
-                len_index = len(index)
-                if len_index == 1:                
-                    index = index[0]
-                    if index < 0:
-                        index += size
-                    
-                    index = slice(index, index+1, 1)
-                    is_slice = True
-                elif len_index:
-                    if convert2positve:
-                        # Convert to non-negative integer numpy array
-                        index = numpy.array(index)
-                        index = numpy.where(index < 0, index+size, index)
-    
-                    steps = index[1:] - index[:-1]
-                    step = steps[0]
-                    if step and not (steps - step).any():
-                        # Replace the numpy array index with a slice
-                        if step > 0:
-                            start, stop = index[0], index[-1]+1
-                        elif step < 0:
-                            start, stop = index[0], index[-1]-1
-                            
-                        if stop < 0:
-                            stop = None
-                                
-                        index = slice(start, stop, step)
-                        is_slice = True
-                else:
-                    raise IndexError(
-                        "Invalid indices {} for array with shape {}".format(
-                            parsed_indices, shape))                
-            #--- End: if
-        #--- End: if
-        
-        parsed_indices[i] = index    
-    #--- End: for
-
-    return parsed_indices
-#--- End: def
+#def parse_indices(shape, indices):
+#    '''
+#
+#:Parameters:
+#
+#    shape: sequence of `ints`
+#
+#    indices: `tuple` (not a `list`!)
+#
+#:Returns:
+#
+#    out: `list`
+#
+#**Examples**
+#
+#'''
+#    parsed_indices = []
+#    roll           = {}
+#    flip           = []
+#    compressed_indices = []
+#
+#    if not isinstance(indices, tuple):
+#        indices = (indices,)
+#
+#    # Initialize the list of parsed indices as the input indices with any
+#    # Ellipsis objects expanded
+#    length = len(indices)
+#    n = len(shape)
+#    ndim = n
+#    for index in indices:
+#        if index is Ellipsis:
+#            m = n - length + 1
+#            parsed_indices.extend([slice(None)] * m)
+#            n -= m            
+#        else:
+#            parsed_indices.append(index)
+#            n -= 1
+#
+#        length -= 1
+#    #--- End: for
+#    len_parsed_indices = len(parsed_indices)
+#
+#    if ndim and len_parsed_indices > ndim:
+#        raise IndexError("Invalid indices %s for array with shape %s" %
+#                         (parsed_indices, shape))
+#
+#    if len_parsed_indices < ndim:
+#        parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
+#
+#    if not ndim and parsed_indices:
+#        raise IndexError("Scalar array can only be indexed with () or Ellipsis")
+#
+#    for i, (index, size) in enumerate(zip(parsed_indices, shape)):
+#        is_slice = False
+#
+#        if isinstance(index, slice):            
+#            is_slice = True
+#
+#        elif isinstance(index, (int, int)):
+#            if index < 0: 
+#                index += size
+#
+#            index = slice(index, index+1, 1)
+#            is_slice = True
+#        else:
+#            convert2positve = True
+#            if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
+#                # Convert booleans to non-negative integers. We're
+#                # assuming that anything with a dtype attribute also
+#                # has a size attribute.
+#                if index.size != size:
+#                    raise IndexError(
+#"Invalid indices {} for array with shape {}".format(parsed_indices, shape))
+#                
+#                index = numpy.where(index)[0]
+#                convert2positve = False
+#            #--- End: if
+#
+#            if not numpy.ndim(index):
+#                if index < 0:
+#                    index += size
+#
+#                index = slice(index, index+1, 1)
+#                is_slice = True
+#            else:
+#                len_index = len(index)
+#                if len_index == 1:                
+#                    index = index[0]
+#                    if index < 0:
+#                        index += size
+#                    
+#                    index = slice(index, index+1, 1)
+#                    is_slice = True
+#                elif len_index:
+#                    if convert2positve:
+#                        # Convert to non-negative integer numpy array
+#                        index = numpy.array(index)
+#                        index = numpy.where(index < 0, index+size, index)
+#    
+#                    steps = index[1:] - index[:-1]
+#                    step = steps[0]
+#                    if step and not (steps - step).any():
+#                        # Replace the numpy array index with a slice
+#                        if step > 0:
+#                            start, stop = index[0], index[-1]+1
+#                        elif step < 0:
+#                            start, stop = index[0], index[-1]-1
+#                            
+#                        if stop < 0:
+#                            stop = None
+#                                
+#                        index = slice(start, stop, step)
+#                        is_slice = True
+#                else:
+#                    raise IndexError(
+#                        "Invalid indices {} for array with shape {}".format(
+#                            parsed_indices, shape))                
+#            #--- End: if
+#        #--- End: if
+#        
+#        parsed_indices[i] = index    
+#    #--- End: for
+#
+#    return parsed_indices
+##--- End: def
 
 #def get_subspace(array, indices):
 #    '''

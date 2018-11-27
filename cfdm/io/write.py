@@ -86,11 +86,10 @@ set their external status:
         parameter expansions are applied to the string.
 
         *Example:*
-          The file ``file.nc`` in the user's home directory can be
+          The file ``file.nc`` in the user's home directory could be
           described by any of the following: ``'$HOME/file.nc'``,
           ``'${HOME}/file.nc'``, ``'~/file.nc'``,
-          ``'~/tmp/../file.nc'`` or, most simply but assuming that the
-          current working directory is ``$HOME``, ``'file.nc'``.
+          ``'~/tmp/../file.nc'``.
   
     fmt: `str`, optional
         The format of the output file. One of:

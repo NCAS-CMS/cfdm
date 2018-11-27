@@ -7,6 +7,8 @@
 **Philosophy**
 ==============
 
+Version |release| for version |version| of the CF conventions.
+
 ----
 
 The basic requirement of the reference implementation is to represent
