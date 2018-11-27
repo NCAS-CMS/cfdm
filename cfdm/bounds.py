@@ -68,7 +68,26 @@ capability.
     def dump(self, display=True, field=None, key=None, _title=None,
              _create_title=True, _prefix=None, _level=0,
              _omit_properties=None, _axes=None, _axis_names=None):
-        '''TODO
+        '''A full description of the bounds component.
+
+Returns a description of all properties and provides selected values
+of all data arrays.
+
+.. versionadded:: 1.7
+
+:Parameters:
+
+    display: `bool`, optional
+        If False then return the description as a string. By default
+        the description is printed.
+
+:Returns:
+
+    out: `None` or `str`
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
+
         '''
         if _create_title and _title is None: 
             _title = 'Bounds: ' + self.name(default='')

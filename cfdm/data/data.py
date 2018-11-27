@@ -234,11 +234,11 @@ to the subspace defined by the indices. For example:
 
    >>> d = cfdm.Data([1, 2, 3])
    >>> d
-   <Data: [1, 2, 3]>
+   <Data(3): [1, 2, 3]>
    >>> d[:] = 99
-   <Data: [99, 99, 99]>
+   <Data(3): [99, 99, 99]>
    >>> d[1:] = [-2, -1]
-   <Data: [99, -2, -1]>
+   <Data(3): [99, -2, -1]>
 
 **Missing data**
 
@@ -248,13 +248,13 @@ may be unmasked by simple assignment. For example:
 
    >>> d = cfdm.Data([1, 2, 3])
    >>> d
-   <Data: [1, 2, 3]>
+   <Data(3): [1, 2, 3]>
    >>> d[1:] = cfdm.masked
    >>> d
-   <Data: [1, --, --]>
+   <Data(3): [1, --, --]>
    >>> d[:2] = 99
    >>> d
-   <Data: [99, 99, --]>
+   <Data(3): [99, 99, --]>
 
 .. seealso:: `__getitem__`, `masked`, `parse_indices`, `_set_subspace`
 
@@ -693,11 +693,26 @@ Conversions are carried out with the `netCDF4.num2date` function.
     #--- End: def
 
     def get_count_variable(self, *default):
-        '''TODO
+        '''Return the count variable for a compressed array.
 
-        :Returns:
+.. versionadded:: 1.7
 
-        out: `Data` or `None`
+.. seealso:: `get_index_variable`, `get_list_variable`
+
+:Parameters:
+
+    default: optional
+        Return *default* if a count variable has not been set.
+
+:Returns:
+
+    out:
+        The count variable. If unset then *default* is returned, if
+        provided.
+
+**Examples:**
+
+>>> c = d.get_count_variable(None)
 
         '''
         array = self._get_Array(None)
@@ -720,11 +735,26 @@ Conversions are carried out with the `netCDF4.num2date` function.
     #--- End: def
 
     def get_index_variable(self, *default):
-        '''TODO
+        '''Return the index variable for a compressed array.
 
-        :Returns:
+.. versionadded:: 1.7
 
-        out: `Data` or `None`
+.. seealso:: `get_count_variable`, `get_list_variable`
+
+:Parameters:
+
+    default: optional
+        Return *default* if index variable has not been set.
+
+:Returns:
+
+    out:
+        The index variable. If unset then *default* is returned, if
+        provided.
+
+**Examples:**
+
+>>> i = d.get_index_variable(None)
 
         '''
         array = self._get_Array(None)
@@ -747,11 +777,26 @@ Conversions are carried out with the `netCDF4.num2date` function.
     #--- End: def
 
     def get_list_variable(self, *default):
-        '''TODO
+        '''Return the list variable for a compressed array.
 
-        :Returns:
+.. versionadded:: 1.7
 
-        out: `Data` or `None`
+.. seealso:: `get_count_variable`, `get_index_variable`
+
+:Parameters:
+
+    default: optional
+        Return *default* if a list variable has not been set.
+
+:Returns:
+
+    out:
+        The list variable. If unset then *default* is returned, if
+        provided.
+
+**Examples:**
+
+>>> l = d.get_list_variable(None)
 
         '''
         array = self._get_Array(None)
@@ -773,8 +818,31 @@ Conversions are carried out with the `netCDF4.num2date` function.
         return variable
     #--- End: def
 
-    def get_compressed_dimension(self):
-        '''TODO
+    def get_compressed_dimension(self, *default):
+        '''Return the position of the compressed dimension in the compressed
+array.
+
+. versionadded:: 1.7
+
+.. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
+             `get_compressed_type`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the underlying array is not compressed.
+
+:Returns:
+
+    out: `int`
+        The position of the compressed dimension in the compressed
+        array. If the underlying is not compressed then *default* is
+        returned, if provided.
+
+**Examples:**
+
+>>> i = d.get_compressed_dimension()
+
         '''        
         a = self._get_Array(None)
 
@@ -1272,29 +1340,21 @@ Missing data array elements are omitted from the calculation.
     #--- End: def
 
     def get_compressed_array(self):
-        '''TODO
+        '''Return an independent numpy array containing the compressed data.
 
-.. seealso:: `compression_type`, `list_indices`
+.. versionadded:: 1.7
 
-:Examples 1:
-
->>> a = d.compression_axes()
+.. seealso:: `get_compressed_axes`, `get_compressed_dimension`,
+             `get_compression_type`,
 
 :Returns:
 
-    out: `list`
-        The axes of the data that are compressed to a single axis in the internal array.
+     out: `numpy.ndarray`
+        An independent numpy array of the compressed data.
 
-:Examples 2:
+**Examples:**
 
->>> d.compression_axes()
-[0, 1]
-
->>> d.compression_axes()
-[1, 2, 3]
-
->>> d.compression_axes()
-[]
+>>> a = d.get_compressed_array()
 
         '''
         ca = self._get_Array(None)
@@ -1306,29 +1366,19 @@ Missing data array elements are omitted from the calculation.
     #--- End: def
 
     def get_compressed_axes(self):
-        '''TODO
+        '''Return the dimensions that are compressed.
 
-.. seealso:: `compression_type`, `list_indices`
-
-:Examples 1:
-
->>> a = d.compression_axes()
+.. versionadded:: 1.7
 
 :Returns:
 
     out: `list`
-        The axes of the data that are compressed to a single axis in the internal array.
+        TODO The axes of the data that are compressed to a single axis
+        in the internal array.
 
-:Examples 2:
+**Examples:**
 
->>> d.compression_axes()
-[0, 1]
-
->>> d.compression_axes()
-[1, 2, 3]
-
->>> d.compression_axes()
-[]
+TODO
 
         '''
         ca = self._get_Array(None)
@@ -1340,13 +1390,12 @@ Missing data array elements are omitted from the calculation.
     #--- End: def
 
     def get_compression_type(self):
-        '''Return the type of compression applied to the internal array.
+        '''Return the type of compression applied to the underlying array.
 
-.. seealso:: `compression_axes`, `list_indices`
+.. versionadded:: 1.7
 
-:Examples 1:
-
->>> t = d.compression_type()
+.. seealso:: `get_compressed_array`, `compression_axes`,
+             `get_compressed_dimension`
 
 :Returns:
 
@@ -1354,15 +1403,15 @@ Missing data array elements are omitted from the calculation.
         The compression type. An empty string means that no
         compression has been applied.
         
-:Examples 2:
+**Examples:**
 
->>> d.compression_type()
+>>> d.get_compression_type()
 ''
 
->>> d.compression_type()
+>>> d.get_compression_type()
 'gathered'
 
->>> d.compression_type()
+>>> d.get_compression_type()
 'ragged contiguous'
 
         '''
@@ -1373,100 +1422,96 @@ Missing data array elements are omitted from the calculation.
         return ma.get_compression_type()
     #--- End: def
     
-    def dump(self, display=True, prefix=None):
-        '''TODO
-
-Return a string containing a full description of the instance.
-
-:Parameters:
-
-    display: `bool`, optional
-        If False then return the description as a string. By default
-        the description is printed, i.e. ``d.dump()`` is equivalent to
-        ``print d.dump(display=False)``.
-
-    prefix: `str`, optional
-       Set the common prefix of component names. By default the
-       instance's class name is used.
-
-:Returns:
-
-    out: `None` or `str`
-        A string containing the description.
-
-**Examples:**
-
-'''
-        if prefix is None:
-            prefix = self.__class__.__name__
-            
-        string = []
-        for attr in ('ndim', 'shape', 'size', 'dtype', 'fill_value', 'array'):
-            string.append('{0}.{1} = {2!r}'.format(prefix, attr, getattr(self, attr)))
-
-        string = '\n'.join(string)
-       
-        if display:
-            print(string)
-        else:
-            return string
-    #--- End: def
-
-    def equals(self, other, rtol=None, atol=None,
+    def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_construct_type=False, traceback=False,
-               ignore_type=False, _check_values=True):
-        '''True if two `Data` objects are equal.
+               ignore_compression=False, ignore_type=False,
+               _check_values=True):
+        '''Whether two data arrays are the same.
 
-Two `Data` objects are equal if
+Equality is strict by default. This means that for data arrays to be
+considered equal:
 
-  * The have the same shape
+* the units and calendar must be the same,
 
-  * They have the same data type (unless *ignore_data_type* is True)
+..
 
-  * They have the same fill value (unless *ignore_fill_value* is True)
+* the fill value must be the same (see the *ignore_fill_value*
+  parameter), and
 
-  * They have the same missing data mask
+..
 
-  * They have the same array values
+* the arrays must have same shape and data type, the same missing data
+  mask, and be element-wise equal (see the *ignore_data_type*
+  parameter).
+
+Two numerical elements ``a`` and ``b`` are considered equal if
+``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
+
+The compression type and, if appliciable, the underlying compressed
+arrays must be the same, as well as the arrays in their uncompressed
+forms. See the *ignore_compression* parameter.
+
+Any type of object may be tested but, in general, equality is only
+possible with another cell measure construct, or a subclass of
+one. See the *ignore_type* parameter.
+
+.. versionadded:: 1.7
 
 :Parameters:
 
-    other : 
+    other: 
         The object to compare for equality.
 
-    atol: `float`, optional
-        The absolute tolerance for all numerical comparisons. By
-        default the value returned by the `ATOL` function is used.
-
-    rtol: `float`, optional
-        The relative tolerance for all numerical comparisons. By
-        default the value returned by the `RTOL` function is used.
+    atol: float, optional
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
+        
+    rtol: float, optional
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
 
     ignore_fill_value: `bool`, optional
-        If True then data with different fill values are considered
-        equal. By default they are considered unequal.
-
-    ignore_data_type: `bool`, optional
-        If True then data with different data types are considered
-        equal. By default they are considered unequal.
+        If True then the fill value is omitted from the comparison.
 
     traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        instances differ.
+        If True then print information about differences that lead to
+        inequality.
+
+    ignore_data_type: `bool`, optional
+        If True then ignore the data types in all numerical data array
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
+
+    ignore_compression: `bool`, optional
+        If True then any compression applied to the underlying arrays
+        is ignored and only the uncompressed arrays are tested for
+        equality. By default the compression type and, if appliciable,
+        the underlying compressed arrays must be the same, as well as
+        the arrays in their uncompressed forms
+
+    ignore_type: `bool`, optional
+        Any type of object may be tested but, in general, equality is
+        only possible with another data array, or a subclass of
+        one. If *ignore_type* is True then then ``Data(source=other)``
+        is tested, rather than the ``other`` defined by the *other*
+        parameter.
 
 :Returns: 
-
-    out: bool
-        Whether or not the two `Data` objects are equals.
+  
+    out: `bool`
+        Whether the two data arrays are equal.
 
 **Examples:**
 
 >>> d.equals(d)
 True
->>> d.equals(d + 1)
-False
->>> d.equals(d.expand_dims())
+>>> d.equals(d.copy())
+True
+>>> d.equals('not a data array')
 False
 
         '''
@@ -1477,47 +1522,10 @@ False
         
         other = pp
         
-#       # Check for object identity
-#       if self is other:
-#           return True
-#       
-#       # Check that each object is of the same type
-#       if ignore_construct_type:
-#           if not isinstance(other, self.__class__):
-#               other = type(self)(source=other, copy=False)
-#       elif not isinstance(other, self.__class__):
-#           if traceback:
-#               print("{0}: Incompatible types: {0}, {1}".format(
-#       	    self.__class__.__name__,
-#       	    other.__class__.__name__))
-#           return False
-#        if not super().equals(other, traceback=traceback,
-#                              ignore_construct_type=ignore_construct_type):
-#            if traceback:
-#                print(
-#                    "{0}: Different ??/".format(self.__class__.__name__))
-#            return False
-
-#        # Check for object identity
-#        if self is other:
-#            return True
-#
-#        # Check each instance's id
-#        if self is other:
-#            return True
-#
-#        # Check that each instance is of the same type
-#        if not ignore_construct_type and not isinstance(other, self.__class__):
-#            if traceback:
-#                print("{0}: Incompatible types: {0}, {1}".format(#
-#			self.__class__.__name__#,#
-#			other.__class__.__name__)a#)
-#            return False
-
         # Check that each instance has the same shape
         if self.shape != other.shape:
             if traceback:
-                print("{0}: Different shapes: {1}, {2}".format(
+                print("{0}: Different shapes: {1} != {2}".format(
                     self.__class__.__name__, self.shape, other.shape))
             return False
 
@@ -1527,7 +1535,7 @@ False
             y = getattr(other, 'get_'+attr)(None)
             if x != y:
                 if traceback:
-                    print("{0}: Different {1}: {2!r}, {3!r}".format(
+                    print("{0}: Different {1}: {2!r} != {3!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
         #--- End: for
@@ -1536,7 +1544,7 @@ False
         if (not ignore_fill_value and
             self.get_fill_value(None) != other.get_fill_value(None)):
             if traceback:
-                print("{0}: Different fill value: {1}, {2}".format(
+                print("{0}: Different fill value: {1} != {2}".format(
                     self.__class__.__name__, 
                     self.get_fill_value(None), other.get_fill_value(None)))
             return False
@@ -1544,7 +1552,7 @@ False
         # Check that each instance has the same data type
         if not ignore_data_type and self.dtype != other.dtype:
             if traceback:
-                print("{0}: Different data types: {1}, {2}".format(
+                print("{0}: Different data types: {1} != {2}".format(
                     self.__class__.__name__, self.dtype, other.dtype))
             return False
 
@@ -1553,29 +1561,44 @@ False
         if not _check_values:
             return True
 
+        if not ignore_compression:
+            # --------------------------------------------------------
+            # Check for equal compression types
+            # --------------------------------------------------------
+            compression_type = self.get_compression_type()
+            if compression_type != other.get_compression_type():
+                if traceback:
+                    print("{0}: Different compression types: {1} != {2}".format(
+                        self.__class__.__name__,
+                        compression_type,
+                        other.get_compression_type()))
+                return False
+            
+            # --------------------------------------------------------
+            # Check for equal compressed array values
+            # --------------------------------------------------------
+            if compression_type:
+                if not self._equals(self.get_compressed_array(),
+                                    other.get_compressed_array(),
+                                    rtol=rtol, atol=atol):
+                    if traceback:
+                        print("{0}: Different compressed array values".format(
+                            self.__class__.__name__))
+                    return False
+        #--- End: if
+        
         # ------------------------------------------------------------
-        # Check that each instance has equal array values
+        # Check for equal (uncompressed) array values
         # ------------------------------------------------------------
-#        # Set default tolerances
-#        if rtol is None:
-#            rtol = RTOL()
-#        if atol is None:
-#            atol = ATOL()        
-
         if not self._equals(self.get_array(), other.get_array(),
                             rtol=rtol, atol=atol):
-
-#        if not _numpy_allclose(self.get_array(), other.get_array(),
-#                               rtol=rtol, atol=atol):
             if traceback:
-                print("{0}: Different data values".format(
+                print("{0}: Different array values".format(
                     self.__class__.__name__))
-                print(repr(self.get_array()))
-                print(repr(other.get_array()))
             return False
 
         # ------------------------------------------------------------
-        # Still here? Then the two instances are equal.
+        # Still here? Then the two data arrays are equal.
         # ------------------------------------------------------------
         return True            
     #--- End: def
@@ -1625,10 +1648,10 @@ missing values.
 
 >>> d = Data([[4, 2, 1], [1, 2, 3]], 'metre')
 >>> d.unique()
-<Data: [1, 2, 3, 4] metre>
+<Data(4): [1, 2, 3, 4] metre>
 >>> d[1, -1] = masked
 >>> d.unique()
-<Data: [1, 2, 4] metre>
+<Data(3): [1, 2, 4] metre>
 
         '''
         array = self.get_array()
@@ -1644,4 +1667,3 @@ missing values.
     #--- End: def
 
 #--- End: class
-

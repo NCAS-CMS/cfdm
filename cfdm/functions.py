@@ -604,7 +604,7 @@ def environment(display=True):
 
 :Returns:
 
-    out: `None` or `str`
+    out:
         If *display* is True then the description of the environment
         is printed and `None` is returned. Otherwise the description
         is returned as a string.
@@ -619,7 +619,7 @@ netcdf library: 4.6.1
 netCDF4: 1.4.0 /home/user/anaconda2/lib/python2.7/site-packages/netCDF4/__init__.pyc
 numpy: 1.11.3 /home/user/anaconda2/lib/python2.7/site-packages/numpy/__init__.pyc
 future: 0.16.0 /home/user/anaconda2/lib/python2.7/site-packages/future/__init__.pyc
-cfdm: 1.7 /home/user/cfdm/cfdm/__init__.pyc
+cfdm: 1.7.1 /home/user/cfdm/cfdm/__init__.pyc
 
     '''
     out = []

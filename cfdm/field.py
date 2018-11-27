@@ -631,7 +631,8 @@ data arrays.
     
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_type=False):
+               ignore_properties=(), ignore_compression=False,
+               ignore_type=False):
         '''Whether two field constructs are the same.
 
 Equality is strict by default. This means that for two field
@@ -644,14 +645,19 @@ metadata constructs and for each pair of constructs:
 
 ..
 
-* if there are data arrays then they must have same shape, data type
-  and be element-wise equal (see the *ignore_data_type* parameter).
+* if there are data arrays then they must have same shape and data
+  type, the same missing data mask, and be element-wise equal (see the
+  *ignore_data_type* parameter).
 
 Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.
+
+If data arrays are compressed then the compression type and the
+underlying compressed arrays must be the same, as well as the arrays
+in their uncompressed forms. See the *ignore_compression* parameter.
 
 Any type of object may be tested but, in general, equality is only
 possible with another field construct, or a subclass of one. See the
@@ -683,7 +689,7 @@ construct.
 
     traceback: `bool`, optional
         If True then print information about differences that lead to
-        inequaility.
+        inequality.
 
     ignore_properties: sequence of `str`, optional
         The names of properties of the field construct (not the
@@ -695,6 +701,13 @@ construct.
         comparisons. By default different numerical data types imply
         inequality, regardless of whether the elements are within the
         tolerance for equality.
+
+    ignore_compression: `bool`, optional
+        If True then any compression applied to underlying arrays is
+        ignored and only uncompressed arrays are tested for
+        equality. By default the compression type and, if appliciable,
+        the underlying compressed arrays must be the same, as well as
+        the arrays in their uncompressed forms
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
@@ -737,18 +750,20 @@ False
                 ignore_data_type=ignore_data_type,
                 ignore_fill_value=ignore_fill_value,
                 ignore_properties=ignore_properties,
+                ignore_compression=ignore_compression,
                 ignore_type=ignore_type):
             return False
 
         # ------------------------------------------------------------
         # Check the constructs
         # ------------------------------------------------------------              
-        if not self._equals(self._get_constructs(), other._get_constructs(),
-                            rtol=rtol, atol=atol,
-                            traceback=traceback,
+        if not self._equals(self._get_constructs(),
+                            other._get_constructs(), rtol=rtol,
+                            atol=atol, traceback=traceback,
                             ignore_data_type=ignore_data_type,
-                            ignore_type=ignore_type,
-                            ignore_fill_value=ignore_fill_value):
+                            ignore_fill_value=ignore_fill_value,
+                            ignore_compression=ignore_compression,
+                            ignore_type=ignore_type):
             if traceback:
                 print(
                     "{0}: Different {1}".format(self.__class__.__name__, 'constructs'))
@@ -760,8 +775,8 @@ False
     def expand_dims(self, axis, position=0):
         '''Expand the shape of the data array.
 
-Insert a new size 1 axis, corresponding to a domain axis construct,
-into the data array.
+Insert a new size 1 axis, corresponding to an existing domain axis
+construct, into the data array.
 
 .. versionadded:: 1.7
 

@@ -1,8 +1,7 @@
 from __future__ import print_function
 from builtins import object
 
-import sys
-import textwrap
+import inspect
 
 import numpy
 
@@ -56,26 +55,42 @@ x.__str__() <==> str(x)
         numbers. The default value is set by the `cfdm.RTOL` function.
 
         '''
-        kwargs['ignore_data_type'] = ignore_data_type
-        
         if rtol is None:
             rtol = RTOL()
         if atol is None:
             atol = ATOL()
 
+        kwargs['ignore_data_type'] = ignore_data_type
+        kwargs['rtol'] = rtol
+        kwargs['atol'] = atol
+        
         eq = getattr(x, 'equals', None)
         if callable(eq):
             # --------------------------------------------------------
             # x has a callable "equals" method
             # --------------------------------------------------------
-            return eq(y, rtol=rtol, atol=atol, **kwargs)
+            # Check that the kwargs are OK
+            try:
+                # Python 3
+                parameters = inspect.signature(eq).bind_partial(**kwargs)
+            except AttributeError:
+                # Python 2
+                pass
+            return eq(y, **kwargs)
         
         eq = getattr(y, 'equals', None)
         if callable(eq):
             # --------------------------------------------------------
             # y has a callable "equals" method
             # --------------------------------------------------------
-            return eq(x, rtol=rtol, atol=atol, **kwargs)
+            # Check that the kwargs are OK
+            try:
+                # Python 3
+                parameters = inspect.signature(eq).bind_partial(**kwargs)
+            except AttributeError:
+                # Python 2
+                pass
+            return eq(x, **kwargs)
         
         if numpy.shape(x) != numpy.shape(y):
             return False
@@ -95,7 +110,6 @@ x.__str__() <==> str(x)
 
         if not ignore_data_type and x.dtype != y.dtype:
             if x.dtype.kind not in ('S', 'U') and y.dtype.kind not in ('S', 'U'):
-                print (x.dtype , y.dtype)
                 return False
         
         x_is_masked = numpy.ma.isMA(x)

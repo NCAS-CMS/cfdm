@@ -138,61 +138,6 @@ and institution).
     # Attributes
     # ----------------------------------------------------------------
     @property
-    def domain(self):
-        '''Return the domain.
-        
-``f.domain`` is equivalent to ``f.get_domain()`` 
-
-.. versionadded:: 1.7
-
-.. seealso:: `get_domain`
-
-:Returns:
-
-    out: `Domain`
-
-**Examples**
-
->>> d = f.domain
-TODO
-        '''
-        return self.get_domain()
-    #--- End: def
-    
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
-#    def cell_methods(self, copy=False):
-#        '''Return the cell method constructs.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`
-#
-#:Parameters:
-#
-#    copy: `bool`, optional
-#        If `True` then deep copies of the constructs are returned.
-#
-#:Returns:
-#
-#    out: `OrderDict`
-#
-#**Examples**
-#
-#>>> f.cell_methods()
-#OrderedDict([('cellmethod0',
-#              <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>),
-#             ('cellmethod1', <CellMethod: domainaxis1: maximum where sea>)])
-#
-#        '''
-#        return self._get_constructs().constructs(
-#            construct_type='cell_method', copy=copy)
-#    #--- End: def
-#    def get_construct_type(self):
-#        return 'field'
-    
-    @property
     def construct_type(self):
         '''Return a description of the construct type.
         
@@ -207,6 +152,35 @@ TODO
         return 'field'
     #--- End: def        
         
+    @property
+    def domain(self):
+        '''Return the domain.
+        
+``f.domain`` is equivalent to ``f.get_domain()`` 
+
+.. versionadded:: 1.7
+
+.. seealso:: `get_domain`
+
+:Returns:
+
+    out: `Domain`
+        The domain.
+
+**Examples:**
+
+>>> d0 = f.domain
+>>> d1 = f.get_domain()
+>>> d0.equals(d1)
+True
+ 
+        '''
+        return self.get_domain()
+    #--- End: def
+    
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def del_data_axes(self, *default):
         '''Remove the identifiers of the domain axes spanned by the data
 array.
@@ -226,7 +200,7 @@ array.
         The removed identifiers of the domain axes spanned by the data
         array. If unset then *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
 TODO
 
@@ -245,10 +219,10 @@ TODO
 
     out: `Domain`
 
-**Examples**
+**Examples:**
 
 >>> d = f.get_domain()
-TODO
+
         '''
         return self._Domain.fromconstructs(self._get_constructs())
     #--- End: def
@@ -272,7 +246,7 @@ array.
         The identifiers of the domain axes spanned by the data
         array. If unset then *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
 >>> f.ndim
 3
@@ -291,33 +265,6 @@ None
         return self._get_component('data_axes', *default)
     #--- End: def
     
-#    def field_ancillaries(self, copy=False):
-#        '''Return the field ancillary constructs.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`
-#
-#:Parameters:
-#
-#    copy: `bool`, optional
-#        If `True` then deep copies of the constructs are returned.
-#
-#:Returns:
-#
-#    out: `dict`
-#        TODO
-#
-#**Examples**
-#
-#>>> f.field_ancillaries()
-#TODO
-#
-#
-#'''
-#        return self._get_constructs().constructs(
-#            construct_type='field_ancillary', copy=copy)
-
     def del_construct(self, cid):
         '''TODO Remove a metadata construct.
 
@@ -401,7 +348,7 @@ removed prior to insertion.
 
     `None`
 
-**Examples**
+**Examples:**
 
 TODO
 
@@ -431,7 +378,7 @@ TODO
 
     `None`
 
-**Examples**
+**Examples:**
 
 TODO
 
@@ -506,92 +453,4 @@ TODO
 #        return out
 #    #--- End: def
     
-#    def set_cell_method(self, cell_method, id=None, copy=True):
-#        '''Set a cell method construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `CellMethod`
-#        TODO
-#        
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='cellmethod0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples**
-#
-#TODO
-#
-#        '''
-#        self.set_construct('cell_method', cell_method, id=id,
-#                           copy=copy)
-#    #--- End: def
-#
-#    def set_field_ancillary(self, construct, axes=None, id=None,
-#                            copy=True):
-#        '''Set a field ancillary construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `FieldAncillary`
-#        TODO
-#
-#    axes: sequence of `str`, optional
-#        The identifiers of the domain axes spanned by the data array.
-#
-#        The axes may also be set afterwards with the
-#        `set_construct_axes` method.
-#
-#        *Example:*
-#          ``axes=['domainaxis0', 'domainaxis1']``
-#
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='fieldancillary0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples**
-#
-#TODO
-#        
-#        '''
-#        return self.set_construct('field_ancillary', construct, id=id,
-#                                  axes=axes, copy=copy)
-#    #--- End: def
-
 #--- End: class

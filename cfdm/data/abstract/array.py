@@ -131,18 +131,30 @@ True
     #--- End: def
 
     def get_compressed_dimension(self, *default):
-        '''TODO
+        '''Return the position of the compressed dimension in the compressed
+array.
 
 .. versionadded:: 1.7
 
+.. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
+             `get_compressed_type`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the underlying array is not compressed.
+
 :Returns:
 
-    out: `str`
-        TODO
+    out: `int`
+        The position of the compressed dimension in the compressed
+        array. If the underlying is not compressed then *default* is
+        returned, if provided.
 
-:Examples:
+**Examples:**
 
-TODO
+>>> i = d.get_compressed_dimension()
+
         '''
         return self._get_component('compressed_dimension', *default)
     #--- End: def

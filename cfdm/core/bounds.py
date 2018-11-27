@@ -96,10 +96,9 @@ Note that the data are returned in a `Data` object. Use the
 >>> f.has_data()
 True
 >>> f.get_data()
-<Data: [0, ..., 9]>
->>> d = f.del_data()
->>> d
-<Data: [0, ..., 9]>
+<Data(10): [0, ..., 9]>
+>>> f.del_data()
+<Data(10): [0, ..., 9]>
 >>> f.has_data()
 False
 >>> print(f.get_data(None))

@@ -87,9 +87,9 @@
 <h1>cfdm.core.Field.set_construct_axes<a class="headerlink" href="#cfdm-core-field-set-construct-axes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.Field.set_construct_axes">
-<code class="descclassname">Field.</code><code class="descname">set_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>axes</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.Field.set_construct_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the domain axis constructs spanned by a metadata construct data
-array.</p>
+<code class="descclassname">Field.</code><code class="descname">set_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/mixin/constructaccess.py#L385"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.set_construct_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the domain axis constructs spanned by the data array of a
+metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -137,8 +137,8 @@ spanned by the data array.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cid</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">c</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_construct_axes</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cid</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_construct_axes</span><span class="p">(</span><span class="n">cid</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </dd></dl>

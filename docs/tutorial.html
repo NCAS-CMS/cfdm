@@ -94,11 +94,11 @@
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Version 1.7b5</p>
+<p>Version 1.7b6</p>
 <hr class="docutils" />
 <p>The code examples in this tutorial are available in an <strong>IPython
-notebook</strong> (<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 70kB)
-<a class="footnote-reference" href="#files" id="id2">[1]</a>.</p>
+Jupyter notebook</strong> (<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
+70kB) <a class="footnote-reference" href="#files" id="id2">[1]</a>.</p>
 <div class="section" id="import">
 <span id="id3"></span><h2><strong>Import</strong><a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -123,7 +123,9 @@ the CF data model being used may be found with the <a class="reference internal"
 <p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function reads a <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> file from disk, or
 from an <a class="reference external" href="https://www.opendap.org/">OPeNDAP</a> URL <a class="footnote-reference" href="#opendap2" id="id5">[2]</a>, and
 returns the contents as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of zero or more <a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> class
-instances, each of which represents a field construct <a class="footnote-reference" href="#language" id="id6">[3]</a>.</p>
+instances, each of which represents a field construct. Henceforth, the
+phrase “field construct” will be assumed to mean “<a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance”,
+unless stated otherwise <a class="footnote-reference" href="#language" id="id6">[3]</a>.</p>
 <p>For example, to read the file <strong>file.nc</strong> (<a class="reference download internal" href="_downloads/file.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id7">[1]</a>:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
@@ -662,9 +664,13 @@ field construct and are</p>
 <ul class="simple">
 <li><em>robust</em> (each metadata construct is guaranteed to have a unique
 identifier within its parent field construct),</li>
+</ul>
+<ul class="simple">
 <li><em>arbitrary</em> (no semantic meaning should be attached to the
 identifier, and the same identifier will usually refer to different
 metadata constructs in different field constructs), and</li>
+</ul>
+<ul class="simple">
 <li><em>unstable</em> (the identifiers could be different each time the field
 construct is created).</li>
 </ul>
@@ -674,9 +680,8 @@ metadata constructs by</p>
 <li>metadata construct type,</li>
 <li>property value,</li>
 <li>whether or the data array spans particular domain axis constructs,</li>
-<li>netCDF variable name,</li>
-<li>netCDF dimension name, and</li>
-<li>construct identifier.</li>
+<li>construct identifier, and</li>
+<li>netCDF variable or dimension name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>).</li>
 </ul>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;air_temperature standard_error&#39;</span><span class="p">)</span>
 <span class="go">{&#39;fieldancillary0&#39;: &lt;FieldAncillary: air_temperature standard_error(10, 9) K&gt;}</span>
@@ -733,8 +738,8 @@ be removed with the <a class="reference internal" href="method/cfdm.Field.del_co
 <span class="go">False</span>
 </pre></div>
 </div>
-<p>Metadata constructs of a particular type can also be retrieved with
-the following methods of the field construct:</p>
+<p>Metadata constructs of a particular type can also be retrieved more
+convieniently with the following methods of the field construct:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="45%" />
@@ -1935,9 +1940,13 @@ the cfdm package includes algorithms that are required to uncompress
 each type of compressed array.</p>
 <p>There are two basic types of compression supported by the CF
 conventions: ragged arrays (as used by <a class="reference internal" href="#dsg"><span class="std std-ref">discrete sampling
-geometries</span></a> and <a class="reference internal" href="#gathering"><span class="std std-ref">compression by gathering</span></a>,
+geometries</span></a>) and <a class="reference internal" href="#gathering"><span class="std std-ref">compression by gathering</span></a>,
 each of which has particular implementation details, but the following
 access patterns and behaviours apply to both:</p>
+<ul class="simple">
+<li>Whether or not the data are compressed is tested with the
+<a class="reference internal" href="method/cfdm.Data.get_compression_type.html#cfdm.Data.get_compression_type" title="cfdm.Data.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</li>
+</ul>
 <ul class="simple">
 <li>Accessing the data by a call to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code> method of a field
 or metadata construct returns a numpy array that is
@@ -2058,7 +2067,7 @@ file:</p>
 <span class="go">[3 7 5 9]</span>
 </pre></div>
 </div>
-<p>We can easily select the timeseries for the second station by indexing
+<p>The timeseries for the second station is easily selected by indexing
 the “station” axis of the field construct:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">station</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">station</span>
@@ -2121,7 +2130,7 @@ field construct with an underlying contiguous ragged array:</p>
 <span class="n">tas</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>We can now inspect the new field construct…</p>
+<p>The new field construct can now be inspected:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tas</span>
 <span class="go">&lt;Field: air_temperature(cid%domainaxis1(2), cid%domainaxis0(4)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tas</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
@@ -2138,11 +2147,11 @@ field construct with an underlying contiguous ragged array:</p>
 <span class="go">[2 4]</span>
 </pre></div>
 </div>
-<p>…write it to a netCDF file…</p>
+<p>and written to a file:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tas</span><span class="p">,</span> <span class="s1">&#39;tas_contiguous.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>…and inspect the file:</p>
+<p>The content of the new file is:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump tas_contiguous.nc
 netcdf tas_contiguous {
 dimensions:
@@ -2240,8 +2249,8 @@ file:</p>
 <span class="go">[1 2 5 7 8 16 18]</span>
 </pre></div>
 </div>
-<p>We can easily create subspaces based on the uncompressed axes of the
-field construct:</p>
+<p>Subspaces based on the uncompressed axes of the field construct are
+easiliy created:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">&lt;Field: precipitation_flux(time(1), latitude(4), longitude(5)) kg m2 s-1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
@@ -2300,7 +2309,7 @@ array dimensions, it is necessary to state the position of the
 compressed dimension in the compressed array (with the
 <em>compressed_dimension</em> parameter of the <a class="reference internal" href="class/cfdm.GatheredArray.html#cfdm.GatheredArray" title="cfdm.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GatheredArray</span></code></a>
 initialisation).</p>
-<p>We can now inspect the new field construct…</p>
+<p>The new field construct can now be inspected:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tas</span>
 <span class="go">&lt;Field: air_temperature(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tas</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
@@ -2323,11 +2332,11 @@ initialisation).</p>
 <span class="go">[1 4 5]</span>
 </pre></div>
 </div>
-<p>…write it to a netCDF file…</p>
+<p>and written a netCDF file:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tas</span><span class="p">,</span> <span class="s1">&#39;tas_gathered.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>…and inspect the file:</p>
+<p>The content of the new file is:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump tas_gathered.nc
 netcdf tas_gathered {
 dimensions:

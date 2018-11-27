@@ -20,7 +20,6 @@ Inspection
    :toctree: ../method/
    :template: method.rst
    
-   ~cfdm.Data.dump
    ~cfdm.Data.get_array
    ~cfdm.Data.get_dtarray
    ~cfdm.Data.first_element

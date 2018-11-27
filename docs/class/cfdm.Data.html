@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Data.dump" href="../method/cfdm.Data.dump.html" />
+    <link rel="next" title="cfdm.Data.get_array" href="../method/cfdm.Data.get_array.html" />
     <link rel="prev" title="cfdm.CoordinateConversion.__str__" href="../method/cfdm.CoordinateConversion.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -50,7 +50,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.CoordinateConversion.__str__.html" title="previous chapter">cfdm.CoordinateConversion.__str__</a></li>
-      <li>Next: <a href="../method/cfdm.Data.dump.html" title="next chapter">cfdm.Data.dump</a></li>
+      <li>Next: <a href="../method/cfdm.Data.get_array.html" title="next chapter">cfdm.Data.get_array</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -86,7 +86,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Data">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.data.Data</span></code></p>
 <p>An orthogonal multidimensional array with masked values and units.</p>
 <div class="versionadded">
@@ -173,31 +173,28 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.dump.html#cfdm.Data.dump" title="cfdm.Data.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
-<td>TODO</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_array.html#cfdm.Data.get_array" title="cfdm.Data.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_array.html#cfdm.Data.get_array" title="cfdm.Data.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_dtarray.html#cfdm.Data.get_dtarray" title="cfdm.Data.get_dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dtarray</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_dtarray.html#cfdm.Data.get_dtarray" title="cfdm.Data.get_dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_dtarray</span></code></a></td>
 <td>An independent numpy array of date-time objects.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.first_element.html#cfdm.Data.first_element" title="cfdm.Data.first_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">first_element</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.first_element.html#cfdm.Data.first_element" title="cfdm.Data.first_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">first_element</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.last_element.html#cfdm.Data.last_element" title="cfdm.Data.last_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_element</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.last_element.html#cfdm.Data.last_element" title="cfdm.Data.last_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">last_element</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.second_element.html#cfdm.Data.second_element" title="cfdm.Data.second_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second_element</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.second_element.html#cfdm.Data.second_element" title="cfdm.Data.second_element"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second_element</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_calendar.html#cfdm.Data.get_calendar" title="cfdm.Data.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_calendar.html#cfdm.Data.get_calendar" title="cfdm.Data.get_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_calendar</span></code></a></td>
 <td>Return the calendar.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_fill_value.html#cfdm.Data.get_fill_value" title="cfdm.Data.get_fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_fill_value</span></code></a></td>
 <td>Return the missing data value.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_units.html#cfdm.Data.get_units" title="cfdm.Data.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_units.html#cfdm.Data.get_units" title="cfdm.Data.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a></td>
 <td>Return the units.</td>
 </tr>
 </tbody>
@@ -294,7 +291,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.equals.html#cfdm.Data.equals" title="cfdm.Data.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>True if two <a class="reference internal" href="#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects are equal.</td>
+<td>Whether two data arrays are the same.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.parse_indices.html#cfdm.Data.parse_indices" title="cfdm.Data.parse_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_indices</span></code></a></td>
 <td>TODO</td>
@@ -312,25 +309,25 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_compression_type.html#cfdm.Data.get_compression_type" title="cfdm.Data.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
-<td>Return the type of compression applied to the internal array.</td>
+<td>Return the type of compression applied to the underlying array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_compressed_axes.html#cfdm.Data.get_compressed_axes" title="cfdm.Data.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
-<td>TODO</td>
+<td>Return the dimensions that are compressed.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_compressed_array.html#cfdm.Data.get_compressed_array" title="cfdm.Data.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a></td>
-<td>TODO</td>
+<td>Return an independent numpy array containing the compressed data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_compressed_dimension.html#cfdm.Data.get_compressed_dimension" title="cfdm.Data.get_compressed_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_dimension</span></code></a></td>
-<td>TODO</td>
+<td>Return the position of the compressed dimension in the compressed array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_count_variable.html#cfdm.Data.get_count_variable" title="cfdm.Data.get_count_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count_variable</span></code></a></td>
-<td>TODO</td>
+<td>Return the count variable for a compressed array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.get_index_variable.html#cfdm.Data.get_index_variable" title="cfdm.Data.get_index_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index_variable</span></code></a></td>
-<td>TODO</td>
+<td>Return the index variable for a compressed array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.get_list_variable.html#cfdm.Data.get_list_variable" title="cfdm.Data.get_list_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list_variable</span></code></a></td>
-<td>TODO</td>
+<td>Return the list variable for a compressed array.</td>
 </tr>
 </tbody>
 </table>

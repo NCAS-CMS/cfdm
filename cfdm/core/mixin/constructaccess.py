@@ -35,8 +35,8 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return self._get_constructs().array_constructs(copy=copy)
  
     def construct_axes(self, cid=None):
-        '''Return the identifiers of the domain axes spanned by the construct
-data arrays.
+        '''Return the identifiers of the domain axes spanned by the metadata
+construct data arrays.
 
 .. versionadded:: 1.7
 
@@ -383,8 +383,8 @@ TODO
     #--- End: def
 
     def set_construct_axes(self, cid, axes):
-        '''Set the domain axis constructs spanned by a metadata construct data
-array.
+        '''Set the domain axis constructs spanned by the data array of a
+metadata construct.
 
 .. versionadded:: 1.7
 
@@ -417,8 +417,8 @@ array.
 
 **Examples:**
 
->>> cid = f.set_construct(c
->>> f.set_construct_axes(c, axes=['domainaxis1'])
+>>> cid = f.set_construct(c)
+>>> f.set_construct_axes(cid, axes=['domainaxis1'])
 
         '''
         return self._get_constructs().set_construct_axes(cid, axes)

@@ -85,7 +85,7 @@
 <h1>cfdm.core.Array<a class="headerlink" href="#cfdm-core-array" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.Array">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.Array" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/data/abstract/array.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>Abstract base class for a container of an array.</p>
 <p>The form of the array is arbitrary and is defined by the
@@ -107,7 +107,7 @@ initialization parameters of a subclass of <cite>Array</cite>.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.Array.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.Array.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/data/abstract/array.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Array.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -168,7 +168,7 @@ initialization parameters of a subclass of <cite>Array</cite>.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.Array.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.Array.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Array.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy of the array.</p>
 <p><code class="docutils literal notranslate"><span class="pre">a.copy()</span> <span class="pre">is</span> <span class="pre">equivalent</span> <span class="pre">to</span> <span class="pre">``copy.deepcopy(a)</span></code>.</p>
 <p>Copy-on-write is employed. Therefore, after copying, care must be
@@ -196,7 +196,7 @@ original or the new copy.</p>
 
 <dl class="method">
 <dt id="cfdm.core.Array.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.Array.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/data/abstract/array.py#L242"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Array.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array containing the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

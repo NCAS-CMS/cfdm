@@ -72,7 +72,8 @@
             
   <div class="section" id="cfdm-package">
 <h1><strong>cfdm package</strong><a class="headerlink" href="#cfdm-package" title="Permalink to this headline">¶</a></h1>
-<p>Version 1.7b5</p>
+<hr class="docutils" />
+<p>Version 1.7b6 for version 1.7 of the CF conventions.</p>
 <div class="section" id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -135,8 +136,10 @@ cell_methods attribute of data variable).</li>
 is available to download at
 <a class="reference external" href="https://www.geosci-model-dev.net/10/4619/2017">https://www.geosci-model-dev.net/10/4619/2017</a>.</p>
 </div>
+</div>
 <div class="section" id="implementation">
-<h3><strong>Implementation</strong><a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h3>
+<h2><strong>Implementation</strong><a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
 <p>The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is,
 however, not strict about CF compliance so that partially conformant
@@ -147,6 +150,7 @@ datasets and written to new datasets.</p>
 <li>read field constructs from netCDF datasets,</li>
 <li>create new field constructs in memory,</li>
 <li>inspect field constructs,</li>
+<li>test whether two field constructs are the same,</li>
 <li>modify field construct metadata and data,</li>
 <li>create subspaces of field constructs,</li>
 <li>write field constructs to netCDF datasets on disk,</li>
@@ -155,7 +159,6 @@ datasets and written to new datasets.</p>
 (i.e. ragged or gathered arrays), whilst presenting a view of the
 data in its uncompressed form.</li>
 </ul>
-</div>
 </div>
 <div class="section" id="table-of-contents">
 <h2><strong>Table Of Contents</strong><a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>

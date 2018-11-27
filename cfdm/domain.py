@@ -206,7 +206,7 @@ field.
     #--- End: def
 
     def domain_axis_name(self, key):
-        '''
+        '''TODO
         '''
         constructs = self._get_constructs()
         return constructs.domain_axis_name(key)
@@ -312,63 +312,9 @@ last values.
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
-        '''True if two {+variable}s are equal, False otherwise.
+        '''TODO
 
-Two fields are equal if ...
-
-Note that a {+variable} may be equal to a single element field list,
-for example ``f.equals(f[0:1])`` and ``f[0:1].equals(f)`` are always
-True.
-
-.. seealso:: `cf.FieldList.equals`, `cf.FieldList.set_equals`
-
-:Parameters:
-
-    other: `object`
-        The object to compare for equality.
-
-    {+atol}
-
-    {+rtol}
-
-    ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
-
-    traceback: `bool`, optional
-        If True then print a traceback highlighting where the two
-        {+variable}s differ.
-
-    ignore: `tuple`, optional
-        The names of CF properties to omit from the comparison. By
-        default, the CF Conventions property is omitted.
-
-:Returns: 
-  
-    out: `bool`
-        Whether or not the two {+variable}s are equal.
-
-**Examples**
-
->>> f.Conventions
-'CF-1.0'
->>> g = f.copy()
->>> g.Conventions = 'CF-1.6'
->>> f.equals(g)
-True
-
-In the following example, two fields differ only by the long name of
-their time coordinates. The traceback shows that they differ in their
-domains, that they differ in their time coordinates and that the long
-name could not be matched.
-
->>> g = f.copy()
->>> g.coord('time').long_name += ' different'
->>> f.equals(g, traceback=True)
-Domain: Different coordinate: <CF Coordinate: time(12)>
-Field: Different domain properties: <CF Domain: (128, 1, 12, 64)>, <CF Domain: (128, 1, 12, 64)>
-False
-
+.. versionadded:: 1.7
         '''
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             

@@ -11,8 +11,8 @@ Version |release|
 ----
  
 The code examples in this tutorial are available in an **IPython
-notebook** (:download:`download <notebooks/tutorial.ipynb>`, 70kB)
-[#files]_.
+Jupyter notebook** (:download:`download <notebooks/tutorial.ipynb>`,
+70kB) [#files]_.
 
 .. _import:
 
@@ -54,7 +54,9 @@ The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
 from an `OPeNDAP <https://www.opendap.org/>`_ URL [#opendap2]_, and
 returns the contents as a `list` of zero or more `Field` class
-instances, each of which represents a field construct [#language]_.
+instances, each of which represents a field construct. Henceforth, the
+phrase "field construct" will be assumed to mean "`Field` instance",
+unless stated otherwise [#language]_.
 
 For example, to read the file **file.nc** (:download:`download
 <netcdf_files/file.nc>`, 9kB) [#files]_:
@@ -501,10 +503,7 @@ Method                Description
    >>> t2.transpose([2, 0, 1])
    <Field: air_temperature(grid_longitude(9), grid_latitude(10), time(1)) K>
 
-
 .. _subspacing:
-
-
 
 **Subspacing**
 --------------
@@ -563,6 +562,8 @@ CF data model construct  Description                     cfdm class
 Domain axis              Independent axes of the domain  `DomainAxis`           
 Dimension coordinate     Domain cell locations           `DimensionCoordinate`  
 Auxiliary coordinate     Domain cell locations           `AuxiliaryCoordinate`  
+
+
 Coordinate reference     Domain coordinate systems       `CoordinateReference`  
 Domain ancillary         Cell locations in alternative   `DomainAncillary`      
                          coordinate systems		                       
@@ -616,9 +617,13 @@ field construct and are
 * *robust* (each metadata construct is guaranteed to have a unique
   identifier within its parent field construct),
 
+..
+
 * *arbitrary* (no semantic meaning should be attached to the
   identifier, and the same identifier will usually refer to different
   metadata constructs in different field constructs), and
+
+..
 
 * *unstable* (the identifiers could be different each time the field
   construct is created).
@@ -631,12 +636,12 @@ metadata constructs by
 * property value,
 
 * whether or the data array spans particular domain axis constructs,
-  
-* netCDF variable name,
-  
-* netCDF dimension name, and 
-  
-* construct identifier.  
+
+* construct identifier, and 
+
+* netCDF variable or dimension name (see the :ref:`netCDF interface
+  <netcdf_interface>`).
+ 
 
 .. code:: python
 	  
@@ -698,8 +703,8 @@ be removed with the `~Field.del_construct` method.
    >>> t.has_construct('units:degrees')
    False
 
-Metadata constructs of a particular type can also be retrieved with
-the following methods of the field construct:
+Metadata constructs of a particular type can also be retrieved more
+convieniently with the following methods of the field construct:
 
 ==============================  ====================================
 Method                          Description
@@ -1358,9 +1363,9 @@ constructs (data arrays have been generated with dummy values using
    Q.set_construct(dimX, axes=[axisX])
 
 The new field construct may now be inspected:
-   
-.. code:: python
 
+.. code:: python
+	  
    >>> Q.dump()
    ------------------------
    Field: specific_humidity
@@ -1946,9 +1951,13 @@ each type of compressed array.
 
 There are two basic types of compression supported by the CF
 conventions: ragged arrays (as used by :ref:`discrete sampling
-geometries <dsg>` and :ref:`compression by gathering <gathering>`,
+geometries <dsg>`) and :ref:`compression by gathering <gathering>`,
 each of which has particular implementation details, but the following
 access patterns and behaviours apply to both:
+
+* Whether or not the data are compressed is tested with the
+  `~Data.get_compression_type` method of the `Data` instance.
+..
 
 * Accessing the data by a call to the `!get_array` method of a field
   or metadata construct returns a numpy array that is
@@ -2084,7 +2093,7 @@ file:
    >>> print(count_variable.get_array())
    [3 7 5 9]
 
-We can easily select the timeseries for the second station by indexing
+The timeseries for the second station is easily selected by indexing
 the "station" axis of the field construct:
 
 .. code:: python
@@ -2153,7 +2162,7 @@ field construct with an underlying contiguous ragged array:
    # Set the data for the field
    tas.set_data(cfdm.Data(array), axes=[Y, X])
 				
-We can now inspect the new field construct...
+The new field construct can now be inspected:
 
 .. code:: python
    
@@ -2172,14 +2181,14 @@ We can now inspect the new field construct...
    >>> print(count_variable.get_array())
    [2 4]
 
-...write it to a netCDF file...
+and written to a file:
 
 .. code:: python
 	  
    >>> cfdm.write(tas, 'tas_contiguous.nc')
 
-...and inspect the file:
-   
+The content of the new file is:
+  
 .. code:: bash
 
    $ ncdump tas_contiguous.nc
@@ -2288,8 +2297,8 @@ file:
    >>> print(list_variable.get_array())
    [1 2 5 7 8 16 18]
 
-We can easily create subspaces based on the uncompressed axes of the
-field construct:
+Subspaces based on the uncompressed axes of the field construct are
+easiliy created:
 
 .. code:: python
 	  
@@ -2355,7 +2364,7 @@ compressed dimension in the compressed array (with the
 *compressed_dimension* parameter of the `GatheredArray`
 initialisation).
 
-We can now inspect the new field construct...
+The new field construct can now be inspected:
 
 .. code:: python
    
@@ -2380,13 +2389,13 @@ We can now inspect the new field construct...
    >>> print(list_variable.get_array())
    [1 4 5]
 
-...write it to a netCDF file...
+and written a netCDF file:
 
 .. code:: python
 	  
    >>> cfdm.write(tas, 'tas_gathered.nc')
 
-...and inspect the file:
+The content of the new file is:
    
 .. code:: bash
 

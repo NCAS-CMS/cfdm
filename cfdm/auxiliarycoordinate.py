@@ -119,7 +119,8 @@ components, and provides selected values of all data arrays.
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_type=False):
+               ignore_properties=(), ignore_compression=False,
+               ignore_type=False):
         '''Whether two auxiliary coordinate constructs are the same.
 
 Equality is strict by default. This means that for two auxiliary
@@ -131,22 +132,26 @@ coordinate constructs to be considered equal:
 
 ..
 
-* if there are data arrays then they must have same shape, data type
-  and be element-wise equal (see the *ignore_data_type* parameter),
-  and
+* if there are data arrays then they must have same shape and data
+  type, the same missing data mask, and be element-wise equal (see the
+  *ignore_data_type* parameter).
 
 ..
 
 * if there are bounds then their descriptive properties (if any) must
-  be the same and their data arrays must have same shape, data type
-  and be element-wise equal (see the *ignore_properties* and
-  *ignore_data_type* parameters).
+  be the same and their data arrays must have same shape and data
+  type, the same missing data mask, and be element-wise equal (see the
+  *ignore_properties* and *ignore_data_type* parameters).
 
 Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
 parameters.
+
+If data arrays are compressed then the compression type and the
+underlying compressed arrays must be the same, as well as the arrays
+in their uncompressed forms. See the *ignore_compression* parameter.
 
 Any type of object may be tested but, in general, equality is only
 possible with another auxiliary coordinate construct, or a subclass of
@@ -176,7 +181,7 @@ constitute part of the CF data model and so are not checked.
 
     traceback: `bool`, optional
         If True then print information about differences that lead to
-        inequaility.
+        inequality.
 
     ignore_properties: sequence of `str`, optional
         The names of properties to omit from the comparison.
@@ -186,6 +191,13 @@ constitute part of the CF data model and so are not checked.
         comparisons. By default different numerical data types imply
         inequality, regardless of whether the elements are within the
         tolerance for equality.
+
+    ignore_compression: `bool`, optional
+        If True then any compression applied to the underlying arrays
+        is ignored and only the uncompressed arrays are tested for
+        equality. By default the compression type and, if appliciable,
+        the underlying compressed arrays must be the same, as well as
+        the arrays in their uncompressed forms
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
@@ -223,6 +235,7 @@ False
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
+                              ignore_compression=ignore_compression,
                               ignore_type=ignore_type)
     #--- End: def
         

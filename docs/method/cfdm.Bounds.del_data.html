@@ -87,7 +87,7 @@
 <h1>cfdm.Bounds.del_data<a class="headerlink" href="#cfdm-bounds-del-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Bounds.del_data">
-<code class="descclassname">Bounds.</code><code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.Bounds.del_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Bounds.</code><code class="descname">del_data</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/propertiesdata.py#L141"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Bounds.del_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -123,10 +123,9 @@ provided.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;Data: [0, ..., 9]&gt;</span>
+<span class="go">&lt;Data(10): [0, ..., 9]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
+<span class="go">&lt;Data(10): [0, ..., 9]&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="bp">None</span><span class="p">))</span>

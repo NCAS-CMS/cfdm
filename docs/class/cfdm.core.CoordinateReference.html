@@ -85,7 +85,7 @@
 <h1>cfdm.core.CoordinateReference<a class="headerlink" href="#cfdm-core-coordinatereference" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.CoordinateReference">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of the
@@ -200,7 +200,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L63"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -340,7 +340,7 @@ initialization. By default arguments are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.coordinates">
-<code class="descname">coordinates</code><span class="sig-paren">(</span><em>coordinates=None</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.coordinates" title="Permalink to this definition">¶</a></dt>
+<code class="descname">coordinates</code><span class="sig-paren">(</span><em>coordinates=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L207"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace the identifiers of the coordinate objects that
 define the coordinate system.</p>
 <div class="admonition seealso">
@@ -383,7 +383,7 @@ define the coordinate system.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L239"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <div class="versionadded">
@@ -417,7 +417,7 @@ define the coordinate system.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.del_coordinate">
-<code class="descname">del_coordinate</code><span class="sig-paren">(</span><em>key</em>, <em>*default</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.del_coordinate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_coordinate</code><span class="sig-paren">(</span><em>key</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L259"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.del_coordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the identifier of a coordinate object that defines the
 coordinate system.</p>
 <div class="versionadded">
@@ -469,7 +469,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.del_coordinate_conversion">
-<code class="descname">del_coordinate_conversion</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.del_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_coordinate_conversion</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L305"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.del_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the coordinate conversion.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -505,7 +505,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.del_datum">
-<code class="descname">del_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.del_datum" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L334"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.del_datum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the datum.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -532,7 +532,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.get_coordinate_conversion">
-<code class="descname">get_coordinate_conversion</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.get_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_coordinate_conversion</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L355"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.get_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the coordinate conversion.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -559,7 +559,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.get_datum">
-<code class="descname">get_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.get_datum" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L379"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.get_datum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the datum.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -583,17 +583,17 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.has_coordinate_conversion">
-<code class="descname">has_coordinate_conversion</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.has_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_coordinate_conversion</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L407"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.has_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.has_datum">
-<code class="descname">has_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.has_datum" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L401"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.has_datum" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.set_coordinate">
-<code class="descname">set_coordinate</code><span class="sig-paren">(</span><em>coordinate</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.set_coordinate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_coordinate</code><span class="sig-paren">(</span><em>coordinate</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L413"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.set_coordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a coordinate.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -638,12 +638,12 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.set_coordinate_conversion">
-<code class="descname">set_coordinate_conversion</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.set_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_coordinate_conversion</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L448"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.set_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.CoordinateReference.set_datum">
-<code class="descname">set_datum</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.CoordinateReference.set_datum" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_datum</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/coordinatereference.py#L457"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateReference.set_datum" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

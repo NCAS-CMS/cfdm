@@ -430,6 +430,8 @@ None
 
     def set_construct_axes(self, cid, axes):
         '''TODO
+
+.. versionadded:: 1.7
         '''
         if self.construct_type(cid) is None:
             raise ValueError(

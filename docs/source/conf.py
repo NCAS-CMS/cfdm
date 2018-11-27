@@ -48,6 +48,7 @@ def _get_cf_version():
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
 # it absolute, like shown here.  sys.path.insert(0,os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ----------------------------------------------------
@@ -65,13 +66,14 @@ needs_sphinx = '1.0'
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
 #              'sphinx.ext.viewcode',
-#--              'sphinx.ext.linkcode',
+              'sphinx.ext.linkcode',
               'sphinx.ext.mathjax',
               'sphinx.ext.graphviz',
 #              'sphinx.ext.inheritance_diagram',
               'sphinx.ext.intersphinx',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
+              'hidden_code_block',
               ]
 
 

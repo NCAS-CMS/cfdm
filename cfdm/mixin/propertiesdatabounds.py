@@ -210,13 +210,16 @@ rules, the only differences being:
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
-               ignore_properties=(), ignore_type=False):
+               ignore_properties=(), ignore_compression=False,
+               ignore_type=False):
         '''Whether two data arrays with descriptive properties and cell bounds
 are the same.
 
 Equality is strict by default. This means that:
 
-* the descriptive properties must be the same,
+* the descriptive properties must be the same, and vector-valued
+  properties must have same the size and be element-wise equal (see
+  the *ignore_properties* parameter), and
 
 ..
 
@@ -225,17 +228,38 @@ Equality is strict by default. This means that:
 
 ..
 
-* if there are data arrays then they must have same shape, data type
-  and be element-wise equal.
+* if there are data arrays then they must have same shape and data
+  type, the same missing data mask, and be element-wise equal (see the
+  *ignore_data_type* parameter).
+
+..
+
+* if there are bounds then their descriptive properties (if any) must
+  be the same and their data arrays must have same shape and data
+  type, the same missing data mask, and be element-wise equal (see the
+  *ignore_properties* and *ignore_data_type* parameters).
 
 Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers.
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
+
+If data arrays are compressed then the compression type and the
+underlying compressed arrays must be the same, as well as the arrays
+in their uncompressed forms. See the *ignore_compression* parameter.
+
+Any type of object may be tested but, in general, equality is only
+possible with another field construct, or a subclass of one. See the
+*ignore_type* parameter.
+
+NetCDF elements, such as netCDF variable and dimension names, do not
+constitute part of the CF data model and so are not checked.
 
 .. versionadded:: 1.7
 
 :Parameters:
+
 
     other: 
         The object to compare for equality.
@@ -253,22 +277,36 @@ positive, typically very small numbers.
         are omitted from the comparison.
 
     traceback: `bool`, optional
-        If True and the collections of properties are different then
-        print a traceback stating how they are different.
+        If True then print information about differences that lead to
+        inequality.
 
     ignore_properties: sequence of `str`, optional
         The names of properties to omit from the comparison.
 
     ignore_data_type: `bool`, optional
-        TODO
+        If True then ignore the data types in all numerical data array
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
+
+    ignore_compression: `bool`, optional
+        If True then any compression applied to the underlying arrays
+        is ignored and only the uncompressed arrays are tested for
+        equality. By default the compression type and, if appliciable,
+        the underlying compressed arrays must be the same, as well as
+        the arrays in their uncompressed forms
 
     ignore_type: `bool`, optional
-        TODO
+         Any type of object may be tested but, in general, equality is
+        only possible with another TODO, or a subclass of one. If
+        *ignore_type* is True then then
+        ``PropertiesDataBounds(source=other)`` is tested, rather than
+        the ``other`` defined by the *other* parameter.
 
 :Returns: 
   
     out: `bool`
-        Whether the two collections of propoerties are equal.
+        TODO
 
 **Examples:**
 
@@ -277,15 +315,6 @@ True
 >>> p.equals(p.copy())
 True
 >>> p.equals('not a colection of properties')
-False
-
->>> q = p.copy()
->>> q.set_property('foo', 'bar')
->>> p.equals(q)
-False
->>> p.equals(q, traceback=True)
-Field: Non-common property name: foo
-Field: Different properties
 False
 
         '''    
@@ -297,7 +326,8 @@ False
                               ignore_data_type=ignore_data_type,
                               ignore_fill_value=ignore_fill_value,
                               ignore_properties=ignore_properties,
-                              ignore_type=ignore_type):
+                              ignore_type=ignore_type,
+                              ignore_compression=ignore_compression):
             if traceback:
                 print("???????/")
             return False
@@ -327,7 +357,8 @@ False
                                 traceback=traceback,
                                 ignore_data_type=ignore_data_type,
                                 ignore_type=ignore_type,
-                                ignore_fill_value=ignore_fill_value):
+                                ignore_fill_value=ignore_fill_value,
+                                ignore_compression=ignore_compression):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False
@@ -348,41 +379,15 @@ False
                                 traceback=traceback,
                                 ignore_data_type=ignore_data_type,
                                 ignore_type=ignore_type,
-                                ignore_fill_value=ignore_fill_value):
+                                ignore_fill_value=ignore_fill_value,
+                                ignore_compression=ignore_compression):
                 if traceback:
                     print("{0}: Different {1}".format(self.__class__.__name__, attr))
                 return False
         #--- End: if
 
-#        # ------------------------------------------------------------
-#        # Check the coordinate ancillaries
-#        # ------------------------------------------------------------
-#        ancillaries0 = self.ancillaries()
-#        ancillaries1 = other.ancillaries()
-#        if set(ancillaries0) != set(ancillaries1):
-#            if traceback:
-#                print(
-#"{0}: Different coordinate ancillaries ({1} != {2})".format(
-#    self.__class__.__name__,
-#    set(ancillaries0). set(ancillaries1)))
-#            return False
-#
-#        for name, value0 in ancillaries0.iteritems():            
-#            value1 = ancillaries1[term]                
-#            if not self._equals(value0, value1, rtol=rtol, atol=atol,
-#                                traceback=traceback,
-#                                ignore_data_type=ignore_data_type,
-#                                ignore_fill_value=ignore_fill_value,
-#                                ignore_type=ignore_type):
-#                if traceback:
-#                    print(
-#"{}: Unequal {!r} ancillaries ({!r} != {!r})".format( 
-#    self.__class__.__name__, name, value0, value1))
-#                return False
-#        #--- End: for
-        
         return True
-#    #--- End: def
+    #--- End: def
     
     def del_part_ncdim(self):
         '''TODO

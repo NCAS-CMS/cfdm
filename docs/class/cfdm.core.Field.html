@@ -86,7 +86,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.Field">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties={}</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties={}</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/field.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -159,7 +159,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return metadata constructs.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Field.construct_axes.html#cfdm.core.Field.construct_axes" title="cfdm.core.Field.construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_axes</span></code></a></td>
-<td>Return the identifiers of the domain axes spanned by the construct data arrays.</td>
+<td>Return the identifiers of the domain axes spanned by the metadata construct data arrays.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Field.get_array.html#cfdm.core.Field.get_array" title="cfdm.core.Field.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array the data.</td>
@@ -297,7 +297,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return metadata constructs.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Field.construct_axes.html#cfdm.core.Field.construct_axes" title="cfdm.core.Field.construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_axes</span></code></a></td>
-<td>Return the identifiers of the domain axes spanned by the construct data arrays.</td>
+<td>Return the identifiers of the domain axes spanned by the metadata construct data arrays.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Field.del_construct.html#cfdm.core.Field.del_construct" title="cfdm.core.Field.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a></td>
 <td>TODO Remove a metadata construct.</td>
@@ -312,7 +312,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a metadata construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Field.set_construct_axes.html#cfdm.core.Field.set_construct_axes" title="cfdm.core.Field.set_construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_axes</span></code></a></td>
-<td>Set the domain axis constructs spanned by a metadata construct data array.</td>
+<td>Set the domain axis constructs spanned by the data array of a metadata construct.</td>
 </tr>
 </tbody>
 </table>
@@ -345,7 +345,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Set a metadata construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.Field.set_construct_axes.html#cfdm.core.Field.set_construct_axes" title="cfdm.core.Field.set_construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_axes</span></code></a></td>
-<td>Set the domain axis constructs spanned by a metadata construct data array.</td>
+<td>Set the domain axis constructs spanned by the data array of a metadata construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.Field.set_data.html#cfdm.core.Field.set_data" title="cfdm.core.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>

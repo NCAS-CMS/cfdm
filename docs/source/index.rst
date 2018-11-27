@@ -5,7 +5,9 @@
 **cfdm package**
 ################
 
-Version |release|
+----
+
+Version |release| for version |version| of the CF conventions.
 
 .. .. include:: introduction.rst
 .. .. include:: installation.rst
@@ -27,7 +29,6 @@ meaning of data and of their spatial and temporal properties and are
 designed to promote the creation, processing, and sharing of climate
 and forecasting data using netCDF files and libraries
 (https://www.unidata.ucar.edu/software/netcdf).
-
 
 **CF data model**
 -----------------
@@ -89,7 +90,9 @@ is available to download at
 https://www.geosci-model-dev.net/10/4619/2017.
 
 **Implementation**
-------------------
+==================
+
+----
 
 The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is,
@@ -104,6 +107,8 @@ The cfdm package can
 * create new field constructs in memory,
 
 * inspect field constructs,
+
+* test whether two field constructs are the same,
 
 * modify field construct metadata and data,
 

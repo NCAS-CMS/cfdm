@@ -84,7 +84,7 @@ constitute part of the CF data model and so are not checked.
 
     traceback: `bool`, optional
         If True then print information about differences that lead to
-        inequaility.
+        inequality.
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is

@@ -5,15 +5,11 @@ from . import core
 
 
 class Constructs(core.Constructs):
-    '''
-    '''    
-    
-#    def auxiliary_coordinates(self, axes=None, copy=False):
-#        '''
-#        '''
-#        return self.constructs(construct_type='auxiliary_coordinate', axes=axes, copy=copy)
-#    #--- End: def
+    '''TODO
 
+.. versionadded:: 1.7
+
+    '''    
     def get_construct(self, description=None, cid=None, construct_type=None,
                       axes=None, copy=False):
         '''Return a metadata construct.
@@ -117,18 +113,6 @@ TODO
         return out
     #--- End: def
 
-    def cell_methods(self, copy=False):
-        return self.constructs(construct_type='cell_method', copy=copy)
-    #--- End: def
-    
-    def coordinate_references(self, copy=False):
-        return self.constructs(construct_type='coordinate_reference', copy=copy)
-    #--- End: def
-
-#    def dimension_coordinates(self, axes=None, copy=False):
-#        return self.constructs(construct_type='dimension_coordinate', axes=axes, copy=copy)
-#    #--- End: def
-
     def domain_axis_name(self, axis):
         '''Return the canonical name for an axis.
 
@@ -197,8 +181,11 @@ TODO
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
-               **kwargs):
-        '''
+               ignore_data_type=False, ignore_fill_value=False,
+               ignore_compression=False, ignore_type=False):
+        '''TODO
+
+.. versionadded:: 1.7
         
         '''
         if self is other:
@@ -221,9 +208,9 @@ TODO
         # ------------------------------------------------------------
         if not self._equals_domain_axis(other, rtol=rtol, atol=atol,
                                         traceback=traceback,
+                                        ignore_type=ignore_type,
                                         axis1_to_axis0=axis1_to_axis0,
-                                        key1_to_key0=key1_to_key0,
-                                        **kwargs):
+                                        key1_to_key0=key1_to_key0):
             return False
         
         # ------------------------------------------------------------
@@ -231,11 +218,7 @@ TODO
         # ------------------------------------------------------------
         axes_to_constructs0 = self.axes_to_constructs()
         axes_to_constructs1 = other.axes_to_constructs()
-#        print 'axes_to_constructs0 =', axes_to_constructs0
-#        print '\naxes_to_constructs1 =', axes_to_constructs1
         for axes0, constructs0 in axes_to_constructs0.items():
-#            print '\n\naxes0 = ', axes0
-#            print 'constructs0 = ', constructs0
             matched_all_constructs_with_these_axes = False
 
             log = []
@@ -244,8 +227,7 @@ TODO
             for axes1, constructs1 in tuple(axes_to_constructs1.items()):
                 log = []
                 constructs1 = constructs1.copy()
-#                print '\n    axes1 = ', axes1
-#                print '    constructs1 = ', constructs1
+
                 matched_roles = False
 
                 if len_axes0 != len(axes1):
@@ -254,7 +236,6 @@ TODO
                     continue
 
                 for construct_type in self._array_constructs:
-#                    print '        construct_type =', construct_type
                     matched_role = False
                     role_constructs0 = constructs0[construct_type]
                     role_constructs1 = constructs1[construct_type].copy()
@@ -271,9 +252,13 @@ TODO
                     for key0, item0 in role_constructs0.items():
                         matched_construct = False
                         for key1, item1 in tuple(role_constructs1.items()):
-                            if item0.equals(item1, rtol=rtol,
-                                            atol=atol,
-                                            traceback=False, **kwargs):
+                            if item0.equals(item1,
+                                            rtol=rtol, atol=atol,
+                                            traceback=False,
+                                            ignore_data_type=ignore_data_type,
+                                            ignore_fill_value=ignore_fill_value,
+                                            ignore_compression=ignore_compression,
+                                            ignore_type=ignore_type):
                                 del role_constructs1[key1]
                                 key1_to_key0[key1] = key0
                                 matched_construct = True
@@ -338,43 +323,17 @@ TODO
                 axis1_to_axis0[axis1] = axis0
         #--- End: for
 
-#        # ------------------------------------------------------------
-#        #
-#        # ------------------------------------------------------------
-#        for construct_type in ('dimension_coordinate',
-#                               'auxiliary_coordinate',
-#                               'domain_ancillary'):
-#            found_match = False
-#            for key1, y in other.constructs(construct_type).iteritems():
-#                x = self.get_construct(key1_to_key0[key1])                
-#
-##                terms0 = x.cell_extent.domain_ancillaries()
-#                terms0 = x.ancillaries()
-#                terms1 = {}
-##                for term, key in y.cell_extent.domain_ancillaries().items():
-#                for term, key in y.ancillaries().items():
-#                    terms1[term] = key1_to_key0.get(key, key)
-#                    
-#                if terms0 != terms1:                    
-#                    if traceback:
-#                        print(
-#"Traceback: No match for {0!r})".format('????'))
-#                    return False
-#        #--- End: for
-        
         # ------------------------------------------------------------
         # Check non-array constructs
         # ------------------------------------------------------------
-        kwargs.pop('ignore_fill_value', None) # DCH ???
-        kwargs.pop('ignore_data_type', None) # DCH ???
         for construct_type in self._non_array_constructs:
             if not getattr(self, '_equals_'+construct_type)(
                     other,
                     rtol=rtol, atol=atol,
                     traceback=traceback,
+                    ignore_type=ignore_type,
                     axis1_to_axis0=axis1_to_axis0,
-                    key1_to_key0=key1_to_key0,
-                    **kwargs):
+                    key1_to_key0=key1_to_key0):
                 return False
 
         # ------------------------------------------------------------
@@ -385,12 +344,13 @@ TODO
     
     def _equals_coordinate_reference(self, other, rtol=None, atol=None,
                                      traceback=False,
+                                     ignore_type=False,
                                      axis1_to_axis0=None,
-                                     key1_to_key0=None, **kwargs):
+                                     key1_to_key0=None):
         '''
         '''
-        refs0 = self.coordinate_references()
-        refs1 = other.coordinate_references()
+        refs0 = self.constructs(construct_type='coordinate_reference')
+        refs1 = other.constructs(construct_type='coordinate_reference')
 
         if len(refs0) != len(refs1):
             if traceback:
@@ -404,7 +364,8 @@ TODO
                 found_match = False
                 for key1, ref1 in tuple(refs1.items()):
                     if not ref0.equals(ref1, rtol=rtol, atol=atol,
-                                       traceback=False, **kwargs): ####
+                                       traceback=False,
+                                       ignore_type=ignore_type):
                         continue
 
                     # Coordinates
@@ -451,13 +412,13 @@ TODO
     #--- End: def
 
     def _equals_cell_method(self, other, rtol=None, atol=None,
-                            traceback=False, axis1_to_axis0=None,
-                            key1_to_key0=None, **kwargs):
+                            traceback=False, ignore_type=False,
+                            axis1_to_axis0=None, key1_to_key0=None):
         '''TODO
 
         '''
-        cell_methods0 = self.cell_methods()
-        cell_methods1 = other.cell_methods()
+        cell_methods0 = self.constructs(construct_type='cell_method')
+        cell_methods1 = other.constructs(construct_type='cell_method')
 
         if len(cell_methods0) != len(cell_methods1):
             if traceback:
@@ -520,7 +481,8 @@ TODO
             cm1.set_axes(axes0)
 
             if not cm0.equals(cm1, atol=atol, rtol=rtol,
-                              traceback=traceback, **kwargs):
+                              traceback=traceback,
+                              ignore_type=ignore_type):
                 if traceback:
                     print(
 "Traceback: Different cell methods: {0!r}, {1!r}".format(
@@ -532,9 +494,9 @@ TODO
     #--- End: def
 
     def _equals_domain_axis(self, other, rtol=None, atol=None,
-                            traceback=False, axis1_to_axis0=None,
-                            key1_to_key0=None, **kwargs):
-        '''
+                            traceback=False, ignore_type=False,
+                            axis1_to_axis0=None, key1_to_key0=None):
+        '''TODO
         '''
         # ------------------------------------------------------------
         # Domain axes

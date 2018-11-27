@@ -94,7 +94,7 @@ into the data.
 True
 >>> d = f.data
 >>> d
-<Data: [0, ..., 9]>
+<Data(10): [0, ..., 9]>
 >>> f.data.shape
 (10,)
 
@@ -163,10 +163,9 @@ False
 >>> f.has_data()
 True
 >>> f.get_data()
-<Data: [0, ..., 9]>
->>> d = f.del_data()
->>> d
-<Data: [0, ..., 9]>
+<Data(10): [0, ..., 9]>
+>>> f.del_data()
+<Data(10): [0, ..., 9]>
 >>> f.has_data()
 False
 >>> print(f.get_data(None))
@@ -245,10 +244,9 @@ into the data.
 >>> f.has_data()
 True
 >>> f.get_data()
-<Data: [0, ..., 9]>
->>> d = f.del_data()
->>> d
-<Data: [0, ..., 9]>
+<Data(10): [0, ..., 9]>
+>>> f.del_data()
+<Data(10): [0, ..., 9]>
 >>> f.has_data()
 False
 >>> print(f.get_data(None))
@@ -299,10 +297,9 @@ None
 >>> f.has_data()
 True
 >>> f.get_data()
-<Data: [0, ..., 9]>
->>> d = f.del_data()
->>> d
-<Data: [0, ..., 9]>
+<Data(10): [0, ..., 9]>
+>>> f.del_data()
+<Data(10): [0, ..., 9]>
 >>> f.has_data()
 False
 >>> print(f.get_data(None))
@@ -344,10 +341,9 @@ removed prior to insertion.
 >>> f.has_data()
 True
 >>> f.get_data()
-<Data: [0, ..., 9]>
->>> d = f.del_data()
->>> d
-<Data: [0, ..., 9]>
+<Data(10): [0, ..., 9]>
+>>> f.del_data()
+<Data(10): [0, ..., 9]>
 >>> f.has_data()
 False
 >>> print(f.get_data(None))

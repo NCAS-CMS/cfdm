@@ -811,12 +811,12 @@ axes, and possibly other axes, are returned.
 >>> d
 <DimensionCoordinate: latitude(180) degrees_north>
 >>> w.get_data(d)
-<Data: [-89.5, ..., 89.5] degrees_north>
+<Data(180): [-89.5, ..., 89.5] degrees_north>
 
 >>> b
 <Bounds: latitude(180, 2) degrees_north>
 >>> w.get_data(b)
-<Data: [[-90, ..., 90]] degrees_north>
+<Data(180, 2): [[-90, ..., 90]] degrees_north>
         '''
         return parent.get_data(*default)
     #--- End: def
