@@ -82,7 +82,8 @@ be read within a session, and makes the read operation fast.
 
 .. versionadded:: 1.7
 
-.. seealso:: `cfdm.write`, `cfdm.Field.create_field`
+.. seealso:: `cfdm.write`, `cfdm.Field.create_field`,
+             `cfdm.Field.read_report`
 
 :Parameters:
 

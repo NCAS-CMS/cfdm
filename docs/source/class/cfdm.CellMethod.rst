@@ -20,32 +20,16 @@ Inspection
    :toctree: ../method/
    :template: method.rst
 
-   ~cfdm.CellMethod.change_axes
    ~cfdm.CellMethod.del_axes
-   ~cfdm.CellMethod.del_error
-   ~cfdm.CellMethod.del_method
    ~cfdm.CellMethod.del_property
-   ~cfdm.CellMethod.del_string
    ~cfdm.CellMethod.dump
-   ~cfdm.CellMethod.equivalent
-   ~cfdm.CellMethod.expand_intervals
    ~cfdm.CellMethod.get_axes
-   ~cfdm.CellMethod.get_error
-   ~cfdm.CellMethod.get_method
    ~cfdm.CellMethod.get_property
-   ~cfdm.CellMethod.get_string
    ~cfdm.CellMethod.has_axes
-   ~cfdm.CellMethod.has_method
    ~cfdm.CellMethod.has_property
-   ~cfdm.CellMethod.parse
    ~cfdm.CellMethod.properties
-   ~cfdm.CellMethod.remove_axes
    ~cfdm.CellMethod.set_axes
-   ~cfdm.CellMethod.set_error
-   ~cfdm.CellMethod.set_method
    ~cfdm.CellMethod.set_property
-   ~cfdm.CellMethod.set_string
-   ~cfdm.CellMethod.sorted
 
 .. rubric:: Attributes
    
@@ -66,10 +50,13 @@ Modification
    :toctree: ../method/
    :template: method.rst
 
+   ~cfdm.CellMethod.del_axes
    ~cfdm.CellMethod.del_property
    ~cfdm.CellMethod.properties
+   ~cfdm.CellMethod.set_axes
    ~cfdm.CellMethod.set_property
- 
+   ~cfdm.CellMethod.sorted
+
 Miscellaneous
 -------------
 

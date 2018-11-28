@@ -294,7 +294,6 @@ applies.
 #    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
-#               ignore_data_type=False,
                ignore_properties=(),
                ignore_type=False):
         '''Whether two cell method constructs are the same.

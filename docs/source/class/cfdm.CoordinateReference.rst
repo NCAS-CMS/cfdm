@@ -18,23 +18,16 @@ Methods
    :toctree: ../method/
    :template: method.rst
 
-   ~CoordinateReference.coordinates
-   ~CoordinateReference.copy
-   ~CoordinateReference.del_coordinate
-   ~CoordinateReference.del_coordinate_conversion
-   ~CoordinateReference.del_datum
-   ~CoordinateReference.del_ncvar
-   ~CoordinateReference.dump
-   ~CoordinateReference.equals
-   ~CoordinateReference.get_coordinate_conversion
-   ~CoordinateReference.get_datum
-   ~CoordinateReference.get_ncvar
-   ~CoordinateReference.has_coordinate_conversion
-   ~CoordinateReference.has_datum
-   ~CoordinateReference.name
-   ~CoordinateReference.set_coordinate
-   ~CoordinateReference.set_datum
-   ~CoordinateReference.set_ncvar
+   ~cfdm.CoordinateReference.coordinates
+   ~cfdm.CoordinateReference.del_coordinate
+   ~cfdm.CoordinateReference.del_coordinate_conversion
+   ~cfdm.CoordinateReference.del_datum
+   ~cfdm.CoordinateReference.dump
+   ~cfdm.CoordinateReference.get_coordinate_conversion
+   ~cfdm.CoordinateReference.get_datum
+   ~cfdm.CoordinateReference.has_coordinate_conversion
+   ~cfdm.CoordinateReference.has_datum
+   ~cfdm.CoordinateReference.name
 
 Attributes
 ----------
@@ -43,9 +36,40 @@ Attributes
    :toctree: ../attribute/
    :template: attribute.rst
 	      
-   ~CoordinateReference.construct_type
-   ~CoordinateReference.coordinate_conversion
-   ~CoordinateReference.datum
+   ~cfdm.CoordinateReference.construct_type
+   ~cfdm.CoordinateReference.coordinate_conversion
+   ~cfdm.CoordinateReference.datum
+
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CoordinateReference.coordinates
+   ~cfdm.CoordinateReference.del_coordinate
+   ~cfdm.CoordinateReference.del_coordinate_conversion
+   ~cfdm.CoordinateReference.del_datum
+   ~cfdm.CoordinateReference.set_coordinate
+   ~cfdm.CoordinateReference.set_coordinate_conversion
+   ~cfdm.CoordinateReference.set_datum
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CoordinateReference.copy
+   ~cfdm.CoordinateReference.equals
 
 NetCDF
 ------
@@ -57,12 +81,24 @@ NetCDF
    :toctree: ../method/
    :template: method.rst
 
-   ~CoordinateReference.nc_del_variable
-   ~CoordinateReference.nc_get_variable
-   ~CoordinateReference.nc_has_variable
-   ~CoordinateReference.nc_set_variable 
+   ~cfdm.CoordinateReference.nc_del_variable
+   ~cfdm.CoordinateReference.nc_get_variable
+   ~cfdm.CoordinateReference.nc_has_variable
+   ~cfdm.CoordinateReference.nc_set_variable 
       
+Special
+-------
 
-   
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.CoordinateReference.__deepcopy__
+   ~cfdm.CoordinateReference.__repr__
+   ~cfdm.CoordinateReference.__str__
+
    
    

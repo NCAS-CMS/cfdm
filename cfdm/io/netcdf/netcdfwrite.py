@@ -185,9 +185,9 @@ extra trailing dimension.
 
         if array.dtype.kind == 'U':
             array = array.astype('S')
-
+#        print ('A', repr(array))
         array = numpy.array(tuple(array.tostring().decode('ascii')), dtype='S1')
-
+#        print ('B', repr(array))
 #        else:
 #            # dtype is 'U'
 #            x = []
@@ -1387,10 +1387,10 @@ created. The ``seen`` dictionary is updated for *cfvar*.
             # trailing dimension.
             # --------------------------------------------------------
             strlen = data.dtype.itemsize
-            if strlen > 1:
-                data = self._convert_to_char(data)
-                ncdim = self._string_length_dimension(strlen)            
-                ncdimensions = original_ncdimensions + (ncdim,)
+#            if strlen > 1:
+            data = self._convert_to_char(data)
+            ncdim = self._string_length_dimension(strlen)            
+            ncdimensions = original_ncdimensions + (ncdim,)
         #--- End: if
         
         if verbose:
@@ -1582,8 +1582,8 @@ extra trailing dimension.
         '''
         strlen = data.dtype.itemsize
 #        print ('1 strlen =', strlen)
-        if strlen > 1:
-            data = self.implementation.initialise_Data(
+#        if strlen > 1:
+        data = self.implementation.initialise_Data(
                 array=self._character_array(self.implementation.get_array(data)),
                 units=self.implementation.get_data_units(data, None),
                 calendar=self.implementation.get_data_calendar(data, None),

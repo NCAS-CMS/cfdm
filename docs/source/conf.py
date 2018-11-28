@@ -80,7 +80,6 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
-              'hidden_code_block',
               ]
 
 

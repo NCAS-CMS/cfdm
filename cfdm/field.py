@@ -1131,6 +1131,8 @@ from a dataset.
 
 .. versionadded:: 1.7
 
+.. seealso:: `cfdm.read`
+
 :Parameters:
 
     display: `bool`, optional

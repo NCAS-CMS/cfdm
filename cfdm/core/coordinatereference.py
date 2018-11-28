@@ -399,13 +399,13 @@ coordinate system.
     #--- End: def
     
     def has_datum(self):
-        '''
+        '''TODO
         '''
         return self._has_component('datum')
     #--- End: def
 
     def has_coordinate_conversion(self):
-        '''
+        '''TODO
         '''
         return self._has_component('coordinate_conversion')
     #--- End: def
@@ -446,7 +446,7 @@ coordinate system.
     #--- End: def
 
     def set_coordinate_conversion(self, value, copy=True):
-        '''
+        '''TODO
         '''
         if copy and value is not None:
             value = value.copy()
@@ -455,7 +455,7 @@ coordinate system.
     #--- End: def
 
     def set_datum(self, value, copy=True):
-        '''
+        '''TODO
         '''
         if copy and value is not None:
             value = value.copy()

@@ -23,21 +23,33 @@ includes no functionality beyond that mandated by the CF data
 model. This core implementation provides the basis for an extended
 implementation, the cfdm package, that allows the reading and writing
 of netCDF datasets, as well as having comprehensive inspection
-capabilities, some more sophisticated field modification capabilities,
-and a more user-friendly application programming interface (API).
+capabilities, and some more sophisticated field modification
+capabilities.
 
-The design of the API needs to strike a balance between being verbose
-and terse. A verbose API is easier to understand, is more memorable,
-but usually involves more typing; whilst a terse API is more efficient
-for the experienced user. The cfdm package has aimed for an API that
-is more at the verbose end of the spectrum: in general it does not use
-abbreviations for method and parameter names, and each method performs
-a sole function.
+**Functionality**
+-----------------
 
-The cfdm package is *not* (and is not meant to be) a general analysis
+The cfdm package has, with very few exceptions, only the functionality
+required to read and write datasets and to create, inspect field
+constructs in memory.
+
+The cfdm package is *not*, and is not meant to be, a general analysis
 package. Therefore it can't, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc.
+
+
+**API**
+-------
+
+The design of the pplication programming interface (API) needs to
+strike a balance between being verbose and terse. A verbose API is
+easier to understand, is more memorable, but usually involves more
+typing; whilst a terse API is more efficient for the experienced
+user. The cfdm package has aimed for an API that is more at the
+verbose end of the spectrum: in general it does not use abbreviations
+for method and parameter names, and each method performs a sole
+function.
 
 Here is an example of a simple field created with the :ref:`cfdm.core
 <class_core>` package:
@@ -61,7 +73,7 @@ The same field may be created with the cfdm package:
 
    >>> import cfdm
    >>> f = cfdm.Field(properties={'standard_name': 'altitude'})
-   >>> axis = f.set_domain_axis(cfdm.DomainAxis(1))
+   >>> axis = f.set_construct(cfdm.DomainAxis(1))
    >>> f.set_data(cfdm.Data([115.]), axes=[axis])
    >>> print(f.get_array())
    [ 115.]
@@ -70,3 +82,8 @@ The same field may be created with the cfdm package:
    ---------------
    Data            : altitude(cid%domainaxis0(1))
 
+
+**Optimisation**
+----------------
+
+Very little effort has been put in 

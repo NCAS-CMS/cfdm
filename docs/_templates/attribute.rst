@@ -1,7 +1,7 @@
 {{ fullname }}
 {{ underline }}
 
-.. currentmodule:: cf
+.. currentmodule:: cfdm
 .. default-role:: obj
 
 .. autoattribute:: {{ fullname }}

@@ -12,7 +12,7 @@ Version |release| for version |version| of the CF conventions.
  
 The code examples in this tutorial are available in an **IPython
 Jupyter notebook** (:download:`download <notebooks/tutorial.ipynb>`,
-70kB) [#files]_.
+70kB) [#notebook]_, [#files]_.
 
 .. _Import:
 
@@ -1551,7 +1551,8 @@ been generated with dummy values using `numpy.arange`):
    
    domain_anc_A    = tas.set_construct(domain_ancillary_a, axes=[axis_Z])
    domain_anc_B    = tas.set_construct(domain_ancillary_b, axes=[axis_Z])
-   domain_anc_OROG = tas.set_construct(domain_ancillary_orog, axes=[axis_Y, axis_X])
+   domain_anc_OROG = tas.set_construct(domain_ancillary_orog,
+                                       axes=[axis_Y, axis_X])
    
    # Create and set the coordinate references
    datum = cfdm.Datum(parameters={'earth_radius': 6371007.})
@@ -1771,7 +1772,7 @@ Metadata constructs may be copied individually in the same manner:
    >>> orog = t.get_construct('surface_altitude').copy()
 
 *Note on performance*
-  `Data` instances within constructs are copied with a `copy-on-write
+  Arrays within `Data` instances are copied with a `copy-on-write
   <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This
   means that a copy takes up very little extra memory, even when the
   original constructs contain very large data arrays, and the copy
@@ -2220,32 +2221,32 @@ field construct with an underlying contiguous ragged array:
 
    # Create the field construct with the domain axes and the ragged
    # array
-   tas = cfdm.Field()
-   tas.properties({'standard_name': 'air_temperature',
-	           'units': 'K',
-		   'featureType': 'timeSeries'})
+   T = cfdm.Field()
+   T.properties({'standard_name': 'air_temperature',
+                 'units': 'K',
+      	         'featureType': 'timeSeries'})
    
    # Create the domain axis constructs for the uncompressed array
-   X = tas.set_construct(cfdm.DomainAxis(4))
-   Y = tas.set_construct(cfdm.DomainAxis(2))
+   X = T.set_construct(cfdm.DomainAxis(4))
+   Y = T.set_construct(cfdm.DomainAxis(2))
    
    # Set the data for the field
-   tas.set_data(cfdm.Data(array), axes=[Y, X])
+   T.set_data(cfdm.Data(array), axes=[Y, X])
 				
 The new field construct can now be inspected:
 
 .. code:: python
    
-   >>> tas
+   >>> T
    <Field: air_temperature(cid%domainaxis1(2), cid%domainaxis0(4)) K>
-   >>> print(tas.get_array())
+   >>> print(T.get_array())
    [[280.0 282.5    --    --]
     [281.0 279.0 278.0 279.5]]
-   >>> tas.data.get_compression_type()
+   >>> T.data.get_compression_type()
    'ragged contiguous'
-   >>> print(tas.data.get_compressed_array())
+   >>> print(T.data.get_compressed_array())
    [280.  282.5 281.  279.  278.  279.5]
-   >>> count_variable = tas.data.get_count_variable()
+   >>> count_variable = T.data.get_count_variable()
    >>> count_variable
    <Count: long_name:number of obs for this timeseries(2) >
    >>> print(count_variable.get_array())
@@ -2255,14 +2256,14 @@ and written to a file:
 
 .. code:: python
 	  
-   >>> cfdm.write(tas, 'tas_contiguous.nc')
+   >>> cfdm.write(T, 'T_contiguous.nc')
 
 The content of the new file is:
   
 .. code:: bash
 
-   $ ncdump tas_contiguous.nc
-   netcdf tas_contiguous {
+   $ ncdump T_contiguous.nc
+   netcdf T_contiguous {
    dimensions:
    	dim = 2 ;
    	element = 6 ;
@@ -2399,7 +2400,7 @@ simple field construct with an underlying gathered array:
    import cfdm
 
    # Define the gathered values
-   gathered_array = numpy.array([[280, 282.5, 281], [279, 278, 277.5]],
+   gathered_array = numpy.array([[2, 1, 3], [4, 0, 5]],
                                 dtype='float32')
 
    # Define the list array values
@@ -2417,16 +2418,16 @@ simple field construct with an underlying gathered array:
 
    # Create the field construct with the domain axes and the gathered
    # array
-   tas = cfdm.Field(properties={'standard_name': 'air_temperature',
-                                'units': 'K'})
+   P = cfdm.Field(properties={'standard_name': 'precipitation_flux',
+                              'units': 'kg m-2 s-1'})
 
    # Create the domain axis constructs for the uncompressed array
-   T = tas.set_construct(cfdm.DomainAxis(2))
-   Y = tas.set_construct(cfdm.DomainAxis(3))
-   X = tas.set_construct(cfdm.DomainAxis(2))
+   T = P.set_construct(cfdm.DomainAxis(2))
+   Y = P.set_construct(cfdm.DomainAxis(3))
+   X = P.set_construct(cfdm.DomainAxis(2))
 
    # Set the data for the field
-   tas.set_data(cfdm.Data(array), axes=[T, Y, X])			      
+   P.set_data(cfdm.Data(array), axes=[T, Y, X])			      
 
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
@@ -2438,22 +2439,22 @@ The new field construct can now be inspected:
 
 .. code:: python
    
-   >>> tas
-   <Field: air_temperature(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) K>
-   >>> print(tas.get_array())
-   [[[--    280.0]
-     [--    --   ]
-     [282.5 281.0]]
-   
-    [[--    279.0]
-     [--    --   ]
-     [278.0 277.5]]]
-   >>> tas.data.get_compression_type()
+   >>> P
+   <Field: precipitation_flux(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) kg m-2 s-1>
+   >>> print(P.get_array())
+   [[[ -- 2.0]
+     [ --  --]
+     [1.0 3.0]]
+
+    [[ -- 4.0]
+     [ --  --]
+     [0.0 5.0]]]
+   >>> P.data.get_compression_type()
    'gathered'
-   >>> print(tas.data.get_compressed_array())
-   [[ 280.   282.5  281. ]
-    [ 279.   278.   277.5]]
-   >>> list_variable = tas.data.get_list_variable()
+   >>> print(P.data.get_compressed_array())
+   [[2. 1. 3.]
+    [4. 0. 5.]]
+   >>> list_variable = P.data.get_list_variable()
    >>> list_variable 
    <List: (3) >
    >>> print(list_variable.get_array())
@@ -2463,14 +2464,14 @@ and written a netCDF file:
 
 .. code:: python
 	  
-   >>> cfdm.write(tas, 'tas_gathered.nc')
+   >>> cfdm.write(P, 'P_gathered.nc')
 
 The content of the new file is:
    
 .. code:: bash
 
-   $ ncdump tas_gathered.nc
-   netcdf tas_gathered {
+   $ ncdump P_gathered.nc
+   netcdf P_gathered {
    dimensions:
    	dim = 2 ;
    	dim_1 = 3 ;
@@ -2479,9 +2480,9 @@ The content of the new file is:
    variables:
    	int64 list(list) ;
    		list:compress = "dim_1 dim_2" ;
-   	float air_temperature(dim, list) ;
-   		air_temperature:units = "K" ;
-   		air_temperature:standard_name = "air_temperature" ;
+   	float precipitation_flux(dim, list) ;
+   		precipitation_flux:units = "kg m-2 s-1" ;
+   		precipitation_flux:standard_name = "precipitation_flux" ;
    
    // global attributes:
    		:Conventions = "CF-1.7" ;
@@ -2489,14 +2490,22 @@ The content of the new file is:
    
     list = 1, 4, 5 ;
    
-    air_temperature =
-     280, 282.5, 281,
-     279, 278, 277.5 ;
+    precipitation_flux =
+     2, 1, 3,
+     4, 0, 5 ;
    }
 
 ----
 
 .. rubric:: Footnotes
+
+.. [#notebook] The Jupyter notebook is quite long. To aid navigation
+               it has been written so that it may optionally be used
+               with the "Collapsible Headings" Jupyter notebook
+               extension. See
+               https://jupyter-contrib-nbextensions.readthedocs.io/en/latest
+               for details.
+..
 
 .. [#files] The tutorial files may be also found in the
             `docs/_downloads
