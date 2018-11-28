@@ -1,9 +1,0 @@
-cd ~/cfdm/docs/dev
-rm *.html
-rm -fr function
-rm -fr class
-rm -fr method
-rm -fr attribute
-rm -fr .doctrees
-rm -fr _downloads
-rm -fr _sources
