@@ -1,0 +1,7 @@
+cfdm.Domain.cell_measures
+=========================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Domain.cell_measures

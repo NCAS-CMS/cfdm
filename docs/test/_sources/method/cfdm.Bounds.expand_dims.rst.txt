@@ -1,0 +1,7 @@
+cfdm.Bounds.expand_dims
+=======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Bounds.expand_dims

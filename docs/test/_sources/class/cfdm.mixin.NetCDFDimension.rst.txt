@@ -1,0 +1,33 @@
+cfdm.mixin.NetCDFDimension
+==========================
+
+.. currentmodule:: cfdm.mixin
+
+.. autoclass:: NetCDFDimension
+   :no-members:
+   :no-inherited-members:
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~NetCDFDimension.nc_del_dimension
+   ~NetCDFDimension.nc_get_dimension
+   ~NetCDFDimension.nc_has_dimension
+   ~NetCDFDimension.nc_set_dimension
+   
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+   
+
+   
+   
+   

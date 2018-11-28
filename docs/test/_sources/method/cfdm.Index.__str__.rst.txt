@@ -1,0 +1,7 @@
+cfdm.Index.__str__
+==================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Index.__str__

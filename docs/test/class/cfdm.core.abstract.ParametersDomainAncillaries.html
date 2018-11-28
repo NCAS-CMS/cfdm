@@ -1,0 +1,596 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cfdm.core.abstract.ParametersDomainAncillaries &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cfdm.core.abstract.Properties" href="cfdm.core.abstract.Properties.html" />
+    <link rel="prev" title="cfdm.core.abstract.Parameters" href="cfdm.core.abstract.Parameters.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../functions.html"><strong>cfdm functions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../class.html"><strong>cfdm classes</strong></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../class_core.html"><strong>cfdm.core classes</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
+  <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
+      <li>Previous: <a href="cfdm.core.abstract.Parameters.html" title="previous chapter">cfdm.core.abstract.Parameters</a></li>
+      <li>Next: <a href="cfdm.core.abstract.Properties.html" title="next chapter">cfdm.core.abstract.Properties</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/class/cfdm.core.abstract.ParametersDomainAncillaries.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cfdm-core-abstract-parametersdomainancillaries">
+<h1>cfdm.core.abstract.ParametersDomainAncillaries<a class="headerlink" href="#cfdm-core-abstract-parametersdomainancillaries" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries">
+<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">ParametersDomainAncillaries</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parametersdomainancillaries.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.parameters.Parameters</span></code></p>
+<p>Abstract base class for a collection of named parameters and named
+domain ancillary constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>parameters: <cite>dict</cite>, optional</dt>
+<dd><p class="first">Set parameters. The dictionary keys are parameter names, with
+corresponding values. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
+</dd>
+</dl>
+<p class="last">Parameters may also be set after initialisation with the
+<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
+</dd>
+</dl>
+<p>domain_ancillaries: <cite>dict</cite>, optional</p>
+<blockquote>
+<div><p>TODO</p>
+</div></blockquote>
+<dl class="last docutils">
+<dt>source: optional</dt>
+<dd><p class="first last">TODO Initialize the parameters from those of <em>source</em>.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parametersdomainancillaries.py#L19"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>parameters: <cite>dict</cite>, optional</dt>
+<dd><p class="first">Set parameters. The dictionary keys are parameter names, with
+corresponding values. Ignored if the <em>source</em> parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
+</dd>
+</dl>
+<p class="last">Parameters may also be set after initialisation with the
+<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
+</dd>
+</dl>
+<p>domain_ancillaries: <cite>dict</cite>, optional</p>
+<blockquote>
+<div><p>TODO</p>
+</div></blockquote>
+<dl class="last docutils">
+<dt>source: optional</dt>
+<dd><p class="first last">TODO Initialize the parameters from those of <em>source</em>.</p>
+</dd>
+<dt>copy: <cite>bool</cite>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.__init__" title="cfdm.core.abstract.ParametersDomainAncillaries.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([parameters,&nbsp;domain_ancillaries,&nbsp;…])</td>
+<td><strong>Initialization</strong></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.copy" title="cfdm.core.abstract.ParametersDomainAncillaries.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary" title="cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_domain_ancillary</span></code></a>(domain_ancillary,&nbsp;*default)</td>
+<td>Delete a domain ancillary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_parameter" title="cfdm.core.abstract.ParametersDomainAncillaries.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a>(parameter,&nbsp;*default)</td>
+<td>Delete a parameter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries" title="cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a>([domain_ancillaries,&nbsp;copy])</td>
+<td>Return or replace the domain ancillary-valued terms.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary" title="cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_domain_ancillary</span></code></a>(domain_ancillary,&nbsp;*default)</td>
+<td>Get a parameter value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_parameter" title="cfdm.core.abstract.ParametersDomainAncillaries.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a>(term,&nbsp;*default)</td>
+<td>Get a parameter value.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParametersDomainAncillaries.next</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.parameters" title="cfdm.core.abstract.ParametersDomainAncillaries.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a>([parameters,&nbsp;copy])</td>
+<td>Return or replace the parameter-valued terms.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary" title="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a>(term,&nbsp;value[,&nbsp;copy])</td>
+<td>Set an domain ancillary-valued term.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_parameter" title="cfdm.core.abstract.ParametersDomainAncillaries.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a>(term,&nbsp;value[,&nbsp;copy])</td>
+<td>Set a parameter-valued term.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parametersdomainancillaries.py#L86"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a deep copy.</p>
+<p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The deep copy.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary">
+<code class="descname">del_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parametersdomainancillaries.py#L106"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a domain ancillary.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>domain_ancillaries</cite>, <cite>get_domain_ancillary</cite>,
+<cite>has_domain_ancillary</cite>, <cite>set_domain_ancillary</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>domain_ancillary: <cite>str</cite></dt>
+<dd><p class="first">The name of the domain ancillary to be deleted.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">domain_ancillary='orog'</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>default: optional</dt>
+<dd><p class="first last">Return <em>default</em> if the domain ancillary has not been set.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The removed domain. If the property has not been then the
+<em>default</em> is returned, if provided.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.del_parameter">
+<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parameters.py#L90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.del_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a parameter.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>get_parameter</cite>, <cite>has_parameter</cite>, <cite>parameters</cite>,
+<cite>set_parameter</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>parameter: <cite>str</cite></dt>
+<dd><p class="first last">The name of the parameter to be deleted.</p>
+</dd>
+<dt>default: optional</dt>
+<dd><p class="first last">Return <em>default</em> if the parameter has not been set.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The removed parameter. If the parameter has not been then
+<em>default</em> is returned, if provided.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries">
+<code class="descname">domain_ancillaries</code><span class="sig-paren">(</span><em>domain_ancillaries=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parametersdomainancillaries.py#L138"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return or replace the domain ancillary-valued terms.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>parameters</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>ancillaries: <cite>dict</cite>, optional</dt>
+<dd><p class="first">Replace all named domain ancillaries with those provided.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">domain_ancillaries={'x':</span> <span class="pre">x_ancillary}</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+<p>copy: <cite>bool</cite>, optional</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">The parameter-valued terms and their values. If the
+<em>parameters</em> keyword has been set then the parameter-valued
+terms prior to replacement are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ancillaries</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary">
+<code class="descname">get_domain_ancillary</code><span class="sig-paren">(</span><em>domain_ancillary</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parametersdomainancillaries.py#L180"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a parameter value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>term: <cite>str</cite></dt>
+<dd><p class="first last">The name of the term.</p>
+</dd>
+</dl>
+<p>default: optional</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The value of the term &lt;SOMETING BAOUT DEFAULT&gt;</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">)</span>
+<span class="go">70.0</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">ERROR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nonexistent term&#39;</span><span class="p">)</span>
+<span class="go">&#39;nonexistent term&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.get_parameter">
+<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parameters.py#L118"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.get_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a parameter value.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>term: <cite>str</cite></dt>
+<dd><p class="first last">The name of the term.</p>
+</dd>
+</dl>
+<p>default: optional</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The value of the term &lt;SOMETING BAOUT DEFAULT&gt;</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">)</span>
+<span class="go">70.0</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
+<span class="go">ERROR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nonexistent term&#39;</span><span class="p">)</span>
+<span class="go">&#39;nonexistent term&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.parameters">
+<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parameters.py#L158"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return or replace the parameter-valued terms.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>ancillaries</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>parameters: <cite>dict</cite>, optional</dt>
+<dd><p class="first">Replace all parameter-valued terms with those provided.</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007}</span></code></p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+</dl>
+<p>copy: <cite>bool</cite>, optional</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: <cite>dict</cite></dt>
+<dd><p class="first last">The parameter-valued terms and their values. If the
+<em>parameters</em> keyword has been set then the parameter-valued
+terms prior to replacement are returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
+<span class="go"> &#39;longitude_of_central_meridian&#39;: 265.0,</span>
+<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+<span class="go">{}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary">
+<code class="descname">set_domain_ancillary</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parametersdomainancillaries.py#L218"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set an domain ancillary-valued term.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>domain_ancillaries</cite>, <cite>del_domain_ancillary</cite>, <cite>get_domain_ancillary</cite>,
+<cite>set_domain_ancillary</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>None</cite></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
+<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span> <span class="mf">265.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
+<span class="go"> &#39;longitude_of_central_meridian&#39;: 265.0,</span>
+<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cfdm.core.abstract.ParametersDomainAncillaries.set_parameter">
+<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/parameters.py#L206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.ParametersDomainAncillaries.set_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a parameter-valued term.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>parameters</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>None</cite></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
+<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span> <span class="mf">265.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
+<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
+<span class="go"> &#39;longitude_of_central_meridian&#39;: 265.0,</span>
+<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/class/cfdm.core.abstract.ParametersDomainAncillaries.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
