@@ -9,7 +9,7 @@
     <title>cfdm.Field &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -32,6 +32,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
@@ -86,7 +87,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Field">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/field.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/field.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDataVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -442,6 +443,12 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>Whether two field constructs are the same.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Field.create_field.html#cfdm.Field.create_field" title="cfdm.Field.create_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_field</span></code></a></td>
+<td>Return a new field construct based on a metadata construct.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Field.read_report.html#cfdm.Field.read_report" title="cfdm.Field.read_report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_report</span></code></a></td>
+<td>A report of problems encountered whilst reading the field construct from a dataset.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -511,8 +518,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.Field.rst.txt"

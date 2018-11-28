@@ -10,7 +10,7 @@
     <title>Index &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -31,6 +31,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="index.html">Table Of Contents</a></h3>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html"><strong>Reference manual</strong></a></li>
@@ -115,6 +116,8 @@
         <li><a href="method/cfdm.CompressedArray.__deepcopy__.html#cfdm.CompressedArray.__deepcopy__">(cfdm.CompressedArray method)</a>
 </li>
         <li><a href="method/cfdm.CoordinateConversion.__deepcopy__.html#cfdm.CoordinateConversion.__deepcopy__">(cfdm.CoordinateConversion method)</a>
+</li>
+        <li><a href="method/cfdm.CoordinateReference.__deepcopy__.html#cfdm.CoordinateReference.__deepcopy__">(cfdm.CoordinateReference method)</a>
 </li>
         <li><a href="method/cfdm.Count.__deepcopy__.html#cfdm.Count.__deepcopy__">(cfdm.Count method)</a>
 </li>
@@ -244,6 +247,8 @@
 </li>
         <li><a href="method/cfdm.CoordinateConversion.__repr__.html#cfdm.CoordinateConversion.__repr__">(cfdm.CoordinateConversion method)</a>
 </li>
+        <li><a href="method/cfdm.CoordinateReference.__repr__.html#cfdm.CoordinateReference.__repr__">(cfdm.CoordinateReference method)</a>
+</li>
         <li><a href="method/cfdm.Count.__repr__.html#cfdm.Count.__repr__">(cfdm.Count method)</a>
 </li>
         <li><a href="method/cfdm.Data.__repr__.html#cfdm.Data.__repr__">(cfdm.Data method)</a>
@@ -285,6 +290,8 @@
         <li><a href="method/cfdm.CompressedArray.__str__.html#cfdm.CompressedArray.__str__">(cfdm.CompressedArray method)</a>
 </li>
         <li><a href="method/cfdm.CoordinateConversion.__str__.html#cfdm.CoordinateConversion.__str__">(cfdm.CoordinateConversion method)</a>
+</li>
+        <li><a href="method/cfdm.CoordinateReference.__str__.html#cfdm.CoordinateReference.__str__">(cfdm.CoordinateReference method)</a>
 </li>
         <li><a href="method/cfdm.Count.__str__.html#cfdm.Count.__str__">(cfdm.Count method)</a>
 </li>
@@ -640,6 +647,8 @@
 </li>
       </ul></li>
       <li><a href="class/cfdm.Count.html#cfdm.Count">Count (class in cfdm)</a>
+</li>
+      <li><a href="method/cfdm.Field.create_field.html#cfdm.Field.create_field">create_field() (cfdm.Field method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1907,8 +1916,6 @@
         <li><a href="method/cfdm.mixin.NetCDFInstanceDimension.nc_has_instance_dimension.html#cfdm.mixin.NetCDFInstanceDimension.nc_has_instance_dimension">(cfdm.mixin.NetCDFInstanceDimension method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.Count.nc_has_sample_dimension.html#cfdm.Count.nc_has_sample_dimension">nc_has_sample_dimension() (cfdm.Count method)</a>
 
       <ul>
@@ -1917,6 +1924,8 @@
         <li><a href="method/cfdm.mixin.NetCDFSampleDimension.nc_has_sample_dimension.html#cfdm.mixin.NetCDFSampleDimension.nc_has_sample_dimension">(cfdm.mixin.NetCDFSampleDimension method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.AuxiliaryCoordinate.nc_has_variable.html#cfdm.AuxiliaryCoordinate.nc_has_variable">nc_has_variable() (cfdm.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -2037,6 +2046,16 @@
 </li>
       <li><a href="class/cfdm.mixin.NetCDFVariable.html#cfdm.mixin.NetCDFVariable">NetCDFVariable (class in cfdm.mixin)</a>
 </li>
+      <li><a href="method/cfdm.Bounds.next.html#cfdm.Bounds.next">next() (cfdm.Bounds method)</a>
+
+      <ul>
+        <li><a href="method/cfdm.CoordinateConversion.next.html#cfdm.CoordinateConversion.next">(cfdm.CoordinateConversion method)</a>
+</li>
+        <li><a href="method/cfdm.Domain.next.html#cfdm.Domain.next">(cfdm.Domain method)</a>
+</li>
+        <li><a href="method/cfdm.NetCDFArray.next.html#cfdm.NetCDFArray.next">(cfdm.NetCDFArray method)</a>
+</li>
+      </ul></li>
       <li><a href="class/cfdm.NumpyArray.html#cfdm.NumpyArray">NumpyArray (class in cfdm)</a>
 
       <ul>
@@ -2083,8 +2102,6 @@
         <li><a href="class/cfdm.mixin.ParametersDomainAncillaries.html#cfdm.mixin.ParametersDomainAncillaries">(class in cfdm.mixin)</a>
 </li>
       </ul></li>
-      <li><a href="method/cfdm.Data.parse_indices.html#cfdm.Data.parse_indices">parse_indices() (cfdm.Data method)</a>
-</li>
       <li><a href="class/cfdm.core.abstract.Properties.html#cfdm.core.abstract.Properties">Properties (class in cfdm.core.abstract)</a>
 
       <ul>
@@ -2163,11 +2180,13 @@
 </li>
       <li><a href="class/cfdm.RaggedIndexedArray.html#cfdm.RaggedIndexedArray">RaggedIndexedArray (class in cfdm)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="class/cfdm.RaggedIndexedContiguousArray.html#cfdm.RaggedIndexedContiguousArray">RaggedIndexedContiguousArray (class in cfdm)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="function/cfdm.read.html#cfdm.read">read() (in module cfdm)</a>
+</li>
+      <li><a href="method/cfdm.Field.read_report.html#cfdm.Field.read_report">read_report() (cfdm.Field method)</a>
 </li>
       <li><a href="function/cfdm.RTOL.html#cfdm.RTOL">RTOL() (in module cfdm)</a>
 </li>
@@ -2239,8 +2258,12 @@
         <li><a href="class/cfdm.core.CoordinateReference.html#cfdm.core.CoordinateReference.set_coordinate">(cfdm.core.CoordinateReference method)</a>
 </li>
       </ul></li>
-      <li><a href="class/cfdm.core.CoordinateReference.html#cfdm.core.CoordinateReference.set_coordinate_conversion">set_coordinate_conversion() (cfdm.core.CoordinateReference method)</a>
+      <li><a href="method/cfdm.CoordinateReference.set_coordinate_conversion.html#cfdm.CoordinateReference.set_coordinate_conversion">set_coordinate_conversion() (cfdm.CoordinateReference method)</a>
+
+      <ul>
+        <li><a href="class/cfdm.core.CoordinateReference.html#cfdm.core.CoordinateReference.set_coordinate_conversion">(cfdm.core.CoordinateReference method)</a>
 </li>
+      </ul></li>
       <li><a href="method/cfdm.AuxiliaryCoordinate.set_data.html#cfdm.AuxiliaryCoordinate.set_data">set_data() (cfdm.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -2559,8 +2582,8 @@
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
     </div>
 

@@ -9,7 +9,7 @@
     <title>cfdm.Data &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -32,6 +32,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
@@ -86,7 +87,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Data">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/data/data.py#L18"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.data.Data</span></code></p>
 <p>An orthogonal multidimensional array with masked values and units.</p>
 <div class="versionadded">
@@ -293,9 +294,6 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.equals.html#cfdm.Data.equals" title="cfdm.Data.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>Whether two data arrays are the same.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.parse_indices.html#cfdm.Data.parse_indices" title="cfdm.Data.parse_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_indices</span></code></a></td>
-<td>TODO</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -354,7 +352,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Data.__setitem__.html#cfdm.Data.__setitem__" title="cfdm.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></td>
-<td>x.__setitem__(indices, y) &lt;==&gt; x[indices]=y</td>
+<td>Assign to data elements defined by indices.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Data.__str__.html#cfdm.Data.__str__" title="cfdm.Data.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
@@ -374,8 +372,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.Data.rst.txt"

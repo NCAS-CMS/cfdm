@@ -9,7 +9,7 @@
     <title>Tutorial &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -32,6 +32,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="index.html">Table Of Contents</a></h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Tutorial</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#import"><strong>Import</strong></a></li>
@@ -44,7 +45,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#metadata-constructs"><strong>Metadata constructs</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#netcdf-interface"><strong>NetCDF interface</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#writing-to-disk"><strong>Writing to disk</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#field-creation"><strong>Field creation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#field-construct-creation"><strong>Field construct creation</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#domain"><strong>Domain</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#copying"><strong>Copying</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#equality"><strong>Equality</strong></a></li>
@@ -94,13 +95,13 @@
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Version 1.7b6</p>
+<p>Version 1.7b7 for version 1.7 of the CF conventions.</p>
 <hr class="docutils" />
 <p>The code examples in this tutorial are available in an <strong>IPython
 Jupyter notebook</strong> (<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
-70kB) <a class="footnote-reference" href="#files" id="id2">[1]</a>.</p>
+70kB) <a class="footnote-reference" href="#notebook" id="id2">[1]</a>, <a class="footnote-reference" href="#files" id="id3">[2]</a>.</p>
 <div class="section" id="import">
-<span id="id3"></span><h2><strong>Import</strong><a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><strong>Import</strong><a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The cfdm package is imported as follows:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
@@ -108,7 +109,7 @@ Jupyter notebook</strong> (<a class="reference download internal" href="_downloa
 </div>
 </div>
 <div class="section" id="cf-version">
-<span id="id4"></span><h2><strong>CF version</strong><a class="headerlink" href="#cf-version" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2><strong>CF version</strong><a class="headerlink" href="#cf-version" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The version of the <a class="reference external" href="http://cfconventions.org">CF conventions</a> and
 the CF data model being used may be found with the <a class="reference internal" href="function/cfdm.CF.html#cfdm.CF" title="cfdm.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.CF</span></code></a> function:</p>
@@ -118,15 +119,15 @@ the CF data model being used may be found with the <a class="reference internal"
 </div>
 </div>
 <div class="section" id="reading-datasets">
-<span id="reading"></span><h2><strong>Reading datasets</strong><a class="headerlink" href="#reading-datasets" title="Permalink to this headline">¶</a></h2>
+<span id="id6"></span><h2><strong>Reading datasets</strong><a class="headerlink" href="#reading-datasets" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function reads a <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/">netCDF</a> file from disk, or
-from an <a class="reference external" href="https://www.opendap.org/">OPeNDAP</a> URL <a class="footnote-reference" href="#opendap2" id="id5">[2]</a>, and
+from an <a class="reference external" href="https://www.opendap.org/">OPeNDAP</a> URL <a class="footnote-reference" href="#opendap2" id="id7">[3]</a>, and
 returns the contents as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of zero or more <a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> class
 instances, each of which represents a field construct. Henceforth, the
 phrase “field construct” will be assumed to mean “<a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance”,
-unless stated otherwise <a class="footnote-reference" href="#language" id="id6">[3]</a>.</p>
-<p>For example, to read the file <strong>file.nc</strong> (<a class="reference download internal" href="_downloads/file.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id7">[1]</a>:</p>
+unless stated otherwise <a class="footnote-reference" href="#language" id="id8">[4]</a>.</p>
+<p>For example, to read the file <strong>file.nc</strong> (<a class="reference download internal" href="_downloads/file.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 9kB) <a class="footnote-reference" href="#files" id="id9">[2]</a>:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -137,8 +138,9 @@ unless stated otherwise <a class="footnote-reference" href="#language" id="id6">
 <p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function has optional parameters to</p>
 <ul class="simple">
 <li>provide files that contain <a class="reference internal" href="#external-variables"><span class="std std-ref">external variables</span></a>, and</li>
-<li>return “metadata” netCDF variables (i.e. those that are referenced
-from CF-netCDF data variables) as independent field constructs.</li>
+<li><a class="reference internal" href="#creating-field-constructs-from-metadata-constructs"><span class="std std-ref">create independent field constructs from “metadata” netCDF
+variables</span></a>,
+i.e. those that are referenced from CF-netCDF data variables.</li>
 </ul>
 <dl class="docutils">
 <dt><em>Note on performance</em></dt>
@@ -146,17 +148,17 @@ from CF-netCDF data variables) as independent field constructs.</li>
 loading</a> is employed
 for all data arrays, which means that no data is read into memory
 until the data is required for inspection or to modify the array
-contents. This maximises the number of fields that may be read
-within a session, and makes the read operation fast.</dd>
+contents. This maximises the number of field constructs that may be
+read within a session, and makes the read operation fast.</dd>
 </dl>
 </div>
 <div class="section" id="inspection">
-<span id="id8"></span><h2><strong>Inspection</strong><a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<span id="id10"></span><h2><strong>Inspection</strong><a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The contents of a field construct may be inspected at three different
 levels of detail.</p>
 <div class="section" id="minimal-detail">
-<h3><strong>Minimal detail</strong><a class="headerlink" href="#minimal-detail" title="Permalink to this headline">¶</a></h3>
+<span id="id11"></span><h3><strong>Minimal detail</strong><a class="headerlink" href="#minimal-detail" title="Permalink to this headline">¶</a></h3>
 <p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function returns a short, one-line description:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">[&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;,</span>
@@ -173,7 +175,7 @@ spanned by the data array (“latitude” and “longitude” with sizes 5 and
 8 respectively) and the units of the data (“1”).</p>
 </div>
 <div class="section" id="medium-detail">
-<h3><strong>Medium detail</strong><a class="headerlink" href="#medium-detail" title="Permalink to this headline">¶</a></h3>
+<span id="id12"></span><h3><strong>Medium detail</strong><a class="headerlink" href="#medium-detail" title="Permalink to this headline">¶</a></h3>
 <p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function returns similar information as the
 one-line output, along with short descriptions of the metadata
 constructs, which include the first and last values of their data
@@ -210,7 +212,7 @@ arrays:</p>
 </div>
 </div>
 <div class="section" id="full-detail">
-<h3><strong>Full detail</strong><a class="headerlink" href="#full-detail" title="Permalink to this headline">¶</a></h3>
+<span id="id13"></span><h3><strong>Full detail</strong><a class="headerlink" href="#full-detail" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="method/cfdm.Field.dump.html#cfdm.Field.dump" title="cfdm.Field.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a> method of the field construct gives all
 properties of all constructs, including metadata constructs and their
 components, and shows the first and last values of all data arrays:</p>
@@ -350,7 +352,7 @@ components, and shows the first and last values of all data arrays:</p>
 </div>
 </div>
 <div class="section" id="properties">
-<span id="id9"></span><h2><strong>Properties</strong><a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<span id="id14"></span><h2><strong>Properties</strong><a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>Descriptive properties that apply to field construct as a whole may be
 retrieved with the <a class="reference internal" href="method/cfdm.Field.properties.html#cfdm.Field.properties" title="cfdm.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> method:</p>
@@ -400,7 +402,7 @@ providing a new set of properties to the <a class="reference internal" href="met
 </div>
 </div>
 <div class="section" id="data">
-<span id="id10"></span><h2><strong>Data</strong><a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<span id="id15"></span><h2><strong>Data</strong><a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The field construct’s data array is stored in a <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> class instance
 that is accessed with the <a class="reference internal" href="method/cfdm.Field.get_data.html#cfdm.Field.get_data" title="cfdm.Field.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a> method:</p>
@@ -437,7 +439,7 @@ access attributes and methods of the <a class="reference internal" href="class/c
 </pre></div>
 </div>
 <div class="section" id="indexing">
-<span id="id11"></span><h3><strong>Indexing</strong><a class="headerlink" href="#indexing" title="Permalink to this headline">¶</a></h3>
+<span id="id16"></span><h3><strong>Indexing</strong><a class="headerlink" href="#indexing" title="Permalink to this headline">¶</a></h3>
 <p>Indexing a <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance follows rules that are very similar to the
 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html">numpy indexing rules</a>,
 the only differences being:</p>
@@ -469,28 +471,32 @@ package</a><strong>.</strong></li>
 </div>
 </div>
 <div class="section" id="assignment">
-<span id="data-assignment"></span><h3><strong>Assignment</strong><a class="headerlink" href="#assignment" title="Permalink to this headline">¶</a></h3>
+<span id="id17"></span><h3><strong>Assignment</strong><a class="headerlink" href="#assignment" title="Permalink to this headline">¶</a></h3>
 <p>Data array elements are changed by assigning to elements selected by
 indexing the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance using the <a class="reference internal" href="#indexing"><span class="std std-ref">cfdm indexing rules</span></a>.</p>
 <p>The value, or values, being assigned must be broadcastable to the
 shape defined by the indices, using the <a class="reference external" href="https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html">numpy broadcasting rules</a>.</p>
+<p>Data array elements may be set to missing values by assigning them to
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.masked" title="(in NumPy v1.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ma.masked</span></code></a>. Missing values may be unmasked by assigning them to
+any other value.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]]</span> <span class="o">=</span>  <span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">]])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
-<span class="go">[[[  0.0   1.0   2.0   3.0   4.0   5.0   6.0 --   8.0]</span>
-<span class="go">  [272.7 -10.0 279.5 278.9 263.8 263.3 274.2 -- 279.5]</span>
-<span class="go">  [269.7 -10.0 273.4 274.2  -2.0 270.2 280.0 --  -3.0]</span>
-<span class="go">  [261.7 -10.0 270.8 260.3 265.6 279.4 276.9 -- 260.6]</span>
-<span class="go">  [264.2 -10.0 262.5  -3.0  -2.0  -1.0 270.4 -- 275.3]</span>
-<span class="go">  [263.9 -10.0 272.1  -6.0  -5.0  -4.0 260.0 -- 270.2]</span>
-<span class="go">  [273.8 -10.0 268.5  -9.0  -8.0  -7.0 270.6 -- 270.6]</span>
-<span class="go">  [267.9 -10.0 279.8 260.3 261.2 275.3 271.2 -- 268.9]</span>
-<span class="go">  [270.9 -10.0 273.2 261.7 271.6 265.8 273.0 -- 266.4]</span>
-<span class="go">  [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0 --  -3.0]]]</span>
+<span class="go">[[[  0.0   1.0   2.0   3.0   4.0   5.0   6.0   --   8.0]</span>
+<span class="go">  [272.7 -10.0 279.5 278.9 263.8 263.3 274.2   -- 279.5]</span>
+<span class="go">  [269.7 -10.0 273.4 274.2  -2.0 270.2 280.0   --  -3.0]</span>
+<span class="go">  [261.7 -10.0 270.8 260.3 265.6 279.4 276.9   -- 260.6]</span>
+<span class="go">  [264.2 -10.0 262.5  -3.0  -2.0  -1.0 270.4   -- 275.3]</span>
+<span class="go">  [263.9 -10.0 272.1  -6.0  -5.0  -4.0 260.0 -1.0 270.2]</span>
+<span class="go">  [273.8 -10.0 268.5  -9.0  -8.0  -7.0 270.6   -- 270.6]</span>
+<span class="go">  [267.9 -10.0 279.8 260.3 261.2 275.3 271.2   -- 268.9]</span>
+<span class="go">  [270.9 -10.0 273.2 261.7 271.6 265.8 273.0   -- 266.4]</span>
+<span class="go">  [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0   --  -3.0]]]</span>
 </pre></div>
 </div>
 </div>
@@ -536,7 +542,7 @@ by using the following field construct methods:</p>
 </div>
 </div>
 <div class="section" id="subspacing">
-<span id="id12"></span><h2><strong>Subspacing</strong><a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h2>
+<span id="id18"></span><h2><strong>Subspacing</strong><a class="headerlink" href="#subspacing" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>Creation of a new field construct which spans a subspace of the
 original domain is achieved by indexing the field directly (rather
@@ -569,7 +575,7 @@ latitude of the original, and with a reversed longitude axis:</p>
 </div>
 </div>
 <div class="section" id="metadata-constructs">
-<span id="constructs"></span><h2><strong>Metadata constructs</strong><a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
+<span id="id19"></span><h2><strong>Metadata constructs</strong><a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The metadata constructs are all of the constructs that serve to
 describe the field construct that contains them. Each CF data model
@@ -739,7 +745,7 @@ be removed with the <a class="reference internal" href="method/cfdm.Field.del_co
 </pre></div>
 </div>
 <p>Metadata constructs of a particular type can also be retrieved more
-convieniently with the following methods of the field construct:</p>
+conveniently with the following methods of the field construct:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="45%" />
@@ -791,7 +797,8 @@ convieniently with the following methods of the field construct:</p>
 <h3><strong>Properties and data</strong><a class="headerlink" href="#properties-and-data" title="Permalink to this headline">¶</a></h3>
 <p>Where applicable, metadata constructs share the same API as the field
 construct. This means, for instance, that any construct that has a
-data array (such as auxiliary coordinate construct) will have a
+data array (i.e. auxiliary coordinate, dimension coordinate, cell
+measure, domain ancillary and field ancillary constructs) will have a
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code> method to access its data as an independent numpy array:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lon</span>
@@ -845,7 +852,7 @@ with the <a class="reference internal" href="method/cfdm.Field.get_data_axes.htm
 </div>
 </div>
 <div class="section" id="cell-methods">
-<span id="id13"></span><h3><strong>Cell methods</strong><a class="headerlink" href="#cell-methods" title="Permalink to this headline">¶</a></h3>
+<span id="id20"></span><h3><strong>Cell methods</strong><a class="headerlink" href="#cell-methods" title="Permalink to this headline">¶</a></h3>
 <p>A cell method construct describes how the data represent the variation
 of the physical quantity within the cells of the domain, and multiple
 cell method constructs allow multiple methods to be recorded. Because
@@ -855,7 +862,7 @@ variances is generally not the same as a variance of means), the
 ordered dictionary of constructs. The order is the same as that
 described by a cell method attribute read from a netCDF dataset, or
 the same as that in which cell method constructs were added to the
-field construct during <a class="reference internal" href="#field-creation"><span class="std std-ref">field creation</span></a>.</p>
+field construct during <a class="reference internal" href="#field-construct-creation"><span class="std std-ref">field construct creation</span></a>.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">cell_methods</span><span class="p">()</span>
 <span class="go">OrderedDict([(&#39;cellmethod0&#39;, &lt;CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)&gt;),</span>
 <span class="go">             (&#39;cellmethod1&#39;, &lt;CellMethod: domainaxis3: maximum&gt;)])</span>
@@ -940,7 +947,7 @@ coordinate system.</td>
 </div>
 </div>
 <div class="section" id="netcdf-interface">
-<span id="id14"></span><h2><strong>NetCDF interface</strong><a class="headerlink" href="#netcdf-interface" title="Permalink to this headline">¶</a></h2>
+<span id="id21"></span><h2><strong>NetCDF interface</strong><a class="headerlink" href="#netcdf-interface" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The logical CF data model is independent of netCDF, but the CF
 conventions are designed to enable the processing and sharing of
@@ -951,9 +958,18 @@ create CF-netCDF datasets. See the section on <a class="reference internal" href
 <p>When a netCDF dataset is read, netCDF elements (such as dimension and
 variable names, and some attribute values) that do not have a place in
 the CF data model are, nevertheless, stored within the appropriate
-cfdm objects. This allows them to be used when writing field
+cfdm constructs. This allows them to be used when writing field
 constructs to a new netCDF dataset, and also makes them accessible for
-<a class="reference internal" href="#constructs"><span class="std std-ref">metadata construct identification</span></a>.</p>
+metadata construct identification with the <a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> and
+<a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a> methods of the field construct:</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;ncvar%b&#39;</span><span class="p">)</span>
+<span class="go">{&#39;domainancillary1&#39;: &lt;DomainAncillary: ncvar%b(1) &gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncvar</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">&lt;DimensionCoordinate: grid_longitude(9) degrees&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncdim</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">&lt;DomainAxis: 9&gt;</span>
+</pre></div>
+</div>
 <p>Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:</p>
 <table border="1" class="docutils">
@@ -1111,20 +1127,9 @@ as netCDF unlimited dimensions</td>
 </tr>
 </tbody>
 </table>
-<p>NetCDF variable and dimension names may be used to identify metadata
-constructs via the <a class="reference internal" href="method/cfdm.Field.constructs.html#cfdm.Field.constructs" title="cfdm.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a> and <a class="reference internal" href="method/cfdm.Field.get_construct.html#cfdm.Field.get_construct" title="cfdm.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>
-methods of the field construct:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">constructs</span><span class="p">(</span><span class="s1">&#39;ncvar%b&#39;</span><span class="p">)</span>
-<span class="go">{&#39;domainancillary1&#39;: &lt;DomainAncillary: ncvar%b(1) &gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncvar</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="go">&lt;DimensionCoordinate: grid_longitude(9) degrees&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;ncdim</span><span class="si">%x</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="go">&lt;DomainAxis: 9&gt;</span>
-</pre></div>
-</div>
 </div>
 <div class="section" id="writing-to-disk">
-<span id="write"></span><h2><strong>Writing to disk</strong><a class="headerlink" href="#writing-to-disk" title="Permalink to this headline">¶</a></h2>
+<span id="id22"></span><h2><strong>Writing to disk</strong><a class="headerlink" href="#writing-to-disk" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The <a class="reference internal" href="function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a> function writes a field construct, or a sequence of
 field constructs, to a new netCDF file on disk:</p>
@@ -1266,8 +1271,8 @@ variables:
 </div>
 </div>
 </div>
-<div class="section" id="field-creation">
-<span id="id15"></span><h2><strong>Field creation</strong><a class="headerlink" href="#field-creation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="field-construct-creation">
+<span id="id23"></span><h2><strong>Field construct creation</strong><a class="headerlink" href="#field-construct-creation" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>Creation of a field construct has three stages:</p>
 <p><strong>Stage 1:</strong> The field construct is created without metadata constructs.</p>
@@ -1482,9 +1487,9 @@ been generated with dummy values using <a class="reference external" href="https
 
 <span class="c1"># Initialize the field</span>
 <span class="n">tas</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span>
-        <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="s1">&#39;research&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">})</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="s1">&#39;research&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">})</span>
 
 <span class="c1"># Create and set domain axes</span>
 <span class="n">axis_T</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
@@ -1533,20 +1538,20 @@ been generated with dummy values using <a class="reference external" href="https
 
 <span class="n">dimension_coordinate_Y</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span>
         <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;grid_latitude&#39;</span><span class="p">,</span>
-                     <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees&#39;</span><span class="p">},</span>
+                    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees&#39;</span><span class="p">},</span>
         <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">10.</span><span class="p">)),</span>
         <span class="n">bounds</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">))))</span>
 
 <span class="n">dimension_coordinate_X</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span>
         <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;grid_longitude&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees&#39;</span><span class="p">},</span>
-        <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">9.</span><span class="p">)),</span>
-        <span class="n">bounds</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">))))</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">9.</span><span class="p">)),</span>
+    <span class="n">bounds</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">))))</span>
 
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_T</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_T</span><span class="p">])</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_Z</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Z</span><span class="p">])</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_Y</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">])</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_X</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_X</span><span class="p">])</span>
+<span class="n">dim_T</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_T</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_T</span><span class="p">])</span>
+<span class="n">dim_Z</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_Z</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Z</span><span class="p">])</span>
+<span class="n">dim_Y</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_Y</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">])</span>
+<span class="n">dim_X</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_X</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_X</span><span class="p">])</span>
 
 <span class="c1"># Create and set the auxiliary coordinates</span>
 <span class="n">auxiliary_coordinate_lat</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span>
@@ -1555,9 +1560,9 @@ been generated with dummy values using <a class="reference external" href="https
                       <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
 
 <span class="n">auxiliary_coordinate_lon</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span>
-                      <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span>
-                                  <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">},</span>
-                      <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+                  <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_east&#39;</span><span class="p">},</span>
+                  <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
 
 <span class="n">array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s1">&#39;abcdefghij&#39;</span><span class="p">))</span>
 <span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked</span>
@@ -1565,29 +1570,30 @@ been generated with dummy values using <a class="reference external" href="https
                        <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Grid latitude name&#39;</span><span class="p">},</span>
                        <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
 
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lat</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lon</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_X</span><span class="p">,</span> <span class="n">axis_Y</span><span class="p">])</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_name</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">])</span>
+<span class="n">aux_LAT</span>  <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lat</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
+<span class="n">aux_LON</span>  <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lon</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_X</span><span class="p">,</span> <span class="n">axis_Y</span><span class="p">])</span>
+<span class="n">aux_NAME</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_name</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">])</span>
 
 <span class="c1"># Create and set domain ancillaries</span>
 <span class="n">domain_ancillary_a</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAncillary</span><span class="p">(</span>
-                       <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">},</span>
-                       <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">10.</span><span class="p">]),</span>
-                       <span class="n">bounds</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">]])))</span>
+                   <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">},</span>
+                   <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">10.</span><span class="p">]),</span>
+                   <span class="n">bounds</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mf">5.</span><span class="p">,</span> <span class="mf">15.</span><span class="p">]])))</span>
 
 <span class="n">domain_ancillary_b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAncillary</span><span class="p">(</span>
-                       <span class="n">properties</span><span class="o">=</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">},</span>
+                       <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">},</span>
                        <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">20.</span><span class="p">]),</span>
                        <span class="n">bounds</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">([[</span><span class="mi">14</span><span class="p">,</span> <span class="mf">26.</span><span class="p">]])))</span>
 
 <span class="n">domain_ancillary_orog</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAncillary</span><span class="p">(</span>
                           <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;surface_altitude&#39;</span><span class="p">,</span>
-                                       <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">},</span>
+                                     <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;m&#39;</span><span class="p">},</span>
                           <span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
 
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_a</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Z</span><span class="p">])</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_b</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Z</span><span class="p">])</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_orog</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
+<span class="n">domain_anc_A</span>    <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_a</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Z</span><span class="p">])</span>
+<span class="n">domain_anc_B</span>    <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_b</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Z</span><span class="p">])</span>
+<span class="n">domain_anc_OROG</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_orog</span><span class="p">,</span>
+                                    <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
 
 <span class="c1"># Create and set the coordinate references</span>
 <span class="n">datum</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Datum</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;earth_radius&#39;</span><span class="p">:</span> <span class="mf">6371007.</span><span class="p">})</span>
@@ -1600,22 +1606,22 @@ been generated with dummy values using <a class="reference external" href="https
 <span class="n">horizontal_crs</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CoordinateReference</span><span class="p">(</span>
                    <span class="n">datum</span><span class="o">=</span><span class="n">datum</span><span class="p">,</span>
                    <span class="n">coordinate_conversion</span><span class="o">=</span><span class="n">coordinate_conversion_h</span><span class="p">,</span>
-                   <span class="n">coordinates</span><span class="o">=</span><span class="p">[</span><span class="n">dimension_coordinate_X</span><span class="p">,</span>
-                                <span class="n">dimension_coordinate_Y</span><span class="p">,</span>
-                                <span class="n">auxiliary_coordinate_lat</span><span class="p">,</span>
-                                <span class="n">auxiliary_coordinate_lon</span><span class="p">])</span>
+                   <span class="n">coordinates</span><span class="o">=</span><span class="p">[</span><span class="n">dim_X</span><span class="p">,</span>
+                                <span class="n">dim_Y</span><span class="p">,</span>
+                                <span class="n">aux_LAT</span><span class="p">,</span>
+                                <span class="n">aux_LON</span><span class="p">])</span>
 
 <span class="n">coordinate_conversion_v</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CoordinateConversion</span><span class="p">(</span>
          <span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;atmosphere_hybrid_height_coordinate&#39;</span><span class="p">,</span>
                      <span class="s1">&#39;computed_standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;altitude&#39;</span><span class="p">},</span>
-         <span class="n">domain_ancillaries</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">domain_ancillary_a</span><span class="p">,</span>
-                             <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="n">domain_ancillary_a</span><span class="p">,</span>
-                             <span class="s1">&#39;orog&#39;</span><span class="p">:</span> <span class="n">domain_ancillary_orog</span><span class="p">})</span>
+         <span class="n">domain_ancillaries</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="n">domain_anc_A</span><span class="p">,</span>
+                             <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="n">domain_anc_B</span><span class="p">,</span>
+                             <span class="s1">&#39;orog&#39;</span><span class="p">:</span> <span class="n">domain_anc_OROG</span><span class="p">})</span>
 
 <span class="n">vertical_crs</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CoordinateReference</span><span class="p">(</span>
                  <span class="n">datum</span><span class="o">=</span><span class="n">datum</span><span class="p">,</span>
                  <span class="n">coordinate_conversion</span><span class="o">=</span><span class="n">coordinate_conversion_v</span><span class="p">,</span>
-                 <span class="n">coordinates</span><span class="o">=</span><span class="p">[</span><span class="n">dimension_coordinate_Z</span><span class="p">])</span>
+                 <span class="n">coordinates</span><span class="o">=</span><span class="p">[</span><span class="n">dim_Z</span><span class="p">])</span>
 
 <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">horizontal_crs</span><span class="p">)</span>
 <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">vertical_crs</span><span class="p">)</span>
@@ -1650,9 +1656,64 @@ been generated with dummy values using <a class="reference external" href="https
 <span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m</span>
 </pre></div>
 </div>
+<div class="section" id="creating-field-constructs-from-metadata-constructs">
+<span id="id24"></span><h3>Creating field constructs from metadata constructs<a class="headerlink" href="#creating-field-constructs-from-metadata-constructs" title="Permalink to this headline">¶</a></h3>
+<p>Independent field constructs may be created from metadata in two ways:
+either derived from a netCDF variable using the <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function,
+or derived from a metadata construct using the <a class="reference internal" href="method/cfdm.Field.create_field.html#cfdm.Field.create_field" title="cfdm.Field.create_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_field</span></code></a>
+method of the field construct.</p>
+<p>The <a class="reference internal" href="method/cfdm.Field.create_field.html#cfdm.Field.create_field" title="cfdm.Field.create_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_field</span></code></a> method of the field construct identifies a
+unique metadata construct and returns a new field construct based on
+its properties and data. The new field construct always has domain
+axis constructs corresponding to the data, and may also contain other
+metadata constructs that further define its domain.</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">orog</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">create_field</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">orog</span><span class="p">)</span>
+<span class="go">Field: surface_altitude</span>
+<span class="go">-----------------------</span>
+<span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
+<span class="go">Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees</span>
+<span class="go">                : grid_longitude(9) = [0.0, ..., 8.0] degrees</span>
+<span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] degrees_north</span>
+<span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] degrees_east</span>
+<span class="go">                : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., j]</span>
+<span class="go">Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2</span>
+<span class="go">Coord references: rotated_latitude_longitude</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">orog1</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">create_field</span><span class="p">(</span><span class="s1">&#39;surface_altitude&#39;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">orog1</span><span class="p">)</span>
+<span class="go">Field: surface_altitude</span>
+<span class="go">-----------------------</span>
+<span class="go">Data            : surface_altitude(cid%domainaxis2(10), cid%domainaxis3(9)) m</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function allows field constructs to be derived
+directly from the netCDF variables that, in turn, correspond to
+metadata constructs. In this case, the new field constructs will have
+a domain limited to that which can be inferred from the corresponding
+netCDF variable, but without the connections that are defined by the
+parent netCDF data variable. This will usually result in different
+field constructs than are created with the <a class="reference internal" href="method/cfdm.Field.create_field.html#cfdm.Field.create_field" title="cfdm.Field.create_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_field</span></code></a>
+method.</p>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tas</span><span class="p">,</span> <span class="s1">&#39;tas.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;tas.nc&#39;</span><span class="p">,</span> <span class="n">create_field</span><span class="o">=</span><span class="s1">&#39;domain_ancillary&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span>
+<span class="go">[&lt;Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m&gt;,</span>
+<span class="go"> &lt;Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;,</span>
+<span class="go"> &lt;Field: ncvar%b(atmosphere_hybrid_height_coordinate(1)) 1&gt;,</span>
+<span class="go"> &lt;Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="go">Field: surface_altitude (ncvar%surface_altitude)</span>
+<span class="go">------------------------------------------------</span>
+<span class="go">Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m</span>
+<span class="go">Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees</span>
+<span class="go">                : grid_longitude(9) = [0.0, ..., 8.0] degrees</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="domain">
-<span id="id16"></span><h2><strong>Domain</strong><a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
+<span id="id25"></span><h2><strong>Domain</strong><a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The domain of the CF data model describes the locations of the field
 construct’s data and is represented by the <a class="reference internal" href="class/cfdm.Domain.html#cfdm.Domain" title="cfdm.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain</span></code></a> class. The domain
@@ -1698,7 +1759,7 @@ attributes and methods of the domain instance:</p>
 </div>
 </div>
 <div class="section" id="copying">
-<span id="id17"></span><h2><strong>Copying</strong><a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h2>
+<span id="id26"></span><h2><strong>Copying</strong><a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>A field construct may be copied with its <a class="reference internal" href="method/cfdm.Field.copy.html#cfdm.Field.copy" title="cfdm.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method. This
 produces a deep copy, i.e. the new field construct is completely
@@ -1728,14 +1789,14 @@ independent of the original field.</p>
 </div>
 <dl class="docutils">
 <dt><em>Note on performance</em></dt>
-<dd><a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instances within constructs are copied with a <a class="reference external" href="https://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a> technique. This
+<dd>Arrays within <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instances are copied with a <a class="reference external" href="https://en.wikipedia.org/wiki/Copy-on-write">copy-on-write</a> technique. This
 means that a copy takes up very little extra memory, even when the
 original constructs contain very large data arrays, and the copy
 operation is fast.</dd>
 </dl>
 </div>
 <div class="section" id="equality">
-<span id="id18"></span><h2><strong>Equality</strong><a class="headerlink" href="#equality" title="Permalink to this headline">¶</a></h2>
+<span id="id27"></span><h2><strong>Equality</strong><a class="headerlink" href="#equality" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>Whether or not two field constructs are the same is tested with either
 field construct’s <a class="reference internal" href="method/cfdm.Field.equals.html#cfdm.Field.equals" title="cfdm.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a> method.</p>
@@ -1806,7 +1867,7 @@ settings.</li>
 </div>
 </div>
 <div class="section" id="external-variables">
-<span id="id19"></span><h2><strong>External variables</strong><a class="headerlink" href="#external-variables" title="Permalink to this headline">¶</a></h2>
+<span id="id28"></span><h2><strong>External variables</strong><a class="headerlink" href="#external-variables" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables">External variables</a> are those referred to in a netCDF dataset, but
 which are not present in it. Instead, such variables are stored in
@@ -1815,7 +1876,7 @@ however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the <a class="reference internal" href="function/cfdm.read.html#cfdm.read" title="cfdm.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.read</span></code></a> function.</p>
 <p>This is illustrated with the files <strong>parent.nc</strong> (<a class="reference download internal" href="_downloads/parent.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) and <strong>external.nc</strong>
-(<a class="reference download internal" href="_downloads/external.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id20">[1]</a>:</p>
+(<a class="reference download internal" href="_downloads/external.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id29">[2]</a>:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h parent.nc
 netcdf parent {
 dimensions:
@@ -1925,7 +1986,7 @@ external file name to the <a class="reference internal" href="function/cfdm.writ
 </div>
 </div>
 <div class="section" id="compression">
-<span id="id21"></span><h2><strong>Compression</strong><a class="headerlink" href="#compression" title="Permalink to this headline">¶</a></h2>
+<span id="id30"></span><h2><strong>Compression</strong><a class="headerlink" href="#compression" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p>The CF conventions have support for space saving by identifying
 unwanted missing data.  Such compression techniques store the data
@@ -1939,10 +2000,11 @@ arrays contained in <a class="reference internal" href="class/cfdm.Data.html#cfd
 the cfdm package includes algorithms that are required to uncompress
 each type of compressed array.</p>
 <p>There are two basic types of compression supported by the CF
-conventions: ragged arrays (as used by <a class="reference internal" href="#dsg"><span class="std std-ref">discrete sampling
-geometries</span></a>) and <a class="reference internal" href="#gathering"><span class="std std-ref">compression by gathering</span></a>,
-each of which has particular implementation details, but the following
-access patterns and behaviours apply to both:</p>
+conventions: ragged arrays (as used by <a class="reference internal" href="#discrete-sampling-geometries"><span class="std std-ref">discrete sampling
+geometries</span></a>) and <a class="reference internal" href="#gathering"><span class="std std-ref">compression by
+gathering</span></a>, each of which has particular implementation
+details, but the following access patterns and behaviours apply to
+both:</p>
 <ul class="simple">
 <li>Whether or not the data are compressed is tested with the
 <a class="reference internal" href="method/cfdm.Data.get_compression_type.html#cfdm.Data.get_compression_type" title="cfdm.Data.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</li>
@@ -1964,8 +2026,8 @@ follows that to uncompress all of the data in a field construct,
 index the field construct with <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a>.</li>
 </ul>
 <ul class="simple">
-<li>If data elements are modified by <a class="reference internal" href="#data-assignment"><span class="std std-ref">assigning</span></a>
-to indices of the uncompressed form of the data, then the underlying
+<li>If data elements are modified by <a class="reference internal" href="#assignment"><span class="std std-ref">assigning</span></a> to
+indices of the uncompressed form of the data, then the underlying
 compressed array is replaced by its uncompressed form.</li>
 </ul>
 <ul class="simple">
@@ -1980,10 +2042,11 @@ modified will be written to an output dataset as uncompressed
 arrays.</li>
 </ul>
 <p>Examples of all of the above may be found in the sections on
-<a class="reference internal" href="#dsg"><span class="std std-ref">discrete sampling geometries</span></a> and <a class="reference internal" href="#gathering"><span class="std std-ref">gathering</span></a>.</p>
+<a class="reference internal" href="#discrete-sampling-geometries"><span class="std std-ref">discrete sampling geometries</span></a> and
+<a class="reference internal" href="#gathering"><span class="std std-ref">gathering</span></a>.</p>
 </div>
 <div class="section" id="discrete-sampling-geometries">
-<span id="dsg"></span><h2><strong>Discrete sampling geometries</strong><a class="headerlink" href="#discrete-sampling-geometries" title="Permalink to this headline">¶</a></h2>
+<span id="id31"></span><h2><strong>Discrete sampling geometries</strong><a class="headerlink" href="#discrete-sampling-geometries" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries">Discrete sampling geometry (DSG)</a> features may be compressed by
 combining them using one of three ragged array representations:
@@ -1997,7 +2060,7 @@ indexed contiguous, ragged array is stored in an <a class="reference internal" h
 is accessed with the <a class="reference internal" href="method/cfdm.Data.get_index_variable.html#cfdm.Data.get_index_variable" title="cfdm.Data.get_index_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index_variable</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance.</p>
 <p>The contiguous case is is illustrated with the file <strong>contiguous.nc</strong>
-(<a class="reference download internal" href="_downloads/contiguous.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id22">[1]</a>:</p>
+(<a class="reference download internal" href="_downloads/contiguous.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 2kB) <a class="footnote-reference" href="#files" id="id32">[2]</a>:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h contiguous.nc
 dimensions:
      station = 4 ;
@@ -2117,30 +2180,30 @@ field construct with an underlying contiguous ragged array:</p>
 
 <span class="c1"># Create the field construct with the domain axes and the ragged</span>
 <span class="c1"># array</span>
-<span class="n">tas</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;featureType&#39;</span><span class="p">:</span> <span class="s1">&#39;timeSeries&#39;</span><span class="p">})</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">()</span>
+<span class="n">T</span><span class="o">.</span><span class="n">properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;featureType&#39;</span><span class="p">:</span> <span class="s1">&#39;timeSeries&#39;</span><span class="p">})</span>
 
 <span class="c1"># Create the domain axis constructs for the uncompressed array</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 
 <span class="c1"># Set the data for the field</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">])</span>
+<span class="n">T</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>The new field construct can now be inspected:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tas</span>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T</span>
 <span class="go">&lt;Field: air_temperature(cid%domainaxis1(2), cid%domainaxis0(4)) K&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tas</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
 <span class="go">[[280.0 282.5    --    --]</span>
 <span class="go"> [281.0 279.0 278.0 279.5]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tas</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
 <span class="go">&#39;ragged contiguous&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tas</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compressed_array</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compressed_array</span><span class="p">())</span>
 <span class="go">[280.  282.5 281.  279.  278.  279.5]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">count_variable</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_count_variable</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">count_variable</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_count_variable</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">count_variable</span>
 <span class="go">&lt;Count: long_name:number of obs for this timeseries(2) &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">count_variable</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
@@ -2148,12 +2211,12 @@ field construct with an underlying contiguous ragged array:</p>
 </pre></div>
 </div>
 <p>and written to a file:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tas</span><span class="p">,</span> <span class="s1">&#39;tas_contiguous.nc&#39;</span><span class="p">)</span>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="s1">&#39;T_contiguous.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The content of the new file is:</p>
-<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump tas_contiguous.nc
-netcdf tas_contiguous {
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump T_contiguous.nc
+netcdf T_contiguous {
 dimensions:
      dim = 2 ;
      element = 6 ;
@@ -2178,7 +2241,7 @@ data:
 </div>
 </div>
 <div class="section" id="gathering">
-<span id="id23"></span><h2><strong>Gathering</strong><a class="headerlink" href="#gathering" title="Permalink to this headline">¶</a></h2>
+<span id="id33"></span><h2><strong>Gathering</strong><a class="headerlink" href="#gathering" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <p><a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering">Compression by gathering</a> combines axes of a multidimensional array
 into a new, discrete axis whilst omitting the missing values and thus
@@ -2186,7 +2249,7 @@ reducing the number of values that need to be stored.</p>
 <p>The list variable that is required to uncompress a gathered array is
 stored in a <a class="reference internal" href="class/cfdm.List.html#cfdm.List" title="cfdm.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">List</span></code></a> object and is retrieved with the
 <a class="reference internal" href="method/cfdm.Data.get_list_variable.html#cfdm.Data.get_list_variable" title="cfdm.Data.get_list_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list_variable</span></code></a> method of the <a class="reference internal" href="class/cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance.</p>
-<p>This is illustrated with the file <strong>gathered.nc</strong> (<a class="reference download internal" href="_downloads/gathered.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id24">[1]</a>:</p>
+<p>This is illustrated with the file <strong>gathered.nc</strong> (<a class="reference download internal" href="_downloads/gathered.nc" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 1kB) <a class="footnote-reference" href="#files" id="id34">[2]</a>:</p>
 <div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump -h gathered.nc
 netcdf gathered {
 dimensions:
@@ -2250,7 +2313,7 @@ file:</p>
 </pre></div>
 </div>
 <p>Subspaces based on the uncompressed axes of the field construct are
-easiliy created:</p>
+easily created:</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">&lt;Field: precipitation_flux(time(1), latitude(4), longitude(5)) kg m2 s-1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
@@ -2274,7 +2337,7 @@ simple field construct with an underlying gathered array:</p>
 <span class="kn">import</span> <span class="nn">cfdm</span>
 
 <span class="c1"># Define the gathered values</span>
-<span class="n">gathered_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">280</span><span class="p">,</span> <span class="mf">282.5</span><span class="p">,</span> <span class="mi">281</span><span class="p">],</span> <span class="p">[</span><span class="mi">279</span><span class="p">,</span> <span class="mi">278</span><span class="p">,</span> <span class="mf">277.5</span><span class="p">]],</span>
+<span class="n">gathered_array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">]],</span>
                              <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">)</span>
 
 <span class="c1"># Define the list array values</span>
@@ -2292,40 +2355,40 @@ simple field construct with an underlying gathered array:</p>
 
 <span class="c1"># Create the field construct with the domain axes and the gathered</span>
 <span class="c1"># array</span>
-<span class="n">tas</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
-                             <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">})</span>
+<span class="n">P</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;precipitation_flux&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kg m-2 s-1&#39;</span><span class="p">})</span>
 
 <span class="c1"># Create the domain axis constructs for the uncompressed array</span>
-<span class="n">T</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">Y</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 
 <span class="c1"># Set the data for the field</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">])</span>
+<span class="n">P</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
 compressed dimension in the compressed array (with the
-<em>compressed_dimension</em> parameter of the <a class="reference internal" href="class/cfdm.GatheredArray.html#cfdm.GatheredArray" title="cfdm.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GatheredArray</span></code></a>
+“compressed_dimension” parameter of the <a class="reference internal" href="class/cfdm.GatheredArray.html#cfdm.GatheredArray" title="cfdm.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GatheredArray</span></code></a>
 initialisation).</p>
 <p>The new field construct can now be inspected:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tas</span>
-<span class="go">&lt;Field: air_temperature(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) K&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tas</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
-<span class="go">[[[--    280.0]</span>
-<span class="go">  [--    --   ]</span>
-<span class="go">  [282.5 281.0]]</span>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">P</span>
+<span class="go">&lt;Field: precipitation_flux(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) kg m-2 s-1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
+<span class="go">[[[ -- 2.0]</span>
+<span class="go">  [ --  --]</span>
+<span class="go">  [1.0 3.0]]</span>
 
-<span class="go"> [[--    279.0]</span>
-<span class="go">  [--    --   ]</span>
-<span class="go">  [278.0 277.5]]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tas</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
+<span class="go"> [[ -- 4.0]</span>
+<span class="go">  [ --  --]</span>
+<span class="go">  [0.0 5.0]]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">P</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
 <span class="go">&#39;gathered&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">tas</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compressed_array</span><span class="p">())</span>
-<span class="go">[[ 280.   282.5  281. ]</span>
-<span class="go"> [ 279.   278.   277.5]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">list_variable</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_list_variable</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">P</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compressed_array</span><span class="p">())</span>
+<span class="go">[[2. 1. 3.]</span>
+<span class="go"> [4. 0. 5.]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_variable</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_list_variable</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">list_variable</span>
 <span class="go">&lt;List: (3) &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">list_variable</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
@@ -2333,12 +2396,12 @@ initialisation).</p>
 </pre></div>
 </div>
 <p>and written a netCDF file:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tas</span><span class="p">,</span> <span class="s1">&#39;tas_gathered.nc&#39;</span><span class="p">)</span>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="s1">&#39;P_gathered.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The content of the new file is:</p>
-<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump tas_gathered.nc
-netcdf tas_gathered {
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span>$ ncdump P_gathered.nc
+netcdf P_gathered {
 dimensions:
      dim = 2 ;
      dim_1 = 3 ;
@@ -2347,9 +2410,9 @@ dimensions:
 variables:
      int64 list(list) ;
              list:compress = &quot;dim_1 dim_2&quot; ;
-     float air_temperature(dim, list) ;
-             air_temperature:units = &quot;K&quot; ;
-             air_temperature:standard_name = &quot;air_temperature&quot; ;
+     float precipitation_flux(dim, list) ;
+             precipitation_flux:units = &quot;kg m-2 s-1&quot; ;
+             precipitation_flux:standard_name = &quot;precipitation_flux&quot; ;
 
 // global attributes:
              :Conventions = &quot;CF-1.7&quot; ;
@@ -2357,18 +2420,29 @@ data:
 
  list = 1, 4, 5 ;
 
- air_temperature =
-  280, 282.5, 281,
-  279, 278, 277.5 ;
+ precipitation_flux =
+  2, 1, 3,
+  4, 0, 5 ;
 }
 </pre></div>
 </div>
 <hr class="docutils" />
 <p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="notebook" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>The Jupyter notebook is quite long. To aid navigation
+it has been written so that it may optionally be used
+with the “Collapsible Headings” Jupyter notebook
+extension. See
+<a class="reference external" href="https://jupyter-contrib-nbextensions.readthedocs.io/en/latest">https://jupyter-contrib-nbextensions.readthedocs.io/en/latest</a>
+for details.</td></tr>
+</tbody>
+</table>
 <table class="docutils footnote" frame="void" id="files" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id7">2</a>, <a class="fn-backref" href="#id20">3</a>, <a class="fn-backref" href="#id22">4</a>, <a class="fn-backref" href="#id24">5</a>)</em> The tutorial files may be also found in the
+<tr><td class="label">[2]</td><td><em>(<a class="fn-backref" href="#id3">1</a>, <a class="fn-backref" href="#id9">2</a>, <a class="fn-backref" href="#id29">3</a>, <a class="fn-backref" href="#id32">4</a>, <a class="fn-backref" href="#id34">5</a>)</em> The tutorial files may be also found in the
 <a class="reference external" href="https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads">docs/_downloads</a>
 directory of the code repository.</td></tr>
 </tbody>
@@ -2376,7 +2450,7 @@ directory of the code repository.</td></tr>
 <table class="docutils footnote" frame="void" id="opendap2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[2]</a></td><td>Requires the netCDF4 python package to have been built
+<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td>Requires the netCDF4 python package to have been built
 with OPeNDAP support enabled. See
 <a class="reference external" href="http://unidata.github.io/netcdf4-python">http://unidata.github.io/netcdf4-python</a> for details.</td></tr>
 </tbody>
@@ -2384,7 +2458,7 @@ with OPeNDAP support enabled. See
 <table class="docutils footnote" frame="void" id="language" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[3]</a></td><td>In the terminology of the CF data model, a “construct”
+<tr><td class="label"><a class="fn-backref" href="#id8">[4]</a></td><td>In the terminology of the CF data model, a “construct”
 is an abstract concept which is distinct from its
 realization, e.g. a <a class="reference internal" href="class/cfdm.Field.html#cfdm.Field" title="cfdm.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> instance is not, strictly
 speaking, a field construct. However, the distinction
@@ -2411,8 +2485,8 @@ intended.</td></tr>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

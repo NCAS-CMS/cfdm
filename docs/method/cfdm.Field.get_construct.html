@@ -9,7 +9,7 @@
     <title>cfdm.Field.get_construct &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -32,6 +32,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
@@ -87,7 +88,7 @@
 <h1>cfdm.Field.get_construct<a class="headerlink" href="#cfdm-field-get-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.get_construct">
-<code class="descclassname">Field.</code><code class="descname">get_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/mixin/constructaccess.py#L353"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.get_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">get_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/mixin/constructaccess.py#L353"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.get_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a metadata construct.</p>
 <p>The construct is selected via optional parameters. The <em>unique</em>
 construct that satisfies <em>all</em> of the given criteria is returned. An
@@ -107,32 +108,29 @@ criteria.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>description: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select constructs that have the given property, or other
+<dd><p class="first">Select the construct that have the given property, or other
 attribute, value.</p>
 <p>The description may be one of:</p>
 <ul class="last">
 <li><p class="first">The value of the standard name property on its own.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs
-that have a “standard_name” property with the value
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs that
+have a “standard_name” property with the value
 “air_pressure”.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">The value of any property prefixed by the property name and
 a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs
-that have a “positive” property with the value “up”.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs that
+have a “positive” property with the value “up”.</p>
 </dd>
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that
-have a “foo” property with the value “bar”.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that have
+a “foo” property with the value “bar”.</p>
 </dd>
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
@@ -140,52 +138,42 @@ constructs that have a “standard_name” property with the
 value “air_pressure”.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">The measure of cell measure constructs, prefixed by
 <code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='measure%area'</span></code> will select “area” cell
 measure constructs.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">A construct identifier, prefixed by <code class="docutils literal notranslate"><span class="pre">cid%</span></code> (see also the
 <em>cid</em> parameter).</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em> </dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%cellmethod1'</span></code> will select cell
-method construct with construct identifier
-“cellmethod1”. This is equivalent to
-<code class="docutils literal notranslate"><span class="pre">cid='cellmethod1'</span></code>.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%cellmethod1'</span></code> will select cell method
+construct with construct identifier “cellmethod1”. This is
+equivalent to <code class="docutils literal notranslate"><span class="pre">cid='cellmethod1'</span></code>.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code>.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with
 netCDF variable name “lat”.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">The netCDF dimension name of domain axis constructs,
 prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncdim%time'</span></code> will select domain axis
 constructs with netCDF dimension name “time”.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 </ul>
 </dd>
@@ -194,7 +182,7 @@ constructs with netCDF dimension name “time”.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary0'</span></code> will the domain ancillary
-construct with construct identifier “domainancillary1”. This
+construct with construct identifier “domainancillary0”. This
 is equivalent to <code class="docutils literal notranslate"><span class="pre">description='cid%domainancillary0'</span></code>.</p>
 </dd>
 </dl>
@@ -307,8 +295,8 @@ False.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.Field.get_construct.rst.txt"

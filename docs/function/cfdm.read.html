@@ -9,7 +9,7 @@
     <title>cfdm.read &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -32,6 +32,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
@@ -85,23 +86,24 @@
 <h1>cfdm.read<a class="headerlink" href="#cfdm-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cfdm.read">
-<code class="descclassname">cfdm.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>external_files=None</em>, <em>field=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;cfdm.io.cfdmimplementation.CFDMImplementation object&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/io/read.py#L65"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read fields from a dataset.</p>
+<code class="descclassname">cfdm.</code><code class="descname">read</code><span class="sig-paren">(</span><em>filename</em>, <em>external_files=None</em>, <em>create_field=None</em>, <em>verbose=False</em>, <em>_implementation=&lt;cfdm.io.cfdmimplementation.CFDMImplementation object&gt;</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/io/read.py#L66"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read field constructs from a dataset.</p>
 <p>The dataset may be a netCDF file on disk or on an OPeNDAP server.</p>
-<p>The returned fields are sorted by the netCDF variable names of their
-corresponding data variables.</p>
+<p>The returned field constructs are sorted by the netCDF variable names
+of their corresponding data variables.</p>
 <p><strong>Performance</strong></p>
 <p>Descriptive properties are always read into memory, but lazy loading
 is employed for all data arrays, which means that no data is read into
 memory until the data is required for inspection or to modify the
-array contents. This maximises the number of fields that may be read
-within a session, and makes the read operation fast.</p>
+array contents. This maximises the number of field constructs that may
+be read within a session, and makes the read operation fast.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a></p>
+<p class="last"><a class="reference internal" href="cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>, <a class="reference internal" href="../method/cfdm.Field.create_field.html#cfdm.Field.create_field" title="cfdm.Field.create_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.create_field</span></code></a>,
+<a class="reference internal" href="../method/cfdm.Field.read_report.html#cfdm.Field.read_report" title="cfdm.Field.read_report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.Field.read_report</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -114,11 +116,10 @@ within a session, and makes the read operation fast.</p>
 parameter expansions are applied to the string.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last">The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory can be
+<dd><p class="first last">The file <code class="docutils literal notranslate"><span class="pre">file.nc</span></code> in the user’s home directory could be
 described by any of the following: <code class="docutils literal notranslate"><span class="pre">'$HOME/file.nc'</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'${HOME}/file.nc'</span></code>, <code class="docutils literal notranslate"><span class="pre">'~/file.nc'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code> or, most simply but assuming that the
-current working directory is <code class="docutils literal notranslate"><span class="pre">$HOME</span></code>, <code class="docutils literal notranslate"><span class="pre">'file.nc'</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">'~/tmp/../file.nc'</span></code>.</p>
 </dd>
 </dl>
 </dd>
@@ -144,10 +145,10 @@ will return <a class="reference external" href="https://docs.python.org/3/librar
 </dd>
 </dl>
 </dd>
-<dt>field: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Create extra, independent fields from the given types of
-metadata constructs. The <em>field</em> parameter may be one, or a
-sequence, of:</p>
+<dt>create_field: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Create extra, independent fields from the particular types of
+metadata constructs. The <em>create_field</em> parameter may be one,
+or a sequence, of:</p>
 <blockquote>
 <div><table border="1" class="docutils">
 <colgroup>
@@ -155,8 +156,8 @@ sequence, of:</p>
 <col width="55%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head"><em>field</em></th>
-<th class="head">Field components</th>
+<tr class="row-odd"><th class="head"><em>create_field</em></th>
+<th class="head">Metadata constructs</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -181,29 +182,31 @@ sequence, of:</p>
 <dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last">To create fields from auxiliary coordinate constructs:
-<code class="docutils literal notranslate"><span class="pre">field='auxiliary_coordinate'</span></code> or
-<code class="docutils literal notranslate"><span class="pre">field=['auxiliary_coordinate']</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">create_field='auxiliary_coordinate'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">create_field=['auxiliary_coordinate']</span></code>.</p>
 </dd>
 <dt><em>Example:</em></dt>
 <dd><p class="first last">To create fields from domain ancillary and cell measure
-constructs: <code class="docutils literal notranslate"><span class="pre">field=['domain_ancillary',</span> <span class="pre">'cell_measure']</span></code>.</p>
+constructs: <code class="docutils literal notranslate"><span class="pre">create_field=['domain_ancillary',</span>
+<span class="pre">'cell_measure']</span></code>.</p>
 </dd>
 </dl>
-<p class="last">An extra field created via the <em>field</em> parameter will have a
-domain limited to that which can be inferred from the
-corresponding netCDF variable, without the connections that
-are defined by the parent netCDF data variable. It is possbile
-to create independent fields from metadata constructs that do
-incorporate as much of the parent field’s domain as possible
-by using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">field</span></code> method of the returned
-fields, instead of setting the <em>field</em> parameter.</p>
+<p class="last">An extra field construct created via the <em>create_field</em>
+parameter will have a domain limited to that which can be
+inferred from the corresponding netCDF variable, but without
+the connections that are defined by the parent netCDF data
+variable. It is possible to create independent fields from
+metadata constructs that do incorporate as much of the parent
+field construct’s domain as possible by using the
+<a class="reference internal" href="../method/cfdm.Field.create_field.html#cfdm.Field.create_field" title="cfdm.Field.create_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_field</span></code></a> method of a returned field
+construct, instead of setting the <em>create_field</em> parameter.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt>
-<dd><p class="first last">The fields constructs found in the dataset. The list may be
+<dd><p class="first last">The field constructs found in the dataset. The list may be
 empty.</p>
 </dd>
 </dl>
@@ -227,8 +230,8 @@ empty.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/function/cfdm.read.rst.txt"

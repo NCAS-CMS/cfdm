@@ -9,7 +9,7 @@
     <title>cfdm.DimensionCoordinate &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.DimensionCoordinate.dump" href="../method/cfdm.DimensionCoordinate.dump.html" />
-    <link rel="prev" title="cfdm.CoordinateReference.nc_set_variable" href="../method/cfdm.CoordinateReference.nc_set_variable.html" />
+    <link rel="prev" title="cfdm.CoordinateReference.__str__" href="../method/cfdm.CoordinateReference.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,6 +32,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
@@ -49,7 +50,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../method/cfdm.CoordinateReference.nc_set_variable.html" title="previous chapter">cfdm.CoordinateReference.nc_set_variable</a></li>
+      <li>Previous: <a href="../method/cfdm.CoordinateReference.__str__.html" title="previous chapter">cfdm.CoordinateReference.__str__</a></li>
       <li>Next: <a href="../method/cfdm.DimensionCoordinate.dump.html" title="next chapter">cfdm.DimensionCoordinate.dump</a></li>
   </ul></li>
   </ul></li>
@@ -86,7 +87,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.DimensionCoordinate">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">DimensionCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/dimensioncoordinate.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">DimensionCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/dimensioncoordinate.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.dimensioncoordinate.DimensionCoordinate</span></code></p>
 <p>A dimension coordinate construct of the CF data model.</p>
 <p>A dimension coordinate construct provides information which locate the
@@ -437,8 +438,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.DimensionCoordinate.rst.txt"

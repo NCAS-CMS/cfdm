@@ -9,7 +9,7 @@
     <title>cfdm.core.CellMethod &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -32,6 +32,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="../index.html">Table Of Contents</a></h3>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html"><strong>Reference manual</strong></a><ul class="current">
@@ -85,7 +86,7 @@
 <h1>cfdm.core.CellMethod<a class="headerlink" href="#cfdm-core-cellmethod" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.CellMethod">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/cellmethod.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/cellmethod.py#L9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.properties.Properties</span></code></p>
 <p>A cell method construct of the CF data model.</p>
 <p>One or more cell method constructs describe how the cell values of the
@@ -162,7 +163,7 @@ initialization By default parameters are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.CellMethod.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>axes=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/cellmethod.py#L27"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>axes=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/cellmethod.py#L27"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialisation</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -254,7 +255,7 @@ initialization By default parameters are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.CellMethod.has_property" title="cfdm.core.CellMethod.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a>(prop)</td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMethod.next</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
 <td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.CellMethod.properties" title="cfdm.core.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a>([properties,&nbsp;copy])</td>
@@ -270,7 +271,7 @@ initialization By default parameters are deep copied.</p>
 </table>
 <dl class="method">
 <dt id="cfdm.core.CellMethod.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/properties.py#L58"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/abstract/properties.py#L58"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy.</p>
 <p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
 <div class="versionadded">
@@ -297,7 +298,7 @@ initialization By default parameters are deep copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.del_axes">
-<code class="descname">del_axes</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/cellmethod.py#L152"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.del_axes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_axes</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/cellmethod.py#L152"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.del_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the axes of the cell method.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -339,7 +340,7 @@ unset then <em>default</em> is returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.del_property">
-<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/properties.py#L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.del_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/abstract/properties.py#L78"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.del_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -398,7 +399,7 @@ provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.get_axes">
-<code class="descname">get_axes</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/cellmethod.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.get_axes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_axes</code><span class="sig-paren">(</span><em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/cellmethod.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.get_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the axes of the cell method.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -443,7 +444,7 @@ of <em>default</em> parameter, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.get_property">
-<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/properties.py#L130"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.get_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_property</code><span class="sig-paren">(</span><em>prop</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/abstract/properties.py#L130"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.get_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -502,7 +503,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.has_axes">
-<code class="descname">has_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/cellmethod.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.has_axes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_axes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/cellmethod.py#L215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.has_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether the axes of the cell method have been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -544,7 +545,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.has_property">
-<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/properties.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.has_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_property</code><span class="sig-paren">(</span><em>prop</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/abstract/properties.py#L182"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.has_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a property has been set.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -599,7 +600,7 @@ returned, if provided.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.properties">
-<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/properties.py#L223"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.properties" title="Permalink to this definition">¶</a></dt>
+<code class="descname">properties</code><span class="sig-paren">(</span><em>properties=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/abstract/properties.py#L223"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace all properties.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -661,7 +662,7 @@ properties if no changes were specified.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.set_axes">
-<code class="descname">set_axes</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/cellmethod.py#L240"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.set_axes" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_axes</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/cellmethod.py#L240"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.set_axes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the axes of the cell method.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -701,7 +702,7 @@ properties if no changes were specified.</p>
 
 <dl class="method">
 <dt id="cfdm.core.CellMethod.set_property">
-<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b6/cfdm/core/abstract/properties.py#L281"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.set_property" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_property</code><span class="sig-paren">(</span><em>prop</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/abstract/properties.py#L281"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CellMethod.set_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a property.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -787,8 +788,8 @@ properties if no changes were specified.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.core.CellMethod.rst.txt"

@@ -6,6 +6,8 @@
 **Installation**
 ================
 
+Version |release| for version |version| of the CF conventions.
+
 ----
 
 **Dependencies**
@@ -84,7 +86,7 @@ To install from source:
 	 
        python setup.py install
 
-  * To install the cfdm package locally to the user in a default
+  * To install the cfdm package locally to the user in the default
     location:
 
     .. code:: bash

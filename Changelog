@@ -1,6 +1,10 @@
-version 1.7b7 - 2018-??-??
+version 1.7b7 - 2018-11-28
 ==========================
 
+* Fixed bug when writing arrays of length-1 strings to disk
+* Fixed bugs in cfdm.Field.create_field
+* New method cfdm.Field.read_report	
+ 	
 version 1.7b6 - 2018-11-27
 ==========================
 

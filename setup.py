@@ -56,15 +56,17 @@ The **cfdm** package can
 
 * inspect field constructs,
 
+* test whether two field constructs are the same,
+
 * modify field construct metadata and data,
 
 * create subspaces of field constructs,
 
 * write field constructs to netCDF datasets on disk,
 
-* incorporate, and create, metadata stored in external files,
+* incorporate, and create, metadata stored in external files, and
 
-* read and write data that has been compressed by convention
+* read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
 

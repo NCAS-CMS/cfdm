@@ -9,7 +9,7 @@
     <title>cfdm package &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="next" title="Introduction" href="introduction.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -31,6 +31,7 @@
         <div class="sphinxsidebarwrapper">
 <h3><a href="#">Table Of Contents</a></h3>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html"><strong>Reference manual</strong></a></li>
@@ -41,7 +42,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
-      <li>Next: <a href="installation.html" title="next chapter"><strong>Installation</strong></a></li>
+      <li>Next: <a href="introduction.html" title="next chapter"><strong>Introduction</strong></a></li>
   </ul></li>
 </ul>
 </div>
@@ -73,9 +74,10 @@
   <div class="section" id="cfdm-package">
 <h1><strong>cfdm package</strong><a class="headerlink" href="#cfdm-package" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 1.7b6 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7b7 for version 1.7 of the CF conventions.</p>
 <div class="section" id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>Version 1.7b7 for version 1.7 of the CF conventions.</p>
 <hr class="docutils" />
 <p>The cfdm package is a complete implementation of the CF data model.</p>
 <div class="section" id="cf-conventions">
@@ -136,10 +138,8 @@ cell_methods attribute of data variable).</li>
 is available to download at
 <a class="reference external" href="https://www.geosci-model-dev.net/10/4619/2017">https://www.geosci-model-dev.net/10/4619/2017</a>.</p>
 </div>
-</div>
 <div class="section" id="implementation">
-<h2><strong>Implementation</strong><a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
-<hr class="docutils" />
+<h3><strong>Implementation</strong><a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h3>
 <p>The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is,
 however, not strict about CF compliance so that partially conformant
@@ -160,11 +160,18 @@ datasets and written to new datasets.</p>
 data in its uncompressed form.</li>
 </ul>
 </div>
+</div>
 <div class="section" id="table-of-contents">
 <h2><strong>Table Of Contents</strong><a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#cf-conventions"><strong>CF conventions</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#cf-data-model"><strong>CF data model</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#implementation"><strong>Implementation</strong></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#dependencies"><strong>Dependencies</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#pip"><strong>pip</strong></a></li>
@@ -185,7 +192,7 @@ data in its uncompressed form.</li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#metadata-constructs"><strong>Metadata constructs</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#netcdf-interface"><strong>NetCDF interface</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#writing-to-disk"><strong>Writing to disk</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#field-creation"><strong>Field creation</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#field-construct-creation"><strong>Field construct creation</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#domain"><strong>Domain</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#copying"><strong>Copying</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#equality"><strong>Equality</strong></a></li>
@@ -202,7 +209,12 @@ data in its uncompressed form.</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="subclassing.html"><strong>Subclassing</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="philosophy.html"><strong>Philosophy</strong></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="philosophy.html#functionality"><strong>Functionality</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="philosophy.html#api"><strong>API</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="philosophy.html#optimisation"><strong>Optimisation</strong></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -226,8 +238,8 @@ data in its uncompressed form.</li>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="_sources/index.rst.txt"
