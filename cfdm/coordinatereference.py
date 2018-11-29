@@ -68,24 +68,27 @@ by a coordinate reference construct which relates the coordinate
 values of the coordinate system to locations in a planetary reference
 frame and consists of the following:
 
-  * References to the dimension coordinate and auxiliary coordinate
-    constructs that define the coordinate system to which the
-    coordinate reference construct applies. Note that the coordinate
-    values are not relevant to the coordinate reference construct,
-    only their properties.
+* References to the dimension coordinate and auxiliary coordinate
+  constructs that define the coordinate system to which the coordinate
+  reference construct applies. Note that the coordinate values are not
+  relevant to the coordinate reference construct, only their
+  properties.
 
-  * A definition of a datum specifying the zeroes of the dimension and
-    auxiliary coordinate constructs which define the coordinate
-    system. The datum may be implied by the metadata of the referenced
-    dimension and auxiliary coordinate constructs, or explicitly
-    provided by a `Datum` instance.
+..
 
-  * A coordinate conversion, which defines a formula for converting
-    coordinate values taken from the dimension or auxiliary coordinate
-    constructs to a different coordinate system. A coordinate
-    reference construct relates the coordinate values of the field to
-    locations in a planetary reference frame. The coordinate
-    conversion formula is stored in a `CoordinateConversion` instance.
+* A definition of a datum specifying the zeroes of the dimension and
+  auxiliary coordinate constructs which define the coordinate
+  system. The datum may be implied by the metadata of the referenced
+  dimension and auxiliary coordinate constructs, or explicitly
+  provided.
+
+..
+
+* A coordinate conversion, which defines a formula for converting
+  coordinate values taken from the dimension or auxiliary coordinate
+  constructs to a different coordinate system. A coordinate reference
+  construct relates the coordinate values of the field to locations in
+  a planetary reference frame.
 
 .. versionadded:: 1.7
 
@@ -124,14 +127,14 @@ frame and consists of the following:
         `coordinates` and `set_coordinate` methods.
 
     datum: `Datum`, optional
-        Define the datum component of the coordinate reference
+        Set the datum component of the coordinate reference
         construct. Ignored if the *source* parameter is set.
 
         The datum may also be set after initialisation with the
         `set_datum` method.
 
     coordinate_conversion: `CoordinateConversion`, optional
-        Define the coordinate conversion component of the coordinate
+        Set the coordinate conversion component of the coordinate
         reference construct. Ignored if the *source* parameter is set.
 
         The coordinate conversion may also be set after initialisation

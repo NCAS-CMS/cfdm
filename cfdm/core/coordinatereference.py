@@ -30,24 +30,27 @@ by a coordinate reference construct which relates the coordinate
 values of the coordinate system to locations in a planetary reference
 frame and consists of the following:
 
-  * References to the dimension coordinate and auxiliary coordinate
-    constructs that define the coordinate system to which the
-    coordinate reference construct applies. Note that the coordinate
-    values are not relevant to the coordinate reference construct,
-    only their properties.
+* References to the dimension coordinate and auxiliary coordinate
+  constructs that define the coordinate system to which the coordinate
+  reference construct applies. Note that the coordinate values are not
+  relevant to the coordinate reference construct, only their
+  properties.
 
-  * A definition of a datum specifying the zeroes of the dimension and
-    auxiliary coordinate constructs which define the coordinate
-    system. The datum may be implied by the metadata of the referenced
-    dimension and auxiliary coordinate constructs, or explicitly
-    provided by a `Datum` instance.
+..
 
-  * A coordinate conversion, which defines a formula for converting
-    coordinate values taken from the dimension or auxiliary coordinate
-    constructs to a different coordinate system. A coordinate
-    reference construct relates the coordinate values of the field to
-    locations in a planetary reference frame. The coordinate
-    conversion formula is stored in a `CoordinateConversion` instance.
+* A definition of a datum specifying the zeroes of the dimension and
+  auxiliary coordinate constructs which define the coordinate
+  system. The datum may be implied by the metadata of the referenced
+  dimension and auxiliary coordinate constructs, or explicitly
+  provided.
+
+..
+
+* A coordinate conversion, which defines a formula for converting
+  coordinate values taken from the dimension or auxiliary coordinate
+  constructs to a different coordinate system. A coordinate
+  reference construct relates the coordinate values of the field to
+  locations in a planetary reference frame.
 
 .. versionadded:: 1.7
 
@@ -67,49 +70,37 @@ frame and consists of the following:
 :Parameters:
 
     coordinates: sequence of `str`, optional
-        Identify the dimension and auxiliary coordinate objects which
-        apply to this coordinate reference. By default the standard
-        names of those expected by the CF conventions are
-        used. Ignored if the *source* parameter is set.
+        Identify the related dimension and auxiliary coordinate
+        constructs by their construct identifiers. Ignored if the
+        *source* parameter is set.
 
-        Coordinates may also be set after initialisation with the
+        *Example:*
+          ``coordinates=['dimensioncoordinate2']``
+
+        *Example:*
+          ``coordinates=('dimensioncoordinate0', 'dimensioncoordinate1')``
+
+        The coordinates may also be set after initialisation with the
         `coordinates` and `set_coordinate` methods.
-  
+
     datum: `Datum`, optional
-        Set the datum. Ignored if the *source* parameter is set.
+        Set the datum component of the coordinate reference
+        construct. Ignored if the *source* parameter is set.
 
         The datum may also be set after initialisation with the
         `set_datum` method.
-  
-          *Example:*
-            >>> d = Datum(parameters={'earth_radius': 6371007})
-            >>> c = CoordinateReference(datum=d)
 
     coordinate_conversion: `CoordinateConversion`, optional
-        Set the coordinate conversion formula. Ignored if the *source*
-        parameter is set.
+        Set the coordinate conversion component of the coordinate
+        reference construct. Ignored if the *source* parameter is set.
 
-        The coordinate conversion formula may also be set after
-        initialisation with the `set_coordinate conversion` method.
-  
-          *Example:*
-            >>> f = CoordinateConversion(
-            ...         parameters={'standard_name': 'atmosphere_hybrid_height'},
-            ...         domain_ancillaries={'orog': 'domainancillary2',
-            ...                             'a': 'domainancillary0',
-            ...                             'b': 'domainancillary1'}))
-            ...
-            >>> c = CoordinateReference(coordinate_conversion=f)
+        The coordinate conversion may also be set after initialisation
+        with the `set_coordinate_conversion` method.
 
     source: optional
-         Override the *coordinates*, *datum* and
-         *coordinate_conversion* parameters with
-         ``source.coordinates()``, ``source.get_datum()`` and
-         ``source.get_coordinate_conversion()`` respectively.
+        Initialize the coordinates, datum and coordinate conversion
+        from those of *source*.
 
-        If *source* does not have one of these methods, or it can not
-        return anything, then that parameter is not set.
-        
     copy: `bool`, optional
         If False then do not deep copy arguments prior to
         initialization. By default arguments are deep copied.
@@ -140,14 +131,10 @@ frame and consists of the following:
         self.set_coordinate_conversion(coordinate_conversion, copy=copy)
         self.set_datum(datum, copy=copy)
     #--- End: def
-   
-#    def __str__(self):
-#        '''x.__str__() <==> str(x)
-#
-#        '''    
-#        return ', '.join(sorted(self.terms()))
-#    #--- End: def
 
+    # ----------------------------------------------------------------
+    # Attributes
+    # ----------------------------------------------------------------
     @property
     def construct_type(self):
         '''Return a description of the construct type.
@@ -164,18 +151,18 @@ frame and consists of the following:
 
     @property
     def coordinate_conversion(self):
-        '''Return the coordinate conversion.
+        '''Return the coordinate conversion component.
 
 .. versionadded:: 1.7
 
-..seealso:: `datum`, `get_coordinate_conversion`
+.. seealso:: `datum`, `get_coordinate_conversion`
 
 :Returns:
 
     out: `CoordinateConversion`
         The coordinate conversion.
 
-**Examples**
+**Examples:**
 
 >>> c.coordinate_conversion
 <>
@@ -185,18 +172,18 @@ frame and consists of the following:
         
     @property
     def datum(self):
-        '''Return the datum.
+        '''Return the datum component.
 
 .. versionadded:: 1.7
 
-..seealso:: `coordinate_conversion`, `datum`
+.. seealso:: `coordinate_conversion`, `datum`
 
 :Returns:
 
    out: `Datum`
         The datum.
 
-**Examples**
+**Examples:**
 
 >>> c.datum
 <>
@@ -204,22 +191,24 @@ frame and consists of the following:
         return self.get_datum()
     #--- End: def
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def coordinates(self, coordinates=None):
-        '''Return or replace the identifiers of the coordinate objects that
-define the coordinate system.
+        '''Return or replace all references to coordinate constructs.
 
 .. seealso:: `del_coordinate`, `set_coordinate`
 
-:Examples 1:
+:Parameters:
 
->>> coordinates = c.coordinates()
+    coordinates: sequence of `str`
 
 :Returns:
 
     out: `set`
         The identifiers of the coordinate objects.
 
-**Examples**
+**Examples:**
 
 >>> c.coordinates()
 {'dimensioncoordinate0',
@@ -243,86 +232,91 @@ define the coordinate system.
 
 .. versionadded:: 1.7
 
-:Examples 1:
-
->>> g = f.copy()
-
 :Returns:
 
     out:
         The deep copy.
 
+**Examples:**
+
+>>> d = c.copy()
+
         '''
         return type(self)(source=self, copy=True)
     #--- End: def
 
-    def del_coordinate(self, key, *default):
-        '''Delete the identifier of a coordinate object that defines the
-coordinate system.
+    def del_coordinate(self, cid, *default):
+        '''Remove a reference to a coordinate construct.
 
 .. versionadded:: 1.7
 
-.. seealso:: `coordinates`
+.. seealso:: `coordinates`, `set_coordinate`
 
 :Parameters:
 
-    key: `str`
+    cid: `str`
+        The construct identifier of the coordinate construct.
 
           *Example:*
-             ``key='dimensioncoordinate1'``
+             ``cid='dimensioncoordinate1'``
+
+          *Example:*
+             ``cid='auxiliarycoordinate0'``
 
     default: optional
-        Return *default* if the coordinate key has not been set.
+        Return *default* if the coordinate construct has not been
+        referenced.
 
 :Returns:
 
-    out: 
-        The removed coordinate key. If unset then *default* is
-        returned, if provided.
+    out:
+      The removed coordinate construct identifier property. If unset
+      then *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
 >>> c.coordinates()
 {'dimensioncoordinate0',
  'dimensioncoordinate1'}
 >>> c.del_coordinate('dimensioncoordinate0')
+'dimensioncoordinate0'
 >>> c.coordinates()
 {'dimensioncoordinate1'}
+>>> c.del_coordinate('dimensioncoordinate0', 'not set')
+'not set'
 
         '''
         coordinates = self._get_component('coordinates')
-        if key in coordinates:
-            coordinates.remove(key)
-            return key
+        if cid in coordinates:
+            coordinates.remove(cid)
+            return cid
 
         if default:
             return default[0]
         
         raise AttributeError("{!r} has no {!r} coordinate".format(
-            self.__class__.__name__, key))
+            self.__class__.__name__, cid))
     #--- End: def
     
-    def del_coordinate_conversion(self, *default):
-        '''Remove the coordinate conversion.
+    def del_coordinate_conversion(self):
+        '''Remove the coordinate conversion component.
 
 .. versionadded:: 1.7
 
-..seealso:: `coordinate_conversion`, `get_coordinate_conversion`,
-            `has_coordinate_conversion`, `set_coordinate_conversion`
-
-:Parameters:
-
-    default: optional
-        Return *default* if the coordinate conversion has not been
-        set.
+.. seealso:: `coordinate_conversion`, `get_coordinate_conversion`,
+             `set_coordinate_conversion`
 
 :Returns:
 
     out: 
-        The removed coordinate conversion. If unset then *default* is
-        returned, if provided.
+        The removed coordinate conversion component.
 
-**Examples**
+**Examples:**
+
+>>> c.del_coordinate_conversion()
+<CoordinateConversion: Parameters(grid_mapping_name, grid_north_pole_latitude, grid_north_pole_longitude)>
+>>> c.get_coordinate_conversion()
+<CoordinateConversion: >
 
         '''
         new = self._CoordinateConversion()
@@ -332,18 +326,23 @@ coordinate system.
     #--- End: def
     
     def del_datum(self):
-        '''Remove the datum.
+        '''Remove the datum component.
 
 .. versionadded:: 1.7
 
-..seealso:: `datum`, `get_datum`, `has_datum`, `set_datum`
+.. seealso:: `datum`, `get_datum`, `set_datum`
 
-        :Returns:
+:Returns:
 
     out: 
-        The removed datum.
+        The removed datum component.
 
-**Examples**
+**Examples:**
+
+>>> c.del_datum()
+<Datum: Parameters(earth_radius)>
+>>> c.get_datum()
+<Datum: >
 
         '''
         new = self._Datum()
@@ -353,19 +352,22 @@ coordinate system.
     #--- End: def
 
     def get_coordinate_conversion(self):
-        '''Get the coordinate conversion.
+        '''Get the coordinate conversion component.
 
 .. versionadded:: 1.7
 
-..seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
-            `has_coordinate_conversion`, `set_coordinate_conversion`
+.. seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
+             `set_coordinate_conversion`
 
 :Returns:
 
     out: `CoordinateConversion`
-        The coordinate conversion.
+        The coordinate conversion component.
 
-**Examples**
+**Examples:**
+
+>>> c.get_coordinate_conversion()
+<CoordinateConversion: Parameters(grid_mapping_name, grid_north_pole_latitude, grid_north_pole_longitude)>
 
         '''
         out = self._get_component('coordinate_conversion', None)
@@ -377,18 +379,22 @@ coordinate system.
     #--- End: def
     
     def get_datum(self):
-        '''Return the datum.
+        '''Return the datum component.
 
 .. versionadded:: 1.7
 
-..seealso:: `datum`, `get_coordinate_conversion`
+.. seealso:: `datum`, `get_coordinate_conversion`
 
 :Returns:
 
    out: `Datum`
-        The datum.
+        The datum component.
 
-**Examples**
+**Examples:**
+
+>>> c.get_datum()
+<Datum: Parameters(earth_radius)>
+
         '''
         out = self._get_component('datum', None)
         if out is None:
@@ -398,38 +404,29 @@ coordinate system.
         return out
     #--- End: def
     
-    def has_datum(self):
-        '''TODO
-        '''
-        return self._has_component('datum')
-    #--- End: def
-
-    def has_coordinate_conversion(self):
-        '''TODO
-        '''
-        return self._has_component('coordinate_conversion')
-    #--- End: def
-
-    def set_coordinate(self, coordinate):
-        '''Set a coordinate.
+    def set_coordinate(self, cid):
+        '''Set a reference to a coordinate construct.
 
 .. versionadded:: 1.7
 
-.. seealso:: `del_coordinate`
-
-:Examples 1:
-
->>> c.set_coordinates('auxiliarycoordinate1')
+.. seealso:: `coordinates`, `del_coordinate`
 
 :Parameters:
 
-    coordinate: `str`
+    cid: `str`
+        The construct identifier of the coordinate construct.
+
+          *Example:*
+             ``cid='dimensioncoordinate1'``
+
+          *Example:*
+             ``cid='auxiliarycoordinate0'``
 
 :Returns:
 
     `None`
 
-**Examples**
+**Examples:**
 
 >>> c.coordinates()
 {'dimensioncoordinate0',
@@ -442,25 +439,75 @@ coordinate system.
 
         '''
         c = self._get_component('coordinates')
-        c.add(coordinate)
+        c.add(cid)
     #--- End: def
 
-    def set_coordinate_conversion(self, value, copy=True):
-        '''TODO
+    def set_coordinate_conversion(self, coordinate_conversion, copy=True):
+        '''Set the coordinate conversion component.
+
+.. versionadded:: 1.7
+
+.. seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
+             `get_coordinate_conversion`
+
+:Parameters:
+
+    coordinate_conversion: `CoordinateConversion`
+        The coordinate conversion component to be inserted.
+
+    copy: `bool`, optional
+        If False then do not copy the coordinate conversion prior to
+        insertion. By default the coordinate conversion is copied.
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> c.set_coordinate_conversion(cc)
+
+>>> c.set_coordinate_conversion(cc, copy=False)
+
         '''
-        if copy and value is not None:
-            value = value.copy()
+        if copy and coordinate_conversion is not None:
+            coordinate_conversion = coordinate_conversion.copy()
             
-        self._set_component('coordinate_conversion', value, copy=False)
+        self._set_component('coordinate_conversion',
+                            coordinate_conversion, copy=False)
     #--- End: def
 
-    def set_datum(self, value, copy=True):
-        '''TODO
+    def set_datum(self, datum, copy=True):
+        '''Set the datum component.
+
+.. versionadded:: 1.7
+
+.. seealso:: `datum`, `del_datum`, `get_datum`
+
+:Parameters:
+
+    datum: `Datum`
+        The datum component to be inserted.
+
+    copy: `bool`, optional
+        If False then do not copy the datum prior to insertion. By
+        default the datum is copied.
+
+:Returns:
+
+    `None`
+
+**Examples:**
+
+>>> c.set_datum(d)
+
+>>> c.set_datum(d, copy=False)
+
         '''
-        if copy and value is not None:
-            value = value.copy()
+        if copy and datum is not None:
+            datum = datum.copy()
             
-        self._set_component('datum', value, copy=False)
+        self._set_component('datum', datum, copy=False)
     #--- End: def
 
 #--- End: class

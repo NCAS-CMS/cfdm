@@ -25,8 +25,6 @@ Methods
    ~cfdm.CoordinateReference.dump
    ~cfdm.CoordinateReference.get_coordinate_conversion
    ~cfdm.CoordinateReference.get_datum
-   ~cfdm.CoordinateReference.has_coordinate_conversion
-   ~cfdm.CoordinateReference.has_datum
    ~cfdm.CoordinateReference.name
 
 Attributes

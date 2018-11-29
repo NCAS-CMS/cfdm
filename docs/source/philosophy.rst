@@ -30,10 +30,10 @@ capabilities.
 -----------------
 
 The cfdm package has, with very few exceptions, only the functionality
-required to read and write datasets and to create, inspect field
+required to read and write datasets, and to create and inspect field
 constructs in memory.
 
-The cfdm package is *not*, and is not meant to be, a general analysis
+The cfdm package is not, and is not meant to be, a general analysis
 package. Therefore it can't, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc.
@@ -59,7 +59,7 @@ Here is an example of a simple field created with the :ref:`cfdm.core
    >>> import numpy
    >>> import cfdm
    >>> f = cfdm.core.Field(properties={'standard_name': 'altitude'})
-   >>> axis = f.set_construct('domain_axis', cfdm.core.DomainAxis(1))
+   >>> axis = f.set_construct(cfdm.core.DomainAxis(1))
    >>> data = cfdm.core.Data(cfdm.core.NumpyArray(numpy.array([115.])))
    >>> f.set_data(data, axes=[axis])
    >>> print(f.get_array())
@@ -81,9 +81,3 @@ The same field may be created with the cfdm package:
    Field: altitude
    ---------------
    Data            : altitude(cid%domainaxis0(1))
-
-
-**Optimisation**
-----------------
-
-Very little effort has been put in 

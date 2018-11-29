@@ -73,13 +73,10 @@ TODO
 
         if cid is not None:
             construct = out.get(cid)
-            if construct is not None:
-                out = {cid: construct}
-            else:
-                out = {}
+            if construct is None:
+                return {}
 
-            if not out:
-                return out
+            out = {cid: construct}
         #--- End: if
         
         if axes is not None:
@@ -95,11 +92,11 @@ TODO
         #--- End: if
 
         if description is not None:
-            (prefix, _, key) = description.partition('%')
+            (prefix, _, value) = description.partition('%')
             if prefix == 'cid':
-                construct = out.get(key)
+                construct = out.get(value)
                 if construct is not None:
-                    out = {key: construct}
+                    out = {value: construct}
                 else:
                     out = {}
             else:
