@@ -35,8 +35,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
         return self._get_constructs().array_constructs(copy=copy)
  
     def construct_axes(self, cid=None):
-        '''Return the identifiers of the domain axes spanned by the metadata
-construct data arrays.
+        '''Return the domain axes spanned by metadata construct data arrays.
 
 .. versionadded:: 1.7
 
@@ -50,9 +49,10 @@ construct data arrays.
 :Returns:
 
     out: `tuple` or `None`
-        The identifiers of the domain axes spanned by the construct's
-        data array. If the construct does not have a data array then
-        `None` is returned.
+
+        The identifiers of the domain axes constructs spanned by data
+        array of metadata constructs. If a metadata construct does not have a
+        data array then `None` is returned.
 
 **Examples:**
 
@@ -154,6 +154,55 @@ TODO
         return self._get_constructs().get_construct(cid)
     #--- End: def
 
+    def get_construct_axes(self, cid, *default):
+        '''Return the domain axes spanned by a metadata construct data array.
+
+.. versionadded:: 1.7
+
+.. seealso:: `construct_axes`, `get_construct`, `set_construct_axes`
+
+:Parameters:
+
+    cid: `str`
+        The construct identifier of the metadata construct.
+
+        *Example:*
+          ``cid='domainancillary1'``
+
+    default: optional
+        Return *default* if the metadata construct does not have a
+        data array, or no domain axes have been set.
+
+:Returns:
+
+    out:
+        The identifiers of the domain axis constructs spanned by data
+        array. If a metadata construct does not have a data array, or
+        no domain axes have been set, then `None` is returned.
+
+**Examples:**
+
+>>> f.get_construct_axes('domainancillary2')
+('domainaxis1', 'domainaxis0')
+>>> da = f.get_construct('domainancillary2')
+>>> data = da.del_data()
+>>> print(f.get_construct_axes('domainancillary2', None))
+None
+
+>>> f.get_construct_axes('cellmethod0', 'no axes')
+'no axes'
+
+        '''
+        axes = self.construct_axes().get(cid)
+        if axes is None:
+            if default:
+                return default[0]
+
+            raise ValueError("no axes.")
+
+        return axes
+    #--- End: def
+    
     def has_construct(self, cid):
         '''Whether a construct exisits.
 
@@ -182,143 +231,6 @@ TODO
         return self._get_constructs().domain_axis_name(axis)
     #--- End: def
     
-#    def set_auxiliary_coordinate(self, item, axes=None, cid=None,
-#                                 copy=True):
-#        '''Set an auxiliary coordinate construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `AuxiliaryCoordinate`
-#        TODOgg369
-#
-#    axes: sequence of `str`, optional
-#        The identifiers of the domain axes spanned by the data array.
-#
-#        The axes may also be set afterwards with the
-#        `set_construct_axes` method.
-#
-#        *Example:*
-#          ``axes=['domainaxis1']``
-#        
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='auxiliarycoordinate0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#
-#        '''
-#        return self.set_construct('auxiliary_coordinate', item,
-#                                  id=id, axes=axes, copy=copy)
-#    #--- End: def
-#
-#    def set_domain_axis(self, domain_axis, id=None, copy=True):
-#        '''Set a domain axis construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`
-#
-#:Parameters:
-#
-#    item: `DomainAxis`
-#        TODO
-#        
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='domainaxis2'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#
-#        '''
-#        return self.set_construct('domain_axis', domain_axis, id=id,
-#                                  copy=copy)
-#    #--- End: def
-#
-#    def set_domain_ancillary(self, item, axes=None, id=None, copy=True):
-##                             extra_axes=0, copy=True):
-#        '''Set a domain ancillary construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `DomainAncillary`
-#        TODO
-#
-#    axes: sequence of `str`, optional
-#        The identifiers of the domain axes spanned by the data array.
-#
-#        The axes may also be set afterwards with the
-#        `set_construct_axes` method.
-#
-#        *Example:*
-#          ``axes=['domainaxis1', 'domainaxis0']``
-#        
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='domainancillary0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#
-#        ''' 
-#        return self.set_construct('domain_ancillary', item, id=id,
-#                                  axes=axes, #extra_axes=extra_axes,
-#                                  copy=copy)
-#    #--- End: def
-
     def set_construct(self, construct, cid=None, axes=None,
                       copy=True):
         '''Set a metadata construct.
@@ -383,8 +295,8 @@ TODO
     #--- End: def
 
     def set_construct_axes(self, cid, axes):
-        '''Set the domain axis constructs spanned by the data array of a
-metadata construct.
+        '''Set the domain axis constructs spanned by a metadata construct data
+array.
 
 .. versionadded:: 1.7
 
@@ -423,140 +335,5 @@ metadata construct.
         '''
         return self._get_constructs().set_construct_axes(cid, axes)
     #--- End: def
-
-#    def set_cell_measure(self, item, axes=None, id=None, copy=True):
-#        '''Set a cell measure construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `CellMeasure`
-#        TODO
-#
-#    axes: sequence of `str`, optional
-#        The identifiers of the domain axes spanned by the data array.
-#
-#        The axes may also be set afterwards with the
-#        `set_construct_axes` method.
-#
-#        *Example:*
-#          ``axes=['domainaxis1']``
-#        
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='cellmeasure0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#        '''
-#        return self.set_construct('cell_measure', item, id=id,
-#                                  axes=axes, copy=copy)
-#    #--- End: def
-#
-#    def set_coordinate_reference(self, item, id=None, copy=True):
-#        '''Set a coordinate reference construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `CoordinateReference`
-#        TODO
-#
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='coordinatereference0'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#
-#        '''
-#        return self.set_construct('coordinate_reference',
-#                                  item, id=id, copy=copy)
-#    #--- End: def
-#
-#    def set_dimension_coordinate(self, item, axes=None, id=None,
-#                                 copy=True):
-#        '''Set a dimension coordinate construct.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `constructs`, `del_construct`, `get_construct`,
-#             `set_construct_axes`
-#
-#:Parameters:
-#
-#    item: `DimensionCoordinate`
-#        TODO
-#
-#    axes: sequence of `str`, optional
-#        The identifiers of the domain axes spanned by the data array.
-#
-#        The axes may also be set afterwards with the
-#        `set_construct_axes` method.
-#
-#        *Example:*
-#          ``axes=['domainaxis1']``
-#        
-#    id: `str`, optional
-#        The identifier of the construct. If not set then a new, unique
-#        identifier is created. If the identifier already exisits then
-#        the exisiting construct will be replaced.
-#
-#        *Example:*
-#          ``id='dimensioncoordinate1'``
-#        
-#    copy: `bool`, optional
-#        If False then do not copy the construct prior to insertion. By
-#        default it is copied.
-#        
-#:Returns:
-#
-#     out: `str`
-#        The identifier of the construct.
-#    
-#**Examples:**
-#
-#TODO
-#
-#        '''
-#        return self.set_construct('dimension_coordinate', item, id=id,
-#                                  axes=axes, copy=copy)
-#    #--- End: def
 
 #--- End: class

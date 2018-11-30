@@ -66,13 +66,13 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-        def _print_item(self, key, variable, dimension_coord):
+        def _print_item(self, cid, variable, dimension_coord):
             '''Private function called by __str__'''
             
             if dimension_coord:
                 # Dimension coordinate
-                axis = self.construct_axes(key)[0]
-                name = variable.name(ncvar=True, default=key)
+#                axis = self.construct_axes(cid)[0]
+                name = variable.name(ncvar=True, default=cid)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
                 elif hasattr(variable, 'nc_external'):
@@ -93,10 +93,10 @@ x.__str__() <==> str(x)
                 # Cell measure
                 # Field ancillary
                 # Domain ancillary
-                x = [variable.name(ncvar=True, default=key)]
+                x = [variable.name(ncvar=True, default=cid)]
 
                 if variable.has_data():
-                    shape = [axis_names[axis] for axis in self.construct_axes(key)]
+                    shape = [axis_names[axis] for axis in self.construct_axes(cid)]
                     shape = str(tuple(shape)).replace("'", "")
                     shape = shape.replace(',)', ')')
                     x.append(shape)
@@ -138,15 +138,15 @@ x.__str__() <==> str(x)
             string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
         # Auxiliary coordinates
-        x = [_print_item(self, aux, v, False) 
-             for aux, v in sorted(self.auxiliary_coordinates().items())]
+        x = [_print_item(self, cid, v, False) 
+             for cid, v in sorted(self.auxiliary_coordinates().items())]
         if x:
             string.append('Auxiliary coords: {}'.format(
                 '\n                : '.join(x)))
         
         # Cell measures
-        x = [_print_item(self, msr, v, False)
-             for msr, v in sorted(self.cell_measures().items())]
+        x = [_print_item(self, cid, v, False)
+             for cid, v in sorted(self.cell_measures().items())]
         if x:
             string.append('Cell measures   : {}'.format(
                 '\n                : '.join(x)))

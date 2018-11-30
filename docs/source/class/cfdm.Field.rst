@@ -34,6 +34,7 @@ Inspection
    ~cfdm.Field.field_ancillaries
    ~cfdm.Field.get_array
    ~cfdm.Field.get_construct
+   ~cfdm.Field.get_construct_axes
    ~cfdm.Field.get_data
    ~cfdm.Field.get_domain
    ~cfdm.Field.has_data

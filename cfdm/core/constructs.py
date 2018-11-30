@@ -512,15 +512,15 @@ None
         for axes in list(self.construct_axes().values()):
             d = {}
             for construct_type in self._array_constructs:
-                d[construct_type] = {}  #ARRAY CONSTRUCTS SHOULD CONTAIN GENERIC NAME, NOT KEY BASE .....
+                d[construct_type] = {}
 
             out[axes] = d
         #--- End: for
 
-        for key, construct in self.array_constructs().items():
-            axes = self.construct_axes(key)
-            construct_type = self._construct_type[key]
-            out[axes][construct_type][key] = construct
+        for cid, construct in self.array_constructs().items():
+            axes = self.construct_axes().get(cid)
+            construct_type = self._construct_type[cid]
+            out[axes][construct_type][cid] = construct
 
         return out
     #--- End: def

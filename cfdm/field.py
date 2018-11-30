@@ -1107,28 +1107,6 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
               
         return f
     #--- End: def
-    
-#    def get_read_report(self):
-#        '''Return the report of problems encountered whilst reading the field
-#construct from a dataset.
-#
-#.. versionadded:: 1.7
-#
-#.. seealso:: `dump_read_report`
-#
-#:Returns:
-#
-#    out: `dict`
-#        The report.
-#
-#**Examples:**
-#
-#>>> f.get_read_report()
-#{'humidity': {'dimensions': ('obs',), 'components': {}}}
-#
-#        '''
-#        return self._get_component('read_report', {})
-#    #--- End: def
    
     def read_report(self, display=True):
         '''A report of problems encountered whilst reading the field construct
