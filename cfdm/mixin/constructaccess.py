@@ -338,16 +338,13 @@ criteria.
 ...                     axes=['domainaxis1'])
 
         '''
-        c = self.constructs(description=description, cid=cid,
-                            construct_type=construct_type, axes=axes,
-                            copy=False)
-        if len(c) == 1:
-            cid, _ = c.popitem()
-            return self._get_constructs().del_construct(cid=cid)
+        key = self.get_construct_id(description=description, cid=cid,
+                                    construct_type=construct_type,
+                                    axes=axes, default=None)
+        if key is None:
+            raise ValueError("as 345 345 sdjh aiua oi ")
 
-        self.get_construct(description=description, cid=cid,
-                           construct_type=construct_type, axes=axes,
-                           copy=False)
+        return self._get_constructs().del_construct(cid=key)
     #--- End: def
 
     def get_construct(self, description=None, cid=None, axes=None,
@@ -450,7 +447,6 @@ criteria.
         *Example:*
           ``construct_type='dimension_coordinate'``
 
-
         *Example:*
           ``construct_type=['auxiliary_coordinate']``
 
@@ -477,10 +473,8 @@ criteria.
 
 :Returns:
 
-    out: `dict`
-
-        True if a unique construct has been identified, otherwise
-        False.
+    out:
+        The unique selected construct.
 
 **Examples:**
 
@@ -495,14 +489,12 @@ criteria.
         '''
         return self._get_constructs().get_construct(
             description=description, cid=cid,
-            construct_type=construct_type,
-            axes=axes,
-            copy=copy)
+            construct_type=construct_type, axes=axes, copy=copy)            
     #--- End: def
     
     def get_construct_axes(self, description=None, cid=None,
                            axes=None, construct_type=None,
-                           default=None):
+                           default=()):
         '''Return the domain axes spanned by a metadata construct data array.
 
 The construct is selected via optional parameters. The *unique*
@@ -623,8 +615,8 @@ criteria, then the *default* parameter is returned.
     default: optional
         Return *default* if there is not a unique construct that
         satisfies all of the given criteria and that has a data array
-        for which domain axes have been set. By default, `None` is
-        returned in these cases.
+        for which domain axes have been set. By default, an empty
+        tuple is returned in these cases.
 
 :Returns:
 
@@ -638,7 +630,157 @@ criteria, then the *default* parameter is returned.
 TODO
 
         '''
-        return self._get_constructs().construct_axes(cid=cid)
+        key = self.get_construct_id(description=description, cid=cid,
+                                    construct_type=construct_type,
+                                    axes=axes, default=None)
+
+        return self.construct_axes().get(key, default)
+    #--- End: def
+        
+    def get_construct_id(self, description=None, cid=None, axes=None,
+                         construct_type=None, default=None):
+        '''Return the domain axes spanned by a metadata construct data array.
+
+The construct is selected via optional parameters. The *unique*
+construct that satisfies *all* of the given criteria is selected. If
+there is not a unique construct that satisfies all of the given
+criteria, then the *default* parameter is returned.
+
+.. versionadded:: 1.7
+
+.. seealso:: `construct_axes`, `get_construct`, `set_construct_axes`
+
+:Parameters:
+
+    description: `str`, optional
+        Select the construct that have the given property, or other
+        attribute, value.
+
+        The description may be one of:
+
+        * The value of the standard name property on its own. 
+
+          *Example:*
+            ``description='air_pressure'`` will select constructs that
+            have a "standard_name" property with the value
+            "air_pressure".
+
+        * The value of any property prefixed by the property name and
+          a colon (``:``).
+
+          *Example:*
+            ``description='positive:up'`` will select constructs that
+            have a "positive" property with the value "up".
+
+          *Example:*
+            ``description='foo:bar'`` will select constructs that have
+            a "foo" property with the value "bar".
+
+          *Example:*
+            ``description='standard_name:air_pressure'`` will select
+            constructs that have a "standard_name" property with the
+            value "air_pressure".
+
+        * The measure of cell measure constructs, prefixed by
+          ``measure%``.
+
+          *Example:*
+            ``description='measure%area'`` will select "area" cell
+            measure constructs.
+
+        * A construct identifier, prefixed by ``cid%`` (see also the
+          *cid* parameter).
+
+          *Example:* 
+            ``description='cid%cellmethod1'`` will select cell method
+            construct with construct identifier "cellmethod1". This is
+            equivalent to ``cid='cellmethod1'``.
+
+        * The netCDF variable name, prefixed by ``ncvar%``.
+
+          *Example:*
+            ``description='ncvar%lat'`` will select constructs with
+            netCDF variable name "lat".
+
+        * The netCDF dimension name of domain axis constructs,
+          prefixed by ``ncdim%``.
+
+          *Example:*
+            ``description='ncdim%time'`` will select domain axis
+            constructs with netCDF dimension name "time".
+
+    cid: `str`, optional
+        Select the construct with the given construct identifier.
+
+        *Example:*
+          ``cid='domainancillary0'`` will the domain ancillary
+          construct with construct identifier "domainancillary0". This
+          is equivalent to ``description='cid%domainancillary0'``.
+
+    construct_type: `str`, optional
+        Select constructs of the given type. Valid types are:
+
+          ==========================  ================================
+          *construct_type*            Constructs
+          ==========================  ================================
+          ``'domain_ancillary'``      Domain ancillary constructs
+          ``'dimension_coordinate'``  Dimension coordinate constructs
+          ``'domain_axis'``           Domain axis constructs
+          ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+          ``'cell_measure'``          Cell measure constructs
+          ``'coordinate_reference'``  Coordinate reference constructs
+          ``'cell_method'``           Cell method constructs
+          ``'field_ancillary'``       Field ancillary constructs
+          ==========================  ================================
+
+        *Example:*
+          ``construct_type='dimension_coordinate'``
+
+        *Example:*
+          ``construct_type=['auxiliary_coordinate']``
+
+        *Example:*
+          ``construct_type=('domain_ancillary', 'cell_method')``
+
+        Note that a domain never contains cell method nor field
+        ancillary constructs.
+
+    axes: sequence of `str`, optional
+        Select constructs which have data that spans one or more of
+        the given domain axes, in any order. Domain axes are specified
+        by their construct identifiers.
+
+        *Example:*
+          ``axes=['domainaxis2']``
+
+        *Example:*
+          ``axes=['domainaxis0', 'domainaxis1']``
+
+    default: optional
+        Return *default* if there is not a unique construct that
+        satisfies all of the given criteria. By default, `None` is
+        returned in this case.
+
+:Returns:
+
+    out: 
+        The identifiers of the domain axis constructs spanned by the
+        unique selected construct's data array. If there are no such
+        domain axis constructs, then *default* is returned.
+
+**Examples:**
+
+TODO
+
+        '''
+        c = self.constructs(description=description, cid=cid,
+                            construct_type=construct_type, axes=axes,
+                            copy=False)
+        if len(c) == 1:
+            cid, _ = c.popitem()
+            return cid
+
+        return default
     #--- End: def
     
     def has_construct(self, description=None, cid=None, axes=None,

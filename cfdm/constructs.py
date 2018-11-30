@@ -10,8 +10,8 @@ class Constructs(core.Constructs):
 .. versionadded:: 1.7
 
     '''    
-    def get_construct(self, description=None, cid=None, construct_type=None,
-                      axes=None, copy=False):
+    def get_construct(self, description=None, cid=None,
+                      construct_type=None, axes=None, copy=False):
         '''Return a metadata construct.
 
 :Parameters:
@@ -20,7 +20,7 @@ class Constructs(core.Constructs):
 
     out:
 
-**Examples**
+**Examples:**
 
         '''
         out = self.constructs(description=description, cid=cid,
@@ -30,7 +30,7 @@ class Constructs(core.Constructs):
         if not out:
             raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
         
-        key, construct = out.popitem()
+        _, construct = out.popitem()
         if out:
             raise ValueError("More than one construct meets criteria")
             
