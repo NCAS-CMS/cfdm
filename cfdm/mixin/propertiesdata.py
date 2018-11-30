@@ -9,9 +9,8 @@ class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.
 
     '''
-
     def __getitem__(self, indices):
-        '''Return a subspace of the construct defined by indices
+        '''Return a subspace defined by indices
 
 f.__getitem__(indices) <==> f[indices]
 
@@ -29,7 +28,7 @@ rules, the only differences being:
 :Returns:
 
     out:
-        The subspace of the construct.
+        The subspace.
 
 **Examples:**
 
@@ -190,7 +189,7 @@ standard_name = 'time'
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
-        '''Whether two data arrays with descriptive properties are the same.
+        '''Whether two instances are the same.
 
 Equality is strict by default. This means that:
 
@@ -215,8 +214,8 @@ underlying compressed arrays must be the same, as well as the arrays
 in their uncompressed forms. See the *ignore_compression* parameter.
 
 Any type of object may be tested but, in general, equality is only
-possible with another field construct, or a subclass of one. See the
-*ignore_type* parameter.
+possible with another object of the same type, or a subclass of
+one. See the *ignore_type* parameter.
 
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
@@ -261,11 +260,10 @@ constitute part of the CF data model and so are not checked.
         the arrays in their uncompressed forms
 
     ignore_type: `bool`, optional
-         Any type of object may be tested but, in general, equality is
-        only possible with another TODO, or a subclass of one. If
-        *ignore_type* is True then then
-        ``PropertiesData(source=other)`` is tested, rather than the
-        ``other`` defined by the *other* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. If *ignore_type* is True then equality is
+        possible for any object with a compatible API.
 
 :Returns: 
   
@@ -274,11 +272,11 @@ constitute part of the CF data model and so are not checked.
 
 **Examples:**
 
->>> p.equals(p)
+>>> x.equals(x)
 True
->>> p.equals(p.copy())
+>>> x.equals(x.copy())
 True
->>> p.equals('not a colection of properties')
+>>> x.equals('something else')
 False
 
         '''
@@ -376,7 +374,7 @@ Insert a new size 1 axis into the data array.
 :Returns:
 
     out:
-        The new construct with expanded data axes.
+        A new instance with expanded data axes.
 
 **Examples:**
 
@@ -433,18 +431,14 @@ first axis which is to have a chunk size of 12:
 
     def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
-        '''Return a name for the construct.
+        '''Return a name.
 
 By default the name is the first found of the following:
 
 1. The "standard_name" property.
-
 2. The "cf_role" property, preceeded by ``'cf_role:'``.
-
 3. The "long_name" property, preceeded by ``'long_name:'``.
-
 4. The netCDF variable name, preceeded by ``'ncvar%'``.
-
 5. The value of the *default* parameter.
 
 .. versionadded:: 1.7
@@ -452,19 +446,54 @@ By default the name is the first found of the following:
 :Parameters:
 
     default: optional
-        TODO If no name can be found then return the value of the
-        *default* parameter. By default the default is `None`.
+        If no name can be found then return the value of the *default*
+        parameter. By default the default is `None`.
 
     ncvar: `bool`, optional
+        If False then do not consider the netCDF variable name.
+
+    all_names: `bool`, optional
+        If True then return a list of all possible names.
+
+    custom: sequence of `str`, optional
+        Replace the ordered list of properties from which to find a
+        name. The default list is ``['standard_name', 'cf_role',
+        'long_name']``.
+
+        *Example:*
+          ``custom=['project']``
+
+        *Example:*
+          ``custom=['project', 'long_name']``
 
 :Returns:
 
     out:
-        The name.
+        The name. If the *all_names* parameters is True then a list of
+        all possible names.
 
 **Examples:**
 
-TODO
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Air Temperature',
+ 'standard_name': 'air_temperature'}
+>>> f.nc_get_variable()
+'tas'
+>>> f.name()
+'air_temperature'
+>>> f.name(all_names=True)
+['air_temperature', 'long_name:Air Temperature', 'ncvar:tas']
+>>> x = f.del_property('standard_name')
+>>> f.name()
+'long_name:Air Temperature'
+>>> x = f.del_property('long_name')
+>>> f.name()
+'ncvar:tas'
+>>> f.name(custom=['foo'])
+'foo:bar'
+>>> f.name(default='no name', custom=['foo'])
+['foo:bar', 'no name']
 
         '''
         out = []
@@ -540,7 +569,7 @@ may be selected for removal.
 :Returns:
 
     out:
-        The new construct with removed data axes.
+        A new instance with removed data axes.
 
 **Examples:**
 
@@ -587,7 +616,7 @@ may be selected for removal.
 :Returns:
 
     out: 
-         The new construct with permuted data axes.
+         A new instance with permuted data axes.
 
 **Examples:**
 
