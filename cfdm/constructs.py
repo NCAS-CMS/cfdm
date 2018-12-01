@@ -10,32 +10,32 @@ class Constructs(core.Constructs):
 .. versionadded:: 1.7
 
     '''    
-    def get_construct(self, description=None, cid=None,
-                      construct_type=None, axes=None, copy=False):
-        '''Return a metadata construct.
-
-:Parameters:
-
-:Returns:
-
-    out:
-
-**Examples:**
-
-        '''
-        out = self.constructs(description=description, cid=cid,
-                              construct_type=construct_type,
-                              axes=axes, copy=copy)
-
-        if not out:
-            raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
-        
-        _, construct = out.popitem()
-        if out:
-            raise ValueError("More than one construct meets criteria")
-            
-        return construct
-    #--- End: def
+#    def get_construct(self, description=None, cid=None,
+#                      construct_type=None, axes=None, copy=False):
+#        '''Return a metadata construct.
+#
+#:Parameters:
+#
+#:Returns:
+#
+#    out:
+#
+#**Examples:**
+#
+#        '''
+#        out = self.constructs(description=description, cid=cid,
+#                              construct_type=construct_type,
+#                              axes=axes, copy=copy)
+#
+#        if not out:
+#            raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
+#        
+#        _, construct = out.popitem()
+#        if out:
+#            raise ValueError("More than one construct meets criteria")
+#            
+#        return construct
+#    #--- End: def
         
     def constructs(self, description=None, cid=None, axes=None,
                    construct_type=None, copy=False):

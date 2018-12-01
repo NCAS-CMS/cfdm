@@ -487,9 +487,22 @@ criteria.
 ...                     axes=['domainaxis1'])
 
         '''
-        return self._get_constructs().get_construct(
-            description=description, cid=cid,
-            construct_type=construct_type, axes=axes, copy=copy)            
+        out = self.constructs(description=description, cid=cid,
+                              construct_type=construct_type,
+                              axes=axes, copy=copy)
+
+        if not out:
+            raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
+        
+        _, construct = out.popitem()
+        if out:
+            raise ValueError("More than one construct meets criteria")
+            
+        return construct
+    
+#        return self._get_constructs().get_construct(
+#            description=description, cid=cid,
+#            construct_type=construct_type, axes=axes, copy=copy)            
     #--- End: def
     
     def get_construct_axes(self, description=None, cid=None,
@@ -639,7 +652,7 @@ TODO
         
     def get_construct_id(self, description=None, cid=None, axes=None,
                          construct_type=None, default=None):
-        '''Return the domain axes spanned by a metadata construct data array.
+        '''Return the identifier for a metadata construct.
 
 The construct is selected via optional parameters. The *unique*
 construct that satisfies *all* of the given criteria is selected. If
@@ -648,7 +661,7 @@ criteria, then the *default* parameter is returned.
 
 .. versionadded:: 1.7
 
-.. seealso:: `construct_axes`, `get_construct`, `set_construct_axes`
+.. seealso:: `constructs`, `get_construct`, `get_construct_axes`
 
 :Parameters:
 
@@ -764,9 +777,8 @@ criteria, then the *default* parameter is returned.
 :Returns:
 
     out: 
-        The identifiers of the domain axis constructs spanned by the
-        unique selected construct's data array. If there are no such
-        domain axis constructs, then *default* is returned.
+        The identifier of the unique selected construct. If there are
+        no such domain axis constructs, then *default* is returned.
 
 **Examples:**
 
@@ -776,11 +788,17 @@ TODO
         c = self.constructs(description=description, cid=cid,
                             construct_type=construct_type, axes=axes,
                             copy=False)
-        if len(c) == 1:
-            cid, _ = c.popitem()
-            return cid
+        if not c:
+            # No construct selected
+            return default
+            
+        cid, _ = c.popitem()
+        if c:
+            # More than one construct selected
+            return default
 
-        return default
+        # A unique construct selected
+        return cid
     #--- End: def
     
     def has_construct(self, description=None, cid=None, axes=None,
@@ -937,8 +955,8 @@ returned.
 
 .. versionadded:: 1.7
 
-.. seealso:: `del_construct`, `get_construct`, `has_construct`,
-             `set_construct`
+.. seealso:: `del_construct`, `get_construct`, `get_construct_axes`,
+             `get_construct_id`, `has_construct`, `set_construct`
 
 :Parameters:
 
@@ -968,7 +986,9 @@ returned.
 
             *Example:*
               ``description='standard_name:air_pressure'`` will select
-              constructs that have a "standard_name" property with the
+              constructs that have
+
+        a "standard_name" property with the
               value "air_pressure".
 
         * The measure of cell measure constructs, prefixed by
