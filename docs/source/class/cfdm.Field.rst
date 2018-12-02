@@ -35,6 +35,7 @@ Inspection
    ~cfdm.Field.get_array
    ~cfdm.Field.get_construct
    ~cfdm.Field.get_construct_axes
+   ~cfdm.Field.get_construct_id
    ~cfdm.Field.get_data
    ~cfdm.Field.get_domain
    ~cfdm.Field.has_data
@@ -113,6 +114,8 @@ Metadata constructs
    ~cfdm.Field.construct_axes
    ~cfdm.Field.del_construct
    ~cfdm.Field.get_construct
+   ~cfdm.Field.get_construct_axes
+   ~cfdm.Field.get_construct_id
    ~cfdm.Field.has_construct
    ~cfdm.Field.set_construct
    ~cfdm.Field.set_construct_axes

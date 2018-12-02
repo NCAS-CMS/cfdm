@@ -9,7 +9,7 @@
     <title>Tutorial &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -95,7 +95,7 @@
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>Version 1.7b7 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7b8 for version 1.7 of the CF conventions.</p>
 <hr class="docutils" />
 <p>The code examples in this tutorial are available in an <strong>IPython
 Jupyter notebook</strong> (<a class="reference download internal" href="_downloads/tutorial.ipynb" download=""><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>,
@@ -1218,16 +1218,17 @@ written as a CF-netCDF size one coordinate variable, the field
 construct’s data must be expanded to span the corresponding size one
 domain axis construct, by using the <a class="reference internal" href="method/cfdm.Field.expand_dims.html#cfdm.Field.expand_dims" title="cfdm.Field.expand_dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expand_dims</span></code></a> method of the
 field construct:</p>
-<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%humidity)</span>
+<span class="go">-----------------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="go">&lt;Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">dimension_coordinates</span><span class="p">()</span>
-<span class="go">{&#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
-<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: longitude(8) degrees_east&gt;,</span>
-<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: time(1) days since 2018-12-01 &gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">construct_axes</span><span class="p">()</span>
-<span class="go">{&#39;dimensioncoordinate0&#39;: (&#39;domainaxis0&#39;,),</span>
-<span class="go"> &#39;dimensioncoordinate1&#39;: (&#39;domainaxis1&#39;,),</span>
-<span class="go"> &#39;dimensioncoordinate2&#39;: (&#39;domainaxis2&#39;,)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">get_construct_axes</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="go">(&#39;domainaxis2&#39;,)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q2</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q2</span>
 <span class="go">&lt;Field: specific_humidity(time(1), latitude(5), longitude(8)) 1&gt;</span>
@@ -2485,8 +2486,8 @@ intended.</td></tr>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

@@ -9,7 +9,7 @@
     <title>cfdm.CoordinateReference.del_datum &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -88,29 +88,35 @@
 <h1>cfdm.CoordinateReference.del_datum<a class="headerlink" href="#cfdm-coordinatereference-del-datum" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CoordinateReference.del_datum">
-<code class="descclassname">CoordinateReference.</code><code class="descname">del_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/coordinatereference.py#L334"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.del_datum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove the datum.</p>
+<code class="descclassname">CoordinateReference.</code><code class="descname">del_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/coordinatereference.py#L328"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.del_datum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the datum component.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
-<p>..seealso:: <a class="reference internal" href="../attribute/cfdm.CoordinateReference.datum.html#cfdm.CoordinateReference.datum" title="cfdm.CoordinateReference.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a>, <a class="reference internal" href="cfdm.CoordinateReference.get_datum.html#cfdm.CoordinateReference.get_datum" title="cfdm.CoordinateReference.get_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datum</span></code></a>, <a class="reference internal" href="cfdm.CoordinateReference.has_datum.html#cfdm.CoordinateReference.has_datum" title="cfdm.CoordinateReference.has_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_datum</span></code></a>, <a class="reference internal" href="cfdm.CoordinateReference.set_datum.html#cfdm.CoordinateReference.set_datum" title="cfdm.CoordinateReference.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a></p>
-<blockquote>
-<div><blockquote>
-<div><table class="docutils field-list" frame="void" rules="none">
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../attribute/cfdm.CoordinateReference.datum.html#cfdm.CoordinateReference.datum" title="cfdm.CoordinateReference.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a>, <a class="reference internal" href="cfdm.CoordinateReference.get_datum.html#cfdm.CoordinateReference.get_datum" title="cfdm.CoordinateReference.get_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datum</span></code></a>, <a class="reference internal" href="cfdm.CoordinateReference.set_datum.html#cfdm.CoordinateReference.set_datum" title="cfdm.CoordinateReference.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out: </dt>
+<dd><p class="first last">The removed datum component.</p>
+</dd>
+</dl>
+</td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
-<dl class="docutils">
-<dt>out: </dt>
-<dd>The removed datum.</dd>
-</dl>
-</div></blockquote>
-<p><strong>Examples</strong></p>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">del_datum</span><span class="p">()</span>
+<span class="go">&lt;Datum: Parameters(earth_radius)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_datum</span><span class="p">()</span>
+<span class="go">&lt;Datum: &gt;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -125,8 +131,8 @@
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.CoordinateReference.del_datum.rst.txt"

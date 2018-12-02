@@ -9,7 +9,7 @@
     <title>cfdm.mixin.PropertiesData.name &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -73,8 +73,8 @@
 <h1>cfdm.mixin.PropertiesData.name<a class="headerlink" href="#cfdm-mixin-propertiesdata-name" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.mixin.PropertiesData.name">
-<code class="descclassname">PropertiesData.</code><code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncvar=True</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/mixin/propertiesdata.py#L434"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.PropertiesData.name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a name for the construct.</p>
+<code class="descclassname">PropertiesData.</code><code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncvar=True</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/mixin/propertiesdata.py#L432"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.PropertiesData.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a name.</p>
 <p>By default the name is the first found of the following:</p>
 <ol class="arabic simple">
 <li>The “standard_name” property.</li>
@@ -92,16 +92,35 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>default: optional</dt>
-<dd><p class="first last">TODO If no name can be found then return the value of the
-<em>default</em> parameter. By default the default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dd><p class="first last">If no name can be found then return the value of the <em>default</em>
+parameter. By default the default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>ncvar: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then do not consider the netCDF variable name.</p>
+</dd>
+<dt>all_names: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then return a list of all possible names.</p>
+</dd>
+<dt>custom: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Replace the ordered list of properties from which to find a
+name. The default list is <code class="docutils literal notranslate"><span class="pre">['standard_name',</span> <span class="pre">'cf_role',</span>
+<span class="pre">'long_name']</span></code>.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">custom=['project']</span></code></p>
+</dd>
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">custom=['project',</span> <span class="pre">'long_name']</span></code></p>
 </dd>
 </dl>
-<p>ncvar: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</p>
+</dd>
+</dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out:</dt>
-<dd><p class="first last">The name.</p>
+<dd><p class="first last">The name. If the <em>all_names</em> parameters is True then a list of
+all possible names.</p>
 </dd>
 </dl>
 </td>
@@ -109,7 +128,28 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;foo&#39;: &#39;bar&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &#39;Air Temperature&#39;,</span>
+<span class="go"> &#39;standard_name&#39;: &#39;air_temperature&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
+<span class="go">&#39;tas&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="go">&#39;air_temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">all_names</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">[&#39;air_temperature&#39;, &#39;long_name:Air Temperature&#39;, &#39;ncvar:tas&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="go">&#39;long_name:Air Temperature&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;long_name&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+<span class="go">&#39;ncvar:tas&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">custom</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">])</span>
+<span class="go">&#39;foo:bar&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;no name&#39;</span><span class="p">,</span> <span class="n">custom</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">])</span>
+<span class="go">[&#39;foo:bar&#39;, &#39;no name&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -124,8 +164,8 @@
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.mixin.PropertiesData.name.rst.txt"

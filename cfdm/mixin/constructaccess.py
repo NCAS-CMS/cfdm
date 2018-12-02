@@ -340,7 +340,7 @@ criteria.
         '''
         key = self.get_construct_id(description=description, cid=cid,
                                     construct_type=construct_type,
-                                    axes=axes, default=None)
+                                    axes=axes)
         if key is None:
             raise ValueError("as 345 345 sdjh aiua oi ")
 
@@ -506,14 +506,13 @@ criteria.
     #--- End: def
     
     def get_construct_axes(self, description=None, cid=None,
-                           axes=None, construct_type=None,
-                           default=()):
+                           axes=None, construct_type=None):
         '''Return the domain axes spanned by a metadata construct data array.
 
 The construct is selected via optional parameters. The *unique*
 construct that satisfies *all* of the given criteria is selected. If
 there is not a unique construct that satisfies all of the given
-criteria, then the *default* parameter is returned.
+criteria, then an empty tuple is returned.
 
 .. versionadded:: 1.7
 
@@ -625,18 +624,12 @@ criteria, then the *default* parameter is returned.
         *Example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
-    default: optional
-        Return *default* if there is not a unique construct that
-        satisfies all of the given criteria and that has a data array
-        for which domain axes have been set. By default, an empty
-        tuple is returned in these cases.
-
 :Returns:
 
-    out: 
+    out: `tuple`
         The identifiers of the domain axis constructs spanned by the
         unique selected construct's data array. If there are no such
-        domain axis constructs, then *default* is returned.
+        domain axis constructs, then an empty tuple is returned
 
 **Examples:**
 
@@ -645,19 +638,22 @@ TODO
         '''
         key = self.get_construct_id(description=description, cid=cid,
                                     construct_type=construct_type,
-                                    axes=axes, default=None)
+                                    axes=axes)
 
-        return self.construct_axes().get(key, default)
+        if key is None:
+            return ()
+            
+        return self.construct_axes()[key]
     #--- End: def
         
     def get_construct_id(self, description=None, cid=None, axes=None,
-                         construct_type=None, default=None):
+                         construct_type=None):
         '''Return the identifier for a metadata construct.
 
 The construct is selected via optional parameters. The *unique*
 construct that satisfies *all* of the given criteria is selected. If
 there is not a unique construct that satisfies all of the given
-criteria, then the *default* parameter is returned.
+criteria, then the `None` is returned.
 
 .. versionadded:: 1.7
 
@@ -769,16 +765,11 @@ criteria, then the *default* parameter is returned.
         *Example:*
           ``axes=['domainaxis0', 'domainaxis1']``
 
-    default: optional
-        Return *default* if there is not a unique construct that
-        satisfies all of the given criteria. By default, `None` is
-        returned in this case.
-
 :Returns:
 
-    out: 
+    out: `str` or `None`
         The identifier of the unique selected construct. If there are
-        no such domain axis constructs, then *default* is returned.
+        no such domain axis constructs, then `None` is returned.
 
 **Examples:**
 
@@ -788,14 +779,11 @@ TODO
         c = self.constructs(description=description, cid=cid,
                             construct_type=construct_type, axes=axes,
                             copy=False)
-        if not c:
-            # No construct selected
-            return default
+        if len(c) != 1:
+            # 0 or 2 or more constructs selected
+            return
             
         cid, _ = c.popitem()
-        if c:
-            # More than one construct selected
-            return default
 
         # A unique construct selected
         return cid

@@ -9,7 +9,7 @@
     <title>Philosophy &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -39,7 +39,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Philosophy</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#functionality"><strong>Functionality</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#api"><strong>API</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#optimisation"><strong>Optimisation</strong></a></li>
 </ul>
 </li>
 </ul>
@@ -78,7 +77,7 @@
             
   <div class="section" id="philosophy">
 <span id="id1"></span><h1><strong>Philosophy</strong><a class="headerlink" href="#philosophy" title="Permalink to this headline">¶</a></h1>
-<p>Version 1.7b7 for version 1.7 of the CF conventions.</p>
+<p>Version 1.7b8 for version 1.7 of the CF conventions.</p>
 <hr class="docutils" />
 <p>The basic requirement of the reference implementation is to represent
 the logical CF data model in memory with a package of Python classes,
@@ -96,9 +95,9 @@ capabilities.</p>
 <div class="section" id="functionality">
 <h2><strong>Functionality</strong><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
 <p>The cfdm package has, with very few exceptions, only the functionality
-required to read and write datasets and to create, inspect field
+required to read and write datasets, and to create and inspect field
 constructs in memory.</p>
-<p>The cfdm package is <em>not</em>, and is not meant to be, a general analysis
+<p>The cfdm package is not, and is not meant to be, a general analysis
 package. Therefore it can’t, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc.</p>
@@ -117,7 +116,7 @@ function.</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cfdm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Field</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;altitude&#39;</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="s1">&#39;domain_axis&#39;</span><span class="p">,</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axis</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">cfdm</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">NumpyArray</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">115.</span><span class="p">])))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_array</span><span class="p">())</span>
@@ -140,10 +139,6 @@ function.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="optimisation">
-<h2><strong>Optimisation</strong><a class="headerlink" href="#optimisation" title="Permalink to this headline">¶</a></h2>
-<p>Very little effort has been put in</p>
-</div>
 </div>
 
 
@@ -156,8 +151,8 @@ function.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/philosophy.rst.txt"

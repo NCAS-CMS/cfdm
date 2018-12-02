@@ -1132,16 +1132,17 @@ field construct:
 
 .. code:: python
 		   
-   >>> q
+   >>> print(q)
+   Field: specific_humidity (ncvar%humidity)
+   -----------------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> q.dimension_coordinates()
-   {'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-    'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-    'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-   >>> q.construct_axes()
-   {'dimensioncoordinate0': ('domainaxis0',),
-    'dimensioncoordinate1': ('domainaxis1',),
-    'dimensioncoordinate2': ('domainaxis2',)}
+   >>> q.get_construct_axes('time')
+   ('domainaxis2',)
    >>> q2 = q.expand_dims(axis='domainaxis2')
    >>> q2
    <Field: specific_humidity(time(1), latitude(5), longitude(8)) 1>

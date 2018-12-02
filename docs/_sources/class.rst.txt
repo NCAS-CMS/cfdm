@@ -78,6 +78,26 @@ Classes that support the creation and storage of compressed arrays.
    cfdm.RaggedIndexedContiguousArray
    cfdm.CompressedArray
 
+.. Mixin classes
+
+   .. toctree::
+      :hidden:   
+      
+      cfdm.mixin.ConstructAccess
+      cfdm.mixin.Container
+      cfdm.mixin.Coordinate
+      cfdm.mixin.NetCDFDataVariable
+      cfdm.mixin.NetCDFDimension
+      cfdm.mixin.NetCDFExternal
+      cfdm.mixin.NetCDFInstanceDimension,
+      cfdm.mixin.NetCDFSampleDimension,
+      cfdm.mixin.NetCDFVariable
+      cfdm.mixin.Parameters
+      cfdm.mixin.ParametersDomainAncillaries
+      cfdm.mixin.Properties
+      cfdm.mixin.PropertiesData
+      cfdm.mixin.PropertiesDataBounds
+   
 .. **Mixin classes**
    ------------------
    

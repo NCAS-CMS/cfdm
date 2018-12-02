@@ -10,7 +10,7 @@
     <title>Index &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -1338,14 +1338,24 @@
         <li><a href="class/cfdm.core.mixin.ConstructAccess.html#cfdm.core.mixin.ConstructAccess.get_construct">(cfdm.core.mixin.ConstructAccess method)</a>
 </li>
       </ul></li>
+      <li><a href="class/cfdm.core.Domain.html#cfdm.core.Domain.get_construct_axes">get_construct_axes() (cfdm.core.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cfdm.Field.get_construct_axes.html#cfdm.Field.get_construct_axes">(cfdm.Field method)</a>
+</li>
+        <li><a href="class/cfdm.core.mixin.ConstructAccess.html#cfdm.core.mixin.ConstructAccess.get_construct_axes">(cfdm.core.mixin.ConstructAccess method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="method/cfdm.Field.get_construct_id.html#cfdm.Field.get_construct_id">get_construct_id() (cfdm.Field method)</a>
+</li>
       <li><a href="method/cfdm.CoordinateReference.get_coordinate_conversion.html#cfdm.CoordinateReference.get_coordinate_conversion">get_coordinate_conversion() (cfdm.CoordinateReference method)</a>
 
       <ul>
         <li><a href="class/cfdm.core.CoordinateReference.html#cfdm.core.CoordinateReference.get_coordinate_conversion">(cfdm.core.CoordinateReference method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.Data.get_count_variable.html#cfdm.Data.get_count_variable">get_count_variable() (cfdm.Data method)</a>
 </li>
       <li><a href="method/cfdm.AuxiliaryCoordinate.get_data.html#cfdm.AuxiliaryCoordinate.get_data">get_data() (cfdm.AuxiliaryCoordinate method)</a>
@@ -1582,12 +1592,6 @@
         <li><a href="class/cfdm.core.mixin.ConstructAccess.html#cfdm.core.mixin.ConstructAccess.has_construct">(cfdm.core.mixin.ConstructAccess method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cfdm.CoordinateReference.has_coordinate_conversion.html#cfdm.CoordinateReference.has_coordinate_conversion">has_coordinate_conversion() (cfdm.CoordinateReference method)</a>
-
-      <ul>
-        <li><a href="class/cfdm.core.CoordinateReference.html#cfdm.core.CoordinateReference.has_coordinate_conversion">(cfdm.core.CoordinateReference method)</a>
-</li>
-      </ul></li>
       <li><a href="method/cfdm.AuxiliaryCoordinate.has_data.html#cfdm.AuxiliaryCoordinate.has_data">has_data() (cfdm.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -1630,20 +1634,14 @@
         <li><a href="class/cfdm.core.abstract.PropertiesDataBounds.html#cfdm.core.abstract.PropertiesDataBounds.has_data">(cfdm.core.abstract.PropertiesDataBounds method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cfdm.CoordinateReference.has_datum.html#cfdm.CoordinateReference.has_datum">has_datum() (cfdm.CoordinateReference method)</a>
-
-      <ul>
-        <li><a href="class/cfdm.core.CoordinateReference.html#cfdm.core.CoordinateReference.has_datum">(cfdm.core.CoordinateReference method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="class/cfdm.core.abstract.Coordinate.html#cfdm.core.abstract.Coordinate.has_geometry">has_geometry() (cfdm.core.abstract.Coordinate method)</a>
 
       <ul>
         <li><a href="class/cfdm.core.abstract.PropertiesDataBounds.html#cfdm.core.abstract.PropertiesDataBounds.has_geometry">(cfdm.core.abstract.PropertiesDataBounds method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="class/cfdm.core.abstract.Coordinate.html#cfdm.core.abstract.Coordinate.has_interior_ring">has_interior_ring() (cfdm.core.abstract.Coordinate method)</a>
 
       <ul>
@@ -1916,6 +1914,8 @@
         <li><a href="method/cfdm.mixin.NetCDFInstanceDimension.nc_has_instance_dimension.html#cfdm.mixin.NetCDFInstanceDimension.nc_has_instance_dimension">(cfdm.mixin.NetCDFInstanceDimension method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.Count.nc_has_sample_dimension.html#cfdm.Count.nc_has_sample_dimension">nc_has_sample_dimension() (cfdm.Count method)</a>
 
       <ul>
@@ -1924,8 +1924,6 @@
         <li><a href="method/cfdm.mixin.NetCDFSampleDimension.nc_has_sample_dimension.html#cfdm.mixin.NetCDFSampleDimension.nc_has_sample_dimension">(cfdm.mixin.NetCDFSampleDimension method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cfdm.AuxiliaryCoordinate.nc_has_variable.html#cfdm.AuxiliaryCoordinate.nc_has_variable">nc_has_variable() (cfdm.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -2046,16 +2044,6 @@
 </li>
       <li><a href="class/cfdm.mixin.NetCDFVariable.html#cfdm.mixin.NetCDFVariable">NetCDFVariable (class in cfdm.mixin)</a>
 </li>
-      <li><a href="method/cfdm.Bounds.next.html#cfdm.Bounds.next">next() (cfdm.Bounds method)</a>
-
-      <ul>
-        <li><a href="method/cfdm.CoordinateConversion.next.html#cfdm.CoordinateConversion.next">(cfdm.CoordinateConversion method)</a>
-</li>
-        <li><a href="method/cfdm.Domain.next.html#cfdm.Domain.next">(cfdm.Domain method)</a>
-</li>
-        <li><a href="method/cfdm.NetCDFArray.next.html#cfdm.NetCDFArray.next">(cfdm.NetCDFArray method)</a>
-</li>
-      </ul></li>
       <li><a href="class/cfdm.NumpyArray.html#cfdm.NumpyArray">NumpyArray (class in cfdm)</a>
 
       <ul>
@@ -2582,8 +2570,8 @@
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

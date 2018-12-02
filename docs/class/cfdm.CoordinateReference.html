@@ -9,7 +9,7 @@
     <title>cfdm.CoordinateReference &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -87,7 +87,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateReference">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/coordinatereference.py#L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/coordinatereference.py#L45"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of the
@@ -108,26 +108,27 @@ exclusively associated with any coordinate system.</p>
 by a coordinate reference construct which relates the coordinate
 values of the coordinate system to locations in a planetary reference
 frame and consists of the following:</p>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>References to the dimension coordinate and auxiliary coordinate
-constructs that define the coordinate system to which the
-coordinate reference construct applies. Note that the coordinate
-values are not relevant to the coordinate reference construct,
-only their properties.</li>
+constructs that define the coordinate system to which the coordinate
+reference construct applies. Note that the coordinate values are not
+relevant to the coordinate reference construct, only their
+properties.</li>
+</ul>
+<ul class="simple">
 <li>A definition of a datum specifying the zeroes of the dimension and
 auxiliary coordinate constructs which define the coordinate
 system. The datum may be implied by the metadata of the referenced
 dimension and auxiliary coordinate constructs, or explicitly
-provided by a <a class="reference internal" href="cfdm.Datum.html#cfdm.Datum" title="cfdm.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a> instance.</li>
+provided.</li>
+</ul>
+<ul class="simple">
 <li>A coordinate conversion, which defines a formula for converting
 coordinate values taken from the dimension or auxiliary coordinate
-constructs to a different coordinate system. A coordinate
-reference construct relates the coordinate values of the field to
-locations in a planetary reference frame. The coordinate
-conversion formula is stored in a <a class="reference internal" href="cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a> instance.</li>
+constructs to a different coordinate system. A coordinate reference
+construct relates the coordinate values of the field to locations in
+a planetary reference frame.</li>
 </ul>
-</div></blockquote>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -153,13 +154,13 @@ constructs by their construct identifiers. Ignored if the
 <a class="reference internal" href="../method/cfdm.CoordinateReference.coordinates.html#cfdm.CoordinateReference.coordinates" title="cfdm.CoordinateReference.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a> and <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate.html#cfdm.CoordinateReference.set_coordinate" title="cfdm.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a> methods.</p>
 </dd>
 <dt>datum: <a class="reference internal" href="cfdm.Datum.html#cfdm.Datum" title="cfdm.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a>, optional</dt>
-<dd><p class="first">Define the datum component of the coordinate reference
+<dd><p class="first">Set the datum component of the coordinate reference
 construct. Ignored if the <em>source</em> parameter is set.</p>
 <p class="last">The datum may also be set after initialisation with the
 <a class="reference internal" href="../method/cfdm.CoordinateReference.set_datum.html#cfdm.CoordinateReference.set_datum" title="cfdm.CoordinateReference.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a> method.</p>
 </dd>
 <dt>coordinate_conversion: <a class="reference internal" href="cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a>, optional</dt>
-<dd><p class="first">Define the coordinate conversion component of the coordinate
+<dd><p class="first">Set the coordinate conversion component of the coordinate
 reference construct. Ignored if the <em>source</em> parameter is set.</p>
 <p class="last">The coordinate conversion may also be set after initialisation
 with the <a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate_conversion.html#cfdm.CoordinateReference.set_coordinate_conversion" title="cfdm.CoordinateReference.set_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code></a> method.</p>
@@ -188,31 +189,25 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.coordinates.html#cfdm.CoordinateReference.coordinates" title="cfdm.CoordinateReference.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a></td>
-<td>Return or replace the identifiers of the coordinate objects that define the coordinate system.</td>
+<td>Return or replace all references to coordinate constructs.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.del_coordinate.html#cfdm.CoordinateReference.del_coordinate" title="cfdm.CoordinateReference.del_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate</span></code></a></td>
-<td>Delete the identifier of a coordinate object that defines the coordinate system.</td>
+<td>Remove a reference to a coordinate construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.del_coordinate_conversion.html#cfdm.CoordinateReference.del_coordinate_conversion" title="cfdm.CoordinateReference.del_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_conversion</span></code></a></td>
-<td>Remove the coordinate conversion.</td>
+<td>Remove the coordinate conversion component.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.del_datum.html#cfdm.CoordinateReference.del_datum" title="cfdm.CoordinateReference.del_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_datum</span></code></a></td>
-<td>Remove the datum.</td>
+<td>Remove the datum component.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.dump.html#cfdm.CoordinateReference.dump" title="cfdm.CoordinateReference.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
 <td>A full description of the coordinate reference construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.get_coordinate_conversion.html#cfdm.CoordinateReference.get_coordinate_conversion" title="cfdm.CoordinateReference.get_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_conversion</span></code></a></td>
-<td>Get the coordinate conversion.</td>
+<td>Get the coordinate conversion component.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.get_datum.html#cfdm.CoordinateReference.get_datum" title="cfdm.CoordinateReference.get_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datum</span></code></a></td>
-<td>Return the datum.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.has_coordinate_conversion.html#cfdm.CoordinateReference.has_coordinate_conversion" title="cfdm.CoordinateReference.has_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_coordinate_conversion</span></code></a></td>
-<td>TODO</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.has_datum.html#cfdm.CoordinateReference.has_datum" title="cfdm.CoordinateReference.has_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_datum</span></code></a></td>
-<td>TODO</td>
+<td>Return the datum component.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.name.html#cfdm.CoordinateReference.name" title="cfdm.CoordinateReference.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
 <td>Return a name.</td>
@@ -232,10 +227,10 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a description of the construct type.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.coordinate_conversion.html#cfdm.CoordinateReference.coordinate_conversion" title="cfdm.CoordinateReference.coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_conversion</span></code></a></td>
-<td>Return the coordinate conversion.</td>
+<td>Return the coordinate conversion component.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cfdm.CoordinateReference.datum.html#cfdm.CoordinateReference.datum" title="cfdm.CoordinateReference.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></td>
-<td>Return the datum.</td>
+<td>Return the datum component.</td>
 </tr>
 </tbody>
 </table>
@@ -250,25 +245,25 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.coordinates.html#cfdm.CoordinateReference.coordinates" title="cfdm.CoordinateReference.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a></td>
-<td>Return or replace the identifiers of the coordinate objects that define the coordinate system.</td>
+<td>Return or replace all references to coordinate constructs.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.del_coordinate.html#cfdm.CoordinateReference.del_coordinate" title="cfdm.CoordinateReference.del_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate</span></code></a></td>
-<td>Delete the identifier of a coordinate object that defines the coordinate system.</td>
+<td>Remove a reference to a coordinate construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.del_coordinate_conversion.html#cfdm.CoordinateReference.del_coordinate_conversion" title="cfdm.CoordinateReference.del_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_conversion</span></code></a></td>
-<td>Remove the coordinate conversion.</td>
+<td>Remove the coordinate conversion component.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.del_datum.html#cfdm.CoordinateReference.del_datum" title="cfdm.CoordinateReference.del_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_datum</span></code></a></td>
-<td>Remove the datum.</td>
+<td>Remove the datum component.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate.html#cfdm.CoordinateReference.set_coordinate" title="cfdm.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a></td>
-<td>Set a coordinate.</td>
+<td>Set a reference to a coordinate construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.set_coordinate_conversion.html#cfdm.CoordinateReference.set_coordinate_conversion" title="cfdm.CoordinateReference.set_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code></a></td>
-<td>TODO</td>
+<td>Set the coordinate conversion component.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateReference.set_datum.html#cfdm.CoordinateReference.set_datum" title="cfdm.CoordinateReference.set_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_datum</span></code></a></td>
-<td>TODO</td>
+<td>Set the datum component.</td>
 </tr>
 </tbody>
 </table>
@@ -348,8 +343,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.CoordinateReference.rst.txt"

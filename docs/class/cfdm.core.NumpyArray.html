@@ -9,7 +9,7 @@
     <title>cfdm.core.NumpyArray &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -86,7 +86,7 @@
 <h1>cfdm.core.NumpyArray<a class="headerlink" href="#cfdm-core-numpyarray" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.NumpyArray">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">NumpyArray</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/data/numpyarray.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">NumpyArray</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/data/numpyarray.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.abstract.array.Array</span></code></p>
 <p>A container for a numpy array.</p>
 <p><strong>Initialization</strong></p>
@@ -105,7 +105,7 @@
 </table>
 <dl class="method">
 <dt id="cfdm.core.NumpyArray.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/data/numpyarray.py#L12"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/data/numpyarray.py#L12"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -138,7 +138,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.NumpyArray.get_array" title="cfdm.core.NumpyArray.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a>()</td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumpyArray.next</span></code></td>
 <td></td>
 </tr>
 </tbody>
@@ -166,7 +166,7 @@
 </table>
 <dl class="method">
 <dt id="cfdm.core.NumpyArray.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.copy" title="Permalink to this definition">¶</a></dt>
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/data/abstract/array.py#L217"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a deep copy of the array.</p>
 <p><code class="docutils literal notranslate"><span class="pre">a.copy()</span> <span class="pre">is</span> <span class="pre">equivalent</span> <span class="pre">to</span> <span class="pre">``copy.deepcopy(a)</span></code>.</p>
 <p>Copy-on-write is employed. Therefore, after copying, care must be
@@ -194,7 +194,7 @@ original or the new copy.</p>
 
 <dl class="method">
 <dt id="cfdm.core.NumpyArray.get_array">
-<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/data/numpyarray.py#L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.get_array" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/data/numpyarray.py#L132"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.NumpyArray.get_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an independent numpy array containing the data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -366,8 +366,8 @@ original or the new copy.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.NumpyArray.rst.txt"

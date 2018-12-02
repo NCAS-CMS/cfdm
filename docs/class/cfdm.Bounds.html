@@ -9,7 +9,7 @@
     <title>cfdm.Bounds &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -85,7 +85,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Bounds">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/bounds.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Bounds</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/bounds.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.bounds.Bounds</span></code></p>
 <p>A cell bounds component of a coordinate or domain ancillary
 construct of the CF data model.</p>
@@ -306,7 +306,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Bounds.equals.html#cfdm.Bounds.equals" title="cfdm.Bounds.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>Whether two data arrays with descriptive properties are the same.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 </tbody>
 </table>
@@ -348,7 +348,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Bounds.__getitem__.html#cfdm.Bounds.__getitem__" title="cfdm.Bounds.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
-<td>Return a subspace of the construct defined by indices</td>
+<td>Return a subspace defined by indices</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Bounds.__repr__.html#cfdm.Bounds.__repr__" title="cfdm.Bounds.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
@@ -371,8 +371,8 @@ initialization. By default arguments are deep copied.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.Bounds.rst.txt"

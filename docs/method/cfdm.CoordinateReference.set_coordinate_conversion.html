@@ -9,7 +9,7 @@
     <title>cfdm.CoordinateReference.set_coordinate_conversion &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -88,8 +88,43 @@
 <h1>cfdm.CoordinateReference.set_coordinate_conversion<a class="headerlink" href="#cfdm-coordinatereference-set-coordinate-conversion" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CoordinateReference.set_coordinate_conversion">
-<code class="descclassname">CoordinateReference.</code><code class="descname">set_coordinate_conversion</code><span class="sig-paren">(</span><em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/coordinatereference.py#L448"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.set_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<code class="descclassname">CoordinateReference.</code><code class="descname">set_coordinate_conversion</code><span class="sig-paren">(</span><em>coordinate_conversion</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/coordinatereference.py#L445"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateReference.set_coordinate_conversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the coordinate conversion component.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../attribute/cfdm.CoordinateReference.coordinate_conversion.html#cfdm.CoordinateReference.coordinate_conversion" title="cfdm.CoordinateReference.coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_conversion</span></code></a>, <a class="reference internal" href="cfdm.CoordinateReference.del_coordinate_conversion.html#cfdm.CoordinateReference.del_coordinate_conversion" title="cfdm.CoordinateReference.del_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_coordinate_conversion</span></code></a>,
+<a class="reference internal" href="cfdm.CoordinateReference.get_coordinate_conversion.html#cfdm.CoordinateReference.get_coordinate_conversion" title="cfdm.CoordinateReference.get_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_conversion</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>coordinate_conversion: <a class="reference internal" href="../class/cfdm.CoordinateConversion.html#cfdm.CoordinateConversion" title="cfdm.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a></dt>
+<dd><p class="first last">The coordinate conversion component to be inserted.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then do not copy the coordinate conversion prior to
+insertion. By default the coordinate conversion is copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_coordinate_conversion</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_coordinate_conversion</span><span class="p">(</span><span class="n">cc</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -104,8 +139,8 @@
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.CoordinateReference.set_coordinate_conversion.rst.txt"

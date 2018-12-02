@@ -9,7 +9,7 @@
     <title>cfdm.core.mixin.ConstructAccess &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -73,13 +73,13 @@
 <h1>cfdm.core.mixin.ConstructAccess<a class="headerlink" href="#cfdm-core-mixin-constructaccess" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cfdm.core.mixin.ConstructAccess">
-<em class="property">class </em><code class="descclassname">cfdm.core.mixin.</code><code class="descname">ConstructAccess</code><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">future.types.newobject.newobject</span></code></p>
+<em class="property">class </em><code class="descclassname">cfdm.core.mixin.</code><code class="descname">ConstructAccess</code><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Mixin class for accessing an embedded <cite>Constructs</cite> object.</p>
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>x.__init__(…) initializes x; see help(type(x)) for signature</p>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -99,7 +99,7 @@
 <td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.mixin.ConstructAccess.construct_axes" title="cfdm.core.mixin.ConstructAccess.construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_axes</span></code></a>([cid])</td>
-<td>Return the identifiers of the domain axes spanned by the metadata construct data arrays.</td>
+<td>Return the domain axes spanned by metadata construct data arrays.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.mixin.ConstructAccess.construct_type" title="cfdm.core.mixin.ConstructAccess.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a>(cid)</td>
 <td>TODO</td>
@@ -131,7 +131,7 @@
 <tr class="row-even"><td><a class="reference internal" href="#cfdm.core.mixin.ConstructAccess.get_construct" title="cfdm.core.mixin.ConstructAccess.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>(cid)</td>
 <td>Return a metadata construct.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code>()</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructAccess.next</span></code></td>
 <td></td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructAccess.set_auxiliary_coordinate</span></code></td>
@@ -144,7 +144,7 @@
 <td>Set a metadata construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.mixin.ConstructAccess.set_construct_axes" title="cfdm.core.mixin.ConstructAccess.set_construct_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct_axes</span></code></a>(cid,&nbsp;axes)</td>
-<td>Set the domain axis constructs spanned by the data array of a metadata construct.</td>
+<td>Set the domain axis constructs spanned by a metadata construct data array.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstructAccess.set_coordinate_reference</span></code></td>
 <td></td>
@@ -162,9 +162,8 @@
 </table>
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.construct_axes">
-<code class="descname">construct_axes</code><span class="sig-paren">(</span><em>cid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L37"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.construct_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the identifiers of the domain axes spanned by the metadata
-construct data arrays.</p>
+<code class="descname">construct_axes</code><span class="sig-paren">(</span><em>cid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L37"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.construct_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the domain axes spanned by metadata construct data arrays.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -183,13 +182,12 @@ construct data arrays.</p>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>tuple</cite> or <cite>None</cite></dt>
-<dd><p class="first last">The identifiers of the domain axes spanned by the construct’s
-data array. If the construct does not have a data array then
-<cite>None</cite> is returned.</p>
-</dd>
-</dl>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">out: <cite>tuple</cite> or <cite>None</cite></p>
+<blockquote class="last">
+<div><p>The identifiers of the domain axes constructs spanned by data
+array of metadata constructs. If a metadata construct does not have a
+data array then <cite>None</cite> is returned.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
@@ -205,13 +203,13 @@ data array. If the construct does not have a data array then
 
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.construct_type">
-<code class="descname">construct_type</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.construct_type" title="Permalink to this definition">¶</a></dt>
+<code class="descname">construct_type</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L68"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.construct_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.constructs">
-<code class="descname">constructs</code><span class="sig-paren">(</span><em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.constructs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">constructs</code><span class="sig-paren">(</span><em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L74"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return metadata constructs.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -247,7 +245,7 @@ data array. If the construct does not have a data array then
 
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.del_construct">
-<code class="descname">del_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L102"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.del_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">del_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L102"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.del_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -287,13 +285,13 @@ data array. If the construct does not have a data array then
 
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.domain_axis_name">
-<code class="descname">domain_axis_name</code><span class="sig-paren">(</span><em>axis</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L179"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.domain_axis_name" title="Permalink to this definition">¶</a></dt>
+<code class="descname">domain_axis_name</code><span class="sig-paren">(</span><em>axis</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L228"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.domain_axis_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO WHY DO WE NED THIS HERE?</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.get_construct">
-<code class="descname">get_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L131"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.get_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L131"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.get_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -329,8 +327,65 @@ data array. If the construct does not have a data array then
 </dd></dl>
 
 <dl class="method">
+<dt id="cfdm.core.mixin.ConstructAccess.get_construct_axes">
+<code class="descname">get_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L157"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.get_construct_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the domain axes spanned by a metadata construct data array.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><cite>construct_axes</cite>, <cite>get_construct</cite>, <cite>set_construct_axes</cite></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>cid: <cite>str</cite></dt>
+<dd><p class="first">The construct identifier of the metadata construct.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='domainancillary1'</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>default: optional</dt>
+<dd><p class="first last">Return <em>default</em> if the metadata construct does not have a
+data array, or no domain axes have been set.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>out:</dt>
+<dd><p class="first last">The identifiers of the domain axis constructs spanned by data
+array. If a metadata construct does not have a data array, or
+no domain axes have been set, then <cite>None</cite> is returned.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_construct_axes</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">)</span>
+<span class="go">(&#39;domainaxis1&#39;, &#39;domainaxis0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_construct</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">get_construct_axes</span><span class="p">(</span><span class="s1">&#39;domainancillary2&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_construct_axes</span><span class="p">(</span><span class="s1">&#39;cellmethod0&#39;</span><span class="p">,</span> <span class="s1">&#39;no axes&#39;</span><span class="p">)</span>
+<span class="go">&#39;no axes&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.has_construct">
-<code class="descname">has_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L157"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.has_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">has_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.has_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether a construct exisits.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -361,7 +416,7 @@ data array. If the construct does not have a data array then
 
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.set_construct">
-<code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>cid=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L322"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>cid=None</em>, <em>axes=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L234"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
@@ -434,9 +489,9 @@ construct. By default the construct is not copied.</p>
 
 <dl class="method">
 <dt id="cfdm.core.mixin.ConstructAccess.set_construct_axes">
-<code class="descname">set_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/core/mixin/constructaccess.py#L385"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.set_construct_axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the domain axis constructs spanned by the data array of a
-metadata construct.</p>
+<code class="descname">set_construct_axes</code><span class="sig-paren">(</span><em>cid</em>, <em>axes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L297"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.mixin.ConstructAccess.set_construct_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the domain axis constructs spanned by a metadata construct data
+array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
@@ -504,8 +559,8 @@ spanned by the data array.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/class/cfdm.core.mixin.ConstructAccess.rst.txt"

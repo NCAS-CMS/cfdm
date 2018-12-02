@@ -9,7 +9,7 @@
     <title>cfdm.Count.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -88,8 +88,8 @@
 <h1>cfdm.Count.equals<a class="headerlink" href="#cfdm-count-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Count.equals">
-<code class="descclassname">Count.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/mixin/propertiesdata.py#L189"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.equals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether two data arrays with descriptive properties are the same.</p>
+<code class="descclassname">Count.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/mixin/propertiesdata.py#L188"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
 <li>the descriptive properties must be the same, and vector-valued
@@ -110,8 +110,8 @@ parameters.</p>
 underlying compressed arrays must be the same, as well as the arrays
 in their uncompressed forms. See the <em>ignore_compression</em> parameter.</p>
 <p>Any type of object may be tested but, in general, equality is only
-possible with another field construct, or a subclass of one. See the
-<em>ignore_type</em> parameter.</p>
+possible with another object of the same type, or a subclass of
+one. See the <em>ignore_type</em> parameter.</p>
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.</p>
 <div class="versionadded">
@@ -158,13 +158,10 @@ the underlying compressed arrays must be the same, as well as
 the arrays in their uncompressed forms</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><blockquote class="first">
-<div><p>Any type of object may be tested but, in general, equality is</p>
-</div></blockquote>
-<p class="last">only possible with another TODO, or a subclass of one. If
-<em>ignore_type</em> is True then then
-<code class="docutils literal notranslate"><span class="pre">PropertiesData(source=other)</span></code> is tested, rather than the
-<code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
+<dd><p class="first last">Any type of object may be tested but, in general, equality is
+only possible with another object of the same type, or a
+subclass of one. If <em>ignore_type</em> is True then equality is
+possible for any object with a compatible API.</p>
 </dd>
 </dl>
 </td>
@@ -179,11 +176,11 @@ the arrays in their uncompressed forms</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a colection of properties&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;something else&#39;</span><span class="p">)</span>
 <span class="go">False</span>
 </pre></div>
 </div>
@@ -201,8 +198,8 @@ the arrays in their uncompressed forms</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.Count.equals.rst.txt"

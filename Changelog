@@ -1,3 +1,10 @@
+version 1.7b8 - 2018-12-02
+==========================
+
+* New nethods: cfdm.Field.get_construct_axes,
+  cfdm.Field.get_construct_id
+* Changed behavious of cfdm.Field.construct_axes
+ 	
 version 1.7b7 - 2018-11-28
 ==========================
 

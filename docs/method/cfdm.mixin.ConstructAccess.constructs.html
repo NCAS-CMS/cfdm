@@ -9,7 +9,7 @@
     <title>cfdm.mixin.ConstructAccess.constructs &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -73,7 +73,7 @@
 <h1>cfdm.mixin.ConstructAccess.constructs<a class="headerlink" href="#cfdm-mixin-constructaccess-constructs" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.mixin.ConstructAccess.constructs">
-<code class="descclassname">ConstructAccess.</code><code class="descname">constructs</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b7/cfdm/mixin/constructaccess.py#L646"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.ConstructAccess.constructs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">ConstructAccess.</code><code class="descname">constructs</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em>, <em>copy=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/mixin/constructaccess.py#L935"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.mixin.ConstructAccess.constructs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return metadata constructs</p>
 <p>By default all metadata constructs are returned, but a subset may be
 selected via the optional parameters. If multiple parameters are
@@ -84,8 +84,8 @@ returned.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></p>
+<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_axes</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct_id</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">has_construct</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -96,7 +96,7 @@ returned.</p>
 <dd><p class="first">Select constructs that have the given property, or other
 attribute, value.</p>
 <p>The description may be one of:</p>
-<ul class="last">
+<ul>
 <li><p class="first">The value of the standard name property on its own.</p>
 <blockquote>
 <div><dl class="docutils">
@@ -122,12 +122,18 @@ have a “foo” property with the value “bar”.</p>
 </dd>
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
-constructs that have a “standard_name” property with the
-value “air_pressure”.</p>
+constructs that have</p>
 </dd>
 </dl>
 </div></blockquote>
 </li>
+</ul>
+<dl class="docutils">
+<dt>a “standard_name” property with the</dt>
+<dd><p class="first last">value “air_pressure”.</p>
+</dd>
+</dl>
+<ul class="last">
 <li><p class="first">The measure of cell measure constructs, prefixed by
 <code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
 <blockquote>
@@ -242,9 +248,9 @@ are:</p>
 ancillary constructs.</p>
 </dd>
 <dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Select constructs which have data that spans any one or more
-of the given domain axes, in any order. Domain axes are
-specified by their construct identifiers.</p>
+<dd><p class="first">Select constructs which have data that spans one or more of
+the given domain axes, in any order. Domain axes are specified
+by their construct identifiers.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis2']</span></code></p>
@@ -356,8 +362,8 @@ added.</p>
       &copy;2018, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cfdm.mixin.ConstructAccess.constructs.rst.txt"
