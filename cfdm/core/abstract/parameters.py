@@ -11,7 +11,7 @@ from . import Container
 class Parameters(with_metaclass(abc.ABCMeta, Container)):
     '''Abstract base class for a collection of named parameters.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
     '''
     def __init__(self, parameters=None, source=None, copy=True): 
         '''**Initialization**
@@ -72,7 +72,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -90,7 +90,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
     def del_parameter(self, parameter, *default):
         '''Delete a parameter.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_parameter`, `has_parameter`, `parameters`,
              `set_parameter`
@@ -118,7 +118,7 @@ class Parameters(with_metaclass(abc.ABCMeta, Container)):
     def get_parameter(self, term, *default):
         '''Get a parameter value.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -158,7 +158,7 @@ ERROR
     def parameters(self, parameters=None, copy=True):
         '''Return or replace the parameter-valued terms.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `ancillaries`
 
@@ -206,7 +206,7 @@ ERROR
     def set_parameter(self, term, value, copy=True):
         '''Set a parameter-valued term.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `parameters`
 

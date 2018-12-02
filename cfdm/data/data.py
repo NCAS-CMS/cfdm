@@ -18,7 +18,7 @@ from . import NumpyArray
 class Data(mixin.Container, core.Data):
     '''An orthogonal multidimensional array with masked values and units.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, array=None, units=None, calendar=None,
@@ -95,7 +95,7 @@ class Data(mixin.Container, core.Data):
     def __array__(self, *dtype):
         '''The numpy array interface.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns: 
 
@@ -155,7 +155,7 @@ rules, the only differences being:
   the way vector subscripts work in Fortran). This is the same
   behaviour as indexing on a Variable object of the netCDF4 package.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `__setitem__`, `_parse_indices`
 
@@ -234,7 +234,7 @@ Data array elements may be set to missing values by assigning them to
 `numpy.ma.masked`. Missing values may be unmasked by assigning them to
 any other value.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `__getitem__`, `_parse_indices`
 
@@ -564,7 +564,7 @@ masked
 Insert a new size 1 axis, corresponding to a given position in the
 data array shape.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `squeeze`, `transpose`, `unsqueeze`
 
@@ -642,7 +642,7 @@ If the calendar has not been set then the CF default calendar of
 
 Conversions are carried out with the `netCDF4.num2date` function.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_array`
 
@@ -688,7 +688,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
     def get_count_variable(self, *default):
         '''Return the count variable for a compressed array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_index_variable`, `get_list_variable`
 
@@ -730,7 +730,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
     def get_index_variable(self, *default):
         '''Return the index variable for a compressed array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_count_variable`, `get_list_variable`
 
@@ -772,7 +772,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
     def get_list_variable(self, *default):
         '''Return the list variable for a compressed array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_count_variable`, `get_index_variable`
 
@@ -815,7 +815,7 @@ Conversions are carried out with the `netCDF4.num2date` function.
         '''Return the position of the compressed dimension in the compressed
 array.
 
-. versionadded:: 1.7
+. versionadded:: 1.7.0
 
 .. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
              `get_compressed_type`
@@ -1125,7 +1125,7 @@ Missing data array elements are omitted from the calculation.
 By default all size 1 axes are removed, but particular axes may be
 selected with the keyword arguments.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `expand_dims`, `transpose`, `unsqueeze`
 
@@ -1269,7 +1269,7 @@ Missing data array elements are omitted from the calculation.
     def transpose(self, axes=None):
         '''Permute the axes of the data array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `expand_dims`, `squeeze`, `unsqueeze`
 
@@ -1335,7 +1335,7 @@ Missing data array elements are omitted from the calculation.
     def get_compressed_array(self):
         '''Return an independent numpy array containing the compressed data.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_compressed_axes`, `get_compressed_dimension`,
              `get_compression_type`,
@@ -1361,7 +1361,7 @@ Missing data array elements are omitted from the calculation.
     def get_compressed_axes(self):
         '''Return the dimensions that are compressed.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -1385,7 +1385,7 @@ TODO
     def get_compression_type(self):
         '''Return the type of compression applied to the underlying array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_compressed_array`, `compression_axes`,
              `get_compressed_dimension`
@@ -1451,7 +1451,7 @@ Any type of object may be tested but, in general, equality is only
 possible with another cell measure construct, or a subclass of
 one. See the *ignore_type* parameter.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -1630,7 +1630,7 @@ False
 The unique elements are sorted into a one dimensional array. with no
 missing values.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 

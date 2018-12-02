@@ -1,11 +1,9 @@
 from builtins import super
 
 from . import abstract
-#from future.utils import with_metaclass
 
 
 class CellMeasure(abstract.PropertiesData):
-#    class CellMeasure(with_metaclass(abc.ABCMeta, abstract.PropertiesData)):
     '''A cell measure construct of the CF data model.
 
 A cell measure construct provides information that is needed about the
@@ -24,6 +22,8 @@ with the measure, e.g. square metres. It is assumed that the metric
 does not depend on axes of the domain which are not spanned by the
 array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.
+
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, measure=None, properties=None, data=None,
@@ -96,7 +96,7 @@ cell measure variables correspond to cell measure constructs.
     def construct_type(self):
         '''Return a description of the construct type.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
 :Returns:
 
@@ -110,7 +110,7 @@ cell measure variables correspond to cell measure constructs.
     def del_measure(self, *default):
         '''Remove the measure.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_measure`, `has_measure`, `properties`, `set_measure`
 

@@ -325,7 +325,7 @@ typically very small numbers. By default both are set to the system
 epsilon (the difference between 1 and the least value greater than 1
 that is representable as a float).
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.RTOL`
 
@@ -370,7 +370,7 @@ typically very small numbers. By default both are set to the system
 epsilon (the difference between 1 and the least value greater than 1
 that is representable as a float).
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.ATOL`
 
@@ -594,7 +594,7 @@ between ``a`` and ``b``.
 def environment(display=True):
     '''Return the names, versions and paths of all dependencies.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -646,7 +646,7 @@ cfdm: 1.7.1 /home/user/cfdm/cfdm/__init__.pyc
 def CF():
     '''Return the version of the CF conventions.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 

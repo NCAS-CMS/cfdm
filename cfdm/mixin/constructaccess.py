@@ -7,6 +7,8 @@ class ConstructAccess(object):
     '''Mixin class for manipulating constructs stored in a `Constructs`
 object.
 
+.. versionadded:: 1.7.0
+
     '''
 
     def _unique_construct_names(self):
@@ -65,7 +67,7 @@ object.
     def coordinate_references(self, copy=False):
         '''Return coordinate reference constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -99,7 +101,7 @@ object.
     def coordinates(self, copy=False):
         '''Return dimension and auxiliary coordinate constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -138,7 +140,7 @@ object.
     def domain_ancillaries(self, copy=False):
         '''Return domain ancillary constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -172,7 +174,7 @@ object.
     def cell_measures(self, copy=False):
         '''Return cell measure constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -210,7 +212,7 @@ construct that satisfies *all* of the given criteria is removed. An
 error is raised if multiple constructs satisfy all of the given
 criteria.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`, `has_construct`,
              `set_construct`
@@ -356,7 +358,7 @@ construct that satisfies *all* of the given criteria is returned. An
 error is raised if multiple constructs satisfy all of the given
 criteria.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `has_construct`,
              `set_construct`
@@ -514,7 +516,7 @@ construct that satisfies *all* of the given criteria is selected. If
 there is not a unique construct that satisfies all of the given
 criteria, then an empty tuple is returned.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `construct_axes`, `get_construct`, `set_construct_axes`
 
@@ -655,7 +657,7 @@ construct that satisfies *all* of the given criteria is selected. If
 there is not a unique construct that satisfies all of the given
 criteria, then the `None` is returned.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`, `get_construct_axes`
 
@@ -797,7 +799,7 @@ The construct is identified via optional parameters. If, and only if,
 there is a *unique* construct that satisfies *all* of the given
 criteria, then `True` is returned.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `get_construct`,
              `set_construct`
@@ -941,7 +943,7 @@ selected via the optional parameters. If multiple parameters are
 specified, then the constructs that satisfy *all* of the criteria are
 returned.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_construct`, `get_construct`, `get_construct_axes`,
              `get_construct_id`, `has_construct`, `set_construct`
@@ -1146,7 +1148,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     def domain_axes(self, copy=False):
         '''Return domain axis constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -1182,7 +1184,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     def auxiliary_coordinates(self, copy=False):
         '''Return auxiliary coordinate constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -1216,7 +1218,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     def dimension_coordinates(self, copy=False):
         '''Return dimension coordinate constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 

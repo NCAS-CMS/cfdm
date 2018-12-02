@@ -15,7 +15,7 @@ independent axis of the domain. Note that, for climatological time
 axes, the bounds are interpreted in a special way indicated by the
 cell method constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -74,7 +74,7 @@ cell method constructs.
 Note that the data are returned in a `Data` object. Use the
 `get_array` method to return the data as an independent `numpy` array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_data`, `get_array`, `has_data`, `set_data`
 

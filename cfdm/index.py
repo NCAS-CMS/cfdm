@@ -12,7 +12,7 @@ class Index(mixin.NetCDFVariable,
             core.abstract.PropertiesData):
     '''An index variable required to uncompress a ragged array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties={}, data=None, source=None,

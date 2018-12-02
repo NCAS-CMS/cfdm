@@ -314,7 +314,7 @@ last values.
                ignore_properties=(), ignore_type=False):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         '''
         ignore_properties = tuple(ignore_properties) + ('Conventions',)
             

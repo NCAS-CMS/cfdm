@@ -4,6 +4,8 @@ from builtins import object
 class NetCDF(object):
     '''Mixin class for storing simple netCDF elements.
 
+.. versionadded:: 1.7.0
+
     '''
     def _initialise_netcdf(self, source=None):
         '''TODO 
@@ -26,11 +28,13 @@ class NetCDF(object):
 class NetCDFDimension(NetCDF):
     '''Mixin class for accessing the netCDF dimension name.
 
+.. versionadded:: 1.7.0
+
     '''
     def nc_del_dimension(self, *default):
         '''Remove the netCDF dimension name.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_get_dimension`, `nc_has_dimension`,
              `nc_set_dimension`
@@ -75,7 +79,7 @@ None
     def nc_get_dimension(self, *default):
         '''Return the netCDF dimension name.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_del_dimension`, `nc_has_dimension`,
              `nc_set_dimension`
@@ -122,7 +126,7 @@ None
     def nc_has_dimension(self):
         '''Whether the netCDF dimension name has been set.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
              `nc_set_dimension`
@@ -156,7 +160,7 @@ None
     def nc_set_dimension(self, value):
         '''Set the netCDF dimension name.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_del_dimension`, `nc_get_dimension`,
              `nc_has_dimension`
@@ -196,11 +200,13 @@ None
 class NetCDFVariable(NetCDF):
     '''Mixin class for accessing the netCDF variable name.
 
+.. versionadded:: 1.7.0
+
     '''
     def nc_del_variable(self, *default):
         '''Remove the netCDF variable name.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_get_variable`, `nc_has_variable`, `nc_set_variable`
 
@@ -243,7 +249,7 @@ None
     def nc_get_variable(self, *default):
         '''Return the netCDF variable name.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_del_variable`, `nc_has_variable`, `nc_set_variable`
 
@@ -288,7 +294,7 @@ None
     def nc_has_variable(self):
         '''Whether the netCDF variable name has been set.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_del_variable`, `nc_get_variable`, `nc_set_variable`
 
@@ -321,7 +327,7 @@ None
     def nc_set_variable(self, value):
         '''Set the netCDF variable name.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_del_variable`, `nc_get_variable`, `nc_has_variable`
 
@@ -359,6 +365,8 @@ None
 
 class NetCDFSampleDimension(NetCDF):
     '''Mixin TODO 
+
+.. versionadded:: 1.7.0
 
     '''
     def nc_del_sample_dimension(self, *default):
@@ -399,6 +407,8 @@ class NetCDFSampleDimension(NetCDF):
 
 class NetCDFInstanceDimension(NetCDF):
     '''Mixin TODO 
+
+.. versionadded:: 1.7.0
 
     '''
     def nc_del_instance_dimension(self,*default):
@@ -442,6 +452,8 @@ class NetCDFDataVariable(NetCDF):
     '''Mixin class for accessing netCDF elements relating to a data
 variable.
 
+.. versionadded:: 1.7.0
+
     '''
     def nc_global_attributes(self, attributes=None):
         '''Return or replace the selection of properties to be written as
@@ -460,7 +472,7 @@ The `description of file contents
 properties are always written as netCDF global attributes, if
 possible, so selecting them is optional.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_unlimited_dimensions`
 
@@ -511,7 +523,7 @@ written as netCDF unlimited dimensions.
 
 By default output netCDF dimensions are not unlimited.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `nc_global_attributes`
 
@@ -560,6 +572,8 @@ set()
 class NetCDFExternal(NetCDF):
     '''TODO
 
+.. versionadded:: 1.7.0
+
     '''
     def nc_external(self, *external):
         '''TODO Whether the construct is external.
@@ -567,7 +581,7 @@ class NetCDFExternal(NetCDF):
 The construct is assumed to be internal unless sepcifically set to be
 external with the `set_external` method.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 

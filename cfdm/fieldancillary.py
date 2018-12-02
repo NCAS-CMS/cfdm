@@ -27,7 +27,7 @@ the domain definition of the parent field construct but does not
 contribute to the domain's definition, unlike, for instance, an
 auxiliary coordinate construct or domain ancillary construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -77,7 +77,7 @@ auxiliary coordinate construct or domain ancillary construct.
 Returns a description of all properties, including those of
 components, and provides selected values of all data arrays.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -138,7 +138,7 @@ one. See the *ignore_type* parameter.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

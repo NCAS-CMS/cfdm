@@ -7,6 +7,8 @@ from . import Parameters
 class ParametersDomainAncillaries(Parameters):
     '''Mixin class for parameter- and ancillary-valued terms.
 
+.. versionadded:: 1.7.0
+
     '''
 
     def __bool__(self):

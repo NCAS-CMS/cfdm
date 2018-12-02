@@ -9,7 +9,7 @@ from copy import deepcopy
 class Container(with_metaclass(abc.ABCMeta, object)):
     '''Abstract base class for storing components.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self):
@@ -27,7 +27,7 @@ after initialisation with the `_set_component` method.
 
 x.__deepcopy__() <==> copy.deepcopy(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 **Examples:**
 
@@ -41,7 +41,7 @@ x.__deepcopy__() <==> copy.deepcopy(x)
     def _del_component(self, component, *default):
         '''Remove a component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `_get_component`, `_has_component`, `_set_component`
 
@@ -82,7 +82,7 @@ False
     def _get_component(self, component, *default):
         '''Return a component
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `_del_component`, `_has_component`, `_set_component`
 
@@ -128,7 +128,7 @@ False
     def _has_component(self, component):
         '''Whether a component has been set.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `_del_component`, `_get_component`, `_set_component`
 
@@ -161,7 +161,7 @@ False
     def _set_component(self, component, value, copy=True):
         '''Set a component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `_del_component`, `_get_component`, `_has_component`
 
@@ -203,7 +203,7 @@ False
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 

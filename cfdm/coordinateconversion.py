@@ -19,7 +19,7 @@ construct (such as one containing spatially varying orography data). A
 coordinate reference construct relates the coordinate values of the
 field to locations in a planetary reference frame.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
 #--- End: class

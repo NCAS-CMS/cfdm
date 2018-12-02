@@ -25,7 +25,7 @@ The cfdm package can
 __author__       = 'David Hassell'
 __date__         = '2018-12-02'
 __cf_version__   = '1.7'
-__version__      = '1.7b8'
+__version__      = '1.7.0b8'
 
 from distutils.version import StrictVersion
 import platform

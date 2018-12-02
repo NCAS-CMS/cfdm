@@ -19,13 +19,14 @@ An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
 number of vertices of each cell.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
+
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
 :Returns:
 
@@ -34,5 +35,6 @@ number of vertices of each cell.
 
         '''
         return 'domain_ancillary' 
+    #--- End: def
 
-        #--- End: class
+#--- End: class

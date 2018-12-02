@@ -52,7 +52,7 @@ frame and consists of the following:
   reference construct relates the coordinate values of the field to
   locations in a planetary reference frame.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     
@@ -139,7 +139,7 @@ frame and consists of the following:
     def construct_type(self):
         '''Return a description of the construct type.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
 :Returns:
 
@@ -153,7 +153,7 @@ frame and consists of the following:
     def coordinate_conversion(self):
         '''Return the coordinate conversion component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `datum`, `get_coordinate_conversion`
 
@@ -174,7 +174,7 @@ frame and consists of the following:
     def datum(self):
         '''Return the datum component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `coordinate_conversion`, `datum`
 
@@ -230,7 +230,7 @@ frame and consists of the following:
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -248,7 +248,7 @@ frame and consists of the following:
     def del_coordinate(self, cid, *default):
         '''Remove a reference to a coordinate construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `coordinates`, `set_coordinate`
 
@@ -301,7 +301,7 @@ frame and consists of the following:
     def del_coordinate_conversion(self):
         '''Remove the coordinate conversion component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `coordinate_conversion`, `get_coordinate_conversion`,
              `set_coordinate_conversion`
@@ -328,7 +328,7 @@ frame and consists of the following:
     def del_datum(self):
         '''Remove the datum component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `datum`, `get_datum`, `set_datum`
 
@@ -354,7 +354,7 @@ frame and consists of the following:
     def get_coordinate_conversion(self):
         '''Get the coordinate conversion component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
              `set_coordinate_conversion`
@@ -381,7 +381,7 @@ frame and consists of the following:
     def get_datum(self):
         '''Return the datum component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `datum`, `get_coordinate_conversion`
 
@@ -407,7 +407,7 @@ frame and consists of the following:
     def set_coordinate(self, cid):
         '''Set a reference to a coordinate construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `coordinates`, `del_coordinate`
 
@@ -445,7 +445,7 @@ frame and consists of the following:
     def set_coordinate_conversion(self, coordinate_conversion, copy=True):
         '''Set the coordinate conversion component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `coordinate_conversion`, `del_coordinate_conversion`,
              `get_coordinate_conversion`
@@ -480,7 +480,7 @@ frame and consists of the following:
     def set_datum(self, datum, copy=True):
         '''Set the datum component.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `datum`, `del_datum`, `get_datum`
 

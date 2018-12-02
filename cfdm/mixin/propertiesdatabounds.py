@@ -10,6 +10,8 @@ class PropertiesDataBounds(PropertiesData):
     '''Mixin class for a data array with descriptive properties and cell
 bounds.
 
+.. versionadded:: 1.7.0
+
     '''
     
     def __getitem__(self, indices):
@@ -256,7 +258,7 @@ possible with another field construct, or a subclass of one. See the
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -401,7 +403,7 @@ False
 Insert a new size 1 axis into the data array. A corresponding axis is
 also inserted into the bounds data array, if present.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `squeeze`, `transpose`
 
@@ -500,7 +502,7 @@ By default all size one axes are removed, but particular size one axes
 may be selected for removal. Corresponding axes are also removed from
 the bounds data array, if present.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `expand_dims`, `transpose`
 

@@ -11,7 +11,7 @@ class Count(mixin.NetCDFVariable,
             core.abstract.PropertiesData):
     '''A count variable required to uncompress a ragged array.
 
-.. versionadded::1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties={}, data=None, source=None,

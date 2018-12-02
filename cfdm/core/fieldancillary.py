@@ -22,15 +22,15 @@ the domain definition of the parent field construct but does not
 contribute to the domain's definition, unlike, for instance, an
 auxiliary coordinate construct or domain ancillary construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     @property
     def construct_type(self):
         '''Return a description of the construct type.
         
-.. versionadded:: 1.7
-        
+.. versionadded:: 1.7.0
+
 :Returns:
 
     out: `str`
@@ -38,5 +38,6 @@ auxiliary coordinate construct or domain ancillary construct.
 
         '''
         return 'field_ancillary'
+    #--- End: def
 
-        #--- End: class
+#--- End: class

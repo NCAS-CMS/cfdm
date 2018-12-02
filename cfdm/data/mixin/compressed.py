@@ -7,7 +7,7 @@ class Compressed(object):
     def _set_compressed_Array(self, array, copy=True):
         '''Set the compressed array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

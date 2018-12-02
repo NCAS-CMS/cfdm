@@ -16,6 +16,8 @@ initialization parameters of a subclass of `Array`.
 
 See `cfdm.NumpyArray` for an example implementation.
 
+.. versionadded:: 1.7.0
+
     '''
     @abc.abstractmethod
     def __getitem__(self, indices):
@@ -36,7 +38,7 @@ rules, the only differences being:
   the way vector subscripts work in Fortran). This is the same
   behaviour as indexing on a Variable object of the netCDF4 package.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         raise NotImplementedError()
@@ -47,7 +49,7 @@ rules, the only differences being:
 
 x.__repr__() <==> repr(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''      
         return "<{0}: {1}>".format(self.__class__.__name__, str(self))
@@ -58,7 +60,7 @@ x.__repr__() <==> repr(x)
 
 x.__str__() <==> str(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         return "shape={0}, dtype={1}".format(self.shape, self.dtype)
@@ -68,7 +70,7 @@ x.__str__() <==> str(x)
         '''The type of compression that has been applied to the underlying
 array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -95,7 +97,7 @@ array.
         '''Return an independent numpy array containing of the underlying
 compressed array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -115,7 +117,7 @@ True
     def get_compressed_axes(self):
         '''Return axes that are compressed in the underlying array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -134,7 +136,7 @@ True
         '''Return the position of the compressed dimension in the compressed
 array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_compressed_axearray`, `get_compressed_axes`,
              `get_compressed_type`
@@ -174,7 +176,7 @@ difference to numpy indexing is
     then these indices work independently along each dimension
     (similar to the way vector subscripts work in Fortran).
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

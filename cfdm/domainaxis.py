@@ -19,7 +19,7 @@ spans the domain axis constructs of the domain, with the optional
 exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, size=None, source=None, copy=True):
@@ -54,7 +54,7 @@ to the order of the elements.
 
 x.__str__() <==> str(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         return str(self.get_size(''))
@@ -75,7 +75,7 @@ the *ignore_type* parameter.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -145,7 +145,7 @@ By default the name is the first found of the following:
   
   4. The value of the *default* parameter.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

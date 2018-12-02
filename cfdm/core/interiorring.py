@@ -14,6 +14,8 @@ CF-netCDF. The interior ring array spans the same domain axes as its
 coordinate array, with the addition of an extra ragged dimension that
 indexes the geometries for each cell.
 
+.. versionadded:: 1.8.0
+
     '''
 
 #--- End: class

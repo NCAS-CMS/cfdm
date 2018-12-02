@@ -10,7 +10,7 @@ class PropertiesDataBounds(with_metaclass(abc.ABCMeta, PropertiesData)):
     '''Abstract base class for a data array with bounds and descriptive
 properties.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''    
     def __init__(self, properties=None, data=None, bounds=None,
@@ -124,7 +124,7 @@ properties.
 Note that a `Bounds` instance is returned. Use the `get_array` method
 of the `Bounds` instance to return the bounds as a `numpy` array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_bounds`, `get_bounds`, `has_bounds`,
              `set_bounds`
@@ -164,7 +164,7 @@ TODO
 #even when the original contains very large data arrays, and the copy
 #operation is fast.
 #
-#.. versionadded:: 1.7
+#.. versionadded:: 1.7.0
 #
 #:Parameters:
 #
@@ -193,7 +193,7 @@ TODO
     def del_bounds(self, *default):
         '''Remove the bounds.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_data`, `get_bounds`, `has_bounds`, `set_bounds`
 
@@ -359,7 +359,7 @@ None
     def has_bounds(self):
         '''Whether or not there are bounds.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_bounds`, `get_bounds`, `has_data`, `set_bounds`
 
@@ -434,7 +434,7 @@ None
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
 

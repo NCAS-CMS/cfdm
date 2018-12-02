@@ -8,6 +8,8 @@ from . import abstract
 class NumpyArray(abstract.Array):
     '''A container for a numpy array.
 
+.. versionadded:: 1.7.0
+
     '''
     def __init__(self, array=None):
         '''**Initialization**
@@ -25,6 +27,8 @@ class NumpyArray(abstract.Array):
     def dtype(self):
         '''Data-type of the data elements.
 
+.. versionadded:: 1.7.0
+
 :Examples:
 
 >>> a.dtype
@@ -41,6 +45,8 @@ dtype('float64')
     def ndim(self):
         '''Number of array dimensions
                 
+.. versionadded:: 1.7.0
+
 :Examples:
 
 >>> a.shape
@@ -71,6 +77,8 @@ dtype('float64')
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
+
+.. versionadded:: 1.7.0
 
 :Examples:
 
@@ -103,6 +111,8 @@ dtype('float64')
     def size(self):
         '''Number of elements in the array.
 
+.. versionadded:: 1.7.0
+
 :Examples:
 
 >>> a.shape
@@ -131,6 +141,8 @@ dtype('float64')
     
     def get_array(self):
         '''Return an independent numpy array containing the data.
+
+.. versionadded:: 1.7.0
 
 :Returns:
 

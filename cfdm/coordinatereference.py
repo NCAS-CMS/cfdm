@@ -90,7 +90,7 @@ frame and consists of the following:
   construct relates the coordinate values of the field to locations in
   a planetary reference frame.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
 
@@ -164,7 +164,7 @@ frame and consists of the following:
 
 x.__str__() <==> str(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''    
         return self.name(default=self.nc_get_variable(''))
@@ -178,7 +178,7 @@ x.__str__() <==> str(x)
 Returns a description of all properties, including those of
 components.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -316,7 +316,7 @@ one. See the *ignore_type* parameter.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

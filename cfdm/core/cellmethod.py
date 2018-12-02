@@ -22,7 +22,8 @@ properties serving to indicate more precisely how the method was
 applied (e.g. recording the spacing of the original data, or the fact
 that the method was applied only over El Nino years).
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
+
     '''
     def __init__(self, axes=None, properties=None, source=None,
                  copy=True):
@@ -139,7 +140,7 @@ that the method was applied only over El Nino years).
     def construct_type(self):
         '''Return a description of the construct type.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
 :Returns:
 
@@ -152,7 +153,7 @@ that the method was applied only over El Nino years).
     def del_axes(self, *default):
         '''Remove the axes of the cell method.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_axes`, `has_axes`, `set_axes`
 
@@ -182,7 +183,7 @@ None
     def get_axes(self, *default):
         '''Return the axes of the cell method.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_axes`, `has_axes`, `set_axes`
 
@@ -215,7 +216,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
     def has_axes(self):
         '''Whether the axes of the cell method have been set.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_axes`, `get_axes`, `set_axes`
 
@@ -240,7 +241,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
     def set_axes(self, value, copy=True):
         '''Set the axes of the cell method.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_axes`, `get_axes`, `has_axes`
 

@@ -15,7 +15,7 @@ spans the domain axis constructs of the domain, with the optional
 exception of size one axes, because their presence makes no difference
 to the order of the elements.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, size=None, source=None, copy=True):
@@ -57,7 +57,7 @@ to the order of the elements.
     def construct_type(self):
         '''Return a description of the construct type.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -73,7 +73,7 @@ to the order of the elements.
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:	
 
@@ -91,7 +91,7 @@ to the order of the elements.
     def del_size(self, *default):
         '''Remove the size.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_size`, `has_size`, `set_size`
 
@@ -129,7 +129,7 @@ None
     def has_size(self):
         '''Whether the size has been set.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_size`, `get_size`, `set_size`
 
@@ -161,7 +161,7 @@ None
     def get_size(self, *default):
         '''Return the size.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_size`, `has_size`, `set_size`
 
@@ -197,7 +197,7 @@ None
     def set_size(self, size, copy=True):
         '''Set the size.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_size`, `get_size`, `has_size`
 

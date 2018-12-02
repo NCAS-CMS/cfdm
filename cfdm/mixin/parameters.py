@@ -7,12 +7,14 @@ from . import Container
 class Parameters(Container):
     '''Mixin class for parameters.
 
+.. versionadded:: 1.7.0
+
     '''
 
     def __bool__(self):
         '''TODO 
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         return bool(self.parameters())
@@ -21,7 +23,7 @@ class Parameters(Container):
     def __nonzero__(self):
         '''TODO 
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         '''
         return bool(self.parameters())
     #--- End: def
@@ -31,7 +33,7 @@ class Parameters(Container):
 
 x.__str__() <==> str(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         return 'Parameters: {0}'.format(', '.join(sorted(self.parameters())))

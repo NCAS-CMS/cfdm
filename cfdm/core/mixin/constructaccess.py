@@ -7,10 +7,14 @@ import abc
 class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     '''Mixin class for accessing an embedded `Constructs` object.
 
+.. versionadded:: 1.7.0
+
     '''   
     @abc.abstractmethod
     def _get_constructs(self, *default):
         '''Return the `Constructs` object
+
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -37,7 +41,7 @@ class ConstructAccess(with_metaclass(abc.ABCMeta, object)):
     def construct_axes(self, cid=None):
         '''Return the domain axes spanned by metadata construct data arrays.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -67,6 +71,8 @@ None
     
     def construct_type(self, cid):
         '''TODO
+
+.. versionadded:: 1.7.0
         '''                
         return self._get_constructs().construct_type(cid)
     #--- End: def
@@ -74,7 +80,7 @@ None
     def constructs(self, construct_type=None, copy=False):
         '''Return metadata constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `construct_axes`
 
@@ -103,7 +109,7 @@ TODO
     def del_construct(self, cid):
         '''Remove a construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_construct`, `constructs`
 
@@ -131,7 +137,7 @@ TODO
     def get_construct(self, cid):
         '''Return a metadata construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -157,7 +163,7 @@ TODO
     def get_construct_axes(self, cid, *default):
         '''Return the domain axes spanned by a metadata construct data array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `construct_axes`, `get_construct`, `set_construct_axes`
 
@@ -206,7 +212,7 @@ None
     def has_construct(self, cid):
         '''Whether a construct exisits.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -227,6 +233,9 @@ TODO
 
     def domain_axis_name(self, axis):
         '''TODO WHY DO WE NED THIS HERE?
+
+.. versionadded:: 1.7.0
+
         '''
         return self._get_constructs().domain_axis_name(axis)
     #--- End: def
@@ -235,7 +244,7 @@ TODO
                       copy=True):
         '''Set a metadata construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `get_construct`,
              `set_construct_axes`
@@ -298,7 +307,7 @@ TODO
         '''Set the domain axis constructs spanned by a metadata construct data
 array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `get_construct`,
              `set_construct`

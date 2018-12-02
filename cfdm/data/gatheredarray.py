@@ -130,7 +130,7 @@ indexing (given the restrictions on the type of indices allowed) is:
     def get_list_variable(self, *default):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

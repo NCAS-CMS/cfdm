@@ -24,7 +24,7 @@ properties serving to indicate more precisely how the method was
 applied (e.g. recording the spacing of the original data, or the fact
 that the method was applied only over El Nino years).
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
     
     '''
     def __str__(self):
@@ -38,7 +38,7 @@ Note that if the intention is to use this string in a CF-netCDF
 cell_methods attribute then, unless they are standard names, the axes
 names will need to be modified to be netCDF dimension names.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''     
         string = ['{0}:'.format(axis) for axis in self.get_axes(())]
@@ -79,7 +79,7 @@ names will need to be modified to be netCDF dimension names.
 Returns a description of all properties and the axes to which it
 applies.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -322,7 +322,7 @@ the *ignore_type* parameter.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -538,7 +538,7 @@ By default the name is the first found of the following:
   
   4. The value of the *default* parameter.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

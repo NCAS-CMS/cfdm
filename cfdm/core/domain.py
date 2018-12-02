@@ -117,7 +117,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     def _get_constructs(self, *default):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
         '''
         return self._get_component('constructs', *default)
@@ -131,7 +131,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 
 ``d.copy()`` is equivalent to ``copy.deepcopy(d)``.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `fromconstructs`
 
@@ -182,7 +182,7 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     def fromconstructs(cls, constructs):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `copy`
 

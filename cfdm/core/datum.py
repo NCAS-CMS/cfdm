@@ -17,7 +17,7 @@ Elements of the datum not specified may be implied by the properties
 of the dimension and auxiliary coordinate constructs referenced by the
 `CoordinateReference` instance that contains the datum.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
 #--- End: class

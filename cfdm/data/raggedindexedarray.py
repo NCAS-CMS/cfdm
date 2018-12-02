@@ -17,7 +17,7 @@ The information needed to uncompress the data is stored in a "index
 variable" that specifies the feature that each element of the sample
 dimension belongs to.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,

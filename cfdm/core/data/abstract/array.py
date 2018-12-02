@@ -14,6 +14,8 @@ initialization parameters of a subclass of `Array`.
 
 See cfdm.core.NumpyArray for an example implementation.
 
+.. versionadded:: 1.7.0
+
     '''
     def __init__(self, **kwargs):
         '''**Initialization**
@@ -32,6 +34,8 @@ See cfdm.core.NumpyArray for an example implementation.
 
     def __array__(self, *dtype):
         '''The numpy array interface.
+
+.. versionadded:: 1.7.0
 
 :Returns: 
 
@@ -63,7 +67,7 @@ Copy-on-write is employed. Therefore, after copying, care must be
 taken when making in-place modifications to attributes of either the
 original or the new copy.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 **Examples:**
 
@@ -74,28 +78,6 @@ original or the new copy.
         return self.copy()
     #--- End: def
 
-#    def __repr__(self):
-#        '''Called by the `repr` built-in function.
-#
-#x.__repr__() <==> repr(x)
-#
-#.. versionadded:: 1.7
-#
-#        '''      
-#        return "<{0}: {1}>".format(self.__class__.__name__, str(self))
-#    #--- End: def
-#        
-#    def __str__(self):
-#        '''Called by the `str` built-in function.
-#
-#x.__str__() <==> str(x)
-#
-#.. versionadded:: 1.7
-#
-#        '''
-#        return "shape={0}, dtype={1}".format(self.shape, self.dtype)
-#    #--- End: def
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -103,6 +85,8 @@ original or the new copy.
     @abc.abstractmethod
     def dtype(self):
         '''Data-type of the data elements.
+
+.. versionadded:: 1.7.0
 
 :Examples:
 
@@ -119,6 +103,8 @@ dtype('float64')
     @abc.abstractmethod
     def ndim(self):
         '''Number of array dimensions
+
+.. versionadded:: 1.7.0
 
 :Examples:
 
@@ -152,6 +138,8 @@ dtype('float64')
     def shape(self):
         '''Tuple of array dimension sizes.
 
+.. versionadded:: 1.7.0
+
 :Examples:
 
 >>> a.shape
@@ -183,6 +171,8 @@ dtype('float64')
     @abc.abstractmethod
     def size(self):
         '''Number of elements in the array.
+
+.. versionadded:: 1.7.0
 
 :Examples:
 
@@ -223,6 +213,8 @@ Copy-on-write is employed. Therefore, after copying, care must be
 taken when making in-place modifications to attributes of either the
 original or the new copy.
 
+.. versionadded:: 1.7.0
+
 :Returns:
 
     out:
@@ -242,6 +234,8 @@ original or the new copy.
     @abc.abstractmethod
     def get_array(self):
         '''Return an independent numpy array containing the data.
+
+.. versionadded:: 1.7.0
 
 :Returns:
 

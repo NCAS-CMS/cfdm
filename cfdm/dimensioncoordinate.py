@@ -34,7 +34,7 @@ relate to an independent axis of the domain. Note that, for
 climatological time axes, the bounds are interpreted in a special way
 indicated by the cell method constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, bounds=None,
@@ -93,7 +93,7 @@ indicated by the cell method constructs.
 Returns a description of all properties, including those of
 components, and provides selected values of all data arrays.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -167,7 +167,7 @@ one. See the *ignore_type* parameter.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

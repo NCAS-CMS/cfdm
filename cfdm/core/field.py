@@ -33,7 +33,7 @@ some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
 
@@ -128,7 +128,7 @@ and institution).
     # ----------------------------------------------------------------
     def _get_constructs(self, *default):
         '''TODO
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
         '''
         return self._get_component('constructs', *default)
@@ -141,7 +141,7 @@ and institution).
     def construct_type(self):
         '''Return a description of the construct type.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
 :Returns:
 
@@ -158,7 +158,7 @@ and institution).
         
 ``f.domain`` is equivalent to ``f.get_domain()`` 
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_domain`
 
@@ -185,7 +185,7 @@ True
         '''Remove the identifiers of the domain axes spanned by the data
 array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `get_data_axes`, `set_data_axes`
 
@@ -211,7 +211,7 @@ TODO
     def get_domain(self):
         '''Return the domain.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `domain`
 
@@ -231,7 +231,7 @@ TODO
         '''Return the identifiers of the domain axes spanned by the data
 array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_data_axes`, `get_data`, `set_data_axes`
 
@@ -271,7 +271,7 @@ None
 If a removed domain axis construct is referenced by a cell method
 construct, then that reference is also removed.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_construct`, `constructs`
 
@@ -324,7 +324,7 @@ TODO
 The units, calendar and fill value properties of the data object are
 removed prior to insertion.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_data`, `get_data`, `has_data`, `set_data_axes`
 
@@ -362,7 +362,7 @@ TODO
     def set_data_axes(self, axes):
         '''Set the domain axes spanned by the data array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_data_axes`, `get_data`, `get_data_axes`
 

@@ -28,6 +28,8 @@ does not depend on axes of the domain which are not spanned by the
 array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.
 
+.. versionadded:: 1.7.0
+
     '''
     def __init__(self, measure=None, properties=None, data=None,
                  source=None, copy=True, _use_data=True):
@@ -86,7 +88,7 @@ cell measure variables correspond to cell measure constructs.
 Returns a description of all properties, including those of
 components, and provides selected values of all data arrays.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -158,7 +160,7 @@ one. See the *ignore_type* parameter.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

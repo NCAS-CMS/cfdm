@@ -11,7 +11,8 @@ from . import Container
 class Properties(with_metaclass(abc.ABCMeta, Container)):
     '''Abstract base class for an object with descriptive properties.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
+
     '''
     def __init__(self, properties=None, source=None, copy=True):
         '''**Initialization**
@@ -60,7 +61,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -78,7 +79,7 @@ class Properties(with_metaclass(abc.ABCMeta, Container)):
     def del_property(self, prop, *default):
         '''Remove a property.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `get_property`, `has_property`, `properties`,
              `set_property`
@@ -130,7 +131,7 @@ None
     def get_property(self, prop, *default):
         '''Return a property.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `has_property`, `properties`,
              `set_property`
@@ -182,7 +183,7 @@ None
     def has_property(self, prop):
         '''Whether a property has been set.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `properties`,
              `set_property`
@@ -223,7 +224,7 @@ None
     def properties(self, properties=None, copy=True):
         '''Return or replace all properties.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `has_property`,
              `set_property`
@@ -281,7 +282,7 @@ None
     def set_property(self, prop, value, copy=True):
         '''Set a property.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_property`, `get_property`, `has_property`,
              `properties`

@@ -41,7 +41,7 @@ some netCDF attributes of variables (e.g. units, long_name and
 standard_name), and some netCDF global file attributes (e.g. history
 and institution).
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -484,7 +484,7 @@ field.
         '''Set the report of problems encountered whilst reading the field
 construct from a dataset.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `read_report`
 
@@ -515,7 +515,7 @@ technique. This means that a copy takes up very little extra memory,
 even when the original contains very large data arrays, and the copy
 operation is fast.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -551,7 +551,7 @@ Returns a description of all properties, including those of metadata
 constructs and their components, and provides selected values of all
 data arrays.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -702,7 +702,7 @@ NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
 construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -813,7 +813,7 @@ False
 Insert a new size 1 axis, corresponding to an existing domain axis
 construct, into the data array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `squeeze`, `transpose`
 
@@ -900,7 +900,7 @@ parent netCDF data variable. This will usually result in different
 field constructs than are created with the `~Field.create_field`
 method, regardless of the setting of the *domain* parameter.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.read`
 
@@ -1112,7 +1112,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
         '''A report of problems encountered whilst reading the field construct
 from a dataset.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.read`
 
@@ -1163,7 +1163,7 @@ from a dataset.
 By default all size one axes are removed, but particular size one axes
 may be selected for removal.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `expand_dims`, `transpose`
 
@@ -1245,7 +1245,7 @@ may be selected for removal.
     def transpose(self, axes=None):
         '''Permute the axes of the data array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `expand_dims`, `squeeze`
 
@@ -1299,7 +1299,7 @@ may be selected for removal.
     def field_ancillaries(self, axes=None, copy=False):
         '''Return field ancillary constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`
 
@@ -1331,7 +1331,7 @@ may be selected for removal.
     def cell_methods(self, copy=False):
         '''Return cell method constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `get_construct`, `set_construct`
 

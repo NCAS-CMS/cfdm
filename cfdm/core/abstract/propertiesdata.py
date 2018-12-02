@@ -9,7 +9,7 @@ from . import Properties
 class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
     '''Abstract base class for a data array with descriptive properties.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
     '''
     def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
@@ -76,7 +76,7 @@ return the data as a `numpy` array.
 The units, calendar and fill value properties are, if set, inserted
 into the data.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_data`, `get_array`, `get_data`, `has_data`,
              `set_data`
@@ -115,7 +115,7 @@ technique. This means that a copy takes up very little extra memory,
 even when the original contains very large data arrays, and the copy
 operation is fast.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -141,7 +141,7 @@ False
     def del_data(self, *default):
         '''Remove the data.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `get_data`, `has_data`, `set_data`
 
@@ -182,7 +182,7 @@ None
 
 Use the `get_data` method to return the data as a `Data` instance.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `get_data`
 
@@ -223,7 +223,7 @@ return the data as an independent `numpy` array.
 The units, calendar and fill value properties are, if set, inserted
 into the data.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_data`, `get_array`, `has_data`, `set_data`
 
@@ -281,7 +281,7 @@ None
     def has_data(self):
         '''Whether a data has been set.
         
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_data`, `get_data`, `set_data`
 
@@ -317,7 +317,7 @@ None
 The units, calendar and fill value of the incoming `Data` instance are
 removed prior to insertion.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `data`, `del_data`, `get_data`, `has_data`
 

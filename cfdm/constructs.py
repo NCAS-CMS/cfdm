@@ -7,7 +7,7 @@ from . import core
 class Constructs(core.Constructs):
     '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''    
 #    def get_construct(self, description=None, cid=None,
@@ -182,7 +182,7 @@ TODO
                ignore_compression=False, ignore_type=False):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         
         '''
         if self is other:

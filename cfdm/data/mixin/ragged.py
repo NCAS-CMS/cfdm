@@ -3,12 +3,14 @@ from builtins import object
 
 class RaggedContiguous(object):
     '''TODO
+
+.. versionadded:: 1.7.0
     '''
 
     def get_count_variable(self, *default):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -45,7 +47,7 @@ class RaggedIndexed(object):
     def get_index_variable(self, *default):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

@@ -7,12 +7,7 @@
 
 ----
 
-Version |release| for version |version| of the CF conventions.
-
 .. include:: introduction.rst
-
-.. .. include:: installation.rst
-.. .. include:: tutorial.rst
 
 **Table Of Contents**
 =====================

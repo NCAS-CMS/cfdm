@@ -9,7 +9,7 @@ class List(mixin.NetCDFVariable,
            core.abstract.PropertiesData):
     '''A list variable required to uncompress a gathered array.
 
-.. versionadded::1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,

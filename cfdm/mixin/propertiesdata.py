@@ -8,6 +8,8 @@ from . import Properties
 class PropertiesData(Properties):
     '''Mixin class for a data array with descriptive properties.
 
+.. versionadded:: 1.7.0
+
     '''
     def __getitem__(self, indices):
         '''Return a subspace defined by indices
@@ -60,7 +62,7 @@ rules, the only differences being:
 
 x.__str__() <==> str(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         name = self.name('')
@@ -220,7 +222,7 @@ one. See the *ignore_type* parameter.
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -353,7 +355,7 @@ False
 
 Insert a new size 1 axis into the data array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `squeeze`, `transpose`
 
@@ -441,7 +443,7 @@ By default the name is the first found of the following:
 4. The netCDF variable name, preceeded by ``'ncvar%'``.
 5. The value of the *default* parameter.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -545,7 +547,7 @@ By default the name is the first found of the following:
 By default all size one axes are removed, but particular size one axes
 may be selected for removal.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `expand_dims`, `transpose`
 
@@ -595,7 +597,7 @@ may be selected for removal.
     def transpose(self, axes=None):
         '''Permute the axes of the data array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `expand_dims`, `squeeze`
 

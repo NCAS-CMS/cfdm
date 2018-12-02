@@ -6,21 +6,20 @@ import textwrap
 import numpy
 import sys
 
-from . import Container #, Equals
-
-#from .equals import Equals
+from . import Container
 
 
 class Properties(Container):
     '''Mixin class for descriptive properties.
 
-    '''
+.. versionadded:: 1.7.0
 
+    '''
     def _dump_properties(self, _prefix='', _level=0,
                          _omit_properties=None):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -73,7 +72,7 @@ Two numerical elements ``a`` and ``b`` are considered equal if
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

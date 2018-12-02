@@ -7,6 +7,8 @@ from collections import OrderedDict
 class Constructs(object):
     '''TODO
 
+.. versionadded:: 1.7.0
+
     '''
     
     def __init__(self, 
@@ -159,7 +161,7 @@ class Constructs(object):
     def __deepcopy__(self, memo):
         '''Called by the :py:obj:`copy.deepcopy` standard library function.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         return self.copy()
@@ -278,7 +280,7 @@ class Constructs(object):
 Constructs are returned as values of a dictionary, keyed by their
 construct identifiers.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `del_construct`, `get_construct`, `set_construct`
 
@@ -431,7 +433,7 @@ None
     def set_construct_axes(self, cid, axes):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
         '''
         if self.construct_type(cid) is None:
             raise ValueError(
@@ -603,7 +605,7 @@ Parameters:
     def has_construct(self, cid):
         '''Whether a construct exisits.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -632,7 +634,7 @@ TODO
                       copy=True):
         '''Set a construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `get_construct`,
              `set_construct_axes`
@@ -743,7 +745,7 @@ TODO
     def new_identifier(self, construct_type):
         '''Return a new, unique identifier for a construct.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

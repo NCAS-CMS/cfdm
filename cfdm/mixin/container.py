@@ -10,7 +10,7 @@ from ..functions import ATOL, RTOL
 class Container(object):
     '''Mixin class for storing object components.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __repr__(self):
@@ -18,7 +18,7 @@ class Container(object):
 
 x.__repr__() <==> repr(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         return '<{0}: {1}>'.format(self.__class__.__name__,
@@ -30,7 +30,7 @@ x.__repr__() <==> repr(x)
 
 x.__str__() <==> str(x)
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         out = sorted(self._components)
@@ -42,7 +42,7 @@ x.__str__() <==> str(x)
                 ignore_data_type=False, **kwargs):
         '''TODO
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 
@@ -155,7 +155,7 @@ x.__str__() <==> str(x)
 #               ignore_type=False):
 #        '''TODO
 #
-#..versionadded:: 1.7
+#..versionadded:: 1.7.0
 #
 #:Parameters:
 #

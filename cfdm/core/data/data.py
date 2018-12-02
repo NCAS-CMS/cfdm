@@ -8,7 +8,7 @@ from .. import abstract
 class Data(abstract.Container):
     '''An orthogonal multidimensional array with masked values and units.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, array=None, units=None, calendar=None,

@@ -24,7 +24,7 @@ construct itself. However, it is sometimes desired to store properties
 on a CF-netCDF bounds variable, so this class supports this
 capability.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties=None, data=None, source=None,
@@ -73,7 +73,7 @@ capability.
 Returns a description of all properties and provides selected values
 of all data arrays.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

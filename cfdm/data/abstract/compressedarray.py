@@ -14,6 +14,8 @@ array
 
 See `cfdm.GatheredArray` for an example implementation.
 
+.. versionadded:: 1.7.0
+
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,
                  ndim=None, compressed_dimension=None,
@@ -75,7 +77,7 @@ rules, the only differences being:
   the way vector subscripts work in Fortran). This is the same
   behaviour as indexing on a Variable object of the netCDF4 package.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
         '''
         raise NotImplementedError()
@@ -115,7 +117,7 @@ rules, the only differences being:
     def _set_compressed_Array(self, array, copy=True):
         '''Set the compressed array.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Parameters:
 

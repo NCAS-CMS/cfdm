@@ -12,7 +12,7 @@ class ParametersDomainAncillaries(with_metaclass(abc.ABCMeta, Parameters)):
     '''Abstract base class for a collection of named parameters and named
 domain ancillary constructs.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
     '''
 
@@ -88,7 +88,7 @@ domain ancillary constructs.
 
 ``f.copy()`` is equivalent to ``copy.deepcopy(f)``.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 :Returns:
 
@@ -106,7 +106,7 @@ domain ancillary constructs.
     def del_domain_ancillary(self, domain_ancillary, *default):
         '''Delete a domain ancillary.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `domain_ancillaries`, `get_domain_ancillary`,
              `has_domain_ancillary`, `set_domain_ancillary`
@@ -138,7 +138,7 @@ domain ancillary constructs.
     def domain_ancillaries(self, domain_ancillaries=None, copy=True):
         '''Return or replace the domain ancillary-valued terms.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `parameters`
 
@@ -218,7 +218,7 @@ ERROR
     def set_domain_ancillary(self, term, value, copy=True):
         '''Set an domain ancillary-valued term.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `domain_ancillaries`, `del_domain_ancillary`, `get_domain_ancillary`,
              `set_domain_ancillary`
