@@ -11,8 +11,8 @@ from ...core.data import Array as core_Array
 class Array(with_metaclass(abc.ABCMeta, core_Array)):
     '''Abstract base class for a container of an underlying array.
 
-The form of the array is arbitrary and is defined by the
-initialization parameters of a subclass of `Array`.
+The form of the array is defined by the initialization parameters of a
+subclass.
 
 See `cfdm.NumpyArray` for an example implementation.
 

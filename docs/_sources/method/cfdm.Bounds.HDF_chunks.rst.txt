@@ -1,0 +1,7 @@
+cfdm.Bounds.HDF_chunks
+======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Bounds.HDF_chunks

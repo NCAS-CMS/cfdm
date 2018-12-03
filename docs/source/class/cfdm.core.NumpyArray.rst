@@ -1,34 +1,45 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.NumpyArray
 ====================
 
-.. currentmodule:: cfdm.core
+----
 
-.. autoclass:: NumpyArray
+.. autoclass:: cfdm.core.NumpyArray
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-      ~NumpyArray.__init__
-      ~NumpyArray.copy
-      ~NumpyArray.get_array
-      ~NumpyArray.next
+   ~cfdm.core.NumpyArray.get_array
    
-   
+.. rubric:: Attributes
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
    
+   ~cfdm.core.NumpyArray.dtype
+   ~cfdm.core.NumpyArray.ndim
+   ~cfdm.core.NumpyArray.shape
+   ~cfdm.core.NumpyArray.size
    
-   .. rubric:: Attributes
+Miscellaneous
+-------------
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-      ~NumpyArray.dtype
-      ~NumpyArray.ndim
-      ~NumpyArray.shape
-      ~NumpyArray.size
-   
-   
+   ~cfdm.core.NumpyArray.copy

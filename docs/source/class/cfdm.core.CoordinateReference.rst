@@ -1,42 +1,82 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.CoordinateReference
 =============================
 
-.. currentmodule:: cfdm.core
+----
 
-.. autoclass:: CoordinateReference
+.. autoclass:: cfdm.core.CoordinateReference
+   :no-members:
+   :no-inherited-members:
+   
+Methods
+-------
 
-   
-   .. automethod:: __init__
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   
-   .. rubric:: Methods
+   ~cfdm.core.CoordinateReference.coordinates
+   ~cfdm.core.CoordinateReference.del_coordinate
+   ~cfdm.core.CoordinateReference.del_coordinate_conversion
+   ~cfdm.core.CoordinateReference.del_datum
+   ~cfdm.core.CoordinateReference.get_coordinate_conversion
+   ~cfdm.core.CoordinateReference.get_datum
 
-   .. autosummary::
-   
-      ~CoordinateReference.__init__
-      ~CoordinateReference.coordinates
-      ~CoordinateReference.copy
-      ~CoordinateReference.del_coordinate
-      ~CoordinateReference.del_coordinate_conversion
-      ~CoordinateReference.del_datum
-      ~CoordinateReference.get_coordinate_conversion
-      ~CoordinateReference.get_datum
-      ~CoordinateReference.has_coordinate_conversion
-      ~CoordinateReference.has_datum
-      ~CoordinateReference.next
-      ~CoordinateReference.set_coordinate
-      ~CoordinateReference.set_coordinate_conversion
-      ~CoordinateReference.set_datum
-   
-   
+Attributes
+----------
+ 
+.. autosummary::
+   :toctree: ../attribute/
+   :template: attribute.rst
+	      
+   ~cfdm.core.CoordinateReference.construct_type
+   ~cfdm.core.CoordinateReference.coordinate_conversion
+   ~cfdm.core.CoordinateReference.datum
 
-   
-   
-   .. rubric:: Attributes
+Modification
+------------
 
-   .. autosummary::
-   
-      ~CoordinateReference.coordinate_conversion
-      ~CoordinateReference.datum
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CoordinateReference.coordinates
+   ~cfdm.core.CoordinateReference.del_coordinate
+   ~cfdm.core.CoordinateReference.del_coordinate_conversion
+   ~cfdm.core.CoordinateReference.del_datum
+   ~cfdm.core.CoordinateReference.set_coordinate
+   ~cfdm.core.CoordinateReference.set_coordinate_conversion
+   ~cfdm.core.CoordinateReference.set_datum
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CoordinateReference.copy
+      
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.CoordinateReference.__deepcopy__
+
    
    

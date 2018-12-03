@@ -1,34 +1,60 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.Array
 ===============
 
-.. currentmodule:: cfdm.core
+----
 
-.. autoclass:: Array
+.. autoclass:: cfdm.core.Array
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+      
+   ~cfdm.core.Array.get_array
    
-      ~Array.__init__
-      ~Array.copy
-      ~Array.get_array
-      ~Array.next
-   
-   
+.. rubric:: Attributes
 
-   
-   
-   .. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
 
-   .. autosummary::
-   
-      ~Array.dtype
-      ~Array.ndim
-      ~Array.shape
-      ~Array.size
-   
-   
+   ~cfdm.core.Array.dtype
+   ~cfdm.core.Array.ndim
+   ~cfdm.core.Array.shape
+   ~cfdm.core.Array.size
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Array.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.Array.__array__
+   ~cfdm.core.Array.__deepcopy__

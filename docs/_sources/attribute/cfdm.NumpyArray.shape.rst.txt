@@ -1,0 +1,7 @@
+cfdm.NumpyArray.shape
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cfdm.NumpyArray.shape

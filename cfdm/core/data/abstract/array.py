@@ -5,14 +5,14 @@ import abc
 
 from ...abstract import Container
 
-#class Array(with_metaclass(abc.ABCMeta, object)):
+
 class Array(with_metaclass(abc.ABCMeta, Container)):
     '''Abstract base class for a container of an array.
 
-The form of the array is arbitrary and is defined by the
-initialization parameters of a subclass of `Array`.
+The form of the array is defined by the initialization parameters of a
+subclass.
 
-See cfdm.core.NumpyArray for an example implementation.
+See `cfdm.core.NumpyArray` for an example implementation.
 
 .. versionadded:: 1.7.0
 
