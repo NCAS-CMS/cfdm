@@ -8,7 +8,8 @@ Version |release| for version |version| of the CF conventions.
 
 ----
 
-The cfdm package is a complete implementation of the CF data model.
+The Python cfdm package is a complete implementation of the CF data
+model.
 
 **CF conventions**
 ------------------

@@ -318,12 +318,12 @@ def ATOL(*atol):
     '''The tolerance on absolute differences when testing for numerically
 tolerant equality.
 
-Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
-+ rtol*abs(y)``, where atol (the tolerance on absolute differences)
-and rtol (the tolerance on relative differences) are positive,
-typically very small numbers. By default both are set to the system
-epsilon (the difference between 1 and the least value greater than 1
-that is representable as a float).
+Two real numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <=
+atol + rtol*abs(y)``, where atol (the tolerance on absolute
+differences) and rtol (the tolerance on relative differences) are
+positive, typically very small numbers. By default both are set to the
+system epsilon (the difference between 1 and the least value greater
+than 1 that is representable as a float).
 
 .. versionadded:: 1.7.0
 
@@ -363,12 +363,12 @@ def RTOL(*rtol):
     '''The tolerance on relative differences when testing for numerically
 tolerant equality.
 
-Two numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <= atol
-+ rtol*abs(y)``, where atol (the tolerance on absolute differences)
-and rtol (the tolerance on relative differences) are positive,
-typically very small numbers. By default both are set to the system
-epsilon (the difference between 1 and the least value greater than 1
-that is representable as a float).
+Two real numbers ``x`` and ``y`` are considered equal if ``abs(x-y) <=
+atol + rtol*abs(y)``, where atol (the tolerance on absolute
+differences) and rtol (the tolerance on relative differences) are
+positive, typically very small numbers. By default both are set to the
+system epsilon (the difference between 1 and the least value greater
+than 1 that is representable as a float).
 
 .. versionadded:: 1.7.0
 

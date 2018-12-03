@@ -62,7 +62,6 @@ For example, to read the file **file.nc** (:download:`download
 
 .. code:: python
 
-   >>> import cfdm
    >>> x = cfdm.read('file.nc')
    >>> type(x)
    list
@@ -1741,7 +1740,7 @@ attributes and methods of the domain instance:
 ----
 
 A field construct may be copied with its `~Field.copy` method. This
-produces a deep copy, i.e. the new field construct is completely
+produces a "deep copy", i.e. the new field construct is completely
 independent of the original field.
 
 .. code:: python
@@ -1816,14 +1815,14 @@ metadata constructs and for each pair of constructs:
 * if there are data arrays then they must have same shape, data type
   and be element-wise equal.
 
-Two numerical data elements :math:`a` and :math:`b` are considered
-equal if :math:`|a - b| \le atol + rtol|b|`, where :math:`atol` (the
-tolerance on absolute differences) and :math:`rtol` (the tolerance on
-relative differences) are positive, typically very small numbers. By
-default both are set to the system epsilon (the difference between 1
-and the least value greater than 1 that is representable as a
-float). Their values may be inspected and changed with the `cfdm.ATOL`
-and `cfdm.RTOL` functions:
+Two real numbers :math:`a` and :math:`b` are considered equal if
+:math:`|a - b| \le atol + rtol|b|`, where :math:`atol` (the tolerance
+on absolute differences) and :math:`rtol` (the tolerance on relative
+differences) are positive, typically very small numbers. By default
+both are set to the system epsilon (the difference between 1 and the
+least value greater than 1 that is representable as a float). Their
+values may be inspected and changed with the `cfdm.ATOL` and
+`cfdm.RTOL` functions:
 
 .. code:: python
 
@@ -1846,9 +1845,9 @@ construct.
 The `~Field.equals` method has optional parameters for modifying the
 criteria for considering two fields to be equal:
 
-* named properties may be omitted from the comparison,x
+* named properties may be omitted from the comparison,
 
-* the fill value and missing data value properties may be ignored,
+* fill value and missing data value properties may be ignored,
 
 * the data type of data arrays may be ignored, and
 
@@ -1872,16 +1871,15 @@ Metadata constructs may also be tested for equality:
 
 ----
 
-`External variables`_ are those referred to in a netCDF dataset, but
-which are not present in it. Instead, such variables are stored in
+`External variables`_ are those in a netCDF file that are referred to,
+but which are not present in it. Instead, such variables are stored in
 other netCDF files known as "external files". External variables may,
 however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the `cfdm.read` function.
 
 This is illustrated with the files **parent.nc** (:download:`download
-<netcdf_files/parent.nc>`, 2kB) and **external.nc**
-(:download:`download <netcdf_files/external.nc>`, 1kB) [#files]_:
+<netcdf_files/parent.nc>`, 2kB) [#files]_:
 
 .. code:: bash
    
@@ -1906,6 +1904,11 @@ This is illustrated with the files **parent.nc** (:download:`download
    		:Conventions = "CF-1.7" ;
    		:external_variables = "areacella" ;
    }
+
+and **external.nc** (:download:`download <netcdf_files/external.nc>`,
+1kB) [#files]_:
+
+.. code:: bash
 
    $ ncdump -h external.nc 
    netcdf external {
@@ -2508,10 +2511,10 @@ The content of the new file is:
                for details.
 ..
 
-.. [#files] The tutorial files may be also found in the
-            `docs/_downloads
+.. [#files] The tutorial files may be also found in the `downloads
+            directory
             <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
-            directory of the code repository.
+            of the on-line code repository.
 
 ..
 

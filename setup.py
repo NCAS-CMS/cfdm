@@ -37,9 +37,9 @@ packages     = ['cfdm']
 
 #package_data = etc_files
 
-long_description = """**cfdm** is a complete implementation of the `CF data model
-<https://www.geosci-model-dev.net/10/4619/2017>`_, that identifies the
-fundamental elements of the `CF conventions
+long_description = """The **cfdm** Python package is a complete implementation of the `CF
+data model <https://www.geosci-model-dev.net/10/4619/2017>`_, that
+identifies the fundamental elements of the `CF conventions
 <http://cfconventions.org/>`_ and shows how they relate to each other,
 independently of the `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ encoding.

@@ -309,7 +309,7 @@ they may ony be correctly interpreted by the field constructs that
 contain the cell method constructs in question. They are, however,
 taken into account when two fields constructs are tested for equality.
 
-Two numerical properties ``a`` and ``b`` are considered equal if
+Two real numbers ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. The data type of the numbers
@@ -595,28 +595,24 @@ By default the name is the first found of the following:
     #--- End: def
 
     def sorted(self, indices=None):
-        '''Return a cell method with sorted domain axes.
+        '''Return a cell method with sorted axes.
 
-The domain axes are sorted by their internal identifiers and the
-intervals, if provided, are sorted accordingly.
+The axes are sorted by domain axis construct identifier or standard
+name, and any intervals are sorted accordingly.
 
 :Parameters:
 
     indices: ordered sequence of `int`, optional
-        Sort the somain axes with the given indices. By default the
-        domain axes are sorted by their internal identifiers.
+        Sort the axes with the given indices. By default the axes are
+        sorted by their internal identifiers or standard names.
 
 :Returns:
 
     out: `CellMethod`
-        A new cell method object with sorted domain axes.
+        A new cell method object with sorted axes.
 
 **Examples**
 
->>> cm = CellMethod(axes=['domainaxis1', 'domainaxis0'],
-...                 method='mean',
-...                 properties={'intervals': [Data(1, 'km'), 
-...                                           Data(2, 'km')]})
 >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
 ...                      properties={'method': 'mean',
 ...                                  'intervals': [1, 2]})
@@ -625,6 +621,15 @@ intervals, if provided, are sorted accordingly.
 <CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
 >>> cm.sorted()
 <CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)>
+
+>>> cm = cfdm.CellMethod(axes=['domainaxis0', 'area'],
+...                      properties={'method': 'mean',
+...                                  'intervals': [1, 2]})
+... 
+>>> cm
+<CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
+>>> cm.sorted()
+<CellMethod: area: domainaxis0: mean (interval: 2 interval: 1)>
 
         '''
         new = self.copy()

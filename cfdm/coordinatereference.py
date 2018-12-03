@@ -303,7 +303,7 @@ constructs that contain the coordinate reference constructs in
 question. They are, however, taken into account when two fields
 constructs are tested for equality.
 
-Two numerical parameters ``a`` and ``b`` are considered equal if
+Two real numbers ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. The data type of the numbers

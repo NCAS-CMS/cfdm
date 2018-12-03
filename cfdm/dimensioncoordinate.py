@@ -150,7 +150,7 @@ coordinate constructs to be considered equal:
   type, and be element-wise equal (see the *ignore_properties* and
   *ignore_data_type* parameters).
 
-Two numerical elements ``a`` and ``b`` are considered equal if
+Two real numbers ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*

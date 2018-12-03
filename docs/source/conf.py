@@ -235,7 +235,7 @@ html_theme_options = {
 #    "sidebar_search_button" :  '#ED1010',
     'fixed_sidebar' : 'true',
     
-    'github_user' : 'ncas-cms',
+    'github_user' : 'davidhassell',
     'github_repo' : 'cfdm',
 
     'seealso_bg'     : 'transparent',

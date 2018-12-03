@@ -1,16 +1,16 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-################
-**cfdm package**
-################
+#######################
+**Python cfdm package**
+#######################
 
 ----
 
 .. include:: introduction.rst
 
-**Table Of Contents**
-=====================
+**Contents**
+============
 
 ----
 
