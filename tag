@@ -37,7 +37,7 @@
 # --------------------------------------------------------------------
 
 if [[ ! $1 ]] ; then 
-  echo "No version \$1 (e.g. 2.0.1)"
+  echo "No version \$1 (e.g. 1.7.0)"
   exit 1
 fi
 
@@ -45,17 +45,6 @@ version=$1
 major_version=$(echo $version | cut -c 1)
 
 current_branch=`git rev-parse --abbrev-ref HEAD`
-
-#if [[ $major_version == 1 && $current_branch != v1 ]] ; then
-#  echo "Can only tag version $version in branch v1, not branch $current_branch"
-#  exit 2
-#fi
-#
-#if [[ $major_version == 2 && $current_branch != master ]] ; then
-#  echo "Can only tag version $version in branch master, not branch $current_branch"
-#  echo "Can only tag branch 'master'"
-#  exit 2
-#fi
 
 echo "New tag: v$version"
 echo

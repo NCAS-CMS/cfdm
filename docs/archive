@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [[ ! $1 ]] ; then 
+  echo "No version \$1 (e.g. 1.7.0)"
+  exit 1
+fi
+
+version=$1
+
+echo "Update $PWD/source/releases.rst .... continue? [yes|no]"
+read ok
+
+if [[ $ok != 'yes' ]] ; then
+  # ------------------------------------------------------------------
+  # Quit nicely
+  # ------------------------------------------------------------------
+  exit 0
+fi
+
+# --------------------------------------------------------------------
+# Make the archive docs    
+# --------------------------------------------------------------------
+make html $version
+
+# --------------------------------------------------------------------
+# Add, commit and push
+# --------------------------------------------------------------------
+#git add $version
+git commit -a -m "archive of v$version documentation"
+git push origin master
+
