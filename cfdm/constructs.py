@@ -376,10 +376,14 @@ TODO
     
                     # Domain ancillary-valued coordinate conversion terms
                     terms0 = ref0.coordinate_conversion.domain_ancillaries()
-                    terms1 = {}
-                    for term, key in tuple(ref1.coordinate_conversion.domain_ancillaries().items()):
-                        terms1[term] = key1_to_key0.get(key, key)
-    
+#                    terms1 = {}
+#                    for term, key in tuple(ref1.coordinate_conversion.domain_ancillaries().items()):
+#                        terms1[term] = key1_to_key0.get(key, key)
+
+                    terms1 = {term: key1_to_key0.get(key, key)
+                              for term, key in ref1.coordinate_conversion.domain_ancillaries().items()}
+#                    print(terms1)
+
                     if terms0 != terms1:
                         continue
     
@@ -424,9 +428,12 @@ TODO
     cell_methods0, cell_methods1))
             return False
         
-        axis0_to_axis1 = {}
-        for axis0, axis1 in axis1_to_axis0.items():
-            axis0_to_axis1[axis0] = axis1
+#        axis0_to_axis1 = {}
+#        for axis0, axis1 in axis1_to_axis0.items():
+#            axis0_to_axis1[axis0] = axis1
+            
+        axis0_to_axis1 = {axis0: axis1
+                          for axis0, axis1 in axis1_to_axis0.items()}
             
         for cm0, cm1 in zip(tuple(cell_methods0.values()),
                             tuple(cell_methods1.values())):

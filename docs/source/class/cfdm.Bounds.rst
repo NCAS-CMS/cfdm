@@ -26,9 +26,10 @@ Inspection
    ~cfdm.Bounds.has_data
    ~cfdm.Bounds.get_property
    ~cfdm.Bounds.has_property
-   ~cfdm.Bounds.name
    ~cfdm.Bounds.properties
-
+   ~cfdm.Bounds.inherited_properties
+   ~cfdm.Bounds.name
+   
 .. rubric:: Attributes
    
 .. autosummary::

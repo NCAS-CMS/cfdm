@@ -448,8 +448,9 @@ By default the name is the first found of the following:
 :Parameters:
 
     default: optional
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is `None`.
+        If no other name can be found then return the value of the
+        *default* parameter. By default `None` is returned in this
+        case.
 
     ncvar: `bool`, optional
         If False then do not consider the netCDF variable name.
@@ -458,8 +459,8 @@ By default the name is the first found of the following:
         If True then return a list of all possible names.
 
     custom: sequence of `str`, optional
-        Replace the ordered list of properties from which to find a
-        name. The default list is ``['standard_name', 'cf_role',
+        Replace the ordered list of properties from which to seatch
+        for a name. The default list is ``['standard_name', 'cf_role',
         'long_name']``.
 
         *Example:*
@@ -533,13 +534,6 @@ By default the name is the first found of the following:
 
         return default
     #--- End: def
-
-#    def open(self):
-#        '''TODO
-#        '''
-#        if self.has_data():
-#            self.get_data().open()
-#    #--- End: def
 
     def squeeze(self, axes=None):
         '''Remove size one axes from the data array.

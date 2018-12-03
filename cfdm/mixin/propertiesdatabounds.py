@@ -462,6 +462,61 @@ also inserted into the bounds data array, if present.
         return c
     #--- End: def
     
+    def get_bounds(self, *default):
+        '''Return the bounds.
+
+.. versionadd:: 1.7.0
+
+.. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
+             `set_bounds`
+
+:Parameters:
+
+    default: optional
+        Return *default* if and only if the bounds have not been set.
+
+:Returns:
+
+    out:
+        The bounds. If the bounds have not been set, then return the
+        value of *default* parameter if provided.
+
+**Examples:**
+
+>>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> c.set_bounds(b)
+>>> c.has_bounds()
+True
+>>> c.get_bounds()
+<Bounds: (5, 2) >
+>>> b = c.del_bounds()
+>>> b
+<Bounds: (5, 2) >
+>>> c.has_bounds()
+False
+>>> print(c.get_bounds(None))
+None
+>>> print(c.del_bounds(None))
+None
+
+        '''
+        bounds = super().get_bounds(None)
+
+        if bounds is None:
+            return self._get_component('bounds', *default)
+        
+        properties = self.properties()
+        bounds_properties = bounds.properties()
+
+        inherited_properties = {prop: value
+                                for (prop, value) in properties.items()
+                                if prop not in bounds_properties}
+
+        bounds._set_component('inherited_properties', inherited_properties)
+        
+        return bounds
+    #--- End: def
+
     def get_node_ncdim(self, *default):
         '''TODO
         '''        

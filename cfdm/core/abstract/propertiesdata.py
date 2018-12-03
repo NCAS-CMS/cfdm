@@ -4,12 +4,14 @@ from builtins import super
 import abc
 
 from . import Properties
-
+#from . import DataContainer
 
 class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
+#class PropertiesData(with_metaclass(abc.ABCMeta, DataContainer, Properties)):
     '''Abstract base class for a data array with descriptive properties.
 
 .. versionadded:: 1.7.0
+
     '''
     def __init__(self, properties=None, data=None, source=None,
                  copy=True, _use_data=True):
@@ -42,11 +44,15 @@ class PropertiesData(with_metaclass(abc.ABCMeta, Properties)):
         initialization. By default arguments are deep copied.
 
         '''
-#        super().__init__(properties=properties, source=source,
-#                         copy=copy)
-        Properties.__init__(self, properties=properties,
-                            source=source, copy=copy)
-
+        super().__init__(properties=properties, source=source,
+                         copy=copy)
+#        DataContainer.__init__(self, data=data, source=source,
+#                               copy=copy, _use_data=_use_data)
+#        print ('A', self.properties())
+#        Properties.__init__(self, properties=properties,
+#                            source=source, copy=copy)
+#        print ('B', self.properties())
+#        print ('')
         if source is not None:
             if not _use_data:
                 data = None

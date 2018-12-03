@@ -79,9 +79,11 @@ class Constructs(object):
                     continue
                 
                 if copy:
-                    new_v = {}
-                    for cid, construct in source._constructs[construct_type].items():
-                        new_v[cid] = construct.copy()
+#                    new_v = {}
+#                    for cid, construct in source._constructs[construct_type].items():
+#                        new_v[cid] = construct.copy()
+                    new_v = {cid: construct.copy()
+                             for cid, construct in source._constructs[construct_type].items()}
                 else:
                     new_v = source._constructs[construct_type].copy()
 
@@ -512,9 +514,11 @@ None
         out = {}
 
         for axes in list(self.construct_axes().values()):
-            d = {}
-            for construct_type in self._array_constructs:
-                d[construct_type] = {}
+#            d = {}
+#            for construct_type in self._array_constructs:
+#                d[construct_type] = {}
+            d = {construct_type: {}
+                 for construct_type in self._array_constructs}
 
             out[axes] = d
         #--- End: for

@@ -258,9 +258,10 @@ None
     def get_bounds(self, *default):
         '''Return the bounds.
 
-.. versionadd:: 1.7
+.. versionadd:: 1.7.0
 
-.. seealso:: `get_array`, `get_data`, `has_bounds`, `set_bounds`
+.. seealso:: `bounds`, `get_data`, `del_bounds`, `has_bounds`,
+             `set_bounds`
 
 :Parameters:
 
@@ -292,22 +293,7 @@ None
 None
 
         '''
-        bounds = self._get_component('bounds', None)
-        if bounds is None:
-            return self._get_component('bounds', *default)
-
-        properties = self.properties()
-        bounds_properties = bounds.properties()
-
-        inherited_properties = {}
-        for prop, value in properties.items():
-            if prop not in bounds_properties:
-                inherited_properties[prop] = value
-        #--- End: for
-        
-        bounds._set_component('inherited_properties', inherited_properties)
-        
-        return bounds
+        return self._get_component('bounds', *default)
     #--- End: def
 
     def get_geometry(self, *default):

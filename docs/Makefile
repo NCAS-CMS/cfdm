@@ -5,17 +5,25 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 PAPER         =
-BUILDDIR      = build
+#BUILDDIR      = build
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+#ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+ALLSPHINXOPTS   = -j 3 source
+BUILDDIR        = $(filter-out $@, $(MAKECMDGOALS))
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
+VERSION    = $(shell grep __version__ ../cfdm/__init__.py | cut -d "=" -f 2 | sed "s/[' ]//g")
+CF_VERSION = $(shell grep __cf_version__ ../cfdm/__init__.py | cut -d "=" -f 2 | sed "s/[' ]//g")
+ID         = $(shell echo $$$$)
+X          = Version $(VERSION) for version $(CF_VERSION) of the CF conventions.
+NOTEBOOK   = source/notebooks/tutorial.ipynb
+
+.PHONY: help html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest
 
 help:
-	@echo "Please use \`make <target>' where <target> is one of"
+	@echo "Please use \`make <target> <builddir>' where <target> is one of"
 	@echo "  html       to make standalone HTML files"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
@@ -33,13 +41,21 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
-clean:
-	-rm -rf $(BUILDDIR)/*
+#clean:
+#	-rm -rf $(BUILDDIR)/*
+
+
 
 html:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
+
+	sed 's/Version .* for version .* of the CF conventions./$(X)/' $(NOTEBOOK) > $(NOTEBOOK).tmp
+	cp -p $(NOTEBOOK).tmp $(NOTEBOOK) 
+	mv $(NOTEBOOK).tmp $(NOTEBOOK).$(ID)
+
 	@echo
-	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+	@echo "$(X)"
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)"
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml

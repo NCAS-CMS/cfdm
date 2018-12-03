@@ -207,7 +207,6 @@ class create_fieldTest(unittest.TestCase):
             print("####################################################")
             
         cfdm.write(f, self.filename, fmt='NETCDF3_CLASSIC', verbose=verbose)
-#        f.dump()
 #        sys.exit(0)
 
         g = cfdm.read(self.filename, verbose=verbose) #, squeeze=True)
