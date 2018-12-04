@@ -1,7 +1,13 @@
-version 1.7b8 - 2018-12-02
-==========================
+version 1.7.0b9 - 
+============================
 
-* New nethods: cfdm.Field.get_construct_axes,
+* New method: cfdm.Bounds.inherted_properties
+* Renamed the io module as read_write to avoid namespace clashes
+ 	
+version 1.7.0b8 - 2018-12-02
+============================
+
+* New methods: cfdm.Field.get_construct_axes,
   cfdm.Field.get_construct_id
 * Changed behavious of cfdm.Field.construct_axes
  	

@@ -49,7 +49,7 @@ from .data import (Data,
                    RaggedIndexedArray,
                    RaggedIndexedContiguousArray)
 
-from .functions import (CF, environment, ATOL, RTOL)
+from .functions import CF, environment, ATOL, RTOL
 
 from .count import Count
 from .index import Index
@@ -71,7 +71,7 @@ from .domainaxis          import DomainAxis
 from .field               import Field
 from .fieldancillary      import FieldAncillary
 
-from .io import (read, write)
+from .read_write import read, write
 
 
     

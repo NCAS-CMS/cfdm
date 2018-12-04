@@ -509,8 +509,8 @@ None
         bounds_properties = bounds.properties()
 
         inherited_properties = {prop: value
-                                for (prop, value) in properties.items()
-                                if prop not in bounds_properties}
+                                for prop, value in properties.items()}
+#                                if prop not in bounds_properties}
 
         bounds._set_component('inherited_properties', inherited_properties)
         
