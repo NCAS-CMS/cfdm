@@ -168,7 +168,7 @@ that the method was applied only over El Nino years).
         The removed axes, identified by field key or standard name. If
         unset then *default* is returned, if provided.
 
-**Examples**
+**Examples:**
 
 >>> c.set_axes('area')
 >>> print c.del_axes()
@@ -198,7 +198,7 @@ None
         The axes. If axes have not been set then return the value
         of *default* parameter, if provided.
 
-**Examples**
+**Examples:**
 
 >>> c.set_axes(['time'])
 >>> c.get_axes()
@@ -229,7 +229,7 @@ AttributeError: 'CellMethod' object has no component 'axes'
      out: `bool`
         True if the axes have been set, otherwise False.
 
-**Examples**
+**Examples:**
 
 >>> if c.has_axes():
 ...     print 'Has axes'

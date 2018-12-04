@@ -14,7 +14,7 @@ class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file_c.nc')
 
-    def test_create_field(self):
+    def test_create_field_3(self):
 
         # Dimension coordinates
         data = numpy.arange(9.) + 20

@@ -138,7 +138,7 @@ applies.
 #
 #    out: `list`
 #
-#**Examples**
+#**Examples:**
 #
 #>>> c = CellMethod.parse('time: minimum within years time: mean over years (ENSO years)')
 #>>> print c
@@ -458,7 +458,7 @@ False
 #    out : bool
 #        Whether or not the two instances are equivalent.
 #
-#**Examples**
+#**Examples:**
 #
 #        '''
 #        if self is other:
@@ -526,9 +526,8 @@ False
 #        return True
 #    #--- End: def
 
-    def name(self, default=None, ncvar=False, custom=None,
-             all_names=False):
-        '''TODO Return a name for the {+variable}.
+def name(self, default=None, custom=None, all_names=False):
+        '''Return a name for the cell method construct.
 
 By default the name is the first found of the following:
 
@@ -546,18 +545,14 @@ By default the name is the first found of the following:
         If no name can be found then return the value of the *default*
         parameter. By default the default is `None`.
 
-    ncvar: `bool`, optional
-
 :Returns:
 
     out:
         The name.
 
-**Examples**
+**Examples:**
 
-
->>> n = f.{+name}()
->>> n = f.{+name}(default='NO NAME')
+TODO
 
         '''
         out = []
@@ -595,23 +590,25 @@ By default the name is the first found of the following:
     #--- End: def
 
     def sorted(self, indices=None):
-        '''Return a cell method with sorted axes.
+        '''Return a new cell method construct with sorted axes.
 
 The axes are sorted by domain axis construct identifier or standard
 name, and any intervals are sorted accordingly.
+
+.. versionadded:: 1.7.0
 
 :Parameters:
 
     indices: ordered sequence of `int`, optional
         Sort the axes with the given indices. By default the axes are
-        sorted by their internal identifiers or standard names.
+        sorted by domain axis construct identifier or standard name.
 
 :Returns:
 
     out: `CellMethod`
-        A new cell method object with sorted axes.
+        A new cell method construct with sorted axes.
 
-**Examples**
+**Examples:**
 
 >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
 ...                      properties={'method': 'mean',

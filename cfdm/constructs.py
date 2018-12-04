@@ -126,7 +126,7 @@ TODO
     out: `str`
         The canonical name for the axis.
 
-**Examples**
+**Examples:**
 
 >>> f.domain_axis_name('domainaxis1')
 'longitude'

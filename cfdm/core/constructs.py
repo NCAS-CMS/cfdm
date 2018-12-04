@@ -380,7 +380,7 @@ TODO
 
     out: `dict` or `tuple` or *default*
 
-**Examples**
+**Examples:**
 
 >>> x = f.construct_axes()
 >>> f.variable_axes()
@@ -454,7 +454,7 @@ None
     out: `Constructs`
         The copy.
 
-**Examples**
+**Examples:**
 
 >>> d = c.copy()
 
@@ -470,7 +470,7 @@ None
 
     out: `dict`
 
-**Examples**
+**Examples:**
 
 >>> print c.axes_to_constructs()
 {('domainaxis1',): {
@@ -538,7 +538,7 @@ None
 #
 #    copy: 
 #
-#**Examples**
+#**Examples:**
 #
 #>>> d = f.domain_axes()
 #>>> d
@@ -579,7 +579,7 @@ Parameters:
 
     out:
 
-**Examples**
+**Examples:**
 
 >>> f.constructs()
 >>> f.get_construct('dimensioncoordinate1')
@@ -760,7 +760,7 @@ TODO
     out: `str`
         The new identifier.
 
-**Examples**
+**Examples:**
 
 >>> d.items().keys()
 ['aux2', 'aux0', 'dim1', 'ref2']
@@ -813,7 +813,7 @@ TODO
         The removed construct, or `None` if the given key did not
         exist.
 
-**Examples**
+**Examples:**
 
 >>> x = f.del_construct('auxiliarycoordinate2')
         '''

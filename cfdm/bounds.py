@@ -185,9 +185,13 @@ None
 
 **Examples:**
 
->>> b.inherited_properties()
+>>> b.properties()
 {}
-
+>>> b.inherited_properties()
+{'standard_name': 'longitude',
+ 'units': 'degrees_east'}
+>>> b.properties({'foo': 'bar', 'standard_name': 'latitude'})
+{}
 >>> b.inherited_properties()
 {'standard_name': 'longitude',
  'units': 'degrees_east'}

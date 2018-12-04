@@ -142,7 +142,7 @@ indexing (given the restrictions on the type of indices allowed) is:
     out:
         TODO
 
-**Examples**
+**Examples:**
 
 TODO
         '''

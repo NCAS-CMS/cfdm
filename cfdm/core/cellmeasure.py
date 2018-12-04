@@ -71,7 +71,7 @@ cell measure variables correspond to cell measure constructs.
         If False then do not deep copy input parameters prior to
         initialization By default parameters are deep copied.
 
-**Examples**
+**Examples:**
 
 >>> c = CellMeasure(measure='area'
 ...                 properties={'units': 'km 2'},
@@ -125,7 +125,7 @@ cell measure variables correspond to cell measure constructs.
         The removed measure. If unset then *default* is returned, if
         provided.
 
-**Examples**
+**Examples:**
 
 TODO
 

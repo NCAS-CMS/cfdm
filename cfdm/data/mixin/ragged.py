@@ -22,7 +22,7 @@ class RaggedContiguous(object):
     out:
         TODO
 
-**Examples**
+**Examples:**
 
 TODO
         '''
@@ -59,7 +59,7 @@ class RaggedIndexed(object):
     out:
         TODO
 
-**Examples**
+**Examples:**
 
 TODO
 

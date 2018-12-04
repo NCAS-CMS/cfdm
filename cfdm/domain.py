@@ -186,7 +186,7 @@ field.
     out: `str`
         A string containing the description.
     
-**Examples**
+**Examples:**
 
         '''
         indent1 = '    ' * _level

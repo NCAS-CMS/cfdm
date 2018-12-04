@@ -472,7 +472,7 @@ By default the name is the first found of the following:
 :Returns:
 
     out:
-        The name. If the *all_names* parameters is True then a list of
+        The name. If the *all_names* parameter is True then a list of
         all possible names.
 
 **Examples:**

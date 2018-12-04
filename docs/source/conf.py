@@ -109,9 +109,7 @@ intersphinx_cache_limit = 5     # days to keep the cached inventories
 intersphinx_mapping = {
     'sphinx':     ('http://sphinx.pocoo.org',  None),
     'python':     ('http://docs.python.org/3', None),
-    'matplotlib': ('http://matplotlib.sourceforge.net', None),
     'numpy':      ('http://docs.scipy.org/doc/numpy', None),
-    'scipy':      ('http://docs.scipy.org/doc/scipy/reference', None),
     'netCDF4':    ('http://unidata.github.io/netcdf4-python', None),
     }
 

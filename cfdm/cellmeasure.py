@@ -252,68 +252,63 @@ False
         return True
     #--- End: def
 
-    def name(self, default=None, ncvar=False, custom=None,
+    def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
-        '''Return a name for the cell measure.
+        '''Return a name for the cell measure construct.
 
 By default the name is the first found of the following:
 
-  1. The `!measure` attribute.
-  
-  2. The `standard_name` CF property.
-  
-  3. The `!id` attribute.
+1. The "standard_name" property.
+2. The measure property, preceeded by 'measure%'.
+3. The "cf_role" property, preceeded by 'cf_role:'.
+4. The "long_name" property, preceeded by 'long_name:'.
+5. The netCDF variable name, preceeded by 'ncvar%'.
+6. The value of the default parameter.
 
-  4. The `long_name` CF property, preceeded by the string
-     ``'long_name:'``.
-
-  5. The `!ncvar` attribute, preceeded by the string ``'ncvar:'``.
-
-  6. The value of the *default* parameter.
-
-Note that ``c.name(identity=True)`` is equivalent to ``c.identity()``.
-
-.. seealso:: `identity`
+.. versionadded:: 1.7.0
 
 :Parameters:
 
-    default : *optional*
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is None.
+    default: optional
+        If no other name can be found then return the value of the
+        *default* parameter. By default `None` is returned in this
+        case.
 
-    identity : bool, optional
-        If True then 3. and 4. are not considered as possible names.
+    ncvar: `bool`, optional
+        If False then do not consider the netCDF variable name.
 
-    ncvar : bool, optional
-        If True then 1., 2., 3. and 4. are not considered as possible
-        names.
+    all_names: `bool`, optional
+        If True then return a list of all possible names.
+
+    custom: sequence of `str`, optional
+        Replace the ordered list of properties from which to seatch
+        for a name. The default list is ``['standard_name', 'cf_role',
+        'long_name']``.
+
+        *Example:*
+          ``custom=['project']``
+
+        *Example:*
+          ``custom=['project', 'long_name']``
 
 :Returns:
 
-    out : str
-        A  name for the cell measure.
+    out:
+        The name. If the *all_names* parameter is True then a list of
+        all possible names.
 
-**Examples**
+**Examples:**
 
->>> f.standard_name = 'air_temperature'
->>> f.long_name = 'temperature of the air'
->>> f.ncvar = 'tas'
->>> f.name()
-'air_temperature'
->>> del f.standard_name
->>> f.name()
-'long_name:temperature of the air'
->>> del f.long_name
->>> f.name()
-'ncvar:tas'
->>> del f.ncvar
->>> f.name()
-None
->>> f.name('no_name')
-'no_name'
->>> f.standard_name = 'air_temperature'
->>> f.name('no_name')
-'air_temperature'
+>>> c.get_measure()
+'area'
+>>> f.properties()
+{'foo': 'bar',
+ 'long_name': 'Area',
+ 'standard_name': 'cell_area'}
+>>> c.name()
+'cell_area'
+>>> c.name(all_names=True)
+['cell_area', 'measure%area', 'long_name:Area', 'ncvar:areacella']
 
         '''
         out = []

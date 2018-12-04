@@ -50,7 +50,7 @@ between ``a`` and ``b``.
     out: `bool`
         Returns True if the arrays are equal, otherwise False.
 
-**Examples**
+**Examples:**
 
 >>> cf._numpy_allclose([1, 2], [1, 2])
 True
@@ -125,7 +125,7 @@ between ``a`` and ``b``.
 
     out: `numpy.ndarray`
 
-**Examples**
+**Examples:**
     '''      
     try:
         return numpy.isclose(a, b, rtol=rtol, atol=atol)
@@ -146,7 +146,7 @@ between ``a`` and ``b``.
 #
 #    out: `list`
 #
-#**Examples**
+#**Examples:**
 #
 #'''
 #    parsed_indices = []
@@ -341,7 +341,7 @@ than 1 that is representable as a float).
         The value prior to the change, or the current value if no
         new value was specified.
 
-**Examples**
+**Examples:**
 
 >>> ATOL()
 2.220446049250313e-16
@@ -386,7 +386,7 @@ than 1 that is representable as a float).
         The value prior to the change, or the current value if no
         new value was specified.
 
-**Examples**
+**Examples:**
 
 >>> cfdm.RTOL()
 2.220446049250313e-16
@@ -441,7 +441,7 @@ than 1 that is representable as a float).
 #    out: `bool`
 #        Whether or not the two objects are equal.
 #
-#**Examples**
+#**Examples:**
 #
 #>>> f
 #<CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
@@ -520,7 +520,7 @@ than 1 that is representable as a float).
 #    out: `str`
 #        The normalized absolutized version of *filename*.
 # 
-#**Examples**
+#**Examples:**
 #
 #>>> import os
 #>>> os.getcwd()
@@ -569,7 +569,7 @@ between ``a`` and ``b``.
     out: `bool`
         Returns True if the arrays are equal, otherwise False.
 
-**Examples**
+**Examples:**
 
 '''    
     if rtol is None:
@@ -644,7 +644,7 @@ cfdm: 1.7.1 /home/user/cfdm/cfdm/__init__.pyc
 #--- End: def
 
 def CF():
-    '''Return the version of the CF conventions.
+    '''The version of the CF conventions.
 
 .. versionadded:: 1.7.0
 

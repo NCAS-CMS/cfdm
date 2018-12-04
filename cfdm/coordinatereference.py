@@ -440,7 +440,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 
 .. seealso:: `identity`
 
-**Examples**
+**Examples:**
 
 >>> n = r.name()
 >>> n = r.name(default='NO NAME'))
@@ -540,7 +540,7 @@ Note that ``f.name(identity=True)`` is equivalent to ``f.identity()``.
 #        True if the coordinate reference satisfies the given criteria,
 #        False otherwise.
 #
-#**Examples**
+#**Examples:**
 #
 #        '''
 ##        conditions_have_been_set = False

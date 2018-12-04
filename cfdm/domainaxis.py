@@ -133,17 +133,14 @@ False
         return True
     #--- End: def
 
-    def name(self, default=None, ncvar=True, custom=None,
+    def name(self, default=None, ncdim=True, custom=None,
              all_names=False):
-        '''TODO
+        '''Return a name for the domain axis construct.
 
 By default the name is the first found of the following:
 
-  3. If the *ncdim* parameter is True, the netCDF variable name (as
-     returned by the `nc_get_variable` method), preceeded by the
-     string ``'ncvar%'``.
-  
-  4. The value of the *default* parameter.
+1. The netCDF dimension name, preceeded by 'ncdim%'.
+2. The value of the default parameter.
 
 .. versionadded:: 1.7.0
 
@@ -153,33 +150,56 @@ By default the name is the first found of the following:
         If no name can be found then return the value of the *default*
         parameter. By default the default is `None`.
 
-    ncvar: `bool`, optional
+    ncdim: `bool`, optional
+        If False then do not consider the netCDF dimension name.
+
+    all_names: `bool`, optional
+        If True then return a list of all possible names.
+
+    custom: optional
+        *Ignored.*
 
 :Returns:
 
     out:
-        The name.
+        The name. If the *all_names* parameter is True then a list of
+        all possible names.
 
-**Examples**
+**Examples:**
 
->>> n = f.{+name}()
->>> n = f.{+name}(default='NO NAME')
+>>> d.name()
+'ncdim%time'
+>>> d.name(all_names=True)
+['ncdim%time']
+>>> d.name('default_value', all_names=True)
+['ncdim%time', 'default_value']
+>>> d.nc_del_dimension()
+'time'
+>>> d.name('default value')
+'default value'
+>>> d.name('default value', all_names=True)
+['default value']
 
         '''
+        out = []
+
         if all_names:
-            out = []
-            n = self.nc_get_dimension(None)
-            if n is not None:
-                out.append('ncdim%{0}'.format(n))
-                
+            if ncdim:
+                n = self.nc_get_dimension(None)
+                if n is not None:
+                    out.append('ncdim%{0}'.format(n))
+            #--- End: if
+            
             if default is not None:
                 out.append(default)
 
             return out
-       
-        n = self.nc_get_dimension(None)
-        if n is not None:
-            return 'ncdim%{0}'.format(n)
+
+        if ncdim:
+            n = self.nc_get_dimension(None)
+            if n is not None:
+                return 'ncdim%{0}'.format(n)
+        #--- End: if
         
         return default
     #--- End: def
