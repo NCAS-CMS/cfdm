@@ -526,7 +526,7 @@ False
 #        return True
 #    #--- End: def
 
-def name(self, default=None, custom=None, all_names=False):
+    def name(self, default=None, custom=None, all_names=False):
         '''Return a name for the cell method construct.
 
 By default the name is the first found of the following:
@@ -591,7 +591,7 @@ TODO
 
     def sorted(self, indices=None):
         '''Return a new cell method construct with sorted axes.
-
+        
 The axes are sorted by domain axis construct identifier or standard
 name, and any intervals are sorted accordingly.
 
