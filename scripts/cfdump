@@ -1,0 +1,183 @@
+#!/home/david/anaconda2/bin/python
+#-*-python-*-
+
+from __future__ import print_function
+    
+if __name__ == '__main__':
+
+    import getopt
+    import sys
+    import os
+    import cfdm
+
+    def print_help(version, date):
+        import subprocess
+        
+        manpage = '''\
+.TH "CFDUMP" "1" "{0}" "{1}" "cfdump"
+.
+.
+.
+.SH NAME
+.
+cfdump \- view the contents of a CF-netCDF dataset
+.
+.
+.
+.SH SYNOPSIS
+.
+cfdump [\-s] [\-c] [\-e file [\-e file] ...] [\-h] file
+.
+.
+.
+.SH DESCRIPTION
+.
+.
+.
+The cfdump tool generates text descriptions on standard output of the
+CF field constructs contained in a netCDF dataset. By default a
+medium-length summary of each CF field is output, but short, one-line
+summaries and complete dumps are also available.
+.ft B
+file
+.ft P
+may be the name of a netCDF file on disk, or a URL if DAP access is
+enabled.
+.
+.
+.
+.SH OPTIONS
+.
+.
+.
+.TP
+.B \-c, \-\-complete
+Display complete descriptions. All properties of all constructs,
+including metadata constructs and their components are described
+without abbreviation with the exception of data arrays with more than
+three elements, which are abbreviated to their first and last values.
+.
+.
+.TP
+.B \-e file, \-\-external=file
+Read external variables from the given external file. Multiple
+external files may be provided by specifying more than one
+.ft B
+\-e 
+.ft P
+option.
+.
+.
+.TP
+.B \-h, \-\-help
+Display this man page.
+.
+.
+.TP
+.B \-s, \-\-short
+Display short descriptions. Each field construct is described by a
+short, one\-line summary that gives the identity of the field
+construct; the identities and sizes of the dimensions spanned by the
+data array; and the units of the data.
+.
+.
+.
+.SH SEE ALSO
+ncdump(1)
+.
+.
+.
+.SH LIBRARY
+cfdm version {0} of {2}
+.
+.
+.
+.SH BUGS
+Reports of bugs are welcome at https://github.com/NCAS-CMS/cfdm
+.
+.
+.
+.SH LICENSE
+Open Source Initiative MIT License
+.
+.
+.SH AUTHOR
+David Hassell
+'''.format(version, date, cfdm.__date__)
+
+        p = subprocess.Popen(['man', '-r',
+                              ' Manual page cfdump(1)\ ?ltline\ %lt?L/%L.:',
+                              '-l', '-'], stdin=subprocess.PIPE)
+        p.communicate(manpage)
+    #---- End: def
+
+    iam   = os.path.basename(sys.argv[0])
+    usage = "USAGE: {0} [-s] [-c] [-e file [-e file] ...] [-h] file".format(iam)
+    short_help = '''{0}
+  [-s]                   Display short, one-line descriptions
+  [-c]                   Display complete descriptions
+  [-e file]              External files
+  [-h]                   Display the full man page
+  file                   Name of netCDF file (or URL if DAP access enabled)
+cfdm package version {1} of {2}'''.format(
+    usage, cfdm.__version__, cfdm.__date__)
+    
+    # --------------------------------------------------------------------
+    # Parse command line options
+    # --------------------------------------------------------------------
+    try:
+        opts, infile = getopt.getopt(sys.argv[1:], "ce:hs", 
+                                     longopts=['complete',
+                                               'external=',
+                                               'help',
+                                               'short',])
+    except getopt.GetoptError, err:
+        # Print help information and exit:
+        print("{} ERROR: Incorrect usage".format(iam))
+        print(short_help)
+        sys.exit(2)
+
+    if not (len(infile) == 1 or opts):
+        print(short_help)
+        sys.exit(0)
+
+    # Defaults
+    short_output      = False
+    complete_output   = False
+    external_files    = []
+
+    for option, arg in opts: 
+        if option in ('-h', '--help'):
+            print_help(cfdm.__version__, cfdm.__date__)
+            sys.exit(0)
+        elif option in ('-e', '--external'):
+            external_files.append(arg)
+        elif option in ('-s', '--short'):
+            short_output = True
+        elif option in ('-c', '--complete'):
+            complete_output = True
+        else:
+            print(short_help)
+            assert False, "Unhandled option: "+option
+    #--- End: for
+
+    # ----------------------------------------------------------------
+    # Read the input file
+    # ----------------------------------------------------------------
+    try:        
+        f = cfdm.read(infile[0], external_files=external_files)
+    except Exception as error:
+        print('{} ERROR reading file: {}'.format(iam, error))
+        sys.exit(1)
+
+    # ----------------------------------------------------------------
+    # Print the field construct descriptions
+    # ----------------------------------------------------------------
+    for g in f:            
+        if short_output:
+            print(repr(g)[1:-1])
+        elif not complete_output:
+            print(g)
+        else:
+            g.dump()
+            

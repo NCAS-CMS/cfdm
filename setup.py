@@ -70,6 +70,14 @@ The **cfdm** package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
 
+**Command line utility**
+
+During installation the `cfdump` command line tool is also installed,
+which generates text descriptions of the field constructs contained
+in a netCDF dataset.
+
+**Source code**
+
 This project is hosted on a `GitHub repository
 <https://github.com/NCAS-CMS/cfdm>`_ where you may access the most
 up-to-date source."""
@@ -99,20 +107,19 @@ setup(name = "cfdm",
       packages     = ['cfdm',
                       'cfdm.core',
                       'cfdm.core.abstract',
-                      'cfdm.core.mixin',
                       'cfdm.core.data',
                       'cfdm.core.data.abstract',
+                      'cfdm.core.mixin',
                       'cfdm.data',
                       'cfdm.data.abstract',
                       'cfdm.data.mixin',
-                      'cfdm.io',
-                      'cfdm.io.abstract',
-                      'cfdm.io.netcdf',
                       'cfdm.mixin',
+                      'cfdm.read_write',
+                      'cfdm.read_write.abstract',
+                      'cfdm.read_write.netcdf',
                       'cfdm.test',],
-#      package_data = {'cfdm': package_data},
+      scripts      = ['scripts/cfdump'],
       requires     = ['netCDF4 (>=1.4)',
                       'numpy (>=1.11)',
-                      'future (>=0.16.0)',
-                      ],
-  )
+                      'future (>=0.16.0)',],
+)

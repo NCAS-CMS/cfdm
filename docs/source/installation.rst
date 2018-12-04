@@ -1,7 +1,7 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
-.. _installation:
+.. _Installation:
 
 **Installation**
 ================
@@ -9,6 +9,8 @@
 Version |release| for version |version| of the CF conventions.
 
 ----
+
+.. _Dependencies:
 
 **Dependencies**
 ----------------
@@ -26,6 +28,8 @@ The cfdm package requires:
 
 * `future <https://python-future.org/>`_, version 0.16.0 or newer.
 
+.. _pip:
+  
 **pip**
 -------
 
@@ -46,6 +50,8 @@ can be used, for example:
 
    pip install cfdm --target <dir>
 
+.. _conda:
+
 **conda**
 ---------
 
@@ -61,6 +67,7 @@ can be used, for example:
    
       conda install -c ncas cfdm
 
+.. _Source:
 
 **Source**
 ----------
@@ -99,6 +106,19 @@ To install from source:
 
        python setup.py install --home=<directory>
 
+.. _Command-line-utility:
+
+**Command line utility**
+------------------------
+
+----
+
+During installation the `!cfdump` command line tool is also installed,
+which generates text descriptions of the field constructs contained in
+a netCDF dataset.
+
+.. _Tests:
+
 **Tests**
 ---------
 
@@ -110,6 +130,8 @@ Tests are run from within the ``cfdm/test`` directory:
  
    python run_tests.py
        
+.. _Code-repository:
+
 **Code repository**
 -------------------
 
