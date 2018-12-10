@@ -57,7 +57,7 @@ instances, each of which represents a field construct. Henceforth, the
 phrase "field construct" will be assumed to mean "`Field` instance",
 unless stated otherwise [#language]_.
 
-For example, to read the file **file.nc** (:download:`download
+For example, to read the file ``file.nc`` (:download:`download
 <netcdf_files/file.nc>`, 9kB) [#files]_:
 
 .. code:: python
@@ -302,6 +302,23 @@ components, and shows the first and last values of all data arrays:
        units = 'km2'
        Data(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
 
+  
+.. _cfdump:
+       
+**cfdump**
+----------
+
+The description for every field construct in a file can also be
+generated from the command line, with minimal, medium or full detail,
+by using the ``cfdump`` tool, for example:
+
+.. code:: bash
+
+   $ cfdump -s file.nc
+   Field: specific_humidity(latitude(5), longitude(8)) 1
+   Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+
+       
 .. _Properties:
        
 **Properties**
@@ -1121,7 +1138,7 @@ spanned by a dimension coordinate construct's data array, but not the
 field construct's data, nor the data of any other metadata construct.
 
 This is the case for the "specific humidity" field construct ``q``
-that was written to the file **q_file.nc**.
+that was written to the file ``q_file.nc``.
 
 To change this so that the "time" dimension coordinate construct is
 written as a CF-netCDF size one coordinate variable, the field
@@ -1148,7 +1165,7 @@ field construct:
    >>> cfdm.write(q2, 'q2_file.nc')
 
 The new dataset is structured as follows (note, relative to file
-**q_file.nc**, the existence of the "time" dimension and the lack of a
+``q_file.nc``, the existence of the "time" dimension and the lack of a
 "coordinates" attribute on the, now three-dimensional, data variable):
    
 .. code:: bash
@@ -1878,7 +1895,7 @@ however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the `cfdm.read` function.
 
-This is illustrated with the files **parent.nc** (:download:`download
+This is illustrated with the files ``parent.nc`` (:download:`download
 <netcdf_files/parent.nc>`, 2kB) [#files]_:
 
 .. code:: bash
@@ -1905,7 +1922,7 @@ This is illustrated with the files **parent.nc** (:download:`download
    		:external_variables = "areacella" ;
    }
 
-and **external.nc** (:download:`download <netcdf_files/external.nc>`,
+and ``external.nc`` (:download:`download <netcdf_files/external.nc>`,
 1kB) [#files]_:
 
 .. code:: bash
@@ -1924,8 +1941,8 @@ and **external.nc** (:download:`download <netcdf_files/external.nc>`,
    		:Conventions = "CF-1.7" ;
    }
 
-The dataset in **parent.nc** may be read *without* specifying the
-external file **external.nc**. In this case a cell measure construct
+The dataset in ``parent.nc`` may be read *without* specifying the
+external file ``external.nc``. In this case a cell measure construct
 is still created, but one without any metadata or data:
 
 .. code:: python
@@ -1952,7 +1969,7 @@ is still created, but one without any metadata or data:
    False
 
 If this field construct were to be written to disk using `cfdm.write`,
-then the output file would be identical to the original **parent.nc**
+then the output file would be identical to the original ``parent.nc``
 file, i.e. the netCDF variable name of the cell measure construct
 ("areacella") would be listed by the "external_variables" global
 attribute.
@@ -2093,7 +2110,7 @@ indexed contiguous, ragged array is stored in an `Index` instance and
 is accessed with the `~Data.get_index_variable` method of the `Data`
 instance.
 
-The contiguous case is is illustrated with the file **contiguous.nc**
+The contiguous case is is illustrated with the file ``contiguous.nc``
 (:download:`download <netcdf_files/contiguous.nc>`, 2kB) [#files]_:
 
 .. code:: bash
@@ -2237,7 +2254,7 @@ field construct with an underlying contiguous ragged array:
    # Set the data for the field
    T.set_data(cfdm.Data(array), axes=[Y, X])
 				
-The new field construct can now be inspected:
+The new field construct can now be inspected and written to a netCDF file:
 
 .. code:: python
    
@@ -2255,11 +2272,6 @@ The new field construct can now be inspected:
    <Count: long_name:number of obs for this timeseries(2) >
    >>> print(count_variable.get_array())
    [2 4]
-
-and written to a file:
-
-.. code:: python
-	  
    >>> cfdm.write(T, 'T_contiguous.nc')
 
 The content of the new file is:
@@ -2304,7 +2316,7 @@ The list variable that is required to uncompress a gathered array is
 stored in a `List` object and is retrieved with the
 `~Data.get_list_variable` method of the `Data` instance.
 
-This is illustrated with the file **gathered.nc** (:download:`download
+This is illustrated with the file ``gathered.nc`` (:download:`download
 <netcdf_files/gathered.nc>`, 1kB) [#files]_:
 
 .. code:: bash
@@ -2439,7 +2451,7 @@ compressed dimension in the compressed array (with the
 "compressed_dimension" parameter of the `GatheredArray`
 initialisation).
 
-The new field construct can now be inspected:
+The new field construct can now be inspected and written a netCDF file:
 
 .. code:: python
    
@@ -2463,11 +2475,6 @@ The new field construct can now be inspected:
    <List: (3) >
    >>> print(list_variable.get_array())
    [1 4 5]
-
-and written a netCDF file:
-
-.. code:: python
-	  
    >>> cfdm.write(P, 'P_gathered.nc')
 
 The content of the new file is:

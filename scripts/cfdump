@@ -1,4 +1,4 @@
-#!/home/david/anaconda2/bin/python
+#! /usr/bin/env python
 #-*-python-*-
 
 from __future__ import print_function
@@ -92,8 +92,8 @@ cfdm version {0} of {2}
 .
 .
 .
-.SH BUGS
-Reports of bugs are welcome at https://github.com/NCAS-CMS/cfdm
+.SH ISSUES
+Reports of issues are welcome at https://github.com/NCAS-CMS/cfdm
 .
 .
 .
