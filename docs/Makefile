@@ -49,9 +49,12 @@ help:
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
 
-	sed 's/Version .* for version .* of the CF conventions./$(X)/' $(NOTEBOOK) > $(NOTEBOOK).tmp
-	cp -p $(NOTEBOOK).tmp $(NOTEBOOK) 
-	mv $(NOTEBOOK).tmp $(NOTEBOOK).$(ID)
+	# Update the version numbers in the Jupyter notebook
+	cp -p $(NOTEBOOK) $(NOTEBOOK).$(ID)
+	sed 's/Version .* for version .* of the CF conventions./$(X)/' $(NOTEBOOK) > $(NOTEBOOK).tmp0
+	sed 's/ncas-cms.github.io\/cfdm\//&$(VERSION)\//g' $(NOTEBOOK).tmp0 > $(NOTEBOOK).tmp
+	rm $(NOTEBOOK).tmp0
+	mv $(NOTEBOOK).tmp $(NOTEBOOK) 
 
 	@echo
 	@echo "$(X)"
