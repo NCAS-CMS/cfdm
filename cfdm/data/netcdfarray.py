@@ -47,7 +47,7 @@ class NetCDFArray(abstract.Array):
     ndim: `int`
         The number of array dimensions.
 
-:Examples:
+**Examples:**
 
 >>> import netCDF4
 >>> nc = netCDF4.Dataset('file.nc', 'r')
@@ -190,7 +190,7 @@ x.__str__() <==> str(x)
     def dtype(self):
         '''Data-type of the data elements.
          
-:Examples:
+**Examples:**
 
 >>> a.dtype
 dtype('float64')
@@ -205,7 +205,7 @@ dtype('float64')
     def ndim(self):
         '''Number of array dimensions
         
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -235,7 +235,7 @@ dtype('float64')
     def shape(self):
         '''Tuple of array dimension sizes.
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -265,7 +265,7 @@ dtype('float64')
     def size(self):        
         '''Number of elements in the array.
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -295,7 +295,7 @@ dtype('float64')
     def get_filename(self):
         '''The name of the netCDF file containing the array.
 
-:Examples:
+**Examples:**
 TODO
         '''
         return self._get_component('filename')
@@ -304,7 +304,7 @@ TODO
     def get_ncvar(self):
         '''The name of the netCDF variable containing the array.
 
-:Examples:
+**Examples:**
 
 >>> print(self.netcdf)
 'tas'
@@ -324,7 +324,7 @@ None
         '''The UNIDATA netCDF interface ID of the variable containing the
 array.
 
-:Examples:
+**Examples:**
 
 >>> print(self.netcdf)
 'tas'
@@ -349,7 +349,7 @@ None
 
     `None`
 
-:Examples:
+**Examples:**
 
 >>> a.close()
 
@@ -370,7 +370,7 @@ None
     out: `numpy.ndarray`
         An independent numpy array of the data.
 
-:Examples:
+**Examples:**
 
 >>> n = numpy.asanyarray(a)
 >>> isinstance(n, numpy.ndarray)
@@ -387,7 +387,7 @@ True
 
     out: `netCDF4.Dataset`
 
-:Examples:
+**Examples:**
 
 >>> netcdf = a.open()
 >>> variable = netcdf.variables[self.get_ncvar()]

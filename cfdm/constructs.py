@@ -10,33 +10,6 @@ class Constructs(core.Constructs):
 .. versionadded:: 1.7.0
 
     '''    
-#    def get_construct(self, description=None, cid=None,
-#                      construct_type=None, axes=None, copy=False):
-#        '''Return a metadata construct.
-#
-#:Parameters:
-#
-#:Returns:
-#
-#    out:
-#
-#**Examples:**
-#
-#        '''
-#        out = self.constructs(description=description, cid=cid,
-#                              construct_type=construct_type,
-#                              axes=axes, copy=copy)
-#
-#        if not out:
-#            raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
-#        
-#        _, construct = out.popitem()
-#        if out:
-#            raise ValueError("More than one construct meets criteria")
-#            
-#        return construct
-#    #--- End: def
-        
     def constructs(self, description=None, cid=None, axes=None,
                    construct_type=None, copy=False):
         '''Return the metadata constructs
@@ -201,7 +174,7 @@ TODO
         key1_to_key0   = {}
         
         # ------------------------------------------------------------
-        # Domain axes
+        # Domain axis constructs
         # ------------------------------------------------------------
         if not self._equals_domain_axis(other, rtol=rtol, atol=atol,
                                         traceback=traceback,
@@ -211,7 +184,7 @@ TODO
             return False
         
         # ------------------------------------------------------------
-        # Check the array constructs
+        # Constructs with arrays
         # ------------------------------------------------------------
         axes_to_constructs0 = self.axes_to_constructs()
         axes_to_constructs1 = other.axes_to_constructs()
@@ -321,7 +294,7 @@ TODO
         #--- End: for
 
         # ------------------------------------------------------------
-        # Check non-array constructs
+        # Constructs with no arrays
         # ------------------------------------------------------------
         for construct_type in self._non_array_constructs:
             if not getattr(self, '_equals_'+construct_type)(
@@ -470,7 +443,7 @@ TODO
                     elif axis1 is None:
                         if traceback:
                             print(
-"Traceback: Different cell methods (undefined axis): {0!r}, {1!r}".format(
+"Traceback: Different cell methods (mismatched axes): {0!r}, {1!r}".format(
     cell_methods0, cell_methods1))
                         return False
             #--- End: for

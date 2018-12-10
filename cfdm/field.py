@@ -810,7 +810,7 @@ False
     def expand_dims(self, axis, position=0):
         '''Expand the shape of the data array.
 
-Insert a new size 1 axis, corresponding to an existing domain axis
+Inserts a new size 1 axis, corresponding to an existing domain axis
 construct, into the data array.
 
 .. versionadded:: 1.7.0
@@ -1169,7 +1169,7 @@ may be selected for removal.
 
 :Parameters:
 
-    axes: (sequence of) `int`
+    axes: (sequence of) `int`, optional
         The positions of the size one axes to be removed. By default
         all size one axes are removed. Each axis is identified by its
         original integer position. Negative integers counting from the

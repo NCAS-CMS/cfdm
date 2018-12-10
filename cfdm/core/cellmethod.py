@@ -220,10 +220,6 @@ AttributeError: 'CellMethod' object has no component 'axes'
 
 .. seealso:: `del_axes`, `get_axes`, `set_axes`
 
-:Examples 1:
-
->>> x = c.has_axes()
-
 :Returns:
 
      out: `bool`
@@ -245,10 +241,6 @@ AttributeError: 'CellMethod' object has no component 'axes'
 
 .. seealso:: `del_axes`, `get_axes`, `has_axes`
 
-:Examples 1:
-
->>> c.set_axes('time')
-
 :Parameters:
 
     value: (sequence of) `str`
@@ -257,6 +249,10 @@ AttributeError: 'CellMethod' object has no component 'axes'
 :Returns:
 
      `None`
+
+**Examples:**
+
+TODO
 
         '''
         if copy:

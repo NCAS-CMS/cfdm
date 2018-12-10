@@ -70,7 +70,7 @@ x.__str__() <==> str(x)
     out: `bool`
         Whether or not the two instances are equal.
 
-:Examples:
+**Examples:**
 
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,

@@ -46,7 +46,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     out:
         The class object.
 
-:Examples:
+**Examples:**
 
 >>> Field = i.get_class('Field')
 >>> f = Field()
@@ -66,7 +66,7 @@ class Implementation(with_metaclass(abc.ABCMeta, object)):
     out: `str`
         The version.
 
-:Examples:
+**Examples:**
 
 >>> i.get_cf_version()
 '1.8'    

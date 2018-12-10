@@ -78,7 +78,7 @@ class Data(mixin.Container, core.Data):
         Initialize the array, units, calendar and fill value from
         those of *source*.
 
-    copy: bool, optional
+    copy: `bool`, optional
         If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
@@ -364,11 +364,7 @@ x.__str__() <==> str(x)
 It is assumed, but not checked, that the given index selects exactly
 one element.
 
-:Examples 1:
-
->>> x = d._item(8)
-
-:Examples 2:
+**Examples:**
 
 >>> import numpy
 >>> d = Data([[1, 2, 3]], 'km')
@@ -547,7 +543,7 @@ masked
     out: 
         The deep copy.
 
-:Examples:
+**Examples:**
 
 >>> e = d.copy()
 >>> e = d.copy(array=False)
@@ -561,29 +557,42 @@ masked
     def expand_dims(self, position=0):
         '''Expand the shape of the data array.
 
-Insert a new size 1 axis, corresponding to a given position in the
+Inserts a new size 1 axis, corresponding to a given position in the
 data array shape.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `squeeze`, `transpose`, `unsqueeze`
+.. seealso:: `squeeze`, `transpose`
 
 :Parameters:
 
     position: `int`, optional
         Specify the position that the new axis will have in the data
-        array axes. By default the new axis has position 0, the
-        slowest varying position.
+        array. By default the new axis has position 0, the slowest
+        varying position. Negative integers counting from the last
+        position are allowed.
 
-    copy: `bool`, optional
-        If False then update the data array in place. By default a new
-        data array is created.
+        *Example:*
+          ``position=2``
+
+        *Example:*
+          ``position=-1``
 
 :Returns:
 
     out: `Data`
+        The new data array with expanded data axes.
 
 **Examples:**
+
+>>> d.shape
+(19, 73, 96)
+>>> d.expand_dims('domainaxis3').shape
+(1, 96, 73, 19)
+>>> d.expand_dims('domainaxis3', position=3).shape
+(19, 73, 96, 1)
+>>> d.expand_dims('domainaxis3', position=-1).shape
+(19, 73, 1, 96)
 
         '''
         # Parse position
@@ -1127,63 +1136,40 @@ selected with the keyword arguments.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `transpose`, `unsqueeze`
+.. seealso:: `expand_dims`, `transpose`
 
 :Parameters:
 
     axes: (sequence of) `int`, optional
-        Select the size 1 axes to be removed.  By default all size 1
-        axes are removed. Axes are selected by their integer position
-        in the dimensions of the data array. No axes are removed if
-        *axes* is an empty sequence.
+        The positions of the size one axes to be removed. By default
+        all size one axes are removed. Each axis is identified by its
+        original integer position. Negative integers counting from the
+        last position are allowed.
 
-          *Example:*
-            To remove all size 1 axes: ``d.squeeze()`` or
-            ``d.squeeze(None)``.
+        *Example:*
+          ``axes=0``
 
-          *Example:*
-            To remove the size 1 axis in position 2 of a
-            5-dimensionsal data array : ``d.squeeze(2)``
-            or``d.squeeze(-3)``.
+        *Example:*
+          ``axes=-2``
 
-          *Example:*
-            To remove the size 1 axes in positions 1 and 3:
-            ``d.squeeze([1, 3])``.
-
-    copy: `bool`, optional
-        If False then update the data array in place. By default a new
-        data array is created.
+        *Example:*
+          ``axes=[2, 0]``
 
 :Returns:
 
     out: `Data`
-        The squeezed data.
+        The new data array with removed data axes.
 
 **Examples:**
 
->>> v.shape
-(1,)
->>> v.squeeze()
->>> v.shape
-()
-
->>> v.shape
-(1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1)
->>> v.squeeze((0,))
->>> v.shape
-(2, 1, 3, 1, 4, 1, 5, 1, 6, 1)
->>> v.squeeze(1)
->>> v.shape
-(2, 3, 1, 4, 1, 5, 1, 6, 1)
->>> v.squeeze([2, 4])
->>> v.shape
-(2, 3, 4, 5, 1, 6, 1)
->>> v.squeeze([])
->>> v.shape
-(2, 3, 4, 5, 1, 6, 1)
->>> v.squeeze()
->>> v.shape
-(2, 3, 4, 5, 6)
+>>> d.shape
+(1, 73, 1, 96)
+>>> f.squeeze().shape
+(73, 96)
+>>> d.squeeze(0).shape
+(73, 1, 96)
+>>> d.squeeze([-3, 2]).shape
+(73, 96)
 
         '''
         d = self.copy()
@@ -1271,32 +1257,35 @@ Missing data array elements are omitted from the calculation.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `expand_dims`, `squeeze`, `unsqueeze`
+.. seealso:: `expand_dims`, `squeeze`
 
 :Parameters:
 
     axes: (sequence of) `int`
-        The new axis order of the data array. By default the order is
-        reversed. Each axis of the new order is identified by its
-        original integer position.
+        The new axis order. By default the order is reversed. Each
+        axis in the new order is identified by its original integer
+        position. Negative integers counting from the last position
+        are allowed.
+
+        *Example:*
+          ``axes=[2, 0, 1]``
+
+        **Example:**
+          ``axes=[-1, 0, 1]``
 
 :Returns:
 
     out: `Data`
+        The new data array with permuted data axes.
 
 **Examples:**
 
 >>> d.shape
 (19, 73, 96)
->>> d.transpose()
->>> d.shape
+>>> d.tranpose().shape
 (96, 73, 19)
->>> d.transpose([1, 0, 2])
->>> d.shape
-(73, 96, 19)
->>> d.transpose((-1, 0, 1))
->>> d.shape
-(19, 73, 96)
+>>> d.tranpose([1, 0, 2]).shape
+(73, 19, 96)
 
         '''
         d = self.copy()

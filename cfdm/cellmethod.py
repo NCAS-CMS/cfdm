@@ -121,10 +121,6 @@ applies.
 #    def parse(cls, string, allow_error=False):
 #        '''Parse a CF cell_methods string.
 #
-#:Examples 1:
-#
-#>>> c = CellMethod('t: mean')
-#
 #:Parameters:
 #
 #    string: `str`
@@ -294,8 +290,7 @@ applies.
 #    #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,
-               ignore_properties=(),
-               ignore_type=False):
+               ignore_properties=(), ignore_type=False):
         '''Whether two cell method constructs are the same.
 
 Equality is strict by default. This means that for two cell method

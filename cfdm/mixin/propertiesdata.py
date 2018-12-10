@@ -115,17 +115,6 @@ Return a string containing a full description of the instance.
     out: `None` or `str`
         A string containing the description.
 
-:Examples:
-
->>> f.{+name}()
-Data(1, 2) = [[2999-12-01 00:00:00, 3000-12-01 00:00:00]] 360_day
-axis = 'T'
-standard_name = 'time'
-
->>> f.{+name}(omit=('axis',))
-Data(1, 2) = [[2999-12-01 00:00:00, 3000-12-01 00:00:00]] 360_day
-standard_name = 'time'
-
 '''
         indent0 = '    ' * _level
         indent1 = '    ' * (_level+1)
@@ -353,7 +342,7 @@ False
     def expand_dims(self, position=0):
         '''Expand the shape of the data array.
 
-Insert a new size 1 axis into the data array.
+Inserts a new size 1 axis into the data array.
 
 .. versionadded:: 1.7.0
 
@@ -401,13 +390,6 @@ Insert a new size 1 axis into the data array.
         '''TODO {+HDF_chunks}
         
 .. versionadded:: 1.6
-
-:Examples 1:
-        
-To define chunks which are the full size for each axis except for the
-first axis which is to have a chunk size of 12:
-
->>> old_chunks = f.{+name}({0: 12})
 
 :Parameters:
 

@@ -52,7 +52,7 @@ the CF data model being used may be found with the `cfdm.CF` function:
 The `cfdm.read` function reads a `netCDF
 <https://www.unidata.ucar.edu/software/netcdf/>`_ file from disk, or
 from an `OPeNDAP <https://www.opendap.org/>`_ URL [#opendap2]_, and
-returns the contents as a `list` of zero or more `Field` class
+returns the contents as a list of zero or more `Field` class
 instances, each of which represents a field construct. Henceforth, the
 phrase "field construct" will be assumed to mean "`Field` instance",
 unless stated otherwise [#language]_.

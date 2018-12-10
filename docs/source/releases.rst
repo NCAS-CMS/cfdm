@@ -10,4 +10,4 @@
 
 ----
 
-`Version 1.7.0 <index.html>`_
+`Version 1.7.0 <https://ncas-cms.github.io/cfdm>`_

@@ -29,7 +29,7 @@ class NumpyArray(abstract.Array):
 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.dtype
 dtype('float64')
@@ -47,7 +47,7 @@ dtype('float64')
                 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -80,7 +80,7 @@ dtype('float64')
 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -113,7 +113,7 @@ dtype('float64')
 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -149,7 +149,7 @@ dtype('float64')
     out: `numpy.ndarray`
         An independent numpy array of the data.
 
-:Examples:
+**Examples:**
 
 >>> n = numpy.asanyarray(a)
 >>> isinstance(n, numpy.ndarray)

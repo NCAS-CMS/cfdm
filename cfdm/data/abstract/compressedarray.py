@@ -128,7 +128,7 @@ rules, the only differences being:
 
     `None`
 
-:Examples:
+**Examples:**
 
 >>> d._set_compressed_Array(a)
 
@@ -150,7 +150,7 @@ rules, the only differences being:
     def dtype(self):
         '''Data-type of the data elements.
 
-:Examples:
+**Examples:**
 
 >>> a.dtype
 dtype('float64')
@@ -165,7 +165,7 @@ dtype('float64')
     def ndim(self):
         '''The number of dimensions of the uncompressed data.
 
-:Examples:
+**Examples:**
 
 >>> d.shape
 (73, 96)
@@ -196,7 +196,7 @@ dtype('float64')
     def shape(self):
         '''Shape of the uncompressed data.
 
-:Examples:
+**Examples:**
 
 >>> d.shape
 (73, 96)
@@ -227,7 +227,7 @@ dtype('float64')
     def size(self):
         '''Number of elements in the uncompressed data.
 
-:Examples:
+**Examples:**
 
 >>> d.shape
 (73, 96)
@@ -262,7 +262,7 @@ dtype('float64')
     out: `list`
         The compressed axes described by their integer positions.
 
-:Examples:
+**Examples:**
 
 >>> c.ndim
 4
@@ -286,7 +286,7 @@ dtype('float64')
     out: `numpy.ndarray`
         The uncompressed array.
 
-:Examples:
+**Examples:**
 
 >>> n = a.get_array()
 >>> isinstance(n, numpy.ndarray)
@@ -304,7 +304,7 @@ True
     out: `numpy.ndarray`
         The compressed array.
 
-:Examples:
+**Examples:**
 
 >>> n = a.get_compressed_array()
 >>> isinstance(n, numpy.ndarray)

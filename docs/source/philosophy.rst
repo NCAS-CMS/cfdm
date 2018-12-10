@@ -23,8 +23,7 @@ includes no functionality beyond that mandated by the CF data
 model. This core implementation provides the basis for an extended
 implementation, the cfdm package, that allows the reading and writing
 of netCDF datasets, as well as having comprehensive inspection
-capabilities, and some more sophisticated field modification
-capabilities.
+capabilities, and some more sophisticated field modification methods.
 
 **Functionality**
 -----------------

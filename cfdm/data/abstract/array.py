@@ -78,7 +78,7 @@ array.
         The compression type. An empty string means that no
         compression has been applied.
 
-:Examples:
+**Examples:**
 
 >>> a.compression_type
 ''
@@ -104,7 +104,7 @@ compressed array.
     out: `numpy.ndarray`
         The compressed array.
 
-:Examples:
+**Examples:**
 
 >>> n = a.get_compressed_array()
 >>> isinstance(n, numpy.ndarray)
@@ -126,7 +126,7 @@ True
         the list of uncompressed axes. If no axes have been compressed
         then the list is empty.
 
-:Examples:
+**Examples:**
 
         '''
         return []

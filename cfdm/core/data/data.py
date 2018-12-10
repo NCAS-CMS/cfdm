@@ -154,7 +154,7 @@ class Data(abstract.Container):
     def dtype(self):
         '''Data-type of the data elements.
 
-:Examples:
+**Examples:**
 
 >>> d.dtype
 dtype('float64')
@@ -169,7 +169,7 @@ dtype('float64')
     def ndim(self):
         '''Number of data dimensions.
 
-:Examples:
+**Examples:**
 
 >>> d.shape
 (73, 96)
@@ -200,7 +200,7 @@ dtype('float64')
     def shape(self):
         '''Tuple of data dimension sizes.
 
-:Examples:
+**Examples:**
 
 >>> d.shape
 (73, 96)
@@ -231,7 +231,7 @@ dtype('float64')
     def size(self):
         '''Number of elements in the data.
 
-:Examples:
+**Examples:**
 
 >>> d.shape
 (73, 96)
@@ -277,10 +277,10 @@ attribute.
 
 :Returns:
 
-    out: 
+    out: `Data`
         The deep copy.
 
-:Examples:
+**Examples:**
 
 >>> e = d.copy()
 >>> e = d.copy(array=False)
@@ -294,17 +294,13 @@ attribute.
 
 .. seealso:: `get_calendar`, `set_calendar`
 
-:Examples 1:
-
->>> u = d.del_calendar()
-
 :Returns:
 
     out:
         The value of the deleted calendar, or `None` if calendar was
         not set.
 
-:Examples 2:
+**Examples:**
 
 >>> d.set_calendar('proleptic_gregorian')
 >>> d.get_calendar
@@ -325,15 +321,11 @@ None
     def _del_Array(self):
         '''Delete the data.
 
-:Examples 1:
-
->>> d.del_data()
-
 :Returns:
 
     out:
 
-:Examples 2:
+**Examples:**
 
 >>> old = d.del_data()
 
@@ -346,17 +338,13 @@ None
 
 .. seealso:: `get_fill_value`, `set_fill_value`
 
-:Examples 1:
-
->>> f = d.del_fill_value()
-
 :Returns:
 
     out:
         The value of the deleted fill value, or `None` if fill value
         was not set.
 
-:Examples 2:
+**Examples:**
 
 >>> f.set_fill_value(-9999)
 >>> f.get_fill_value()
@@ -385,17 +373,13 @@ None
 
 .. seealso:: `get_units`, `set_units`
 
-:Examples 1:
-
->>> u = d.del_units()
-
 :Returns:
 
     out:
         The value of the deleted units, or `None` if units was not
         set.
 
-:Examples 2:
+**Examples:**
 
 >>> d.set_units('metres')
 >>> d.get_units()
@@ -425,7 +409,7 @@ type will be used.
     out: `numpy.ndarray`
         An independent numpy array of the data.
 
-:Examples:
+**Examples:**
 
 >>> d = Data([1, 2, 3.0], 'km')
 >>> n = d.get_array()
@@ -452,10 +436,6 @@ True
 
 .. seealso:: `del_calendar`, `set_calendar`
 
-:Examples 1:
-
->>> u = d.get_calendar()
-
 :Parameters:
 
     default: optional
@@ -467,7 +447,7 @@ True
         The calendar. If calendar has not been set then return the
         value of *default* parameter, if provided.
 
-:Examples 2:
+**Examples:**
 
 >>> d.set_calendar('julian')
 >>> d.get_calendar
@@ -494,10 +474,6 @@ None
     def _get_Array(self, *default):
         '''Return the data.
 
-:Examples 1:
-
->>> a = d.get_data()
-
 :Parameters:
 
     default: *optional*
@@ -509,7 +485,7 @@ None
         The data. If the data has not been set then *default* is
         returned, if set.
 
-:Examples 2:
+**Examples:**
 
 >>> a = d.get_data(None)
 
@@ -531,10 +507,6 @@ None
 
 .. seealso:: `del_fill_value`, `set_fill_vlaue`
 
-:Examples 1:
-
->>> f = d.get_fill_value()
-
 :Parameters:
 
     default: optional
@@ -546,7 +518,7 @@ None
         The fill value. If fill value has not been set then return the
         value of *default* parameter, if provided.
 
-:Examples 2:
+**Examples:**
 
 >>> f.set_fill_value(-9999)
 >>> f.get_fill_value()
@@ -581,10 +553,6 @@ None
 
 .. seealso:: `del_units`, `set_units`
 
-:Examples 1:
-
->>> u = d.get_units()
-
 :Parameters:
 
     default: optional
@@ -596,7 +564,7 @@ None
         The units. If units has not been set then return the value of
         *default* parameter, if provided.
 
-:Examples 2:
+**Examples:**
 
 >>> d.set_units('metres')
 >>> d.get_units()
@@ -625,10 +593,6 @@ None
 
 .. seealso:: `del_calendar`, `get_calendar`
 
-:Examples 1:
-
->>> u = d.set_calendar('365_day')
-
 :Parameters:
 
     value: `str`
@@ -638,7 +602,7 @@ None
 
     `None`
 
-:Examples 2:
+**Examples:**
 
 >>> d.set_calendar('none')
 >>> d.get_calendar
@@ -666,7 +630,7 @@ None
 
     `None`
 
-:Examples:
+**Examples:**
 
 >>> d._set_Array(a)
 
@@ -682,10 +646,6 @@ None
 
 .. seealso:: `del_fill_value`, `get_fill_vlaue`
 
-:Examples 1:
-
->>> f = d.set_fill_value(-256)
-
 :Parameters:
 
     value: scalar
@@ -695,7 +655,7 @@ None
 
     `None`
 
-:Examples 2:
+**Examples:**
 
 >>> f.set_fill_value(-9999)
 >>> f.get_fill_value()
@@ -722,10 +682,6 @@ None
 
 .. seealso:: `del_units`, `get_units`
 
-:Examples 1:
-
->>> u = d.set_units('kg m-2')
-
 :Parameters:
 
     value: `str`
@@ -735,7 +691,7 @@ None
 
     `None`
 
-:Examples 2:
+**Examples:**
 
 >>> d.set_units('watt')
 >>> d.get_units()

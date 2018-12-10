@@ -153,8 +153,6 @@ rules, the only differences being:
     out: `None` or `str`
         A string containing the description.
 
-:Examples:
-
         '''
         # ------------------------------------------------------------
         # Properties and Data
@@ -400,7 +398,7 @@ False
     def expand_dims(self, position):
         '''Expand the shape of the data array.
 
-Insert a new size 1 axis into the data array. A corresponding axis is
+Inserts a new size 1 axis into the data array. A corresponding axis is
 also inserted into the bounds data array, if present.
 
 .. versionadded:: 1.7.0

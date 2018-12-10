@@ -18,7 +18,7 @@ class Compressed(object):
 
     `None`
 
-:Examples:
+**Examples:**
 
 >>> d._set_compressed_Array(a)
 

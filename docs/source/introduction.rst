@@ -84,8 +84,8 @@ https://www.geosci-model-dev.net/10/4619/2017.
 ------------------
 
 The cfdm package implements the CF data model for its internal data
-structures and so is able to process any CF-compliant dataset. It is,
-however, not strict about CF compliance so that partially conformant
+structures and so is able to process any CF-compliant dataset. It is
+not strict about CF compliance, however, so that partially conformant
 datasets may be modified in memory, as well as ingested from existing
 datasets and written to new datasets.
 

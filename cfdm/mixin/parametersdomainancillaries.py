@@ -65,8 +65,6 @@ class ParametersDomainAncillaries(Parameters):
     out: `bool`
         Whether or not the two instances are equal.
 
-:Examples:
-
         '''
         if not super().equals(other, rtol=rtol, atol=atol,
                               traceback=traceback,

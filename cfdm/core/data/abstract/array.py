@@ -88,7 +88,7 @@ original or the new copy.
 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.dtype
 dtype('float64')
@@ -106,7 +106,7 @@ dtype('float64')
 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -140,7 +140,7 @@ dtype('float64')
 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -174,7 +174,7 @@ dtype('float64')
 
 .. versionadded:: 1.7.0
 
-:Examples:
+**Examples:**
 
 >>> a.shape
 (73, 96)
@@ -220,7 +220,7 @@ original or the new copy.
     out:
         The deep copy.
 
-:Examples:
+**Examples:**
 
 >>> b = a.copy()
 
@@ -242,7 +242,7 @@ original or the new copy.
     out: `numpy.ndarray`
         An independent numpy array of the data.
 
-:Examples:
+**Examples:**
 
 >>> n = a.get_array()
 >>> isinstance(n, numpy.ndarray)
