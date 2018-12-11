@@ -8,8 +8,6 @@
 
 Version |release| for version |version| of the CF conventions.
 
-----
-
 .. _Dependencies:
 
 **Dependencies**
