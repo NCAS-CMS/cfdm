@@ -3,6 +3,7 @@ version 1.7.0b9 -
 
 * New method: cfdm.Bounds.inherted_properties
 * Renamed the io module as read_write to avoid namespace clashes
+* New script: cfdump
  	
 version 1.7.0b8 - 2018-12-02
 ============================
