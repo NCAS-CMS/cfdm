@@ -1022,7 +1022,7 @@ Coord references: rotated_latitude_longitude
 >>> print(y)
 Field: surface_altitude (ncvar%surface_altitude)
 ------------------------------------------------
-Data            : surface_altitude(ncdim%y(10), ncdim%x(9)) m
+Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 >>> g = cfdm.read('file.nc', create_field='domain_ancillary')
 >>> g
 [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
@@ -1072,36 +1072,47 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
         # Add a more complete domain
         # ------------------------------------------------------------
         if domain:
+            construct_axes = self.construct_axes()
+            
             for construct_type in ('dimension_coordinate',
                                    'auxiliary_coordinate',
                                    'cell_measure'):
-                for ccid, con in self.constructs(
-                        construct_type=construct_type,
-                        axes=data_axes,
-                        copy=False).items():
-                    axes = self.construct_axes().get(ccid)
+                for ccid, con in self.constructs(construct_type=construct_type,
+                                                 axes=data_axes,
+                                                 copy=False).items():
+                    axes = construct_axes.get(ccid)
                     if axes is None:
                         continue
-
+    
                     if set(axes).issubset(data_axes):
                         f.set_construct(con, cid=ccid, axes=axes,
                                         copy=True)
+                #--- End: for
             #--- End: for
-        
+       
             # Add coordinate references which span a subset of the item's
             # axes
             for rcid, ref in self.coordinate_references().items():
+
+                new_coordinates = [ccid for ccid in ref.coordinates()
+                                   if set(construct_axes[ccid]).issubset(data_axes)]
+
+                if not new_coordinates:
+                    continue
+
+                # Still here?
                 ok = True
-                for ccid in (tuple(ref.coordinates()) +
-                             tuple(ref.coordinate_conversion.domain_ancillaries().values())):
-                    axes = self.construct_axes()[ccid]
+                for ccid in ref.coordinate_conversion.domain_ancillaries().values():
+                    axes = construct_axes[ccid]
                     if not set(axes).issubset(data_axes):
                         ok = False
                         break
                 #--- End: for
-                
+
                 if ok:
-                    f.set_construct(ref, cid=rcid, copy=True)
+                    ref = ref.copy()
+                    ref.coordinates(new_coordinates)
+                    f.set_construct(ref, cid=rcid, copy=False)                    
             #--- End: for
         #--- End: if
               

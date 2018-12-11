@@ -1646,7 +1646,7 @@ field construct.
 The `~Field.create_field` method of the field construct identifies a
 unique metadata construct and returns a new field construct based on
 its properties and data. The new field construct has domain axis
-constructs corresponding to the data and, by default, any other
+constructs corresponding to the data, and (by default) any other
 metadata constructs that further define its domain.
 
 .. code:: python
@@ -1664,6 +1664,10 @@ metadata constructs that further define its domain.
    Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
    Coord references: rotated_latitude_longitude
 
+The `~Field.create_field` method has an option to only include domain
+axis constructs in the new field construct, with no other metadata
+constructs.
+
    >>> orog1 = tas.create_field('surface_altitude', domain=False) 
    >>> print(orog1)
    Field: surface_altitude
@@ -1671,13 +1675,13 @@ metadata constructs that further define its domain.
    Data            : surface_altitude(cid%domainaxis2(10), cid%domainaxis3(9)) m
    
 The `cfdm.read` function allows field constructs to be derived
-directly from the netCDF variables that, in turn, correspond to
-metadata constructs. In this case, the new field constructs will have
-a domain limited to that which can be inferred from the corresponding
-netCDF variable, but without the connections that are defined by the
-parent netCDF data variable. This will usually result in different
-field constructs than are created with the `~Field.create_field`
-method.
+directly from the netCDF variables that correspond to metadata
+constructs. In this case, the new field constructs will have a domain
+limited to that which can be inferred from the corresponding netCDF
+variable, but without the connections that are defined by the parent
+netCDF data variable. This will often result in a new field construct
+that has fewer metadata constructs than one created with the
+`~Field.create_field` method.
 
 .. code:: python
 
