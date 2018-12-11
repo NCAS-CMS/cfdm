@@ -34,6 +34,11 @@ The **cfdm** package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
 
+Installation
+============
+
+https://ncas-cms.github.io/cfdm/installation.html
+
 Documentation
 =============
 
