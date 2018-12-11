@@ -6,9 +6,9 @@
 **Tutorial**
 ============
 
-Version |release| for version |version| of the CF conventions.
-
 ----
+
+Version |release| for version |version| of the CF conventions.
  
 The code examples in this tutorial are available in an **IPython
 Jupyter notebook** (:download:`download <notebooks/tutorial.ipynb>`,

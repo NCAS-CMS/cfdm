@@ -7,9 +7,9 @@
 **Philosophy**
 ==============
 
-Version |release| for version |version| of the CF conventions.
-
 ----
+
+Version |release| for version |version| of the CF conventions.
 
 The basic requirement of the reference implementation is to represent
 the logical CF data model in memory with a package of Python classes,
@@ -28,6 +28,8 @@ capabilities, and some more sophisticated field modification methods.
 **Functionality**
 -----------------
 
+----
+
 The cfdm package has, with very few exceptions, only the functionality
 required to read and write datasets, and to create and inspect field
 constructs in memory.
@@ -40,6 +42,8 @@ arithmetically, etc.
 
 **API**
 -------
+
+----
 
 The design of the pplication programming interface (API) needs to
 strike a balance between being verbose and terse. A verbose API is

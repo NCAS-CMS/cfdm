@@ -4,15 +4,17 @@
 **Introduction**
 ================
 
-Version |release| for version |version| of the CF conventions.
-
 ----
+
+Version |release| for version |version| of the CF conventions.
 
 The Python cfdm package is a complete implementation of the CF data
 model.
 
 **CF conventions**
 ------------------
+
+----
 
 The CF (Climate and Forecast) metadata conventions
 (http://cfconventions.org) provide a description of the physical
@@ -23,6 +25,8 @@ and forecasting data using netCDF files and libraries
 
 **CF data model**
 -----------------
+
+----
 
 The `CF data model <https://www.geosci-model-dev.net/10/4619/2017>`_
 identifies the fundamental elements ("constructs") of CF and shows how
@@ -82,6 +86,8 @@ https://www.geosci-model-dev.net/10/4619/2017.
 
 **Implementation**
 ------------------
+
+----
 
 The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is

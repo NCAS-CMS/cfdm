@@ -6,6 +6,8 @@
 **Installation**
 ================
 
+----
+
 Version |release| for version |version| of the CF conventions.
 
 .. _Dependencies:
@@ -111,9 +113,9 @@ To install from source:
 
 ----
 
-During installation the `!cfdump` command line tool is also installed,
-which generates text descriptions of the field constructs contained in
-a netCDF dataset.
+During installation the ``cfdump`` command line tool is also
+installed, which generates text descriptions of the field constructs
+contained in a netCDF dataset.
 
 .. _Tests:
 

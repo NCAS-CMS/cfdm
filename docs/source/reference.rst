@@ -1,9 +1,9 @@
 **Reference manual**
 ====================
 
-Version |release| for version |version| of the CF conventions.
-
 ----
+
+Version |release| for version |version| of the CF conventions.
 
 .. toctree::
    :maxdepth: 2
