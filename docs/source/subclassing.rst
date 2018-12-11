@@ -6,9 +6,10 @@
 **Subclassing**
 ===============
 
+----
+
 Version |release| for version |version| of the CF conventions.
 
-----
 
 *This page is under preparation*
 

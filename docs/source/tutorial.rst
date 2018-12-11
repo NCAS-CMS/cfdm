@@ -1639,14 +1639,14 @@ Creating field constructs from metadata constructs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Independent field constructs may be created from metadata in two ways:
-either derived from a netCDF variable using the `cfdm.read` function,
-or derived from a metadata construct using the `~Field.create_field`
-method of the field construct.
+either from a netCDF variable using the `cfdm.read` function, or from
+a metadata construct using the `~Field.create_field` method of the
+field construct.
 
 The `~Field.create_field` method of the field construct identifies a
 unique metadata construct and returns a new field construct based on
-its properties and data. The new field construct always has domain
-axis constructs corresponding to the data, and may also contain other
+its properties and data. The new field construct has domain axis
+constructs corresponding to the data and, by default, any other
 metadata constructs that further define its domain.
 
 .. code:: python
