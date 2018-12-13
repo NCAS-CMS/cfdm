@@ -11,12 +11,47 @@ class Count(mixin.NetCDFVariable,
             core.abstract.PropertiesData):
     '''A count variable required to uncompress a ragged array.
 
+A collection of features stored using a contiguous ragged array
+combines all features along a single dimension (the "sample
+dimension") such that each feature in the collection occupies a
+contiguous block.
+
+The information needed to uncompress the data is stored in a count
+variable that gives the size of each block.
+
 .. versionadded:: 1.7.0
 
     '''
     def __init__(self, properties={}, data=None, source=None,
                  copy=True, _use_data=True):
-        '''TODO
+        '''**Initialization**
+
+:Parameters:
+
+    properties: `dict`, optional
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
+
+        *Example:*
+          ``properties={'long_name': 'number of obs for this station'}``
+
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
+
+    data: `Data`, optional
+        Set the data array. Ignored if the *source* parameter is set.
+
+        The data array may also be set after initialisation with the
+        `set_data` method.
+
+    source: optional
+        Initialize the properties and data from those of *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
+
         '''
         super().__init__(properties=properties, data=data,
                          source=source, copy=copy,

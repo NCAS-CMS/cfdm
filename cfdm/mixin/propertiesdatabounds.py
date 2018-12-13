@@ -212,19 +212,14 @@ rules, the only differences being:
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
                ignore_type=False):
-        '''Whether two data arrays with descriptive properties and cell bounds
-are the same.
+        '''Whether two instances are the same.
 
 Equality is strict by default. This means that:
 
 * the descriptive properties must be the same, and vector-valued
-  properties must have same the size and be element-wise equal (see
-  the *ignore_properties* parameter), and
-
-..
-
-* vector-valued properties must have same size and be element-wise
-  equal,
+  properties must have same the size and data type and be element-wise
+  equal (see the *ignore_properties* and *ignore_data_type*
+  parameters), and
 
 ..
 
@@ -250,8 +245,8 @@ underlying compressed arrays must be the same, as well as the arrays
 in their uncompressed forms. See the *ignore_compression* parameter.
 
 Any type of object may be tested but, in general, equality is only
-possible with another field construct, or a subclass of one. See the
-*ignore_type* parameter.
+possible with another object of the same type, or a subclass of
+one. See the *ignore_type* parameter.
 
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.
@@ -284,7 +279,7 @@ constitute part of the CF data model and so are not checked.
         The names of properties to omit from the comparison.
 
     ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical data array
+        If True then ignore the data types in all numerical
         comparisons. By default different numerical data types imply
         inequality, regardless of whether the elements are within the
         tolerance for equality.
@@ -294,19 +289,18 @@ constitute part of the CF data model and so are not checked.
         is ignored and only the uncompressed arrays are tested for
         equality. By default the compression type and, if appliciable,
         the underlying compressed arrays must be the same, as well as
-        the arrays in their uncompressed forms
+        the arrays in their uncompressed forms.
 
     ignore_type: `bool`, optional
-         Any type of object may be tested but, in general, equality is
-        only possible with another TODO, or a subclass of one. If
-        *ignore_type* is True then then
-        ``PropertiesDataBounds(source=other)`` is tested, rather than
-        the ``other`` defined by the *other* parameter.
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. If *ignore_type* is True then equality is
+        possible for any object with a compatible API.
 
 :Returns: 
   
     out: `bool`
-        TODO
+        Whether the two instances are equal.
 
 **Examples:**
 

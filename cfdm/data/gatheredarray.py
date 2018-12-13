@@ -17,8 +17,7 @@ reducing the number of values that need to be stored.
 The information needed to uncompress the data is stored in a "list
 variable" that gives the indices of the required points.
 
-
-.. versionadded::1.7
+.. versionadded:: 1.7.0
 
     '''
     def __init__(self, compressed_array=None, shape=None, size=None,

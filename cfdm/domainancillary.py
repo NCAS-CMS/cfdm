@@ -128,8 +128,9 @@ Equality is strict by default. This means that for two domain
 ancillary constructs to be considered equal:
 
 * the descriptive properties must be the same, and vector-valued
-  properties must have same the size and be element-wise equal (see
-  the *ignore_properties* parameter),
+  properties must have same the size and data type and be element-wise
+  equal (see the *ignore_properties* and *ignore_data-type*
+  parameters),
 
 ..
 
@@ -188,7 +189,7 @@ constitute part of the CF data model and so are not checked.
         The names of properties to omit from the comparison.
 
     ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical data array
+        If True then ignore the data types in all numerical 
         comparisons. By default different numerical data types imply
         inequality, regardless of whether the elements are within the
         tolerance for equality.
@@ -202,10 +203,10 @@ constitute part of the CF data model and so are not checked.
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
-        only possible with another domain ancillary construct, or
-        a subclass of one. If *ignore_type* is True then then
-        ``DomainAncillary(source=other)`` is tested, rather than
-        the ``other`` defined by the *other* parameter.
+        only possible with another domain ancillary construct, or a
+        subclass of one. If *ignore_type* is True then
+        ``DomainAncillary(source=other)`` is tested, rather than the
+        ``other`` defined by the *other* parameter.
 
 :Returns: 
   

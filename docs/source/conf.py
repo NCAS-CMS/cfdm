@@ -228,11 +228,12 @@ html_theme_options = {
 #    "page_width"      : "auto",
     "show_related"    : 'true',
     "show_relbars"    : 'true',
+    "sidebar_collapse": 'true',
 #    "link"            : '#ED1010', #'#5682AD', # light blue
 #    "link_hover"      : '#46DD6c',
 #    "sidebar_search_button" :  '#ED1010',
     'fixed_sidebar' : 'true',
-    
+    'sidebar_text' : '#RASE',
     'github_user' : 'davidhassell',
     'github_repo' : 'cfdm',
 
@@ -280,7 +281,7 @@ html_title = "Documentation"
 # sheets) here, relative to this directory. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite
 # the builtin "default.css".
-html_static_path = ['_static/']
+html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.

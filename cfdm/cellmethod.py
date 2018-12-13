@@ -342,7 +342,7 @@ constitute part of the CF data model and so are not checked.
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
         only possible with another cell method construct, or a
-        subclass of one. If *ignore_type* is True then then
+        subclass of one. If *ignore_type* is True then
         ``CellMethod(source=other)`` is tested, rather than the
         ``other`` defined by the *other* parameter.
 

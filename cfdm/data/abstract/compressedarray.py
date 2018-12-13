@@ -10,7 +10,7 @@ from .array import Array
 
 class CompressedArray(with_metaclass(abc.ABCMeta, Array)):
     '''Abstract base class for a container of an underlying compressed
-array
+array.
 
 See `cfdm.GatheredArray` for an example implementation.
 

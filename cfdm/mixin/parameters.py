@@ -12,7 +12,9 @@ class Parameters(Container):
     '''
 
     def __bool__(self):
-        '''TODO 
+        '''Called by the `bool` built-in function.
+
+x.__bool__() <==> bool(x)
 
 .. versionadded:: 1.7.0
 
@@ -21,9 +23,12 @@ class Parameters(Container):
     #--- End: def
         
     def __nonzero__(self):
-        '''TODO 
+        '''Called by the `bool` built-in function.
+
+x.__nonzero__() <==> bool(x)
 
 .. versionadded:: 1.7.0
+
         '''
         return bool(self.parameters())
     #--- End: def
@@ -42,7 +47,21 @@ x.__str__() <==> str(x)
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_type=False):
-        '''TODO True if two instances are equal, False otherwise.
+        '''Whether two instances are the same.
+
+Equality is strict by default. This means that:
+
+* TODO (see the *ignore_data_type* parameter)
+
+Two numerical elements ``a`` and ``b`` are considered equal if
+``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
+differences) and ``rtol`` (the tolerance on relative differences) are
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
+
+Any type of object may be tested but, in general, equality is only
+possible with another object of the same type, or a subclass of
+one. See the *ignore_type* parameter.
 
 :Parameters:
 
@@ -50,16 +69,28 @@ x.__str__() <==> str(x)
         The object to compare for equality.
 
     atol: `float`, optional
-        The absolute tolerance for all numerical comparisons, By
-        default the value returned by the `ATOL` function is used.
+        The tolerance on absolute differences between real
+        numbers. The default value is set by the `cfdm.ATOL` function.
 
     rtol: `float`, optional
-        The relative tolerance for all numerical comparisons, By
-        default the value returned by the `RTOL` function is used.
+        The tolerance on relative differences between real
+        numbers. The default value is set by the `cfdm.RTOL` function.
 
-    ignore_fill_value: `bool`, optional
-        If True then data arrays with different fill values are
-        considered equal. By default they are considered unequal.
+    traceback: `bool`, optional
+        If True then print information about differences that lead to
+        inequality.
+
+    ignore_data_type: `bool`, optional
+        If True then ignore the data types in all numerical
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
+
+    ignore_type: `bool`, optional
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. If *ignore_type* is True then equality is
+        possible for any object with a compatible API.
 
     traceback: `bool`, optional
         If True then print a traceback highlighting where the two
@@ -68,9 +99,11 @@ x.__str__() <==> str(x)
 :Returns: 
 
     out: `bool`
-        Whether or not the two instances are equal.
+       Whether the two instances are equal.
 
 **Examples:**
+
+TODO
 
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,

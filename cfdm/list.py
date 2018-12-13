@@ -9,6 +9,13 @@ class List(mixin.NetCDFVariable,
            core.abstract.PropertiesData):
     '''A list variable required to uncompress a gathered array.
 
+Compression by gathering combines axes of a multidimensional array
+into a new, discrete axis whilst omitting the missing values and thus
+reducing the number of values that need to be stored.
+
+The information needed to uncompress the data is stored in a list
+variable that gives the indices of the required points.
+
 .. versionadded:: 1.7.0
 
     '''
@@ -16,7 +23,32 @@ class List(mixin.NetCDFVariable,
                  copy=True, _use_data=True):
         '''**Initialization**
 
-TODO
+:Parameters:
+
+    properties: `dict`, optional
+        Set descriptive properties. The dictionary keys are property
+        names, with corresponding values. Ignored if the *source*
+        parameter is set.
+
+        *Example:*
+          ``properties={'long_name': 'uncompression indices'}``
+
+        Properties may also be set after initialisation with the
+        `properties` and `set_property` methods.
+
+    data: `Data`, optional
+        Set the data array. Ignored if the *source* parameter is set.
+
+        The data array may also be set after initialisation with the
+        `set_data` method.
+
+    source: optional
+        Initialize the properties and data from those of *source*.
+
+    copy: `bool`, optional
+        If False then do not deep copy input parameters prior to
+        initialization. By default arguments are deep copied.
+
         '''
         super().__init__(properties=properties, data=data,
                          source=source, copy=copy,

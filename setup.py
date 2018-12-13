@@ -35,8 +35,6 @@ version      = _get_version()
 packages     = ['cfdm']
 #etc_files    = [f for f in find_package_data_files('cfdm/etc')]
 
-#package_data = etc_files
-
 long_description = """The **cfdm** Python package is a complete implementation of the `CF
 data model <https://www.geosci-model-dev.net/10/4619/2017>`_, that
 identifies the fundamental elements of the `CF conventions
@@ -51,21 +49,13 @@ of its metadata.
 The **cfdm** package can
 
 * read field constructs from netCDF datasets,
-
 * create new field constructs in memory,
-
 * inspect field constructs,
-
 * test whether two field constructs are the same,
-
 * modify field construct metadata and data,
-
 * create subspaces of field constructs,
-
 * write field constructs to netCDF datasets on disk,
-
 * incorporate, and create, metadata stored in external files, and
-
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
@@ -90,11 +80,11 @@ setup(name = "cfdm",
       maintainer   = "David Hassell",
       maintainer_email = "david.hassell@ncas.ac.uk",
       author_email = "david.hassell@ncas.ac.uk",
-      url          = "https://github.com/NCAS-CMS/cfdm",
-      download_url = "https://pypi.org/project/cfdm",
+      url          = "https://ncas-cms.github.io/cfdm",
+      download_url = "https://pypi.org/project/cfdm/#files",
       platforms    = ["Linux", "MacOS", "Windows"],
-      keywords     = ['cf','netcdf','data','science',
-                      'oceanography','meteorology','climate'],
+      keywords     = ['cf', 'netcdf', 'data', 'science',
+                      'oceanography', 'meteorology', 'climate'],
       classifiers  = ["Development Status :: 4 - Beta",
                       "Intended Audience :: Science/Research", 
                       "License :: OSI Approved :: MIT License", 

@@ -155,6 +155,11 @@ be read within a session, and makes the read operation fast.
         `~cfdm.Field.create_field` method of a returned field
         construct, instead of setting the *create_field* parameter.
 
+    verbose: `bool`, optional
+        If True then print a description of how the contents of the
+        netCDF file were parsed and mapped to CF data model
+        constructs.
+
 :Returns:
     
     out: `list`
@@ -163,7 +168,17 @@ be read within a session, and makes the read operation fast.
 
 **Examples:**
 
-TODO
+>>> x = cfdm.read('file.nc')
+>>> type(x)
+list
+
+>>> f = cfdm.read('file.nc', create_field='domain_ancillary')
+>>> g = cfdm.read('file.nc', create_field=['dimension_coordinate', 
+...                                        'auxiliary_coordinate'])
+
+>>> h = cfdm.read('parent.nc', external_files='external.nc')
+>>> i = cfdm.read('parent.nc', external_files=['external_1.nc',
+...                                            'external_2.nc'])
 
     '''
     # Parse the field parameter

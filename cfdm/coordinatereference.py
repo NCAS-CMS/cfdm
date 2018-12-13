@@ -338,7 +338,7 @@ constitute part of the CF data model and so are not checked.
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
         only possible with another coordinate reference construct, or
-        a subclass of one. If *ignore_type* is True then then
+        a subclass of one. If *ignore_type* is True then
         ``CoordinateReference(source=other)`` is tested, rather than
         the ``other`` defined by the *other* parameter.
 

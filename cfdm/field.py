@@ -675,8 +675,9 @@ constructs to be considered equal they must have corresponding
 metadata constructs and for each pair of constructs:
 
 * the descriptive properties must be the same, and vector-valued
-  properties must have same the size and be element-wise equal (see
-  the *ignore_properties* parameter), and
+  properties must have same the size and data type be element-wise
+  equal (see the *ignore_properties* and *ignore_data_type*
+  parameters), and
 
 ..
 
@@ -732,7 +733,7 @@ construct.
         the "Conventions" property is always omitted by default.
 
     ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical data array
+        If True then ignore the data types in all numerical 
         comparisons. By default different numerical data types imply
         inequality, regardless of whether the elements are within the
         tolerance for equality.
@@ -747,9 +748,9 @@ construct.
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
         only possible with another field construct, or a subclass of
-        one. If *ignore_type* is True then then
-        ``Field(source=other)`` is tested, rather than the ``other``
-        defined by the *other* parameter.
+        one. If *ignore_type* is True then ``Field(source=other)`` is
+        tested, rather than the ``other`` defined by the *other*
+        parameter.
 
 :Returns: 
   

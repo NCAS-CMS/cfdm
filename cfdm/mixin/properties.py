@@ -62,15 +62,23 @@ class Properties(Container):
     def equals(self, other, rtol=None, atol=None, traceback=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_type=False):
-        '''Whether two collections of properties are the same.
+        '''Whether two instances are the same.
 
-For vector-valued properties to be equal they must have same size and
-be element-wise equal.
+Equality is strict by default. This means that:
+
+* the descriptive properties must be the same, and vector-valued
+  properties must have same the size and data type and be element-wise
+  equal (see the *ignore_properties* parameter), and
 
 Two numerical elements ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers.
+positive, typically very small numbers. See the *atol* and *rtol*
+parameters.
+
+Any type of object may be tested but, in general, equality is only
+possible with another object of the same type, or a subclass of
+one. See the *ignore_type* parameter.
 
 .. versionadded:: 1.7.0
 
@@ -99,15 +107,21 @@ positive, typically very small numbers.
         The names of properties to omit from the comparison.
 
     ignore_data_type: `bool`, optional
-        TODO
+        If True then ignore the data types in all numerical
+        comparisons. By default different numerical data types imply
+        inequality, regardless of whether the elements are within the
+        tolerance for equality.
 
     ignore_type: `bool`, optional
-        TODO
+        Any type of object may be tested but, in general, equality is
+        only possible with another object of the same type, or a
+        subclass of one. If *ignore_type* is True then equality is
+        possible for any object with a compatible API.
 
 :Returns: 
   
     out: `bool`
-        Whether the two collections of propoerties are equal.
+        Whether the two instances are equal.
 
 **Examples:**
 

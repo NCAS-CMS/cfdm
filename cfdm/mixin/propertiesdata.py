@@ -185,8 +185,9 @@ Return a string containing a full description of the instance.
 Equality is strict by default. This means that:
 
 * the descriptive properties must be the same, and vector-valued
-  properties must have same the size and be element-wise equal (see
-  the *ignore_properties* parameter), and
+  properties must have same the size and data type and be element-wise
+  equal (see the *ignore_properties* and *ignore_data_type*
+  parameters), and
 
 ..
 
@@ -238,7 +239,7 @@ constitute part of the CF data model and so are not checked.
         The names of properties to omit from the comparison.
 
     ignore_data_type: `bool`, optional
-        If True then ignore the data types in all numerical data array
+        If True then ignore the data types in all numerical
         comparisons. By default different numerical data types imply
         inequality, regardless of whether the elements are within the
         tolerance for equality.
@@ -248,7 +249,7 @@ constitute part of the CF data model and so are not checked.
         is ignored and only the uncompressed arrays are tested for
         equality. By default the compression type and, if appliciable,
         the underlying compressed arrays must be the same, as well as
-        the arrays in their uncompressed forms
+        the arrays in their uncompressed forms.
 
     ignore_type: `bool`, optional
         Any type of object may be tested but, in general, equality is
@@ -259,7 +260,7 @@ constitute part of the CF data model and so are not checked.
 :Returns: 
   
     out: `bool`
-        TODO
+        Whether the two instances are equal.
 
 **Examples:**
 
@@ -386,32 +387,32 @@ Inserts a new size 1 axis into the data array.
         return v
     #--- End: def
     
-    def HDF_chunks(self, *chunksizes):
-        '''TODO {+HDF_chunks}
-        
-.. versionadded:: 1.6
-
-:Parameters:
-
-    {+chunksizes}
-
-:Returns:
-
-    out: `dict`
-        The chunk sizes prior to the new setting, or the current
-        current sizes if no new values are specified.
-
-        '''
-        if self.has_data():
-            old_chunks = self.get_data().HDF_chunks(*chunksizes)
-        else:
-            old_chunks = None
-
-#        if self.hasbounds:
-#            self.bounds.HDF_chunks(*chunksizes)
-
-        return old_chunks
-    #--- End: def
+#    def HDF_chunks(self, *chunksizes):
+#        '''TODO {+HDF_chunks}
+#        
+#.. versionadded:: 1.6
+#
+#:Parameters:
+#
+#    {+chunksizes}
+#
+#:Returns:
+#
+#    out: `dict`
+#        The chunk sizes prior to the new setting, or the current
+#        current sizes if no new values are specified.
+#
+#        '''
+#        if self.has_data():
+#            old_chunks = self.get_data().HDF_chunks(*chunksizes)
+#        else:
+#            old_chunks = None
+#
+##        if self.hasbounds:
+##            self.bounds.HDF_chunks(*chunksizes)
+#
+#        return old_chunks
+#    #--- End: def
 
     def name(self, default=None, ncvar=True, custom=None,
              all_names=False):
