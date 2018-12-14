@@ -70,7 +70,7 @@ Equality is strict by default. This means that:
   properties must have same the size and data type and be element-wise
   equal (see the *ignore_properties* parameter), and
 
-Two numerical elements ``a`` and ``b`` are considered equal if
+Two real numbers ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*

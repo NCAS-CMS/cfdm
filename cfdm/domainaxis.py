@@ -63,8 +63,7 @@ x.__str__() <==> str(x)
     def equals(self, other, traceback=False, ignore_type=False):
         '''Whether two domain axis constructs are the same.
 
-Equality is strict by default. This means that for two field domain
-axis constructs to be considered equal::
+Equality is strict by default. This means that:
 
 * the axis sizes must be the same.
 

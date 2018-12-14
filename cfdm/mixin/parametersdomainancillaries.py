@@ -53,9 +53,15 @@ x.__str__() <==> str(x)
 
 Equality is strict by default. This means that:
 
-* TODO 
+* the named parameters must be the same and have the same data type,
+  and vector-valued parameters must also have same the size and be
+  element-wise equal (see (see the *ignore_data_type* parameter), and
 
-Two numerical elements ``a`` and ``b`` are considered equal if
+..
+
+* the names of domain ancillary constructs are the same.
+
+Two real numbers ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
@@ -99,17 +105,18 @@ one. See the *ignore_type* parameter.
 
 **Examples:**
 
-TODO
+>>> c.equals(c)
+True
+>>> c.equals(c.copy())
+True
+>>> c.equals(None)
+False
 
         '''
         if not super().equals(other, rtol=rtol, atol=atol,
                               traceback=traceback,
                               ignore_type=ignore_type):
             return False
-        
-        # Check that the coordinate conversion ancillary terms
-        # match
-#        internal_ancillaries = self._internal_ancillaries
         
         domain_ancillaries0 = self.domain_ancillaries()
         domain_ancillaries1 = other.domain_ancillaries()
@@ -133,22 +140,9 @@ TODO
     self.__class__.__name__, term, 
     value0, value1))
                 return False
-
-#            if internal_ancillaries:
-#                if not self._equals(value0, value1,
-#                                    rtol=rtol, atol=atol,
-#                                    traceback=traceback,
-#                                    ignore_data_type=ignore_data_type,
-#                                    ignore_fill_value=ignore_fill_value,
-#                                    ignore_type=ignore_type):
-#                    if traceback:
-#                        print(
-#"{}: Unequal {!r} terms ({!r} != {!r})".format( 
-#    self.__class__.__name__, term, value0, value1))
-#                    return False
         #--- End: for
      
-        # Still here? Then the two XXX are as equal as can be
+        # Still here? Then the two instances are as equal as can be
         # ascertained in the absence of domains.
         return True
     #--- End: def

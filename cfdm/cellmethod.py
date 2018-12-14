@@ -293,8 +293,7 @@ applies.
                ignore_properties=(), ignore_type=False):
         '''Whether two cell method constructs are the same.
 
-Equality is strict by default. This means that for two cell method
-constructs to be considered equal:
+Equality is strict by default. This means that:
 
 * the descriptive properties must be the same (see the
   *ignore_properties* parameter).

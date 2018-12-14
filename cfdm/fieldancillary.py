@@ -108,13 +108,12 @@ components, and provides selected values of all data arrays.
                ignore_type=False):
         '''Whether two field ancillary constructs are the same.
 
-Equality is strict by default. This means that for two field ancillary
-constructs to be considered equal:
+Equality is strict by default. This means that:
 
-* the descriptive properties must be the same, and vector-valued
-  properties must have same the size and data type and be element-wise
-  equal (see the *ignore_properties* and *ignore_data_type*
-  parameters), and
+* the descriptive properties must be the same and have the same data
+  type, and vector-valued properties also have the size and be
+  element-wise equal (see the *ignore_properties* and
+  *ignore_data_type* parameters), and
 
 ..
 

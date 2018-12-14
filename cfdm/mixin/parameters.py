@@ -51,9 +51,11 @@ x.__str__() <==> str(x)
 
 Equality is strict by default. This means that:
 
-* TODO (see the *ignore_data_type* parameter)
+* the named parameters must be the same and have the same data type,
+  and vector-valued parameters must also have same the size and be
+  element-wise equal (see (see the *ignore_data_type* parameter).
 
-Two numerical elements ``a`` and ``b`` are considered equal if
+Two real numbers ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
 differences) and ``rtol`` (the tolerance on relative differences) are
 positive, typically very small numbers. See the *atol* and *rtol*
@@ -103,7 +105,12 @@ one. See the *ignore_type* parameter.
 
 **Examples:**
 
-TODO
+>>> d.equals(d)
+True
+>>> d.equals(d.copy())
+True
+>>> d.equals(None)
+False
 
         '''
         pp = super()._equals_preprocess(other, traceback=traceback,
@@ -112,28 +119,7 @@ TODO
             return pp
         
         other = pp
-        
-#        # Check for object identity
-#        if self is other:
-#            return True
-#        
-#        # Check that each object is of the same type
-#        if ignore_type:
-#            if not isinstance(other, self.__class__):
-#                other = type(self)(source=other, copy=False)
-#        elif not isinstance(other, self.__class__):
-#            if traceback:
-#                print("{0}: Incompatible types: {0}, {1}".format(
-#		    self.__class__.__name__,
-#		    other.__class__.__name__))
-#            return False
-
-#        if not super().equals(
-#                other, #rtol=rtol, atol=atol,
-#                traceback=traceback,
-#                ignore_type=ignore_type):
-#            return False
-        
+                
         # Check that the coordinate conversion parameter terms match
         parameters0 = self.parameters()
         parameters1 = other.parameters()

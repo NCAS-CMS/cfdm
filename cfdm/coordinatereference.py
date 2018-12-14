@@ -290,8 +290,7 @@ components.
                ignore_type=False):
         '''Whether two coordinate reference constructs are the same.
 
-Equality is strict by default. This means that for two coordinate
-reference constructs to be considered equal:
+Equality is strict by default. This means that:
 
 * the datum and coordinate conversion components must have the same
   string and numerical parameters.
