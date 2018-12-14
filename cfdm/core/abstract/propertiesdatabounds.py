@@ -136,8 +136,18 @@ of the `Bounds` instance to return the bounds as a `numpy` array.
 
 **Examples:**
 
-TODO
-
+>>> import numpy
+>>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+>>> c.set_bounds(b)
+>>> c.has_bounds()
+True
+>>> b = c.bounds
+>>> b
+<Bounds: (5, 2) >
+>>> b.data
+<Data(5, 2): [[0, ..., 9]]>
+>>> b.data.shape
+(5, 2)
         '''
         return self.get_bounds()
     #--- End: def
@@ -210,7 +220,8 @@ TODO
 
 **Examples:**
 
->>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> import numpy
+>>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
 >>> c.set_bounds(b)
 >>> c.has_bounds()
 True
@@ -276,7 +287,8 @@ None
 
 **Examples:**
 
->>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> import numpy
+>>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
 >>> c.set_bounds(b)
 >>> c.has_bounds()
 True
@@ -356,7 +368,8 @@ None
 
 **Examples:**
 
->>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> import numpy
+>>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
 >>> c.set_bounds(b)
 >>> c.has_bounds()
 True
@@ -439,7 +452,8 @@ None
 
 **Examples:**
 
->>> b = cfdm.Bounds(data=cfdm.Data(range(10).reshape(5, 2)))
+>>> import numpy
+>>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
 >>> c.set_bounds(b)
 >>> c.has_bounds()
 True

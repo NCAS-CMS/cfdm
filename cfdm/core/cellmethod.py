@@ -87,55 +87,6 @@ that the method was applied only over El Nino years).
             axes = self.set_axes(axes)
     #--- End: def
 
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        return '<{0}: {1}>'.format(self.__class__.__name__, str(self))
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''x.__str__() <==> str(x)
-#
-#Return a CF-netCDF-like string of the cell method.
-#
-#Note that if the intention is to use this string in a CF-netCDF
-#cell_methods attribute then, unless they are standard names, the axes
-#names will need to be modified to be netCDF dimension names.
-#
-#        '''     
-#        string = ['{0}:'.format(axis) for axis in self.get_axes(())]
-#
-#        string.append(self.get_property('method', ''))
-#
-#        for portion in ('within', 'where', 'over'):
-#            p = self.get_property(portion, None)
-#            if p is not None:
-#                string.extend((portion, p))
-#        #--- End: for
-#
-#        intervals = self.get_property('intervals', ())
-#        comment   = self.get_property('comment', None)
-#
-#        if intervals:
-#            x = ['(']
-#
-#            y = ['interval: {0}'.format(data) for data in intervals]
-#            x.append(' '.join(y))
-#
-#            if comment is not None:
-#                x.append(' comment: {0}'.format(comment))
-#
-#            x.append(')')
-#
-#            string.append(''.join(x))
-#
-#        elif comment is not None:
-#            string.append('({0})'.format(comment))
-#
-#        return ' '.join(string)
-#    #--- End: def
-
     @property
     def construct_type(self):
         '''Return a description of the construct type.
@@ -170,11 +121,18 @@ that the method was applied only over El Nino years).
 
 **Examples:**
 
->>> c.set_axes('area')
->>> print c.del_axes()
-('area',)
->>> print f.del_axes()
-None
+>>> c.set_axes(['domainaxis1'])
+>>> c.has_axes()
+True
+>>> c.get_axes()
+('time',)
+>>> c.del_axes()
+>>> c.has_axes()
+False
+>>> c.get_axes('NO AXES')
+'NO AXES'
+>>> c.del_axes('NO AXES')
+'NO AXES'
 
         '''
         return self._del_component('axes')
@@ -200,13 +158,17 @@ None
 
 **Examples:**
 
->>> c.set_axes(['time'])
+>>> c.set_axes(['domainaxis1'])
+>>> c.has_axes()
+True
 >>> c.get_axes()
 ('time',)
 >>> c.del_axes()
->>> c.get_axes()
-AttributeError: 'CellMethod' object has no component 'axes'
+>>> c.has_axes()
+False
 >>> c.get_axes('NO AXES')
+'NO AXES'
+>>> c.del_axes('NO AXES')
 'NO AXES'
 
         '''
@@ -227,8 +189,18 @@ AttributeError: 'CellMethod' object has no component 'axes'
 
 **Examples:**
 
->>> if c.has_axes():
-...     print 'Has axes'
+>>> c.set_axes(['domainaxis1'])
+>>> c.has_axes()
+True
+>>> c.get_axes()
+('time',)
+>>> c.del_axes()
+>>> c.has_axes()
+False
+>>> c.get_axes('NO AXES')
+'NO AXES'
+>>> c.del_axes('NO AXES')
+'NO AXES'
 
 '''
         return self._has_component('axes')
@@ -244,7 +216,27 @@ AttributeError: 'CellMethod' object has no component 'axes'
 :Parameters:
 
     value: (sequence of) `str`
-        The value for the axes.
+        The axes, specified either by the construct identifiers of
+        domain axis constructs; standard names; or the special string
+        ``'area'``.
+
+        *Example:*
+          ``axes='domainaxis0'``
+
+        *Example:*
+          ``axes='time'``
+
+        *Example:*
+          ``axes='area'``
+
+        *Example:*
+          ``axes=['domainaxis0', 'domainaxis2']``
+
+        *Example:*
+          ``axes=['time', 'area']``
+
+        *Example:*
+          ``axes=['domainaxis0', 'time']``
 
 :Returns:
 
@@ -252,7 +244,24 @@ AttributeError: 'CellMethod' object has no component 'axes'
 
 **Examples:**
 
-TODO
+>>> c.set_axes(['domainaxis1'])
+>>> c.has_axes()
+True
+>>> c.get_axes()
+('time',)
+>>> c.del_axes()
+>>> c.has_axes()
+False
+>>> c.get_axes('NO AXES')
+'NO AXES'
+>>> c.del_axes('NO AXES')
+'NO AXES'
+
+>>> c.set_axes(['domainaxis1', 'domainaxis0'])
+
+>>> c.set_axes(['time', 'domainaxis0'])
+
+>>> c.set_axes('time')
 
         '''
         if copy:

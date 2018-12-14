@@ -112,12 +112,12 @@ cell measure variables correspond to cell measure constructs.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `get_measure`, `has_measure`, `properties`, `set_measure`
+.. seealso:: `get_measure`, `has_measure`, `set_measure`
 
 :Parameters:
 
     default: optional
-        Return *default* if the property has not been set.
+        Return *default* if the measure has not been set.
 
 :Returns:
 
@@ -127,26 +127,127 @@ cell measure variables correspond to cell measure constructs.
 
 **Examples:**
 
-TODO
+>>> c.set_measure('area')
+>>> c.has_measure()
+True
+>>> c.get_measure()
+'area'
+>>> c.del_measure()
+'area'
+>>> c.has_measure()
+False
+>>> print(c.del_measure(None))
+None
+>>> print(c.get_measure(None))
+None
 
         '''
-        return self._del_component('measure')
+        return self._del_component('measure', *default)
     #--- End: def
 
     def has_measure(self):
-        '''TODO
+        '''Whether the measure has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_measure`, `get_measure`, `set_measure`
+
+:Returns:
+
+     out: `bool`
+        True if the measure has been set, otherwise False.
+
+**Examples:**
+
+>>> c.set_measure('area')
+>>> c.has_measure()
+True
+>>> c.get_measure()
+'area'
+>>> c.del_measure()
+'area'
+>>> c.has_measure()
+False
+>>> print(c.del_measure(None))
+None
+>>> print(c.get_measure(None))
+None
         '''
         return self._has_component('measure')
     #--- End: def
 
     def get_measure(self, *default):
-        '''TODO
+        '''Return the measure.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_measure`, `has_measure`, `set_measure`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the measure has not been set.
+
+:Returns:
+
+     out:
+        The value of the measure. If unset then *default* is returned,
+        if provided.
+
+**Examples:**
+
+>>> c.set_measure('area')
+>>> c.has_measure()
+True
+>>> c.get_measure()
+'area'
+>>> c.del_measure()
+'area'
+>>> c.has_measure()
+False
+>>> print(c.del_measure(None))
+None
+>>> print(c.get_measure(None))
+None
+
         '''
         return self._get_component('measure', *default)
     #--- End: def
 
     def set_measure(self, measure, copy=True):
-        '''TODO
+        '''Set the measure.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_measure`, `get_measure`, `has_measure`
+
+:Parameters:
+
+    measure: `str`
+        The value for the measure.
+
+    copy: `bool`, optional
+        If True then set a deep copy of *measure*.
+
+:Returns:
+
+     `None`
+
+**Examples:**
+
+>>> c.set_measure('area')
+>>> c.has_measure()
+True
+>>> c.get_measure()
+'area'
+>>> c.del_measure()
+'area'
+>>> c.has_measure()
+False
+>>> print(c.del_measure(None))
+None
+>>> print(c.get_measure(None))
+None
         '''
         return self._set_component('measure', measure, copy=copy)
     #--- End: def
