@@ -184,10 +184,10 @@ Return a string containing a full description of the instance.
 
 Equality is strict by default. This means that:
 
-* the descriptive properties must be the same, and vector-valued
-  properties must have same the size and data type and be element-wise
-  equal (see the *ignore_properties* and *ignore_data_type*
-  parameters), and
+* the same descriptive properties must be present, with the same
+  values and data types, and vector-valued properties must also have
+  same the size and be element-wise equal (see the *ignore_properties*
+  and *ignore_data_type* parameters), and
 
 ..
 

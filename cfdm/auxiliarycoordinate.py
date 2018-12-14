@@ -125,10 +125,10 @@ components, and provides selected values of all data arrays.
 
 Equality is strict by default. This means that:
 
-* the descriptive properties must be the same and have the same data
-  type, and vector-valued properties also have the size and be
-  element-wise equal (see the *ignore_properties* and
-  *ignore_data_type* parameters),
+* the same descriptive properties must be present, with the same
+  values and data types, and vector-valued properties must also have
+  same the size and be element-wise equal (see the *ignore_properties*
+  and *ignore_data_type* parameters), and
 
 ..
 

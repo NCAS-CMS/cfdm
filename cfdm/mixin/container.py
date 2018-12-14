@@ -95,16 +95,15 @@ x.__str__() <==> str(x)
         if numpy.shape(x) != numpy.shape(y):
             return False
 
+        # ------------------------------------------------------------
+        # Cast x and y as numpy arrays
+        # ------------------------------------------------------------
         if not isinstance(x, numpy.ndarray):
             x = numpy.asanyarray(x)
             
         if not isinstance(y, numpy.ndarray):
             y = numpy.asanyarray(y)
             
-#        if isinstance(x, numpy.ndarray) or isinstance(y, numpy.ndarray):
-#            # --------------------------------------------------------
-#            # x or y is a numpy array
-#            # --------------------------------------------------------
             
         # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
 
@@ -136,58 +135,8 @@ x.__str__() <==> str(x)
                     return True
                 else:
                     return bool(out)
-#        else:
-#            # --------------------------------------------------------
-#            # x and y are not numpy arrays
-#            # --------------------------------------------------------
-##            return x == y
-#            x1 = numpy.asanyarray(x)
-#            y1 = numpy.asanyarray(y)            
-#            try:
-#                return bool(numpy.allclose(x1, y1, rtol=rtol, atol=atol))
-#            except (IndexError, NotImplementedError, TypeError):
-##                return x == y
-#                return bool((x1 == y1).all())
-
     #--- End: def
     
-#    def equals(self, other, traceback=False,
-#               ignore_type=False):
-#        '''TODO
-#
-#..versionadded:: 1.7.0
-#
-#:Parameters:
-#
-#    TODO
-#
-#:Returns:
-#
-#    TODO
-#
-#**Examples:**
-#
-#TODO
-#        '''
-#        # Check for object identity
-#        if self is other:
-#            return True
-#
-#        # Check that each instance is of the same type
-#        if ignore_type and not isinstance(other, self.__class__):
-#            other = type(self)(source=other, copy=False)
-#        else:
-#        # Check that each instance is of the same type
-#            if not ignore_type and not isinstance(other, self.__class__):
-#                if traceback:
-#                    print("{0}: Incompatible types: {0}, {1}".format(
-#			self.__class__.__name__,
-#			other.__class__.__name__))
-#                return False
-#        #--- End: if
-#
-#        return True
-#    #--- End: def
 
     def _equals_preprocess(self, other, traceback=False,
                            ignore_type=False):

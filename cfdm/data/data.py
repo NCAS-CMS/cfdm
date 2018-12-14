@@ -97,6 +97,11 @@ class Data(mixin.Container, core.Data):
 
 .. versionadded:: 1.7.0
 
+:Parameters:
+
+    dtype: optional
+        Typecode or data-type to which the array is cast.
+
 :Returns: 
 
     out: `numpy.ndarray`
@@ -104,8 +109,19 @@ class Data(mixin.Container, core.Data):
 
 **Examples:**
 
-TODO
-        '''
+>>> import numpy
+>>> d = cfdm.Data([1, 2, 3])
+>>> a = numpy.array(d)
+>>> type(a)
+numpy.ndarray
+>>> a[0] = -99
+>>> d
+<Data(3): [1, 2, 3]>
+>>> b = numpy.array(d, float)
+>>> print(b)
+[ 1.  2.  3.]
+
+       '''
         array = self.get_array()
         if not dtype:
             return array

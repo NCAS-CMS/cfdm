@@ -8,7 +8,17 @@ class NetCDF(object):
 
     '''
     def _initialise_netcdf(self, source=None):
-        '''TODO 
+        '''Call this from inside the __init__ method of classes that inherit
+from this mixin class.
+
+:Parameters:
+
+    source: optional
+
+:Returns:
+
+    `None`
+
         '''
         if source is None:
              netcdf = {}

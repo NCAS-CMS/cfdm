@@ -51,9 +51,9 @@ x.__str__() <==> str(x)
 
 Equality is strict by default. This means that:
 
-* the named parameters must be the same and have the same data type,
-  and vector-valued parameters must also have same the size and be
-  element-wise equal (see (see the *ignore_data_type* parameter).
+* the named parameters must be the same, with the same values and data
+  types, and vector-valued parameters must also have same the size and
+  be element-wise equal (see the *ignore_data_type* parameter).
 
 Two real numbers ``a`` and ``b`` are considered equal if
 ``|a-b|<=atol+rtol|b|``, where ``atol`` (the tolerance on absolute
