@@ -24,7 +24,12 @@ import numpy
 #	    the default directory used by the :mod:`tempfile` module.
 #
 # --------------------------------------------------------------------
-CONSTANTS = {'RTOL'              : sys.float_info.epsilon,
-             'ATOL'              : sys.float_info.epsilon,
-             }
+CONSTANTS = {
+    # The value of absolute tolerance for testing numerically tolerant
+    # equality.
+    'RTOL': sys.float_info.epsilon,
+    # The value of relative tolerance for testing numerically tolerant
+    # equality.
+    'ATOL': sys.float_info.epsilon,
+}
 masked = numpy.ma.masked
