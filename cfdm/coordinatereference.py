@@ -211,24 +211,15 @@ components.
                 indent1, term, value))
 
         # Coordinate conversion domain ancillary-valued terms
-#        if field:
-#            for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
-#                value = field.domain_ancillaries().get(key)
-#                if value is not None:
-#                    value = 'Domain Ancillary: '+value.name(default=key)
-#                else:
-#                    value = ''
-#                string.append('{0}Coordinate conversion:{1} = {2}'.format(
-#                    indent1, term, str(value)))
         if _construct_names:
-            for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
-#                value = field.domain_ancillaries().get(key)
-#                if value is not None:
-#                    value = 'Domain Ancillary: '+value.name(default=key)
-#                else:
-#                    value = ''
-                string.append('{0}Coordinate conversion:{1} = Domain Ancillary: {2}'.format(
-                    indent1, term, _construct_names.get(key, 'cid%{}'.format(key))))
+            for term, cid in sorted(coordinate_conversion.domain_ancillaries().items()):
+                if cid in _construct_names:
+                    construct_name = 'Domain Ancillary: '+_construct_names.get(cid, 'cid%{}'.format(cid))
+                else:
+                    construct_name = ''
+                    
+                string.append('{0}Coordinate conversion:{1} = {2}'.format(
+                    indent1, term, construct_name))
         else:
             for term, value in sorted(coordinate_conversion.ancillaries.items()):
                 string.append("{0}Coordinate conversion:{1} = {2}".format(
@@ -239,38 +230,13 @@ components.
         for term, value in sorted(datum.parameters().items()):
             string.append("{0}Datum:{1} = {2}".format(indent1, term, value))
 
-#        # Datum domain ancillary-valued terms
-#        if field:
-#            for term, key in sorted(datum.domain_ancillaries().items()):
-#                value = field.domain_ancillaries().get(key)
-#                if value is not None:
-#                    value = 'Domain Ancillary: '+value.name(default=key)
-#                else:
-#                    value = ''
-#                string.append('{0}Datum:{1} = {2}'.format(indent1, term, str(value)))
-#        else:
-#            for term, value in sorted(datum.ancillaries().items()):
-#                string.append("{0}Datum:{1} = {2}".format(indent1, term, str(value)))
-
         # Coordinates 
-#       if field:
-#           for key in sorted(self.coordinates()):
-#               coord = field.coordinates().get(key)
-#               if coord is not None:
-#                   if isinstance(coord, DimensionCoordinate):
-#                       coord = 'Dimension Coordinate: '+coord.name(default='key%'+key)
-#                   elif isinstance(coord, AuxiliaryCoordinate):
-#                       coord = 'Auxiliary Coordinate: '+coord.name(default='key%'+key)
-#                   else:
-#                       coord = coord.name(default=key)
-#
-#                   string.append('{0}{1}'.format(indent1, coord))
         if _construct_names:
-            for key in sorted(self.coordinates(), reverse=True):
-                coord = '{}'.format(_construct_names.get(key, 'cid%{}'.format(key)))
-                if key in _dimension_coordinates:
+            for cid in sorted(self.coordinates(), reverse=True):
+                coord = '{}'.format(_construct_names.get(cid, 'cid%{}'.format(cid)))
+                if cid in _dimension_coordinates:
                     coord = 'Dimension Coordinate: '+coord
-                elif key in _auxiliary_coordinates:
+                elif cid in _auxiliary_coordinates:
                     coord = 'Auxiliary Coordinate: '+coord
                     
                 string.append('{0}{1}'.format(indent1, coord))

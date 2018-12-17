@@ -39,6 +39,8 @@ Domain ancillary      Ancillary values for cell locations in
 Cell measure          Cell sizes stored in `CellMeasure` objects
 ====================  ================================================
 
+.. versionadded:: 1.7.0
+        
     '''
 
     # Define the base of the identity keys for each construct type
@@ -63,10 +65,11 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 :Parameters:
 
     source: optional
-        TODO
-        Initialise the domain from the constructs of *source*,
-        ignoring any cell method or field ancillary constructs.
+        Initialize the metadata constructs from those of *source*.
         
+        A new domain may also be instantiated with the
+        `fromconstructs` class method.
+
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
@@ -95,22 +98,6 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
         self._set_component('constructs', constructs, copy=False)
     #--- End: def
     
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        shape = sorted([domain_axis.size for domain_axis in list(self.domain_axes().values())]#)
-#
-#        return '<{0}: {1}>'.format(self.__class__.__name__, shape)
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''x.__str__() <==> str(x)
-#
-#        '''
-#        return 'STRINASDAs da sa'
-#    #-- End: def
-
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -179,17 +166,21 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
     #--- End: def
 
     @classmethod
-    def fromconstructs(cls, constructs):
-        '''TODO
+    def fromconstructs(cls, constructs, copy=False):
+        '''Create a domain from existing metadata constructs.
 
 .. versionadded:: 1.7.0
-
-.. seealso:: `copy`
 
 :Parameters:
 
     constructs: `Constructs`
-        
+        TODO
+
+    copy: bool, optional
+        If True then deep copy the metadata constructs prior to
+        initialization. By default the metadata constructs are not
+        copied.
+
 :Returns:
 
     out: `Domain`
@@ -198,13 +189,13 @@ Cell measure          Cell sizes stored in `CellMeasure` objects
 **Examples:**
 
 >>> d = Domain.fromconstructs(f._get_constructs())
-        
+
         '''
         domain = cls()
         domain._set_component('constructs',
                               constructs.view(ignore=('cell_method',
                                                       'field_ancillary')),
-                              copy=False)
+                              copy=copy)
         return domain
     #--- End: def
             

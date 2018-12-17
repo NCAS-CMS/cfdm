@@ -31,13 +31,22 @@ from distutils.version import StrictVersion
 import platform
 
 # Check the version of python
-if StrictVersion(platform.python_version()) < StrictVersion('2.7.0'):
+min_vn = '2.7.0'
+if StrictVersion(platform.python_version()) < StrictVersion(min_vn):
     raise ValueError(
-        "Bad python version: cfdm requires python 2.7 or later. Got {}".format(
-        platform.python_version()))
+        "Bad python version: cfdm requires python version {} or later. Got {}".format(
+            min_vn,  platform.python_version()))
 
-from .constants        import *
-from .constructs       import Constructs
+# Check the version of netCDF4
+import netCDF4
+min_vn = '1.4.0'
+if StrictVersion(netCDF4.__version__) < StrictVersion(min_vn):
+    raise ValueError(
+        "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {}".format(
+            min_vn, netCDF4.__version__))
+
+from .constants  import *
+from .constructs import Constructs
 
 from .data import (Data,
                    Array,

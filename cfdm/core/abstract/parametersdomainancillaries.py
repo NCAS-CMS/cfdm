@@ -61,9 +61,6 @@ domain ancillary constructs.
         elif copy: # or not _use_data:
             domain_ancillaries = domain_ancillaries.copy()
             for key, value in list(domain_ancillaries.items()):
-#                try:
-#                    domain_ancillaries[key] = value.copy(data=_use_data)
-#                except AttributeError:
                 domain_ancillaries[key] = deepcopy(value)
         #--- End: if
             
@@ -240,7 +237,7 @@ ERROR
 
         '''
         if copy:
-            value = value.copy()
+            value = deepcopy(value)
             
         self._get_component('domain_ancillaries')[term] = value
     #--- End: def

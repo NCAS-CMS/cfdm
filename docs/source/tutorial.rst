@@ -58,7 +58,8 @@ phrase "field construct" will be assumed to mean "`Field` instance",
 unless stated otherwise [#language]_.
 
 For example, to read the file ``file.nc`` (:download:`download
-<netcdf_files/file.nc>`, 9kB) [#files]_:
+<netcdf_files/file.nc>`, 9kB) [#files]_, creating a field construct
+from each CF-netCDF data variable:
 
 .. code:: python
 
