@@ -799,6 +799,8 @@ TODO
     def del_construct(self, cid):        
         '''Remove a construct.
 
+.. versionadded:: 1.7.0
+
 :Parameters:
 
    cid: `str`, optional
@@ -816,7 +818,41 @@ TODO
 **Examples:**
 
 >>> x = f.del_construct('auxiliarycoordinate2')
+
         '''
+        if cid in self.constructs(construct_type='domain_axis'):
+            domain_axis = True
+            for xid, axes in self.construct_axes().items():
+                if cid in axes:
+                    raise ValueError(
+"Can't remove domain axis construct {!r} that spans the data array of construct {!r}".format(
+    cid, xid))
+
+            # Remove reference to a removed domain axis construct in
+            # cell method constructs
+            for cm in self.constructs(construct_type='cell_method').values():
+                axes = cm.get_axes(())
+                if cid not in axes:
+                    continue
+                
+                axes = list(axes)
+                axes.remove(cid)
+                cm.set_axes(axes)
+        else:
+            # Remove pointers to removed construct in coordinate
+            # reference constructs
+            for ref in self.constructs(construct_type='coordinate_reference').values():
+                coordinate_conversion = ref.coordinate_conversion
+                for term, value in coordinate_conversion.domain_ancillaries().items():
+                    if cid == value:
+                        coordinate_conversion.set_domain_ancillary(term, None)
+                    
+                for coord_key in ref.coordinates():
+                    if cid == coord_key:
+                        ref.del_coordinate(coord_key)
+                        break
+        #--- End: if
+
         self._construct_axes.pop(cid, None)
 
         construct_type = self._construct_type.pop(cid, None)

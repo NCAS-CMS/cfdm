@@ -127,9 +127,24 @@ and institution).
     # Private methods
     # ----------------------------------------------------------------
     def _get_constructs(self, *default):
-        '''TODO
+        '''Return the `Constructs` instance contained by the field construct.
+
 .. versionadded:: 1.7.0
-        
+
+:Parameters:
+
+    default: optional
+        Return *default* if the `Constructs` instance has not been
+        set.
+
+:Returns:
+
+    out: `Constucts`
+
+**Examples:**
+
+>>> c = f._get_contructs()
+
         '''
         return self._get_component('constructs', *default)
     #--- End: def
@@ -202,7 +217,15 @@ array.
 
 **Examples:**
 
-TODO
+>>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
+>>> f.get_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> f.del_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> print(f.del_dataxes(None))
+None
+>>> print(f.get_data_axes(None))
+None
 
         '''
         return self._del_component('data_axes', *default)
@@ -248,18 +271,15 @@ array.
 
 **Examples:**
 
->>> f.ndim
-3
+>>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
 >>> f.get_data_axes()
-('dim2', 'dim0', 'dim1')
->>> d = f.del_data()
->>> print f.get_data_axes(None)
+('domainaxis0', 'domainaxis1')
+>>> f.del_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> print(f.del_dataxes(None))
 None
-
->>> f.ndim
-0
->>> f.get_data_axes()
-()
+>>> print(f.get_data_axes(None))
+None
 
         '''    
         return self._get_component('data_axes', *default)
@@ -380,7 +400,15 @@ TODO
 
 **Examples:**
 
-TODO
+>>> f.set_data_axes(['domainaxis0', 'domainaxis1'])
+>>> f.get_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> f.del_data_axes()
+('domainaxis0', 'domainaxis1')
+>>> print(f.del_dataxes(None))
+None
+>>> print(f.get_data_axes(None))
+None
 
         '''
         domain_axes = self.constructs(construct_type='domain_axis')

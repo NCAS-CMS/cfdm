@@ -82,8 +82,8 @@ To install from source:
 
    .. code:: bash
 	 
-      tar zxvf cfdm-1.7b8.tar.gz
-      cd cfdm-1.7b8
+      tar zxvf cfdm-1.7.0b8.tar.gz
+      cd cfdm-1.7.0b8
 
 3. Install the package:
   

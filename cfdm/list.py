@@ -60,7 +60,26 @@ variable that gives the indices of the required points.
     def dump(self, display=True, field=None, key=None, _title=None,
              _create_title=True, _prefix='', _level=0,
              _omit_properties=None):
-        '''TODO
+        '''A full description of the list variable.
+
+Returns a description of all properties, including those of
+components, and provides selected values of all data arrays.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+
+    display: `bool`, optional
+        If False then return the description as a string. By default
+        the description is printed.
+
+:Returns:
+
+    out: `None` or `str`
+        The description. If *display* is True then the description is
+        printed and `None` is returned. Otherwise the description is
+        returned as a string.
+
         '''
         if _create_title and _title is None: 
             _title = 'List: ' + self.name(default='')
