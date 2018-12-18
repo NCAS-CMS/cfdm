@@ -63,12 +63,11 @@ x.__repr__() <==> repr(x)
 x.__str__() <==> str(x)
 
         '''
-        def _print_item(self, cid, variable, dimension_coord):
+        def _print_item(self, cid, variable, axes, dimension_coord):
             '''Private function called by __str__'''
             
             if dimension_coord:
                 # Dimension coordinate
-#                axis = self.construct_axes(cid)[0]
                 name = variable.name(ncvar=True, default=cid)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
@@ -93,7 +92,8 @@ x.__str__() <==> str(x)
                 x = [variable.name(ncvar=True, default=cid)]
 
                 if variable.has_data():
-                    shape = [axis_names[axis] for axis in self.construct_axes(cid)]
+#                    shape = [axis_names[axis] for axis in self.construct_axes(cid)]
+                    shape = [axis_names[axis] for axis in axes]
                     shape = str(tuple(shape)).replace("'", "")
                     shape = shape.replace(',)', ')')
                     x.append(shape)
@@ -117,11 +117,14 @@ x.__str__() <==> str(x)
         axis_name = self.domain_axis_name
 
         axis_names = self._unique_domain_axis_names()
+
+        construct_axes = self.construct_axes()
         
         x = []
         for axis_cid in sorted(self.domain_axes()):
             for cid, dim in list(self.dimension_coordinates().items()):
-                if self.construct_axes()[cid] == (axis_cid,):
+#                if self.construct_axes()[cid] == (axis_cid,):
+                if construct_axes[cid] == (axis_cid,):
                     name = dim.name(default='cid%{0}'.format(cid), ncvar=True)
                     y = '{0}({1})'.format(name, dim.get_data().size)
                     if y != axis_names[axis_cid]:
@@ -135,14 +138,14 @@ x.__str__() <==> str(x)
             string.append('Dimension coords: {}'.format('\n                : '.join(x)))
 
         # Auxiliary coordinates
-        x = [_print_item(self, cid, v, False) 
+        x = [_print_item(self, cid, v, construct_axes[cid], False) 
              for cid, v in sorted(self.auxiliary_coordinates().items())]
         if x:
             string.append('Auxiliary coords: {}'.format(
                 '\n                : '.join(x)))
         
         # Cell measures
-        x = [_print_item(self, cid, v, False)
+        x = [_print_item(self, cid, v, construct_axes[cid], False)
              for cid, v in sorted(self.cell_measures().items())]
         if x:
             string.append('Cell measures   : {}'.format(
@@ -155,7 +158,7 @@ x.__str__() <==> str(x)
                 '\n                : '.join(x)))
             
         # Domain ancillary variables
-        x = [_print_item(self, cid, anc, False)
+        x = [_print_item(self, cid, anc, construct_axes[cid], False)
              for cid, anc in sorted(self.domain_ancillaries().items())]
         if x:
             string.append('Domain ancils   : {}'.format(
@@ -344,11 +347,11 @@ by any data arrays.
         return self._get_constructs().del_construct(cid=cid)
     #--- End: def
 
-    def domain_axis_name(self, key):
+    def domain_axis_name(self, cid):
         '''TODO
         '''
         constructs = self._get_constructs()
-        return constructs.domain_axis_name(key)
+        return constructs.domain_axis_name(cid)
     #--- End: def
 
     def dump(self, display=True, _level=0, _title=None):
@@ -384,6 +387,8 @@ last values.
 
         construct_name = self._unique_construct_names()
 
+        construct_axes = self.construct_axes()
+        
         string = []
 
         # Domain axes
@@ -392,49 +397,49 @@ last values.
             string.append(axes)
           
         # Dimension coordinates
-        for key, value in sorted(self.dimension_coordinates().items()):
+        for cid, value in sorted(self.dimension_coordinates().items()):
             string.append('')
             string.append(value.dump(display=False, _level=_level,
                                      _title='Dimension coordinate: {0}'.format(
-                                         construct_name[key]),
-                                     _axes=self.construct_axes(key),
+                                         construct_name[cid]),
+                                     _axes=construct_axes[cid],
                                      _axis_names=axis_to_name))
             
         # Auxiliary coordinates
-        for key, value in sorted(self.auxiliary_coordinates().items()):
+        for cid, value in sorted(self.auxiliary_coordinates().items()):
             string.append('')
             string.append(value.dump(display=False, _level=_level,
                                      _title='Auxiliary coordinate: {0}'.format(
-                                         construct_name[key]),
-                                     _axes=self.construct_axes(key),
+                                         construct_name[cid]),
+                                     _axes=construct_axes[cid],
                                      _axis_names=axis_to_name))
 
         # Domain ancillaries
-        for key, value in sorted(self.domain_ancillaries().items()):
+        for cid, value in sorted(self.domain_ancillaries().items()):
             string.append('') 
             string.append(value.dump(display=False, _level=_level,
                                      _title='Domain ancillary: {0}'.format(
-                                         construct_name[key]),
-                                     _axes=self.construct_axes(key),
+                                         construct_name[cid]),
+                                     _axes=construct_axes[cid],
                                      _axis_names=axis_to_name))
             
         # Coordinate references
-        for key, value in sorted(self.coordinate_references().items()):
+        for cid, value in sorted(self.coordinate_references().items()):
             string.append('')
             string.append(value.dump(display=False, _level=_level,
                                      _title='Coordinate reference: {0}'.format(
-                                         construct_name[key]),
+                                         construct_name[cid]),
                                      _construct_names=construct_name,
                                      _auxiliary_coordinates=tuple(self.auxiliary_coordinates()),
                                      _dimension_coordinates=tuple(self.dimension_coordinates())))
 
         # Cell measures
-        for key, value in sorted(self.cell_measures().items()):
+        for cid, value in sorted(self.cell_measures().items()):
             string.append('')
             string.append(value.dump(display=False, field=self,
-                                     key=key, _level=_level,
-                                     _title='Cell measure: {0}'.format(construct_name[key]),
-                                     _axes=self.construct_axes(key),
+                                     key=cid, _level=_level,
+                                     _title='Cell measure: {0}'.format(construct_name[cid]),
+                                     _axes=construct_axes[cid],
                                      _axis_names=axis_to_name))
 
 

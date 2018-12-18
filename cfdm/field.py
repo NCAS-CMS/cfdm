@@ -148,12 +148,12 @@ x.__str__() <==> str(x)
             string.append('Cell methods    : {0}'.format(c))
         #--- End: if
         
-        def _print_item(self, key, variable, dimension_coord):
+        def _print_item(self, key, variable, axes, dimension_coord):
             '''Private function called by __str__'''
             
             if dimension_coord:
                 # Dimension coordinate
-                axis = self.construct_axes(key)[0]
+                axis = self.get_construct_axes(key)[0]
                 name = variable.name(ncvar=True, default=key)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
@@ -178,7 +178,7 @@ x.__str__() <==> str(x)
                 x = [variable.name(ncvar=True, default=key)]
 
                 if variable.has_data():
-                    shape = [axis_names[axis] for axis in self.construct_axes(key)]
+                    shape = [axis_names[axis] for axis in axes]
                     shape = str(tuple(shape)).replace("'", "")
                     shape = shape.replace(',)', ')')
                     x.append(shape)
@@ -198,13 +198,12 @@ x.__str__() <==> str(x)
         #--- End: def
                           
         # Field ancillary variables
-        x = [_print_item(self, key, anc, False)
+        x = [_print_item(self, key, anc, self.get_construct_axes(cid=cid), False)
              for key, anc in sorted(self.field_ancillaries().items())]
         if x:
             string.append('Field ancils    : {}'.format(
                 '\n                : '.join(x)))
 
-        
 
         string.append(str(self.domain))
 #        x = []
@@ -317,6 +316,8 @@ rules, the only differences being:
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
+        new_construct_axes = new.construct_axes()
+        
         for cid, construct in new.array_constructs().items():
             data = self.get_construct(cid=cid).get_data(None)
             if data is None:
@@ -325,7 +326,7 @@ rules, the only differences being:
 
             needs_slicing = False
             dice = []
-            for axis in new.construct_axes(cid):
+            for axis in new_construct_axes[cid]:
                 if axis in data_axes:
                     needs_slicing = True
                     dice.append(indices[data_axes.index(axis)])
@@ -743,6 +744,8 @@ data arrays.
 
         name = self._unique_construct_names()
 
+        construct_axes = self.construct_axes()
+        
         # Simple properties
         properties = self.properties()
         if properties:
@@ -781,9 +784,10 @@ data arrays.
         #--- End: if
 
         # Field ancillaries
-        for key, value in sorted(self.field_ancillaries().items()):
+        
+        for cid, value in sorted(self.field_ancillaries().items()):
             string.append(value.dump(display=False,
-                                     _axes=self.construct_axes(key),
+                                     _axes=construct_axes[cid],
                                      _axis_names=axis_to_name,
                                      _level=_level))
             string.append('') 
@@ -1204,7 +1208,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
         # ------------------------------------------------------------
         # Add domain axes
         # ------------------------------------------------------------
-        data_axes = self.construct_axes(cid)
+        data_axes = self.get_construct_axes(cid=cid)
         if data_axes:
             for domain_axis in data_axes:
                 f.set_construct(self.domain_axes()[domain_axis],

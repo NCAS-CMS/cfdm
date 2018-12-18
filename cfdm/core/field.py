@@ -286,7 +286,7 @@ None
     #--- End: def
     
     def del_construct(self, cid):
-        '''TODO Remove a metadata construct.
+        '''Remove a metadata construct.
 
 If a removed domain axis construct is referenced by a cell method
 construct, then that reference is also removed.
@@ -314,28 +314,11 @@ construct, then that reference is also removed.
 TODO
 
         '''
-        if cid in self.constructs(construct_type='domain_axis'):
-            domain_axis = True
-            if cid in self.get_data_axes(()):
-                raise ValueError(
-"Can't remove domain axis {!r} that is spanned by the field's data".format(cid))
-            # Remove reference to a removed domain axis construct in
-            # cell method constructs
-            for _, cm in self.constructs(construct_type='cell_method').items():
-                axes = cm.get_axes()
-                if cid not in axes:
-                    continue
-                
-                axes = list(axes)
-                axes.remove(cid)
-                cm.set_axes(axes)
-        #--- End: if
-        
-        x = self.domain.del_construct(cid)
-        if x is None:
-            x = self._get_constructs().del_construct(cid)
-            
-        return x
+        if cid in self.get_data_axes(()):
+            raise ValueError(
+                "Can't remove domain axis {!r} that is spanned by the field's data".format(cid))
+
+        return super().del_construct(cid=cid)
     #--- End: def
 
     def set_data(self, data, axes, copy=True):
@@ -346,7 +329,8 @@ removed prior to insertion.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `data`, `del_data`, `get_data`, `has_data`, `set_data_axes`
+.. seealso:: `data`, `del_data`, `get_data`, `has_data`,
+             `set_data_axes`
 
 :Parameters:
 

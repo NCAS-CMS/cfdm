@@ -366,38 +366,33 @@ TODO
     #--- End: def
     
     def construct_axes(self, cid=None):
-        '''TODO
+        '''Return the domain axeis identifiers spanned by metadata construct
+data arrays.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `constructs`, `get_construct`
 
 :Parameters:
 
-    cid: `str`, optional
-
-    axes: sequence of `str`, optional
-
-    default: optional
+    cid: `str`
+        The identifier of the construct.
 
 :Returns:
 
-    out: `dict` or `tuple` or *default*
+    out: `tuple` or `None`
+        The identifiers of the domain axes constructs spanned by data
+        array of metadata constructs. If a metadata construct does not have a
+        data array then `None` is returned.
 
 **Examples:**
 
->>> x = f.construct_axes()
->>> f.variable_axes()
-{'aux0': ('dim1', 'dim0'),
- 'aux1': ('dim0',),
- 'aux2': ('dim0',),
- 'aux3': ('dim0',),
- 'aux4': ('dim0',),
- 'aux5': ('dim0',)}
->>> f._axes(key='aux0')
-('dim1', 'dim0')
->>> print c.item_axes(key='aux0', new_axes=['dim0', 'dim1'])
+>>> f.construct_axes('auxiliarycoordinate0')
+('domainaxis1', 'domainaxis0')
+>>> print(f.construct_axes('auxiliarycoordinate99'))
 None
->>> f._axes(key='aux0')
-('dim0', 'dim1')
 
-'''
+        '''
         if cid is None:
             # Return all of the constructs' axes
             if not self._ignore:
@@ -436,10 +431,40 @@ None
         '''TODO
 
 .. versionadded:: 1.7.0
+
+:Parameters:
+
+    cid: `str`, optional
+        The construct identifier of metadata construct.
+
+        *Example:*
+          ``cid='cellmeasure0'``
+
+    axes: sequence of `str`
+        The construct identifiers of the domain axis constructs
+        spanned by the data array. An exception is raised if used for
+        a metadata construct that can not have a data array,
+        i.e. domain axis, cell method and coordinate reference
+        constructs.
+
+        *Example:*
+          ``axes=['domainaxis1']``
+
+        *Example:*
+          ``axes=['domainaxis1', 'domainaxis0']``
+        
+:Returns:
+
+    `None`
+
+**Examples:**
+
+TODO
+
         '''
         if self.construct_type(cid) is None:
             raise ValueError(
-                "Can't set axes for non-existent construct identifier: {}".format(cid))
+                "Can't set axes for non-existent construct identifier {!r}".format(cid))
 
         self._set_construct_axes(cid, axes)
     #--- End: def
@@ -531,67 +556,45 @@ None
         return out
     #--- End: def
 
-#    def domain_axes(self, copy=False):
-#        '''TODO
-#
-#:Parameters:
-#
-#    copy: 
-#
-#**Examples:**
-#
-#>>> d = f.domain_axes()
-#>>> d
-#{'domainaxis1': <DomainAxis: 106>,
-# 'domainaxis0': <DomainAxis: 111>}
-#>>> d['domainaxis0'].set_size(73)
-#>>> f.domain_axes()
-#{'domainaxis1': <DomainAxis: 106>,
-# 'domainaxis0': <DomainAxis: 73>}
-#
-#>>> d['domainaxis0'].set_size(73)
-#>>> f.domain_axes()
-#{'domainaxis1': <DomainAxis: 106>,
-# 'domainaxis0': <DomainAxis: 73>}
-#
-#>>> d = f.domain_axes(copy=True)
-#>>> d
-#{'domainaxis1': <DomainAxis: 106>,
-# 'domainaxis0': <DomainAxis: 73>}
-#>>> d['domainaxis0'].set_size(111)
-#>>> f.domain_axes()
-#{'domainaxis1': <DomainAxis: 106>,
-# 'domainaxis0': <DomainAxis: 73>}
-#
-#     
-#        '''
-#        return self.constructs(construct_type='domain_axis', copy=copy)
-#    #--- End: def
-    
     def get_construct(self, cid):
         '''Return a metadata construct.
 
-Parameters:	
+.. versionadded:: 1.7.0
+
+.. seealso:: `constructs`, `del_construct`, `has_construct`,
+             `set_construct`
+
+:Parameters:
 
     cid: `str`
+        The identifier of the metadata construct.
 
-:Returns:	
+        *Example:*
+          ``cid='domainaxis1'``
+
+:Returns:
 
     out:
+        The metadata construct.
 
 **Examples:**
 
 >>> f.constructs()
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
+ 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
+ 'cellmethod0': <CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>,
+ 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+ 'domainaxis1': <DomainAxis: 10>,
+ 'domainaxis2': <DomainAxis: 9>}
 >>> f.get_construct('dimensioncoordinate1')
-<>
->>> f.get_construct('dimensioncoordinate99', 'Not set')
-'Not set'
+<DimensionCoordinate: grid_latitude(10) degrees>
 
         '''
         construct_type = self.construct_type(cid)
         if construct_type is None:
-            if default:
-                return default[0]
             raise ValueError("Can't get construct!!!!!!")
             
         d = self._constructs.get(construct_type)
@@ -601,29 +604,46 @@ Parameters:
         try:            
             return d[cid]
         except KeyError:
-#            if default:
-#                return default[0]
             raise ValueError("Can't get construct!!!!!!")
     #--- End: def
     
     def has_construct(self, cid):
-        '''Whether a construct exisits.
+        '''Whether a construct exists.
 
 .. versionadded:: 1.7.0
+
+.. seealso:: `constructs`, `del_construct`, `get_construct`,
+             `set_construct`
 
 :Parameters:
 
     cid: `str`
-        TODO
+        The identifier of the metadata construct.
+
+        *Example:*
+          ``cid='cellmeasure1'``
 
 :Returns:
 
     out: `bool`
-        True if the construct exists, otherwise False.
+        True if the metadata construct exists, otherwise False.
 
 **Examples:**
 
-TODO
+>>> f.constructs()
+{'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degree_N>,
+ 'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degreeE>,
+ 'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:greek_letters(10) >,
+ 'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+ 'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+ 'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+ 'domainaxis1': <DomainAxis: 10>,
+ 'domainaxis2': <DomainAxis: 9>}
+>>> f.has_construct('dimensioncoordinate1')
+True
+>>> f.has_construct('domainaxis99')
+False
+
         '''
         try:
             self.get_construct(cid)
@@ -636,7 +656,7 @@ TODO
     def set_construct(self, construct, cid=None,
                       axes=None, #extra_axes=0, #replace=True,
                       copy=True):
-        '''Set a construct.
+        '''Set a metadata construct.
 
 .. versionadded:: 1.7.0
 
@@ -647,6 +667,16 @@ TODO
 
     construct:
         The metadata construct to be inserted.
+
+
+    cid: `str`, optional
+        The construct identifier to be used for the construct. If not
+        set then a new, unique identifier is created automatically. If
+        the identifier already exisits then the exisiting construct
+        will be replaced.
+
+        *Example:*
+          ``cid='cellmeasure0'``
 
     axes: sequence of `str`, optional
         The construct identifiers of the domain axis constructs
@@ -661,18 +691,24 @@ TODO
         *Example:*
           ``axes=['domainaxis1']``
         
-    cid: `str`, optional
-        The construct identifier to be used for the construct. If not
-        set then a new, unique identifier is created automatically. If
-        the identifier already exisits then the exisiting construct
-        will be replaced.
-
         *Example:*
-          ``cid='cellmeasure0'``
-
+          ``axes=['domainaxis1', 'domainaxis0']``
+        
     copy: `bool`, optional
         If True then return a copy of the unique selected
         construct. By default the construct is not copied.
+
+:Returns:
+
+     out: `str`
+        The construct identifier for the construct.
+    
+**Examples:**
+
+>>> cid = f.set_construct(c)
+>>> cid = f.set_construct(c, copy=False)
+>>> cid = f.set_construct(c, axes=['domainaxis2'])
+>>> cid = f.set_construct(c, cid='cellmeasure0')
 
         '''
 #    extra_axes: `int`, optional
@@ -691,10 +727,6 @@ TODO
         if cid is None:
             # Create a new construct identifier
             cid = self.new_identifier(construct_type)
-#        elif not replace and cid in self._constructs[construct_type]:
-#            raise ValueError(
-#"Can't set {} construct: Identifier {!r} already exists".format(
-#    self._construct_type_description(construct_type), cid))
     
         if construct_type in self._array_constructs:
             #---------------------------------------------------------
@@ -834,6 +866,8 @@ TODO
             try:
                 cell_methods = self.constructs(construct_type='cell_method')
             except ValueError:
+                # Cell methods are not possible for this Constructs
+                # instance
                 pass
             else:
                 for xid, cm in cell_methods.items():
@@ -855,12 +889,15 @@ TODO
                 ref.del_coordinate(cid, None)
         #--- End: if
 
+        # Remove the construct axes, if any
         self._construct_axes.pop(cid, None)
 
+        # Find the construct type
         construct_type = self._construct_type.pop(cid, None)
         if construct_type is None:
             return
 
+        # Remove and return the construct
         return self._constructs[construct_type].pop(cid, None)
     #--- End: def
 

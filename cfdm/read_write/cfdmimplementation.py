@@ -258,7 +258,7 @@ AttributeError: Field doesn't have property 'standard_name'
     def get_construct_axes(self, field, key):
         '''
         '''
-        return field.construct_axes(key)
+        return field.construct_axes()[key]
     #--- End: def
     
     def get_constructs(self, field, axes=None):
