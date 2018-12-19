@@ -9,38 +9,18 @@ from . import Constructs
 class Domain(mixin.ConstructAccess, abstract.Container):
     '''A domain of the CF data model.
 
-A domain represents a set of discrete "locations" in what generally
+The domain represents a set of discrete "locations" in what generally
 would be a multi-dimensional space, either in the real world or in a
-model's simulated world.
+model's simulated world. These locations correspond to individual data
+array elements of a field construct
 
-The domain is defined collectively by other constructs included in a
-field construct which describe measurement locations and cell
-properties:
-
-====================  ================================================
-Construct             Description
-====================  ================================================
-Domain axis           Independent axes of the domain stored in
-                      `DomainAxis` objects
-
-Dimension coordinate  Cell locations stored in `DimensionCoordinate`
-                      objects
-
-Auxiliary coordinate  Cell locations stored in `AuxiliaryCoordinate`
-                      objects
-
-Coordinate reference  Coordinate systems stored in
-                      `CoordinateReference` objects
-
-Domain ancillary      Ancillary values for cell locations in
-                      alternative coordinate systems stored in
-                      `DomainAncillary` objects
-
-Cell measure          Cell sizes stored in `CellMeasure` objects
-====================  ================================================
+The domain is defined collectively by the following constructs of the
+CF data model: domain axis, dimension coordinate, auxiliary
+coordinate, cell measure, coordinate reference and domain ancillary
+constructs.
 
 .. versionadded:: 1.7.0
-        
+
     '''
 
     # Define the base of the identity keys for each construct type

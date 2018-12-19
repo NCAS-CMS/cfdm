@@ -353,7 +353,8 @@ object.
 #    #--- End: def
 
     def get_construct(self, description=None, cid=None, axes=None,
-                      construct_type=None, copy=False):
+                      construct_type=None, copy=False,
+                      default=ValueError()):
         '''Return a metadata construct.
 
 The construct is selected via optional parameters. The *unique*
@@ -476,10 +477,18 @@ criteria.
         If True then return a copy of the unique selected
         construct. By default the construct is not copied.
 
+    default: optional
+        Return *default* if no metadata construct can be found. By
+        default an exception is raised in this case.
+
+        *Example:*
+          ``default=None``
+
 :Returns:
 
     out:
-        The unique selected construct.
+        The unique selected construct. If there is none, then
+        *default* is returned, if provided.
 
 **Examples:**
 
@@ -497,21 +506,30 @@ criteria.
                               axes=axes, copy=copy)
 
         if not out:
-            raise ValueError("No such construct {} {} {}".format(description, construct_type, axes))
+            return self._default(default, "No construct meets criteria")
         
         _, construct = out.popitem()
         if out:
-            raise ValueError("More than one construct meets criteria")
+            return self._default(default, "More than one construct meets criteria")
             
         return construct
+    #--- End: def
     
-#        return self._get_constructs().get_construct(
-#            description=description, cid=cid,
-#            construct_type=construct_type, axes=axes, copy=copy)            
+    def _default(self, default, message=None):
+        '''
+        '''
+        if isinstance(default, Exception):
+            if message is not None and not default.args:
+                default.args = (message,)
+
+            raise default
+        
+        return default
     #--- End: def
     
     def get_construct_axes(self, description=None, cid=None,
-                           axes=None, construct_type=None):
+                           axes=None, construct_type=None,
+                           default=ValueError):
         '''Return the domain axes spanned by a metadata construct data array.
 
 The construct is selected via optional parameters. The *unique*
@@ -650,18 +668,18 @@ None
 
 
         '''
-        key = self.get_construct_id(description=description, cid=cid,
+        cid = self.get_construct_id(description=description, cid=cid,
                                     construct_type=construct_type,
-                                    axes=axes)
+                                    axes=axes, default=None)
 
-        if key is None:
-            return ()
+        if cid is None:
+            return self._default(default, 'No unique construct meets criteria')
             
-        return self.construct_axes()[key]
+        return self.construct_axes()[cid]
     #--- End: def
         
     def get_construct_id(self, description=None, cid=None, axes=None,
-                         construct_type=None):
+                         construct_type=None, default=ValueError()):
         '''Return the identifier for a metadata construct.
 
 The construct is selected via optional parameters. The *unique*
@@ -795,8 +813,8 @@ TODO
                             copy=False)
         if len(c) != 1:
             # 0 or 2 or more constructs selected
-            return
-            
+            return self._default(default, "No unique construct meets criteria")
+        
         cid, _ = c.popitem()
 
         # A unique construct selected
@@ -970,57 +988,54 @@ returned.
 
         * The value of the standard name property on its own. 
 
-            *Example:*
-              ``description='air_pressure'`` will select constructs
-              that have a "standard_name" property with the value
-              "air_pressure".
+          *Example:*
+            ``description='air_pressure'`` will select constructs that
+            have a "standard_name" property with the value
+            "air_pressure".
 
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
-            *Example:*
-              ``description='positive:up'`` will select constructs
-              that have a "positive" property with the value "up".
+          *Example:*
+            ``description='positive:up'`` will select constructs that
+            have a "positive" property with the value "up".
 
-            *Example:*
-              ``description='foo:bar'`` will select constructs that
-              have a "foo" property with the value "bar".
+          *Example:*
+            ``description='foo:bar'`` will select constructs that have
+            a "foo" property with the value "bar".
 
-            *Example:*
-              ``description='standard_name:air_pressure'`` will select
-              constructs that have
-
-        a "standard_name" property with the
-              value "air_pressure".
+          *Example:*
+            ``description='standard_name:air_pressure'`` will select
+            constructs that have a "standard_name" property with the
+            value "air_pressure".
 
         * The measure of cell measure constructs, prefixed by
           ``measure%``.
 
-            *Example:*
-              ``description='measure%area'`` will select "area" cell
-              measure constructs.
+          *Example:*
+            ``description='measure%area'`` will select "area" cell
+            measure constructs.
 
         * A construct identifier, prefixed by ``cid%`` (see also the
           *cid* parameter).
 
-            *Example:* 
-              ``description='cid%cellmethod1'`` will select cell
-              method construct with construct identifier
-              "cellmethod1". This is equivalent to
-              ``cid='cellmethod1'``.
+          *Example:* 
+            ``description='cid%cellmethod1'`` will select cell method
+            construct with construct identifier "cellmethod1". This is
+            equivalent to ``cid='cellmethod1'``.
 
         * The netCDF variable name, prefixed by ``ncvar%``.
 
-            *Example:*
-              ``description='ncvar%lat'`` will select constructs with
-              netCDF variable name "lat".
+          *Example:*
+            ``description='ncvar%lat'`` will select constructs with
+            netCDF variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
           prefixed by ``ncdim%``.
 
-            *Example:*
-              ``description='ncdim%time'`` will select domain axis
-              constructs with netCDF dimension name "time".
+          *Example:*
+            ``description='ncdim%time'`` will select domain axis
+            constructs with netCDF dimension name "time".
 
     cid: `str`, optional
         Select the construct with the given construct identifier.

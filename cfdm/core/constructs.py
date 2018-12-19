@@ -216,7 +216,7 @@ class Constructs(object):
         return out
     #--- End: def
 
-    def array_constructs(self, axes=None, copy=False):
+    def data_constructs(self, axes=None, copy=False):
         '''TODO
         '''
         out = {}
@@ -548,7 +548,7 @@ TODO
             out[axes] = d
         #--- End: for
 
-        for cid, construct in self.array_constructs().items():
+        for cid, construct in self.data_constructs().items():
             axes = self.construct_axes().get(cid)
             construct_type = self._construct_type[cid]
             out[axes][construct_type][cid] = construct
@@ -595,7 +595,7 @@ TODO
         '''
         construct_type = self.construct_type(cid)
         if construct_type is None:
-            raise ValueError("Can't get construct!!!!!!")
+            raise ValueError('No metadata construct found')
             
         d = self._constructs.get(construct_type)
         if d is None:
@@ -604,7 +604,7 @@ TODO
         try:            
             return d[cid]
         except KeyError:
-            raise ValueError("Can't get construct!!!!!!")
+            raise ValueError('No metadata construct found')
     #--- End: def
     
     def has_construct(self, cid):

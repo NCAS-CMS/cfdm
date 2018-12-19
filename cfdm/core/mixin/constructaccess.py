@@ -36,9 +36,36 @@ class ConstructAccess(object):
         raise NotImplementedError("Must implement this method in subclasses")
     #--- End: def
     
-    def array_constructs(self, copy=False):
-        return self._get_constructs().array_constructs(copy=copy)
- 
+    def data_constructs(self, copy=False):
+        '''Return metadata constructs that support data arrays.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `constructs`, `get_construct`
+
+:Parameters:
+
+    copy: `bool`, optional
+        If True then return copies of the constructs. By default the
+        constructs are not copied.
+
+:Returns:
+
+    out: `dict`
+        Constructs are returned as values of a dictionary, keyed by
+        their construct identifiers.
+
+**Examples:**
+
+>>> f.constructs()
+TODO
+>>> f.data_constructs()
+TODO
+
+        '''
+        return self._get_constructs().data_constructs(copy=copy)
+    #-- End: def
+    
     def construct_axes(self):
         '''Return the domain axes spanned by metadata construct data arrays.
 
