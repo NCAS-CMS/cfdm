@@ -1828,7 +1828,9 @@ variable should be pre-filled with missing values.
         # Add axes and non-scalar dimension coordinates to the field
         # ----------------------------------------------------------------
         field_ncdimensions = self._ncdimensions(field_ncvar)
-            
+
+        unlimited = []
+        
         for ncdim in field_ncdimensions:
             if g['variable_dimensions'].get(ncdim) == (ncdim,):
                 # There is a Unidata coordinate variable for this
@@ -1860,7 +1862,7 @@ variable should be pre-filled with missing values.
                     
                 # Set unlimited status of axis
                 if nc.dimensions[ncdim].isunlimited():
-                    f.unlimited({axis: True})
+                    unlimited.append(axis)
     
                 ncvar_to_key[ncdim] = dim
                 g['coordinates'].setdefault(field_ncvar, []).append(ncdim)
@@ -1881,7 +1883,7 @@ variable should be pre-filled with missing values.
                 # Set unlimited status of axis
                 try:
                     if nc.dimensions[ncdim].isunlimited():
-                        f.unlimited({axis: True})
+                        unlimited.append(axis)
                 except KeyError:
                     # This dimension is not in the netCDF file (as might
                     # be the case for an element dimension implied by a
@@ -1891,10 +1893,13 @@ variable should be pre-filled with missing values.
     
             # Update data dimension name and set dimension size
             data_axes.append(axis)
-    
+
             ncdim_to_axis[ncdim] = axis
         #--- End: for
 
+        if unlimited:
+            self.implementation.nc_set_unlimited_dimensions(f, unlimited)
+    
         data = self._create_data(field_ncvar, f, unpacked_dtype=unpacked_dtype)        
         if verbose:
             print('    [3] Inserting', repr(data))

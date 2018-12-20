@@ -27,12 +27,12 @@ __date__         = '2018-12-02'
 __cf_version__   = '1.7'
 __version__      = '1.7.0b8'
 
-from distutils.version import StrictVersion
+from distutils.version import LooseVersion
 import platform
 
 # Check the version of python
 min_vn = '2.7.0'
-if StrictVersion(platform.python_version()) < StrictVersion(min_vn):
+if LooseVersion(platform.python_version()) < LooseVersion(min_vn):
     raise ValueError(
         "Bad python version: cfdm requires python version {} or later. Got {}".format(
             min_vn,  platform.python_version()))
@@ -40,7 +40,7 @@ if StrictVersion(platform.python_version()) < StrictVersion(min_vn):
 # Check the version of netCDF4
 import netCDF4
 min_vn = '1.4.0'
-if StrictVersion(netCDF4.__version__) < StrictVersion(min_vn):
+if LooseVersion(netCDF4.__version__) < LooseVersion(min_vn):
     raise ValueError(
         "Bad netCDF4 version: cfdm requires netCDF4 version {} or later. Got {}".format(
             min_vn, netCDF4.__version__))

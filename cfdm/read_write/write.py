@@ -63,13 +63,11 @@ set their external status:
 
 **NetCDF unlimited dimensions**
 
+Domain axis constructs will be written as netCDF unlimited dimensions
+if they are returned by the `~cfdm.Field.nc_unlimited_dimensions`
+method of a field construct.
 
-
-**HDF chunksizes**
-
-
-
-.. versionadded:: 1.7
+.. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.read`
 

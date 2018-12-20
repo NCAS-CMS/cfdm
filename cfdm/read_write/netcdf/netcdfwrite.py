@@ -2251,7 +2251,9 @@ extra trailing dimension.
     #--- End: def
                             
     def _unlimited(self, field, axis):
-        '''TODO
+        '''Whether an axis is unlimited.
+
+.. versionadded:: 1.7.0
 
 :Parameters:
   

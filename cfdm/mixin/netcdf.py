@@ -8,7 +8,7 @@ class NetCDF(object):
 
     '''
     def _initialise_netcdf(self, source=None):
-        '''Call this from inside the __init__ method of classes that inherit
+        '''Call this from inside the __init__ method of a class that inherits
 from this mixin class.
 
 :Parameters:
@@ -374,22 +374,91 @@ None
 
 
 class NetCDFSampleDimension(NetCDF):
-    '''Mixin TODO 
+    '''Mixin class for accessing the netCDF sample dimension name.
 
 .. versionadded:: 1.7.0
 
     '''
     def nc_del_sample_dimension(self, *default):
-        '''TODO 
+        '''Remove the netCDF sample dimension name.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_get_sample_dimension`, `nc_has_sample_dimension`,
+             `nc_set_sample_dimension`
+
+:Parameters:
+
+    default: optional        
+        Return *default* if the netCDF sample dimension name has not
+        been set.
+
+:Returns:
+
+     out: `str`
+        The removed netCDF sample dimension name. If unset then
+        *default* is returned, if provided.
+
+**Examples:**
+
+>>> f.nc_set_sample_dimension('time')
+>>> f.nc_has_sample_dimension()
+True
+>>> f.nc_get_sample_dimension()
+'time'
+>>> f.nc_del_sample_dimension()
+'time'
+>>> f.nc_has_sample_dimension()
+False
+>>> print(f.nc_get_sample_dimension(None))
+None
+>>> print(f.nc_del_sample_dimension(None))
+None
+
         '''        
         try:
             return self._get_component('netcdf').pop('sample_dimension', *default)
         except KeyError:
-            raise AttributeError("{!r} object has no netCDF sample dimension name".format(self.__class__.__name__))
+            raise AttributeError("{!r} has no netCDF sample dimension name".format(
+                self.__class__.__name__))
     #--- End: def
 
     def nc_get_sample_dimension(self, *default):
-        '''ttttttttt TODO 
+        '''Return the netCDF sample dimension name.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_del_sample_dimension`, `nc_has_sample_dimension`,
+             `nc_set_sample_dimension`
+
+:Parameters:
+
+    default: optional        
+        Return *default* if the netCDF sample dimension name has not
+        been set.
+
+:Returns:
+
+     out: `str`
+        The netCDF sample dimension name. If unset then *default* is
+        returned, if provided.
+
+**Examples:**
+
+>>> f.nc_set_sample_dimension('time')
+>>> f.nc_has_sample_dimension()
+True
+>>> f.nc_get_sample_dimension()
+'time'
+>>> f.nc_del_sample_dimension()
+'time'
+>>> f.nc_has_sample_dimension()
+False
+>>> print(f.nc_get_sample_dimension(None))
+None
+>>> print(f.nc_del_sample_dimension(None))
+None
+
         '''
         try:
             return self._get_component('netcdf')['sample_dimension']
@@ -402,13 +471,78 @@ class NetCDFSampleDimension(NetCDF):
     #--- End: def
 
     def nc_has_sample_dimension(self):
-        '''TODO 
+        '''Whether the netCDF sample dimension name has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
+             `nc_set_sample_dimension`
+
+:Returns:
+     
+     out: `bool`
+        True if the netCDF sample dimension name has been set,
+        otherwise False.
+
+**Examples:**
+
+>>> f.nc_set_sample_dimension('time')
+>>> f.nc_has_sample_dimension()
+True
+>>> f.nc_get_sample_dimension()
+'time'
+>>> f.nc_del_sample_dimension()
+'time'
+>>> f.nc_has_sample_dimension()
+False
+>>> print(f.nc_get_sample_dimension(None))
+None
+>>> print(f.nc_del_sample_dimension(None))
+None
+
         '''
         return 'sample_dimension' in self._get_component('netcdf')
     #--- End: def
 
     def nc_set_sample_dimension(self, value):
-        '''TODO 
+        '''Set the netCDF sample dimension name.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_del_sample_dimension`, `nc_get_sample_dimension`,
+             `nc_has_sample_dimension`
+             
+:Parameters:
+
+    value: `str`
+        The value for the netCDF sample dimension name.
+
+:Returns:
+
+     `None`
+
+:Returns:
+
+     out: `str`
+        The removed netCDF sample dimension name. If unset then
+        *default* is returned, if provided.
+
+**Examples:**
+
+>>> f.nc_set_sample_dimension('time')
+>>> f.nc_has_sample_dimension()
+True
+>>> f.nc_get_sample_dimension()
+'time'
+>>> f.nc_del_sample_dimension()
+'time'
+>>> f.nc_has_sample_dimension()
+False
+>>> print(f.nc_get_sample_dimension(None))
+None
+>>> print(f.nc_del_sample_dimension(None))
+None
+
         '''
         self._get_component('netcdf')['sample_dimension'] = value
     #--- End: def
@@ -416,22 +550,90 @@ class NetCDFSampleDimension(NetCDF):
 #--- End: class
 
 class NetCDFInstanceDimension(NetCDF):
-    '''Mixin TODO 
+    '''Mixin class for accessing the netCDF instance dimension name.
 
 .. versionadded:: 1.7.0
 
     '''
     def nc_del_instance_dimension(self,*default):
-        '''TODO 
+        '''Return the netCDF instance dimension name.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_del_instance_dimension`, `nc_has_instance_dimension`,
+             `nc_set_instance_dimension`
+
+:Parameters:
+
+    default: optional        
+        Return *default* if the netCDF instance dimension name has not
+        been set.
+
+:Returns:
+
+     out: `str`
+        The netCDF instance dimension name. If unset then *default* is
+        returned, if provided.
+
+**Examples:**
+
+>>> f.nc_set_instance_dimension('time')
+>>> f.nc_has_instance_dimension()
+True
+>>> f.nc_get_instance_dimension()
+'time'
+>>> f.nc_del_instance_dimension()
+'time'
+>>> f.nc_has_instance_dimension()
+False
+>>> print(f.nc_get_instance_dimension(None))
+None
+>>> print(f.nc_del_instance_dimension(None))
+None
+ 
         '''        
         try:
             return self._get_component('netcdf').pop('instance_dimension', *default)
         except KeyError:
-            raise AttributeError("{!r} object has no netCDF instance dimension name".format(self.__class__.__name__))
+            raise AttributeError("{!r} has no netCDF instance dimension name".format(
+                self.__class__.__name__))
     #--- End: def
 
     def nc_get_instance_dimension(self, *default):
-        '''ttttttttt TODO 
+        '''Return the netCDF instance dimension name.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_del_instance_dimension`, `nc_has_instance_dimension`,
+             `nc_set_instance_dimension`
+
+:Parameters:
+
+    default: optional        
+        Return *default* if the netCDF instance dimension name has not
+        been set.
+
+:Returns:
+
+     out: `str`
+        The netCDF instance dimension name. If unset then *default* is
+        returned, if provided.
+
+**Examples:**
+
+>>> f.nc_set_instance_dimension('time')
+>>> f.nc_has_instance_dimension()
+True
+>>> f.nc_get_instance_dimension()
+'time'
+>>> f.nc_del_instance_dimension()
+'time'
+>>> f.nc_has_instance_dimension()
+False
+>>> print(f.nc_get_instance_dimension(None))
+None
+>>> print(f.nc_del_instance_dimension(None))
+None
         '''
         try:
             return self._get_component('netcdf')['instance_dimension']
@@ -444,13 +646,77 @@ class NetCDFInstanceDimension(NetCDF):
     #--- End: def
 
     def nc_has_instance_dimension(self):
-        '''TODO 
+        '''Whether the netCDF instance dimension name has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_del_instance_dimension`, `nc_get_instance_dimension`,
+             `nc_set_instance_dimension`
+
+:Returns:
+     
+     out: `bool`
+        True if the netCDF instance dimension name has been set,
+        otherwise False.
+
+**Examples:**
+
+>>> f.nc_set_instance_dimension('time')
+>>> f.nc_has_instance_dimension()
+True
+>>> f.nc_get_instance_dimension()
+'time'
+>>> f.nc_del_instance_dimension()
+'time'
+>>> f.nc_has_instance_dimension()
+False
+>>> print(f.nc_get_instance_dimension(None))
+None
+>>> print(f.nc_del_instance_dimension(None))
+None 
         '''
         return 'instance_dimension' in self._get_component('netcdf')
     #--- End: def
 
     def nc_set_instance_dimension(self, value):
-        '''TODO 
+        '''Set the netCDF instance dimension name.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `nc_del_instance_dimension`, `nc_get_instance_dimension`,
+             `nc_has_instance_dimension`
+             
+:Parameters:
+
+    value: `str`
+        The value for the netCDF instance dimension name.
+
+:Returns:
+
+     `None`
+
+:Returns:
+
+     out: `str`
+        The removed netCDF instance dimension name. If unset then
+        *default* is returned, if provided.
+
+**Examples:**
+
+>>> f.nc_set_instance_dimension('time')
+>>> f.nc_has_instance_dimension()
+True
+>>> f.nc_get_instance_dimension()
+'time'
+>>> f.nc_del_instance_dimension()
+'time'
+>>> f.nc_has_instance_dimension()
+False
+>>> print(f.nc_get_instance_dimension(None))
+None
+>>> print(f.nc_del_instance_dimension(None))
+None
+ 
         '''
         self._get_component('netcdf')['instance_dimension'] = value
     #--- End: def
@@ -484,7 +750,7 @@ possible, so selecting them is optional.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `nc_unlimited_dimensions`
+.. seealso:: `cfdm.write`, `nc_unlimited_dimensions`
 
 :Parameters:
 
@@ -535,7 +801,7 @@ By default output netCDF dimensions are not unlimited.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `nc_global_attributes`
+.. seealso:: `cfdm.write`, `nc_global_attributes`
 
 :Parameters:
 
@@ -553,8 +819,9 @@ By default output netCDF dimensions are not unlimited.
 :Returns:
 
     out: `set`
-        The selection of properties prior to being changed, or the
-        current selection if no changes were specified.
+        The selection of domain axis construct identifiers prior to
+        being changed, or the current selection if no changes were
+        specified.
 
 **Examples:**
 
@@ -562,7 +829,7 @@ By default output netCDF dimensions are not unlimited.
 >>> f.nc_unlimited_dimensions()
 {'domainaxis1'}
 >>> f.nc_unlimited_dimensions([])
-{['domainaxis1'}
+{'domainaxis1'}
 >>> f.nc_unlimited_dimensions()
 set()
 
@@ -613,4 +880,3 @@ TODO
 #primordial: Zeal & Ardor - Come On Down
 
 #--- End: class
-

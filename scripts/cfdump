@@ -6,9 +6,12 @@ from __future__ import print_function
 if __name__ == '__main__':
 
     import getopt
-    import sys
     import os
+    import platform
+    import sys
     import cfdm
+
+    from distutils.version import LooseVersion
 
     def print_help(version, date):
         import subprocess
@@ -108,17 +111,20 @@ David Hassell
         p = subprocess.Popen(['man', '-r',
                               ' Manual page cfdump(1)\ ?ltline\ %lt?L/%L.:',
                               '-l', '-'], stdin=subprocess.PIPE)
-        p.communicate(manpage)
+        if LooseVersion(platform.python_version()) < LooseVersion('3'):            
+            p.communicate(manpage)                # Python 2.7
+        else:
+            p.communicate(bytes(manpage, "utf8")) # Python 3+
     #---- End: def
 
     iam   = os.path.basename(sys.argv[0])
     usage = "USAGE: {0} [-s] [-c] [-e file [-e file] ...] [-h] file".format(iam)
     short_help = '''{0}
-  [-s]                   Display short, one-line descriptions
-  [-c]                   Display complete descriptions
-  [-e file]              External files
-  [-h]                   Display the full man page
-  file                   Name of netCDF file (or URL if DAP access enabled)
+  [-s]      Display short, one-line descriptions
+  [-c]      Display complete descriptions
+  [-e file] External files
+  [-h]      Display the full man page
+  file      Name of netCDF file (or URL if DAP access enabled)
 cfdm package version {1} of {2}'''.format(
     usage, cfdm.__version__, cfdm.__date__)
     
@@ -130,8 +136,8 @@ cfdm package version {1} of {2}'''.format(
                                      longopts=['complete',
                                                'external=',
                                                'help',
-                                               'short',])
-    except getopt.GetoptError, err:
+                                               'short'])
+    except getopt.GetoptError:
         # Print help information and exit:
         print("{} ERROR: Incorrect usage".format(iam))
         print(short_help)

@@ -12,9 +12,8 @@ class Count(mixin.NetCDFVariable,
     '''A count variable required to uncompress a ragged array.
 
 A collection of features stored using a contiguous ragged array
-combines all features along a single dimension (the "sample
-dimension") such that each feature in the collection occupies a
-contiguous block.
+combines all features along a single dimension (the sample dimension)
+such that each feature in the collection occupies a contiguous block.
 
 The information needed to uncompress the data is stored in a count
 variable that gives the size of each block.

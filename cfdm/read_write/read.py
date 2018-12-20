@@ -80,7 +80,13 @@ memory until the data is required for inspection or to modify the
 array contents. This maximises the number of field constructs that may
 be read within a session, and makes the read operation fast.
 
-.. versionadded:: 1.7
+**NetCDF unlimited dimensions**
+
+Domain axis constructs that correspond to NetCDF unlimited dimensions
+may be viewed with the `cfdm.Field.nc_unlimited_dimensions` method of
+a field construct.
+
+.. versionadded:: 1.7.0
 
 .. seealso:: `cfdm.write`, `cfdm.Field.create_field`,
              `cfdm.Field.read_report`

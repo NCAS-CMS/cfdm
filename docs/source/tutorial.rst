@@ -23,7 +23,7 @@ Jupyter notebook** (:download:`download <notebooks/tutorial.ipynb>`,
 
 The cfdm package is imported as follows:
 
-.. code:: python
+.. code-block:: python
 
    >>> import cfdm
 
@@ -37,7 +37,7 @@ The cfdm package is imported as follows:
 The version of the `CF conventions <http://cfconventions.org>`_ and
 the CF data model being used may be found with the `cfdm.CF` function:
 
-.. code:: python
+.. code-block:: python
 
    >>> cfdm.CF()
    '1.7'
@@ -61,7 +61,7 @@ For example, to read the file ``file.nc`` (:download:`download
 <netcdf_files/file.nc>`, 9kB) [#files]_, creating a field construct
 from each CF-netCDF data variable:
 
-.. code:: python
+.. code-block:: python
 
    >>> x = cfdm.read('file.nc')
    >>> type(x)
@@ -104,7 +104,7 @@ levels of detail.
 
 The built-in `repr` function returns a short, one-line description:
 
-.. code:: python
+.. code-block:: python
 
    >>> x
    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
@@ -129,7 +129,7 @@ one-line output, along with short descriptions of the metadata
 constructs, which include the first and last values of their data
 arrays:
 
-.. code:: python
+.. code-block:: python
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -169,7 +169,7 @@ The `~cfdm.Field.dump` method of the field construct gives all
 properties of all constructs, including metadata constructs and their
 components, and shows the first and last values of all data arrays:
 
-.. code:: python
+.. code-block:: python
 
    >>> q.dump()
    ----------------------------------
@@ -313,7 +313,7 @@ The description for every field construct in a file can also be
 generated from the command line, with minimal, medium or full detail,
 by using the ``cfdump`` tool, for example:
 
-.. code:: bash
+.. code-block:: shell
 
    $ cfdump -s file.nc
    Field: specific_humidity(latitude(5), longitude(8)) 1
@@ -330,7 +330,7 @@ by using the ``cfdump`` tool, for example:
 Descriptive properties that apply to field construct as a whole may be
 retrieved with the `~Field.properties` method:
 
-.. code:: python
+.. code-block:: python
 
    >>> t.properties()
    {'Conventions': 'CF-1.7',
@@ -342,7 +342,7 @@ Individual properties may be accessed and modified with the
 `~Field.del_property`, `~Field.get_property`, `~Field.has_property`,
 and `~Field.set_property` methods:
 
-.. code:: python
+.. code-block:: python
 
    >>> t.has_property('standard_name')
    True
@@ -359,7 +359,7 @@ and `~Field.set_property` methods:
 The properties may be completely replaced with another collection by
 providing a new set of properties to the `~Field.properties` method:
 
-.. code:: python
+.. code-block:: python
 	  
    >>> original = t.properties({'foo': 'bar', 'units': 'K'})
    >>> original
@@ -389,7 +389,7 @@ providing a new set of properties to the `~Field.properties` method:
 The field construct's data array is stored in a `Data` class instance
 that is accessed with the `~Field.get_data` method:
 
-.. code:: python
+.. code-block:: python
 
    >>> t.get_data()
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
@@ -397,7 +397,7 @@ that is accessed with the `~Field.get_data` method:
 The data array may be retrieved as an independent (possibly masked)
 `numpy` array with the `~Field.get_array` method:
 
-.. code:: python
+.. code-block:: python
 
    >>> print(t.get_array())
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
@@ -415,7 +415,7 @@ The field construct also has a `~Field.data` attribute that is an
 alias for the `~Field.get_data` method, which makes it easier to
 access attributes and methods of the `Data` instance:
 
-.. code:: python
+.. code-block:: python
 
    >>> t.data.dtype
    dtype('float64')
@@ -448,7 +448,7 @@ the only differences being:
   behaviour as indexing on a** `Variable` **object of the** `netCDF4
   package <http://unidata.github.io/netcdf4-python>`_\ **.**
 
-.. code:: python
+.. code-block:: python
 	    
    >>> data = t.data
    >>> data.shape
@@ -482,7 +482,7 @@ Data array elements may be set to missing values by assigning them to
 `numpy.ma.masked`. Missing values may be unmasked by assigning them to
 any other value.
 
-.. code:: python
+.. code-block:: python
 
    >>> import numpy
    >>> t.data[:, :, 1] = -10
@@ -518,7 +518,7 @@ Method                Description
 `~Field.squeeze`      Remove size one data dimensions
 ====================  ====================================
 
-.. code:: python
+.. code-block:: python
 
    >>> t
    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
@@ -549,7 +549,7 @@ rules <Indexing>` that apply to the `Data` class.
 In this example a new field is created whose domain spans the first
 latitude of the original, and with a reversed longitude axis:
      
-.. code:: python
+.. code-block:: python
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -607,7 +607,7 @@ of the field construct, which provides a dictionary of the metadata
 constructs, each of which is keyed by a unique identifier called a
 "construct identifier".
 
-.. code:: python
+.. code-block:: python
 
    >>> q.constructs()
    {'cellmethod0': <CellMethod: area: mean>,
@@ -671,7 +671,7 @@ metadata constructs by
   <NetCDF-interface>`).
  
 
-.. code:: python
+.. code-block:: python
 	  
    >>> t.constructs('air_temperature standard_error')
    {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
@@ -699,7 +699,7 @@ Selection by construct identifier is useful for systematic metadata
 construct access, and for when a metadata construct is not
 identifiable by other means.
 
-.. code:: python
+.. code-block:: python
 
    >>> t.constructs(cid='domainancillary2')
    {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
@@ -715,7 +715,7 @@ construct, which supports the same filtering options as the
 be checked with the `~Field.has_construct` method and a construct may
 be removed with the `~Field.del_construct` method.
 
-.. code:: python
+.. code-block:: python
 
    >>> t.has_construct('latitude')
    True
@@ -747,7 +747,7 @@ Method                          Description
 `~Field.coordinate_references`  The coordinate reference constructs
 ==============================  ====================================
 
-.. code:: python
+.. code-block:: python
 
    >>> t.coordinate_references()
    {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
@@ -767,7 +767,7 @@ data array (i.e. auxiliary coordinate, dimension coordinate, cell
 measure, domain ancillary and field ancillary constructs) will have a
 `!get_array` method to access its data as an independent numpy array:
 
-.. code:: python
+.. code-block:: python
 
    >>> lon = q.get_construct('longitude')   
    >>> lon
@@ -789,7 +789,7 @@ measure, domain ancillary and field ancillary constructs) will have a
 The domain axis constructs spanned by a metadata construct's data are
 found with the `~Field.construct_axes` method of the field construct:
 
-.. code:: python
+.. code-block:: python
 
    >>> t.construct_axes()
    {'auxiliarycoordinate0': ('domainaxis1', 'domainaxis2'),
@@ -808,7 +808,7 @@ found with the `~Field.construct_axes` method of the field construct:
 The domain axis constructs spanned by the field construct's data found
 with the `~Field.get_data_axes` method of the field construct:
 
-.. code:: python
+.. code-block:: python
 
    >>> t.domain_axes()
    {'domainaxis0': <DomainAxis: 1>,
@@ -839,7 +839,7 @@ the same as that in which cell method constructs were added to the
 field construct during :ref:`field construct creation
 <Field-construct-creation>`.
 
-.. code:: python
+.. code-block:: python
 
    >>> t.cell_methods()
    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
@@ -876,7 +876,7 @@ cfdm class              Description                     cfdm parent classes
 
 Where applicable, these classes also share the same API as the field:
 
-.. code:: python
+.. code-block:: python
 	  
    >>> lon = t.get_construct('grid_longitude')
    >>> bounds = lon.get_bounds()
@@ -931,7 +931,7 @@ constructs to a new netCDF dataset, and also makes them accessible for
 metadata construct identification with the `~Field.constructs` and
 `~Field.get_construct` methods of the field construct:
 
-.. code:: python
+.. code-block:: python
 	  
    >>> t.constructs('ncvar%b')
    {'domainancillary1': <DomainAncillary: ncvar%b(1) >}
@@ -962,7 +962,7 @@ Method                            Description
                                   as netCDF unlimited dimensions
 ================================  ====================================
 
-.. code:: python
+.. code-block:: python
 
    >>> q.nc_get_variable()
    'q'
@@ -1044,7 +1044,7 @@ Method                        Classes                                  NetCDF el
 The `cfdm.write` function writes a field construct, or a sequence of
 field constructs, to a new netCDF file on disk:
 
-.. code:: python
+.. code-block:: python
 
    >>> print(q)
    Field: specific_humidity (ncvar%humidity)
@@ -1058,7 +1058,7 @@ field constructs, to a new netCDF file on disk:
 
 The new dataset is structured as follows:
 
-.. code:: bash
+.. code-block:: shell
 
    $ ncdump -h q_file.nc
    netcdf q_file {
@@ -1093,7 +1093,7 @@ The new dataset is structured as follows:
 
 A sequence of field constructs is written in exactly the same way:
    
-.. code:: python
+.. code-block:: python
 	     
    >>> x
    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
@@ -1147,7 +1147,7 @@ construct's data must be expanded to span the corresponding size one
 domain axis construct, by using the `~Field.expand_dims` method of the
 field construct:
 
-.. code:: python
+.. code-block:: python
 		   
    >>> print(q)
    Field: specific_humidity (ncvar%humidity)
@@ -1169,7 +1169,7 @@ The new dataset is structured as follows (note, relative to file
 ``q_file.nc``, the existence of the "time" dimension and the lack of a
 "coordinates" attribute on the, now three-dimensional, data variable):
    
-.. code:: bash
+.. code-block:: shell
 
    $ ncdump -h q2_file.nc
    netcdf q2_file {
@@ -1231,7 +1231,7 @@ There are two equivalent approaches to stages **1** and **2**.
 Either as much of the content as possible is specified during object
 instantiation:
 
-.. code:: python
+.. code-block:: python
 
    >>> p = cfdm.Field(properties={'standard_name': 'precipitation_flux'})
    >>> p
@@ -1249,7 +1249,7 @@ instantiation:
 or else some or all content is added after instantiation via object
 methods:
 
-.. code:: python
+.. code-block:: python
 
    >>> p = cfdm.Field()
    >>> p
@@ -1295,7 +1295,7 @@ construct):
    `~Field.set_coordinate_reference`              Set a coordinate reference construct
    =============================================  ======================================================================
 
-.. code:: python
+.. code-block:: python
 	  
    >>> longitude_axis = p.set_construct(cfdm.DomainAxis(3))
    >>> longitude_axis
@@ -1324,7 +1324,7 @@ and domain axis, cell method and dimension coordinate metadata
 constructs (data arrays have been generated with dummy values using
 `numpy.arange`):
 
-.. code:: python
+.. code-block:: python
 
    import numpy
    import cfdm
@@ -1392,7 +1392,7 @@ constructs (data arrays have been generated with dummy values using
 
 The new field construct may now be inspected:
 
-.. code:: python
+.. code-block:: python
 	  
    >>> Q.dump()
    ------------------------
@@ -1441,7 +1441,7 @@ names would be automatically generated (based on standard names where
 they exist). The setting of bespoke names is, however, easily done
 with the :ref:`netCDF interface <NetCDF-interface>`:
 
-.. code:: python
+.. code-block:: python
 
    Q.nc_set_variable('q')
 
@@ -1457,7 +1457,7 @@ Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
 been generated with dummy values using `numpy.arange`):
 
-.. code:: python
+.. code-block:: python
 
    import numpy
    import cfdm
@@ -1612,7 +1612,7 @@ been generated with dummy values using `numpy.arange`):
 
 The new field construct may now be inspected:
 
-.. code:: python
+.. code-block:: python
 
    >>> print(tas)
    Field: air_temperature
@@ -1650,7 +1650,7 @@ its properties and data. The new field construct has domain axis
 constructs corresponding to the data, and (by default) any other
 metadata constructs that further define its domain.
 
-.. code:: python
+.. code-block:: python
 
    >>> orog = tas.create_field('surface_altitude')	  
    >>> print(orog)
@@ -1684,7 +1684,7 @@ netCDF data variable. This will often result in a new field construct
 that has fewer metadata constructs than one created with the
 `~Field.create_field` method.
 
-.. code:: python
+.. code-block:: python
 
    >>> cfdm.write(tas, 'tas.nc')
    >>> fields = cfdm.read('tas.nc', create_field='domain_ancillary')
@@ -1712,7 +1712,7 @@ construct's data and is represented by the `Domain` class. The domain
 instance may be accessed with the `~Field.get_domain` method of the
 field construct:
 
-.. code:: python
+.. code-block:: python
 
    >>> domain = t.get_domain()
    >>> domain
@@ -1740,7 +1740,7 @@ field construct also has a `~Field.domain` attribute that is an alias
 for the `~Field.get_domain` method, which makes it easier to access
 attributes and methods of the domain instance:
 
-.. code:: python
+.. code-block:: python
 
    >>> domain.get_construct('latitude').set_property('test', 'set by domain')
    >>> t.get_construct('latitude').get_property('test')
@@ -1765,7 +1765,7 @@ A field construct may be copied with its `~Field.copy` method. This
 produces a "deep copy", i.e. the new field construct is completely
 independent of the original field.
 
-.. code:: python
+.. code-block:: python
 
    >>> u = t.copy()
    >>> u.data[0, 0, 0] = -1e30
@@ -1782,14 +1782,14 @@ independent of the original field.
 
 Equivalently, the `copy.deepcopy` function may be used:
 
-.. code:: python
+.. code-block:: python
 
    >>> import copy
    >>> u = copy.deepcopy(t)
 
 Metadata constructs may be copied individually in the same manner:
 
-.. code:: python
+.. code-block:: python
 
    >>> orog = t.get_construct('surface_altitude').copy()
 
@@ -1810,7 +1810,7 @@ Metadata constructs may be copied individually in the same manner:
 Whether or not two field constructs are the same is tested with either
 field construct's `~Field.equals` method.
 
-.. code:: python
+.. code-block:: python
 
    >>> t.equals(t)
    True
@@ -1846,7 +1846,7 @@ least value greater than 1 that is representable as a float). Their
 values may be inspected and changed with the `cfdm.ATOL` and
 `cfdm.RTOL` functions:
 
-.. code:: python
+.. code-block:: python
 
    >>> cfdm.ATOL()
    2.220446049250313e-16
@@ -1879,7 +1879,7 @@ criteria for considering two fields to be equal:
 
 Metadata constructs may also be tested for equality:
 
-.. code:: python
+.. code-block:: python
 	  
    >>> orog = t.get_construct('surface_altitude')
    >>> orog.equals(orog.copy())
@@ -1903,7 +1903,7 @@ the external file names to the `cfdm.read` function.
 This is illustrated with the files ``parent.nc`` (:download:`download
 <netcdf_files/parent.nc>`, 2kB) [#files]_:
 
-.. code:: bash
+.. code-block:: shell
    
    $ ncdump -h parent.nc
    netcdf parent {
@@ -1930,7 +1930,7 @@ This is illustrated with the files ``parent.nc`` (:download:`download
 and ``external.nc`` (:download:`download <netcdf_files/external.nc>`,
 1kB) [#files]_:
 
-.. code:: bash
+.. code-block:: shell
 
    $ ncdump -h external.nc 
    netcdf external {
@@ -1950,7 +1950,7 @@ The dataset in ``parent.nc`` may be read *without* specifying the
 external file ``external.nc``. In this case a cell measure construct
 is still created, but one without any metadata or data:
 
-.. code:: python
+.. code-block:: python
 
    >>> u = cfdm.read('parent.nc')[0]
    >>> print(u)
@@ -1984,7 +1984,7 @@ this case a cell measure construct is created with all of the metadata
 and data from the external file, as if the netCDF cell measure
 variable had been present in the parent dataset:
 
-.. code:: python
+.. code-block:: python
    
    >>> g = cfdm.read('parent.nc', external_files='external.nc')[0]
    >>> print(g)
@@ -2018,7 +2018,7 @@ output file, simply set the status of the cell measure construct to
 "external" with its `~CellMeasure.nc_external` method, and provide an
 external file name to the `cfdm.write` function:
 
-.. code:: python
+.. code-block:: python
 
    >>> area.nc_external(True)
    False
@@ -2118,7 +2118,7 @@ instance.
 The contiguous case is is illustrated with the file ``contiguous.nc``
 (:download:`download <netcdf_files/contiguous.nc>`, 2kB) [#files]_:
 
-.. code:: bash
+.. code-block:: shell
    
    $ ncdump -h contiguous.nc
    dimensions:
@@ -2161,7 +2161,7 @@ two-dimensional uncompressed form, whilst the underlying array is
 still in the one-dimension ragged representation described in the
 file:
 
-.. code:: python
+.. code-block:: python
    
    >>> h = cfdm.read('contiguous.nc')[0]
    >>> print(h)
@@ -2193,7 +2193,7 @@ file:
 The timeseries for the second station is easily selected by indexing
 the "station" axis of the field construct:
 
-.. code:: python
+.. code-block:: python
 	  
    >>> station = h[1]
    >>> station
@@ -2204,7 +2204,7 @@ the "station" axis of the field construct:
 The underlying array of original data remains in compressed form until
 data array elements are modified:
    
-.. code:: python
+.. code-block:: python
 
    >>> h.data.get_compression_type()
    'ragged contiguous'
@@ -2223,7 +2223,7 @@ special array objects: `RaggedContiguousArray`, `RaggedIndexedArray`
 or `RaggedIndexedContiguousArray`. The following code creates a simple
 field construct with an underlying contiguous ragged array:
 
-.. code:: python
+.. code-block:: python
 
    import numpy
    import cfdm
@@ -2261,7 +2261,7 @@ field construct with an underlying contiguous ragged array:
 				
 The new field construct can now be inspected and written to a netCDF file:
 
-.. code:: python
+.. code-block:: python
    
    >>> T
    <Field: air_temperature(cid%domainaxis1(2), cid%domainaxis0(4)) K>
@@ -2281,7 +2281,7 @@ The new field construct can now be inspected and written to a netCDF file:
 
 The content of the new file is:
   
-.. code:: bash
+.. code-block:: shell
 
    $ ncdump T_contiguous.nc
    netcdf T_contiguous {
@@ -2324,7 +2324,7 @@ stored in a `List` object and is retrieved with the
 This is illustrated with the file ``gathered.nc`` (:download:`download
 <netcdf_files/gathered.nc>`, 1kB) [#files]_:
 
-.. code:: bash
+.. code-block:: shell
    
    $ ncdump -h gathered.nc
    netcdf gathered {
@@ -2358,7 +2358,7 @@ three-dimensional uncompressed form, whilst the underlying array is
 still in the two-dimensional gathered representation described in the
 file:
 
-.. code:: python
+.. code-block:: python
 
    >>> p = cfdm.read('gathered.nc')[0]
    >>> print(p)
@@ -2392,7 +2392,7 @@ file:
 Subspaces based on the uncompressed axes of the field construct are
 easily created:
 
-.. code:: python
+.. code-block:: python
 	  
    >>> p[0]
    <Field: precipitation_flux(time(1), latitude(4), longitude(5)) kg m2 s-1>
@@ -2402,7 +2402,7 @@ easily created:
 The underlying array of original data remains in compressed form until
 data array elements are modified:
    
-.. code:: python
+.. code-block:: python
 
    >>> p.data.get_compression_type()
    'gathered'
@@ -2415,7 +2415,7 @@ initializing a `Data` instance with a gathered array that is stored in
 the special `GatheredArray` array object. The following code creates a
 simple field construct with an underlying gathered array:
 
-.. code:: python
+.. code-block:: python
 
    import numpy	  
    import cfdm
@@ -2458,7 +2458,7 @@ initialisation).
 
 The new field construct can now be inspected and written a netCDF file:
 
-.. code:: python
+.. code-block:: python
    
    >>> P
    <Field: precipitation_flux(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) kg m-2 s-1>
@@ -2484,7 +2484,7 @@ The new field construct can now be inspected and written a netCDF file:
 
 The content of the new file is:
    
-.. code:: bash
+.. code-block:: shell
 
    $ ncdump P_gathered.nc
    netcdf P_gathered {
@@ -2525,7 +2525,7 @@ The content of the new file is:
 
 .. [#files] The tutorial files may be also found in the `downloads
             directory
-            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/1.7.0b8/_downloads>`_
+            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
             of the on-line code repository.
 
 ..
@@ -2550,7 +2550,7 @@ The content of the new file is:
                intended.
 	    
 
-.. External links to the CF conventions
+.. External links to the CF conventions (will need updating with new version of CF)
    
 .. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables
 .. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries

@@ -13,8 +13,8 @@ class Index(mixin.NetCDFVariable,
     '''An index variable required to uncompress a ragged array.
 
 A collection of features stored using an indexed ragged array combines
-all features along a single dimension (the "sample dimension") such
-that the values of each feature in the collection are interleaved.
+all features along a single dimension (the sample dimension) such that
+the values of each feature in the collection are interleaved.
 
 The information needed to uncompress the data is stored in an index
 variable that specifies the feature that each element of the sample

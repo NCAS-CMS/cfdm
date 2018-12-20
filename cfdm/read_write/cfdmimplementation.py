@@ -471,9 +471,45 @@ axes, and possibly other axes, are returned.
     #--- End: def
 
     def nc_get_unlimited_axes(self, field):
-        '''TODO
+        '''Return the selection of domain axis constructs that are to written
+as netCDF unlimited dimensions.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+  
+    field: `Field`
+
+:Returns:
+
+    out: `set`
+        The selection of domain axis construct identifiers that are
+        unlimited.
+
         '''
         return field.nc_unlimited_dimensions()
+    #--- End: def
+    
+    def nc_set_unlimited_dimensions(self, field, unlimited):
+        '''Set the selection of domain axis constructs that were read in as
+netCDF unlimited dimensions.
+
+.. versionadded:: 1.7.0
+
+:Parameters:
+  
+    field: `Field`
+
+    unlimited: sequence of `str`
+
+:Returns:
+
+    out: `set`
+        The selection of domain axis construct identifiers that are
+        unlimited.
+
+        '''
+        return field.nc_unlimited_dimensions(unlimited)
     #--- End: def
     
     def nc_get_global_attributes(self, field):
