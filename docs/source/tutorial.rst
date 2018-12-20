@@ -2525,7 +2525,7 @@ The content of the new file is:
 
 .. [#files] The tutorial files may be also found in the `downloads
             directory
-            <https://github.com/NCAS-CMS/cfdm/tree/docs/1.7.0b8/_downloads>`_
+            <https://github.com/NCAS-CMS/cfdm/tree/master/docs/1.7.0b8/_downloads>`_
             of the on-line code repository.
 
 ..
