@@ -35,9 +35,9 @@ The cfdm package requires:
 
 ----
 
-To install cfdm and its dependencies, download
-:download:`requirements.txt <../../requirements.txt>` (0.3kB) and then
-run, for example
+To install cfdm and the latest versions of all of its dependencies,
+download :download:`requirements.txt <../../requirements.txt>` (0.3kB)
+[#files]_ and then run, for example:
 
 .. code-block:: shell
 
@@ -153,3 +153,13 @@ Tests are run from within the ``cfdm/test`` directory:
 ----
 
 The complete source code is available at https://github.com/NCAS-CMS/cfdm
+
+----
+
+.. rubric:: Footnotes
+
+.. [#files] The ``requirements.txt`` file contains
+
+  .. include:: ../../requirements.txt
+     :literal:
+     
