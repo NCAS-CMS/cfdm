@@ -37,7 +37,7 @@ The cfdm package requires:
 
 To install cfdm and the latest versions of all of its dependencies,
 download :download:`requirements.txt <../../requirements.txt>` (0.3kB)
-[#intallfiles]_ and then run, for example:
+[#installfiles]_ and then run, for example:
 
 .. code-block:: shell
 
