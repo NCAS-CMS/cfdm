@@ -1,6 +1,7 @@
 version 1.7.0b9 - 
 ============================
 
+* Added requirements.txt and updated installation instructions.
 * Fix to cfdm.CoordinateReference.dump for when a domain ancillary
   construct does not exist.
 * New method: cfdm.Bounds.inherted_properties
