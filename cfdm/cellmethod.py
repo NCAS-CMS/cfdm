@@ -525,28 +525,47 @@ False
 
 By default the name is the first found of the following:
 
-  3. If the *ncdim* parameter is True, the netCDF variable name (as
-     returned by the `nc_get_variable` method), preceeded by the
-     string ``'ncvar%'``.
-  
-  4. The value of the *default* parameter.
+  1. The "method" propoerty, preceeded by 'method%'
+  2. The value of the *default* parameter.
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
     default: optional
-        If no name can be found then return the value of the *default*
-        parameter. By default the default is `None`.
+        If no other name can be found then return the value of the
+        default parameter. By default `None` is returned in this case.
+
+    custom: sequence of `str`, optional
+        Replace the ordered list of properties from which to seatch
+        for a name. The default list is ``['method']`.
+
+        *Example:*
+          ``custom=['comment']``
+
+        *Example:*
+          ``custom=['comment', 'where']``
 
 :Returns:
 
     out:
-        The name.
+        The name. If the *all_names* parameter is True then a list of
+        all possible names.
 
 **Examples:**
 
-TODO
+>>> c
+<CellMethod: domainaxis2: mean (interval: 1 day comment: ok)>
+>>> c.name()
+'method%mean'
+>>> c.name(custom=['comment'])
+'comment%El nino years'
+>>> c.name(custom=['comment', 'method'])
+'comment%ok'
+>>> c.name(custom=['comment', 'method'])
+comment%ok'
+>>> c.name(custom=['comment', 'method'], all_names=True, default='no name')
+['comment%ok', 'method%mean', 'no name']
 
         '''
         out = []
@@ -557,7 +576,7 @@ TODO
         for prop in custom:
             n = self.get_property(prop, None)
             if n is not None:
-                out.append('{0}:{1}'.format(prop, n))
+                out.append('{0}%{1}'.format(prop, n))
                 if not all_names:
                     break
         #--- End: if
@@ -572,15 +591,6 @@ TODO
             return out[-1]
 
         return default
-    
-#        if all_names:
-#            n = self.get_property('method', None)
-#            if n is not None:
-#                return [n]
-#            else:
-#                return []
-#            
-#        return self.get_property('method', default)
     #--- End: def
 
     def sorted(self, indices=None):

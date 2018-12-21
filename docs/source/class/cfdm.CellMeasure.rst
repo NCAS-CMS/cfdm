@@ -136,7 +136,8 @@ NetCDF
    ~cfdm.CellMeasure.nc_del_variable
    ~cfdm.CellMeasure.nc_get_variable
    ~cfdm.CellMeasure.nc_has_variable
-   ~cfdm.CellMeasure.nc_set_variable 
+   ~cfdm.CellMeasure.nc_set_variable
+   ~cfdm.CellMeasure.nc_external
 
 Special
 -------

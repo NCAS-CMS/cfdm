@@ -35,18 +35,33 @@ The cfdm package requires:
 
 ----
 
-`pip install <https://pip.pypa.io/en/latest/reference/pip_install/>`_
-can be used, for example:
+To install cfdm and its dependencies, download
+:download:`requirements.txt <../../requirements.txt>` (0.3kB) and then
+run, for example
 
-.. code:: bash
+.. code-block:: shell
+
+   pip install -r requirements.txt
+
+.. code-block:: shell
+
+   pip install -r requirements.txt --user
+
+.. code-block:: shell
+
+   pip install -r requirements.txt --target <dir>
+
+To install cfdm without any of its dependencies then run, for example:
+
+.. code-block:: shell
 
    pip install cfdm
 
-.. code:: bash
+.. code-block:: shell
 
    pip install cfdm --user
 
-.. code:: bash
+.. code-block:: shell
 
    pip install cfdm --target <dir>
 

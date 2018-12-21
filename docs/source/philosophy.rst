@@ -39,6 +39,9 @@ package. Therefore it can't, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc.
 
+It has been designed to be :ref:`subclassable <subclassing>` so that
+gemeral analyses packages define their own field constructs that have
+extra functionality.
 
 **API**
 -------

@@ -47,10 +47,12 @@ help:
 
 
 html:
+	rm -f $(NOTEBOOK)
+	@echo "Removed old Jupyter notebook file: $(NOTEBOOK)"
+
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)
 
-	# Update the version numbers in the Jupyter notebook
-	@echo "Jupyter notebook file: $(NOTEBOOK)"  
+	@echo "Jupyter notebook file: $(NOTEBOOK)" 
 	sed 's/Version .* for version .* of the CF conventions./$(X)/' $(NOTEBOOK) > $(NOTEBOOK).tmp0
 	sed 's/ncas-cms.github.io\/cfdm\//&$(VERSION)\//g' $(NOTEBOOK).tmp0 > $(NOTEBOOK).tmp
 	rm $(NOTEBOOK).tmp0
@@ -58,6 +60,11 @@ html:
 
 	@echo
 	@echo "$(X)"
+
+#        # Update the version numbers in the Jupyter notebook#
+#	N="$(shell ./notebook_version $(BUILDDIR))"
+#	@echo "$(N)"
+
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)"
 
 dirhtml:

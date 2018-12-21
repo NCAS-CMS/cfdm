@@ -198,8 +198,8 @@ x.__str__() <==> str(x)
         #--- End: def
                           
         # Field ancillary variables
-        x = [_print_item(self, key, anc, self.get_construct_axes(cid=cid), False)
-             for key, anc in sorted(self.field_ancillaries().items())]
+        x = [_print_item(self, cid, anc, self.get_construct_axes(cid=cid), False)
+             for cid, anc in sorted(self.field_ancillaries().items())]
         if x:
             string.append('Field ancils    : {}'.format(
                 '\n                : '.join(x)))

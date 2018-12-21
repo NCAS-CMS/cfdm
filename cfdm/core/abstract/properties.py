@@ -250,8 +250,8 @@ None
 :Returns:
 
     out: `dict`
-        The properties prior to being changed, or the current
-        properties if no changes were specified.
+        The properties or, if the *properties* parameter was set, the
+        original properties.
 
 **Examples:**
 

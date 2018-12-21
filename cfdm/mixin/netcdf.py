@@ -847,29 +847,38 @@ set()
 
 
 class NetCDFExternal(NetCDF):
-    '''TODO
+    '''Mixin class for accessing the netCDF external variable status.
 
 .. versionadded:: 1.7.0
 
     '''
     def nc_external(self, *external):
-        '''TODO Whether the construct is external.
-
-The construct is assumed to be internal unless sepcifically set to be
-external with the `set_external` method.
+        '''Whether the construct correponds to an external netCDF variable.
 
 .. versionadded:: 1.7.0
+
+:Parameters:
+
+    external: `bool`, optional
+        Set the external status. If True then the construct will be
+        written to a netCDF extenal file, if specified during the
+        write process.
 
 :Returns:
 
     out: `bool`
-        TODO
+        The external status or, if the *external* parameter was set,
+        the original status.
 
 **Examples:**
 
-TODO
+>>> c.nc_external()
+False
+>>> c.nc_external(True)
+False
+>>> c.nc_external()
+True
 
->>> is_external = 'Yes' if c.nc_external() else 'No'
         '''
         old =  self._get_component('netcdf').get('external', False)
         if external:
@@ -877,6 +886,5 @@ TODO
 
         return old
     #--- End: def
-#primordial: Zeal & Ardor - Come On Down
 
 #--- End: class
