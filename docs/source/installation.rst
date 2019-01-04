@@ -41,29 +41,25 @@ To install cfdm and all of its dependencies, download
 
 .. code-block:: shell
 
+   # Install as root
    pip install -r requirements.txt
 
 .. code-block:: shell
 
+   # Install as user 
    pip install -r requirements.txt --user
-
-.. code-block:: shell
-
-   pip install -r requirements.txt --target <dir>
 
 To install cfdm without any of its dependencies then run, for example:
 
 .. code-block:: shell
 
+   # Install as root
    pip install cfdm
 
 .. code-block:: shell
 
+   # Install as user
    pip install cfdm --user
-
-.. code-block:: shell
-
-   pip install cfdm --target <dir>
 
 .. _conda:
 

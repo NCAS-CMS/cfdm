@@ -9,7 +9,7 @@
     <title>cfdm.Array &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.Array.get_array" href="../method/cfdm.Array.get_array.html" />
-    <link rel="prev" title="cfdm.NumpyArray.size" href="../attribute/cfdm.NumpyArray.size.html" />
+    <link rel="prev" title="cfdm.NumpyArray.__getitem__" href="../method/cfdm.NumpyArray.__getitem__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -50,7 +51,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Previous: <a href="../attribute/cfdm.NumpyArray.size.html" title="previous chapter">cfdm.NumpyArray.size</a></li>
+      <li>Previous: <a href="../method/cfdm.NumpyArray.__getitem__.html" title="previous chapter">cfdm.NumpyArray.__getitem__</a></li>
       <li>Next: <a href="../method/cfdm.Array.get_array.html" title="next chapter">cfdm.Array.get_array</a></li>
   </ul></li>
   </ul></li>
@@ -87,12 +88,15 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Array">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/data/abstract/array.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Array" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Array</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/data/abstract/array.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.abstract.array.Array</span></code></p>
 <p>Abstract base class for a container of an underlying array.</p>
-<p>The form of the array is arbitrary and is defined by the
-initialization parameters of a subclass of <a class="reference internal" href="#cfdm.Array" title="cfdm.Array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Array</span></code></a>.</p>
+<p>The form of the array is defined by the initialization parameters of a
+subclass.</p>
 <p>See <a class="reference internal" href="cfdm.NumpyArray.html#cfdm.NumpyArray" title="cfdm.NumpyArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.NumpyArray</span></code></a> for an example implementation.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -220,11 +224,11 @@ initialization parameters of a subclass of <a class="reference internal" href="#
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.Array.rst.txt"

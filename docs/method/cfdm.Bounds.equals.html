@@ -9,7 +9,7 @@
     <title>cfdm.Bounds.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -88,20 +89,21 @@
 <h1>cfdm.Bounds.equals<a class="headerlink" href="#cfdm-bounds-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Bounds.equals">
-<code class="descclassname">Bounds.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/mixin/propertiesdata.py#L188"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Bounds.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Bounds.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>traceback=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/mixin/propertiesdata.py#L179"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Bounds.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
-<li>the descriptive properties must be the same, and vector-valued
-properties must have same the size and be element-wise equal (see
-the <em>ignore_properties</em> parameter), and</li>
+<li>the same descriptive properties must be present, with the same
+values and data types, and vector-valued properties must also have
+same the size and be element-wise equal (see the <em>ignore_properties</em>
+and <em>ignore_data_type</em> parameters), and</li>
 </ul>
 <ul class="simple">
 <li>if there are data arrays then they must have same shape and data
 type, the same missing data mask, and be element-wise equal (see the
 <em>ignore_data_type</em> parameter).</li>
 </ul>
-<p>Two numerical elements <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
+<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|a-b|&lt;=atol+rtol|b|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
@@ -115,7 +117,7 @@ one. See the <em>ignore_type</em> parameter.</p>
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -145,7 +147,7 @@ inequality.</p>
 <dd><p class="first last">The names of properties to omit from the comparison.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then ignore the data types in all numerical data array
+<dd><p class="first last">If True then ignore the data types in all numerical
 comparisons. By default different numerical data types imply
 inequality, regardless of whether the elements are within the
 tolerance for equality.</p>
@@ -155,7 +157,7 @@ tolerance for equality.</p>
 is ignored and only the uncompressed arrays are tested for
 equality. By default the compression type and, if appliciable,
 the underlying compressed arrays must be the same, as well as
-the arrays in their uncompressed forms</p>
+the arrays in their uncompressed forms.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality is
@@ -168,7 +170,7 @@ possible for any object with a compatible API.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">TODO</p>
+<dd><p class="first last">Whether the two instances are equal.</p>
 </dd>
 </dl>
 </td>
@@ -195,11 +197,11 @@ possible for any object with a compatible API.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.Bounds.equals.rst.txt"

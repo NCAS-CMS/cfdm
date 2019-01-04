@@ -9,7 +9,7 @@
     <title>cfdm.DomainAxis.equals &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -88,20 +89,19 @@
 <h1>cfdm.DomainAxis.equals<a class="headerlink" href="#cfdm-domainaxis-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.DomainAxis.equals">
-<code class="descclassname">DomainAxis.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>traceback=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/domainaxis.py#L63"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAxis.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>traceback=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/domainaxis.py#L63"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.DomainAxis.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two domain axis constructs are the same.</p>
-<p>Equality is strict by default. This means that for two field domain
-axis constructs to be considered equal:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">*</span> <span class="n">the</span> <span class="n">axis</span> <span class="n">sizes</span> <span class="n">must</span> <span class="n">be</span> <span class="n">the</span> <span class="n">same</span><span class="o">.</span>
-</pre></div>
-</div>
+<p>Equality is strict by default. This means that:</p>
+<ul class="simple">
+<li>the axis sizes must be the same.</li>
+</ul>
 <p>Any type of object may be tested but, in general, equality is only
 possible with another domain axis construct, or a subclass of one. See
 the <em>ignore_type</em> parameter.</p>
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -118,7 +118,7 @@ inequality.</p>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality is
 only possible with another domain axis construct, or a
-subclass of one. If <em>ignore_type</em> is True then then
+subclass of one. If <em>ignore_type</em> is True then 
 <code class="docutils literal notranslate"><span class="pre">DomainAxis(source=other)</span></code> is tested, rather than the
 <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
 </dd>
@@ -161,11 +161,11 @@ subclass of one. If <em>ignore_type</em> is True then then
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.DomainAxis.equals.rst.txt"

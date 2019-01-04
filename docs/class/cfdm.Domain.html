@@ -9,7 +9,7 @@
     <title>cfdm.Domain &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -17,7 +17,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.Domain.array_constructs" href="../method/cfdm.Domain.array_constructs.html" />
     <link rel="prev" title="cfdm.FieldAncillary.__str__" href="../method/cfdm.FieldAncillary.__str__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -30,7 +29,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +42,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -51,7 +51,6 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
       <li>Previous: <a href="../method/cfdm.FieldAncillary.__str__.html" title="previous chapter">cfdm.FieldAncillary.__str__</a></li>
-      <li>Next: <a href="../method/cfdm.Domain.array_constructs.html" title="next chapter">cfdm.Domain.array_constructs</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -87,48 +86,20 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Domain">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Domain</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/domain.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Domain</code><span class="sig-paren">(</span><em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/domain.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.constructaccess.ConstructAccess</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.container.Container</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.domain.Domain</span></code></p>
-<p>A CF Domain construct.</p>
-<p>The domain is defined collectively by the following constructs, all of
-which are optional:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="29%" />
-<col width="71%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Construct</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>Domain axis</td>
-<td>Independent axes of the domain stored in
-<a class="reference internal" href="cfdm.DomainAxis.html#cfdm.DomainAxis" title="cfdm.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAxis</span></code></a> objects</td>
-</tr>
-<tr class="row-odd"><td>Dimension coordinate</td>
-<td>Domain cell locations stored in
-<a class="reference internal" href="cfdm.DimensionCoordinate.html#cfdm.DimensionCoordinate" title="cfdm.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DimensionCoordinate</span></code></a> objects</td>
-</tr>
-<tr class="row-even"><td>Auxiliary coordinate</td>
-<td>Domain cell locations stored in
-<a class="reference internal" href="cfdm.AuxiliaryCoordinate.html#cfdm.AuxiliaryCoordinate" title="cfdm.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AuxiliaryCoordinate</span></code></a> objects</td>
-</tr>
-<tr class="row-odd"><td>Coordinate reference</td>
-<td>Domain coordinate systems stored in
-<a class="reference internal" href="cfdm.CoordinateReference.html#cfdm.CoordinateReference" title="cfdm.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a> objects</td>
-</tr>
-<tr class="row-even"><td>Domain ancillary</td>
-<td>Cell locations in alternative coordinate systems
-stored in <a class="reference internal" href="cfdm.DomainAncillary.html#cfdm.DomainAncillary" title="cfdm.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a> objects</td>
-</tr>
-<tr class="row-odd"><td>Cell measure</td>
-<td>Domain cell size or shape stored in
-<a class="reference internal" href="cfdm.CellMeasure.html#cfdm.CellMeasure" title="cfdm.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a> objects</td>
-</tr>
-</tbody>
-</table>
+<p>A domain of the CF data model.</p>
+<p>The domain represents a set of discrete “locations” in what generally
+would be a multi-dimensional space, either in the real world or in a
+model’s simulated world. These locations correspond to individual data
+array elements of a field construct</p>
+<p>The domain is defined collectively by the following constructs of the
+CF data model: domain axis, dimension coordinate, auxiliary
+coordinate, cell measure, coordinate reference and domain ancillary
+constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -136,9 +107,9 @@ stored in <a class="reference internal" href="cfdm.DomainAncillary.html#cfdm.Dom
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>source: optional</dt>
-<dd><p class="first last">TODO
-Initialise the domain from the constructs of <em>source</em>,
-ignoring any cell method or field ancillary constructs.</p>
+<dd><p class="first">Initialize the metadata constructs from those of <em>source</em>.</p>
+<p class="last">A new domain may also be instantiated with the
+<a class="reference internal" href="../method/cfdm.Domain.fromconstructs.html#cfdm.Domain.fromconstructs" title="cfdm.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a> class method.</p>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
@@ -158,7 +129,7 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.array_constructs.html#cfdm.Domain.array_constructs" title="cfdm.Domain.array_constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array_constructs</span></code></a></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.array_constructs</span></code></td>
 <td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.auxiliary_coordinates.html#cfdm.Domain.auxiliary_coordinates" title="cfdm.Domain.auxiliary_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinates</span></code></a></td>
@@ -210,12 +181,12 @@ initialization. By default arguments are deep copied.</p>
 <td>TODO</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.fromconstructs.html#cfdm.Domain.fromconstructs" title="cfdm.Domain.fromconstructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromconstructs</span></code></a></td>
-<td>TODO</td>
+<td>Create a domain from existing metadata constructs.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Domain.get_construct.html#cfdm.Domain.get_construct" title="cfdm.Domain.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a></td>
 <td>Return a metadata construct.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.next</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Domain.next.html#cfdm.Domain.next" title="cfdm.Domain.next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next</span></code></a></td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Domain.set_auxiliary_coordinate</span></code></td>
@@ -262,11 +233,11 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.Domain.rst.txt"

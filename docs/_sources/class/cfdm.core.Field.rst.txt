@@ -22,12 +22,13 @@ Inspection
 
    ~cfdm.core.Field.constructs
    ~cfdm.core.Field.construct_axes
+   ~cfdm.core.Field.data_constructs
    ~cfdm.core.Field.get_array
    ~cfdm.core.Field.get_construct
    ~cfdm.core.Field.get_data
    ~cfdm.core.Field.get_domain
-   ~cfdm.core.Field.has_data
    ~cfdm.core.Field.get_property
+   ~cfdm.core.Field.has_data
    ~cfdm.core.Field.has_construct
    ~cfdm.core.Field.has_property
    ~cfdm.core.Field.properties

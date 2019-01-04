@@ -9,7 +9,7 @@
     <title>cfdm.CoordinateConversion &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -87,7 +88,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CoordinateConversion">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/coordinateconversion.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/coordinateconversion.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.parametersdomainancillaries.ParametersDomainAncillaries</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.coordinateconversion.CoordinateConversion</span></code></p>
 <p>A coordinate conversion component of a coordinate reference
 construct of the CF data model.</p>
@@ -101,7 +102,7 @@ construct (such as one containing spatially varying orography data). A
 coordinate reference construct relates the coordinate values of the
 field to locations in a planetary reference frame.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -186,7 +187,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.equals.html#cfdm.CoordinateConversion.equals" title="cfdm.CoordinateConversion.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>TODO True if two instances are equal, False otherwise.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 </tbody>
 </table>
@@ -200,14 +201,20 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__deepcopy__.html#cfdm.CoordinateConversion.__deepcopy__" title="cfdm.CoordinateConversion.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__bool__.html#cfdm.CoordinateConversion.__bool__" title="cfdm.CoordinateConversion.__bool__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__bool__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__deepcopy__.html#cfdm.CoordinateConversion.__deepcopy__" title="cfdm.CoordinateConversion.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__nonzero__.html#cfdm.CoordinateConversion.__nonzero__" title="cfdm.CoordinateConversion.__nonzero__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__nonzero__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__repr__.html#cfdm.CoordinateConversion.__repr__" title="cfdm.CoordinateConversion.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CoordinateConversion.__str__.html#cfdm.CoordinateConversion.__str__" title="cfdm.CoordinateConversion.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
-<td></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>
@@ -221,11 +228,11 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.CoordinateConversion.rst.txt"

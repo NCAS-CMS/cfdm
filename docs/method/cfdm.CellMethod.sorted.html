@@ -9,7 +9,7 @@
     <title>cfdm.CellMethod.sorted &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -88,37 +89,36 @@
 <h1>cfdm.CellMethod.sorted<a class="headerlink" href="#cfdm-cellmethod-sorted" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.CellMethod.sorted">
-<code class="descclassname">CellMethod.</code><code class="descname">sorted</code><span class="sig-paren">(</span><em>indices=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/cellmethod.py#L597"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.sorted" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a cell method with sorted domain axes.</p>
-<p>The domain axes are sorted by their internal identifiers and the
-intervals, if provided, are sorted accordingly.</p>
+<code class="descclassname">CellMethod.</code><code class="descname">sorted</code><span class="sig-paren">(</span><em>indices=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/cellmethod.py#L596"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod.sorted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new cell method construct with sorted axes.</p>
+<p>The axes are sorted by domain axis construct identifier or standard
+name, and any intervals are sorted accordingly.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>indices: ordered sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first last">Sort the somain axes with the given indices. By default the
-domain axes are sorted by their internal identifiers.</p>
+<dd><p class="first last">Sort the axes with the given indices. By default the axes are
+sorted by domain axis construct identifier or standard name.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference internal" href="../class/cfdm.CellMethod.html#cfdm.CellMethod" title="cfdm.CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMethod</span></code></a></dt>
-<dd><p class="first last">A new cell method object with sorted domain axes.</p>
+<dd><p class="first last">A new cell method construct with sorted axes.</p>
 </dd>
 </dl>
 </td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">CellMethod</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">,</span> <span class="s1">&#39;domainaxis0&#39;</span><span class="p">],</span>
-<span class="gp">... </span>                <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;intervals&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;km&#39;</span><span class="p">),</span> 
-<span class="gp">... </span>                                          <span class="n">Data</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;km&#39;</span><span class="p">)]})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CellMethod</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">,</span> <span class="s1">&#39;domainaxis0&#39;</span><span class="p">],</span>
+<p><strong>Examples:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CellMethod</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">,</span> <span class="s1">&#39;domainaxis0&#39;</span><span class="p">],</span>
 <span class="gp">... </span>                     <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                                 <span class="s1">&#39;intervals&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]})</span>
 <span class="gp">... </span>
@@ -126,6 +126,16 @@ domain axes are sorted by their internal identifiers.</p>
 <span class="go">&lt;CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span><span class="o">.</span><span class="n">sorted</span><span class="p">()</span>
 <span class="go">&lt;CellMethod: domainaxis0: domainaxis1: mean (interval: 2 interval: 1)&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">CellMethod</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;domainaxis0&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                     <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="s1">&#39;intervals&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]})</span>
+<span class="gp">... </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span>
+<span class="go">&lt;CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cm</span><span class="o">.</span><span class="n">sorted</span><span class="p">()</span>
+<span class="go">&lt;CellMethod: area: domainaxis0: mean (interval: 2 interval: 1)&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -139,11 +149,11 @@ domain axes are sorted by their internal identifiers.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.CellMethod.sorted.rst.txt"

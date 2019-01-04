@@ -7,9 +7,9 @@
 **Philosophy**
 ==============
 
-Version |release| for version |version| of the CF conventions.
-
 ----
+
+Version |release| for version |version| of the CF conventions.
 
 The basic requirement of the reference implementation is to represent
 the logical CF data model in memory with a package of Python classes,
@@ -23,11 +23,12 @@ includes no functionality beyond that mandated by the CF data
 model. This core implementation provides the basis for an extended
 implementation, the cfdm package, that allows the reading and writing
 of netCDF datasets, as well as having comprehensive inspection
-capabilities, and some more sophisticated field modification
-capabilities.
+capabilities, and some more sophisticated field modification methods.
 
 **Functionality**
 -----------------
+
+----
 
 The cfdm package has, with very few exceptions, only the functionality
 required to read and write datasets, and to create and inspect field
@@ -38,9 +39,14 @@ package. Therefore it can't, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
 arithmetically, etc.
 
+It has been designed to be :ref:`subclassable <subclassing>` so that
+gemeral analyses packages define their own field constructs that have
+extra functionality.
 
 **API**
 -------
+
+----
 
 The design of the pplication programming interface (API) needs to
 strike a balance between being verbose and terse. A verbose API is

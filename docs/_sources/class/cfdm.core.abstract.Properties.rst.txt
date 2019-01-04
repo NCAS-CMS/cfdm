@@ -1,29 +1,65 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.abstract.Properties
 =============================
 
-.. currentmodule:: cfdm.core.abstract
+----
 
-.. autoclass:: Properties
+.. autoclass:: cfdm.core.abstract.Properties
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
-   
-      ~Properties.__init__
-      ~Properties.copy
-      ~Properties.del_property
-      ~Properties.get_property
-      ~Properties.has_property
-      ~Properties.next
-      ~Properties.properties
-      ~Properties.set_property
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+      
+   ~cfdm.core.abstract.Properties.get_property
+   ~cfdm.core.abstract.Properties.has_property
+   ~cfdm.core.abstract.Properties.properties
    
    
+Modification
+------------
 
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Properties.del_property
+   ~cfdm.core.abstract.Properties.properties
+   ~cfdm.core.abstract.Properties.set_property
    
    
-   
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Properties.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Properties.__deepcopy__

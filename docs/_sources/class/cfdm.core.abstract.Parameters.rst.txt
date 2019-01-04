@@ -1,28 +1,63 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.abstract.Parameters
 =============================
 
-.. currentmodule:: cfdm.core.abstract
+----
 
-.. autoclass:: Parameters
+.. autoclass:: cfdm.core.abstract.Parameters
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   .. autosummary::
+   ~cfdm.core.abstract.Parameters.get_parameter
+   ~cfdm.core.abstract.Parameters.parameters
+  
    
-      ~Parameters.__init__
-      ~Parameters.copy
-      ~Parameters.del_parameter
-      ~Parameters.get_parameter
-      ~Parameters.next
-      ~Parameters.parameters
-      ~Parameters.set_parameter
-   
-   
+Modification
+------------
 
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Parameters.del_parameter
+   ~cfdm.core.abstract.Parameters.set_parameter
+   ~cfdm.core.abstract.Parameters.parameters
    
-   
-   
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Parameters.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Parameters.__deepcopy__

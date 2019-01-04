@@ -9,7 +9,7 @@
     <title>cfdm.Count &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -87,10 +88,52 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.Count">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Count</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/count.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">Count</code><span class="sig-paren">(</span><em>properties={}</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/count.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFSampleDimension</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.propertiesdata.PropertiesData</span></code></p>
 <p>A count variable required to uncompress a ragged array.</p>
-<p>TODO</p>
+<p>A collection of features stored using a contiguous ragged array
+combines all features along a single dimension (the sample dimension)
+such that each feature in the collection occupies a contiguous block.</p>
+<p>The information needed to uncompress the data is stored in a count
+variable that gives the size of each block.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+<p><strong>Initialization</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first">Set descriptive properties. The dictionary keys are property
+names, with corresponding values. Ignored if the <em>source</em>
+parameter is set.</p>
+<dl class="docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'number</span> <span class="pre">of</span> <span class="pre">obs</span> <span class="pre">for</span> <span class="pre">this</span> <span class="pre">station'}</span></code></p>
+</dd>
+</dl>
+<p class="last">Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.Count.properties.html#cfdm.Count.properties" title="cfdm.Count.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> and <a class="reference internal" href="../method/cfdm.Count.set_property.html#cfdm.Count.set_property" title="cfdm.Count.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+</dd>
+<dt>data: <a class="reference internal" href="cfdm.Data.html#cfdm.Data" title="cfdm.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
+<p class="last">The data array may also be set after initialisation with the
+<a class="reference internal" href="../method/cfdm.Count.set_data.html#cfdm.Count.set_data" title="cfdm.Count.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt>
+<dd><p class="first last">Initialize the properties and data from those of <em>source</em>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <div class="section" id="inspection">
@@ -103,7 +146,7 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Count.dump.html#cfdm.Count.dump" title="cfdm.Count.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
-<td>TODO</td>
+<td>A full description of the count variable.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Count.get_array.html#cfdm.Count.get_array" title="cfdm.Count.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array the data.</td>
@@ -271,16 +314,16 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Count.nc_del_sample_dimension.html#cfdm.Count.nc_del_sample_dimension" title="cfdm.Count.nc_del_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></a></td>
-<td>TODO</td>
+<td>Remove the netCDF sample dimension name.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Count.nc_get_sample_dimension.html#cfdm.Count.nc_get_sample_dimension" title="cfdm.Count.nc_get_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></a></td>
-<td>ttttttttt TODO</td>
+<td>Return the netCDF sample dimension name.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Count.nc_has_sample_dimension.html#cfdm.Count.nc_has_sample_dimension" title="cfdm.Count.nc_has_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></a></td>
-<td>TODO</td>
+<td>Whether the netCDF sample dimension name has been set.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.Count.nc_set_sample_dimension.html#cfdm.Count.nc_set_sample_dimension" title="cfdm.Count.nc_set_sample_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></a></td>
-<td>TODO</td>
+<td>Set the netCDF sample dimension name.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.Count.nc_del_variable.html#cfdm.Count.nc_del_variable" title="cfdm.Count.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
 <td>Remove the netCDF variable name.</td>
@@ -330,11 +373,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.Count.rst.txt"

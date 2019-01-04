@@ -1,32 +1,67 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.abstract.ParametersDomainAncillaries
 ==============================================
 
-.. currentmodule:: cfdm.core.abstract
+----
 
-.. autoclass:: ParametersDomainAncillaries
+.. autoclass:: cfdm.core.abstract.ParametersDomainAncillaries
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   .. autosummary::
+   ~cfdm.core.abstract.ParametersDomainAncillaries.get_parameter
+   ~cfdm.core.abstract.ParametersDomainAncillaries.parameters
+   ~cfdm.core.abstract.ParametersDomainAncillaries.get_domain_ancillary
+   ~cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries
    
-      ~ParametersDomainAncillaries.__init__
-      ~ParametersDomainAncillaries.copy
-      ~ParametersDomainAncillaries.del_domain_ancillary
-      ~ParametersDomainAncillaries.del_parameter
-      ~ParametersDomainAncillaries.domain_ancillaries
-      ~ParametersDomainAncillaries.get_domain_ancillary
-      ~ParametersDomainAncillaries.get_parameter
-      ~ParametersDomainAncillaries.next
-      ~ParametersDomainAncillaries.parameters
-      ~ParametersDomainAncillaries.set_domain_ancillary
-      ~ParametersDomainAncillaries.set_parameter
-   
-   
+Modification
+------------
 
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.ParametersDomainAncillaries.del_parameter
+   ~cfdm.core.abstract.ParametersDomainAncillaries.set_parameter
+   ~cfdm.core.abstract.ParametersDomainAncillaries.parameters
+   ~cfdm.core.abstract.ParametersDomainAncillaries.del_domain_ancillary
+   ~cfdm.core.abstract.ParametersDomainAncillaries.set_domain_ancillary
+   ~cfdm.core.abstract.ParametersDomainAncillaries.domain_ancillaries
    
-   
-   
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.ParametersDomainAncillaries.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.ParametersDomainAncillaries.__deepcopy__

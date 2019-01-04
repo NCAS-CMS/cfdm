@@ -9,7 +9,7 @@
     <title>cfdm.CellMeasure &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -87,7 +88,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CellMeasure">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFVariable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.netcdf.NetCDFExternal</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about the
@@ -105,6 +106,9 @@ with the measure, e.g. square metres. It is assumed that the metric
 does not depend on axes of the domain which are not spanned by the
 array, along which the values are implicitly propagated. CF-netCDF
 cell measure variables correspond to cell measure constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
 <p><strong>Initialisation</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -176,10 +180,10 @@ initialization. By default arguments are deep copied.</p>
 <td>Whether a data has been set.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_measure.html#cfdm.CellMeasure.has_measure" title="cfdm.CellMeasure.has_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_measure</span></code></a></td>
-<td>TODO</td>
+<td>Whether the measure has been set.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_measure.html#cfdm.CellMeasure.get_measure" title="cfdm.CellMeasure.get_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></a></td>
-<td>TODO</td>
+<td>Return the measure.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_property.html#cfdm.CellMeasure.get_property" title="cfdm.CellMeasure.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
@@ -188,7 +192,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Whether a property has been set.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.name.html#cfdm.CellMeasure.name" title="cfdm.CellMeasure.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
-<td>Return a name for the cell measure.</td>
+<td>Return a name for the cell measure construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.properties.html#cfdm.CellMeasure.properties" title="cfdm.CellMeasure.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
@@ -227,13 +231,13 @@ initialization. By default arguments are deep copied.</p>
 <td>Remove a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_measure.html#cfdm.CellMeasure.get_measure" title="cfdm.CellMeasure.get_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measure</span></code></a></td>
-<td>TODO</td>
+<td>Return the measure.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.get_property.html#cfdm.CellMeasure.get_property" title="cfdm.CellMeasure.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
 <td>Return a property.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_measure.html#cfdm.CellMeasure.has_measure" title="cfdm.CellMeasure.has_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_measure</span></code></a></td>
-<td>TODO</td>
+<td>Whether the measure has been set.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.has_property.html#cfdm.CellMeasure.has_property" title="cfdm.CellMeasure.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
@@ -242,7 +246,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return or replace all properties.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a></td>
-<td>TODO</td>
+<td>Set the measure.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_property.html#cfdm.CellMeasure.set_property" title="cfdm.CellMeasure.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
@@ -314,7 +318,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return or replace all properties.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_measure.html#cfdm.CellMeasure.set_measure" title="cfdm.CellMeasure.set_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_measure</span></code></a></td>
-<td>TODO</td>
+<td>Set the measure.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.set_data.html#cfdm.CellMeasure.set_data" title="cfdm.CellMeasure.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
 <td>Set the data.</td>
@@ -370,6 +374,9 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMeasure.nc_set_variable.html#cfdm.CellMeasure.nc_set_variable" title="cfdm.CellMeasure.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
 <td>Set the netCDF variable name.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMeasure.nc_external.html#cfdm.CellMeasure.nc_external" title="cfdm.CellMeasure.nc_external"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_external</span></code></a></td>
+<td>Whether the construct correponds to an external netCDF variable.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -406,11 +413,11 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.CellMeasure.rst.txt"

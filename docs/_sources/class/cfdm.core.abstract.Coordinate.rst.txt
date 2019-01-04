@@ -1,53 +1,113 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.abstract.Coordinate
 =============================
 
-.. currentmodule:: cfdm.core.abstract
+----
 
-.. autoclass:: Coordinate
-
-   
-   .. automethod:: __init__
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-   
-      ~Coordinate.__init__
-      ~Coordinate.copy
-      ~Coordinate.del_bounds
-      ~Coordinate.del_data
-      ~Coordinate.del_geometry
-      ~Coordinate.del_property
-      ~Coordinate.get_array
-      ~Coordinate.get_bounds
-      ~Coordinate.get_data
-      ~Coordinate.get_geometry
-      ~Coordinate.get_interior_ring
-      ~Coordinate.get_property
-      ~Coordinate.has_bounds
-      ~Coordinate.has_data
-      ~Coordinate.has_geometry
-      ~Coordinate.has_interior_ring
-      ~Coordinate.has_property
-      ~Coordinate.next
-      ~Coordinate.properties
-      ~Coordinate.set_bounds
-      ~Coordinate.set_data
-      ~Coordinate.set_geometry
-      ~Coordinate.set_interior_ring
-      ~Coordinate.set_property
-   
-   
+.. autoclass:: cfdm.core.abstract.Coordinate
+   :no-members:
+   :no-inherited-members:
 
    
-   
-   .. rubric:: Attributes
+Inspection
+----------
 
-   .. autosummary::
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+      
+   ~cfdm.core.abstract.Coordinate.get_property
+   ~cfdm.core.abstract.Coordinate.has_property
+   ~cfdm.core.abstract.Coordinate.properties
+   ~cfdm.core.abstract.Coordinate.get_array
+   ~cfdm.core.abstract.Coordinate.get_data
+   ~cfdm.core.abstract.Coordinate.has_data
+   ~cfdm.core.abstract.Coordinate.get_bounds
+   ~cfdm.core.abstract.Coordinate.has_bounds
    
-      ~Coordinate.bounds
-      ~Coordinate.data
-      ~Coordinate.interior_ring
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.abstract.Coordinate.data
+   ~cfdm.core.abstract.Coordinate.bounds
+
+Data
+----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Coordinate.get_array
+   ~cfdm.core.abstract.Coordinate.del_data
+   ~cfdm.core.abstract.Coordinate.get_data
+   ~cfdm.core.abstract.Coordinate.has_data
+   ~cfdm.core.abstract.Coordinate.set_data
+   ~cfdm.core.abstract.Coordinate.del_bounds
+   ~cfdm.core.abstract.Coordinate.get_bounds
+   ~cfdm.core.abstract.Coordinate.has_bounds
+   ~cfdm.core.abstract.Coordinate.set_bounds
    
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.abstract.Coordinate.data
+   ~cfdm.core.abstract.Coordinate.bounds
+   
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Coordinate.del_property
+   ~cfdm.core.abstract.Coordinate.set_property
+   ~cfdm.core.abstract.Coordinate.properties
+   ~cfdm.core.abstract.Coordinate.del_data
+   ~cfdm.core.abstract.Coordinate.set_data
+   ~cfdm.core.abstract.Coordinate.del_bounds
+   ~cfdm.core.abstract.Coordinate.set_bounds
+      
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Coordinate.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.Coordinate.__deepcopy__

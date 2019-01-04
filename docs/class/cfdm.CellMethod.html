@@ -9,7 +9,7 @@
     <title>cfdm.CellMethod &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -87,7 +88,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.CellMethod">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/cellmethod.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>properties=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/cellmethod.py#L10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.CellMethod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.mixin.properties.Properties</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.cellmethod.CellMethod</span></code></p>
 <p>A cell method construct of the CF data model.</p>
 <p>One or more cell method constructs describe how the cell values of the
@@ -102,7 +103,7 @@ properties serving to indicate more precisely how the method was
 applied (e.g. recording the spacing of the original data, or the fact
 that the method was applied only over El Nino years).</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <p><strong>Initialisation</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -194,13 +195,16 @@ initialization By default parameters are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMethod.has_property.html#cfdm.CellMethod.has_property" title="cfdm.CellMethod.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
 <td>Whether a property has been set.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMethod.properties.html#cfdm.CellMethod.properties" title="cfdm.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMethod.name.html#cfdm.CellMethod.name" title="cfdm.CellMethod.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></td>
+<td>Return a name for the cell method construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMethod.properties.html#cfdm.CellMethod.properties" title="cfdm.CellMethod.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
 <td>Return or replace all properties.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMethod.set_axes.html#cfdm.CellMethod.set_axes" title="cfdm.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMethod.set_axes.html#cfdm.CellMethod.set_axes" title="cfdm.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a></td>
 <td>Set the axes of the cell method.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMethod.set_property.html#cfdm.CellMethod.set_property" title="cfdm.CellMethod.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.CellMethod.set_property.html#cfdm.CellMethod.set_property" title="cfdm.CellMethod.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
 <td>Set a property.</td>
 </tr>
 </tbody>
@@ -243,7 +247,7 @@ initialization By default parameters are deep copied.</p>
 <td>Set a property.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cfdm.CellMethod.sorted.html#cfdm.CellMethod.sorted" title="cfdm.CellMethod.sorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sorted</span></code></a></td>
-<td>Return a cell method with sorted domain axes.</td>
+<td>Return a new cell method construct with sorted axes.</td>
 </tr>
 </tbody>
 </table>
@@ -296,11 +300,11 @@ initialization By default parameters are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.CellMethod.rst.txt"

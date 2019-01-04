@@ -9,7 +9,7 @@
     <title>cfdm.core.Field.has_construct &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.Field.has_property" href="cfdm.core.Field.has_property.html" />
-    <link rel="prev" title="cfdm.core.Field.get_property" href="cfdm.core.Field.get_property.html" />
+    <link rel="prev" title="cfdm.core.Field.has_data" href="cfdm.core.Field.has_data.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -51,7 +52,7 @@
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
   <li><a href="../class/cfdm.core.Field.html">cfdm.core.Field</a><ul>
-      <li>Previous: <a href="cfdm.core.Field.get_property.html" title="previous chapter">cfdm.core.Field.get_property</a></li>
+      <li>Previous: <a href="cfdm.core.Field.has_data.html" title="previous chapter">cfdm.core.Field.has_data</a></li>
       <li>Next: <a href="cfdm.core.Field.has_property.html" title="next chapter">cfdm.core.Field.has_property</a></li>
   </ul></li>
   </ul></li>
@@ -88,10 +89,15 @@
 <h1>cfdm.core.Field.has_construct<a class="headerlink" href="#cfdm-core-field-has-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.core.Field.has_construct">
-<code class="descclassname">Field.</code><code class="descname">has_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/mixin/constructaccess.py#L206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.has_construct" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether a construct exisits.</p>
+<code class="descclassname">Field.</code><code class="descname">has_construct</code><span class="sig-paren">(</span><em>cid</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/mixin/constructaccess.py#L313"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.Field.has_construct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether a construct exists.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cfdm.core.Field.constructs.html#cfdm.core.Field.constructs" title="cfdm.core.Field.constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constructs</span></code></a>, <a class="reference internal" href="cfdm.core.Field.del_construct.html#cfdm.core.Field.del_construct" title="cfdm.core.Field.del_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_construct</span></code></a>, <a class="reference internal" href="cfdm.core.Field.get_construct.html#cfdm.core.Field.get_construct" title="cfdm.core.Field.get_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_construct</span></code></a>,
+<a class="reference internal" href="cfdm.core.Field.set_construct.html#cfdm.core.Field.set_construct" title="cfdm.core.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -99,14 +105,19 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>cid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">TODO</p>
+<dd><p class="first">The identifier of the metadata construct.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cid='cellmeasure1'</span></code></p>
+</dd>
+</dl>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">True if the construct exists, otherwise False.</p>
+<dd><p class="first last">True if the metadata construct exists, otherwise False.</p>
 </dd>
 </dl>
 </td>
@@ -114,7 +125,21 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">()</span>
+<span class="go">{&#39;auxiliarycoordinate0&#39;: &lt;AuxiliaryCoordinate: latitude(10, 9) degree_N&gt;,</span>
+<span class="go"> &#39;auxiliarycoordinate1&#39;: &lt;AuxiliaryCoordinate: longitude(9, 10) degreeE&gt;,</span>
+<span class="go"> &#39;auxiliarycoordinate2&#39;: &lt;AuxiliaryCoordinate: long_name:greek_letters(10) &gt;,</span>
+<span class="go"> &#39;coordinatereference1&#39;: &lt;CoordinateReference: rotated_latitude_longitude&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate1&#39;: &lt;DimensionCoordinate: grid_latitude(10) degrees&gt;,</span>
+<span class="go"> &#39;dimensioncoordinate2&#39;: &lt;DimensionCoordinate: grid_longitude(9) degrees&gt;,</span>
+<span class="go"> &#39;domainaxis1&#39;: &lt;DomainAxis: 10&gt;,</span>
+<span class="go"> &#39;domainaxis2&#39;: &lt;DomainAxis: 9&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;dimensioncoordinate1&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">has_construct</span><span class="p">(</span><span class="s1">&#39;domainaxis99&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -126,11 +151,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.core.Field.has_construct.rst.txt"

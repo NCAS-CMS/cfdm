@@ -11,4 +11,4 @@
 
 ----
 
-`Version 1.7.0 <https://ncas-cms.github.io/cfdm/1.7.0>`_
+`Version 1.7.0b8 <https://ncas-cms.github.io/cfdm/1.7.0b8>`_

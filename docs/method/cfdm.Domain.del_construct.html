@@ -9,7 +9,7 @@
     <title>cfdm.Domain.del_construct &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -88,14 +89,14 @@
 <h1>cfdm.Domain.del_construct<a class="headerlink" href="#cfdm-domain-del-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Domain.del_construct">
-<code class="descclassname">Domain.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/mixin/constructaccess.py#L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.del_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Domain.</code><code class="descname">del_construct</code><span class="sig-paren">(</span><em>description=None</em>, <em>cid=None</em>, <em>axes=None</em>, <em>construct_type=None</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/domain.py#L195"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Domain.del_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a metadata construct.</p>
 <p>The construct is identified via optional parameters. The <em>unique</em>
-construct that satisfies <em>all</em> of the given criteria is removed. An
-error is raised if multiple constructs satisfy all of the given
-criteria.</p>
+construct that satisfies <em>all</em> of the given criteria is removed.</p>
+<p>If a domain axis construct is to be removed then it can’t be spanned
+by any data arrays.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -113,27 +114,24 @@ attribute, value.</p>
 <p>The description may be one of:</p>
 <ul class="last">
 <li><p class="first">The value of the standard name property on its own.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs
-that have a “standard_name” property with the value
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='air_pressure'</span></code> will select constructs that
+have a “standard_name” property with the value
 “air_pressure”.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">The value of any property prefixed by the property name and
 a colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>).</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs
-that have a “positive” property with the value “up”.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='positive:up'</span></code> will select constructs that
+have a “positive” property with the value “up”.</p>
 </dd>
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that
-have a “foo” property with the value “bar”.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='foo:bar'</span></code> will select constructs that have
+a “foo” property with the value “bar”.</p>
 </dd>
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='standard_name:air_pressure'</span></code> will select
@@ -141,52 +139,46 @@ constructs that have a “standard_name” property with the
 value “air_pressure”.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">The measure of cell measure constructs, prefixed by
 <code class="docutils literal notranslate"><span class="pre">measure%</span></code>.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='measure%area'</span></code> will select “area” cell
 measure constructs.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">A construct identifier, prefixed by <code class="docutils literal notranslate"><span class="pre">cid%</span></code> (see also the
 <em>cid</em> parameter).</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em> </dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%cellmethod1'</span></code> will select cell
-method construct with construct identifier
-“cellmethod1”. This is equivalent to
-<code class="docutils literal notranslate"><span class="pre">cid='cellmethod1'</span></code>.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='cid%domainancillary1'</span></code> will select domain
+ancillary construct with construct identifier
+“domainancillary1”. This is equivalent to
+<code class="docutils literal notranslate"><span class="pre">cid='domainancillary1'</span></code>.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 <li><p class="first">The netCDF variable name, prefixed by <code class="docutils literal notranslate"><span class="pre">ncvar%</span></code>.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with
-netCDF variable name “lat”.</p>
+<dd><dl class="first last docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">description='ncvar%lat'</span></code> will select constructs with</dt>
+<dd><p class="first last">netCDF variable name “lat”.</p>
 </dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 </li>
 <li><p class="first">The netCDF dimension name of domain axis constructs,
 prefixed by <code class="docutils literal notranslate"><span class="pre">ncdim%</span></code>.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">description='ncdim%time'</span></code> will select domain axis
 constructs with netCDF dimension name “time”.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 </ul>
 </dd>
@@ -232,16 +224,10 @@ is equivalent to <code class="docutils literal notranslate"><span class="pre">de
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'coordinate_reference'</span></code></td>
 <td>Coordinate reference constructs</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'cell_method'</span></code></td>
-<td>Cell method constructs</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'field_ancillary'</span></code></td>
-<td>Field ancillary constructs</td>
-</tr>
 </tbody>
 </table>
 </div></blockquote>
-<dl class="docutils">
+<dl class="last docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type='dimension_coordinate'</span></code></p>
 </dd>
@@ -249,11 +235,9 @@ is equivalent to <code class="docutils literal notranslate"><span class="pre">de
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=['auxiliary_coordinate']</span></code></p>
 </dd>
 <dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=('domain_ancillary',</span> <span class="pre">'cell_method')</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">construct_type=('domain_ancillary',</span> <span class="pre">'cell_measure')</span></code></p>
 </dd>
 </dl>
-<p class="last">Note that a domain never contains cell method nor field
-ancillary constructs.</p>
 </dd>
 <dt>axes: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Select constructs which have data that spans one or more of
@@ -265,6 +249,15 @@ by their construct identifiers.</p>
 </dd>
 <dt><em>Example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=['domainaxis0',</span> <span class="pre">'domainaxis1']</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>default: optional</dt>
+<dd><p class="first">Return <em>default</em> if no metadata construct can be found. By
+default an exception is raised in this case.</p>
+<dl class="last docutils">
+<dt><em>Example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">default=None</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -301,11 +294,11 @@ by their construct identifiers.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.Domain.del_construct.rst.txt"

@@ -10,6 +10,9 @@ cfdm.NumpyArray
    :no-members:
    :no-inherited-members:
 
+Inspection
+----------
+
 .. rubric:: Methods
 
 .. autosummary::
@@ -17,13 +20,13 @@ cfdm.NumpyArray
    :toctree: ../method/
    :template: method.rst
    
-   ~NumpyArray.copy
-   ~NumpyArray.get_array
-   ~NumpyArray.get_compressed_array
-   ~NumpyArray.get_compressed_axes
-   ~NumpyArray.get_compression_type
-   ~NumpyArray.get_sample_axis
-   ~NumpyArray.get_subspace
+
+   ~cfdm.NumpyArray.get_array
+   ~cfdm.NumpyArray.get_compressed_array
+   ~cfdm.NumpyArray.get_compressed_axes
+   ~cfdm.NumpyArray.get_compression_type
+   ~cfdm.NumpyArray.get_sample_axis
+   ~cfdm.NumpyArray.get_subspace
    
 .. rubric:: Attributes
 
@@ -32,9 +35,27 @@ cfdm.NumpyArray
    :toctree: ../attribute/
    :template: attribute.rst
    
-   ~NumpyArray.dtype
-   ~NumpyArray.ndim
-   ~NumpyArray.shape
-   ~NumpyArray.size
+   ~cfdm.NumpyArray.dtype
+   ~cfdm.NumpyArray.ndim
+   ~cfdm.NumpyArray.shape
+   ~cfdm.NumpyArray.size
    
+Miscellaneous
+-------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
+   ~cfdm.NumpyArray.copy
+   
+Special
+-------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cfdm.NumpyArray.__getitem__

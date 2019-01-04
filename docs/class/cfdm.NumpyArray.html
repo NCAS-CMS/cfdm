@@ -9,7 +9,7 @@
     <title>cfdm.NumpyArray &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -17,7 +17,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.NumpyArray.copy" href="../method/cfdm.NumpyArray.copy.html" />
+    <link rel="next" title="cfdm.NumpyArray.get_array" href="../method/cfdm.NumpyArray.get_array.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -29,7 +29,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -42,6 +42,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -49,7 +50,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class.html"><strong>cfdm classes</strong></a><ul>
-      <li>Next: <a href="../method/cfdm.NumpyArray.copy.html" title="next chapter">cfdm.NumpyArray.copy</a></li>
+      <li>Next: <a href="../method/cfdm.NumpyArray.get_array.html" title="next chapter">cfdm.NumpyArray.get_array</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -85,7 +86,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.NumpyArray">
-<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">NumpyArray</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/data/numpyarray.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NumpyArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.</code><code class="descname">NumpyArray</code><span class="sig-paren">(</span><em>array=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/data/numpyarray.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.NumpyArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.abstract.array.Array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.data.numpyarray.NumpyArray</span></code></p>
 <p>An underlying numpy array.</p>
 <p><strong>Initialization</strong></p>
@@ -104,6 +105,8 @@
 </table>
 </dd></dl>
 
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -111,25 +114,22 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.copy.html#cfdm.NumpyArray.copy" title="cfdm.NumpyArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
-<td>Return a deep copy of the array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_array.html#cfdm.NumpyArray.get_array" title="cfdm.NumpyArray.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_array.html#cfdm.NumpyArray.get_array" title="cfdm.NumpyArray.get_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_array</span></code></a></td>
 <td>Return an independent numpy array containing the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compressed_array.html#cfdm.NumpyArray.get_compressed_array" title="cfdm.NumpyArray.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compressed_array.html#cfdm.NumpyArray.get_compressed_array" title="cfdm.NumpyArray.get_compressed_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_array</span></code></a></td>
 <td>Return an independent numpy array containing of the underlying compressed array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compressed_axes.html#cfdm.NumpyArray.get_compressed_axes" title="cfdm.NumpyArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compressed_axes.html#cfdm.NumpyArray.get_compressed_axes" title="cfdm.NumpyArray.get_compressed_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compressed_axes</span></code></a></td>
 <td>Return axes that are compressed in the underlying array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compression_type.html#cfdm.NumpyArray.get_compression_type" title="cfdm.NumpyArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_compression_type.html#cfdm.NumpyArray.get_compression_type" title="cfdm.NumpyArray.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a></td>
 <td>The type of compression that has been applied to the underlying array.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumpyArray.get_sample_axis</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.NumpyArray.get_sample_axis</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_subspace.html#cfdm.NumpyArray.get_subspace" title="cfdm.NumpyArray.get_subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subspace</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.NumpyArray.get_subspace.html#cfdm.NumpyArray.get_subspace" title="cfdm.NumpyArray.get_subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subspace</span></code></a></td>
 <td>Return a subspace, defined by indices, of a numpy array.</td>
 </tr>
 </tbody>
@@ -156,6 +156,35 @@
 </tbody>
 </table>
 </div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.copy.html#cfdm.NumpyArray.copy" title="cfdm.NumpyArray.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy of the array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.NumpyArray.__getitem__.html#cfdm.NumpyArray.__getitem__" title="cfdm.NumpyArray.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
+<td>x.__getitem__(indices) &lt;==&gt; x[indices]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 
 
           </div>
@@ -164,11 +193,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.NumpyArray.rst.txt"

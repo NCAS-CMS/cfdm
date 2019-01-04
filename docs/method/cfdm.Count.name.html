@@ -9,7 +9,7 @@
     <title>cfdm.Count.name &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -88,7 +89,7 @@
 <h1>cfdm.Count.name<a class="headerlink" href="#cfdm-count-name" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Count.name">
-<code class="descclassname">Count.</code><code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncvar=True</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/mixin/propertiesdata.py#L432"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.name" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Count.</code><code class="descname">name</code><span class="sig-paren">(</span><em>default=None</em>, <em>ncvar=True</em>, <em>custom=None</em>, <em>all_names=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/mixin/propertiesdata.py#L417"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Count.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a name.</p>
 <p>By default the name is the first found of the following:</p>
 <ol class="arabic simple">
@@ -99,7 +100,7 @@
 <li>The value of the <em>default</em> parameter.</li>
 </ol>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -107,8 +108,9 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>default: optional</dt>
-<dd><p class="first last">If no name can be found then return the value of the <em>default</em>
-parameter. By default the default is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dd><p class="first last">If no other name can be found then return the value of the
+<em>default</em> parameter. By default <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned in this
+case.</p>
 </dd>
 <dt>ncvar: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not consider the netCDF variable name.</p>
@@ -117,8 +119,8 @@ parameter. By default the default is <a class="reference external" href="https:/
 <dd><p class="first last">If True then return a list of all possible names.</p>
 </dd>
 <dt>custom: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Replace the ordered list of properties from which to find a
-name. The default list is <code class="docutils literal notranslate"><span class="pre">['standard_name',</span> <span class="pre">'cf_role',</span>
+<dd><p class="first">Replace the ordered list of properties from which to seatch
+for a name. The default list is <code class="docutils literal notranslate"><span class="pre">['standard_name',</span> <span class="pre">'cf_role',</span>
 <span class="pre">'long_name']</span></code>.</p>
 <dl class="last docutils">
 <dt><em>Example:</em></dt>
@@ -134,7 +136,7 @@ name. The default list is <code class="docutils literal notranslate"><span class
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out:</dt>
-<dd><p class="first last">The name. If the <em>all_names</em> parameters is True then a list of
+<dd><p class="first last">The name. If the <em>all_names</em> parameter is True then a list of
 all possible names.</p>
 </dd>
 </dl>
@@ -176,11 +178,11 @@ all possible names.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.Count.name.rst.txt"

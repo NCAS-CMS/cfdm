@@ -9,7 +9,7 @@
     <title>cfdm.Field.nc_unlimited_dimensions &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -88,16 +89,16 @@
 <h1>cfdm.Field.nc_unlimited_dimensions<a class="headerlink" href="#cfdm-field-nc-unlimited-dimensions" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cfdm.Field.nc_unlimited_dimensions">
-<code class="descclassname">Field.</code><code class="descname">nc_unlimited_dimensions</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/mixin/netcdf.py#L508"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.nc_unlimited_dimensions" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">nc_unlimited_dimensions</code><span class="sig-paren">(</span><em>axes=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/mixin/netcdf.py#L796"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.Field.nc_unlimited_dimensions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return or replace the selection of domain axis constructs to be
 written as netCDF unlimited dimensions.</p>
 <p>By default output netCDF dimensions are not unlimited.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a></p>
+<p class="last"><a class="reference internal" href="../function/cfdm.write.html#cfdm.write" title="cfdm.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code></a>, <a class="reference internal" href="cfdm.Field.nc_global_attributes.html#cfdm.Field.nc_global_attributes" title="cfdm.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -122,8 +123,9 @@ constructs are identified by their construct identifiers.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt>out: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a></dt>
-<dd><p class="first last">The selection of properties prior to being changed, or the
-current selection if no changes were specified.</p>
+<dd><p class="first last">The selection of domain axis construct identifiers prior to
+being changed, or the current selection if no changes were
+specified.</p>
 </dd>
 </dl>
 </td>
@@ -135,7 +137,7 @@ current selection if no changes were specified.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_unlimited_dimensions</span><span class="p">()</span>
 <span class="go">{&#39;domainaxis1&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_unlimited_dimensions</span><span class="p">([])</span>
-<span class="go">{[&#39;domainaxis1&#39;}</span>
+<span class="go">{&#39;domainaxis1&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_unlimited_dimensions</span><span class="p">()</span>
 <span class="go">set()</span>
 </pre></div>
@@ -151,11 +153,11 @@ current selection if no changes were specified.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/method/cfdm.Field.nc_unlimited_dimensions.rst.txt"

@@ -9,7 +9,7 @@
     <title>cfdm.core.abstract.Parameters &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -17,8 +17,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cfdm.core.abstract.ParametersDomainAncillaries" href="cfdm.core.abstract.ParametersDomainAncillaries.html" />
-    <link rel="prev" title="cfdm.core.abstract.Coordinate" href="cfdm.core.abstract.Coordinate.html" />
+    <link rel="next" title="cfdm.core.abstract.Parameters.get_parameter" href="../method/cfdm.core.abstract.Parameters.get_parameter.html" />
+    <link rel="prev" title="cfdm.core.abstract.Coordinate.__deepcopy__" href="../method/cfdm.core.abstract.Coordinate.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -50,8 +51,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="cfdm.core.abstract.Coordinate.html" title="previous chapter">cfdm.core.abstract.Coordinate</a></li>
-      <li>Next: <a href="cfdm.core.abstract.ParametersDomainAncillaries.html" title="next chapter">cfdm.core.abstract.ParametersDomainAncillaries</a></li>
+      <li>Previous: <a href="../method/cfdm.core.abstract.Coordinate.__deepcopy__.html" title="previous chapter">cfdm.core.abstract.Coordinate.__deepcopy__</a></li>
+      <li>Next: <a href="../method/cfdm.core.abstract.Parameters.get_parameter.html" title="next chapter">cfdm.core.abstract.Parameters.get_parameter</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -84,13 +85,14 @@
             
   <div class="section" id="cfdm-core-abstract-parameters">
 <h1>cfdm.core.abstract.Parameters<a class="headerlink" href="#cfdm-core-abstract-parameters" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.abstract.Parameters">
-<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/abstract/parameters.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.abstract.</code><code class="descname">Parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/abstract/parameters.py#L11"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.container.Container</span></code></p>
 <p>Abstract base class for a collection of named parameters.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -98,7 +100,7 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>parameters: <cite>dict</cite>, optional</dt>
+<dt>parameters: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set parameters. The dictionary keys are parameter names, with
 corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 <dl class="docutils">
@@ -107,44 +109,12 @@ corresponding values. Ignored if the <em>source</em> parameter is set.</p>
 </dd>
 </dl>
 <p class="last">Parameters may also be set after initialisation with the
-<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
+<a class="reference internal" href="../method/cfdm.core.abstract.Parameters.parameters.html#cfdm.core.abstract.Parameters.parameters" title="cfdm.core.abstract.Parameters.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a> and <a class="reference internal" href="../method/cfdm.core.abstract.Parameters.set_parameter.html#cfdm.core.abstract.Parameters.set_parameter" title="cfdm.core.abstract.Parameters.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the parameters from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
-<dd><p class="first last">If False then do not deep copy input parameters prior to
-initialization. By default arguments are deep copied.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="cfdm.core.abstract.Parameters.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/abstract/parameters.py#L16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>Initialization</strong></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>parameters: <cite>dict</cite>, optional</dt>
-<dd><p class="first">Set parameters. The dictionary keys are parameter names, with
-corresponding values. Ignored if the <em>source</em> parameter is set.</p>
-<dl class="docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
-</dd>
-</dl>
-<p class="last">Parameters may also be set after initialisation with the
-<cite>parameters</cite> and <cite>set_parameter</cite> methods.</p>
-</dd>
-<dt>source: optional</dt>
-<dd><p class="first last">Initialize the parameters from those of <em>source</em>.</p>
-</dd>
-<dt>copy: <cite>bool</cite>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -155,6 +125,8 @@ initialization. By default arguments are deep copied.</p>
 </table>
 </dd></dl>
 
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -162,224 +134,66 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.Parameters.__init__" title="cfdm.core.abstract.Parameters.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([parameters,&nbsp;source,&nbsp;copy])</td>
-<td><strong>Initialization</strong></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.abstract.Parameters.copy" title="cfdm.core.abstract.Parameters.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>()</td>
-<td>Return a deep copy.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.Parameters.del_parameter" title="cfdm.core.abstract.Parameters.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a>(parameter,&nbsp;*default)</td>
-<td>Delete a parameter.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.abstract.Parameters.get_parameter" title="cfdm.core.abstract.Parameters.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a>(term,&nbsp;*default)</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.get_parameter.html#cfdm.core.abstract.Parameters.get_parameter" title="cfdm.core.abstract.Parameters.get_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_parameter</span></code></a></td>
 <td>Get a parameter value.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parameters.next</span></code></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#cfdm.core.abstract.Parameters.parameters" title="cfdm.core.abstract.Parameters.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a>([parameters,&nbsp;copy])</td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.parameters.html#cfdm.core.abstract.Parameters.parameters" title="cfdm.core.abstract.Parameters.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
 <td>Return or replace the parameter-valued terms.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#cfdm.core.abstract.Parameters.set_parameter" title="cfdm.core.abstract.Parameters.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a>(term,&nbsp;value[,&nbsp;copy])</td>
+</tbody>
+</table>
+</div>
+<div class="section" id="modification">
+<h2>Modification<a class="headerlink" href="#modification" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.del_parameter.html#cfdm.core.abstract.Parameters.del_parameter" title="cfdm.core.abstract.Parameters.del_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_parameter</span></code></a></td>
+<td>Delete a parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.set_parameter.html#cfdm.core.abstract.Parameters.set_parameter" title="cfdm.core.abstract.Parameters.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a></td>
 <td>Set a parameter-valued term.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.parameters.html#cfdm.core.abstract.Parameters.parameters" title="cfdm.core.abstract.Parameters.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></td>
+<td>Return or replace the parameter-valued terms.</td>
+</tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="cfdm.core.abstract.Parameters.copy">
-<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/abstract/parameters.py#L70"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.copy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a deep copy.</p>
-<p><code class="docutils literal notranslate"><span class="pre">f.copy()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">copy.deepcopy(f)</span></code>.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The deep copy.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.copy.html#cfdm.core.abstract.Parameters.copy" title="cfdm.core.abstract.Parameters.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.core.abstract.Parameters.del_parameter">
-<code class="descname">del_parameter</code><span class="sig-paren">(</span><em>parameter</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/abstract/parameters.py#L90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.del_parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete a parameter.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>get_parameter</cite>, <cite>has_parameter</cite>, <cite>parameters</cite>,
-<cite>set_parameter</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>parameter: <cite>str</cite></dt>
-<dd><p class="first last">The name of the parameter to be deleted.</p>
-</dd>
-<dt>default: optional</dt>
-<dd><p class="first last">Return <em>default</em> if the parameter has not been set.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The removed parameter. If the parameter has not been then
-<em>default</em> is returned, if provided.</p>
-</dd>
-</dl>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cfdm.core.abstract.Parameters.__deepcopy__.html#cfdm.core.abstract.Parameters.__deepcopy__" title="cfdm.core.abstract.Parameters.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Examples:</strong></p>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.core.abstract.Parameters.get_parameter">
-<code class="descname">get_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>*default</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/abstract/parameters.py#L118"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.get_parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a parameter value.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>term: <cite>str</cite></dt>
-<dd><p class="first last">The name of the term.</p>
-</dd>
-</dl>
-<p>default: optional</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out:</dt>
-<dd><p class="first last">The value of the term &lt;SOMETING BAOUT DEFAULT&gt;</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;grid_north_pole_latitude&#39;</span><span class="p">)</span>
-<span class="go">70.0</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span>
-<span class="go">ERROR</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;nonexistent term&#39;</span><span class="p">)</span>
-<span class="go">&#39;nonexistent term&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.core.abstract.Parameters.parameters">
-<code class="descname">parameters</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/abstract/parameters.py#L158"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return or replace the parameter-valued terms.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>ancillaries</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>parameters: <cite>dict</cite>, optional</dt>
-<dd><p class="first">Replace all parameter-valued terms with those provided.</p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt><em>Example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007}</span></code></p>
-</dd>
-</dl>
-</div></blockquote>
-</dd>
-</dl>
-<p>copy: <cite>bool</cite>, optional</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out: <cite>dict</cite></dt>
-<dd><p class="first last">The parameter-valued terms and their values. If the
-<em>parameters</em> keyword has been set then the parameter-valued
-terms prior to replacement are returned.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
-<span class="go"> &#39;longitude_of_central_meridian&#39;: 265.0,</span>
-<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="cfdm.core.abstract.Parameters.set_parameter">
-<code class="descname">set_parameter</code><span class="sig-paren">(</span><em>term</em>, <em>value</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/abstract/parameters.py#L206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.abstract.Parameters.set_parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set a parameter-valued term.</p>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
-</div>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><cite>parameters</cite></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>None</cite></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
-<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="s1">&#39;longitude_of_central_meridian&#39;</span><span class="p">,</span> <span class="mf">265.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
-<span class="go">{&#39;standard_parallel&#39;: 25.0;</span>
-<span class="go"> &#39;longitude_of_central_meridian&#39;: 265.0,</span>
-<span class="go"> &#39;latitude_of_projection_origin&#39;: 25.0}</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 
 
@@ -389,11 +203,11 @@ terms prior to replacement are returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.core.abstract.Parameters.rst.txt"

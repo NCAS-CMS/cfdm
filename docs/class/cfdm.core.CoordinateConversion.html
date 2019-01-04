@@ -9,7 +9,7 @@
     <title>cfdm.core.CoordinateConversion &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cfdm.core.CoordinateConversion.del_domain_ancillary" href="../method/cfdm.core.CoordinateConversion.del_domain_ancillary.html" />
-    <link rel="prev" title="cfdm.core.Bounds" href="cfdm.core.Bounds.html" />
+    <link rel="prev" title="cfdm.core.Bounds.__deepcopy__" href="../method/cfdm.core.Bounds.__deepcopy__.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><a href="../index.html">Table Of Contents</a></h3>
+<h3><b><a href="../index.html">Python cfdm package 1.7.0b8</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
@@ -43,6 +43,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../subclassing.html"><strong>Subclassing</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html"><strong>Philosophy</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -50,7 +51,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../reference.html"><strong>Reference manual</strong></a><ul>
   <li><a href="../class_core.html"><strong>cfdm.core classes</strong></a><ul>
-      <li>Previous: <a href="cfdm.core.Bounds.html" title="previous chapter">cfdm.core.Bounds</a></li>
+      <li>Previous: <a href="../method/cfdm.core.Bounds.__deepcopy__.html" title="previous chapter">cfdm.core.Bounds.__deepcopy__</a></li>
       <li>Next: <a href="../method/cfdm.core.CoordinateConversion.del_domain_ancillary.html" title="next chapter">cfdm.core.CoordinateConversion.del_domain_ancillary</a></li>
   </ul></li>
   </ul></li>
@@ -87,7 +88,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cfdm.core.CoordinateConversion">
-<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7b8/cfdm/core/coordinateconversion.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cfdm.core.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.0b8/cfdm/core/coordinateconversion.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfdm.core.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.core.abstract.parametersdomainancillaries.ParametersDomainAncillaries</span></code></p>
 <p>A coordinate conversion component of a coordinate reference
 construct of the CF data model.</p>
@@ -101,7 +102,7 @@ construct (such as one containing spatially varying orography data). A
 coordinate reference construct relates the coordinate values of the
 field to locations in a planetary reference frame.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.</span></p>
+<p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -212,11 +213,11 @@ initialization. By default arguments are deep copied.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, David Hassell.
+      &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
       
       |
       <a href="../_sources/class/cfdm.core.CoordinateConversion.rst.txt"

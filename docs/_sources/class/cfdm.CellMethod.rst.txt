@@ -27,6 +27,7 @@ Inspection
    ~cfdm.CellMethod.get_property
    ~cfdm.CellMethod.has_axes
    ~cfdm.CellMethod.has_property
+   ~cfdm.CellMethod.name
    ~cfdm.CellMethod.properties
    ~cfdm.CellMethod.set_axes
    ~cfdm.CellMethod.set_property

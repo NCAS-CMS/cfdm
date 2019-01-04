@@ -27,6 +27,7 @@ Inspection
    ~cfdm.Field.coordinate_references
    ~cfdm.Field.constructs
    ~cfdm.Field.construct_axes
+   ~cfdm.Field.data_constructs      
    ~cfdm.Field.dimension_coordinates
    ~cfdm.Field.domain_ancillaries
    ~cfdm.Field.domain_axes
@@ -38,8 +39,8 @@ Inspection
    ~cfdm.Field.get_construct_id
    ~cfdm.Field.get_data
    ~cfdm.Field.get_domain
-   ~cfdm.Field.has_data
    ~cfdm.Field.get_property
+   ~cfdm.Field.has_data
    ~cfdm.Field.has_construct
    ~cfdm.Field.has_property
    ~cfdm.Field.name

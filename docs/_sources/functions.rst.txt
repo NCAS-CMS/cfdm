@@ -6,9 +6,9 @@
 **cfdm functions**
 ==================
 
-Version |release| for version |version| of the CF conventions.
-
 ----
+
+Version |release| for version |version| of the CF conventions.
 
 **Reading and writing**
 -----------------------

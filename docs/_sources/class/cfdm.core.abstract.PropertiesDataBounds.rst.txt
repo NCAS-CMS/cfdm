@@ -1,53 +1,113 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
 cfdm.core.abstract.PropertiesDataBounds
-=======================================
+======================================
 
-.. currentmodule:: cfdm.core.abstract
+----
 
-.. autoclass:: PropertiesDataBounds
-
-   
-   .. automethod:: __init__
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-   
-      ~PropertiesDataBounds.__init__
-      ~PropertiesDataBounds.copy
-      ~PropertiesDataBounds.del_bounds
-      ~PropertiesDataBounds.del_data
-      ~PropertiesDataBounds.del_geometry
-      ~PropertiesDataBounds.del_property
-      ~PropertiesDataBounds.get_array
-      ~PropertiesDataBounds.get_bounds
-      ~PropertiesDataBounds.get_data
-      ~PropertiesDataBounds.get_geometry
-      ~PropertiesDataBounds.get_interior_ring
-      ~PropertiesDataBounds.get_property
-      ~PropertiesDataBounds.has_bounds
-      ~PropertiesDataBounds.has_data
-      ~PropertiesDataBounds.has_geometry
-      ~PropertiesDataBounds.has_interior_ring
-      ~PropertiesDataBounds.has_property
-      ~PropertiesDataBounds.next
-      ~PropertiesDataBounds.properties
-      ~PropertiesDataBounds.set_bounds
-      ~PropertiesDataBounds.set_data
-      ~PropertiesDataBounds.set_geometry
-      ~PropertiesDataBounds.set_interior_ring
-      ~PropertiesDataBounds.set_property
-   
-   
+.. autoclass:: cfdm.core.abstract.PropertiesDataBounds
+   :no-members:
+   :no-inherited-members:
 
    
-   
-   .. rubric:: Attributes
+Inspection
+----------
 
-   .. autosummary::
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+      
+   ~cfdm.core.abstract.PropertiesDataBounds.get_property
+   ~cfdm.core.abstract.PropertiesDataBounds.has_property
+   ~cfdm.core.abstract.PropertiesDataBounds.properties
+   ~cfdm.core.abstract.PropertiesDataBounds.get_array
+   ~cfdm.core.abstract.PropertiesDataBounds.get_data
+   ~cfdm.core.abstract.PropertiesDataBounds.has_data
+   ~cfdm.core.abstract.PropertiesDataBounds.get_bounds
+   ~cfdm.core.abstract.PropertiesDataBounds.has_bounds
    
-      ~PropertiesDataBounds.bounds
-      ~PropertiesDataBounds.data
-      ~PropertiesDataBounds.interior_ring
+.. rubric:: Attributes
    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.abstract.PropertiesDataBounds.data
+   ~cfdm.core.abstract.PropertiesDataBounds.bounds
+
+Data
+----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.PropertiesDataBounds.get_array
+   ~cfdm.core.abstract.PropertiesDataBounds.del_data
+   ~cfdm.core.abstract.PropertiesDataBounds.get_data
+   ~cfdm.core.abstract.PropertiesDataBounds.has_data
+   ~cfdm.core.abstract.PropertiesDataBounds.set_data
+   ~cfdm.core.abstract.PropertiesDataBounds.del_bounds
+   ~cfdm.core.abstract.PropertiesDataBounds.get_bounds
+   ~cfdm.core.abstract.PropertiesDataBounds.has_bounds
+   ~cfdm.core.abstract.PropertiesDataBounds.set_bounds
    
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cfdm.core.abstract.PropertiesDataBounds.data
+   ~cfdm.core.abstract.PropertiesDataBounds.bounds
+   
+Modification
+------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.PropertiesDataBounds.del_property
+   ~cfdm.core.abstract.PropertiesDataBounds.set_property
+   ~cfdm.core.abstract.PropertiesDataBounds.properties
+   ~cfdm.core.abstract.PropertiesDataBounds.del_data
+   ~cfdm.core.abstract.PropertiesDataBounds.set_data
+   ~cfdm.core.abstract.PropertiesDataBounds.del_bounds
+   ~cfdm.core.abstract.PropertiesDataBounds.set_bounds
+      
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.PropertiesDataBounds.copy
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cfdm.core.abstract.PropertiesDataBounds.__deepcopy__
