@@ -1,0 +1,7 @@
+cfdm.Count.__getitem__
+======================
+
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+.. automethod:: cfdm.Count.__getitem__
