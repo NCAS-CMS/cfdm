@@ -441,16 +441,17 @@ Indexing a `Data` instance follows rules that are very similar to the
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only differences being:
 
-* **An integer index i takes the i-th element but does not reduce the
-  rank by one.**
+* An integer index *i* specified for a dimension reduces the size of
+  this dimension to unity, taking just the *i*\ -th element, but keeps
+  the dimension itself, so that the rank of the array is not reduced.
 
 ..
 
-* **When two or more dimensions' indices are sequences of integers
-  then these indices work independently along each dimension (similar
-  to the way vector subscripts work in Fortran). This is the same
-  behaviour as indexing on a** `Variable` **object of the** `netCDF4
-  package <http://unidata.github.io/netcdf4-python>`_\ **.**
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a ``Variable`` object of the `netCDF4
+  package <http://unidata.github.io/netcdf4-python>`_.
 
 .. code-block:: python
 	    
@@ -542,16 +543,17 @@ Method                Description
 
 ----
 
-Creation of a new field construct which spans a subspace of the
-original domain is achieved by indexing the field directly (rather
-than its `Data` instance). The new subspace contains the same
-properties and similar metadata constructs to the original field, but
-the latter are also subspaced when they span domain axis constructs
-that have been changed. Subspacing uses the same :ref:`cfdm indexing
-rules <Indexing>` that apply to the `Data` class.
+Creation of a new field construct which spans a subspace of the domain
+of an existing field construct is achieved by indexing the field
+itself, rather than its `Data` instance. This is because the operation
+must also subspace any metadata constructs of the field construct
+(e.g. coordinate constructs) which span any of the domain axes that
+are affected. The new field construct is created with the same
+properties as the original field. Subspacing uses the same :ref:`cfdm
+indexing rules <Indexing>` that apply to the `Data` class.
 
 In this example a new field is created whose domain spans the first
-latitude of the original, and with a reversed longitude axis:
+longitude of the original, and with a reversed latitude axis:
      
 .. code-block:: python
 
@@ -564,17 +566,15 @@ latitude of the original, and with a reversed longitude axis:
                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
 
-   >>> new = q[0, ::-1]
+   >>> new = q[::-1, 0]
    >>> print(new)
    Field: specific_humidity (ncvar%q)
    ----------------------------------
-   Data            : specific_humidity(latitude(1), longitude(8)) 1
+   Data            : specific_humidity(latitude(5), longitude(1)) 1
    Cell methods    : area: mean
    Dimension coords: time(1) = [2019-01-01 00:00:00]
-                   : latitude(1) = [-75.0] degrees_north
-                   : longitude(8) = [337.5, ..., 22.5] degrees_east
-
-
+                   : latitude(5) = [75.0, ..., -75.0] degrees_north
+                   : longitude(1) = [22.5] degrees_east
 
 
 .. _Metadata-constructs:
@@ -584,32 +584,67 @@ latitude of the original, and with a reversed longitude axis:
 
 ----
 
-The metadata constructs are all of the constructs that serve to
-describe the field construct that contains them. Each CF data model
-metadata construct has a corresponding cfdm class:
+The metadata constructs describe the field construct that contains
+them. Each CF data model metadata construct has a corresponding cfdm
+class:
 
-=======================  ==============================  =====================  
-CF data model construct  Description                     cfdm class             
-=======================  ==============================  =====================  
-Domain axis              Independent axes of the domain  `DomainAxis`           
-Dimension coordinate     Domain cell locations           `DimensionCoordinate`  
-Auxiliary coordinate     Domain cell locations           `AuxiliaryCoordinate`  
+=======================  ==============================  =====================
+CF data model construct  Description                     cfdm class           
+=======================  ==============================  =====================
+Domain axis              Independent axes of the domain  `DomainAxis`         
+Dimension coordinate     Domain cell locations           `DimensionCoordinate`
+Auxiliary coordinate     Domain cell locations           `AuxiliaryCoordinate`
+Coordinate reference     Domain coordinate systems       `CoordinateReference`
+Domain ancillary         Cell locations in alternative   `DomainAncillary`    
+                         coordinate systems		                      
+Cell measure             Domain cell size or shape       `CellMeasure`        
+Field ancillary          Ancillary metadata which vary   `FieldAncillary`     
+                         within the domain		                      
+Cell method              Describes how data represent    `CellMethod`         
+                         variation within cells		                      
+=======================  ==============================  =====================
 
+Metadata constructs of a particular type can be retrieved with the
+following methods of the field construct:
 
-Coordinate reference     Domain coordinate systems       `CoordinateReference`  
-Domain ancillary         Cell locations in alternative   `DomainAncillary`      
-                         coordinate systems		                       
-Cell measure             Domain cell size or shape       `CellMeasure`          
-Field ancillary          Ancillary metadata which vary   `FieldAncillary`       
-                         within the domain		                       
-Cell method              Describes how data represent    `CellMethod`           
-                         variation within cells		                       
-=======================  ==============================  =====================  
+==============================  =====================  
+Method                          Metadata constructs    
+==============================  =====================  
+`~Field.domain_axes`            Domain axes            
+`~Field.dimension_coordinates`  Dimension coordinates  
+`~Field.auxiliary_coordinates`  Auxiliary coordinates  
+`~Field.coordinate_references`  Coordinate references  
+`~Field.domain_ancillaries`     Domain ancillaries     
+				                               
+`~Field.cell_measures`          Cell measures          
+ `~Field.field_ancillaries`     Field ancillaries      
+				                              
+`~Field.cell_methods`           Cell methods                               
+==============================  =====================  
 
-The metadata constructs are returned by the `~Field.constructs` method
-of the field construct, which provides a dictionary of the metadata
-constructs, each of which is keyed by a unique identifier called a
-"construct identifier".
+Each of these methods returns a dictionary whose values are the
+metadata constructs of one type, keyed by a unique identifier called a
+"construct identifier":
+
+.. code-block:: python
+
+   >>> t.coordinate_references()
+   {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
+   >>> t.dimension_coordinates()
+   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+
+The construct identifiers (e.g. ``'dimensioncoordinate2'``) are
+usually generated internally and are unique within the field
+constuct. However, construct identifiers may be different for
+equivalent metadata constucts from different field constructs, and for
+different Python sessions.
+
+Metadata constructs of all types may be returned by the
+`~Field.constructs` method of the field construct:
 
 .. code-block:: python
 
@@ -642,23 +677,6 @@ constructs, each of which is keyed by a unique identifier called a
     'domainaxis2': <DomainAxis: 9>,
     'domainaxis3': <DomainAxis: 1>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-
-The construct identifiers are usually generated internally by the
-field construct and are
-
-* *robust* (each metadata construct is guaranteed to have a unique
-  identifier within its parent field construct),
-
-..
-
-* *arbitrary* (no semantic meaning should be attached to the
-  identifier, and the same identifier will usually refer to different
-  metadata constructs in different field constructs), and
-
-..
-
-* *unstable* (the identifiers could be different each time the field
-  construct is created).
 
 The `~Field.constructs` method has optional parameters to filter the
 metadata constructs by
@@ -698,6 +716,17 @@ metadata constructs by
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
    >>> t.constructs('wavelength')
    {}
+
+Note that providing a ``construct_type`` parameter, with no other
+selection parameters, is equivalent to using the field construct
+method for retrieving that type of metadata construct:
+
+.. code-block:: python
+		
+   >>> t.constructs(construct_type='cell_measure')
+   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   >>> t.cell_measures()
+   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
    
 Selection by construct identifier is useful for systematic metadata
 construct access, and for when a metadata construct is not
@@ -735,32 +764,6 @@ be removed with the `~Field.del_construct` method.
    >>> t.has_construct('units:degrees')
    False
 
-Metadata constructs of a particular type can also be retrieved more
-conveniently with the following methods of the field construct:
-
-==============================  ====================================
-Method                          Description
-==============================  ====================================
-`~Field.domain_axes`            The domain axis constructs
-`~Field.cell_methods`           The ordered cell method constructs
-`~Field.field_ancillaries`      The field ancillary constructs
-`~Field.auxiliary_coordinates`  The auxiliary coordinate constructs
-`~Field.cell_measures`          The cell measure constructs
-`~Field.dimension_coordinates`  The dimension coordinates
-`~Field.domain_ancillaries`     The domain ancillary constructs
-`~Field.coordinate_references`  The coordinate reference constructs
-==============================  ====================================
-
-.. code-block:: python
-
-   >>> t.coordinate_references()
-   {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
-    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
-   >>> t.dimension_coordinates()
-   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
 
 **Properties and data**
 ^^^^^^^^^^^^^^^^^^^^^^^

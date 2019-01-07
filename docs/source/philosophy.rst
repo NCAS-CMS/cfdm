@@ -15,15 +15,16 @@ The basic requirement of the reference implementation is to represent
 the logical CF data model in memory with a package of Python classes,
 and no further features. However, to be useful, the implementation
 must also have practical functionality to read, write, inspect, and
-modify real-world netCDF datasets.
+modify netCDF datasets.
 
 In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
 includes no functionality beyond that mandated by the CF data
 model. This core implementation provides the basis for an extended
-implementation, the cfdm package, that allows the reading and writing
-of netCDF datasets, as well as having comprehensive inspection
-capabilities, and some more sophisticated field modification methods.
+implementation, the :ref:`cfdm <class_extended>` package, that allows
+the reading and writing of netCDF datasets, as well as having
+comprehensive inspection capabilities, and some more sophisticated
+field modification methods.
 
 **Functionality**
 -----------------
@@ -48,7 +49,7 @@ extra functionality.
 
 ----
 
-The design of the pplication programming interface (API) needs to
+The design of the application programming interface (API) needs to
 strike a balance between being verbose and terse. A verbose API is
 easier to understand, is more memorable, but usually involves more
 typing; whilst a terse API is more efficient for the experienced
@@ -73,7 +74,8 @@ Here is an example of a simple field created with the :ref:`cfdm.core
    >>> print(f)
    <cfdm.core.field.Field object at 0x7faf6ac23510>
 
-The same field may be created with the cfdm package:
+The same field may be created with the :ref:`cfdm <class_extended>`
+package:
 
 .. code:: python
 
