@@ -617,7 +617,7 @@ Method                          Metadata constructs
 `~Field.domain_ancillaries`     Domain ancillaries     
 				                               
 `~Field.cell_measures`          Cell measures          
- `~Field.field_ancillaries`     Field ancillaries      
+`~Field.field_ancillaries`      Field ancillaries      
 				                              
 `~Field.cell_methods`           Cell methods                               
 ==============================  =====================  
@@ -685,24 +685,30 @@ metadata constructs by
 
 * property value,
 
-* whether or the data array spans particular domain axis constructs,
+* whether the data array spans particular domain axis constructs,
+
+* measure value (for cell measure constructs),
 
 * construct identifier, and 
 
 * netCDF variable or dimension name (see the :ref:`netCDF interface
   <NetCDF-interface>`).
  
-
 .. code-block:: python
 	  
-   >>> t.constructs('air_temperature standard_error')
-   {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-   >>> t.constructs(construct_type='dimension_coordinate')
+   >>> t.constructs(type='dimension_coordinate')
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
     'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-   >>> t.constructs(axes=['domainaxis1'])
+   >>> t.constructs(properties={'standard_name': 'air_temperature standard_error'})
+   {'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+   >>> t.constructs(properties=[{'standard_name': 'air_temperature standard_error'},
+   ...                          {'units': 'm'}])
+   {'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+    'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+    'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+   >>> t.constructs(axis='domainaxis1')
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
     'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
     'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
@@ -710,20 +716,57 @@ metadata constructs by
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
-   >>> t.constructs(axes=['domainaxis3'])
-   {'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-   >>> t.constructs(construct_type='dimension_coordinate', axes=['domainaxis1'])
-   {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>}
-   >>> t.constructs('wavelength')
+   >>> t.constructs(measure='area')
+   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   >>> t.constructs(type='auxiliary_coordinate',
+   ...              axis='domainaxis1',
+   ...		    properties={'units': 'degrees_E'})
+   {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
+
+If no constructs match the given criteria, then an empty dictionary is returned:
+   
+.. code-block:: python
+	
+   >>> t.constructs(properties={'standard_name': 'radiation_wavelength'})
    {}
 
-Note that providing a ``construct_type`` parameter, with no other
-selection parameters, is equivalent to using the field construct
+A less verbose, and often more convienient, method of selection is by
+metadata construct "name". A construct's name is typically the
+description that is displayed when the construct is inspected. For
+example, the three auxiliary coordinate constructs in the field
+construct ``t`` have names ``'latitude'``, ``'longitude'`` and
+``'long_name:Grid latitude name'``. Selection by name does not require
+a keyword parameter:
+
+.. code-block:: python
+	
+   >>> t.constructs('latitude')
+   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
+   >>> t.constructs('measure%area')
+   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+
+More generally, a construct name may be constructed by any of
+
+* The value of the "standard_name" property, e.g. ``'air_temperature'``,
+* The value of any property, preceeded by the property name and a
+  colon, e.g. ``'long_name:Air Temperature'``,
+* The cell measure, preceeded by "measure%", e.g. ``'measure%volume'``
+* The netCDF variable name, preceeded by "ncvar%",
+  e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface`), and
+* The netCDF dimension name, preceeded by "ncdim%"
+  e.g. ``'ncdim%z'`` (see the :ref:`netCDF interface`).
+
+Each construct has a `!name` method that, by default, returns the
+least ambiguous name
+
+  
+Note that providing a ``type`` parameter with no other selection
+parameters is equivalent to using the particular field construct
 method for retrieving that type of metadata construct:
 
 .. code-block:: python
 		
-   >>> t.constructs(construct_type='cell_measure')
+   >>> t.constructs(type='cell_measure')
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
    >>> t.cell_measures()
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
@@ -764,7 +807,6 @@ be removed with the `~Field.del_construct` method.
    >>> t.has_construct('units:degrees')
    False
 
-
 **Properties and data**
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -783,7 +825,9 @@ measure, domain ancillary and field ancillary constructs) will have a
    >>> lon.properties()
    {'units': 'degrees_east',
     'long_name': 'Longitude',
-    'standard_name': 'longitude'}   
+    'standard_name': 'longitude'}
+   >>> lon.name()
+   'longitude'
    >>> lon.data[2]
    <Data(1): [112.5] degrees_east>
    >>> lon.data[2] = 133.33
@@ -1419,8 +1463,9 @@ that has fewer metadata constructs than one created with the
 
 ----
 
-The domain of the CF data model describes the locations of the field
-construct's data and is represented by the `Domain` class. The domain
+The domain of the CF data model is *not* a construct, but is defined
+collectively by various other metadata constructs included in the
+field construct. It is represented by the `Domain` class. The domain
 instance may be accessed with the `~Field.get_domain` method of the
 field construct:
 
@@ -1454,6 +1499,7 @@ attributes and methods of the domain instance:
 
 .. code-block:: python
 
+   >>> domain = t.domain
    >>> domain.get_construct('latitude').set_property('test', 'set by domain')
    >>> t.get_construct('latitude').get_property('test')
    'set by domain'
@@ -1464,7 +1510,6 @@ attributes and methods of the domain instance:
    'set by field'
    >>> t.get_construct('latitude').has_property('test')
    False
-
 
 .. _Copying:
 
@@ -1505,12 +1550,11 @@ Metadata constructs may be copied individually in the same manner:
 
    >>> orog = t.get_construct('surface_altitude').copy()
 
-*Note on performance*
-  Arrays within `Data` instances are copied with a `copy-on-write
-  <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This
-  means that a copy takes up very little extra memory, even when the
-  original constructs contain very large data arrays, and the copy
-  operation is fast.
+Arrays within `Data` instances are copied with a `copy-on-write
+<https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
+that a copy takes up very little extra memory, even when the original
+constructs contain very large data arrays, and the copy operation is
+fast.
 
 .. _Equality:
 
@@ -1532,7 +1576,7 @@ field construct's `~Field.equals` method.
    True
    >>> t.equals(q)
    False
-   >>> t.equals(q, traceback=True)
+   >>> t.equals(q, verbose=True)
    Field: Different units: 'K', '1'
    Field: Different properties
    False
@@ -1549,14 +1593,14 @@ metadata constructs and for each pair of constructs:
 * if there are data arrays then they must have same shape, data type
   and be element-wise equal.
 
-Two real numbers :math:`a` and :math:`b` are considered equal if
-:math:`|a - b| \le atol + rtol|b|`, where :math:`atol` (the tolerance
-on absolute differences) and :math:`rtol` (the tolerance on relative
-differences) are positive, typically very small numbers. By default
-both are set to the system epsilon (the difference between 1 and the
-least value greater than 1 that is representable as a float). Their
-values may be inspected and changed with the `cfdm.ATOL` and
-`cfdm.RTOL` functions:
+Two real numbers :math:`x` and :math:`y` are considered equal if
+:math:`|x - y| \le a_{tol} + r_{tol}|y|`, where :math:`a_{tol}` (the
+tolerance on absolute differences) and :math:`r_{tol}` (the tolerance
+on relative differences) are positive, typically very small
+numbers. By default both are set to the system epsilon (the difference
+between 1 and the least value greater than 1 that is representable as
+a float). Their values may be inspected and changed with the
+`cfdm.ATOL` and `cfdm.RTOL` functions:
 
 .. code-block:: python
 
@@ -1571,6 +1615,10 @@ values may be inspected and changed with the `cfdm.ATOL` and
    1e-05
    >>> cfdm.RTOL()
    2.220446049250313e-16
+
+Note that the above equation is not symmetric in :math:`x` and
+:math:`y`, so that for two fields ``f1`` and ``f2``, ``f1.equals(f2)``
+may be different from ``f2.equals(f1)`` in some rare cases.
    
 NetCDF elements, such as netCDF variable and dimension names, do not
 constitute part of the CF data model and so are not checked on any
@@ -2040,12 +2088,11 @@ external file name to the `cfdm.write` function:
 The CF conventions have support for space saving by identifying
 unwanted missing data.  Such compression techniques store the data
 more efficiently and result in no precision loss. The CF data model,
-however, views arrays that are compressed in their uncompressed
-form.
+however, views compressed arrays in their uncompressed form.
 
 Therefore, the field construct contains domain axis constructs for the
 compressed dimensions and presents a view of compressed data in its
-uncompressed form, even though their "underlying" arrays (i.e. the
+uncompressed form, even though their "underlying arrays" (i.e. the
 arrays contained in `Data` instances) are compressed. This means that
 the cfdm package includes algorithms that are required to uncompress
 each type of compressed array.
@@ -2073,9 +2120,10 @@ both:
 * A :ref:`subspace <Subspacing>` of a field construct is created with
   indices of the uncompressed form of the data. The new subspace will
   no longer be compressed, i.e. its underlying arrays will be
-  uncompressed, but the original data will remain compressed. It
-  follows that to uncompress all of the data in a field construct,
-  index the field construct with `Ellipsis`.
+  uncompressed, but the original data will remain
+  compressed. Therefore, all of the data in a field construct may be
+  uncompressed by creating a subspace that is identical to the entire
+  field constuct, such as one created with an index of `Ellipsis`.
   
 ..
 
@@ -2458,7 +2506,7 @@ simple field construct with an underlying gathered array:
 Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
 compressed dimension in the compressed array (with the
-"compressed_dimension" parameter of the `GatheredArray`
+``compressed_dimension`` parameter of the `GatheredArray`
 initialisation).
 
 The new field construct can now be inspected and written a netCDF file:

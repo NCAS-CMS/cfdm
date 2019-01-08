@@ -66,7 +66,7 @@ TODO
         return self._get_constructs().data_constructs(copy=copy)
     #-- End: def
     
-    def construct_axes(self):
+    def construct_data_axes(self):
         '''Return the domain axes spanned by metadata construct data arrays.
 
 .. versionadded:: 1.7.0
@@ -79,11 +79,11 @@ TODO
 
 **Examples:**
 
->>> f.construct_axes()
+>>> f.construct_data_axes()
 TODO
 
         '''
-        return self._get_constructs().construct_axes() #cid=cid)
+        return self._get_constructs().construct_data_axes() #cid=cid)
     #--- End: def
     
     def construct_type(self, cid):
@@ -99,7 +99,7 @@ TODO
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`, `get_construct_axes`,
+.. seealso:: `del_construct`, `get_construct`, `get_construct_data_axes`,
              `get_construct_id`, `has_construct`, `set_construct`
 
 :Parameters:
@@ -260,13 +260,14 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         return self._get_constructs().get_construct(cid)
     #--- End: def
 
-    def get_construct_axes(self, cid, *default):
+    def get_construct_data_axes(self, cid, *default):
         '''Return the domain axis identifiers spanned by a metadata construct
 data array.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `construct_axes`, `get_construct`, `set_construct_axes`
+.. seealso:: `construct_data_axes`, `get_construct`,
+             `set_construct_data_axes`
 
 :Parameters:
 
@@ -289,18 +290,18 @@ data array.
 
 **Examples:**
 
->>> f.get_construct_axes('domainancillary2')
+>>> f.get_construct_data_axes('domainancillary2')
 ('domainaxis1', 'domainaxis0')
 >>> da = f.get_construct('domainancillary2')
 >>> data = da.del_data()
->>> print(f.get_construct_axes('domainancillary2', None))
+>>> print(f.get_construct_data_axes('domainancillary2', None))
 None
 
->>> f.get_construct_axes('cellmethod0', 'no axes')
+>>> f.get_construct_data_axes('cellmethod0', 'no axes')
 'no axes'
 
         '''
-        axes = self.construct_axes().get(cid)
+        axes = self.construct_data_axes().get(cid)
         if axes is None:
             if default:
                 return default[0]
@@ -367,7 +368,7 @@ False
 .. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct_axes`
+             `set_construct_data_axes`
 
 :Parameters:
 
@@ -417,7 +418,7 @@ False
                                                     axes=axes, copy=copy)
     #--- End: def
 
-    def set_construct_axes(self, cid, axes):
+    def set_construct_data_axes(self, cid, axes):
         '''Set the domain axis constructs spanned by a metadata construct data
 array.
 
@@ -453,10 +454,10 @@ array.
 **Examples:**
 
 >>> cid = f.set_construct(c)
->>> f.set_construct_axes(cid, axes=['domainaxis1'])
+>>> f.set_construct_data_axes(cid, axes=['domainaxis1'])
 
         '''
-        return self._get_constructs().set_construct_axes(cid, axes)
+        return self._get_constructs().set_construct_data_axes(cid, axes)
     #--- End: def
 
 #--- End: class

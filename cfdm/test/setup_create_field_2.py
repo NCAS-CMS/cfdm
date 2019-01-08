@@ -189,7 +189,7 @@ class create_fieldTest_2(unittest.TestCase):
             print(repr(f))
             print(f)
             print(f.constructs())
-            print(f.construct_axes())
+            print(f.construct_data_axes())
         
         self.assertTrue(f.equals(f.copy(), traceback=True),
                         "Field f not equal to a copy of itself")

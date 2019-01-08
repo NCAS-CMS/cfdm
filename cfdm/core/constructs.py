@@ -232,9 +232,9 @@ class Constructs(object):
 
         if axes:
             spans_axes = set(axes)
-            construct_axes = self.construct_axes()
+            construct_data_axes = self.construct_data_axes()
             for cid, construct in list(out.items()):
-                x = construct_axes[cid]
+                x = construct_data_axes[cid]
                 if not spans_axes.intersection(x):
                     del out[cid]
         #--- End: def
@@ -365,7 +365,7 @@ TODO
         return out
     #--- End: def
     
-    def construct_axes(self, cid=None):
+    def construct_data_axes(self, cid=None):
         '''Return the domain axeis identifiers spanned by metadata construct
 data arrays.
 
@@ -387,9 +387,9 @@ data arrays.
 
 **Examples:**
 
->>> f.construct_axes('auxiliarycoordinate0')
+>>> f.construct_data_axes('auxiliarycoordinate0')
 ('domainaxis1', 'domainaxis0')
->>> print(f.construct_axes('auxiliarycoordinate99'))
+>>> print(f.construct_data_axes('auxiliarycoordinate99'))
 None
 
         '''
@@ -427,7 +427,7 @@ None
 #
 #        return construct_type
 
-    def set_construct_axes(self, cid, axes):
+    def set_construct_data_axes(self, cid, axes):
         '''TODO
 
 .. versionadded:: 1.7.0
@@ -538,7 +538,7 @@ TODO
 '''
         out = {}
 
-        for axes in list(self.construct_axes().values()):
+        for axes in list(self.construct_data_axes().values()):
 #            d = {}
 #            for construct_type in self._array_constructs:
 #                d[construct_type] = {}
@@ -549,7 +549,7 @@ TODO
         #--- End: for
 
         for cid, construct in self.data_constructs().items():
-            axes = self.construct_axes().get(cid)
+            axes = self.construct_data_axes().get(cid)
             construct_type = self._construct_type[cid]
             out[axes][construct_type][cid] = construct
 
@@ -661,7 +661,7 @@ False
 .. versionadded:: 1.7.0
 
 .. seealso:: `constructs`, `del_construct`, `get_construct`,
-             `set_construct_axes`
+             `set_construct_data_axes`
 
 :Parameters:
 
@@ -686,7 +686,7 @@ False
         constructs.
 
         The axes may also be set afterwards with the
-        `set_construct_axes` method.
+        `set_construct_data_axes` method.
 
         *Example:*
           ``axes=['domainaxis1']``
@@ -855,7 +855,7 @@ False
         if cid in self.constructs(construct_type='domain_axis'):
             # Fail if the domain axis construct is spanned by a data
             # array
-            for xid, axes in self.construct_axes().items():
+            for xid, axes in self.construct_data_axes().items():
                 if cid in axes:
                     raise ValueError(
 "Can't remove domain axis construct {!r} that spans the data array of {!r}".format(

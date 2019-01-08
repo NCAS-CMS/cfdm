@@ -153,7 +153,7 @@ x.__str__() <==> str(x)
             
             if dimension_coord:
                 # Dimension coordinate
-                axis = self.get_construct_axes(key)[0]
+                axis = self.get_construct_data_axes(key)[0]
                 name = variable.name(ncvar=True, default=key)
                 if variable.has_data():
                     name += '({0})'.format(variable.get_data().size)
@@ -198,7 +198,7 @@ x.__str__() <==> str(x)
         #--- End: def
                           
         # Field ancillary variables
-        x = [_print_item(self, cid, anc, self.get_construct_axes(cid=cid), False)
+        x = [_print_item(self, cid, anc, self.get_construct_data_axes(cid=cid), False)
              for cid, anc in sorted(self.field_ancillaries().items())]
         if x:
             string.append('Field ancils    : {}'.format(
@@ -209,7 +209,7 @@ x.__str__() <==> str(x)
 #        x = []
 #        for key in tuple(non_spanning_axes) + data_axes:
 #            for dc_key, dim in list(self.dimension_coordinates().items()):
-#                if self.construct_axes()[dc_key] == (key,):
+#                if self.construct_data_axes()[dc_key] == (key,):
 #                    name = dim.name(default='id%{0}'.format(dc_key), ncvar=True)
 #                    y = '{0}({1})'.format(name, dim.get_data().size)
 #                    if y != axis_names[key]:
@@ -316,7 +316,7 @@ rules, the only differences being:
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
-        new_construct_axes = new.construct_axes()
+        new_construct_data_axes = new.construct_data_axes()
         
         for cid, construct in new.data_constructs().items():
             data = self.get_construct(cid=cid).get_data(None)
@@ -326,7 +326,7 @@ rules, the only differences being:
 
             needs_slicing = False
             dice = []
-            for axis in new_construct_axes[cid]:
+            for axis in new_construct_data_axes[cid]:
                 if axis in data_axes:
                     needs_slicing = True
                     dice.append(indices[data_axes.index(axis)])
@@ -753,7 +753,7 @@ data arrays.
 
         name = self._unique_construct_names()
 
-        construct_axes = self.construct_axes()
+        construct_data_axes = self.construct_data_axes()
         
         # Simple properties
         properties = self.properties()
@@ -796,7 +796,7 @@ data arrays.
         
         for cid, value in sorted(self.field_ancillaries().items()):
             string.append(value.dump(display=False,
-                                     _axes=construct_axes[cid],
+                                     _axes=construct_data_axes[cid],
                                      _axis_names=axis_to_name,
                                      _level=_level))
             string.append('') 
@@ -1217,7 +1217,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
         # ------------------------------------------------------------
         # Add domain axes
         # ------------------------------------------------------------
-        data_axes = self.get_construct_axes(cid=cid)
+        data_axes = self.get_construct_data_axes(cid=cid)
         if data_axes:
             for domain_axis in data_axes:
                 f.set_construct(self.domain_axes()[domain_axis],
@@ -1234,7 +1234,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
         # Add a more complete domain
         # ------------------------------------------------------------
         if domain:
-            construct_axes = self.construct_axes()
+            construct_data_axes = self.construct_data_axes()
             
             for construct_type in ('dimension_coordinate',
                                    'auxiliary_coordinate',
@@ -1242,7 +1242,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
                 for ccid, con in self.constructs(construct_type=construct_type,
                                                  axes=data_axes,
                                                  copy=False).items():
-                    axes = construct_axes.get(ccid)
+                    axes = construct_data_axes.get(ccid)
                     if axes is None:
                         continue
     
@@ -1257,7 +1257,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
             for rcid, ref in self.coordinate_references().items():
 
                 new_coordinates = [ccid for ccid in ref.coordinates()
-                                   if set(construct_axes[ccid]).issubset(data_axes)]
+                                   if set(construct_data_axes[ccid]).issubset(data_axes)]
 
                 if not new_coordinates:
                     continue
@@ -1265,7 +1265,7 @@ Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
                 # Still here?
                 ok = True
                 for ccid in ref.coordinate_conversion.domain_ancillaries().values():
-                    axes = construct_axes[ccid]
+                    axes = construct_data_axes[ccid]
                     if not set(axes).issubset(data_axes):
                         ok = False
                         break

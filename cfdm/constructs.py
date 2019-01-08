@@ -22,8 +22,9 @@ returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`, `get_construct_axes`,
-             `get_construct_id`, `has_construct`, `set_construct`
+.. seealso:: `del_construct`, `get_construct`,
+             `get_construct_data_axes`, `get_construct_id`,
+             `has_construct`, `set_construct`
 
 :Parameters:
 
@@ -227,9 +228,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         
         if axes is not None:
             axes = set(axes)
-            construct_axes = self.construct_axes()
+            construct_data_axes = self.construct_data_axes()
             for cid in tuple(out):
-                x = construct_axes.get(cid)
+                x = construct_data_axes.get(cid)
                 if x is None or not axes.intersection(x):
                     del out[cid]
                 
@@ -257,7 +258,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     #--- End: def
 
     def constructs2(self, name=None, properties=None, measure=None,
-                    ncvar=None, ncdim=None, cid=None, axes=None,
+                    ncvar=None, ncdim=None, cid=None, axis=None,
                     type=None, copy=False):
         '''Return metadata constructs
 
@@ -268,82 +269,102 @@ returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`, `get_construct_axes`,
-             `get_construct_id`, `has_construct`, `set_construct`
+.. seealso:: `del_construct`, `get_construct`,
+             `get_construct_data_axes`, `get_construct_id`,
+             `has_construct`, `set_construct`
 
 :Parameters:
 
-    description: `str`, optional
-        Select constructs that have the given property, or other
-        attribute, value.
+    name: (sequence of) `str`, optional
+        Select constructs that have the given name. If a sequence of
+        names has been given then the constructs that have any of the
+        names are selected.
+       
+        In general, a construct is selected if any of the given names
+        is the same as one of the possible constuct names, as returned
+        by the construct's `!name` method with the ``all_names``
+        parameter set to True. For example, the following construct,
+        ``c``, has three default names:
 
-        The description may be one of:
+           >>> c.name(all_names=True)
+           ['longitude', 'long_name:Longitude', 'ncvar%lon']
 
-        * The value of the standard name property on its own. 
+        Note that the names used to identify metadata constructs in
+        the ouput of a `print` or `!dump` call may always be used to
+        select constructs.
+
+        A name may be one of:
+
+        * The value of the standard name property.
 
           *Example:*
-            ``description='air_pressure'`` will select constructs that
-            have a "standard_name" property with the value
-            "air_pressure".
+            ``name='air_pressure'`` will select constructs that have a
+            "standard_name" property with the value "air_pressure".
 
         * The value of any property prefixed by the property name and
           a colon (``:``).
 
           *Example:*
-            ``description='positive:up'`` will select constructs that
-            have a "positive" property with the value "up".
+            ``name='long_name:Air Temperature'`` will select
+            constructs that have a "long_name" property with the value
+            "Air Temperature".
 
           *Example:*
-            ``description='foo:bar'`` will select constructs that have
-            a "foo" property with the value "bar".
+            ``name='positive:up'`` will select constructs that have a
+            "positive" property with the value "up".
 
           *Example:*
-            ``description='standard_name:air_pressure'`` will select
+            ``name='foo:bar'`` will select constructs that have a
+            "foo" property with the value "bar".
+
+          *Example:*
+            ``name='standard_name:air_pressure'`` will select
             constructs that have a "standard_name" property with the
-            value "air_pressure".
+            value "air_pressure". Note this selection could also be
+            made with ``name='air_pressure'``.
 
         * The measure of cell measure constructs, prefixed by
-          ``measure%``.
+          ``measure%``. Constructs may also be selected by their
+          meaure with the *measure* parameter.
 
           *Example:*
-            ``description='measure%area'`` will select "area" cell
-            measure constructs.
+            ``name='measure%area'`` will select "area" cell measure
+            constructs. Note this selection could also be made with
+            ``measure='area'``.
+
 
         * A construct identifier, prefixed by ``cid%`` (see also the
-          *cid* parameter).
+          *cid* parameter). Constructs may also be selected by their
+          construct identifier with the *cid* parameter.
+
 
           *Example:* 
-            ``description='cid%cellmethod1'`` will select cell method
-            construct with construct identifier "cellmethod1". This is
-            equivalent to ``cid='cellmethod1'``.
+            ``name='cid%cellmethod1'`` will select cell method
+            construct with construct identifier "cellmethod1".
 
         * The netCDF variable name, prefixed by ``ncvar%``.
+          Constructs may also be selected by their netCDF variable
+          name with the *ncvar* parameter.
 
           *Example:*
-            ``description='ncvar%lat'`` will select constructs with
-            netCDF variable name "lat".
+            ``name='ncvar%lat'`` will select constructs with netCDF
+            variable name "lat".
 
         * The netCDF dimension name of domain axis constructs,
-          prefixed by ``ncdim%``.
+          prefixed by ``ncdim%``. Constructs may also be selected by
+          their netCDF dimension name with the *ncdim* parameter.
 
           *Example:*
-            ``description='ncdim%time'`` will select domain axis
-            constructs with netCDF dimension name "time".
+            ``name='ncdim%time'`` will select domain axis constructs
+            with netCDF dimension name "time".
 
-    cid: `str`, optional
-        Select the construct with the given construct identifier.
-
-        *Example:*
-          ``cid='domainancillary0'`` will the domain ancillary
-          construct with construct identifier "domainancillary1". This
-          is equivalent to ``description='cid%domainancillary0'``.
-
-    construct_type: (sequence of) `str`, optional
-        Select constructs of the given type, or types. Valid types
-        are:
+    type: (sequence of) `str`, optional
+        Select constructs of the given type. If a sequence of types
+        has been given then the constructs of each type are
+        selected. Valid types are:
 
           ==========================  ================================
-          *construct_type*            Constructs
+          *type*                      Selected constructs
           ==========================  ================================
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
@@ -367,16 +388,71 @@ returned.
         Note that a domain never contains cell method nor field
         ancillary constructs.
 
-    axes: sequence of `str`, optional
-        Select constructs which have data that spans one or more of
-        the given domain axes, in any order. Domain axes are specified
-        by their construct identifiers.
+    measure: (sequence of) `str`, optional
+        Select cell measure constructs which have the given
+        measure. If multiple measures are specified then select the
+        cell measure constructs which have any of the given measures.
 
         *Example:*
-          ``axes=['domainaxis2']``
+          ``meausure='area'``
 
         *Example:*
-          ``axes=['domainaxis0', 'domainaxis1']``
+          ``measure=['area']``
+
+        *Example:*
+          ``measure=['area', 'volume']``
+
+    axis: (sequence of) `str`, optional
+        Select constructs which have data that spans a domain axis
+        construct, defined by its construct identifier. If multiple of
+        domain axes are specified then select constructs whose data
+        spans at least one the domain axis constructs.
+
+        *Example:*
+          ``axis='domainaxis1'``
+
+        *Example:*
+          ``axis=['domainaxis2']``
+
+        *Example:*
+          ``axis=['domainaxis0', 'domainaxis1']``
+
+    ncvar: (sequence of) `str`, optional
+        Select constructs which have the given netCDF variable
+        name. If multiple netCDF variable names are specified then
+        select the constructs which have any of the given netCDF
+        variable names.
+
+        *Example:*
+          ``ncvar='lon'``
+
+        *Example:*
+          ``ncvar=['lat']``
+
+        *Example:*
+          ``ncvar=['lon', 'lat']``
+
+    ncdim: (sequence of) `str`, optional
+        Select domain axis constructs which have the given netCDF
+        dimension name. If multiple netCDF dimension names are
+        specified then select the domain axis constructs which have
+        any of the given netCDF dimension names.
+
+        *Example:*
+          ``ncdim='lon'``
+
+        *Example:*
+          ``ncdim=['lat']``
+
+        *Example:*
+          ``ncdim=['lon', 'lat']``
+
+
+    key: `str`, optional
+        Select the construct with the given construct key.
+
+        *Example:*
+          ``cid='domainancillary0'``
 
     copy: `bool`, optional
         If True then return copies of the constructs. By default the
@@ -469,12 +545,17 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
             out = {cid: construct}
         
-        if axes is not None:
-            axes = set(axes)
-            construct_axes = self.construct_axes()
+        if axis is not None:
+            if isinstance(axis, basestring):
+                axis = (axis,)
+
+            axis = set(axis)
+            
+            construct_data_axes = self.construct_data_axes()
             for cid in tuple(out):
-                x = construct_axes.get(cid)
-                if x is None or not axes.intersection(x):
+                x = construct_data_axes.get(cid)
+                if x is None or not axis.intersection(x):
+                    # This construct does not span these axes
                     del out[cid]
             #--- End: for
                         
@@ -483,38 +564,71 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         #--- End: if
 
         if name is not None:
-            (prefix, _, value) = name.partition('%')
-            if prefix == 'cid':
-                construct = out.get(value)
-                if construct is not None:
-                    out = {value: construct}
-                else:
-                    out = {}
-            else:
-                (prefix, _, value) = name.partition(':')
-                custom = (prefix,) if value else None
-                for key, construct in tuple(out.items()):
-                    if description not in construct.name(custom=custom, all_names=True):
-                        del out[key]
+            if isinstance(name, basestring):
+                name = (name,)
+
+            for key, construct in tuple(out.items()):
+                ok = False                
+                for n in name:
+                    (prefix, _, value) = n.partition('%')
+                    if prefix == 'cid':
+                        if value == key:
+                            # This construct matches this name
+                            ok = True
+                            break
+                    else:
+                        (prefix, _, value) = n.partition(':')
+                        custom = (prefix,) if value else None
+                        if n in construct.name(custom=custom,
+                                               all_names=True):
+                            # This construct matches this name
+                            ok = True
+                            break
+                #--- End: for
+                
+                if not ok:
+                    # This construct does not match any of the names
+                    del out[key]
             #--- End: for
-            
+
             if not out:
                 return out
         #--- End: if
 
-        if properties:
+        if properties is not None:
+            if isinstance(properties, dict):
+                properties = (properties,)
+
             for key, construct in tuple(out.items()):
                 try:
                     get_property = construct.get_property
                 except AttributeError:
                     del out[key]
-                else:
                     continue
                 
-                for p, value0 in properties.items():
-                    value1 = get_property(p, None)
-                    if value1 is None or not construct._equals(value1, value0):
-                        del out[key]
+                ok = False
+                for props in properties:
+                    ok = False
+                    for p, value0 in props.items():
+                        value1 = get_property(p, None)
+                        if value1 is None or not construct._equals(value1, value0):
+                            # This construct does not match this set
+                            # of properties
+                            ok = False                            
+                            break
+                        else:
+                            ok = True
+                    #--- End: for
+
+                    if ok:
+                        # This construct matches this set of properties
+                        break
+                #--- End: for
+                
+                if not ok:
+                    # This construct does not match any of the sets of
+                    # properties
+                    del out[key]
             #--- End: for
             
             if not out:
@@ -530,13 +644,21 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                     get_measure = construct.get_measure
                 except AttributeError:
                     del out[key]
-                else:
                     continue
+
+                ok = False
+                for x0 in measure:
+                    x1 = get_measure(None)
+                    if x1 is not None and construct._equals(x1, x0):
+                        # This construct matches this measure
+                        ok = True
+                        break
+                #--- End: for
                 
-                for m0 in measure:
-                    m1 = get_measure(p, None)
-                    if value1 is None or not construct._equals(m0, m1):
-                        del out[key]
+                if not ok:
+                    # This construct does not match any of the
+                    # measures
+                    del out[key]
             #--- End: for
             
             if not out:
@@ -549,16 +671,25 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
             for key, construct in tuple(out.items()):
                 try:
-                    get_nc_variable = construct.get_nc_variable
+                    nc_get_variable = construct.nc_get_variable
                 except AttributeError:
                     del out[key]
-                else:
                     continue
+
+                ok = False
+                for x0 in ncvar:
+                    x1 = nc_get_variable(None)
+                    if x1 is not None and construct._equals(x1, x0):
+                        # This construct matches this netCDF variable
+                        # name
+                        ok = True
+                        break
+                #--- End: for
                 
-                for m0 in ncvar:
-                    m1 = get_nc_variable(p, None)
-                    if value1 is None or not construct._equals(m0, m1):
-                        del out[key]
+                if not ok:
+                    # This construct does not match any of the netCDF
+                    # variable names
+                    del out[key]
             #--- End: for
             
             if not out:
@@ -571,16 +702,25 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 
             for key, construct in tuple(out.items()):
                 try:
-                    get_nc_dimension = construct.get_nc_dimension
+                    nc_get_dimension = construct.nc_get_dimension
                 except AttributeError:
                     del out[key]
-                else:
                     continue
+
+                ok = False
+                for x0 in ncdim:
+                    x1 = nc_get_dimension(None)
+                    if x1 is not None and construct._equals(x1, x0):
+                        # This construct matches this netCDF dimension
+                        # name
+                        ok = True
+                        break
+                #--- End: for
                 
-                for m0 in ncdim:
-                    m1 = get_nc_dimension(p, None)
-                    if value1 is None or not construct._equals(m0, m1):
-                        del out[key]
+                if not ok:
+                    # This construct does not match any of the netCDF
+                    # dimension names
+                    del out[key]
             #--- End: for
             
             if not out:
@@ -618,13 +758,13 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         if axis not in domain_axes:
             return default
 
-        construct_axes = self.construct_axes()
+        construct_data_axes = self.construct_data_axes()
 
         dimension_coordinates = self.constructs(construct_type='dimension_coordinate')
 
         name = None        
         for key, dim in dimension_coordinates.items():
-            if construct_axes[key] == (axis,):
+            if construct_data_axes[key] == (axis,):
                 # Get the name from a dimension coordinate
                 name = dim.name(ncvar=False, default=None)
                 break
@@ -636,7 +776,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         
         found = False
         for key, aux in auxiliary_coordinates.items():
-            if construct_axes[key] == (axis,):
+            if construct_data_axes[key] == (axis,):
                 if found:
                     name = None
                     break

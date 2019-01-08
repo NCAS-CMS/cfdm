@@ -21,7 +21,7 @@ Inspection
    :template: method.rst
 
    ~cfdm.core.Field.constructs
-   ~cfdm.core.Field.construct_axes
+   ~cfdm.core.Field.construct_data_axes
    ~cfdm.core.Field.data_constructs
    ~cfdm.core.Field.get_array
    ~cfdm.core.Field.get_construct
@@ -100,12 +100,12 @@ Metadata constructs
    :template: method.rst
 
    ~cfdm.core.Field.constructs
-   ~cfdm.core.Field.construct_axes
+   ~cfdm.core.Field.construct_data_axes
    ~cfdm.core.Field.del_construct
    ~cfdm.core.Field.get_construct
    ~cfdm.core.Field.has_construct
    ~cfdm.core.Field.set_construct
-   ~cfdm.core.Field.set_construct_axes
+   ~cfdm.core.Field.set_construct_data_axes
 
 Modification
 ------------
@@ -123,7 +123,7 @@ Modification
    ~cfdm.core.Field.del_property
    ~cfdm.core.Field.properties
    ~cfdm.core.Field.set_construct
-   ~cfdm.core.Field.set_construct_axes
+   ~cfdm.core.Field.set_construct_data_axes
    ~cfdm.core.Field.set_data
    ~cfdm.core.Field.set_data_axes
    ~cfdm.core.Field.set_property

@@ -527,9 +527,9 @@ criteria.
         return default
     #--- End: def
     
-    def get_construct_axes(self, description=None, cid=None,
-                           axes=None, construct_type=None,
-                           default=ValueError):
+    def get_construct_data_axes(self, description=None, cid=None,
+                                axes=None, construct_type=None,
+                                default=ValueError):
         '''Return the domain axes spanned by a metadata construct data array.
 
 The construct is selected via optional parameters. The *unique*
@@ -539,7 +539,8 @@ criteria, then an empty tuple is returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `construct_axes`, `get_construct`, `set_construct_axes`
+.. seealso:: `construct_data_axes`, `get_construct`,
+             `set_construct_data_axes`
 
 :Parameters:
 
@@ -656,16 +657,15 @@ criteria, then an empty tuple is returned.
 
 **Examples:**
 
->>> f.get_construct_axes('domainancillary2')
+>>> f.get_construct_data_axes('domainancillary2')
 ('domainaxis1', 'domainaxis0')
 >>> da = f.get_construct('domainancillary2')
 >>> data = da.del_data()
->>> print(f.get_construct_axes('domainancillary2', None))
+>>> print(f.get_construct_data_axes('domainancillary2', None))
 None
 
->>> f.get_construct_axes('cellmethod0', 'no axes')
+>>> f.get_construct_data_axes('cellmethod0', 'no axes')
 'no axes'
-
 
         '''
         cid = self.get_construct_id(description=description, cid=cid,
@@ -675,7 +675,7 @@ None
         if cid is None:
             return self._default(default, 'No unique construct meets criteria')
             
-        return self.construct_axes()[cid]
+        return self.construct_data_axes()[cid]
     #--- End: def
         
     def get_construct_id(self, description=None, cid=None, axes=None,
@@ -689,7 +689,7 @@ criteria, then the `None` is returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `constructs`, `get_construct`, `get_construct_axes`
+.. seealso:: `constructs`, `get_construct`, `get_construct_data_axes`
 
 :Parameters:
 
@@ -975,8 +975,9 @@ returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`, `get_construct_axes`,
-             `get_construct_id`, `has_construct`, `set_construct`
+.. seealso:: `del_construct`, `get_construct`,
+             `get_construct_data_axes`, `get_construct_id`,
+             `has_construct`, `set_construct`
 
 :Parameters:
 
@@ -1173,7 +1174,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     #--- End: def
 
     def constructs2(self, name=None, properties=None, measure=None,
-                    ncvar=None, ncdim=None, cid=None, axes=None,
+                    ncvar=None, ncdim=None, cid=None, axis=None,
                     type=None, copy=False):
         '''Return metadata constructs
 
@@ -1184,8 +1185,9 @@ returned.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`, `get_construct_axes`,
-             `get_construct_id`, `has_construct`, `set_construct`
+.. seealso:: `del_construct`, `get_construct`,
+             `get_construct_data_axes`, `get_construct_id`,
+             `has_construct`, `set_construct`
 
 :Parameters:
 
@@ -1382,7 +1384,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             measure=measure,
             ncvar=ncvar, ncdim=ncdim,
             cid=cid,
-            type=type, axes=axes, copy=copy)
+            type=type, axis=axis, copy=copy)
     #--- End: def
 
     def domain_axes(self, copy=False):

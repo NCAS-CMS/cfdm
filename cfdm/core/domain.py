@@ -125,7 +125,7 @@ constructs.
 #        '''
 #        if cid in self.domain_axes():
 #            for k, v in self.array_constructs().items():
-#                if cid in self.construct_axes().get(k, ()):
+#                if cid in self.construct_data_axes().get(k, ()):
 #                    raise ValueError("asda ;wo3in dp08hi n")
 #        else:
 #            # Remove pointers to removed construct in coordinate

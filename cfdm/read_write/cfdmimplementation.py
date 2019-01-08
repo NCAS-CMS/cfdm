@@ -242,7 +242,7 @@ AttributeError: Field doesn't have property 'standard_name'
             data = self.get_data(field)
             
         if key is not None:
-            data_axes = self.get_construct_axes(field, key)
+            data_axes = self.get_construct_data_axes(field, key)
         else:
             data_axes = self.get_field_data_axes(field)
             
@@ -255,10 +255,10 @@ AttributeError: Field doesn't have property 'standard_name'
         return construct.get_data().get_compression_type()
     #--- End: def
         
-    def get_construct_axes(self, field, key):
+    def get_construct_data_axes(self, field, key):
         '''
         '''
-        return field.construct_axes()[key]
+        return field.construct_data_axes()[key]
     #--- End: def
     
     def get_constructs(self, field, axes=None):

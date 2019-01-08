@@ -26,7 +26,7 @@ Inspection
    ~cfdm.Field.coordinates
    ~cfdm.Field.coordinate_references
    ~cfdm.Field.constructs
-   ~cfdm.Field.construct_axes
+   ~cfdm.Field.construct_data_axes
    ~cfdm.Field.data_constructs      
    ~cfdm.Field.dimension_coordinates
    ~cfdm.Field.domain_ancillaries
@@ -35,7 +35,7 @@ Inspection
    ~cfdm.Field.field_ancillaries
    ~cfdm.Field.get_array
    ~cfdm.Field.get_construct
-   ~cfdm.Field.get_construct_axes
+   ~cfdm.Field.get_construct_data_axes
    ~cfdm.Field.get_construct_id
    ~cfdm.Field.get_data
    ~cfdm.Field.get_domain
@@ -112,14 +112,14 @@ Metadata constructs
    :template: method.rst
 
    ~cfdm.Field.constructs
-   ~cfdm.Field.construct_axes
+   ~cfdm.Field.construct_data_axes
    ~cfdm.Field.del_construct
    ~cfdm.Field.get_construct
-   ~cfdm.Field.get_construct_axes
+   ~cfdm.Field.get_construct_data_axes
    ~cfdm.Field.get_construct_id
    ~cfdm.Field.has_construct
    ~cfdm.Field.set_construct
-   ~cfdm.Field.set_construct_axes
+   ~cfdm.Field.set_construct_data_axes
    ~cfdm.Field.auxiliary_coordinates
    ~cfdm.Field.cell_measures
    ~cfdm.Field.cell_methods
@@ -147,7 +147,7 @@ Modification
    ~cfdm.Field.expand_dims
    ~cfdm.Field.properties
    ~cfdm.Field.set_construct
-   ~cfdm.Field.set_construct_axes
+   ~cfdm.Field.set_construct_data_axes
    ~cfdm.Field.set_data
    ~cfdm.Field.set_data_axes
    ~cfdm.Field.set_property

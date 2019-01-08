@@ -334,7 +334,7 @@ If the construct has no data, then return `None`
         '''
         g = self.write_vars
 
-        domain_axes = self.implementation.get_construct_axes(field, key)
+        domain_axes = self.implementation.get_construct_data_axes(field, key)
 
         if not domain_axes:
             # No data
@@ -531,7 +531,7 @@ a new netCDF dimension for the bounds.
     
 #        coord = self._change_reference_datetime(coord)
 
-        axis = self.implementation.get_construct_axes(f, key)[0]
+        axis = self.implementation.get_construct_data_axes(f, key)[0]
 
         create = False
         if not self._already_in_file(coord):
@@ -1025,7 +1025,7 @@ it is not re-written.
         g = self.write_vars
 
 #        ncdimensions = tuple([g['axis_to_ncdim'][axis]
-#                              for axis in self.implementation.get_construct_axes(f, key)])
+#                              for axis in self.implementation.get_construct_data_axes(f, key)])
 
         ncdimensions = self._netcdf_dimensions(f, key, anc)
         
@@ -1093,7 +1093,7 @@ it is not re-written.
         g = self.write_vars
 
 #        ncdimensions = tuple([g['axis_to_ncdim'][axis]
-#                              for axis in self.implementation.get_construct_axes(f, key)])
+#                              for axis in self.implementation.get_construct_data_axes(f, key)])
     
         ncdimensions = self._netcdf_dimensions(f, key, anc)
         
@@ -1721,7 +1721,7 @@ extra trailing dimension.
         for axis in sorted(domain_axes):
             found_dimension_coordinate = False
             for key, dim_coord in dimension_coordinates.items():
-                if self.implementation.get_construct_axes(f, key) != (axis,):
+                if self.implementation.get_construct_data_axes(f, key) != (axis,):
                     continue
 
                 # --------------------------------------------------------
@@ -1793,7 +1793,7 @@ extra trailing dimension.
 
                     if spanning_constructs:
                         for key, construct in list(spanning_constructs.items()):
-                            axes = self.implementation.get_construct_axes(f, key)
+                            axes = self.implementation.get_construct_data_axes(f, key)
                             spanning_constructs[key] = (construct, axes.index(axis))
                         
                         for b1 in g['xxx']:
@@ -2003,7 +2003,7 @@ extra trailing dimension.
                     owning_coord_key, _ = c[0]
             #--- End: if
     
-            z_axis = self.implementation.get_construct_axes(f, owning_coord_key)[0]
+            z_axis = self.implementation.get_construct_data_axes(f, owning_coord_key)[0]
                 
             if owning_coord_key is not None:
                 # This formula_terms coordinate reference matches up
@@ -2039,7 +2039,7 @@ extra trailing dimension.
     
                     bounds = g['bounds'].get(ncvar, None)
                     if bounds is not None:
-                        if z_axis not in self.implementation.get_construct_axes(f, key):
+                        if z_axis not in self.implementation.get_construct_data_axes(f, key):
                             bounds = None
     
                     if bounds is None:        
