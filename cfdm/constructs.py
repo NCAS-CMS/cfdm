@@ -258,7 +258,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
     #--- End: def
 
     def constructs2(self, name=None, properties=None, measure=None,
-                    ncvar=None, ncdim=None, cid=None, axis=None,
+                    ncvar=None, ncdim=None, key=None, axis=None,
                     type=None, copy=False):
         '''Return metadata constructs
 
@@ -333,13 +333,13 @@ returned.
             ``measure='area'``.
 
 
-        * A construct identifier, prefixed by ``cid%`` (see also the
-          *cid* parameter). Constructs may also be selected by their
-          construct identifier with the *cid* parameter.
+        * A construct identifier, prefixed by ``key%`` (see also the
+          *key* parameter). Constructs may also be selected by their
+          *construct identifier with the *key* parameter.
 
 
           *Example:* 
-            ``name='cid%cellmethod1'`` will select cell method
+            ``name='key%cellmethod1'`` will select cell method
             construct with construct identifier "cellmethod1".
 
         * The netCDF variable name, prefixed by ``ncvar%``.
@@ -452,7 +452,7 @@ returned.
         Select the construct with the given construct key.
 
         *Example:*
-          ``cid='domainancillary0'``
+          ``key='domainancillary0'``
 
     copy: `bool`, optional
         If True then return copies of the constructs. By default the
@@ -538,12 +538,12 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         '''
         out = super().constructs(construct_type=type, copy=copy)
 
-        if cid is not None:
-            construct = out.get(cid)
+        if key is not None:
+            construct = out.get(key)
             if construct is None:
                 return {}
 
-            out = {cid: construct}
+            out = {key: construct}
         
         if axis is not None:
             if isinstance(axis, basestring):
@@ -567,12 +567,12 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             if isinstance(name, basestring):
                 name = (name,)
 
-            for key, construct in tuple(out.items()):
+            for cid, construct in tuple(out.items()):
                 ok = False                
                 for n in name:
                     (prefix, _, value) = n.partition('%')
-                    if prefix == 'cid':
-                        if value == key:
+                    if prefix == 'key':
+                        if value == cid:
                             # This construct matches this name
                             ok = True
                             break
@@ -588,7 +588,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 
                 if not ok:
                     # This construct does not match any of the names
-                    del out[key]
+                    del out[cid]
             #--- End: for
 
             if not out:
@@ -599,11 +599,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             if isinstance(properties, dict):
                 properties = (properties,)
 
-            for key, construct in tuple(out.items()):
+            for cid, construct in tuple(out.items()):
                 try:
                     get_property = construct.get_property
                 except AttributeError:
-                    del out[key]
+                    del out[cid]
                     continue
                 
                 ok = False
@@ -628,7 +628,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 if not ok:
                     # This construct does not match any of the sets of
                     # properties
-                    del out[key]
+                    del out[cid]
             #--- End: for
             
             if not out:
@@ -639,11 +639,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             if isinstance(measure , basestring):
                 measure = (measure,)
 
-            for key, construct in tuple(out.items()):
+            for cid, construct in tuple(out.items()):
                 try:
                     get_measure = construct.get_measure
                 except AttributeError:
-                    del out[key]
+                    del out[cid]
                     continue
 
                 ok = False
@@ -658,7 +658,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 if not ok:
                     # This construct does not match any of the
                     # measures
-                    del out[key]
+                    del out[cid]
             #--- End: for
             
             if not out:
@@ -669,11 +669,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             if isinstance(ncvar , basestring):
                 ncvar = (ncvar,)
 
-            for key, construct in tuple(out.items()):
+            for cid, construct in tuple(out.items()):
                 try:
                     nc_get_variable = construct.nc_get_variable
                 except AttributeError:
-                    del out[key]
+                    del out[cid]
                     continue
 
                 ok = False
@@ -689,7 +689,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 if not ok:
                     # This construct does not match any of the netCDF
                     # variable names
-                    del out[key]
+                    del out[cid]
             #--- End: for
             
             if not out:
@@ -700,11 +700,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             if isinstance(ncdim , basestring):
                 ncdim = (ncdim,)
                 
-            for key, construct in tuple(out.items()):
+            for cid, construct in tuple(out.items()):
                 try:
                     nc_get_dimension = construct.nc_get_dimension
                 except AttributeError:
-                    del out[key]
+                    del out[cid]
                     continue
 
                 ok = False
@@ -720,7 +720,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                 if not ok:
                     # This construct does not match any of the netCDF
                     # dimension names
-                    del out[key]
+                    del out[cid]
             #--- End: for
             
             if not out:
@@ -794,7 +794,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
             return 'ncdim%{0}'.format(ncdim)
 
         # Get the name from the identifier
-        return 'cid%{0}'.format(axis)
+        return 'key%{0}'.format(axis)
     #--- End: def
 
     def equals(self, other, rtol=None, atol=None, traceback=False,

@@ -323,9 +323,8 @@ by using the ``cfdump`` tool, for example:
    Field: specific_humidity(latitude(5), longitude(8)) 1
    Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
 
-       
 .. _Properties:
-       
+
 **Properties**
 --------------
 
@@ -383,6 +382,117 @@ providing a new set of properties to the `~Field.properties` method:
     'standard_name': 'air_temperature',
     'units': 'K'}
 
+.. _Metadata-constructs-(1):
+
+**Metadata constructs (1)**
+---------------------------
+
+----
+
+The metadata constructs describe the field construct that contains
+them. Each CF data model metadata construct has a corresponding cfdm
+class:
+
+=======================  ==============================  =====================
+CF data model construct  Description                     cfdm class           
+=======================  ==============================  =====================
+Domain axis              Independent axes of the domain  `DomainAxis`         
+Dimension coordinate     Domain cell locations           `DimensionCoordinate`
+Auxiliary coordinate     Domain cell locations           `AuxiliaryCoordinate`
+Coordinate reference     Domain coordinate systems       `CoordinateReference`
+Domain ancillary         Cell locations in alternative   `DomainAncillary`    
+                         coordinate systems		                      
+Cell measure             Domain cell size or shape       `CellMeasure`        
+Field ancillary          Ancillary metadata which vary   `FieldAncillary`     
+                         within the domain		                      
+Cell method              Describes how data represent    `CellMethod`         
+                         variation within cells		                      
+=======================  ==============================  =====================
+
+Metadata constructs of a particular type can be retrieved with the
+following methods of the field construct:
+
+==============================  =====================  
+Method                          Metadata constructs    
+==============================  =====================  
+`~Field.domain_axes`            Domain axes            
+`~Field.dimension_coordinates`  Dimension coordinates  
+`~Field.auxiliary_coordinates`  Auxiliary coordinates  
+`~Field.coordinate_references`  Coordinate references  
+`~Field.domain_ancillaries`     Domain ancillaries     
+				                               
+`~Field.cell_measures`          Cell measures          
+`~Field.field_ancillaries`      Field ancillaries      
+				                              
+`~Field.cell_methods`           Cell methods                               
+==============================  =====================  
+
+Each of these methods returns a dictionary whose values are the
+metadata constructs of one type, keyed by a unique identifier called a
+"construct key":
+
+.. code-block:: python
+
+   >>> t.coordinate_references()
+   {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
+   >>> t.dimension_coordinates()
+   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
+   >>> t.domain_axes()
+   {'domainaxis0': <DomainAxis: 1>,
+    'domainaxis1': <DomainAxis: 10>,
+    'domainaxis2': <DomainAxis: 9>,
+    'domainaxis3': <DomainAxis: 1>}
+
+The construct keys (e.g. ``'domainaxis1'``) are usually generated
+internally and are unique within the field constuct. However,
+construct keys may be different for equivalent metadata constucts from
+different field constructs, and for different Python sessions.
+
+Metadata constructs of all types may be returned by the
+`~Field.constructs` method of the field construct:
+
+.. code-block:: python
+
+   >>> q.constructs()
+   {'cellmethod0': <CellMethod: area: mean>,
+    'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
+    'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
+    'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+    'domainaxis0': <DomainAxis: 5>,
+    'domainaxis1': <DomainAxis: 8>,
+    'domainaxis2': <DomainAxis: 1>}
+   >>> t.constructs()
+   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
+    'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
+    'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
+    'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
+    'cellmethod1': <CellMethod: domainaxis3: maximum>,
+    'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
+    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
+    'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
+    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
+    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
+    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
+    'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
+    'domainancillary1': <DomainAncillary: ncvar%b(1) >,
+    'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
+    'domainaxis0': <DomainAxis: 1>,
+    'domainaxis1': <DomainAxis: 10>,
+    'domainaxis2': <DomainAxis: 9>,
+    'domainaxis3': <DomainAxis: 1>,
+    'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
+
+The `~Field.constructs` method has optional parameters to filter the
+output by specifying criteria on the contents of metadata
+constructs. See :ref:`construct selection <Construct-selection>` for
+more details.
+
+
 .. _Data:
 
 **Data**
@@ -430,7 +540,62 @@ access attributes and methods of the `Data` instance:
    >>> t.data.size
    90
 
+.. _Data-axes:
 
+**Data axes**
+^^^^^^^^^^^^^
+
+The data array of the field construct, and every metatadata construct
+that may have one, spans a subset of the domain axis constructs.
+
+.. A domain axis metadata construct specifies the number of points along
+   an independent axis of the field construct's domain.
+
+The domain axis constructs spanned by the field construct's data are
+found with the `~Field.get_data_axes` method of the field construct:
+
+.. code-block:: python
+
+   >>> t.domain_axes()
+   {'domainaxis0': <DomainAxis: 1>,
+    'domainaxis1': <DomainAxis: 10>,
+    'domainaxis2': <DomainAxis: 9>,
+    'domainaxis3': <DomainAxis: 1>}
+   >>> t
+   <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> t.data.shape
+   (1, 10, 9)
+   >>> t.get_data_axes()
+   ('domainaxis0', 'domainaxis1', 'domainaxis2')
+ 
+The domain axis constructs spanned by a metadata construct's data are
+found with the `~Field.constructs_data_axes` method of the field
+construct:
+
+.. code-block:: python
+
+   >>> t.constructs_data_axes()
+   {'auxiliarycoordinate0': ('domainaxis1', 'domainaxis2'),
+    'auxiliarycoordinate1': ('domainaxis2', 'domainaxis1'),
+    'auxiliarycoordinate2': ('domainaxis1',),
+    'cellmeasure0': ('domainaxis2', 'domainaxis1'),
+    'dimensioncoordinate0': ('domainaxis0',),
+    'dimensioncoordinate1': ('domainaxis1',),
+    'dimensioncoordinate2': ('domainaxis2',),
+    'dimensioncoordinate3': ('domainaxis3',),
+    'domainancillary0': ('domainaxis0',),
+    'domainancillary1': ('domainaxis0',),
+    'domainancillary2': ('domainaxis1', 'domainaxis2'),
+    'fieldancillary0': ('domainaxis1', 'domainaxis2')}
+
+Note that the field construct's data may omit size one domain axis
+constructs, because their presence makes no difference to the order of
+the elements, but such domain axis constructs may still be spanned by
+the data of metadata constructs. For example, the data of the field
+construct ``t``, does not span the size one domain axis construct with
+key ``'domainaxis3'``, but this domain axis construct is spanned by a
+dimension coordinate construct (with key ``'dimensioncoordinate3'``).
+   
 .. _Indexing:
 
 **Indexing**
@@ -577,106 +742,12 @@ longitude of the original, and with a reversed latitude axis:
                    : longitude(1) = [22.5] degrees_east
 
 
-.. _Metadata-constructs:
+.. _Metadata-constructs-2:
 
-**Metadata constructs**
------------------------
+**Metadata constructs (2)**
+---------------------------
 
 ----
-
-The metadata constructs describe the field construct that contains
-them. Each CF data model metadata construct has a corresponding cfdm
-class:
-
-=======================  ==============================  =====================
-CF data model construct  Description                     cfdm class           
-=======================  ==============================  =====================
-Domain axis              Independent axes of the domain  `DomainAxis`         
-Dimension coordinate     Domain cell locations           `DimensionCoordinate`
-Auxiliary coordinate     Domain cell locations           `AuxiliaryCoordinate`
-Coordinate reference     Domain coordinate systems       `CoordinateReference`
-Domain ancillary         Cell locations in alternative   `DomainAncillary`    
-                         coordinate systems		                      
-Cell measure             Domain cell size or shape       `CellMeasure`        
-Field ancillary          Ancillary metadata which vary   `FieldAncillary`     
-                         within the domain		                      
-Cell method              Describes how data represent    `CellMethod`         
-                         variation within cells		                      
-=======================  ==============================  =====================
-
-Metadata constructs of a particular type can be retrieved with the
-following methods of the field construct:
-
-==============================  =====================  
-Method                          Metadata constructs    
-==============================  =====================  
-`~Field.domain_axes`            Domain axes            
-`~Field.dimension_coordinates`  Dimension coordinates  
-`~Field.auxiliary_coordinates`  Auxiliary coordinates  
-`~Field.coordinate_references`  Coordinate references  
-`~Field.domain_ancillaries`     Domain ancillaries     
-				                               
-`~Field.cell_measures`          Cell measures          
-`~Field.field_ancillaries`      Field ancillaries      
-				                              
-`~Field.cell_methods`           Cell methods                               
-==============================  =====================  
-
-Each of these methods returns a dictionary whose values are the
-metadata constructs of one type, keyed by a unique identifier called a
-"construct identifier":
-
-.. code-block:: python
-
-   >>> t.coordinate_references()
-   {'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
-    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>}
-   >>> t.dimension_coordinates()
-   {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >}
-
-The construct identifiers (e.g. ``'dimensioncoordinate2'``) are
-usually generated internally and are unique within the field
-constuct. However, construct identifiers may be different for
-equivalent metadata constucts from different field constructs, and for
-different Python sessions.
-
-Metadata constructs of all types may be returned by the
-`~Field.constructs` method of the field construct:
-
-.. code-block:: python
-
-   >>> q.constructs()
-   {'cellmethod0': <CellMethod: area: mean>,
-    'dimensioncoordinate0': <DimensionCoordinate: latitude(5) degrees_north>,
-    'dimensioncoordinate1': <DimensionCoordinate: longitude(8) degrees_east>,
-    'dimensioncoordinate2': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-    'domainaxis0': <DomainAxis: 5>,
-    'domainaxis1': <DomainAxis: 8>,
-    'domainaxis2': <DomainAxis: 1>}
-   >>> t.constructs()
-   {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>,
-    'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>,
-    'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
-    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>,
-    'cellmethod0': <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>,
-    'cellmethod1': <CellMethod: domainaxis3: maximum>,
-    'coordinatereference0': <CoordinateReference: atmosphere_hybrid_height_coordinate>,
-    'coordinatereference1': <CoordinateReference: rotated_latitude_longitude>,
-    'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
-    'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
-    'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
-    'dimensioncoordinate3': <DimensionCoordinate: time(1) days since 2018-12-01 >,
-    'domainancillary0': <DomainAncillary: ncvar%a(1) m>,
-    'domainancillary1': <DomainAncillary: ncvar%b(1) >,
-    'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>,
-    'domainaxis0': <DomainAxis: 1>,
-    'domainaxis1': <DomainAxis: 10>,
-    'domainaxis2': <DomainAxis: 9>,
-    'domainaxis3': <DomainAxis: 1>,
-    'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
 
 The `~Field.constructs` method has optional parameters to filter the
 metadata constructs by
@@ -689,7 +760,7 @@ metadata constructs by
 
 * measure value (for cell measure constructs),
 
-* construct identifier, and 
+* construct key, and
 
 * netCDF variable or dimension name (see the :ref:`netCDF interface
   <NetCDF-interface>`).
@@ -742,8 +813,8 @@ a keyword parameter:
 	
    >>> t.constructs('latitude')
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
-   >>> t.constructs('measure%area')
-   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   >>> t.constructs('long_name:Grid latitude name')
+   {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
 
 More generally, a construct name may be constructed by any of
 
@@ -752,13 +823,13 @@ More generally, a construct name may be constructed by any of
   colon, e.g. ``'long_name:Air Temperature'``,
 * The cell measure, preceeded by "measure%", e.g. ``'measure%volume'``
 * The netCDF variable name, preceeded by "ncvar%",
-  e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface`), and
-* The netCDF dimension name, preceeded by "ncdim%"
-  e.g. ``'ncdim%z'`` (see the :ref:`netCDF interface`).
+  e.g. ``'ncvar%tas'`` (see the :ref:`netCDF interface
+  <NetCDF-interface>`), and
+* The netCDF dimension name, preceeded by "ncdim%" e.g. ``'ncdim%z'``
+  (see the :ref:`netCDF interface <NetCDF-interface>`).
 
 Each construct has a `!name` method that, by default, returns the
-least ambiguous name
-
+least ambiguous name, as defined in the each method's documentation.
   
 Note that providing a ``type`` parameter with no other selection
 parameters is equivalent to using the particular field construct
@@ -771,25 +842,25 @@ method for retrieving that type of metadata construct:
    >>> t.cell_measures()
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
    
-Selection by construct identifier is useful for systematic metadata
-construct access, and for when a metadata construct is not
-identifiable by other means.
+Selection by construct key is useful for systematic metadata construct
+access, and for when a metadata construct is not identifiable by other
+means.
 
 .. code-block:: python
 
-   >>> t.constructs(cid='domainancillary2')
+   >>> t.constructs(key='domainancillary2')
    {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
-   >>> t.constructs('cid%cellmethod1')
+   >>> t.constructs('key%cellmethod1')
    {'cellmethod1': <CellMethod: domainaxis3: maximum>}
-   >>> t.constructs(cid='auxiliarycoordinate999')
+   >>> t.constructs(key='auxiliarycoordinate999')
    {}
 
 An individual metadata construct may be returned without its construct
-identifier, via the `~Field.get_construct` method of the field
-construct, which supports the same filtering options as the
-`~Field.constructs` method. The existence of a metadata construct may
-be checked with the `~Field.has_construct` method and a construct may
-be removed with the `~Field.del_construct` method.
+key, via the `~Field.get_construct` method of the field construct,
+which supports the same filtering options as the `~Field.constructs`
+method. The existence of a metadata construct may be checked with the
+`~Field.has_construct` method and a construct may be removed with the
+`~Field.del_construct` method.
 
 .. code-block:: python
 
@@ -797,7 +868,12 @@ be removed with the `~Field.del_construct` method.
    True
    >>> t.get_construct('latitude')
    <AuxiliaryCoordinate: latitude(10, 9) degrees_N>
-   >>> t.get_construct('units:km2')
+   >>> c = t.get_construct('units:km2')
+   >>> c
+   <CellMeasure: measure%area(9, 10) km2>
+   >>> c.name()
+   'measure%area'
+   >>> t.get_construct('measure%area')
    <CellMeasure: measure%area(9, 10) km2>
    >>> t.constructs('units:degrees')
    {'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
@@ -807,14 +883,11 @@ be removed with the `~Field.del_construct` method.
    >>> t.has_construct('units:degrees')
    False
 
-**Properties and data**
-^^^^^^^^^^^^^^^^^^^^^^^
+**Metadata construct properties**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Where applicable, metadata constructs share the same API as the field
-construct. This means, for instance, that any construct that has a
-data array (i.e. auxiliary coordinate, dimension coordinate, cell
-measure, domain ancillary and field ancillary constructs) will have a
-`!get_array` method to access its data as an independent numpy array:
+Metadata constructs share the same API as the field construct for
+accessing their properties:
 
 .. code-block:: python
 
@@ -828,21 +901,33 @@ measure, domain ancillary and field ancillary constructs) will have a
     'standard_name': 'longitude'}
    >>> lon.name()
    'longitude'
+
+**Metadata construct data**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Metadata constructs share the same API as the field construct for
+accessing their data:
+
+.. code-block:: python
+
+   >>> lon = q.get_construct('longitude')   
+   >>> lon
+   <DimensionCoordinate: longitude(8) degrees_east>
+   >>> lon.get_data()
+   <Data(8): [22.5, ..., 337.5] degrees_east>
    >>> lon.data[2]
    <Data(1): [112.5] degrees_east>
    >>> lon.data[2] = 133.33
    >>> print(lon.get_array())
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
 
-**Domain axes**
-^^^^^^^^^^^^^^^
-
 The domain axis constructs spanned by a metadata construct's data are
-found with the `~Field.construct_axes` method of the field construct:
+found with the `~Field.constructs_data_axes` method of the field
+construct:
 
 .. code-block:: python
 
-   >>> t.construct_axes()
+   >>> t.constructs_data_axes()
    {'auxiliarycoordinate0': ('domainaxis1', 'domainaxis2'),
     'auxiliarycoordinate1': ('domainaxis2', 'domainaxis1'),
     'auxiliarycoordinate2': ('domainaxis1',),
@@ -856,52 +941,12 @@ found with the `~Field.construct_axes` method of the field construct:
     'domainancillary2': ('domainaxis1', 'domainaxis2'),
     'fieldancillary0': ('domainaxis1', 'domainaxis2')}
 
-The domain axis constructs spanned by the field construct's data found
-with the `~Field.get_data_axes` method of the field construct:
+.. _Coordinates:
+		
+**Coordinates**
+^^^^^^^^^^^^^^^
 
-.. code-block:: python
-
-   >>> t.domain_axes()
-   {'domainaxis0': <DomainAxis: 1>,
-    'domainaxis1': <DomainAxis: 10>,
-    'domainaxis2': <DomainAxis: 9>,
-    'domainaxis3': <DomainAxis: 1>}
-   >>> t
-   <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-   >>> t.data.shape
-   (1, 10, 9)
-   >>> t.get_data_axes()
-   ('domainaxis0', 'domainaxis1', 'domainaxis2')
-
-.. _Cell-methods:
-   
-**Cell methods**
-^^^^^^^^^^^^^^^^
-
-A cell method construct describes how the data represent the variation
-of the physical quantity within the cells of the domain, and multiple
-cell method constructs allow multiple methods to be recorded. Because
-the application of cell methods is not commutative (e.g. a mean of
-variances is generally not the same as a variance of means), the
-`~cfdm.Field.cell_methods` method of the field construct returns an
-ordered dictionary of constructs. The order is the same as that
-described by a cell method attribute read from a netCDF dataset, or
-the same as that in which cell method constructs were added to the
-field construct during :ref:`field construct creation
-<Field-construct-creation>`.
-
-.. code-block:: python
-
-   >>> t.cell_methods()
-   OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
-                ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
-
-
-**Components**
-^^^^^^^^^^^^^^
-
-Other classes are required to represent metadata construct components
-that are neither "properties" nor "data":
+<TODO>
 
 ======================  ==============================  ======================
 cfdm class              Description                     cfdm parent classes
@@ -958,6 +1003,33 @@ Where applicable, these classes also share the same API as the field:
    {'a': 'domainancillary0',
     'b': 'domainancillary1',
     'orog': 'domainancillary2'}    
+
+
+.. _Cell-methods:
+   
+**Cell methods**
+^^^^^^^^^^^^^^^^
+
+A cell method construct describes how the data represent the variation
+of the physical quantity within the cells of the domain, and multiple
+cell method constructs allow multiple methods to be recorded. Because
+the application of cell methods is not commutative (e.g. a mean of
+variances is generally not the same as a variance of means), the
+`~cfdm.Field.cell_methods` method of the field construct returns an
+ordered dictionary of constructs. The order is the same as that
+described by a cell method attribute read from a netCDF dataset, or
+the same as that in which cell method constructs were added to the
+field construct during :ref:`field construct creation
+<Field-construct-creation>`.
+
+.. code-block:: python
+
+   >>> t.cell_methods()
+   OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
+                ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
+
+
+<TODO> DEscribe how to get/set/del properties
 
 .. _Field-construct-creation:
 
@@ -1030,12 +1102,11 @@ methods:
 For stage **3**, the `~cfdm.Field.set_construct` method of the field
 construct is used for setting metadata constructs and mapping data
 array dimensions to domain axis constructs. This method returns the
-construct identifier for the metadata construct which can be used when
-other metadata constructs are added to the field (e.g. to specify
-which domain axis constructs correspond to a data array), or when
-other metadata constructs are created (e.g. to identify the domain
-ancillary constructs forming part of a coordinate reference
-construct):
+construct key for the metadata construct which can be used when other
+metadata constructs are added to the field (e.g. to specify which
+domain axis constructs correspond to a data array), or when other
+metadata constructs are created (e.g. to identify the domain ancillary
+constructs forming part of a coordinate reference construct):
 
 
 .. =============================================  ======================================================================
@@ -1056,8 +1127,8 @@ construct):
    >>> longitude_axis = p.set_construct(cfdm.DomainAxis(3))
    >>> longitude_axis
    'domainaxis0'
-   >>> cid = p.set_construct(dc, axes=[longitude_axis])
-   >>> cid
+   >>> key = p.set_construct(dc, axes=[longitude_axis])
+   >>> key
    'dimensioncoordinate0'
    >>> cm = cfdm.CellMethod(axes=[longitude_axis],
    ...                      properties={'method': 'minimum'})
@@ -1067,13 +1138,13 @@ construct):
 In general, the order in which metadata constructs are added to the
 field does not matter, except when one metadata construct is required
 by another, in which case the former must be added to the field first
-so that its construct identifier is available to the latter. Cell
-method constructs must, however, be set in the relative order in which
-their methods were applied to the data.
+so that its construct key is available to the latter. Cell method
+constructs must, however, be set in the relative order in which their
+methods were applied to the data.
 
 The domain axis constructs spanned by a metadata construct's data may
-be changed after insertion with the `~Field.set_construct_axes` method
-of the field construct.
+be changed after insertion with the `~Field.set_construct_data_axes`
+method of the field construct.
 
 The following code creates a field construct with properties; data;
 and domain axis, cell method and dimension coordinate metadata
@@ -1096,7 +1167,7 @@ constructs (data arrays have been generated with dummy values using
    domain_axisX = cfdm.DomainAxis(8)
 
    # Insert the domain axes into the field. The set_construct method
-   # returns the domain axis construct identifier that will be used
+   # returns the domain axis construct key that will be used
    # later to specify which domain axis corresponds to which dimension
    # coordinate construct.  
    axisT = Q.set_construct(domain_axisT)
@@ -1429,7 +1500,7 @@ constructs.
    >>> print(orog1)
    Field: surface_altitude
    -----------------------
-   Data            : surface_altitude(cid%domainaxis2(10), cid%domainaxis3(9)) m
+   Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m
    
 The `cfdm.read` function allows field constructs to be derived
 directly from the netCDF variables that correspond to metadata
@@ -1895,7 +1966,7 @@ field construct:
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
    <Field: specific_humidity(latitude(5), longitude(8)) 1>
-   >>> q.get_construct_axes('time')
+   >>> q.get_construct_data_axes('time')
    ('domainaxis2',)
    >>> q2 = q.expand_dims(axis='domainaxis2')
    >>> q2
@@ -2317,7 +2388,7 @@ The new field construct can now be inspected and written to a netCDF file:
 .. code-block:: python
    
    >>> T
-   <Field: air_temperature(cid%domainaxis1(2), cid%domainaxis0(4)) K>
+   <Field: air_temperature(key%domainaxis1(2), key%domainaxis0(4)) K>
    >>> print(T.get_array())
    [[280.0 282.5    --    --]
     [281.0 279.0 278.0 279.5]]
@@ -2514,7 +2585,7 @@ The new field construct can now be inspected and written a netCDF file:
 .. code-block:: python
    
    >>> P
-   <Field: precipitation_flux(cid%domainaxis0(2), cid%domainaxis1(3), cid%domainaxis2(2)) kg m-2 s-1>
+   <Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>
    >>> print(P.get_array())
    [[[ -- 2.0]
      [ --  --]

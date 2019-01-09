@@ -365,56 +365,50 @@ TODO
         return out
     #--- End: def
     
-    def construct_data_axes(self, cid=None):
-        '''Return the domain axeis identifiers spanned by metadata construct
-data arrays.
+    def constructs_data_axes(self): #, cid=None):
+        '''Return the domain axes spanned by metadata construct data arrays.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `constructs`, `get_construct`
-
-:Parameters:
-
-    cid: `str`
-        The identifier of the construct.
+.. seealso:: `constructs`, `get_construct_data_axes`
 
 :Returns:
 
-    out: `tuple` or `None`
-        The identifiers of the domain axes constructs spanned by data
-        array of metadata constructs. If a metadata construct does not have a
-        data array then `None` is returned.
+    `dict`
+        <TODO>
+        The identifiers of the domain axes constructs spanned by
+        metadata construct data arrays. If a metadata construct does
+        not have a data array then `None` is returned.
 
 **Examples:**
 
->>> f.construct_data_axes('auxiliarycoordinate0')
-('domainaxis1', 'domainaxis0')
->>> print(f.construct_data_axes('auxiliarycoordinate99'))
-None
+>>> f.construct_data_axes()
+<TODO>
 
         '''
-        if cid is None:
-            # Return all of the constructs' axes
-            if not self._ignore:
-                return self._construct_axes.copy()
-            else:
-                ignore = self._ignore
-                out = {}
-                for construct_type, keys in self._constructs.items():
-                    if construct_type not in ignore:
-                        for key in keys:
-                            _ = self._construct_axes.get(key)
-                            if _ is not None:
-                                out[key] = _
-                #--- End: for
-                return out
-        #--- End: if
-        
-        # Return a particular construct's axes
-        if self._ignore and self.construct_type(cid) is None:
-            cid = None
+#        if cid is None:
+        # Return all of the constructs' axes
+        if not self._ignore:
+            return self._construct_axes.copy()
+        else:
+            ignore = self._ignore
+            out = {}
+            for construct_type, keys in self._constructs.items():
+                if construct_type not in ignore:
+                    for key in keys:
+                        _ = self._construct_axes.get(key)
+                        if _ is not None:
+                            out[key] = _
+            #--- End: for
 
-        return self._construct_axes.get(cid)
+            return out
+#        #--- End: if
+        
+#        # Return a particular construct's axes
+#        if self._ignore and self.construct_type(cid) is None:
+#            cid = None#
+#
+#        return self._construct_axes.get(cid)
     #--- End: def
 
 
