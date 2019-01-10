@@ -1044,7 +1044,7 @@ construct, into the data array.
         return f
     #--- End: def
 
-    def create_field(self, description=None, cid=None, domain=True):
+    def convert(self, description=None, cid=None, domain=True):
         '''Return a new field construct based on a metadata construct.
 
 A unique metdata construct is identified with the *description* and
@@ -1059,8 +1059,8 @@ metadata constructs. In this case, the new field constructs will have
 a domain limited to that which can be inferred from the corresponding
 netCDF variable, but without the connections that are defined by the
 parent netCDF data variable. This will usually result in different
-field constructs than are created with the `~Field.create_field`
-method, regardless of the setting of the *domain* parameter.
+field constructs than are created with the `~Field.convert` method,
+regardless of the setting of the *domain* parameter.
 
 .. versionadded:: 1.7.0
 
@@ -1168,7 +1168,7 @@ Coord references: atmosphere_hybrid_height_coordinate
 Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                 : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                 : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
->>> x = f.create_field('domainancillary2')
+>>> x = f.convert('domainancillary2')
 >>> print(x)
 Field: surface_altitude (ncvar%surface_altitude)
 ------------------------------------------------
@@ -1180,12 +1180,12 @@ Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ...
                 : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
 Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
 Coord references: rotated_latitude_longitude
->>> y = f.create_field('domainancillary2', domain=False)
+>>> y = f.convert('domainancillary2', domain=False)
 >>> print(y)
 Field: surface_altitude (ncvar%surface_altitude)
 ------------------------------------------------
 Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
->>> g = cfdm.read('file.nc', create_field='domain_ancillary')
+>>> g = cfdm.read('file.nc', convert='domain_ancillary')
 >>> g
 [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
  <Field: ncvar%b(atmosphere_hybrid_height_coordinate(1))>,
@@ -1197,6 +1197,72 @@ Field: surface_altitude (ncvar%surface_altitude)
 Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
 Dimension coords: grid_latitude(10) = [2.2, ..., -1.76] degrees
                 : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+		   
+.. _Creating-field-constructs-from-metadata-constructs:
+
+Creating field constructs from metadata constructs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Independent field constructs may be created from metadata in two ways:
+either from a netCDF variable using the `cfdm.read` function, or from
+a metadata construct using the `~Field.convert` method of the field
+construct.
+
+The `~Field.convert` method of the field construct identifies a unique
+metadata construct and returns a new field construct based on its
+properties and data. The new field construct has domain axis
+constructs corresponding to the data, and (by default) any other
+metadata constructs that further define its domain.
+
+.. code-block:: python
+
+   >>> orog = tas.convert('surface_altitude')	  
+   >>> print(orog)
+   Field: surface_altitude
+   -----------------------
+   Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
+   Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees
+                   : grid_longitude(9) = [0.0, ..., 8.0] degrees
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] degrees_north
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] degrees_east
+                   : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., j]
+   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
+   Coord references: rotated_latitude_longitude
+
+The `~Field.convert` method has an option to only include domain axis
+constructs in the new field construct, with no other metadata
+constructs.
+
+   >>> orog1 = tas.convert('surface_altitude', domain=False) 
+   >>> print(orog1)
+   Field: surface_altitude
+   -----------------------
+   Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m
+   
+The `cfdm.read` function allows field constructs to be derived
+directly from the netCDF variables that correspond to metadata
+constructs. In this case, the new field constructs will have a domain
+limited to that which can be inferred from the corresponding netCDF
+variable, but without the connections that are defined by the parent
+netCDF data variable. This will often result in a new field construct
+that has fewer metadata constructs than one created with the
+`~Field.convert` method.
+
+.. code-block:: python
+
+   >>> cfdm.write(tas, 'tas.nc')
+   >>> fields = cfdm.read('tas.nc', convert='domain_ancillary')
+   >>> fields
+   [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
+    <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+    <Field: ncvar%b(atmosphere_hybrid_height_coordinate(1)) 1>,
+    <Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m>]
+   >>> print(fields[3])
+   Field: surface_altitude (ncvar%surface_altitude)
+   ------------------------------------------------
+   Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
+   Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees
+                   : grid_longitude(9) = [0.0, ..., 8.0] degrees
 
         '''
         c0 = self.constructs(description=description, cid=cid,

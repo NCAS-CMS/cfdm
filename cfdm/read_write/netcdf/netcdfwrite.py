@@ -1193,7 +1193,8 @@ measure will not be written.
     
     def _create_external(self, field=None, construct_id=None,
                          ncvar=None, ncdimensions=None):
-        '''TODO
+        '''Create a new field to flag it for being written the external file.
+
         '''
         g = self.write_vars
         
@@ -1201,7 +1202,7 @@ measure will not be written.
             return
 
         # Still here?
-        external = self.implementation.create_field(
+        external = self.implementation.convert(
             field=field,
             construct_id=construct_id)
         

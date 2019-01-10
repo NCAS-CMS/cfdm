@@ -23,14 +23,19 @@ designed to promote the creation, processing, and sharing of climate
 and forecasting data using netCDF files and libraries
 (https://www.unidata.ucar.edu/software/netcdf).
 
+
+
+.. _CF-data-model:
+
 **CF data model**
 -----------------
 
 ----
 
-The `CF data model <https://www.geosci-model-dev.net/10/4619/2017>`_
-identifies the fundamental elements ("constructs") of CF and shows how
-they relate to each other, independently of the netCDF encoding.
+The `CF data model <https://doi.org/10.5194/gmd-10-4619-2017>`_
+[#cfdm]_ identifies the fundamental elements ("constructs") of CF and
+shows how they relate to each other, independently of the netCDF
+encoding.
 
 The **field** construct defined by the CF data model, which
 corresponds to a CF-netCDF data variable with all of its metadata, is
@@ -81,8 +86,7 @@ The physical nature of individual data values are described by
   cell_methods attribute of data variable).
 
 A complete description of the CF data model, including UML diagrams,
-is available to download at
-https://www.geosci-model-dev.net/10/4619/2017.
+is available to download at https://doi.org/10.5194/gmd-10-4619-2017.
 
 **Implementation**
 ------------------
@@ -117,3 +121,12 @@ The cfdm package can
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
 
+----
+
+.. rubric:: Footnotes
+
+.. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+           Taylor, K. E.: A data model of the Climate and Forecast
+           metadata conventions (CF-1.6) with a software
+           implementation (cf-python v2.1), Geosci. Model Dev., 10,
+           4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.

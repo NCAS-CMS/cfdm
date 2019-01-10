@@ -46,28 +46,28 @@ class read_writeTest(unittest.TestCase):
         f = cfdm.read(filename)
         self.assertTrue(len(f) == 1, '\n'+str(f))
 
-        f = cfdm.read(filename, create_field=['dimension_coordinate'])
+        f = cfdm.read(filename, extra=['dimension_coordinate'])
         self.assertTrue(len(f) == 4, '\n'+str(f))
 
-        f = cfdm.read(filename, create_field=['auxiliary_coordinate'])
+        f = cfdm.read(filename, extra=['auxiliary_coordinate'])
         self.assertTrue(len(f) == 4, '\n'+str(f))
         
-        f = cfdm.read(filename, create_field='cell_measure')
+        f = cfdm.read(filename, extra='cell_measure')
         self.assertTrue(len(f) == 2, '\n'+str(f))
 
-        f = cfdm.read(filename, create_field=['field_ancillary'])
+        f = cfdm.read(filename, extra=['field_ancillary'])
         self.assertTrue(len(f) == 4, '\n'+str(f))
                 
-        f = cfdm.read(filename, create_field='domain_ancillary')
+        f = cfdm.read(filename, extra='domain_ancillary')
         self.assertTrue(len(f) == 4, '\n'+str(f))
         
-        f = cfdm.read(filename, create_field=['field_ancillary', 'auxiliary_coordinate'])
+        f = cfdm.read(filename, extra=['field_ancillary', 'auxiliary_coordinate'])
         self.assertTrue(len(f) == 7, '\n'+str(f))
         
-        self.assertTrue(len(cfdm.read(filename, create_field=['domain_ancillary', 'auxiliary_coordinate'])) == 7)
-        self.assertTrue(len(cfdm.read(filename, create_field=['domain_ancillary', 'cell_measure', 'auxiliary_coordinate'])) == 8)
+        self.assertTrue(len(cfdm.read(filename, extra=['domain_ancillary', 'auxiliary_coordinate'])) == 7)
+        self.assertTrue(len(cfdm.read(filename, extra=['domain_ancillary', 'cell_measure', 'auxiliary_coordinate'])) == 8)
 
-        f = cfdm.read(filename, create_field=('field_ancillary', 'dimension_coordinate',
+        f = cfdm.read(filename, extra=('field_ancillary', 'dimension_coordinate',
                                        'cell_measure', 'auxiliary_coordinate',
                                        'domain_ancillary'))
         self.assertTrue(len(f) == 14, '\n'+str(f))

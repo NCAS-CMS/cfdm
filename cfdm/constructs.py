@@ -23,7 +23,7 @@ returned.
 .. versionadded:: 1.7.0
 
 .. seealso:: `del_construct`, `get_construct`,
-             `get_construct_data_axes`, `get_construct_id`,
+             `get_constructs_data_axes`, `get_construct_id`,
              `has_construct`, `set_construct`
 
 :Parameters:
@@ -228,9 +228,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         
         if axes is not None:
             axes = set(axes)
-            construct_data_axes = self.construct_data_axes()
+            constructs_data_axes = self.constructs_data_axes()
             for cid in tuple(out):
-                x = construct_data_axes.get(cid)
+                x = constructs_data_axes.get(cid)
                 if x is None or not axes.intersection(x):
                     del out[cid]
                 
@@ -448,11 +448,19 @@ returned.
           ``ncdim=['lon', 'lat']``
 
 
-    key: `str`, optional
-        Select the construct with the given construct key.
+    key: (sequence of) `str`, optional
+        Select the construct with the given construct key. If multiple
+        keys are specified then select all of the metadata constructs
+        which have any of the given keys.
 
         *Example:*
           ``key='domainancillary0'``
+
+        *Example:*
+          ``key=['cellmethod2']``
+
+        *Example:*
+          ``key=('dimensioncoordinate1', 'fieldancillary0')``
 
     copy: `bool`, optional
         If True then return copies of the constructs. By default the
@@ -539,9 +547,13 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         out = super().constructs(construct_type=type, copy=copy)
 
         if key is not None:
-            construct = out.get(key)
-            if construct is None:
-                return {}
+            if isinstance(key, basestring):
+                key = (key,)
+
+            out = {cid: out[cid] for cid in key if cid in out}
+            if not out:
+                return out
+        #--- End: if
 
             out = {key: construct}
         
@@ -551,9 +563,9 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
             axis = set(axis)
             
-            construct_data_axes = self.construct_data_axes()
+            constructs_data_axes = self.constructs_data_axes()
             for cid in tuple(out):
-                x = construct_data_axes.get(cid)
+                x = constructs_data_axes.get(cid)
                 if x is None or not axis.intersection(x):
                     # This construct does not span these axes
                     del out[cid]
@@ -758,13 +770,13 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         if axis not in domain_axes:
             return default
 
-        construct_data_axes = self.construct_data_axes()
+        constructs_data_axes = self.constructs_data_axes()
 
         dimension_coordinates = self.constructs(construct_type='dimension_coordinate')
 
         name = None        
         for key, dim in dimension_coordinates.items():
-            if construct_data_axes[key] == (axis,):
+            if constructs_data_axes[key] == (axis,):
                 # Get the name from a dimension coordinate
                 name = dim.name(ncvar=False, default=None)
                 break
@@ -776,7 +788,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
         
         found = False
         for key, aux in auxiliary_coordinates.items():
-            if construct_data_axes[key] == (axis,):
+            if constructs_data_axes[key] == (axis,):
                 if found:
                     name = None
                     break

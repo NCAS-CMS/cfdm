@@ -223,7 +223,7 @@ contents and any file suffix is not not considered.
             return False
     #--- End: def
 
-    def read(self, filename, create_field=None, default_version=None,
+    def read(self, filename, extra=None, default_version=None,
              external_files=None, extra_read_vars=None,
              _scan_only=False, verbose=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
@@ -251,30 +251,29 @@ ancillaries, field ancillaries).
           ``'${HOME}/file.nc'``, ``'~/file.nc'``,
           ``'~/tmp/../file.nc'``.
 
-    create_field: sequence of `str`, optional
+    extra: sequence of `str`, optional
         Create extra, independent fields from the particular types of
-        metadata constructs. The *create_field* parameter may be one,
-        or a sequence, of:
+        metadata constructs. The *extra* parameter may be one, or a
+        sequence, of:
 
           ==========================  ================================
-          *create_field*              Metadata constructs
+          *extra*                     Metadata constructs
           ==========================  ================================
           ``'field_ancillary'``       Field ancillary constructs
           ``'domain_ancillary'``      Domain ancillary constructs
           ``'dimension_coordinate'``  Dimension coordinate constructs
           ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-        ``'cell_measure'``          Cell measure constructs
+          ``'cell_measure'``          Cell measure constructs
           ==========================  ================================
 
         *Example:*
           To create fields from auxiliary coordinate constructs:
-          ``create_field='auxiliary_coordinate'`` or
-          ``create_field=['auxiliary_coordinate']``.
+          ``extra='auxiliary_coordinate'`` or
+          ``extra=['auxiliary_coordinate']``.
 
         *Example:*
           To create fields from domain ancillary and cell measure
-          constructs: ``create_field=['domain_ancillary',
-          'cell_measure']``.
+          constructs: ``extra=['domain_ancillary', 'cell_measure']``.
 
 :Returns:
 
@@ -284,6 +283,7 @@ ancillaries, field ancillaries).
 :Examples:
 
 TODO
+
         '''
         # ------------------------------------------------------------
         # Initialise netCDF read parameters
@@ -389,18 +389,18 @@ TODO
 
         g['external_files'] = set(external_files)
 
-        # Parse create_field parameter
-        if create_field:
-            if isinstance(create_field, basestring):
-                field = (create_field,)
+        # Parse extra parameter
+        if extra:
+            if isinstance(extra, basestring):
+                field = (extra,)
 
-            for f in create_field:
+            for f in extra:
                 if f not in g['get_constructs']:
                     raise ValueError(
-                        "Can't read: Bad parameter value: create_field={!r}".format(
-                            create_field))            
+                        "Can't read: Bad parameter value: extra={!r}".format(
+                            extra))            
         #--- End: if
-        g['create_field'] = create_field
+        g['extra'] = extra
 
         filename = os.path.expanduser(os.path.expandvars(filename))
         
@@ -679,8 +679,8 @@ TODO
         #--- End: if
 
         # ------------------------------------------------------------
-        # Convert every netCDF variable to a field (apart from special
-        # variables that have already been identified as such)
+        # Create a field from every netCDF variable (apart from
+        # special variables that have already been identified as such)
         # ------------------------------------------------------------
         all_fields = OrderedDict()
         for ncvar in g['variables']:
@@ -725,9 +725,9 @@ TODO
         # If requested, reinstate fields created from netCDF variables
         # that are referenced by other netCDF variables.
         # ------------------------------------------------------------
-        if g['create_field']:
+        if g['extra']:
             fields0 = list(fields.values())
-            for construct_type in g['create_field']:
+            for construct_type in g['extra']:
                 for f in fields0:
                     for construct in g['get_constructs'][construct_type](f).values():
                         ncvar = self.implementation.get_ncvar(construct)

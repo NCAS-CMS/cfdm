@@ -12,7 +12,7 @@ Version |release| for version |version| of the CF conventions.
  
 The code examples in this tutorial are available in an **IPython
 Jupyter notebook** (:download:`download <notebooks/tutorial.ipynb>`,
-70kB) [#notebook]_, [#files]_.
+70kB) [#files]_, [#notebook]_.
 
 .. _Import:
 
@@ -35,7 +35,8 @@ The cfdm package is imported as follows:
 ----
 
 The version of the `CF conventions <http://cfconventions.org>`_ and
-the CF data model being used may be found with the `cfdm.CF` function:
+the :ref:`CF data model <CF-data-model>` being used may be found with
+the `cfdm.CF` function:
 
 .. code-block:: python
 
@@ -66,7 +67,9 @@ For example, to read the file ``file.nc`` (:download:`download
 constructs:
 
 .. code-block:: python
-
+   :caption: *Read file.nc and show that the result is a two-element
+             list.*
+		
    >>> x = cfdm.read('file.nc')
    >>> type(x)
    <type 'list'>
@@ -85,10 +88,9 @@ The `cfdm.read` function has optional parameters to
   variables <External-variables>`, and
 
 * request :ref:`extra field constructs to be created from "metadata"
-  netCDF variables
-  <Creating-field-constructs-from-metadata-constructs>`, i.e. those
-  that are referenced from CF-netCDF data variables, but which are not
-  regarded by default as data variables in their own right.
+  netCDF variables <Creation-by-reading>`, i.e. those that are
+  referenced from CF-netCDF data variables, but which are not regarded
+  by default as data variables in their own right.
 
 .. _Inspection:
 
@@ -109,7 +111,10 @@ levels of detail.
 The built-in `repr` function returns a short, one-line description:
 
 .. code-block:: python
-
+   :caption: *Inspect the contents of the two field constructs from
+             the dataset and create a Python variable for each of
+             them.*
+      
    >>> x
    [<Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
@@ -346,7 +351,9 @@ Individual properties may be accessed and modified with the
 and `~Field.set_property` methods:
 
 .. code-block:: python
-
+   :caption: *Check is a property exists, retrieve its value, delete
+             it and set it to a new value.*
+      
    >>> t.has_property('standard_name')
    True
    >>> t.get_property('standard_name')
@@ -363,7 +370,10 @@ The properties may be completely replaced with another collection by
 providing a new set of properties to the `~Field.properties` method:
 
 .. code-block:: python
-	  
+   :caption: *Delete all the existing properties, saving the original
+             one,and replace them with two new properties; finally
+             reinstate the original ones.*
+	     
    >>> original = t.properties({'foo': 'bar', 'units': 'K'})
    >>> original
    {'Conventions': 'CF-1.7',
@@ -382,6 +392,9 @@ providing a new set of properties to the `~Field.properties` method:
     'standard_name': 'air_temperature',
     'units': 'K'}
 
+All of the methods related to the properties are listed :ref:`here
+<Field-Properties>`.
+
 .. _Metadata-constructs-(1):
 
 **Metadata constructs (1)**
@@ -390,8 +403,8 @@ providing a new set of properties to the `~Field.properties` method:
 ----
 
 The metadata constructs describe the field construct that contains
-them. Each CF data model metadata construct has a corresponding cfdm
-class:
+them. Each :ref:`CF data model metadata construct <CF-data-model>` has
+a corresponding cfdm class:
 
 =======================  ==============================  =====================
 CF data model construct  Description                     cfdm class           
@@ -489,9 +502,8 @@ Metadata constructs of all types may be returned by the
 
 The `~Field.constructs` method has optional parameters to filter the
 output by specifying criteria on the contents of metadata
-constructs. See :ref:`construct selection <Construct-selection>` for
-more details.
-
+constructs. See the :ref:`further section on metadata constructs
+<Metadata-constructs-(2)>` for more details.
 
 .. _Data:
 
@@ -504,8 +516,11 @@ The field construct's data array is stored in a `Data` class instance
 that is accessed with the `~Field.get_data` method:
 
 .. code-block:: python
-
-   >>> t.get_data()
+   :caption: *Retrieve the data and inspect it, showing the shape and
+             some illustrative values.*
+		
+   >>> d = t.get_data()
+   >>> d
    <Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
 The data array may be retrieved as an independent (possibly masked)
@@ -530,7 +545,9 @@ alias for the `~Field.get_data` method, which makes it easier to
 access attributes and methods of the `Data` instance:
 
 .. code-block:: python
-
+   :caption: *Inspect the data type, number of dimensions, dimension
+             sizes and number of elements of the data array.*
+	     
    >>> t.data.dtype
    dtype('float64')
    >>> t.data.ndim
@@ -540,19 +557,21 @@ access attributes and methods of the `Data` instance:
    >>> t.data.size
    90
 
+All of the methods and attributes related to the data are listed
+:ref:`here <Field-Data>`.
+
 .. _Data-axes:
 
 **Data axes**
 ^^^^^^^^^^^^^
 
-The data array of the field construct, and every metatadata construct
-that may have one, spans a subset of the domain axis constructs.
-
-.. A domain axis metadata construct specifies the number of points along
-   an independent axis of the field construct's domain.
-
-The domain axis constructs spanned by the field construct's data are
-found with the `~Field.get_data_axes` method of the field construct:
+The data array of the field construct spans all the domain axis
+constructs with the possible exception of any size one domain axis
+constructs. The domain axis constructs spanned by the field
+construct's data are found with the `~Field.get_data_axes` method of
+the field construct. For example, the data of the field construct
+``t`` does not span the size one domain axis construct with key
+``'domainaxis3'``:
 
 .. code-block:: python
 
@@ -567,42 +586,15 @@ found with the `~Field.get_data_axes` method of the field construct:
    (1, 10, 9)
    >>> t.get_data_axes()
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
- 
-The domain axis constructs spanned by a metadata construct's data are
-found with the `~Field.constructs_data_axes` method of the field
-construct:
-
-.. code-block:: python
-
-   >>> t.constructs_data_axes()
-   {'auxiliarycoordinate0': ('domainaxis1', 'domainaxis2'),
-    'auxiliarycoordinate1': ('domainaxis2', 'domainaxis1'),
-    'auxiliarycoordinate2': ('domainaxis1',),
-    'cellmeasure0': ('domainaxis2', 'domainaxis1'),
-    'dimensioncoordinate0': ('domainaxis0',),
-    'dimensioncoordinate1': ('domainaxis1',),
-    'dimensioncoordinate2': ('domainaxis2',),
-    'dimensioncoordinate3': ('domainaxis3',),
-    'domainancillary0': ('domainaxis0',),
-    'domainancillary1': ('domainaxis0',),
-    'domainancillary2': ('domainaxis1', 'domainaxis2'),
-    'fieldancillary0': ('domainaxis1', 'domainaxis2')}
-
-Note that the field construct's data may omit size one domain axis
-constructs, because their presence makes no difference to the order of
-the elements, but such domain axis constructs may still be spanned by
-the data of metadata constructs. For example, the data of the field
-construct ``t``, does not span the size one domain axis construct with
-key ``'domainaxis3'``, but this domain axis construct is spanned by a
-dimension coordinate construct (with key ``'dimensioncoordinate3'``).
    
 .. _Indexing:
 
 **Indexing**
 ^^^^^^^^^^^^
 
-Indexing a `Data` instance follows rules that are very similar to the
-`numpy indexing rules
+When a `Data` instance is indexed a new instance is created for the
+part of the data defined by the indiced. Indexing follows rules that
+are very similar to the `numpy indexing rules
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only differences being:
 
@@ -619,7 +611,9 @@ the only differences being:
   package <http://unidata.github.io/netcdf4-python>`_.
 
 .. code-block:: python
-	    
+   :caption: *Create new data by indexing and show the shape
+             corresponding to the indices.*
+	     
    >>> data = t.data
    >>> data.shape
    (1, 10, 9)
@@ -634,59 +628,106 @@ the only differences being:
    >>> data[0, :, -2].shape
    (1, 10, 1)
 
-
 .. _Assignment:
 
 **Assignment**
 ^^^^^^^^^^^^^^
 
-Data array elements are changed by assigning to elements selected by
-indexing the `Data` instance using the :ref:`cfdm indexing rules
-<Indexing>`.
+Values can be changed by assigning to elements selected by indices of
+the `Data` instance in a very simmilar using rules that are very
+similar to the `numpy indexing rules
+<https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
+the only difference being:
 
-The value, or values, being assigned must be broadcastable to the
-shape defined by the indices, using the `numpy broadcasting rules
+* When two or more dimensions' indices are sequences of integers then
+  these indices work independently along each dimension (similar to
+  the way vector subscripts work in Fortran). This is the same
+  behaviour as indexing on a ``Variable`` object of the `netCDF4
+  package <http://unidata.github.io/netcdf4-python>`_.
+
+A single value may be assigned to any number of elements.
+  
+.. code-block:: python
+   :caption: *Set a single element to -1, a "column" of elements
+             to -2 and a "square" of elements to -3.*
+	     
+   >>> import numpy
+   >>> t.data[:, 0, 0] = -1
+   >>> t.data[:, :, 1] = -2
+   >>> t.data[..., 6:3:-1, 3:6] = -3
+   >>> print(t.get_array())
+   [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
+     [272.7  -2.0 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
+     [269.7  -2.0 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
+     [261.7  -2.0 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
+     [264.2  -2.0 262.5  -3.0  -3.0  -3.0 270.4 268.6 275.3]
+     [263.9  -2.0 272.1  -3.0  -3.0  -3.0 260.0 263.5 270.2]
+     [273.8  -2.0 268.5  -3.0  -3.0  -3.0 270.6 273.0 270.6]
+     [267.9  -2.0 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
+     [270.9  -2.0 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
+     [276.4  -2.0 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
+
+An array of values can be assigned, as long as it is broadcastable to
+the shape defined by the indices, using the `numpy broadcasting rules
 <https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_.
+
+.. code-block:: python
+   :caption: *Overwrite the square of values of -3 with the numbers 0
+             to 8, and set the corners of a different square to be
+             either -4 or -5.*
+	     
+   >>> t.data[..., 6:3:-1, 3:6] = numpy.arange(9).reshape(3, 3)
+   >>> t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-4, -5]])
+   >>> print(t.get_array())
+   [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
+     [272.7  -2.0 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
+     [269.7  -2.0 273.4 274.2  -4.0 270.2 280.0 272.5  -5.0]
+     [261.7  -2.0 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
+     [264.2  -2.0 262.5   6.0   7.0   8.0 270.4 268.6 275.3]
+     [263.9  -2.0 272.1   3.0   4.0   5.0 260.0 263.5 270.2]
+     [273.8  -2.0 268.5   0.0   1.0   2.0 270.6 273.0 270.6]
+     [267.9  -2.0 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
+     [270.9  -2.0 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
+     [276.4  -2.0 276.3 266.1  -4.0 268.1 277.0 273.4  -5.0]]]
 
 Data array elements may be set to missing values by assigning them to
 `numpy.ma.masked`. Missing values may be unmasked by assigning them to
 any other value.
 
 .. code-block:: python
-
-   >>> import numpy
-   >>> t.data[:, :, 1] = -10
-   >>> t.data[:, 0] = range(9)
-   >>> t.data[..., 6:3:-1, 3:6] = numpy.arange(-18, -9).reshape(3, 3)
-   >>> t.data[0, [2, 9], [4, 8]] =  cfdm.Data([[-2, -3]])
+   :caption: *Set a range of elements to missing values, and then
+             change one of them back to a non-missing value.*
+	     
    >>> t.data[0, :, -2] = numpy.ma.masked
-   >>> t.data[0, 5, -2] = -1
+   >>> t.data[0, 5, -2] = -6
    >>> print(t.get_array())
-   [[[  0.0   1.0   2.0   3.0   4.0   5.0   6.0   --   8.0]
-     [272.7 -10.0 279.5 278.9 263.8 263.3 274.2   -- 279.5]
-     [269.7 -10.0 273.4 274.2  -2.0 270.2 280.0   --  -3.0]
-     [261.7 -10.0 270.8 260.3 265.6 279.4 276.9   -- 260.6]
-     [264.2 -10.0 262.5  -3.0  -2.0  -1.0 270.4   -- 275.3]
-     [263.9 -10.0 272.1  -6.0  -5.0  -4.0 260.0 -1.0 270.2]
-     [273.8 -10.0 268.5  -9.0  -8.0  -7.0 270.6   -- 270.6]
-     [267.9 -10.0 279.8 260.3 261.2 275.3 271.2   -- 268.9]
-     [270.9 -10.0 273.2 261.7 271.6 265.8 273.0   -- 266.4]
-     [276.4 -10.0 276.3 266.1  -2.0 268.1 277.0   --  -3.0]]]
+   [[[ -1.0  -2.0 279.8 269.5 260.9 265.0 263.5    -- 269.2]
+     [272.7  -2.0 279.5 278.9 263.8 263.3 274.2    -- 279.5]
+     [269.7  -2.0 273.4 274.2  -4.0 270.2 280.0    --  -5.0]
+     [261.7  -2.0 270.8 260.3 265.6 279.4 276.9    -- 260.6]
+     [264.2  -2.0 262.5   6.0   7.0   8.0 270.4    -- 275.3]
+     [263.9  -2.0 272.1   3.0   4.0   5.0 260.0  -6.0 270.2]
+     [273.8  -2.0 268.5   0.0   1.0   2.0 270.6    -- 270.6]
+     [267.9  -2.0 279.8 260.3 261.2 275.3 271.2    -- 268.9]
+     [270.9  -2.0 273.2 261.7 271.6 265.8 273.0    -- 266.4]
+     [276.4  -2.0 276.3 266.1  -4.0 268.1 277.0    --  -5.0]]]
 
-**Data dimensions**
-^^^^^^^^^^^^^^^^^^^
+**Manipulating dimensions**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The dimensions of a field construct's data may be reordered, have size
 one dimensions removed and have new new size one dimensions included
 by using the following field construct methods:
 
-====================  ====================================
+====================  ================================================
 Method                Description
-====================  ====================================
+====================  ================================================
 `~Field.transpose`    Reorder data dimensions
-`~Field.expand_dims`  Insert a new size one data dimension
 `~Field.squeeze`      Remove size one data dimensions
-====================  ====================================
+`~Field.expand_dims`  Insert a new size one data dimension. The new
+                      dimension must correspond to an existing size
+                      one domain axis construct.
+====================  ================================================
 
 .. code-block:: python
 
@@ -695,10 +736,10 @@ Method                Description
    >>> t2 = t.squeeze(0)
    >>> t2
    <Field: air_temperature(grid_latitude(10), grid_longitude(9)) K>   
-   >>> t2 = t2.expand_dims(axis='domainaxis3', position=1)
-   >>> t2
+   >>> t3 = t2.expand_dims(axis='domainaxis3', position=1)
+   >>> t3
    <Field: air_temperature(grid_latitude(10), time(1), grid_longitude(9)) K>  
-   >>> t2.transpose([2, 0, 1])
+   >>> t3.transpose([2, 0, 1])
    <Field: air_temperature(grid_longitude(9), grid_latitude(10), time(1)) K>
 
 .. _Subspacing:
@@ -712,10 +753,11 @@ Creation of a new field construct which spans a subspace of the domain
 of an existing field construct is achieved by indexing the field
 itself, rather than its `Data` instance. This is because the operation
 must also subspace any metadata constructs of the field construct
-(e.g. coordinate constructs) which span any of the domain axes that
-are affected. The new field construct is created with the same
-properties as the original field. Subspacing uses the same :ref:`cfdm
-indexing rules <Indexing>` that apply to the `Data` class.
+(e.g. coordinate metadata constructs) which span any of the domain
+axis constructs that are affected. The new field construct is created
+with the same properties as the original field. Subspacing uses the
+same :ref:`cfdm indexing rules <Indexing>` that apply to the `Data`
+class.
 
 In this example a new field is created whose domain spans the first
 longitude of the original, and with a reversed latitude axis:
@@ -742,15 +784,17 @@ longitude of the original, and with a reversed latitude axis:
                    : longitude(1) = [22.5] degrees_east
 
 
-.. _Metadata-constructs-2:
+.. _Metadata-constructs-(2):
 
 **Metadata constructs (2)**
 ---------------------------
 
 ----
 
-The `~Field.constructs` method has optional parameters to filter the
-metadata constructs by
+Further to the functionality described in the :ref:`first section on
+medatadata constructs <Metadata-constructs-(1)>`, the
+`~Field.constructs` method of the field construct has optional
+parameters to filter the metadata constructs by
 
 * metadata construct type,
 
@@ -794,7 +838,24 @@ metadata constructs by
    ...		    properties={'units': 'degrees_E'})
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
 
-If no constructs match the given criteria, then an empty dictionary is returned:
+Selection by construct key is useful for systematic metadata construct
+access, or for when a metadata construct is not identifiable by other
+means.
+
+.. code-block:: python
+
+   >>> t.constructs(key='domainancillary2')
+   {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
+   >>> t.constructs(key='cellmethod1')
+   {'cellmethod1': <CellMethod: domainaxis3: maximum>}
+   >>> t.constructs(key=['auxiliarycoordinate2', 'cellmeasure0'])
+   {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >,
+    'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
+   >>> t.constructs(key='auxiliarycoordinate999')
+   {}
+
+If no constructs match the given criteria, then an empty dictionary is
+returned:
    
 .. code-block:: python
 	
@@ -804,10 +865,11 @@ If no constructs match the given criteria, then an empty dictionary is returned:
 A less verbose, and often more convienient, method of selection is by
 metadata construct "name". A construct's name is typically the
 description that is displayed when the construct is inspected. For
-example, the three auxiliary coordinate constructs in the field
-construct ``t`` have names ``'latitude'``, ``'longitude'`` and
-``'long_name:Grid latitude name'``. Selection by name does not require
-a keyword parameter:
+example, the :ref:`three auxiliary coordinate constructs
+<Medium-detail>` in the field construct ``t`` have names
+``'latitude'``, ``'longitude'`` and ``'long_name:Grid latitude
+name'``. Selection by name does not require a keyword parameter,
+although the keyord ``name`` can be used:
 
 .. code-block:: python
 	
@@ -815,6 +877,8 @@ a keyword parameter:
    {'auxiliarycoordinate0': <AuxiliaryCoordinate: latitude(10, 9) degrees_N>}
    >>> t.constructs('long_name:Grid latitude name')
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
+   >>> t.constructs(name='longitude')
+   {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
 
 More generally, a construct name may be constructed by any of
 
@@ -841,19 +905,6 @@ method for retrieving that type of metadata construct:
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
    >>> t.cell_measures()
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
-   
-Selection by construct key is useful for systematic metadata construct
-access, and for when a metadata construct is not identifiable by other
-means.
-
-.. code-block:: python
-
-   >>> t.constructs(key='domainancillary2')
-   {'domainancillary2': <DomainAncillary: surface_altitude(10, 9) m>}
-   >>> t.constructs('key%cellmethod1')
-   {'cellmethod1': <CellMethod: domainaxis3: maximum>}
-   >>> t.constructs(key='auxiliarycoordinate999')
-   {}
 
 An individual metadata construct may be returned without its construct
 key, via the `~Field.get_construct` method of the field construct,
@@ -883,6 +934,16 @@ method. The existence of a metadata construct may be checked with the
    >>> t.has_construct('units:degrees')
    False
 
+The key of a metadata construct may be found with the
+`~Field.get_constructs_key` method of the field construct:
+
+.. code-block:: python
+
+   >>> t.get_construct_key('latitude')
+   'auxiliarycoordinate0'
+   
+.. _Metadata-construct-properties:
+
 **Metadata construct properties**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -901,6 +962,8 @@ accessing their properties:
     'standard_name': 'longitude'}
    >>> lon.name()
    'longitude'
+
+.. _Metadata-construct-data:
 
 **Metadata construct data**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -941,6 +1004,30 @@ construct:
     'domainancillary2': ('domainaxis1', 'domainaxis2'),
     'fieldancillary0': ('domainaxis1', 'domainaxis2')}
 
+A size one domain axis construct that is *not* spanned by the field
+construct's data may still be spanned by the data of metadata
+constructs. For example, the data of the field construct ``t``
+:ref:`does not span the size one domain axis construct <Data-axes>`
+with key ``'domainaxis3'``, but this domain axis construct is spanned
+by a "time" dimension coordinate construct (with key
+``'dimensioncoordinate3'``). Such a dimension coordinate (i.e. one
+that applies to a domain axis construct that is not spanned by the
+field construct's data) corresponds to a CF-netCDF scalar coordinate
+variable.
+
+.. _Domain-axes:
+
+**Domain axes**
+^^^^^^^^^^^^^^^
+
+
+A domain axis metadata construct specifies the number of points along
+an independent axis of the field construct's domain.
+
+.. code-block:: python
+
+   <TODO>
+   
 .. _Coordinates:
 		
 **Coordinates**
@@ -1038,7 +1125,26 @@ field construct during :ref:`field construct creation
 
 ----
 
-Creation of a field construct has three stages:
+There are three methods for creating a field construct in memory:
+
+* Manual: Instantiate instances of field and metadata construct
+  classes and manually provide the connections between them.
+
+..
+
+* Convert: Convert a single metadata construct already in memory to an
+  independent field construct
+
+..
+  
+* Read: Read a netCDF variable from a dataset using `cfdm.read`.
+
+.. _Manual-creation:
+
+**Manual creation**
+^^^^^^^^^^^^^^^^^^^
+
+Manual creation of a field construct has three stages:
 
 **Stage 1:** The field construct is created without metadata constructs.
 
@@ -1174,7 +1280,7 @@ constructs (data arrays have been generated with dummy values using
    axisY = Q.set_construct(domain_axisY)
    axisX = Q.set_construct(domain_axisX)
 
-   # Field data
+   # Create and insert the field data
    data = cfdm.Data(numpy.arange(40.).reshape(5, 8))
    Q.set_data(data, axes=[axisY, axisX])
 
@@ -1192,25 +1298,27 @@ constructs (data arrays have been generated with dummy values using
 
    # Create the dimension Coordinates
    dimT = cfdm.DimensionCoordinate(
-            properties={'standard_name': 'time',
-                        'units': 'days since 2018-12-01'},
-            data=cfdm.Data([15.5]),
-            bounds=cfdm.Bounds(data=cfdm.Data([[0,31.]])))
-				   
+                               properties={'standard_name': 'time',
+                                           'units': 'days since 2018-12-01'},
+                               data=cfdm.Data([15.5]),
+                               bounds=cfdm.Bounds(data=cfdm.Data([[0,31.]])))
+
+   dimX = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(8.)))
+   dimX.properties({'standard_name': 'longitude',
+                    'units': 'degrees_east'})
+
    dimY = cfdm.DimensionCoordinate(properties={'standard_name': 'latitude',
 		                               'units': 'degrees_north'})
    array = numpy.arange(5.)
    dimY.set_data(cfdm.Data(array))
+
+   # Create and insert the latitude coordinate bounds
    bounds_array = numpy.empty((5, 2))
    bounds_array[:, 0] = array - 0.5
    bounds_array[:, 1] = array + 0.5
    bounds = cfdm.Bounds(data=cfdm.Data(bounds_array))
    dimY.set_bounds(bounds)
 
-   dimX = cfdm.DimensionCoordinate(data=cfdm.Data(numpy.arange(8.)))
-   dimX.properties({'standard_name': 'longitude',
-                    'units': 'degrees_east'})
-  
    # Insert the dimension coordinates into the field, specifying to
    # which domain axis each one corresponds
    Q.set_construct(dimT, axes=[axisT])
@@ -1461,25 +1569,22 @@ The new field construct may now be inspected:
                    : domainancillary1(atmosphere_hybrid_height_coordinate(1)) = [20.0] 1
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m
 
-.. _Creating-field-constructs-from-metadata-constructs:
+.. _Creation-by-conversion:
 
-Creating field constructs from metadata constructs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Creation by conversion**
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Independent field constructs may be created from metadata in two ways:
-either from a netCDF variable using the `cfdm.read` function, or from
-a metadata construct using the `~Field.create_field` method of the
-field construct.
-
-The `~Field.create_field` method of the field construct identifies a
-unique metadata construct and returns a new field construct based on
-its properties and data. The new field construct has domain axis
-constructs corresponding to the data, and (by default) any other
-metadata constructs that further define its domain.
+An independent field construct may be created from an existing
+metadata construct using `~Field.convert` method of the field
+construct, which identifies a unique metadata construct and returns a
+new field construct based on its properties and data. The new field
+construct always has domain axis constructs corresponding to the data,
+and (by default) any other metadata constructs that further define its
+domain.
 
 .. code-block:: python
 
-   >>> orog = tas.create_field('surface_altitude')	  
+   >>> orog = tas.convert('surface_altitude')	  
    >>> print(orog)
    Field: surface_altitude
    -----------------------
@@ -1492,40 +1597,68 @@ metadata constructs that further define its domain.
    Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[0.0, ..., 89.0]] km2
    Coord references: rotated_latitude_longitude
 
-The `~Field.create_field` method has an option to only include domain
-axis constructs in the new field construct, with no other metadata
+The `~Field.convert` method has an option to only include domain axis
+constructs in the new field construct, with no other metadata
 constructs.
 
-   >>> orog1 = tas.create_field('surface_altitude', domain=False) 
+   >>> orog1 = tas.convert('surface_altitude', domain=False) 
    >>> print(orog1)
    Field: surface_altitude
    -----------------------
    Data            : surface_altitude(key%domainaxis2(10), key%domainaxis3(9)) m
    
-The `cfdm.read` function allows field constructs to be derived
-directly from the netCDF variables that correspond to metadata
-constructs. In this case, the new field constructs will have a domain
-limited to that which can be inferred from the corresponding netCDF
-variable, but without the connections that are defined by the parent
-netCDF data variable. This will often result in a new field construct
-that has fewer metadata constructs than one created with the
-`~Field.create_field` method.
+.. _Creation-by-reading:
+
+**Creation by reading**
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The `cfdm.read` function :ref:`reads a netCDF dataset
+<Reading-datasets>` and returns the contents as a list of zero or more
+field constructs, each one corresponding to a unique CF-netCDF data
+variable in the dataset. For example, the field construct ``tas`` that
+was created manually can be :ref:`written to a netCDF dataset
+<Writing-to-disk>` and then read back into memory:
 
 .. code-block:: python
 
    >>> cfdm.write(tas, 'tas.nc')
-   >>> fields = cfdm.read('tas.nc', create_field='domain_ancillary')
+   >>> f = cfdm.read('tas.nc')
+   >>> f
+   [<Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+The `cfdm.read` function also allows field constructs to be derived
+directly from the netCDF variables that correspond to particular types
+metadata constructs. In this case, the new field constructs will have
+a domain limited to that which can be inferred from the corresponding
+netCDF variable, but without the connections that are defined by the
+parent netCDF data variable. This will often result in a new field
+construct that has fewer metadata constructs than one created with the
+`~Field.convert` method.
+
+.. code-block:: python
+
+   >>> fields = cfdm.read('tas.nc', extra='domain_ancillary')
    >>> fields
    [<Field: ncvar%a(atmosphere_hybrid_height_coordinate(1)) m>,
     <Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
     <Field: ncvar%b(atmosphere_hybrid_height_coordinate(1)) 1>,
     <Field: surface_altitude(grid_latitude(10), grid_longitude(9)) m>]
-   >>> print(fields[3])
+   >>> orog_from_file = fields[3]
+   >>> print(orog_from_file)
    Field: surface_altitude (ncvar%surface_altitude)
    ------------------------------------------------
    Data            : surface_altitude(grid_latitude(10), grid_longitude(9)) m
    Dimension coords: grid_latitude(10) = [0.0, ..., 9.0] degrees
                    : grid_longitude(9) = [0.0, ..., 8.0] degrees
+
+Comparing the field constructs ``orog_from_file`` (created with
+`cfdm.read`) and ``orog`` (created with the `~Field.convert` method of
+the ``tas`` field construct), the former lacks the auxiliary
+coordinate, cell measure and coordinate reference constructs of the
+latter. This is because the surface altitude netCDF variable in
+``tas.nc`` does not have the "coordinates", "cell_measures" nor
+"grid_mapping" netCDF attributes that would link it to auxiliary
+coordinate, cell meausure and grid mapping netCDF variables.
 
 .. _Domain:
 
@@ -1534,13 +1667,14 @@ that has fewer metadata constructs than one created with the
 
 ----
 
-The domain of the CF data model is *not* a construct, but is defined
-collectively by various other metadata constructs included in the
-field construct. It is represented by the `Domain` class. The domain
-instance may be accessed with the `~Field.get_domain` method of the
-field construct:
+The :ref:`domain of the CF data model <CF-data-model>` is *not* a
+construct, but is defined collectively by various other metadata
+constructs included in the field construct. It is represented by the
+`Domain` class. The domain instance may be accessed with the
+`~Field.get_domain` method of the field construct.
 
 .. code-block:: python
+   :caption: *Get the domain, and inspect it.*
 
    >>> domain = t.get_domain()
    >>> domain
@@ -1566,9 +1700,12 @@ versa. This is because the domain instance is merely "view" of the
 relevant metadata constructs contained in the field construct. The
 field construct also has a `~Field.domain` attribute that is an alias
 for the `~Field.get_domain` method, which makes it easier to access
-attributes and methods of the domain instance:
+attributes and methods of the domain instance.
 
 .. code-block:: python
+   :caption: *Change a property of a metadata construct of the domain
+             and show that this change appears in the same metadata
+             data construct of the parent field, and vice versa.*
 
    >>> domain = t.domain
    >>> domain.get_construct('latitude').set_property('test', 'set by domain')
@@ -1582,6 +1719,10 @@ attributes and methods of the domain instance:
    >>> t.get_construct('latitude').has_property('test')
    False
 
+All of the methods and attributes related to the domain are listed
+:ref:`here <Field-Domain>`.
+
+
 .. _Copying:
 
 **Copying**
@@ -1594,7 +1735,10 @@ produces a "deep copy", i.e. the new field construct is completely
 independent of the original field.
 
 .. code-block:: python
-
+   :caption: *Copy a field construct and change elements of the copy,
+             showing that the original field construct has not been
+             altered.*
+     
    >>> u = t.copy()
    >>> u.data[0, 0, 0] = -1e30
    >>> print(u.data[0, 0, 0])
@@ -1623,7 +1767,7 @@ Metadata constructs may be copied individually in the same manner:
 
 Arrays within `Data` instances are copied with a `copy-on-write
 <https://en.wikipedia.org/wiki/Copy-on-write>`_ technique. This means
-that a copy takes up very little extra memory, even when the original
+that a copy takes up very little memory, even when the original
 constructs contain very large data arrays, and the copy operation is
 fast.
 
@@ -1638,7 +1782,11 @@ Whether or not two field constructs are the same is tested with either
 field construct's `~Field.equals` method.
 
 .. code-block:: python
-
+   :caption: *A field construct is always equal to itself, a copy of
+             itself and a complete subspace of itself. The "verbose"
+             keyword will give some (but not necessarily all) of the
+             reasons why two field constructs are not the same.*
+	     
    >>> t.equals(t)
    True
    >>> t.equals(t.copy())
@@ -1674,7 +1822,9 @@ a float). Their values may be inspected and changed with the
 `cfdm.ATOL` and `cfdm.RTOL` functions:
 
 .. code-block:: python
-
+   :caption: *The ATOL and RTOL functions allow the numerical equality
+             tolerances to be inspected and changed.*
+      
    >>> cfdm.ATOL()
    2.220446049250313e-16
    >>> cfdm.RTOL()
@@ -2110,7 +2260,7 @@ variable had been present in the parent dataset:
 
 .. code-block:: python
    
-   >>> g = cfdm.read('parent.nc', external_files='external.nc')[0]
+   >>> g = cfdm.read('parent.nc', external='external.nc')[0]
    >>> print(g)
    Field: eastward_wind (ncvar%eastward_wind)
    ------------------------------------------
@@ -2146,7 +2296,7 @@ external file name to the `cfdm.write` function:
 
    >>> area.nc_external(True)
    False
-   >>> cfdm.write(g, 'new_parent.nc', external_file='new_external.nc')
+   >>> cfdm.write(g, 'new_parent.nc', external='new_external.nc')
 
 
 .. _Compression:
@@ -2639,7 +2789,7 @@ The content of the new file is:
 
 .. rubric:: Footnotes
 
-.. [#notebook] The Jupyter notebook is quite long. To aid navigation
+.. [#notebook]( The Jupyter notebook is quite long. To aid navigation
                it has been written so that it may optionally be used
                with the "Collapsible Headings" Jupyter notebook
                extension. See

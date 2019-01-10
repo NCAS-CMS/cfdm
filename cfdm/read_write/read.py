@@ -63,8 +63,8 @@ implementation = CFDMImplementation(
     RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
 )
 
-def read(filename, external_files=None, create_field=None,
-         verbose=False, _implementation=implementation):
+def read(filename, external_files=None, extra=None, verbose=False,
+         _implementation=implementation):
     '''Read field constructs from a dataset.
 
 The dataset may be a netCDF file on disk or on an OPeNDAP server.
@@ -88,7 +88,7 @@ a field construct.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `cfdm.write`, `cfdm.Field.create_field`,
+.. seealso:: `cfdm.write`, `cfdm.Field.convert`,
              `cfdm.Field.read_report`
 
 :Parameters:
@@ -126,13 +126,13 @@ a field construct.
         *Example:*
           ``external_files=['cell_measure_A.nc', 'cell_measure_O.nc']``
 
-    create_field: (sequence of) `str`, optional
+    extra: (sequence of) `str`, optional
         Create extra, independent fields from the particular types of
-        metadata constructs. The *create_field* parameter may be one,
-        or a sequence, of:
+        metadata constructs. The *extra* parameter may be one, or a
+        sequence, of:
 
           ==========================  ================================
-          *create_field*              Metadata constructs
+          *extra*                     Metadata constructs
           ==========================  ================================
           ``'field_ancillary'``       Field ancillary constructs
           ``'domain_ancillary'``      Domain ancillary constructs
@@ -143,23 +143,22 @@ a field construct.
 
         *Example:*
           To create fields from auxiliary coordinate constructs:
-          ``create_field='auxiliary_coordinate'`` or
-          ``create_field=['auxiliary_coordinate']``.
+          ``extra='auxiliary_coordinate'`` or
+          ``extra=['auxiliary_coordinate']``.
 
         *Example:*
           To create fields from domain ancillary and cell measure
-          constructs: ``create_field=['domain_ancillary',
-          'cell_measure']``.
+          constructs: ``extra=['domain_ancillary', 'cell_measure']``.
 
-        An extra field construct created via the *create_field*
-        parameter will have a domain limited to that which can be
-        inferred from the corresponding netCDF variable, but without
-        the connections that are defined by the parent netCDF data
-        variable. It is possible to create independent fields from
-        metadata constructs that do incorporate as much of the parent
-        field construct's domain as possible by using the
-        `~cfdm.Field.create_field` method of a returned field
-        construct, instead of setting the *create_field* parameter.
+        An extra field construct created via the *extra* parameter
+        will have a domain limited to that which can be inferred from
+        the corresponding netCDF variable, but without the connections
+        that are defined by the parent netCDF data variable. It is
+        possible to create independent fields from metadata constructs
+        that do incorporate as much of the parent field construct's
+        domain as possible by using the `~cfdm.Field.convert` method
+        of a returned field construct, instead of setting the *extra*
+        parameter.
 
     verbose: `bool`, optional
         If True then print a description of how the contents of the
@@ -178,8 +177,8 @@ a field construct.
 >>> type(x)
 list
 
->>> f = cfdm.read('file.nc', create_field='domain_ancillary')
->>> g = cfdm.read('file.nc', create_field=['dimension_coordinate', 
+>>> f = cfdm.read('file.nc', extra='domain_ancillary')
+>>> g = cfdm.read('file.nc', extra=['dimension_coordinate', 
 ...                                        'auxiliary_coordinate'])
 
 >>> h = cfdm.read('parent.nc', external_files='external.nc')
@@ -188,10 +187,10 @@ list
 
     '''
     # Parse the field parameter
-    if create_field is None:
-        create_field = ()
-    elif isinstance(create_field, basestring):
-        create_field = (create_field,)
+    if extra is None:
+        extra = ()
+    elif isinstance(extra, basestring):
+        extra = (extra,)
 
     filename = os.path.expanduser(os.path.expandvars(filename))
     
@@ -206,14 +205,14 @@ list
     # ----------------------------------------------------------------
     return _read_a_file(filename,
                         external_files=external_files,
-                        create_field=create_field,
+                        extra=extra,
                         verbose=verbose,
                         _implementation=_implementation)
 #--- End: def
 
 def _read_a_file(filename,
                  external_files=(),
-                 create_field=(),
+                 extra=(),
                  verbose=False,
                  _implementation=None):
     '''Read the contents of a single file into a field list.
@@ -239,8 +238,7 @@ def _read_a_file(filename,
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
         fields = netcdf.read(filename, external_files=external_files,
-                             create_field=create_field,
-                             verbose=verbose)
+                             extra=extra, verbose=verbose)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 

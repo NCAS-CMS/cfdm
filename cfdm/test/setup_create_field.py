@@ -261,7 +261,7 @@ class create_fieldTest(unittest.TestCase):
         x = g.dump(display=False)
         x = f.dump(display=False)
 
-        g = cfdm.read(self.filename, verbose=verbose, create_field='domain_ancillary')
+        g = cfdm.read(self.filename, verbose=verbose, extra='domain_ancillary')
 
         if verbose:            
             for x in g:
