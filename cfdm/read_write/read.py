@@ -63,7 +63,7 @@ implementation = CFDMImplementation(
     RaggedIndexedContiguousArray = RaggedIndexedContiguousArray,
 )
 
-def read(filename, external_files=None, extra=None, verbose=False,
+def read(filename, external=None, extra=None, verbose=False,
          _implementation=implementation):
     '''Read field constructs from a dataset.
 
@@ -105,7 +105,7 @@ a field construct.
           ``'${HOME}/file.nc'``, ``'~/file.nc'``,
           ``'~/tmp/../file.nc'``.
     
-    external_files: (sequence of) `str`, optional
+    external: (sequence of) `str`, optional
         Read external variables (i.e. variables which are named by
         attributes, but are not present, in the parent file given by
         the *filename* parameter) from the given external
@@ -121,10 +121,13 @@ a field construct.
         will return `True`.
 
         *Example:*
-          ``external_files='cell_measure.nc'``
+          ``external='cell_measure.nc'``
 
         *Example:*
-          ``external_files=['cell_measure_A.nc', 'cell_measure_O.nc']``
+          ``external=['cell_measure.nc']``
+
+        *Example:*
+          ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
 
     extra: (sequence of) `str`, optional
         Create extra, independent fields from the particular types of
@@ -181,9 +184,8 @@ list
 >>> g = cfdm.read('file.nc', extra=['dimension_coordinate', 
 ...                                        'auxiliary_coordinate'])
 
->>> h = cfdm.read('parent.nc', external_files='external.nc')
->>> i = cfdm.read('parent.nc', external_files=['external_1.nc',
-...                                            'external_2.nc'])
+>>> h = cfdm.read('parent.nc', external='external.nc')
+>>> i = cfdm.read('parent.nc', external=['external_1.nc', 'external_2.nc'])
 
     '''
     # Parse the field parameter
@@ -204,14 +206,14 @@ list
     # Read the fields in the file
     # ----------------------------------------------------------------
     return _read_a_file(filename,
-                        external_files=external_files,
+                        external=external,
                         extra=extra,
                         verbose=verbose,
                         _implementation=_implementation)
 #--- End: def
 
 def _read_a_file(filename,
-                 external_files=(),
+                 external=(),
                  extra=(),
                  verbose=False,
                  _implementation=None):
@@ -237,8 +239,8 @@ def _read_a_file(filename,
     # Read the file into fields.
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
-        fields = netcdf.read(filename, external_files=external_files,
-                             extra=extra, verbose=verbose)
+        fields = netcdf.read(filename, external=external, extra=extra,
+                             verbose=verbose)
     else:
         raise IOError("Can't determine format of file {}".format(filename))
 

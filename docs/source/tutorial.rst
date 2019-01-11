@@ -352,7 +352,7 @@ and `~Field.set_property` methods:
 
 .. code-block:: python
    :caption: *Check is a property exists, retrieve its value, delete
-             it and set it to a new value.*
+             it and then set it to a new value.*
       
    >>> t.has_property('standard_name')
    True
@@ -371,7 +371,7 @@ providing a new set of properties to the `~Field.properties` method:
 
 .. code-block:: python
    :caption: *Delete all the existing properties, saving the original
-             one,and replace them with two new properties; finally
+             ones, and replace them with two new properties; finally
              reinstate the original ones.*
 	     
    >>> original = t.properties({'foo': 'bar', 'units': 'K'})
@@ -513,7 +513,8 @@ constructs. See the :ref:`further section on metadata constructs
 ----
 
 The field construct's data array is stored in a `Data` class instance
-that is accessed with the `~Field.get_data` method:
+that is accessed with the `~Field.get_data` method of the field
+construct.
 
 .. code-block:: python
    :caption: *Retrieve the data and inspect it, showing the shape and
@@ -542,7 +543,7 @@ The data array may be retrieved as an independent (possibly masked)
    
 The field construct also has a `~Field.data` attribute that is an
 alias for the `~Field.get_data` method, which makes it easier to
-access attributes and methods of the `Data` instance:
+access attributes and methods of the `Data` instance.
 
 .. code-block:: python
    :caption: *Inspect the data type, number of dimensions, dimension
@@ -593,7 +594,7 @@ the field construct. For example, the data of the field construct
 ^^^^^^^^^^^^
 
 When a `Data` instance is indexed a new instance is created for the
-part of the data defined by the indiced. Indexing follows rules that
+part of the data defined by the indices. Indexing follows rules that
 are very similar to the `numpy indexing rules
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only differences being:
@@ -634,8 +635,8 @@ the only differences being:
 ^^^^^^^^^^^^^^
 
 Values can be changed by assigning to elements selected by indices of
-the `Data` instance in a very simmilar using rules that are very
-similar to the `numpy indexing rules
+the `Data` instance using rules that are very similar to the `numpy
+indexing rules
 <https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html>`_,
 the only difference being:
 
@@ -695,7 +696,7 @@ Data array elements may be set to missing values by assigning them to
 any other value.
 
 .. code-block:: python
-   :caption: *Set a range of elements to missing values, and then
+   :caption: *Set a column of elements to missing values, and then
              change one of them back to a non-missing value.*
 	     
    >>> t.data[0, :, -2] = numpy.ma.masked
@@ -759,10 +760,9 @@ with the same properties as the original field. Subspacing uses the
 same :ref:`cfdm indexing rules <Indexing>` that apply to the `Data`
 class.
 
-In this example a new field is created whose domain spans the first
-longitude of the original, and with a reversed latitude axis:
-     
 .. code-block:: python
+  :caption: *Create a new field whose domain spans the first longitude
+            of the original, and with a reversed latitude axis.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -811,7 +811,7 @@ parameters to filter the metadata constructs by
  
 .. code-block:: python
 	  
-   >>> t.constructs(type='dimension_coordinate')
+   >>> t.constructs(construct_type='dimension_coordinate')
    {'dimensioncoordinate0': <DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
     'dimensioncoordinate1': <DimensionCoordinate: grid_latitude(10) degrees>,
     'dimensioncoordinate2': <DimensionCoordinate: grid_longitude(9) degrees>,
@@ -833,7 +833,7 @@ parameters to filter the metadata constructs by
     'fieldancillary0': <FieldAncillary: air_temperature standard_error(10, 9) K>}
    >>> t.constructs(measure='area')
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
-   >>> t.constructs(type='auxiliary_coordinate',
+   >>> t.constructs(construct_type='auxiliary_coordinate',
    ...              axis='domainaxis1',
    ...		    properties={'units': 'degrees_E'})
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
@@ -854,14 +854,6 @@ means.
    >>> t.constructs(key='auxiliarycoordinate999')
    {}
 
-If no constructs match the given criteria, then an empty dictionary is
-returned:
-   
-.. code-block:: python
-	
-   >>> t.constructs(properties={'standard_name': 'radiation_wavelength'})
-   {}
-
 A less verbose, and often more convienient, method of selection is by
 metadata construct "name". A construct's name is typically the
 description that is displayed when the construct is inspected. For
@@ -879,6 +871,8 @@ although the keyord ``name`` can be used:
    {'auxiliarycoordinate2': <AuxiliaryCoordinate: long_name:Grid latitude name(10) >}
    >>> t.constructs(name='longitude')
    {'auxiliarycoordinate1': <AuxiliaryCoordinate: longitude(9, 10) degrees_E>}
+   >>> t.constructs('measure%area')
+   {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
 
 More generally, a construct name may be constructed by any of
 
@@ -901,17 +895,30 @@ method for retrieving that type of metadata construct:
 
 .. code-block:: python
 		
-   >>> t.constructs(type='cell_measure')
+   >>> t.constructs(construct_type='cell_measure')
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
    >>> t.cell_measures()
    {'cellmeasure0': <CellMeasure: measure%area(9, 10) km2>}
 
-An individual metadata construct may be returned without its construct
-key, via the `~Field.get_construct` method of the field construct,
-which supports the same filtering options as the `~Field.constructs`
-method. The existence of a metadata construct may be checked with the
-`~Field.has_construct` method and a construct may be removed with the
-`~Field.del_construct` method.
+If no constructs match the given criteria, then an empty dictionary is
+returned:
+   
+.. code-block:: python
+	
+   >>> t.constructs('radiation_wavelength')
+   {}
+
+.. _Accessing-an-individual-metadata-construct:
+
+**Accessing an individual metadata construct**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   
+An individual metadata construct may be returned, without its
+construct key, via the `~Field.get_construct` method of the field
+construct, which supports the same filtering options as the
+`~Field.constructs` method. The existence of a metadata construct may
+be checked with the `~Field.has_construct` method and a construct may
+be removed with the `~Field.del_construct` method.
 
 .. code-block:: python
 
@@ -947,8 +954,8 @@ The key of a metadata construct may be found with the
 **Metadata construct properties**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Metadata constructs share the same API as the field construct for
-accessing their properties:
+Metadata constructs share the :ref:`same API as the field construct
+<Properties>` for accessing their properties:
 
 .. code-block:: python
 
@@ -968,8 +975,8 @@ accessing their properties:
 **Metadata construct data**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Metadata constructs share the same API as the field construct for
-accessing their data:
+Metadata constructs share the :ref:`a similar API as the field
+construct <Data>` as the field construct for accessing their data:
 
 .. code-block:: python
 
@@ -1018,8 +1025,9 @@ variable.
 .. _Domain-axes:
 
 **Domain axes**
-^^^^^^^^^^^^^^^
+---------------
 
+----
 
 A domain axis metadata construct specifies the number of points along
 an independent axis of the field construct's domain.
@@ -1031,42 +1039,32 @@ an independent axis of the field construct's domain.
 .. _Coordinates:
 		
 **Coordinates**
-^^^^^^^^^^^^^^^
+---------------
 
-<TODO>
+----
 
-======================  ==============================  ======================
-cfdm class              Description                     cfdm parent classes
-======================  ==============================  ======================
-`Bounds`                Cell bounds.                    `DimensionCoordinate`,
-                                                        `AuxiliaryCoordinate`,
-                                                        `DomainAncillary`
+A coordinate construct may contain an array of cell bounds that
+provide the extent of each cell by defining the locations of the cell
+vertices. This is in addition to the main data array that contains a
+grid point location for each cell. The cell bounds are stored in a
+`Bounds` class instance that is accessed with the
+`~Coordinate.get_bounds` method of any construct that can represent
+coordinates, i.e. a dimension coordinate, auxiliary coordinate or
+domain ancillary construct (the last of these can provide extra
+coordinates needed for computing the location of cells in an
+alternative coordinate systems).
 
-`CoordinateConversion`  A formula for                   `CoordinateReference`
-		        converting coordinate values
-		        taken from the dimension or
-		        auxiliary coordinate
-			constructs
-		        to a different coordinate
-			system.
-
-`Datum`                 The zeroes                      `CoordinateReference`
-                        of the dimension
-                        and auxiliary coordinate
-			constructs which define a
-			coordinate system.
-======================  ==============================  ======================
-
-Where applicable, these classes also share the same API as the field:
+`Bounds` instances share the :ref:`the same API as the field construct
+<Data>` as the field construct for accessing their data.
 
 .. code-block:: python
-	  
+   :caption: *Get the Bounds instance of a coordinate construct and
+             inspect its data.*
+      
    >>> lon = t.get_construct('grid_longitude')
    >>> bounds = lon.get_bounds()
    >>> bounds
-   <Bounds: ncvar%grid_longitude_bounds(9, 2) >
-   >>> bounds.properties()
-   {}
+   <Bounds: grid_longitude(9, 2) >
    >>> bounds.get_data()
    <Data(9, 2): [[-4.92, ..., -0.96]]>
    >>> print(bounds.get_array())
@@ -1079,23 +1077,119 @@ Where applicable, these classes also share the same API as the field:
     [-2.28 -1.84]
     [-1.84 -1.4 ]
     [-1.4  -0.96]]
-   >>> crs = t.get_construct('rotated_latitude_longitude')
-   >>> crs.datum
+
+The `Bounds` instance inherits the descriptive properties from its
+parent coordinate construct, but it may also have its own properties
+(although setting these is not recommended).
+    
+.. code-block:: python
+   :caption: *Inspect the inherited and bespoke properties of a Bounds
+             insance.*
+      
+   >>> bounds.inherited_properties()
+   {'standard_name': 'grid_longitude',
+    'units': 'degrees'}  
+   >>> bounds.properties()
+   {}
+
+.. _Coordinate-systems:
+
+**Coordinate systems**
+^^^^^^^^^^^^^^^^^^^^^^
+
+A field construct may contain various coordinate systems. Each
+coordinate system is either defined by a coordinate reference
+construct which relates dimension coordinate, auxiliary coordinate and
+domain ancillary constructs (as is the case for the field construct
+``t``), or is inferred from dimension and auxiliary coordinate
+constructs alone (as is the case for the field construct ``q``).
+
+A corodinate reference construct contains
+
+* references (by construct keys) to the dimension and auxiliary
+  coordinate constructs to which it applies, accessed with the
+  `~CoordinateReference.coordinates` method;
+
+.. code-block:: python
+   :caption: *Select the a vertical coordinate system construct and
+             inspect its coordinate constructs. (Note that the
+             "construct_type" parameter is required since their is
+             also dimension coordinate construct with the same name.)*
+     
+   >>> crs = t.get_construct('atmosphere_hybrid_height_coordinate',
+   ...                       construct_type='coordinate_reference')
+   >>> crs
+   <CoordinateReference: atmosphere_hybrid_height_coordinate>
+   >>> crs.dump()
+   Coordinate Reference: atmosphere_hybrid_height_coordinate
+       Coordinate conversion:computed_standard_name = altitude
+       Coordinate conversion:standard_name = atmosphere_hybrid_height_coordinate
+       Coordinate conversion:a = domainancillary0
+       Coordinate conversion:b = domainancillary1
+       Coordinate conversion:orog = domainancillary2
+       Datum:earth_radius = 6371007
+       Coordinate: dimensioncoordinate0
+   >>> crs.coordinates()
+   {'dimensioncoordinate0'}
+
+* the zeroes of the dimension and auxiliary coordinate constructs
+  which define a coordinate system, stored in a `Datum` instance,
+  which is accessed with the `~CoordinateReference.get_datum` method,
+  or `~CoordinateReference.datum` attribute; and
+
+.. code-block:: python
+   :caption: *Get the datum and inspect its parameters.*
+	     
+   >>> crs.get_datum()
    <Datum: Parameters: earth_radius>
    >>> crs.datum.parameters()
    {'earth_radius': 6371007}
-   >>> crs = t.get_construct('atmosphere_hybrid_height_coordinate',
-   ...                       construct_type='coordinate_reference')
+   
+* a formula for converting coordinate values taken from the dimension
+  or auxiliary coordinate constructs to a different coordinate system,
+  stored in a `CoordinateConversion` class instance.
+
+.. code-block:: python
+   :caption: *Get the coordinate converion and inspect its parameters
+             and referenced domain ancillary constructs.*
+	     
+   >>> crs.get_coordinate_conversion()
+   <CoordinateConversion: Parameters: computed_standard_name, standard_name; Ancillaries: a, b, orog>
+   >>> crs.coordinate_conversion.parameters()
+   {'computed_standard_name': 'altitude',
+    'standard_name': 'atmosphere_hybrid_height_coordinate'}
    >>> crs.coordinate_conversion.domain_ancillaries()
    {'a': 'domainancillary0',
     'b': 'domainancillary1',
     'orog': 'domainancillary2'}    
 
+  
+.. ======================  ==============================  ======================
+   cfdm class              Description                     cfdm parent classes
+   ======================  ==============================  ======================
+   `Bounds`                Cell bounds.                    `DimensionCoordinate`,
+                                                           `AuxiliaryCoordinate`,
+                                                           `DomainAncillary`
+   
+   `CoordinateConversion`  A formula for                   `CoordinateReference`
+   		        converting coordinate values
+   		        taken from the dimension or
+   		        auxiliary coordinate
+   			constructs
+   		        to a different coordinate
+   			system.
+   
+   `Datum`                 The zeroes                      `CoordinateReference`
+                           of the dimension
+                           and auxiliary coordinate
+   			constructs which define a
+   			coordinate system.
+   ======================  ==============================  ======================
 
 .. _Cell-methods:
    
 **Cell methods**
-^^^^^^^^^^^^^^^^
+----------------
 
 A cell method construct describes how the data represent the variation
 of the physical quantity within the cells of the domain, and multiple
@@ -1103,20 +1197,21 @@ cell method constructs allow multiple methods to be recorded. Because
 the application of cell methods is not commutative (e.g. a mean of
 variances is generally not the same as a variance of means), the
 `~cfdm.Field.cell_methods` method of the field construct returns an
-ordered dictionary of constructs. The order is the same as that
-described by a cell method attribute read from a netCDF dataset, or
-the same as that in which cell method constructs were added to the
-field construct during :ref:`field construct creation
-<Field-construct-creation>`.
+ordered dictionary of constructs. The order is the same as that in
+which cell method constructs were added to the field construct during
+:ref:`field construct creation <Field-construct-creation>`.
 
 .. code-block:: python
-
+   :caption: *Inspect the cell methods. The description follows the CF
+             conventions for cell_method attribute strings, apart from
+             the use of construct keys instead of netCDF variable
+             names for cell method axes identification.*
+	     
    >>> t.cell_methods()
    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
 
-<TODO> DEscribe how to get/set/del properties
 
 .. _Field-construct-creation:
 
@@ -2789,27 +2884,22 @@ The content of the new file is:
 
 .. rubric:: Footnotes
 
-.. [#notebook]( The Jupyter notebook is quite long. To aid navigation
-               it has been written so that it may optionally be used
-               with the "Collapsible Headings" Jupyter notebook
-               extension. See
-               https://jupyter-contrib-nbextensions.readthedocs.io/en/latest
-               for details.
-..
-
 .. [#files] The tutorial files may be also found in the `downloads
             directory
             <https://github.com/NCAS-CMS/cfdm/tree/master/docs/_downloads>`_
             of the on-line code repository.
 
-..
+.. [#notebook] The Jupyter notebook is quite long. To aid navigation
+               it has been written so that it may optionally be used
+               with the "Collapsible Headings" Jupyter notebook
+               extension. See
+               https://jupyter-contrib-nbextensions.readthedocs.io/en/latest
+               for details.
 
 .. [#opendap2] Requires the netCDF4 python package to have been built
                with OPeNDAP support enabled. See
                http://unidata.github.io/netcdf4-python for details.
 
-..
-       
 .. .. [#language] In the terminology of the CF data model, a "construct"
                   is an abstract concept which is distinct from its
                   realization, e.g. a `Field` instance is not, strictly

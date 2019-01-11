@@ -224,8 +224,8 @@ contents and any file suffix is not not considered.
     #--- End: def
 
     def read(self, filename, extra=None, default_version=None,
-             external_files=None, extra_read_vars=None,
-             _scan_only=False, verbose=False):
+             external=None, _extra_read_vars=None, _scan_only=False,
+             verbose=False):
         '''Read fields from a netCDF file on disk or from an OPeNDAP server
 location.
 
@@ -364,8 +364,8 @@ TODO
         # ------------------------------------------------------------
         # Add custom read vars
         # ------------------------------------------------------------
-        if extra_read_vars:
-            g.update(deepcopy(extra_read_vars))
+        if _extra_read_vars:
+            g.update(deepcopy(_extra_read_vars))
         
         compression = {}
         
@@ -380,14 +380,14 @@ TODO
             'field_ancillary'     : self.implementation.get_field_ancillaries,
         }
 
-        # Parse external_files parameter
-        if external_files:
-            if isinstance(external_files, basestring):
-                external_files = (external_files,)
+        # Parse external parameter
+        if external:
+            if isinstance(external, basestring):
+                external = (external,)
         else:
-            external_files = ()
+            external = ()
 
-        g['external_files'] = set(external_files)
+        g['external_files'] = set(external)
 
         # Parse extra parameter
         if extra:

@@ -183,10 +183,10 @@ class Constructs(object):
         return 'TODO'
     #--- End: def
     
-    def construct_type(self, cid):
+    def construct_type(self, key):
         '''TODO
         '''
-        x = self._construct_type.get(cid)
+        x = self._construct_type.get(key)
         if x in self._ignore:
             return
         
@@ -199,10 +199,10 @@ class Constructs(object):
         return construct_type.replace('_', ' ')
     #--- End: def
 
-    def _set_construct_axes(self, cid, axes):
+    def _set_construct_axes(self, key, axes):
         '''TODO
         '''
-        self._construct_axes[cid] = tuple(axes)
+        self._construct_axes[key] = tuple(axes)
     #--- End: def
 
     def construct_types(self):
@@ -232,11 +232,11 @@ class Constructs(object):
 
         if axes:
             spans_axes = set(axes)
-            construct_data_axes = self.construct_data_axes()
-            for cid, construct in list(out.items()):
-                x = construct_data_axes[cid]
+            constructs_data_axes = self.constructs_data_axes()
+            for key, construct in list(out.items()):
+                x = constructs_data_axes[key]
                 if not spans_axes.intersection(x):
-                    del out[cid]
+                    del out[key]
         #--- End: def
 
         return out
@@ -259,7 +259,7 @@ class Constructs(object):
     #--- End: def
 
     def _check_construct_type(self, construct_type):
-        '''TODO
+        '''<TODO>
         '''
         if construct_type is None:
             return None
@@ -336,8 +336,6 @@ TODO
                 construct_type = (construct_type,)
         #--- End: if
         
-#        construct_type = self._check_construct_type(construct_type)
-
         if construct_type is not None:
             if construct_type == ('cell_method',):
                 out = self._constructs[construct_type[0]].copy()
@@ -346,9 +344,7 @@ TODO
                 
             for ct in construct_type:
                 ct = self._check_construct_type(ct)
-                out.update(self._constructs[ct])
-            
-#            out = self._constructs[construct_type].copy()
+                out.update(self._constructs[ct])            
         else:
             out = {}
             ignore = self._ignore
@@ -365,7 +361,7 @@ TODO
         return out
     #--- End: def
     
-    def constructs_data_axes(self): #, cid=None):
+    def constructs_data_axes(self):
         '''Return the domain axes spanned by metadata construct data arrays.
 
 .. versionadded:: 1.7.0
@@ -382,7 +378,7 @@ TODO
 
 **Examples:**
 
->>> f.construct_data_axes()
+>>> f.constructs_data_axes()
 <TODO>
 
         '''
@@ -421,18 +417,18 @@ TODO
 #
 #        return construct_type
 
-    def set_construct_data_axes(self, cid, axes):
+    def set_construct_data_axes(self, key, axes):
         '''TODO
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
-    cid: `str`, optional
+    key: `str`, optional
         The construct identifier of metadata construct.
 
         *Example:*
-          ``cid='cellmeasure0'``
+          ``key='cellmeasure0'``
 
     axes: sequence of `str`
         The construct identifiers of the domain axis constructs
@@ -456,11 +452,11 @@ TODO
 TODO
 
         '''
-        if self.construct_type(cid) is None:
+        if self.construct_type(key) is None:
             raise ValueError(
-                "Can't set axes for non-existent construct identifier {!r}".format(cid))
+                "Can't set axes for non-existent construct identifier {!r}".format(key))
 
-        self._set_construct_axes(cid, axes)
+        self._set_construct_axes(key, axes)
     #--- End: def
 
     def copy(self, data=True):
@@ -532,10 +528,7 @@ TODO
 '''
         out = {}
 
-        for axes in list(self.construct_data_axes().values()):
-#            d = {}
-#            for construct_type in self._array_constructs:
-#                d[construct_type] = {}
+        for axes in list(self.constructs_data_axes().values()):
             d = {construct_type: {}
                  for construct_type in self._array_constructs}
 
@@ -543,14 +536,14 @@ TODO
         #--- End: for
 
         for cid, construct in self.data_constructs().items():
-            axes = self.construct_data_axes().get(cid)
+            axes = self.constructs_data_axes().get(cid)
             construct_type = self._construct_type[cid]
             out[axes][construct_type][cid] = construct
 
         return out
     #--- End: def
 
-    def get_construct(self, cid):
+    def get_construct(self, key):
         '''Return a metadata construct.
 
 .. versionadded:: 1.7.0
@@ -560,11 +553,11 @@ TODO
 
 :Parameters:
 
-    cid: `str`
+    key: `str`
         The identifier of the metadata construct.
 
         *Example:*
-          ``cid='domainaxis1'``
+          ``key='domainaxis1'``
 
 :Returns:
 
@@ -587,7 +580,7 @@ TODO
 <DimensionCoordinate: grid_latitude(10) degrees>
 
         '''
-        construct_type = self.construct_type(cid)
+        construct_type = self.construct_type(key)
         if construct_type is None:
             raise ValueError('No metadata construct found')
             
@@ -596,12 +589,12 @@ TODO
             d = {}
             
         try:            
-            return d[cid]
+            return d[key]
         except KeyError:
             raise ValueError('No metadata construct found')
     #--- End: def
     
-    def has_construct(self, cid):
+    def has_construct(self, key):
         '''Whether a construct exists.
 
 .. versionadded:: 1.7.0
@@ -611,11 +604,11 @@ TODO
 
 :Parameters:
 
-    cid: `str`
+    key: `str`
         The identifier of the metadata construct.
 
         *Example:*
-          ``cid='cellmeasure1'``
+          ``key='cellmeasure1'``
 
 :Returns:
 
@@ -640,14 +633,14 @@ False
 
         '''
         try:
-            self.get_construct(cid)
+            self.get_construct(key)
         except ValueError:
             return False
         else:
             return True        
     #--- End: def
 
-    def set_construct(self, construct, cid=None,
+    def set_construct(self, construct, key=None,
                       axes=None, #extra_axes=0, #replace=True,
                       copy=True):
         '''Set a metadata construct.
@@ -663,14 +656,14 @@ False
         The metadata construct to be inserted.
 
 
-    cid: `str`, optional
+    key: `str`, optional
         The construct identifier to be used for the construct. If not
         set then a new, unique identifier is created automatically. If
         the identifier already exisits then the exisiting construct
         will be replaced.
 
         *Example:*
-          ``cid='cellmeasure0'``
+          ``key='cellmeasure0'``
 
     axes: sequence of `str`, optional
         The construct identifiers of the domain axis constructs
@@ -699,10 +692,10 @@ False
     
 **Examples:**
 
->>> cid = f.set_construct(c)
->>> cid = f.set_construct(c, copy=False)
->>> cid = f.set_construct(c, axes=['domainaxis2'])
->>> cid = f.set_construct(c, cid='cellmeasure0')
+>>> key = f.set_construct(c)
+>>> key = f.set_construct(c, copy=False)
+>>> key = f.set_construct(c, axes=['domainaxis2'])
+>>> key = f.set_construct(c, key='cellmeasure0')
 
         '''
 #    extra_axes: `int`, optional
@@ -718,9 +711,9 @@ False
         construct_type = construct.construct_type
         construct_type = self._check_construct_type(construct_type)
                                                 
-        if cid is None:
+        if key is None:
             # Create a new construct identifier
-            cid = self.new_identifier(construct_type)
+            key = self.new_identifier(construct_type)
     
         if construct_type in self._array_constructs:
             #---------------------------------------------------------
@@ -750,7 +743,7 @@ False
                     "Can't set {!r}: Data array shape of {!r} does not match the shape required by domain axes {}: {}".format(
     construct, construct.data.shape, tuple(axes), axes_shape))
 
-            self._set_construct_axes(cid, axes)
+            self._set_construct_axes(key, axes)
 
         elif axes is not None:
             raise ValueError(
@@ -759,17 +752,17 @@ False
         #--- End: if
 
         # Record the construct type
-        self._construct_type[cid] = construct_type
+        self._construct_type[key] = construct_type
 
         if copy:
             # Create a deep copy of the construct
             construct = construct.copy()
 
         # Insert (a copy of) the construct
-        self._constructs[construct_type][cid] = construct
+        self._constructs[construct_type][key] = construct
 
         # Return the identifier of the construct
-        return cid
+        return key
     #--- End: def
 
     def new_identifier(self, construct_type):
@@ -822,18 +815,18 @@ False
         return key
     #--- End: def
 
-    def del_construct(self, cid):        
+    def del_construct(self, key):        
         '''Remove a construct.
 
 .. versionadded:: 1.7.0
 
 :Parameters:
 
-   cid: `str`, optional
+   key: `str`, optional
         The identifier of the construct.
 
         *Example:*
-          ``cid='auxiliarycoordinate0'``
+          ``key='auxiliarycoordinate0'``
   
 :Returns:
 
@@ -846,14 +839,14 @@ False
 >>> x = f.del_construct('auxiliarycoordinate2')
 
         '''
-        if cid in self.constructs(construct_type='domain_axis'):
+        if key in self.constructs(construct_type='domain_axis'):
             # Fail if the domain axis construct is spanned by a data
             # array
-            for xid, axes in self.construct_data_axes().items():
-                if cid in axes:
+            for xid, axes in self.constructs_data_axes().items():
+                if key in axes:
                     raise ValueError(
 "Can't remove domain axis construct {!r} that spans the data array of {!r}".format(
-    cid, self.get_construct(cid=xid)))
+    key, self.get_construct(key=xid)))
 
             # Fail if the domain axis construct is referenced by a
             # cell method construct
@@ -866,51 +859,51 @@ False
             else:
                 for xid, cm in cell_methods.items():
                     axes = cm.get_axes(())
-                    if cid in axes:
+                    if key in axes:
                         raise ValueError(
 "Can't remove domain axis construct {!r} that is referenced by {!r}".format(
-    cid, cm))
+    key, cm))
         else:
             # Remove references to the removed construct in coordinate
             # reference constructs
             for ref in self.constructs(construct_type='coordinate_reference').values():
                 coordinate_conversion = ref.coordinate_conversion
                 for term, value in coordinate_conversion.domain_ancillaries().items():
-                    if cid == value:
+                    if key == value:
                         coordinate_conversion.set_domain_ancillary(term, None)
                 #--- End: for
                 
-                ref.del_coordinate(cid, None)
+                ref.del_coordinate(key, None)
         #--- End: if
 
         # Remove the construct axes, if any
-        self._construct_axes.pop(cid, None)
+        self._construct_axes.pop(key, None)
 
         # Find the construct type
-        construct_type = self._construct_type.pop(cid, None)
+        construct_type = self._construct_type.pop(key, None)
         if construct_type is None:
             return
 
         # Remove and return the construct
-        return self._constructs[construct_type].pop(cid, None)
+        return self._constructs[construct_type].pop(key, None)
     #--- End: def
 
-    def replace(self, cid, construct, axes=None, copy=True):
-        '''TODO
+    def replace(self, key, construct, axes=None, copy=True):
+        '''<TODO>
 
 .. note:: No checks on the axes are done!!!!!
 '''
-        construct_type = self.construct_types().get(cid)
+        construct_type = self.construct_types().get(key)
         if construct_type is None:
-            raise ValueError("Can't replace non-existent construct {!r}".format(cid))
+            raise ValueError("Can't replace non-existent construct {!r}".format(key))
 
         if axes is not None and construct_type in self._array_constructs:        
-            self._set_construct_axes(cid, axes)
+            self._set_construct_axes(key, axes)
 
         if copy:
             construct = construct.copy()
             
-        self._constructs[construct_type][cid] = construct
+        self._constructs[construct_type][key] = construct
     #--- End: def
     
     def view(self, ignore=()):

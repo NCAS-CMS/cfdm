@@ -66,7 +66,7 @@ TODO
         return self._get_constructs().data_constructs(copy=copy)
     #-- End: def
     
-    def construct_data_axes(self):
+    def constructs_data_axes(self):
         '''Return the domain axes spanned by metadata construct data arrays.
 
 .. versionadded:: 1.7.0
@@ -79,19 +79,19 @@ TODO
 
 **Examples:**
 
->>> f.construct_data_axes()
+>>> f.constructs_data_axes()
 TODO
 
         '''
-        return self._get_constructs().construct_data_axes() #cid=cid)
+        return self._get_constructs().constructs_data_axes()
     #--- End: def
     
-    def construct_type(self, cid):
+    def construct_type(self, key):
         '''TODO
 
 .. versionadded:: 1.7.0
         '''                
-        return self._get_constructs().construct_type(cid)
+        return self._get_constructs().construct_type(key)
     #--- End: def
     
     def constructs(self, construct_type=None, copy=False):
@@ -99,8 +99,8 @@ TODO
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `del_construct`, `get_construct`, `get_construct_data_axes`,
-             `get_construct_id`, `has_construct`, `set_construct`
+.. seealso:: `constructs_data_axes`, `del_construct`, `get_construct`,
+             `get_construct_key`, `has_construct`, `set_construct`
 
 :Parameters:
 
@@ -191,7 +191,7 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
                                                  copy=copy)
     #--- End: def
     
-    def del_construct(self, cid):
+    def del_construct(self, key):
         '''Remove a metadata construct.
 
 .. versionadded:: 1.7.0
@@ -201,11 +201,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
 :Parameters:
 
-    cid: `str`, optional
+    key: `str`, optional
         The identifier of the metadata construct.
 
         *Example:*
-          ``cid='auxiliarycoordinate0'``
+          ``key='auxiliarycoordinate0'``
         
 :Returns:
 
@@ -218,10 +218,10 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 <DimensionCoordinate: grid_latitude(111) degrees>
 
         '''
-        return self._get_constructs().del_construct(cid)
+        return self._get_constructs().del_construct(key)
     #--- End: def
 
-    def get_construct(self, cid):
+    def get_construct(self, key):
         '''Return a metadata construct.
 
 .. versionadded:: 1.7.0
@@ -231,11 +231,11 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 
 :Parameters:
 
-    cid: `str`
+    key: `str`
         The identifier of the metadata construct.
 
         *Example:*
-          ``cid='domainaxis1'``
+          ``key='domainaxis1'``
 
 :Returns:
 
@@ -257,25 +257,25 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
 <DimensionCoordinate: grid_latitude(10) degrees>
 
         '''
-        return self._get_constructs().get_construct(cid)
+        return self._get_constructs().get_construct(key)
     #--- End: def
 
-    def get_construct_data_axes(self, cid, *default):
+    def get_construct_data_axes(self, key, *default):
         '''Return the domain axis identifiers spanned by a metadata construct
 data array.
 
 .. versionadded:: 1.7.0
 
-.. seealso:: `construct_data_axes`, `get_construct`,
+.. seealso:: `constructs_data_axes`, `get_construct`,
              `set_construct_data_axes`
 
 :Parameters:
 
-    cid: `str`
+    key: `str`
         The construct identifier of the metadata construct.
 
         *Example:*
-          ``cid='domainancillary1'``
+          ``key='domainancillary1'``
 
     default: optional
         Return *default* if the metadata construct does not have a
@@ -301,7 +301,7 @@ None
 'no axes'
 
         '''
-        axes = self.construct_data_axes().get(cid)
+        axes = self.constructs_data_axes().get(key)
         if axes is None:
             if default:
                 return default[0]
@@ -311,7 +311,7 @@ None
         return axes
     #--- End: def
     
-    def has_construct(self, cid):
+    def has_construct(self, key):
         '''Whether a construct exists.
 
 .. versionadded:: 1.7.0
@@ -321,11 +321,11 @@ None
 
 :Parameters:
 
-    cid: `str`
+    key: `str`
         The identifier of the metadata construct.
 
         *Example:*
-          ``cid='cellmeasure1'``
+          ``key='cellmeasure1'``
 
 :Returns:
 
@@ -349,7 +349,7 @@ True
 False
 
         '''
-        return self._get_constructs().has_construct(cid)
+        return self._get_constructs().has_construct(key)
     #--- End: def
 
     def domain_axis_name(self, axis):
@@ -361,7 +361,7 @@ False
         return self._get_constructs().domain_axis_name(axis)
     #--- End: def
     
-    def set_construct(self, construct, cid=None, axes=None,
+    def set_construct(self, construct, key=None, axes=None,
                       copy=True):
         '''Set a metadata construct.
 
@@ -375,14 +375,14 @@ False
     construct:
         The metadata construct to be inserted.
 
-    cid: `str`, optional
+    key: `str`, optional
         The construct identifier to be used for the construct. If not
         set then a new, unique identifier is created automatically. If
         the identifier already exisits then the exisiting construct
         will be replaced.
 
         *Example:*
-          ``cid='cellmeasure0'``
+          ``key='cellmeasure0'``
 
     axes: sequence of `str`, optional
         The construct identifiers of the domain axis constructs
@@ -408,17 +408,17 @@ False
     
 **Examples:**
 
->>> cid = f.set_construct(c)
->>> cid = f.set_construct(c, copy=False)
->>> cid = f.set_construct(c, axes=['domainaxis2'])
->>> cid = f.set_construct(c, cid='cellmeasure0')
+>>> key = f.set_construct(c)
+>>> key = f.set_construct(c, copy=False)
+>>> key = f.set_construct(c, axes=['domainaxis2'])
+>>> key = f.set_construct(c, key='cellmeasure0')
 
         '''
-        return self._get_constructs().set_construct(construct, cid=cid,
+        return self._get_constructs().set_construct(construct, key=key,
                                                     axes=axes, copy=copy)
     #--- End: def
 
-    def set_construct_data_axes(self, cid, axes):
+    def set_construct_data_axes(self, key, axes):
         '''Set the domain axis constructs spanned by a metadata construct data
 array.
 
@@ -429,11 +429,11 @@ array.
 
 :Parameters:
 
-    cid: `str`
+    key: `str`
         The construct identifier of the metadata construct.
 
         *Example:*
-          ``cid='dimensioncoordinate2'``
+          ``key='dimensioncoordinate2'``
 
      axes: sequence of `str`
         The construct identifiers of the domain axis constructs
@@ -453,11 +453,11 @@ array.
 
 **Examples:**
 
->>> cid = f.set_construct(c)
->>> f.set_construct_data_axes(cid, axes=['domainaxis1'])
+>>> key = f.set_construct(c)
+>>> f.set_construct_data_axes(key, axes=['domainaxis1'])
 
         '''
-        return self._get_constructs().set_construct_data_axes(cid, axes)
+        return self._get_constructs().set_construct_data_axes(key, axes)
     #--- End: def
 
 #--- End: class

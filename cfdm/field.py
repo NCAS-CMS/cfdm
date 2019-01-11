@@ -209,7 +209,7 @@ x.__str__() <==> str(x)
 #        x = []
 #        for key in tuple(non_spanning_axes) + data_axes:
 #            for dc_key, dim in list(self.dimension_coordinates().items()):
-#                if self.construct_data_axes()[dc_key] == (key,):
+#                if self.constructs_data_axes()[dc_key] == (key,):
 #                    name = dim.name(default='id%{0}'.format(dc_key), ncvar=True)
 #                    y = '{0}({1})'.format(name, dim.get_data().size)
 #                    if y != axis_names[key]:
@@ -316,17 +316,17 @@ rules, the only differences being:
         # Subspace other constructs that contain arrays
         # ------------------------------------------------------------
         self_constructs = self._get_constructs()
-        new_construct_data_axes = new.construct_data_axes()
+        new_constructs_data_axes = new.constructs_data_axes()
         
-        for cid, construct in new.data_constructs().items():
-            data = self.get_construct(cid=cid).get_data(None)
+        for key, construct in new.data_constructs().items():
+            data = self.get_construct(key=key).get_data(None)
             if data is None:
                 # This construct has no data
                 continue
 
             needs_slicing = False
             dice = []
-            for axis in new_construct_data_axes[cid]:
+            for axis in new_constructs_data_axes[key]:
                 if axis in data_axes:
                     needs_slicing = True
                     dice.append(indices[data_axes.index(axis)])
@@ -345,10 +345,10 @@ rules, the only differences being:
         # Replace domain axes
         domain_axes = new.domain_axes()
         new_constructs = new._get_constructs()
-        for cid, size in zip(data_axes, new.get_data().shape):
-            domain_axis = domain_axes[cid].copy()
+        for key, size in zip(data_axes, new.get_data().shape):
+            domain_axis = domain_axes[key].copy()
             domain_axis.set_size(size)
-            new_constructs.replace(cid, domain_axis)
+            new_constructs.replace(key, domain_axis)
 
         return new
     #--- End: def
@@ -545,7 +545,8 @@ False
         return new
     #--- End: def
 
-    def del_construct(self, description=None, cid=None, axes=None,
+    def del_construct(self, name=None, properties=None, measure=None,
+                      ncvar=None, ncdim=None, key=None, axis=None,
                       construct_type=None, default=ValueError()):
         '''Remove a metadata construct.
 
@@ -688,18 +689,20 @@ by any data arrays, nor be referenced by any cell method constructs.
 ...                     axes=['domainaxis1'])
 
         '''
-        cid = self.get_construct_id(description=description, cid=cid,
-                                        construct_type=construct_type,
-                                        axes=axes, default=None)
+        cid = self.get_construct_key(name=name, properties=properties,
+                                     measure=measure, ncvar=ncvar,
+                                     ncdim=ncdim, key=key,
+                                     construct_type=construct_type,
+                                     axis=axis, default=None)
         if cid is None:
             return self._get_constructs()._default(
                 default, 'No unique construct meets criteria')
             
         if cid in self.get_data_axes(()):
-            raise ValueError(
+            raise ValueError(  # <TODO> consider other construct data axes?
                 "Can't remove domain axis {!r} that is spanned by the field's data".format(cid))
 
-        return self._get_constructs().del_construct(cid=cid)
+        return self._get_constructs().del_construct(key=cid)
     #--- End: def
 
     def dump(self, display=True, _level=0, _title=None):
@@ -753,7 +756,7 @@ data arrays.
 
         name = self._unique_construct_names()
 
-        construct_data_axes = self.construct_data_axes()
+        constructs_data_axes = self.constructs_data_axes()
         
         # Simple properties
         properties = self.properties()
@@ -796,7 +799,7 @@ data arrays.
         
         for cid, value in sorted(self.field_ancillaries().items()):
             string.append(value.dump(display=False,
-                                     _axes=construct_data_axes[cid],
+                                     _axes=constructs_data_axes[cid],
                                      _axis_names=axis_to_name,
                                      _level=_level))
             string.append('') 
@@ -1044,11 +1047,13 @@ construct, into the data array.
         return f
     #--- End: def
 
-    def convert(self, description=None, cid=None, domain=True):
+    def convert(self, name=None, properties=None, measure=None,
+                ncvar=None, ncdim=None, key=None, axis=None,
+                construct_type=None, domain=True):
         '''Return a new field construct based on a metadata construct.
 
 A unique metdata construct is identified with the *description* and
-*cid* parameters, and a new field construct based on its properties
+*key* parameters, and a new field construct based on its properties
 and data is returned. The new field construct always has domain axis
 constructs corresponding to the data, and may also contain other
 metadata constructs that further define its domain.
@@ -1265,11 +1270,15 @@ that has fewer metadata constructs than one created with the
                    : grid_longitude(9) = [0.0, ..., 8.0] degrees
 
         '''
-        c0 = self.constructs(description=description, cid=cid,
-                            copy=False)
+        c0 = self.constructs(name=name, properties=properties,
+                             measure=measure, ncvar=ncvar,
+                             ncdim=ncdim, key=key, axis=axis,
+                             construct_type=construct_type, copy=False)
         if len(c0) != 1:
-            self.get_construct(description=description, cid=cid,
-                               copy=False)
+            self.get_construct(name=name, properties=properties,
+                               measure=measure, ncvar=ncvar,
+                               ncdim=ncdim, key=key, axis=axis,
+                               construct_type=construct_type, copy=False)
             return
 
         cid, c = c0.popitem()
@@ -1283,11 +1292,12 @@ that has fewer metadata constructs than one created with the
         # ------------------------------------------------------------
         # Add domain axes
         # ------------------------------------------------------------
-        data_axes = self.get_construct_data_axes(cid=cid)
-        if data_axes:
+        constructs_data_axes = self.constructs_data_axes()
+        data_axes = constructs_data_axes.get(cid)
+        if data_axes is not None:
             for domain_axis in data_axes:
                 f.set_construct(self.domain_axes()[domain_axis],
-                                cid=domain_axis, copy=True)
+                                key=domain_axis, copy=True)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -1300,15 +1310,13 @@ that has fewer metadata constructs than one created with the
         # Add a more complete domain
         # ------------------------------------------------------------
         if domain:
-            construct_data_axes = self.construct_data_axes()
-            
             for construct_type in ('dimension_coordinate',
                                    'auxiliary_coordinate',
                                    'cell_measure'):
                 for ccid, con in self.constructs(construct_type=construct_type,
                                                  axes=data_axes,
                                                  copy=False).items():
-                    axes = construct_data_axes.get(ccid)
+                    axes = constructs_data_axes.get(ccid)
                     if axes is None:
                         continue
     
@@ -1323,7 +1331,7 @@ that has fewer metadata constructs than one created with the
             for rcid, ref in self.coordinate_references().items():
 
                 new_coordinates = [ccid for ccid in ref.coordinates()
-                                   if set(construct_data_axes[ccid]).issubset(data_axes)]
+                                   if set(constructs_data_axes[ccid]).issubset(data_axes)]
 
                 if not new_coordinates:
                     continue
@@ -1331,7 +1339,7 @@ that has fewer metadata constructs than one created with the
                 # Still here?
                 ok = True
                 for ccid in ref.coordinate_conversion.domain_ancillaries().values():
-                    axes = construct_data_axes[ccid]
+                    axes = constructs_data_axes[ccid]
                     if not set(axes).issubset(data_axes):
                         ok = False
                         break
@@ -1535,7 +1543,7 @@ may be selected for removal.
         return f
     #--- End: def
 
-    def field_ancillaries(self, axes=None, copy=False):
+    def field_ancillaries(self, copy=False):
         '''Return field ancillary constructs.
 
 .. versionadded:: 1.7.0
@@ -1564,7 +1572,7 @@ may be selected for removal.
 
         '''
         return self._get_constructs().constructs(
-            construct_type='field_ancillary', axes=axes, copy=copy)
+            construct_type='field_ancillary', copy=copy)
     #--- End: def
     
     def cell_methods(self, copy=False):
@@ -1598,8 +1606,8 @@ OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where l
              ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
         '''
-        return self._get_constructs().constructs(
-            construct_type='cell_method', copy=copy)
+        return self._get_constructs().constructs(construct_type='cell_method',
+                                                 copy=copy)
     #--- End: def
     
 #    def cell_methods(self, copy=False):

@@ -134,8 +134,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertFalse(cell_measure.has_data())
         
         # External file contains only the cell measure variable
-        f = cfdm.read(self.parent_file,
-                      external_files=[self.external_file],
+        f = cfdm.read(self.parent_file, external=[self.external_file],
                       verbose=False)
 
         c = cfdm.read(self.combined_file, verbose=False)
@@ -158,8 +157,7 @@ class ExternalVariableTest(unittest.TestCase):
             self.assertTrue(c[i].equals(f[i], traceback=True))
 
         # External file contains other variables
-        f = cfdm.read(self.parent_file,
-                      external_files=self.combined_file,
+        f = cfdm.read(self.parent_file, external=self.combined_file,
                       verbose=False)
 
 #        print ('\nParent + Combined:\n')
@@ -178,7 +176,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         # Two external files
         f = cfdm.read(self.parent_file,
-                      external_files=[self.external_file, self.external_missing_file],
+                      external=[self.external_file, self.external_missing_file],
                       verbose=False)
 
 #        print ('\nParent + External + External Missing:\n')
@@ -204,8 +202,7 @@ class ExternalVariableTest(unittest.TestCase):
         combined = cfdm.read(self.combined_file)
         
         # External file contains only the cell measure variable
-        f = cfdm.read(self.parent_file,
-                      external_files=self.external_file)
+        f = cfdm.read(self.parent_file, external=self.external_file)
 
         cfdm.write(f, self.tempfilename)
         g = cfdm.read(self.tempfilename)

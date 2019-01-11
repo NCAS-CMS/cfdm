@@ -88,6 +88,14 @@ The physical nature of individual data values are described by
 A complete description of the CF data model, including UML diagrams,
 is available to download at https://doi.org/10.5194/gmd-10-4619-2017.
 
+----
+
+.. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+           Taylor, K. E.: A data model of the Climate and Forecast
+           metadata conventions (CF-1.6) with a software
+           implementation (cf-python v2.1), Geosci. Model Dev., 10,
+           4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.
+
 **Implementation**
 ------------------
 
@@ -120,13 +128,3 @@ The cfdm package can
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
-
-----
-
-.. rubric:: Footnotes
-
-.. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
-           Taylor, K. E.: A data model of the Climate and Forecast
-           metadata conventions (CF-1.6) with a software
-           implementation (cf-python v2.1), Geosci. Model Dev., 10,
-           4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.

@@ -132,7 +132,7 @@ class CFDMImplementation(Implementation):
     def convert(self, field=None, construct_id=None):
         '''TODO
         '''
-        return field.convert(cid=construct_id, domain=False)
+        return field.convert(key=construct_id, domain=False)
     #--- End: def
         
     def del_property(self, construct, prop, default):
@@ -258,7 +258,7 @@ AttributeError: Field doesn't have property 'standard_name'
     def get_construct_data_axes(self, field, key):
         '''
         '''
-        return field.construct_data_axes()[key]
+        return field.constructs_data_axes()[key]
     #--- End: def
     
     def get_constructs(self, field, axes=None):
@@ -270,7 +270,7 @@ If axes are specified then constructs whose data arrays span those
 axes, and possibly other axes, are returned.
 
         '''
-        return field.constructs(axes=axes)
+        return field.constructs(axis=axes)
     #--- End: def
     
     def get_coordinate_reference_coordinates(self, coordinate_reference):

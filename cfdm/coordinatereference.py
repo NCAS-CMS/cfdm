@@ -212,16 +212,16 @@ components.
 
         # Coordinate conversion domain ancillary-valued terms
         if _construct_names:
-            for term, cid in sorted(coordinate_conversion.domain_ancillaries().items()):
-                if cid in _construct_names:
-                    construct_name = 'Domain Ancillary: '+_construct_names.get(cid, 'cid%{}'.format(cid))
+            for term, key in sorted(coordinate_conversion.domain_ancillaries().items()):
+                if key in _construct_names:
+                    construct_name = 'Domain Ancillary: '+_construct_names.get(key, 'key%{}'.format(key))
                 else:
                     construct_name = ''
                     
                 string.append('{0}Coordinate conversion:{1} = {2}'.format(
                     indent1, term, construct_name))
         else:
-            for term, value in sorted(coordinate_conversion.ancillaries.items()):
+            for term, value in sorted(coordinate_conversion.domain_ancillaries().items()):
                 string.append("{0}Coordinate conversion:{1} = {2}".format(
                     indent1, term, str(value)))
 
@@ -232,17 +232,17 @@ components.
 
         # Coordinates 
         if _construct_names:
-            for cid in sorted(self.coordinates(), reverse=True):
-                coord = '{}'.format(_construct_names.get(cid, 'cid%{}'.format(cid)))
-                if cid in _dimension_coordinates:
+            for key in sorted(self.coordinates(), reverse=True):
+                coord = '{}'.format(_construct_names.get(key, 'key%{}'.format(key)))
+                if key in _dimension_coordinates:
                     coord = 'Dimension Coordinate: '+coord
-                elif cid in _auxiliary_coordinates:
+                elif key in _auxiliary_coordinates:
                     coord = 'Auxiliary Coordinate: '+coord
                     
                 string.append('{0}{1}'.format(indent1, coord))
         else:
             for identifier in sorted(self.coordinates()):
-                string.append('{0}{1}'.format(indent1, identifier))
+                string.append('{0}Coordinate: {1}'.format(indent1, identifier))
             
         string = '\n'.join(string)
        

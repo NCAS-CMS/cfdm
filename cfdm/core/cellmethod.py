@@ -175,6 +175,43 @@ False
         return self._get_component('axes', *default)
     #--- End: def
 
+    def get_method(self, *default):
+        '''Return the method of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_method`, `has_method`, `set_method`
+
+:Parameters:
+
+    default: optional
+        Return *default* if and only if the method have not been set.
+
+:Returns:
+
+    out: `tuple`
+        The method. If the method has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_method(['domainaxis1'])
+>>> c.has_method()
+True
+>>> c.get_method()
+'variance'
+>>> c.del_method()
+>>> c.has_method()
+False
+>>> c.get_method('NO METHOD')
+'NO METHOD'
+>>> c.del_method('NO METHOD')
+'NO METHOD'
+
+        '''
+        return self._get_component('method', *default)
+    #--- End: def
+
     def has_axes(self):
         '''Whether the axes of the cell method have been set.
 

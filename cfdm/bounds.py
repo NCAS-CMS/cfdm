@@ -190,11 +190,6 @@ None
 >>> b.inherited_properties()
 {'standard_name': 'longitude',
  'units': 'degrees_east'}
->>> b.properties({'foo': 'bar', 'standard_name': 'latitude'})
-{}
->>> b.inherited_properties()
-{'standard_name': 'longitude',
- 'units': 'degrees_east'}
 
         '''
         return deepcopy(self._get_component('inherited_properties', {}))
