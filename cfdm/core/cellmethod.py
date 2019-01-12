@@ -95,7 +95,7 @@ that the method was applied only over El Nino years).
         
 :Returns:
 
-    out: `str`
+    `str`
         The construct type.
 
         '''
@@ -115,7 +115,7 @@ that the method was applied only over El Nino years).
 
 :Returns:
 
-     out:
+    `tuple` or *default*
         The removed axes, identified by field key or standard name. If
         unset then *default* is returned, if provided.
 
@@ -148,11 +148,11 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if and only if axes have not been set.
+        Return *default* if axes have not been set.
 
 :Returns:
 
-    out: `tuple`
+    `tuple`
         The axes. If axes have not been set then return the value
         of *default* parameter, if provided.
 
@@ -185,11 +185,11 @@ False
 :Parameters:
 
     default: optional
-        Return *default* if and only if the method have not been set.
+        Return *default* if the "method" propoerty has not been set.
 
 :Returns:
 
-    out: `tuple`
+    `tuple`
         The method. If the method has not been set then return the
         value of *default* parameter, if provided.
 
@@ -212,6 +212,342 @@ False
         return self._get_component('method', *default)
     #--- End: def
 
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('<TODO>', *default)
+    #--- End: def
+
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('<TODO>', *default)
+    #--- End: def
+
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default*  if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('<TODO>', *default)
+    #--- End: def
+
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default*  if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('<TODO>', *default)
+    #--- End: def
+
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default*  if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('<TODO>', *default)
+    #--- End: def
+
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('<TODO>', *default)
+    #--- End: def
+
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default*  if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('<TODO>', *default)
+    #--- End: def
+
+    def get_xx(self, *default):
+        '''Return the xx of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_xx`, `has_xx`, `set_xx`
+
+:Parameters:
+
+    default: optional
+        Return *default*  if the xx have not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The xx. If the xx has not been set then return the
+        value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_xx(<TODO>)
+>>> c.has_xx()
+True
+>>> c.get_xx()
+<TODO>
+>>> c.del_xx()
+>>> c.has_xx()
+False
+>>> c.get_xx('NO XX')
+'NO XX'
+>>> c.del_xx('NO XX')
+'NO XX'
+
+        '''
+        return self._get_component('over', *default)
+    #--- End: def
+
+    def get_where(self, *default):
+        '''Return the "where" property of the cell method.
+
+The "where" property indicates that the method has been applied to
+only a portion of a cell.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_where`, `has_where`, `set_where`
+
+:Parameters:
+
+    default: optional
+        Return *default* if the "where" property has not been set.
+
+:Returns:
+
+    `str`
+        The where property. If the where property has not been set
+        then return the value of *default* parameter, if provided.
+
+**Examples:**
+
+>>> c.set_where('sea')
+>>> c.has_where()
+True
+>>> c.get_where()
+'sea'
+>>> c.del_where()
+>>> c.has_where()
+False
+>>> c.get_where('NO WHERE')
+'NO WHERE'
+>>> c.del_where('NO WHERE')
+'NO WHERE'
+
+        '''
+        return self._get_component('where', *default)
+    #--- End: def
+
     def has_axes(self):
         '''Whether the axes of the cell method have been set.
 
@@ -221,7 +557,7 @@ False
 
 :Returns:
 
-     out: `bool`
+     `bool`
         True if the axes have been set, otherwise False.
 
 **Examples:**
