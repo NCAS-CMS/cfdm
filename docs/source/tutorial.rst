@@ -1211,8 +1211,6 @@ which cell method constructs were added to the field construct during
    OrderedDict([('cellmethod0', <CellMethod: domainaxis1: domainaxis2: mean where land (interval: 0.1 degrees)>),
                 ('cellmethod1', <CellMethod: domainaxis3: maximum>)])
 
-
-
 .. _Field-construct-creation:
 
 **Field construct creation**
