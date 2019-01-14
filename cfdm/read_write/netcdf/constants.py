@@ -142,3 +142,10 @@ description_of_file_contents_attributes = ('comment',
                                            'references',
                                            'source',
                                            'title',)
+
+cell_method_properties = set(('within',
+                              'where',
+                              'over',
+                              'intervals',
+                              'comment',
+))

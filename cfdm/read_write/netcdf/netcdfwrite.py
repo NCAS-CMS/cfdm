@@ -1938,7 +1938,8 @@ extra trailing dimension.
 
             else:
                 raise ValueError(
-"Can't write {!r}: Unknown compression type: {!r}".format(org_f, compression_type))
+"Can't write {!r}: Unknown compression type: {!r}".format(
+    org_f, compression_type))
                 
             g['sample_ncdim'][compressed_ncdims] = sample_ncdim
             
@@ -2167,6 +2168,11 @@ extra trailing dimension.
 
             cell_methods_strings = []
             for cm in list(cell_methods.values()):
+                if not constants.cell_method_properties.issuperset(cm.properties()):
+                    raise ValueError(
+"Can't write {!r}: Unknown cell method property: {!r}".format(
+    org_f, cm.propoerties()))
+                
                 axes = [axis_map.get(axis, axis)
                         for axis in self.implementation.get_cell_method_axes(cm, ())]
                 self.implementation.set_cell_method_axes(cm, axes)
@@ -2640,7 +2646,7 @@ and auxiliary coordinate roles for different data variables.
             try:
                 fields = tuple(fields)
             except TypeError:
-                raise TypeError("'fields' parameter must be a (sequence of) Field")
+                raise TypeError("'fields' parameter must be a (sequence of) Field instances")
             
         # -------------------------------------------------------
         # Scalar coordinate variables

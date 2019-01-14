@@ -1022,6 +1022,68 @@ that applies to a domain axis construct that is not spanned by the
 field construct's data) corresponds to a CF-netCDF scalar coordinate
 variable.
 
+.. _Domain:
+
+**Domain**
+----------
+
+----
+
+The :ref:`domain of the CF data model <CF-data-model>` is *not* a
+construct, but is defined collectively by various other metadata
+constructs included in the field construct. It is represented by the
+`Domain` class. The domain instance may be accessed with the
+`~Field.get_domain` method of the field construct.
+
+.. code-block:: python
+   :caption: *Get the domain, and inspect it.*
+
+   >>> domain = t.get_domain()
+   >>> domain
+   <Domain: {1, 1, 9, 10}>
+   >>> print(domain)
+   Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                   : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                   : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                   : time(1) = [2019-01-01 00:00:00]
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                   : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Coord references: atmosphere_hybrid_height_coordinate
+                   : rotated_latitude_longitude
+   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+   >>> description = domain.dump(display=False)
+
+Changes to domain instance are seen by the field construct, and vice
+versa. This is because the domain instance is merely "view" of the
+relevant metadata constructs contained in the field construct. The
+field construct also has a `~Field.domain` attribute that is an alias
+for the `~Field.get_domain` method, which makes it easier to access
+attributes and methods of the domain instance.
+
+.. code-block:: python
+   :caption: *Change a property of a metadata construct of the domain
+             and show that this change appears in the same metadata
+             data construct of the parent field, and vice versa.*
+
+   >>> domain = t.domain
+   >>> domain.get_construct('latitude').set_property('test', 'set by domain')
+   >>> t.get_construct('latitude').get_property('test')
+   'set by domain'
+   >>> t.get_construct('latitude').set_property('test', 'set by field')
+   >>> domain.get_construct('latitude').get_property('test')
+   'set by field'
+   >>> domain.get_construct('latitude').del_property('test')
+   'set by field'
+   >>> t.get_construct('latitude').has_property('test')
+   False
+
+All of the methods and attributes related to the domain are listed
+:ref:`here <Field-Domain>`.
+
 .. _Domain-axes:
 
 **Domain axes**
@@ -1044,18 +1106,18 @@ an independent axis of the field construct's domain.
 ----
 
 A coordinate construct may contain an array of cell bounds that
-provide the extent of each cell by defining the locations of the cell
+provides the extent of each cell by defining the locations of the cell
 vertices. This is in addition to the main data array that contains a
 grid point location for each cell. The cell bounds are stored in a
 `Bounds` class instance that is accessed with the
-`~Coordinate.get_bounds` method of any construct that can represent
-coordinates, i.e. a dimension coordinate, auxiliary coordinate or
-domain ancillary construct (the last of these can provide extra
-coordinates needed for computing the location of cells in an
-alternative coordinate systems).
+`~Coordinate.get_bounds` method, or `~Coordinate.bounds` attribute, of
+any construct that can represent coordinates, i.e. a dimension
+coordinate, auxiliary coordinate or domain ancillary construct (the
+last of these can provide extra coordinates needed for computing the
+location of cells in an alternative coordinate systems).
 
-`Bounds` instances share the :ref:`the same API as the field construct
-<Data>` as the field construct for accessing their data.
+A `Bounds` instance shares the :ref:`the same API as the field
+construct <Data>` for accessing its data.
 
 .. code-block:: python
    :caption: *Get the Bounds instance of a coordinate construct and
@@ -1099,7 +1161,7 @@ parent coordinate construct, but it may also have its own properties
 
 A field construct may contain various coordinate systems. Each
 coordinate system is either defined by a coordinate reference
-construct which relates dimension coordinate, auxiliary coordinate and
+construct that relates dimension coordinate, auxiliary coordinate and
 domain ancillary constructs (as is the case for the field construct
 ``t``), or is inferred from dimension and auxiliary coordinate
 constructs alone (as is the case for the field construct ``q``).
@@ -1108,13 +1170,15 @@ A corodinate reference construct contains
 
 * references (by construct keys) to the dimension and auxiliary
   coordinate constructs to which it applies, accessed with the
-  `~CoordinateReference.coordinates` method;
+  `~CoordinateReference.coordinates` method of the coordinate
+  reference construct;
 
 .. code-block:: python
-   :caption: *Select the a vertical coordinate system construct and
+   :caption: *Select the vertical coordinate system construct and
              inspect its coordinate constructs. (Note that the
-             "construct_type" parameter is required since their is
-             also dimension coordinate construct with the same name.)*
+             "construct_type" parameter is required since there is
+             also a dimension coordinate construct with the same
+             name.)*
      
    >>> crs = t.get_construct('atmosphere_hybrid_height_coordinate',
    ...                       construct_type='coordinate_reference')
@@ -1133,9 +1197,10 @@ A corodinate reference construct contains
    {'dimensioncoordinate0'}
 
 * the zeroes of the dimension and auxiliary coordinate constructs
-  which define a coordinate system, stored in a `Datum` instance,
+  which define the coordinate system, stored in a `Datum` instance,
   which is accessed with the `~CoordinateReference.get_datum` method,
-  or `~CoordinateReference.datum` attribute; and
+  or `~CoordinateReference.datum` attribute, of the coordinate
+  reference construct; and
 
 .. code-block:: python
    :caption: *Get the datum and inspect its parameters.*
@@ -1147,7 +1212,10 @@ A corodinate reference construct contains
    
 * a formula for converting coordinate values taken from the dimension
   or auxiliary coordinate constructs to a different coordinate system,
-  stored in a `CoordinateConversion` class instance.
+  stored in a `CoordinateConversion` class instance, which is accessed
+  with the `~CoordinateReference.get_coordinate_conversionm` method,
+  or `~CoordinateReference.coordinate_conversion` attribute, of the
+  coordinate reference construct.
 
 .. code-block:: python
    :caption: *Get the coordinate converion and inspect its parameters
@@ -1752,69 +1820,6 @@ latter. This is because the surface altitude netCDF variable in
 ``tas.nc`` does not have the "coordinates", "cell_measures" nor
 "grid_mapping" netCDF attributes that would link it to auxiliary
 coordinate, cell meausure and grid mapping netCDF variables.
-
-.. _Domain:
-
-**Domain**
-----------
-
-----
-
-The :ref:`domain of the CF data model <CF-data-model>` is *not* a
-construct, but is defined collectively by various other metadata
-constructs included in the field construct. It is represented by the
-`Domain` class. The domain instance may be accessed with the
-`~Field.get_domain` method of the field construct.
-
-.. code-block:: python
-   :caption: *Get the domain, and inspect it.*
-
-   >>> domain = t.get_domain()
-   >>> domain
-   <Domain: {1, 1, 9, 10}>
-   >>> print(domain)
-   Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
-                   : grid_latitude(10) = [2.2, ..., -1.76] degrees
-                   : grid_longitude(9) = [-4.7, ..., -1.18] degrees
-                   : time(1) = [2019-01-01 00:00:00]
-   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
-                   : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                   : long_name:Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
-   Cell measures   : measure%area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-   Coord references: atmosphere_hybrid_height_coordinate
-                   : rotated_latitude_longitude
-   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
-                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
-                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
-   >>> description = domain.dump(display=False)
-
-Changes to domain instance are seen by the field construct, and vice
-versa. This is because the domain instance is merely "view" of the
-relevant metadata constructs contained in the field construct. The
-field construct also has a `~Field.domain` attribute that is an alias
-for the `~Field.get_domain` method, which makes it easier to access
-attributes and methods of the domain instance.
-
-.. code-block:: python
-   :caption: *Change a property of a metadata construct of the domain
-             and show that this change appears in the same metadata
-             data construct of the parent field, and vice versa.*
-
-   >>> domain = t.domain
-   >>> domain.get_construct('latitude').set_property('test', 'set by domain')
-   >>> t.get_construct('latitude').get_property('test')
-   'set by domain'
-   >>> t.get_construct('latitude').set_property('test', 'set by field')
-   >>> domain.get_construct('latitude').get_property('test')
-   'set by field'
-   >>> domain.get_construct('latitude').del_property('test')
-   'set by field'
-   >>> t.get_construct('latitude').has_property('test')
-   False
-
-All of the methods and attributes related to the domain are listed
-:ref:`here <Field-Domain>`.
-
 
 .. _Copying:
 
