@@ -171,9 +171,9 @@ class create_fieldTest(unittest.TestCase):
         f.set_property('flag_masks', [2, 1, 0])
 
         cm0 =  cfdm.CellMethod(axes=[axisX],
-                               properties={'method'   : 'mean',
-                                           'intervals': [cfdm.Data(1, 'day')],
-                                           'comment'  : 'ok'})
+                               properties={'method'  : 'mean',
+                                           'interval': [cfdm.Data(1, 'day')],
+                                           'comment' : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
                                properties={'method': 'maximum',

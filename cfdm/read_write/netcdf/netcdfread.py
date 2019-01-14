@@ -2253,8 +2253,10 @@ variable should be pre-filled with missing values.
             for properties in cell_methods:
                 axes = [name_to_axis.get(axis, axis)
                         for axis in properties.pop('axes')]
-                                
-                cell_method = self._create_cell_method(axes, properties)
+
+                method = properties.pop('axes', None)
+                
+                cell_method = self._create_cell_method(axes, method, properties)
                 if verbose:
                     print('    [ ] Inserting', repr(cell_method))
                         
@@ -2818,7 +2820,7 @@ variable's netCDF dimensions.
         return variable
     #--- End: def
 
-    def _create_cell_method(self, axes, properties):
+    def _create_cell_method(self, axes, method, properties):
         '''Create a cell method object.
     
 *Example:*
@@ -2826,6 +2828,8 @@ variable's netCDF dimensions.
 :Parameters:
 
     axes: `tuple`
+
+    method: 'str`
 
     properties: `dict`
         
@@ -2835,6 +2839,7 @@ variable's netCDF dimensions.
 
         '''
         return self.implementation.initialise_CellMethod(axes=axes,
+                                                         method=method,
                                                          properties=properties)
     #--- End: def
 
@@ -3202,7 +3207,7 @@ variable's netCDF dimensions.
                 return []
 
             if intervals:
-                cm['intervals'] = intervals
+                cm['interval'] = intervals
 
             out.append(cm)
         #--- End: while

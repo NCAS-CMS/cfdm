@@ -2171,7 +2171,7 @@ extra trailing dimension.
                 if not constants.cell_method_properties.issuperset(cm.properties()):
                     raise ValueError(
 "Can't write {!r}: Unknown cell method property: {!r}".format(
-    org_f, cm.propoerties()))
+    org_f, cm.properties()))
                 
                 axes = [axis_map.get(axis, axis)
                         for axis in self.implementation.get_cell_method_axes(cm, ())]

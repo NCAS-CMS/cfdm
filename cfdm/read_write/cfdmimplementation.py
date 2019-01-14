@@ -878,11 +878,12 @@ netCDF unlimited dimensions.
         return cls(measure=measure)
     #--- End: def
 
-    def initialise_CellMethod(self, axes=None, properties=None):
+    def initialise_CellMethod(self, axes=None, method=None,
+                              properties=None):
         '''
         '''
         cls = self.get_class('CellMethod')
-        return cls(axes=axes, properties=properties)
+        return cls(axes=axes, method=method, properties=properties)
     #--- End: def
 
     def initialise_CoordinateConversion(self, 

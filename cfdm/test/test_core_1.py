@@ -158,9 +158,9 @@ class create_fieldTest(unittest.TestCase):
         cm0 =  cfdm.core.CellMethod(
             axes=[axisX],
             properties={
-                'method'   : 'mean',
-                'intervals': [cfdm.core.Data(cfdm.core.NumpyArray(numpy.array(1)), 'day')],
-                'comment'  : 'ok'})
+                'method'  : 'mean',
+                'interval': [cfdm.core.Data(cfdm.core.NumpyArray(numpy.array(1)), 'day')],
+                'comment' : 'ok'})
         
         cm1 =  cfdm.core.CellMethod(
             axes=[axisY],

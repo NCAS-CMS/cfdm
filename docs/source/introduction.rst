@@ -23,8 +23,6 @@ designed to promote the creation, processing, and sharing of climate
 and forecasting data using netCDF files and libraries
 (https://www.unidata.ucar.edu/software/netcdf).
 
-
-
 .. _CF-data-model:
 
 **CF data model**
@@ -56,39 +54,38 @@ consists of
 
 The domain is defined by
 
-* **domain axis** constructs (corresponding to CF-netCDF dimensions or
+- **domain axis** constructs (corresponding to CF-netCDF dimensions or
   scalar coordinate variables),
 
-* **dimension coordinate** constructs (corresponding to CF-netCDF
+- **dimension coordinate** constructs (corresponding to CF-netCDF
   coordinate variables or numeric scalar coordinate variables),
 
-* **auxiliary coordinate** constructs (corresponding to CF-netCDF
+- **auxiliary coordinate** constructs (corresponding to CF-netCDF
   auxiliary coordinate variables and non-numeric scalar coordinate
   variables),
 
-* **coordinate reference** constructs (corresponding to CF-netCDF grid
+- **coordinate reference** constructs (corresponding to CF-netCDF grid
   mapping variables or the formula_terms attribute of a coordinate
   variable),
 
-* **domain ancillary** constructs (corresponding to CF-netCDF
+- **domain ancillary** constructs (corresponding to CF-netCDF
   variables named by the formula_terms attribute of a coordinate
   variable), and
 
-* **cell measure** constructs (corresponding to CF-netCDF cell measure
+- **cell measure** constructs (corresponding to CF-netCDF cell measure
   variables).
   
 The physical nature of individual data values are described by 
 
-* **field ancillary** constructs (corresponding to CF-netCDF ancillary
+- **field ancillary** constructs (corresponding to CF-netCDF ancillary
   variables), and
 
-* **cell method** constructs (corresponding to a CF-netCDF
+- **cell method** constructs (corresponding to a CF-netCDF
   cell_methods attribute of data variable).
 
 A complete description of the CF data model, including UML diagrams,
-is available to download at https://doi.org/10.5194/gmd-10-4619-2017.
-
-----
+is available to download at https://doi.org/10.5194/gmd-10-4619-2017
+[#cfdm]_.
 
 .. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
            Taylor, K. E.: A data model of the Climate and Forecast
@@ -103,9 +100,11 @@ is available to download at https://doi.org/10.5194/gmd-10-4619-2017.
 
 The cfdm package implements the CF data model for its internal data
 structures and so is able to process any CF-compliant dataset. It is
-not strict about CF compliance, however, so that partially conformant
+not strict about CF-compliance, however, so that partially conformant
 datasets may be modified in memory, as well as ingested from existing
-datasets and written to new datasets.
+datasets and written to new datasets. However, when reading datasets,
+it requires CF-compliance only to the extent necessary to interpret
+the dataset, reporting errors that prevent it from working.
 
 The cfdm package can
 
@@ -128,3 +127,7 @@ The cfdm package can
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form.
+
+Note that cfdm enables the creation of CF field constructs, but it's
+:ref:`up to the user to use them in a CF-compliant way
+<CF-conventions>`.

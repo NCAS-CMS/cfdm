@@ -1,9 +1,12 @@
 .. currentmodule:: cfdm
 .. default-role:: obj
 
+.. em dash, trimming surrounding whitespace
+.. |---| unicode:: U+2014  
+   :trim:
+      
 .. _philosophy:
 
-	     
 **Philosophy**
 ==============
 
@@ -12,10 +15,10 @@
 Version |release| for version |version| of the CF conventions.
 
 The basic requirement of the reference implementation is to represent
-the logical CF data model in memory with a package of Python classes,
-and no further features. However, to be useful, the implementation
-must also have practical functionality to read, write, inspect, and
-modify netCDF datasets.
+the logical :ref:`CF data model <CF-data-model>` in memory with a
+package of Python classes, with no further features. However, to be
+useful, the implementation must also have practical functionality to
+read, write, inspect, and modify netCDF datasets.
 
 In order to satisfy both needs there is a stand-alone core
 implementation, the :ref:`cfdm.core <class_core>` package, that
@@ -25,6 +28,26 @@ implementation, the :ref:`cfdm <class_extended>` package, that allows
 the reading and writing of netCDF datasets, as well as having
 comprehensive inspection capabilities, and some more sophisticated
 field modification methods.
+
+.. _CF-conventions:
+
+**CF conventions**
+------------------
+
+----
+
+The CF data model does not enforce the CF conventions. CF-compliance
+is the responsibility of the user. For example, a "units" property
+whose value is not a valid `UDUNITS
+<https://www.unidata.ucar.edu/software/udunits>`_ string is not
+CF-compliant, but is allowed by the CF data model. This is also true,
+in general, for the cfdm package. The few exceptions to this occur
+when field constructs are read from, or written to, a netCDF file: it
+may not be possible to parse a non-CF-compliant netCDF variable or
+attribute to create an unambiguous CF data model construct; or create
+an unambiguous netCDF variable or attribute from a non-CF-compliant CF
+data model construct.
+
 
 **Functionality**
 -----------------
@@ -38,18 +61,17 @@ constructs in memory.
 The cfdm package is not, and is not meant to be, a general analysis
 package. Therefore it can't, for example, regrid field constructs to
 new domains, perform statistical collapses, combine field constructs
-arithmetically, etc.
-
-It has been designed to be :ref:`subclassable <subclassing>` so that
-gemeral analyses packages define their own field constructs that have
-extra functionality.
+arithmetically, etc. It has, however, been designed to be
+:ref:`subclassable <subclassing>` to facilitate the creation of other
+packages that build on this cfdm implementation whilst also adding
+extra, higher level functionality.
 
 **API**
 -------
 
 ----
 
-The design of the application programming interface (API) needs to
+The design of an application programming interface (API) needs to
 strike a balance between being verbose and terse. A verbose API is
 easier to understand, is more memorable, but usually involves more
 typing; whilst a terse API is more efficient for the experienced
@@ -88,4 +110,4 @@ package:
    >>> print(f)
    Field: altitude
    ---------------
-   Data            : altitude(cid%domainaxis0(1))
+   Data            : altitude(key%domainaxis0(1))

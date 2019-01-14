@@ -1288,17 +1288,18 @@ which cell method constructs were added to the field construct during
 
 There are three methods for creating a field construct in memory:
 
-* Manual: Instantiate instances of field and metadata construct
+* Manual creation: Instantiate instances of field and metadata construct
   classes and manually provide the connections between them.
 
 ..
 
-* Convert: Convert a single metadata construct already in memory to an
-  independent field construct
+* Creation by conversion: Convert a single metadata construct already
+  in memory to an independent field construct
 
 ..
   
-* Read: Read a netCDF variable from a dataset using `cfdm.read`.
+* Creation by reading: Read a netCDF variable from a dataset using
+  `cfdm.read`.
 
 .. _Manual-creation:
 
@@ -1397,8 +1398,7 @@ constructs forming part of a coordinate reference construct):
    >>> key = p.set_construct(dc, axes=[longitude_axis])
    >>> key
    'dimensioncoordinate0'
-   >>> cm = cfdm.CellMethod(axes=[longitude_axis],
-   ...                      properties={'method': 'minimum'})
+   >>> cm = cfdm.CellMethod(axes=[longitude_axis], method='minimum')
    >>> p.set_construct(cm)
    'cellmethod0'
    
@@ -1446,11 +1446,11 @@ constructs (data arrays have been generated with dummy values using
    Q.set_data(data, axes=[axisY, axisX])
 
    # Create the cell methods
-   cell_method1 = cfdm.CellMethod(axes=['area'], properties={'method': 'mean'})
+   cell_method1 = cfdm.CellMethod(axes=['area'], method='mean')
 
    cell_method2 = cfdm.CellMethod()
    cell_method2.set_axes([axisT])
-   cell_method2.properties({'method': 'maximum'})
+   cell_method2.set_method('maximum')
 
    # Insert the cell methods into the field in the same order that
    # their methods were applied to the data
@@ -1577,13 +1577,11 @@ been generated with dummy values using `numpy.arange`):
    # Create and set the cell methods
    cell_method1 = cfdm.CellMethod(
              axes=[axis_Y, axis_X],
-             properties={'method': 'mean',
-                         'where': 'land',
+	     method='mean',
+             properties={'where': 'land',
                          'intervals': [cfdm.Data(0.1, units='degrees')]})
    
-   cell_method2 = cfdm.CellMethod(
-                    axes=[axis_T],
-                    properties={'method': 'maximum'})
+   cell_method2 = cfdm.CellMethod(axes=[axis_T], method='maximum')
    
    tas.set_construct(cell_method1)
    tas.set_construct(cell_method2)
@@ -1730,6 +1728,24 @@ The new field construct may now be inspected:
                    : domainancillary1(atmosphere_hybrid_height_coordinate(1)) = [20.0] 1
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 89.0]] m
 
+
+Creating data from an array on disk
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All the of above example have created construct data from arrays that
+are already in memory. It is, however, possible to create data from
+arrays that reside on disk, such as are returned by the `cfdm.read
+function`
+
+.. code-block:: python
+
+   >>> nc = netCDF4.Dataset('file.nc', 'r')
+   >>> tas = nc.variables['tas']
+   >>> disk_array = cfdm.NetCDFFileArray(filename='file.nc', ncvar='tas',
+   ...		                         dtype=tas.dtype, ndim=tas.ndim,
+   ...					 shape=tas.shape, size=tas.size)
+   >>> TODO
+		   
 .. _Creation-by-conversion:
 
 **Creation by conversion**

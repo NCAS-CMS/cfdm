@@ -51,13 +51,13 @@ names will need to be modified to be netCDF dimension names.
                 string.extend((portion, p))
         #--- End: for
 
-        intervals = self.get_property('intervals', ())
-        comment   = self.get_property('comment', None)
+        interval = self.get_property('interval', ())
+        comment  = self.get_property('comment', None)
 
-        if intervals:
+        if interval:
             x = ['(']
 
-            y = ['interval: {0}'.format(data) for data in intervals]
+            y = ['interval: {0}'.format(data) for data in interval]
             x.append(' '.join(y))
 
             if comment is not None:
@@ -110,9 +110,9 @@ applies.
 #
 #        n_axes = len(c.get_axes(()))
 #        if n_axes > 1:
-#            intervals = c.get_property('intervals', ())            
+#            interval = c.get_property('interval', ())            
 #            if len(interval) == 1:
-#                c.set_property('intervals', interval*n_axes)
+#                c.set_property('interval', interval*n_axes)
 #
 #        return c
 #    #--- End: def
@@ -204,7 +204,7 @@ applies.
 #                break
 #
 #            # interval and comment
-#            intervals = []
+#            interval = []
 #            if cell_methods[0].endswith('('):
 #                cell_methods.pop(0)
 #
@@ -235,7 +235,7 @@ applies.
 #                        #---End: try
 #
 #                        try:
-#                            intervals.append(cm._Data(parsed_interval, units=units))
+#                            interval.append(cm._Data(parsed_interval, units=units))
 #                        except:
 #                            message = "Cell method interval is incorrectly formatted"
 #                            if allow_error:
@@ -268,7 +268,7 @@ applies.
 #                    cell_methods.pop(0)
 #            #--- End: if
 #
-#            n_intervals = len(intervals)          
+#            n_intervals = len(interval)          
 #            if n_intervals > 1 and n_intervals != len(axes):
 #                message = "Cell method interval is incorrectly formatted"
 #                if allow_error:
@@ -280,8 +280,8 @@ applies.
 #                    raise ValueError("{}: {}".format(message, string))
 #            #---End: if
 #
-#            if intervals:
-#                cm.set_property('intervals', tuple(intervals))
+#            if interval:
+#                cm.set_property('interval', tuple(interval))
 #
 #            out.append(cm)
 #        #--- End: while
@@ -360,7 +360,7 @@ True
 False
 
         '''
-        ignore_properties = tuple(ignore_properties) + ('intervals',)
+        ignore_properties = tuple(ignore_properties) + ('interval',)
 
         if not super().equals(
                 other,
@@ -382,11 +382,11 @@ False
 #            return False
 #        #--- End: if
         
-        if 'intervals' in ignore_properties:
+        if 'interval' in ignore_properties:
             return True
 
-        intervals0 = self.get_property('intervals', ())
-        intervals1 = other.get_property('intervals', ())
+        intervals0 = self.get_property('interval', ())
+        intervals1 = other.get_property('interval', ())
         if intervals0:
             if not intervals1:
                 if traceback:
@@ -397,8 +397,8 @@ False
             #--- End: if
             
             if len(intervals0) != len(intervals1):
-#                intervals0 = self.expand_intervals().get_property('intervals', ())
-#                intervals1 = other.expand_intervals().get_property('intervals', ())        
+#                intervals0 = self.expand_intervals().get_property('interval', ())
+#                intervals1 = other.expand_intervals().get_property('interval', ())        
 #                if len(intervals0) != len(intervals1):
                 if traceback:
                     print(
@@ -480,22 +480,22 @@ False
 #        other1 = other.sorted(argsort=argsort)
 #        self1 = self
 #
-#        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('intervals',)):
+#        if not self1.equals(other1, rtol=rtol, atol=atol, ignore=('interval',)):
 #            if traceback:
 #                print("{0}: Nonequivalent: {1!r}, {2!r}".format(
 #                    self.__class__.__name__, self, other))
 #            return False
 #        #--- End: if
 #
-#        self_interval  = self1.get_property('intervals', ())
-#        other_interval = other1.get_property('intervals', ())
+#        self_interval  = self1.get_property('interval', ())
+#        other_interval = other1.get_property('interval', ())
 #        
 #        if len(self_interval) != len(other_interval):
 #            self1 = self1.expand_intervals(copy=False)
 #            other1.expand_intervals(copy=False)
 #
-#            self_interval  = self1.get_property('intervals', ())
-#            other_interval = other1.get_property('intervals', ())        
+#            self_interval  = self1.get_property('interval', ())
+#            other_interval = other1.get_property('interval', ())        
 #
 #            if len(self_interval) != len(other_interval):
 #                if traceback:
@@ -616,7 +616,7 @@ name, and any intervals are sorted accordingly.
 
 >>> cm = cfdm.CellMethod(axes=['domainaxis1', 'domainaxis0'],
 ...                      properties={'method': 'mean',
-...                                  'intervals': [1, 2]})
+...                                  'interval': [1, 2]})
 ... 
 >>> cm
 <CellMethod: domainaxis1: domainaxis0: mean (interval: 1 interval: 2)>
@@ -625,7 +625,7 @@ name, and any intervals are sorted accordingly.
 
 >>> cm = cfdm.CellMethod(axes=['domainaxis0', 'area'],
 ...                      properties={'method': 'mean',
-...                                  'intervals': [1, 2]})
+...                                  'interval': [1, 2]})
 ... 
 >>> cm
 <CellMethod: domainaxis0: area: mean (interval: 1 interval: 2)>
@@ -650,7 +650,7 @@ name, and any intervals are sorted accordingly.
 
         new.set_axes(tuple(axes2))
 
-        intervals = new.get_property('intervals', ())
+        intervals = new.get_property('interval', ())
         if len(intervals) <= 1:
             return new
 
@@ -658,7 +658,7 @@ name, and any intervals are sorted accordingly.
         for i in indices:
             intervals2.append(intervals[i])
 
-        new.set_property('intervals', tuple(intervals2))
+        new.set_property('interval', tuple(intervals2))
 
         return new
     #--- End: def

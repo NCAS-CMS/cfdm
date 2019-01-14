@@ -25,8 +25,8 @@ that the method was applied only over El Nino years).
 .. versionadded:: 1.7.0
 
     '''
-    def __init__(self, axes=None, properties=None, source=None,
-                 copy=True):
+    def __init__(self, axes=None, method=None, properties=None,
+                 source=None, copy=True):
         '''**Initialisation**
 
 :Parameters:
@@ -51,22 +51,34 @@ that the method was applied only over El Nino years).
          The axes may also be set after initialisation with the
          `set_axes` method.
 
+    method: `str`, optional
+        Set the axes of the cell method construct. Either one or more
+        domain axis construct identifiers or standard names. Ignored
+        if the *source* parameter is set.
+
+          *Example:*
+             ``method='mean'
+
+         The method may also be set after initialisation with the
+         `set_method` method.
+
     properties: `dict`, optional
         Set descriptive properties. The dictionary keys are property
         names, with corresponding values. Ignored if the *source*
         parameter is set.
 
         *Example:*
-          ``properties={'method': 'variance'}``
+          ``properties={'comment': 'sampled instantaneously'}``
        
         *Example:*
-          ``properties={'method': 'mean', 'where': 'sea'}``
+          ``properties={'where': 'sea', ''over': 'ice'}``
         
         Properties may also be set after initialisation with the
         `properties` and `set_property` methods.
 
     source: optional
-        Initialize the axes and properties from those of *source*.
+        Initialize the axes, method and properties from those of
+        *source*.
 
     copy: `bool`, optional
         If False then do not deep copy input parameters prior to
@@ -81,10 +93,18 @@ that the method was applied only over El Nino years).
                 axes = source.get_axes(None)
             except AttributeErrror:
                 axes = None              
+
+            try:
+                method = source.get_method(None)
+            except AttributeErrror:
+                method = None              
         #--- End: if
 
         if axes is not None:                
             axes = self.set_axes(axes)
+
+        if method is not None:                
+            method = self.set_method(method)
     #--- End: def
 
     @property
@@ -100,6 +120,7 @@ that the method was applied only over El Nino years).
 
         '''
         return 'cell_method'
+    #--- End: def
 
     def del_axes(self, *default):
         '''Remove the axes of the cell method.
@@ -138,6 +159,43 @@ False
         return self._del_component('axes')
     #--- End: def
     
+    def del_method(self, *default):
+        '''Remove the method of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `get_method`, `has_method`, `set_method`
+
+:Parameters:
+
+    default: optional
+        Return *default* if method has not been set.
+
+:Returns:
+
+    `tuple` or *default*
+        The removed method. If unset then *default* is returned, if
+        provided.
+
+**Examples:**
+
+>>> c.set_method('minimum')
+>>> c.has_method()
+True
+>>> c.get_method()
+('time',)
+>>> c.del_method()
+>>> c.has_method()
+False
+>>> c.get_method('NO METHOD')
+'NO METHOD'
+>>> c.del_method('NO METHOD')
+'NO METHOD'
+
+        '''
+        return self._del_component('method', *default)
+    #--- End: def
+    
     def get_axes(self, *default):
         '''Return the axes of the cell method.
 
@@ -158,18 +216,18 @@ False
 
 **Examples:**
 
->>> c.set_axes(['domainaxis1'])
->>> c.has_axes()
+>>> c.set_method('minimum')
+>>> c.has_method()
 True
->>> c.get_axes()
-('time',)
->>> c.del_axes()
->>> c.has_axes()
+>>> c.get_method()
+'minimum'
+>>> c.del_method()
+>>> c.has_method()
 False
->>> c.get_axes('NO AXES')
-'NO AXES'
->>> c.del_axes('NO AXES')
-'NO AXES'
+>>> c.get_method('NO METHOD')
+'NO METHOD'
+>>> c.del_method('NO METHOD')
+'NO METHOD'
 
         '''
         return self._get_component('axes', *default)
@@ -195,11 +253,11 @@ False
 
 **Examples:**
 
->>> c.set_method(['domainaxis1'])
+>>> c.set_method('minimum')
 >>> c.has_method()
 True
 >>> c.get_method()
-'variance'
+'minimum'
 >>> c.del_method()
 >>> c.has_method()
 False
@@ -210,342 +268,6 @@ False
 
         '''
         return self._get_component('method', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default* if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('<TODO>', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default* if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('<TODO>', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default*  if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('<TODO>', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default*  if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('<TODO>', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default*  if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('<TODO>', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default* if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('<TODO>', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default*  if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('<TODO>', *default)
-    #--- End: def
-
-    def get_xx(self, *default):
-        '''Return the xx of the cell method.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_xx`, `has_xx`, `set_xx`
-
-:Parameters:
-
-    default: optional
-        Return *default*  if the xx have not been set.
-
-:Returns:
-
-    `tuple` or *default*
-        The xx. If the xx has not been set then return the
-        value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_xx(<TODO>)
->>> c.has_xx()
-True
->>> c.get_xx()
-<TODO>
->>> c.del_xx()
->>> c.has_xx()
-False
->>> c.get_xx('NO XX')
-'NO XX'
->>> c.del_xx('NO XX')
-'NO XX'
-
-        '''
-        return self._get_component('over', *default)
-    #--- End: def
-
-    def get_where(self, *default):
-        '''Return the "where" property of the cell method.
-
-The "where" property indicates that the method has been applied to
-only a portion of a cell.
-
-.. versionadded:: 1.7.0
-
-.. seealso:: `del_where`, `has_where`, `set_where`
-
-:Parameters:
-
-    default: optional
-        Return *default* if the "where" property has not been set.
-
-:Returns:
-
-    `str`
-        The where property. If the where property has not been set
-        then return the value of *default* parameter, if provided.
-
-**Examples:**
-
->>> c.set_where('sea')
->>> c.has_where()
-True
->>> c.get_where()
-'sea'
->>> c.del_where()
->>> c.has_where()
-False
->>> c.get_where('NO WHERE')
-'NO WHERE'
->>> c.del_where('NO WHERE')
-'NO WHERE'
-
-        '''
-        return self._get_component('where', *default)
     #--- End: def
 
     def has_axes(self):
@@ -577,6 +299,37 @@ False
 
 '''
         return self._has_component('axes')
+    #--- End: def
+
+    def has_method(self):
+        '''Whether the method of the cell method has been set.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_axxes`, `get_method`, `set_method`
+
+:Returns:
+
+     `bool`
+        True if the method has been set, otherwise False.
+
+**Examples:**
+
+>>> c.set_method('minimum')
+>>> c.has_method()
+True
+>>> c.get_method()
+'minimum'
+>>> c.del_method()
+>>> c.has_method()
+False
+>>> c.get_method('NO METHOD')
+'NO METHOD'
+>>> c.del_method('NO METHOD')
+'NO METHOD'
+
+'''
+        return self._has_component('method')
     #--- End: def
 
     def set_axes(self, value, copy=True):
@@ -646,6 +399,44 @@ False
             value = tuple(value)
             
         return self._set_component('axes', value, copy=False)
+    #--- End: def
+
+    def set_method(self, value, copy=True):
+        '''Set the method of the cell method.
+
+.. versionadded:: 1.7.0
+
+.. seealso:: `del_method`, `get_method`, `has_method`
+
+:Parameters:
+
+    value: `str`
+        The method.
+
+        *Example:*
+          ``method='variance'``
+
+:Returns:
+
+     `None`
+
+**Examples:**
+
+>>> c.set_method('minimum')
+>>> c.has_method()
+True
+>>> c.get_method()
+'minimum'
+>>> c.del_method()
+>>> c.has_method()
+False
+>>> c.get_method('NO METHOD')
+'NO METHOD'
+>>> c.del_method('NO METHOD')
+'NO METHOD'
+
+        '''
+        return self._set_component('method', value, copy=copy)
     #--- End: def
 
 #--- End: class

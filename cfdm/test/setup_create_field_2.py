@@ -174,9 +174,9 @@ class create_fieldTest_2(unittest.TestCase):
 #            f.set_cell_method(cm)
 
         cm0 =  cfdm.CellMethod(axes=[axisX],
-                               properties={'method'   : 'mean',
-                                           'intervals': [cfdm.Data(1, 'day')],
-                                           'comment'  : 'ok'})
+                               properties={'method'  : 'mean',
+                                           'interval': [cfdm.Data(1, 'day')],
+                                           'comment' : 'ok'})
     
         cm1 =  cfdm.CellMethod(axes=[axisY],
                                properties={'method': 'maximum',
