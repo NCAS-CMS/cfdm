@@ -1732,20 +1732,43 @@ The new field construct may now be inspected:
 Creating data from an array on disk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All the of above example have created construct data from arrays that
-are already in memory. It is, however, possible to create data from
-arrays that reside on disk, such as are returned by the `cfdm.read
-function`
+All the of above examples created construct data from arrays that are
+already in memory. It is, however, possible to create data from arrays
+that reside on disk. The `cfdm.read` function creates data in this
+manner. A pointer to an array on disk is stored in a
+`~cfdm.NetCDFArray` instance, which is is used in turn to initialize a
+`~cfdm.Data` instance.
 
 .. code-block:: python
-
+   :caption: *Define a variable from a dataset with the netCDF package
+             and use it to create a NetCDFArray instance with which to
+             initialize a Data instance.*
+		
    >>> nc = netCDF4.Dataset('file.nc', 'r')
-   >>> tas = nc.variables['tas']
-   >>> disk_array = cfdm.NetCDFFileArray(filename='file.nc', ncvar='tas',
-   ...		                         dtype=tas.dtype, ndim=tas.ndim,
-   ...					 shape=tas.shape, size=tas.size)
-   >>> TODO
-		   
+   >>> v = nc.variables['tas']
+   >>> netcdf_array = cfdm.NetCDFArray(filename='file.nc', ncvar='tas',
+   ...	                               dtype=v.dtype, ndim=v.ndim,
+   ...	     		  	       shape=v.shape, size=v.size)
+   >>> data_disk = cfdm.Data(netcdf_array)
+
+  
+.. code-block:: python
+   :caption: *Read the netCDF variable's data into memory and
+             initialise another Data instance with it. Compare the
+             values of the two data instances.*
+
+   >>> numpy_array = v[...]
+   >>> data_memory = cfdm.Data(numpy_array)
+   >>> data_disk.equals(data_memory)
+   True
+
+Note that data type, number of dimensions, dimension sizes and number
+of elements of the array on disk that are used to initialize the
+`~cfdm.NetCDFArray` instance are those expected by the CF data model,
+which may be different to those of the netCDF variable in the
+file. For example, a netCDF character array of shape ``(12, 9)`` is
+viewed in cfdm as a one-dimensional string array of shape ``(12,)``.
+
 .. _Creation-by-conversion:
 
 **Creation by conversion**
